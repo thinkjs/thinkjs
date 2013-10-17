@@ -1,5 +1,5 @@
 module.exports = {
-    '/w/i': {
-        "get,post": ""
+    '/^welefen\/(welefen)/i': {
+        "get,post": "welefen?name=:1"
     }
 }
