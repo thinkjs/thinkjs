@@ -5,7 +5,7 @@ var action = Action(function(){
         },
         index: function(){
             console.log('index action');
-            this.end();
+            this.end("index action");
         },
         test: function(test, test2){
             console.log("test value: " + test + ","+test2);
