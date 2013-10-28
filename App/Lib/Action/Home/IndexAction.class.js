@@ -1,17 +1,20 @@
-var action = Action(function(){
+module.exports = Action(function(){
     return {
         init: function(){
             
         },
-        index: function(){
-            console.log('index action');
-            this.end("index action");
+        indexAction: function(){
+            var cookie = this.cookie("name");
+            //console.log(__http.req.headers);
+            this.end("cookie: " +cookie);
+            throw_error({
+                msg: "action not exist"
+            })
+            //throw {name: "welefen", type: "", msg: ""};
         },
-        test: function(test, test2){
+        testAction: function(test, test2){
             console.log("test value: " + test + ","+test2);
             this.end();
         }
     }
 });
-
-module.exports = action;
