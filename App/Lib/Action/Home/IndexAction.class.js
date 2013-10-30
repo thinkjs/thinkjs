@@ -12,7 +12,7 @@ module.exports = Action(function(){
             this.display();
         },
         testAction: function(test, test2){
-            console.log("test value: " + test + ","+test2);
+            this.echo("welefen");
             this.end();
         }
     }

@@ -1,0 +1,52 @@
+{
+  "name": "thinkjs",
+  "description": "thinkphp web framework for nodejs",
+  "version": "0.1.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "ejs": "0.8.4",
+    "jade": "0.35.0",
+    "cookie": "0.1.0",
+    "mysql": "2.0.0-alpha9",
+    "multiparty": "3.0.0"
+  },
+  "keywords": [
+    "thinkphp",
+    "framework",
+    "web",
+    "rest",
+    "restful",
+    "router",
+    "app",
+    "api"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/welefen/thinkjs"
+  },
+  "main": "index",
+  "bin": {
+    "thinkjs": "./bin/thinkjs"
+  },
+  "scripts": {
+    "prepublish": "npm prune",
+    "test": "make test"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "readme": "thinkphp web framework for nodejs",
+  "readmeFilename": "Readme.md",
+  "bugs": {
+    "url": "https://github.com/welefen/thinkjs/issues"
+  }
+}
