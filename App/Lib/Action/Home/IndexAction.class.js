@@ -5,7 +5,6 @@ module.exports = Action(function(){
         },
         indexAction: function(){
             var cookie = this.cookie("name");
-            //this.redirect("http://www.baidu.com");
             this.assign({
                 name: "welefen"
             })
