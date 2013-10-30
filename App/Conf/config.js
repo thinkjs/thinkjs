@@ -1,4 +1,5 @@
 module.exports = {
 	//"配置项": "配置值"
-    deny_ip: []
+    deny_ip: [],
+    tpl_engine_type: ""
 };
