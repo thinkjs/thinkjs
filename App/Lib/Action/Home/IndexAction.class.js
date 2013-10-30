@@ -5,7 +5,12 @@ module.exports = Action(function(){
         },
         indexAction: function(){
             var cookie = this.cookie("name");
-            throw_error("welefen");
+            this.header("Access-Control-Allow-Origin", "*");
+            console.log(__request.headers);
+            //this.cookie("name", "welefen test");
+            this.echo("welefen");
+            this.end();
+            //this.redirect("http://www.baidu.com");
         },
         testAction: function(test, test2){
             console.log("test value: " + test + ","+test2);
