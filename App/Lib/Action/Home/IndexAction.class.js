@@ -4,9 +4,8 @@ module.exports = Action(function(){
             
         },
         indexAction: function(){
-            var cookie = this.cookie("name");
-            S("name");
-            this.display();
+            var cookie = this.cookie();
+            this.end(cookie);
         },
         testAction: function(test, test2){
             this.echo("welefen");
