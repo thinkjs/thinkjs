@@ -5,9 +5,7 @@ module.exports = Action(function(){
         },
         indexAction: function(){
             var cookie = this.cookie("name");
-            this.assign({
-                name: "welefen"
-            })
+            S("name");
             this.display();
         },
         testAction: function(test, test2){
