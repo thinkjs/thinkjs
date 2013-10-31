@@ -5,6 +5,8 @@ module.exports = Action(function(){
         },
         indexAction: function(){
             var cookie = this.cookie();
+            var session = think_require("Session");
+            session.start();
             this.end(cookie);
         },
         testAction: function(test, test2){
