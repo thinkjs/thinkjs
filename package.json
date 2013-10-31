@@ -13,11 +13,10 @@
     }
   ],
   "dependencies": {
-    "ejs": "0.8.4",
     "jade": "0.35.0",
     "cookie": "0.1.0",
-    "mysql": "2.0.0-alpha9",
-    "multiparty": "3.0.0"
+    "multiparty": "3.0.0",
+    "when": "2.5.1"
   },
   "keywords": [
     "thinkphp",
