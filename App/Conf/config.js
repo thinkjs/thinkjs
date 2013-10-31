@@ -3,5 +3,5 @@ module.exports = {
     deny_ip: [],
     tpl_engine_type: "jade",
     data_cache_type: "",
-    session_cookie_sign: "welefen"
+    session_cookie_sign: ""
 };
