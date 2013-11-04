@@ -3,6 +3,7 @@ module.exports = Action(function(){
         indexAction: function(){
             var self = this;
             this.session();
+            F("name", null);
             this.end();
         },
         testAction: function(test, test2){
