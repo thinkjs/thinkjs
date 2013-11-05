@@ -2,7 +2,11 @@ module.exports = Action(function(){
     return {
         indexAction: function(){
             var self = this;
-            think_require("UserModel")();
+            var user = think_require("UserModel");
+            var test = think_require("TestModel");
+            test();
+            user();
+            test();
             this.end();
         },
         testAction: function(test, test2){
