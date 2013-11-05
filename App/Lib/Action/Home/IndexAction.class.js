@@ -2,8 +2,7 @@ module.exports = Action(function(){
     return {
         indexAction: function(){
             var self = this;
-            this.session();
-            F("name", null);
+            think_require("UserModel")();
             this.end();
         },
         testAction: function(test, test2){
