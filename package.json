@@ -16,7 +16,8 @@
     "jade": "0.35.0",
     "cookie": "0.1.0",
     "multiparty": "3.0.0",
-    "when": "2.5.1"
+    "when": "2.5.1",
+    "mime": "1.2.11"
   },
   "keywords": [
     "thinkphp",
