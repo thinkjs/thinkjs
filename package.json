@@ -33,13 +33,9 @@
     "type": "git",
     "url": "https://github.com/welefen/thinkjs"
   },
-  "main": "index",
+  "main": "lib/think.js",
   "bin": {
     "thinkjs": "./bin/thinkjs"
-  },
-  "scripts": {
-    "prepublish": "npm prune",
-    "test": "make test"
   },
   "engines": {
     "node": "*"
