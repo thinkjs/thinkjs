@@ -33,10 +33,6 @@
     "type": "git",
     "url": "https://github.com/welefen/thinkjs"
   },
-  "main": "lib/think.js",
-  "bin": {
-    "thinkjs": "./bin/thinkjs"
-  },
   "engines": {
     "node": "*"
   },
