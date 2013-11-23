@@ -1,8 +1,2 @@
-var value = 1;
-exports.value = function(){
-    console.log(fn)
-    return value;
-};
-exports.change = function(val){
-    value = val;
-}
+var a = require("./a.js");
+console.log([1,2].sum())
