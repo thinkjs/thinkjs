@@ -1,1 +1,1 @@
-module.exports = require("./lib/think.js");                             
+module.exports = require("./lib/think.js");
