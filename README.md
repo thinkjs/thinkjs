@@ -1,4 +1,7 @@
-# 介绍
-thinkjs是一款非官方thinkphp框架的nodejs版本，想看thinkphp介绍可以去[她的官网](http://www.thinkphp.cn/)
+## 介绍
+thinkjs是一款轻量级的nodejs web框架，里面很多特性借鉴于thinkphp.
 
-目前还在开发中，文档比较缺失，不建议项目里使用。
+## 安装
+```
+  npm install thinkjs
+```
