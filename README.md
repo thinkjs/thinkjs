@@ -5,3 +5,4 @@ thinkjs是一款轻量级的nodejs web框架，里面很多特性借鉴于thinkp
 ```
   npm install thinkjs
 ```
+其他文档后续给出。
