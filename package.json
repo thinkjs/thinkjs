@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "thinkphp web framework for nodejs",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
