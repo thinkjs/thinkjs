@@ -6,6 +6,9 @@
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
+  "scripts": {
+    "test": "make test"
+  },
   "contributors": [{
       "name": "welefen",
       "email": "welefen@gmail.com"
