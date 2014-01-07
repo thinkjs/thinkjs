@@ -17,7 +17,7 @@
     "ejs": "0.8.4",
     "cookie": "0.1.0",
     "multiparty": "3.0.0",
-    "when": "2.5.1",
+    "es6-promise": "0.1.1",
     "mime": "1.2.11",
     "mysql": "2.0.0-alpha9"
   },
