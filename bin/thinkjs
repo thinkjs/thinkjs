@@ -5,9 +5,13 @@ var os = require("os");
 
 var project = process.argv[2];
 if (!project) {
-	console.log("thinkjs project-name");
-	return;
-};
+	var files = fs.readdirSync(".");
+	if (files.length) {
+		console.log("path is not empty");
+		return false;
+	};
+	project = ".";
+}
 var nodePath = process.execPath;
 require("../lib/Common/common.js");
 
