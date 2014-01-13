@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+var fs = require("fs");
+var child_process = require("child_process");
+var os = require("os");
+
+var project = process.argv[2];
+if (!project) {
+	console.log("thinkjs project-name");
+	return;
+};
+var nodePath = process.execPath;
+require("../lib/Common/common.js");
+
+mkdir(project + "/www");
+//index.js文件内容
+var content = [
+	'//定义APP的根目录',
+	'global.APP_PATH = __dirname + "/../App";',
+	'//静态资源根目录',
+	'global.RESOURCE_PATH = __dirname;',
+	'global.APP_DEBUG = true;',
+	'require("thinkjs");'
+].join("\n");
+
+var indexPath = project + "/www/index.js";
+fs.writeFileSync(indexPath, content);
+child_process.exec(nodePath + " " + indexPath);
+
+//打开浏览器
+var exec = "open";
+if (os.platform() === 'win32') {
+	exec = "start";
+};
+child_process.exec(exec + " http://127.0.0.1:8360");
