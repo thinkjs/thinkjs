@@ -5,3 +5,4 @@ diff
 log
 www
 .gitignore
+npm-debug.log
