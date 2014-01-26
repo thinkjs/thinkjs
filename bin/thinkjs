@@ -35,4 +35,6 @@ var exec = "open";
 if (os.platform() === 'win32') {
 	exec = "start";
 };
-child_process.exec(exec + " http://127.0.0.1:8360");
+setTimeout(function(){
+	child_process.exec(exec + " http://127.0.0.1:8360");
+}, 1000);
