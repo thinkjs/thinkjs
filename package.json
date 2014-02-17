@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "thinkphp web framework for nodejs",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -31,6 +31,9 @@
     "app",
     "api"
   ],
+  "bin": {
+    "thinkjs": "./bin/thinkjs"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/welefen/thinkjs"

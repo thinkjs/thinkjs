@@ -16,6 +16,10 @@ var nodePath = process.execPath;
 require("../lib/Common/common.js");
 
 mkdir(project + "/www");
+mkdir(project + "/www/resource/");
+["js", "css", "img", "module", "swf"].forEach(function(item){
+	mkdir(project + "/www/resource/" + item);
+})
 //index.js文件内容
 var content = [
 	'//定义APP的根目录',
