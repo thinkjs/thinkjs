@@ -1,0 +1,13 @@
+{
+    "name": "jQuery",
+    "version": "1.9.1",
+    "keywords" : ["base"],
+    "repository": {
+        "url": "https://github.com/jquery/jquery.git",
+        "type": "git"
+    },
+    "homepage": "http://jquery.com/",
+    "maintainers": ["ququ <quguangyu@360.cn>"],
+    "description": "一个兼容多浏览器的JS框架，核心理念是write less,do more。",
+    "output" : "jquery.js"
+}

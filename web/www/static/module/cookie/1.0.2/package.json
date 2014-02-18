@@ -1,0 +1,13 @@
+{
+    "name": "Cookie",
+    "version": "1.0.2",
+    "keywords" : ["util"],
+    "repository": {
+        "url": "https://github.com/aralejs/cookie",
+        "type": "git"
+    },
+    "homepage": "https://github.com/aralejs/cookie",
+    "maintainers": ["ququ <quguangyu@360.cn>"],
+    "description": "提供 Cookie 操作方法。",
+    "output": "cookie.js"
+}

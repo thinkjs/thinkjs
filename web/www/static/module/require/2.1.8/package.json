@@ -1,0 +1,13 @@
+{
+    "name": "RequireJS",
+    "version": "2.1.8",
+    "keywords" : ["lib"],
+    "repository": {
+        "url": "https://github.com/jrburke/requirejs",
+        "type": "git"
+    },
+    "homepage": "http://requirejs.org/",
+    "maintainers": ["ququ <quguangyu@360.cn>"],
+    "description": "符合 AMD 规范的 JS 文件及模块加载器。",
+    "output" : "require.js"
+}

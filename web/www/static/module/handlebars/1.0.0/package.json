@@ -1,0 +1,13 @@
+{
+    "name": "handlebars",
+    "version": "1.0.0",
+    "keywords" : ["util"],
+    "repository": {
+        "url": "https://github.com/wycats/handlebars.js/",
+        "type": "git"
+    },
+    "homepage": "http://handlebarsjs.com/",
+    "maintainers": ["黄薇 <huangwei@360.cn>"],   
+    "description": "轻量级的Javascript模板引擎。",
+    "output": "handlebars.js"
+}

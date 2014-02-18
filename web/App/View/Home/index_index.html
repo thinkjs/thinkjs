@@ -1,1 +1,67 @@
-hello, thinkjs!
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>thinkjs官方网站</title>
+	<link href="/static/css/base.css" rel="stylesheet">
+	<link href="/static/module/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="/static/module/highlight/styles/github.css" rel="stylesheet">
+	<script src="/static/module/jquery/1.9.1/jquery.js"></script>
+	<script src="/static/module/bootstrap/js/bootstrap.js"></script>
+	<script src="/static/module/require/2.1.8/require.js"></script>
+	<script>
+	var URL_PREFIX = "";
+	require.config({
+        baseUrl : '/static',        //配置模块根路径到静态资源根目录。
+        urlArgs : "r=" + (new Date()).getTime() //避免开发环境缓存
+    });
+	</script>
+  </head>
+  <body>
+  	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	  <div class="container">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="/">thinkjs</a>
+		</div>
+		<div class="navbar-collapse collapse">
+		    <ul class="nav navbar-nav navbar-right">
+				<li><a href="https://github.com/welefen/thinkjs" target="_blank">Fork on GitHub</a></li>
+		  	</ul>
+        </div>
+	  </div>
+	</div>
+<div class="jumbotron" style="padding-top:50px;background:url(/static/img/bg.jpg); background-size:cover">
+  <div class="container" style="padding-top:50px;">
+    <h1 style="font-size:48px;">node.js web application framework</h1>
+    <p style="margin-top:40px;">帮助发现页面中隐藏的错误，增强代码质量和产品稳定性。</p>
+    <p style="margin-top:40px;"><a class="btn btn-success btn-lg" role="button" href="/introduce">查看更多 &raquo;</a></p>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>解决的问题</h2>
+      <ul style="padding-left:20px;">
+        <li>发现页面中的问题</li>
+      </ul>
+      <p><a class="btn btn-default" href="/introduce" role="button">查看更多 &raquo;</a></p>
+    </div>
+  </div>
+  </div>
+	<hr>
+	<div class="container">
+	<footer>
+	<p style="color:#666">by welefen</p>
+	</footer>
+	</div>
+  </body>
+</html>
