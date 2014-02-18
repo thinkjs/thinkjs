@@ -21,6 +21,16 @@ ul{padding-left: 20px;}
 	  text-transform: uppercase;
 	  letter-spacing: 1px;
 	}  
+	.fork{
+		position: absolute;
+		right: 0;
+		background: url(../img/fork.png) no-repeat;
+		width: 149px;
+		height: 149px;
+		top: 0;
+		text-indent: -1000px;
+		overflow: hidden;
+	}
 	#loading { 
 		position:fixed;
 		top:0;
