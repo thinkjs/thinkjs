@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "thinkphp web framework for nodejs",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -19,7 +19,8 @@
     "multiparty": "3.0.0",
     "es6-promise": "0.1.1",
     "mime": "1.2.11",
-    "mysql": "2.0.0-alpha9"
+    "mysql": "2.0.0-alpha9",
+    "faye-websocket": "0.7.2"
   },
   "keywords": [
     "thinkjs",
