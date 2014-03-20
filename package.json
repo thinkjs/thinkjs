@@ -19,7 +19,7 @@
     "multiparty": "3.0.0",
     "es6-promise": "0.1.1",
     "mime": "1.2.11",
-    "mysql": "2.0.0-alpha9",
+    "mysql": "2.1.1",
     "faye-websocket": "0.7.2"
   },
   "keywords": [
