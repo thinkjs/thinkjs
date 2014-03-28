@@ -29,7 +29,7 @@ cp -r App/Conf/* output/App/Conf/;
 #mv output/App/Conf/config.js output/App/Conf/config.js.bak
 cp -r App/Lib/* output/App/Lib/;
 cp ctrl.sh output/
-cp www/index.js output/www;
+#cp www/index.js output/www;
 cd output;
 tar zcvf ../output.tar.gz *;
 cd ..
