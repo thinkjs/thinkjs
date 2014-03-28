@@ -33,10 +33,10 @@
 		</div>
 		<div class="navbar-collapse collapse">
 		    <ul class="nav navbar-nav navbar-left">
-				<li><a href="/">首页</a></li>
-				<li><a href="/intro">介绍</a></li>
-				<li><a href="/guide">快速上手</a></li>
-				<li><a href="/api">API</a></li>
+				<li <%if(nav=='index'){%>class="active"<%}%>><a href="/">首页</a></li>
+				<li <%if(nav=='intro'){%>class="active"<%}%>><a href="/intro">介绍</a></li>
+				<li <%if(nav=='guide'){%>class="active"<%}%>><a href="/guide">快速上手</a></li>
+				<li <%if(nav=='api'){%>class="active"<%}%>><a href="/api">API</a></li>
 		  	</ul>
         </div>
 	  </div>

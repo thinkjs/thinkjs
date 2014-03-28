@@ -10,9 +10,11 @@ module.exports = Controller(function(){
         docAction: function(doc){
         	var viewFile = VIEW_PATH + "/Home/doc_" + doc + ".html";
         	if (isFile(viewFile)) {
-        		this.display("doc:" + doc);
+                this.assign("nav", doc);
+        		return this.display("doc:" + doc);
         	}else{
-        		this.display("index:index");
+                this.assign("nav", "index");
+        		return this.display("index:index");
         	}
         }
     }
