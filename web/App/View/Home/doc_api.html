@@ -1,0 +1,180 @@
+<% include inc/header.html %>
+<div class="container" style="margin-top:60px;">
+  <div class="row">
+  	<h2>原生对象的扩展</h2>
+  	<h4>Object.values(obj)</h4>
+  	<ul>
+  		<li>obj <code>Object</code></li>
+  		<li>return: <code>Array</code></li>
+  	</ul>
+  	<p>获取对象值的集合</p>
+
+  	<h4>Array.prototype.sum</h4>
+  	<ul>
+  		<li>return: <code>Number</code></li>
+  	</ul>
+  	<p>获取数组的和</p>
+
+	<h2>全局函数</h2>
+	<h4>Class</h4>
+	<h4>extend</h4>
+	<h4>isBoolean</h4>
+	<h4>isNumber</h4>
+	<h4>isObject</h4>
+	<h4>isString</h4>
+	<h4>isFunction</h4>
+	<h4>isDate</h4>
+	<h4>isRegexp</h4>
+	<h4>isError</h4>
+	<h4>isEmpty</h4>
+	<h4>isArray</h4>
+	<h4>isIP</h4>
+	<h4>isIP4</h4>
+	<h4>isIP6</h4>
+	<h4>isFile</h4>
+	<h4>isDir</h4>
+	<h4>isBuffer</h4>
+	<h4>isPromise</h4>
+	<h4>isWritable</h4>
+	<h4>mkdir</h4>
+	<h4>chmod</h4>
+	<h4>getFileContent</h4>
+	<h4>setFileContent</h4>
+	<h4>ucfirst</h4>
+	<h4>md5</h4>
+	<h4>getPromise</h4>
+	<h4>getDefer</h4>
+	<h4>getObject</h4>
+
+	<h4>thinkRequire</h4>
+	<h4>inherits</h4>
+	<h4>Cache</h4>
+	<h4>Behavior</h4>
+	<h4>Controller</h4>
+	<h4>Session</h4>
+	<h4>Model</h4>
+	<h4>Db</h4>
+	<h4>B</h4>
+	<h4>tag</h4>
+	<h4>C</h4>
+	<h4>A</h4>
+	<h4>F</h4>
+	<h4>D</h4>
+	<h4>S</h4>
+	<h4>E</h4>
+
+	<h2>Controller类的方法</h2>
+
+	<h4>controller.ip()</h4>
+	<ul>
+		<li>return: <code>String</code></li>
+	</ul>
+	<p>获取当前用户的ip</p>
+
+	<h4>controller.isGet()</h4>
+	<ul>
+		<li>return: <code>Boolean</code></li>
+	</ul>
+	<p>是否为GET请求</p>
+
+	<h4>controller.isPost()</h4>
+	<ul>
+		<li>return: <code>Boolean</code></li>
+	</ul>
+	<p>是否为POST请求</p>
+
+	<h4>controller.isMethod(method)</h4>
+	<ul>
+		<li>method <code>String</code> 请求类型</li>
+		<li>return: <code>Boolean</code></li>
+	</ul>
+	<p>判断当前请求类型与传递的参数是否相同</p>
+
+	<h4>controller.isAjax()</h4>
+	<ul>
+		<li>return: <code>Boolean</code></li>
+	</ul>
+	<p>是否为ajax请求</p>
+
+	<h4>controller.get(name)</h4>
+	<ul>
+		<li>name <code>String|undefined</code></li>
+		<li>return: <code>String|Object</code></li>
+	</ul>
+	<p>获取get参数的值，如果name为undefined，则返回所有的参数值</p>
+
+	<h4>controller.post(name)</h4>
+	<ul>
+		<li>name <code>String|undefined</code></li>
+		<li>return: <code>String|Object</code></li>
+	</ul>
+	<p>获取POST参数的值，如果name为undefined，则返回所有的POST值</p>
+
+	<h4>controller.param(name)</h4>
+	<ul>
+		<li>name <code>String|undefined</code></li>
+		<li>return: <code>String|Object</code></li>
+	</ul>
+	<p>获取POST或者GET参数的值(优先从POST里获取)，如果name为undefined，则返回所有的值</p>
+
+	<h4>controller.file(name)</h4>
+	<ul>
+		<li>name <code>String</code></li>
+		<li>return: <code>Object</code></li>
+	</ul>
+	<p>获取上传的文件对象</p>
+
+	<h4>controller.header(name, value)</h4>
+	<p>获取或者设置header</p>
+	<ul>
+		<li>如果name为object, 则循环设置header</li>
+		<li>如果设置了value，则设置header</li>
+		<li>如果name为undefined，则返回所有的header</li>
+		<li>返回name对应的header值</li>
+	</ul>
+
+	<h4>controller.userAgent()</h4>
+	<ul>
+		<li>return: <code>String</code></li>
+	</ul>
+	<p>返回用户的userAgent</p>
+
+	<h4>controller.referrer()</h4>
+	<ul>
+		<li>return: <code>String</code></li>
+	</ul>
+	<p>返回当前请求的referrer</p>
+
+	<h4>controller.cookie(name, value, options)</h4>
+
+	<h4>controller.session(name, value)</h4>
+
+	<h4>controller.redirect(url, code)</h4>
+
+	<h4>controller.assign(name, value)</h4>
+
+	<h4>controller.fetch(templateFile, content)</h4>
+
+	<h4>controller.display(templateFile, charset, contentType, content)</h4>
+
+	<h4>controller.action(action)</h4>
+
+	<h4>controller.jsonp(data)</h4>
+
+	<h4>controller.json(data)</h4>
+
+	<h4>controller.status(status)</h4>
+
+	<h4>controller.echo(obj, encoding)</h4>
+
+	<h4>controller.end(obj)</h4>
+
+	<h4>controller.download(file, contentType)</h4>
+
+	<h4>controller.success(data)</h4>
+
+	<h4>controller.error(data)</h4>
+
+	<h2>Model类的方法</h2>
+ </div>
+ </div>

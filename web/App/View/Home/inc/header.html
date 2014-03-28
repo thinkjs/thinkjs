@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>thinkjs官方网站</title>
+	<link href="/static/css/base.css" rel="stylesheet">
+	<link href="/static/module/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="/static/module/highlight/styles/github.css" rel="stylesheet">
+	<script src="/static/module/jquery/1.9.1/jquery.js"></script>
+	<script src="/static/module/bootstrap/js/bootstrap.js"></script>
+	<script src="/static/module/require/2.1.8/require.js"></script>
+	<script>
+	var URL_PREFIX = "";
+	require.config({
+        baseUrl : '/static',        //配置模块根路径到静态资源根目录。
+        urlArgs : "r=" + (new Date()).getTime() //避免开发环境缓存
+    });
+	</script>
+  </head>
+  <body>
+  	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	  <div class="container">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="/" style="width:200px;font-size:30px;">Think.js</a>
+		</div>
+		<div class="navbar-collapse collapse">
+		    <ul class="nav navbar-nav navbar-left">
+				<li><a href="/">首页</a></li>
+				<li><a href="/intro">介绍</a></li>
+				<li><a href="/guide">快速上手</a></li>
+				<li><a href="/api">API</a></li>
+		  	</ul>
+        </div>
+	  </div>
+	  <a class="fork" href="https://github.com/welefen/thinkjs" target="_blank">Fork me on Github</a>
+	</div>

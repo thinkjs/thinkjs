@@ -1,69 +1,43 @@
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-	<meta charset="utf-8">
-	<meta name="renderer" content="webkit">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>thinkjs官方网站</title>
-	<link href="/static/css/base.css" rel="stylesheet">
-	<link href="/static/module/bootstrap/css/bootstrap.css" rel="stylesheet">
-	<link href="/static/module/highlight/styles/github.css" rel="stylesheet">
-	<script src="/static/module/jquery/1.9.1/jquery.js"></script>
-	<script src="/static/module/bootstrap/js/bootstrap.js"></script>
-	<script src="/static/module/require/2.1.8/require.js"></script>
-	<script>
-	var URL_PREFIX = "";
-	require.config({
-        baseUrl : '/static',        //配置模块根路径到静态资源根目录。
-        urlArgs : "r=" + (new Date()).getTime() //避免开发环境缓存
-    });
-	</script>
-  </head>
-  <body>
-  	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	  <div class="container">
-		<div class="navbar-header">
-		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		  </button>
-		  <a class="navbar-brand" href="/" style="width:200px">thinkjs</a>
-		</div>
-		<div class="navbar-collapse collapse">
-		    <ul class="nav navbar-nav navbar-left">
-				<li><a href="https://github.com/welefen/thinkjs" target="_blank">首页</a></li>
-				<li><a href="https://github.com/welefen/thinkjs" target="_blank">介绍</a></li>
-				<li><a href="https://github.com/welefen/thinkjs" target="_blank">API</a></li>
-		  	</ul>
-        </div>
-	  </div>
-	  <a class="fork" href="https://github.com/welefen/thinkjs" target="_blank">Fork me on Github</a>
-	</div>
+<% include inc/header.html %>
 <div class="jumbotron" style="padding-top:50px;background:url(/static/img/bg.jpg); background-size:cover">
   <div class="container" style="padding-top:50px;">
-    <h1 style="font-size:48px;">node.js web application framework</h1>
-    <p style="margin-top:40px;">thinkjs是一个快速、简单的基于MVC和面向对象的轻量级node.js开发框架，遵循MIT协议发布。秉承简洁易用的设计原则，在保持出色的性能和至简的代码同时，注重开发体验和易用性，为WEB应用开发提供强有力的支持。</p>
+    <h1 style="font-size:48px;">A Node.js Web Application Framework</h1>
+    <p style="margin-top:40px;">Think.js是一个快速、简单的基于MVC和面向对象的轻量级Node.js开发框架，遵循MIT协议发布。秉承简洁易用的设计原则，在保持出色的性能和至简的代码同时，注重开发体验和易用性，为WEB应用开发提供强有力的支持。</p>
+    <p style="margin-top:40px;">Think.js里面很多特性来源于ThinkPHP，同时根据Node.js的特点，使用了Promise, WebSocket等特性，让代码更简洁、优雅。</p>
     <p style="margin-top:40px;"><a class="btn btn-success btn-lg" role="button" href="/introduce">查看更多 &raquo;</a></p>
   </div>
 </div>
 <div class="container">
   <div class="row">
-    <div class="col-md-12">
-      <h2>解决的问题</h2>
+    <div class="col-md-4">
+      <h2>开发者</h2>
       <ul style="padding-left:20px;">
-        <li>发现页面中的问题</li>
+        <li><a href="https://github.com/welefen/">welefen</a></li>
+        <li><a href="https://github.com/akira-cn/">akira-cn</a></li>
+        <li><a href="https://github.com/qgy18">qgy18</a></li>
       </ul>
-      <p><a class="btn btn-default" href="/introduce" role="button">查看更多 &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+      <h2>Changelog</h2>
+      <ul style="padding-left:20px;">
+      	<li>优化Session机制，实现gc</li>
+        <li>支持websocket，无缝切换</li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h2>已经使用的产品</h2>
+      <ul style="padding-left:20px;">
+        <li><a href="http://www.gitpress.org/">gitpress</a></li>
+        <li><a href="https://www.imququ.com/">JerryQu 的小站</a></li>
+        <li><a href="">welefen的随笔</a></li>
+      </ul>
     </div>
   </div>
   </div>
 	<hr>
 	<div class="container">
 	<footer>
-	<p style="color:#666">by welefen</p>
+	<p style="color:#666;" class="text-center">@2014</p>
 	</footer>
 	</div>
   </body>

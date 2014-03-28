@@ -1,0 +1,58 @@
+<% include inc/header.html %>
+<div class="container" style="margin-top:60px;">
+  <div class="row">
+
+	<h2>安装</h2>
+	<pre><code>sudo npm install -g thinkjs</code></pre>
+
+	<h2>创建项目</h2>
+	<pre><code>mkdir path/to/xxx;
+cd path/to/xxx;
+thinkjs .</code></pre>
+	<p>执行后，如果当前环境有浏览器，会自动用浏览器打开 <a href="http://127.0.0.1:8360">http://127.0.0.1:8360</a>，并且会看到如下的内容</p>
+	<pre><code>hello, thinkjs!</code></pre>
+
+	<h2>项目结构</h2>
+	<pre><code>.
+├── App
+│   ├── Common
+│   │   └── common.js    ---- 通用函数文件，一般将项目里的一些全局函数放在这里
+│   ├── Conf
+│   │   └── config.js    ---- 项目配置文件
+│   ├── Lib
+│   │   ├── Behavior     ---- 行为类存放位置
+│   │   ├── Controller
+│   │   │   └── Home
+│   │   │       └── IndexController.js   ---- 逻辑控制类
+│   │   └── Model        ---- 模型类
+│   ├── Runtime          ---- 运行时的一些文件
+│   │   ├── Cache        ---- 缓存目录
+│   │   ├── Data         ---- 数据目录
+│   │   ├── Log
+│   │   └── Temp
+│   └── View
+│       └── Home
+│           └── index_index.html      ---- 模版文件，默认使用ejs模版引擎
+├── ctrl.sh              ---- 项目启动、停止脚本
+└── www
+    ├── index.js         ---- 入口文件
+    └── resource         ---- 静态资源目录
+        ├── css
+        ├── img
+        ├── js
+        ├── module
+        └── swf</code></pre>
+
+    <h2>模版引擎</h2>
+    <p>Think.js默认使用的是ejs模版引擎，你可以从<a href="https://github.com/visionmedia/ejs" target="_blank">这里</a>查看ejs的具体使用方法。</p>
+    <p>修改<code>App/View/Home/index_index.html</code>页面，保存后刷新页面，即可看到修改后的内容。</p>
+
+    <h2>开发模式</h2>
+    <p>Think.js默认为debug开发模式，这种模式下修改当前项目下的任意文件，刷新页面后即可看到效果，不需要重启Node.js服务。</p>
+    <p>代码上线时需要将www/index.js里的<code>global.APP_DEBUG = true;</code>设置为false，从而提高性能。</p>
+
+    <h2>启动/关闭Node.js服务</h2>
+    <p>开发环境下建议通过<code>cd www; node index.js</code>来启动服务。</p>
+    <p>线上环境可以通过<code>sh ctrl.sh start/restart/stop</code>命令来启动/重启/关闭服务。</p>
+</div>
+</div>
