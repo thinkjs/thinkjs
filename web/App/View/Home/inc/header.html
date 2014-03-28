@@ -8,16 +8,16 @@
 	<link href="/static/css/base.css" rel="stylesheet">
 	<link href="/static/module/bootstrap/css/bootstrap.css" rel="stylesheet">
 	<link href="/static/module/highlight/styles/github.css" rel="stylesheet">
-	<script src="/static/module/jquery/1.9.1/jquery.js"></script>
+	<!--<script src="/static/module/jquery/1.9.1/jquery.js"></script>
 	<script src="/static/module/bootstrap/js/bootstrap.js"></script>
-	<script src="/static/module/require/2.1.8/require.js"></script>
-	<script>
+	<script src="/static/module/require/2.1.8/require.js"></script>-->
+	<!--<script>
 	var URL_PREFIX = "";
 	require.config({
         baseUrl : '/static',        //配置模块根路径到静态资源根目录。
         urlArgs : "r=" + (new Date()).getTime() //避免开发环境缓存
     });
-	</script>
+	</script>-->
   </head>
   <body>
   	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -33,10 +33,10 @@
 		</div>
 		<div class="navbar-collapse collapse">
 		    <ul class="nav navbar-nav navbar-left">
-				<li <%if(nav=='index'){%>class="active"<%}%>><a href="/">首页</a></li>
-				<li <%if(nav=='intro'){%>class="active"<%}%>><a href="/intro">介绍</a></li>
-				<li <%if(nav=='guide'){%>class="active"<%}%>><a href="/guide">快速上手</a></li>
-				<li <%if(nav=='api'){%>class="active"<%}%>><a href="/api">API</a></li>
+				<li <%if(nav === 'index'){%>class="active"<%}%>><a href="/">首页</a></li>
+				<li <%if(nav === 'intro'){%>class="active"<%}%>><a href="/intro">介绍</a></li>
+				<li <%if(nav === 'guide'){%>class="active"<%}%>><a href="/guide">快速上手</a></li>
+				<li <%if(nav === 'api'){%>class="active"<%}%>><a href="/api">API</a></li>
 		  	</ul>
         </div>
 	  </div>
