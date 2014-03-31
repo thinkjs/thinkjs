@@ -16,6 +16,14 @@ module.exports = Controller(function(){
                 this.assign("nav", "index");
         		return this.display("index:index");
         	}
+        },
+        testAction: function(){
+            this.session("name", "suredywww");
+            var self = this;
+            return this.session("name").then(function(value){
+                console.log(value);
+                self.end();
+            })
         }
     }
 });
