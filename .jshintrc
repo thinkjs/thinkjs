@@ -150,6 +150,10 @@
         "setFileContent": true,
         "D": true,
         "Model": true,
-        "Controller": true
+        "Controller": true,
+        "HAS_ONE": true,
+        "BELONGS_TO": true,
+        "HAS_MANY": true,
+        "MANY_TO_MANY": true
     }    
 }
