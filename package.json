@@ -9,10 +9,12 @@
   "scripts": {
     "test": "make test"
   },
-  "contributors": [{
+  "contributors": [
+    {
       "name": "welefen",
       "email": "welefen@gmail.com"
-    }],
+    }
+  ],
   "dependencies": {
     "ejs": "0.8.4",
     "multiparty": "3.0.0",
@@ -20,6 +22,12 @@
     "mime": "1.2.11",
     "mysql": "2.1.1",
     "faye-websocket": "0.7.2"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "./lib",
+      "data-cover-never": "node_modules"
+    }
   },
   "keywords": [
     "thinkjs",
@@ -41,8 +49,11 @@
   "engines": {
     "node": "*"
   },
-"readmeFilename": "README.md",
+  "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/welefen/thinkjs/issues"
+  },
+  "devDependencies": {
+    "blanket": "^1.1.6"
   }
 }

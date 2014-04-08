@@ -16,32 +16,212 @@
   	<p>获取数组的和</p>
 
 	<h2>全局函数</h2>
-	<h4>Class</h4>
-	<h4>extend</h4>
-	<h4>isBoolean</h4>
-	<h4>isNumber</h4>
-	<h4>isObject</h4>
-	<h4>isString</h4>
-	<h4>isFunction</h4>
-	<h4>isDate</h4>
-	<h4>isRegexp</h4>
-	<h4>isError</h4>
-	<h4>isEmpty</h4>
-	<h4>isArray</h4>
-	<h4>isIP</h4>
-	<h4>isIP4</h4>
+	<h4>Class(obj)</h4>
+	<ul>
+		<li>obj  <code>function | object</code> 如果是function, 则自动执行这个function，获取返回结果</li>
+		<li>return <code>Class</code></li>
+	</ul>
+	<p>通过该函数可以创建一个Class，实例化的时候可以省略new, 并且自动调用init方法。</p>
+	<pre><code class="language-js">var A = Class(function(){
+	return {
+		init: function(name){
+			this.name = name;
+		},
+		mth: function(){
+
+		}
+	}
+}).extend({
+	othermth: function(){
+		console.log("mth")
+	}
+})
+var a = A("welefen");
+console.log(a.name); //will be `welefen`
+a.mth();</code></pre>
+
+	<h4>extend(target, source1, source2, ...)</h4>
+	<ul>
+		<li>target <code>object</code> </li>
+		<li>source <code>object</code> </li>
+	</ul>
+	<p>复制对象的方法对另一个对象上，默认为深度复制。如果第一个参数为false, 则为浅度复制。该方法与jQuery的extend相似，只是默认为深度复制。</p>
+
+	<h4>isBoolean(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为布尔值</p>
+
+	<h4>isNumber(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为数值</p>
+
+	<h4>isObject(object)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为object对象</p>
+
+
+	<h4>isString(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为字符串</p>
+
+	<h4>isFunction(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为函数</p>
+
+
+	<h4>isDate(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为日期对象</p>
+
+	<h4>isRegexp(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为正则表达式对象</p>
+
+
+	<h4>isError(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为错误对象</p>
+
+
+	<h4>isEmpty(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为空，false | "" | [] | {} | 0 | null | undefined 为true, 其他值为false。</p>
+
+	<h4>isArray(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为数组</p>
+
+
+	<h4>isIP(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为IP值，IP4 | IP6。</p>
+
+	<h4>isIP4(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为IP4。</p>
+
 	<h4>isIP6</h4>
-	<h4>isFile</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否为IP6。</p>
+
+
+	<h4>isFile(file)</h4>
+	<ul>
+		<li>obj <code>string</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否是个文件，如果不存在，则为false。</p>
+
+
 	<h4>isDir</h4>
-	<h4>isBuffer</h4>
-	<h4>isPromise</h4>
-	<h4>isWritable</h4>
-	<h4>mkdir</h4>
-	<h4>chmod</h4>
-	<h4>getFileContent</h4>
-	<h4>setFileContent</h4>
-	<h4>ucfirst</h4>
-	<h4>md5</h4>
+	<ul>
+		<li>obj <code>string</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否是个目录，如果不存在，则为false。</p>
+
+
+	<h4>isBuffer(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否Buffer对象。</p>
+
+
+	<h4>isPromise(obj)</h4>
+	<ul>
+		<li>obj <code>mixed</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>是否是Promise。</p>
+
+
+	<h4>isWritable(path)</h4>
+	<ul>
+		<li>path <code>string</code> </li>
+		<li>return <code>true | false</code></li>
+	</ul>
+	<p>目录是否可写。</p>
+
+	<h4>mkdir(p, mode)</h4>
+	<ul>
+		<li>p <code>string</code> 要创建的目录</li>
+		<li>mode <code>string</code> 目录权限，默认为0755</li>
+	</ul>
+	<p>同步模式递归创建一个目录。</p>
+
+	<h4>chmod(p, mode)</h4>
+	<ul>
+		<li>p <code>string</code> 要修改的目录</li>
+		<li>mode <code>string</code> 目录权限，默认为0755</li>
+	</ul>
+	<p>同步模式修改目录的权限。</p>
+
+
+	<!--<h4>getFileContent(filepath)</h4>
+	<ul>
+		<li>filepath <code>string</code> 文件的路径</li>
+		<li>return <code>string</code> 获取到的文件内容，如果文件不存在，则为""</li>
+	</ul>
+	<p>同步模式获取文件的内容，文件编码为C('encoding')。</p>
+
+
+	<h4>setFileContent(filepath, content)</h4>
+	<ul>
+		<li>filepath <code>string</code> 文件的路径</li>
+		<li>content <code>string</code> 要写入的内容</li>
+	</ul>
+	<p>同步模式写入文件内容。</p> -->
+
+
+	<h4>md5(string)</h4>
+	<ul>
+		<li>string <code>string</code> 要计算的字符串</li>
+		<li>return <code>string</code> 内容的md5值</li>
+	</ul>
+	<p>获取字符串的md5值。</p>
+
+
 	<h4>getPromise</h4>
 	<h4>getDefer</h4>
 	<h4>getObject</h4>
@@ -178,3 +358,6 @@
 	<h2>Model类的方法</h2>
  </div>
  </div>
+
+<script src="/static/module/highlight/highlight.pack.js"></script>
+  <script >hljs.initHighlightingOnLoad();</script>
