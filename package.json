@@ -47,7 +47,7 @@
     "url": "https://github.com/welefen/thinkjs"
   },
   "engines": {
-    "node": "*"
+    "node": ">=0.10.0"
   },
   "readmeFilename": "README.md",
   "bugs": {
