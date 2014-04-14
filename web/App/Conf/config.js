@@ -4,6 +4,4 @@ module.exports = {
     db_name: "think_web", // 数据库名
     db_user: "root", // 用户名
     db_pwd: "root", // 密码
-
-    session_type: "Db"
 }
