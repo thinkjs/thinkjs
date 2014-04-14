@@ -222,21 +222,77 @@ a.mth();</code></pre>
 	<p>获取字符串的md5值。</p>
 
 
-	<h4>getPromise</h4>
-	<h4>getDefer</h4>
-	<h4>getObject</h4>
+	<h4>getPromise(obj, reject)</h4>
+	<ul>
+		<li>obj <code>mix</code> 传入的对象会直接返回</li>
+		<li>reject <code>boolean</code> 是否为reject模式，默认为resolve模式</li>
+		<li>return <code>Promise</code> 返回一个Promise对象</li>
+	</ul>
 
-	<h4>thinkRequire</h4>
-	<h4>inherits</h4>
-	<h4>Cache</h4>
+
+	<h4>getDefer</h4>
+	<ul>
+		<li>return <code>Deferred</code> 返回一个Deferred对象</li>
+	</ul>
+	<p>获取一个Deferred对象，含有resolve和reject方法，以及promise属性。</p>
+
+
+	<h4>getObject(name, value)</h4>
+	<ul>
+		<li>name <code>string|array</code> 要生成的对象的key，可以是个字符串或者多个字符串对应的数组</li>
+		<li>value <code>mix</code> 要生成的对象的value</li>
+		<li>return <code>Object</code></li>
+	</ul>
+	<p>快速生成一个Object，主要是方便name和value都是动态的时候生成。</p>
+
+
+	<h4>thinkRequire(name)</h4>
+	<ul>
+		<li>name <code>string</code> 要加载的模块名</li>
+		<li>return <code>mix</code> 返回模块对象</li>
+	</ul>
+	<p>thinkRequire相对于原生的require，多了根据特定的后缀自动查找的功能。类似于php里的autoload机制。</p>
+	<p>如：<code>thinkRequire("UserModel")</code>会自动从几个存放Model的目录查找UserModel模块，不需要手工写很长的文件路径。</p>
+
+	<h4>inherits(superClass, methods)</h4>
+	<ul>
+		<li>superClass <code>string</code> 父类，会自动调用thinkRequire去加载</li>
+		<li>methods <code>object</code> 要追加的属性和方法集合</li>
+		<li>return <code>Class</code> 通过Class函数生成的类</li>
+	</ul>
+<!--
+
+	<h4>Cache(superClass, methods)</h4>
+	<ul>
+		<li>superClass <code>string</code> </li>
+		<li>methods <code>object </code> 要追加的属性和方法集合</li>
+		<li>return <code>Class</code> 返回一个Cache子类</li>
+	</ul>
+	<pre><code>var xxCache = Cache(function(){
+	return {
+		xxx: function(){
+		
+		}
+	}
+})</code></pre>
+
 	<h4>Behavior</h4>
 	<h4>Controller</h4>
 	<h4>Session</h4>
 	<h4>Model</h4>
 	<h4>Db</h4>
 	<h4>B</h4>
-	<h4>tag</h4>
-	<h4>C</h4>
+	<h4>tag</h4> -->
+	<h4>C(name, value)</h4>
+	<ul>
+		<li>name <code>string</code> 配置名称</li>
+		<li>value <code>mix</code> 配置值</li>
+	</ul>
+	<ul>
+		<li>C('name', 'welefen') 设置配置值</li>
+		<li>C('name') 获取名为name的配置值</li>
+		<li>C({name: "name", value: "value"}) 设置配置值</li>
+	</ul>
 	<h4>A</h4>
 	<h4>F</h4>
 	<h4>D</h4>
