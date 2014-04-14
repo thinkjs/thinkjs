@@ -2,6 +2,7 @@
 var fs = require("fs");
 var child_process = require("child_process");
 var os = require("os");
+var path = require("path");
 
 var project = process.argv[2];
 if (!project) {
@@ -9,37 +10,73 @@ if (!project) {
 	if (files.length) {
 		console.log("path is not empty");
 		return false;
-	};
+	}
 	project = ".";
 }
 var nodePath = process.execPath;
-require("../lib/Common/common.js");
+require(__dirname + "/../lib/Common/common.js");
 
-mkdir(project + "/www");
-mkdir(project + "/www/resource/");
-["js", "css", "img", "module", "swf"].forEach(function(item){
-	mkdir(project + "/www/resource/" + item);
-})
-//index.js文件内容
-var content = [
-	'//定义APP的根目录',
-	'global.APP_PATH = __dirname + "/../App";',
-	'//静态资源根目录',
-	'global.RESOURCE_PATH = __dirname;',
-	'global.ROOT_PATH = __dirname;',
-	'global.APP_DEBUG = true;',
-	'require("thinkjs");'
-].join("\n");
+//mkdir 
+var paths = [
+	project + "/www",
+	project + "/www/resource/",
+	project + "/www/resource/js",
+	project + "/www/resource/css",
+	project + "/www/resource/module",
+	project + "/www/resource/swf",
+	project + "/www/resource/font",
+	project + "/www/resource/img",
+	project + "/www/resource/other",
+	project + "/App",
+	project + "/App/Lib",
+	project + "/App/Lib/Model",
+	project + "/App/Lib/Controller/Home",
+	project + "/App/Common",
+	project + "/App/Conf",
+	project + "/App/Runtime",
+	project + "/App/Runtime/Cache",
+	project + "/App/Runtime/Data",
+	project + "/App/Runtime/Temp",
+	project + "/App/View",
+];
+paths.forEach(function(item){
+	mkdir(item);
+});
+var THINK_PATH = __dirname + "/../lib";
+var sourceFiles = [
+	THINK_PATH + "/View/IndexController.js",
+	THINK_PATH + "/View/index_index.html",
+	THINK_PATH + "/View/common.js",
+	THINK_PATH + "/View/ctrl.sh",
+	THINK_PATH + "/View/config.js",
+	THINK_PATH + "/View/index.js"
+];
+var dstFiles = [
+	project + "/App/Lib/Controller/Home/IndexController.js",
+	project + "/App/View/Home/index_index.html",
+	project + "/App/Common/common.js",
+	project + "/ctrl.sh",
+	project + "/App/Conf/config.js",
+	project + "/www/index.js"
+];
+dstFiles.forEach(function(file, i) {
+	if (!isFile(file)) {
+		mkdir(path.dirname(file));
+		var readStream = fs.createReadStream(sourceFiles[i]);
+		var writeStream = fs.createWriteStream(file);
+		readStream.pipe(writeStream);
+		readStream.on("end", function() {});
+	}
+});
 
-var indexPath = project + "/www/index.js";
-fs.writeFileSync(indexPath, content);
-child_process.exec(nodePath + " " + indexPath);
+
+child_process.exec(nodePath + " " + project + "/www/index.js");
 
 //打开浏览器
 var exec = "open";
 if (os.platform() === 'win32') {
 	exec = "start";
-};
+}
 setTimeout(function(){
 	child_process.exec(exec + " http://127.0.0.1:8360");
 }, 1000);
