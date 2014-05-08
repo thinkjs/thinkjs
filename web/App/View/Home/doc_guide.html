@@ -5,9 +5,12 @@
 	<h2>安装</h2>
 	<pre><code>sudo npm install -g thinkjs</code></pre>
 
+    <p>添加Node.js的环境变量，在~/.bashrc文件里添加<code>export NODE_PATH="/usr/local/node/lib/node_modules"</code>，path值可能因环境有所差异。</p>
+    <p>添加后执行<code>. ~/.bashrc</code></p>
+
 	<h2>创建项目</h2>
-	<pre><code>mkdir path/to/xxx;
-cd path/to/xxx;
+	<pre><code>mkdir new_dir_name;
+cd new_dir_name;
 thinkjs .</code></pre>
 	<p>执行后，如果当前环境有浏览器，会自动用浏览器打开 <a href="http://127.0.0.1:8360">http://127.0.0.1:8360</a>，并且会看到如下的内容</p>
 	<pre><code>hello, thinkjs!</code></pre>
