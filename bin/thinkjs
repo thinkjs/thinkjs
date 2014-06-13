@@ -69,8 +69,7 @@ dstFiles.forEach(function(file, i) {
 	}
 });
 
-
-child_process.exec(nodePath + " " + project + "/www/index.js");
+child_process.exec("'" + nodePath + "' " + project + "/www/index.js");
 
 //打开浏览器
 var exec = "open";
