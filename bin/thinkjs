@@ -49,7 +49,8 @@ var sourceFiles = [
 	THINK_PATH + "/View/common.js",
 	THINK_PATH + "/View/ctrl.sh",
 	THINK_PATH + "/View/config.js",
-	THINK_PATH + "/View/index.js"
+	THINK_PATH + "/View/index.js",
+	THINK_PATH + "/View/gitignore.log"
 ];
 var dstFiles = [
 	project + "/App/Lib/Controller/Home/IndexController.js",
@@ -57,7 +58,8 @@ var dstFiles = [
 	project + "/App/Common/common.js",
 	project + "/ctrl.sh",
 	project + "/App/Conf/config.js",
-	project + "/www/index.js"
+	project + "/www/index.js",
+	project + "/.gitignore"
 ];
 dstFiles.forEach(function(file, i) {
 	if (!isFile(file)) {
@@ -69,7 +71,7 @@ dstFiles.forEach(function(file, i) {
 	}
 });
 
-child_process.exec("'" + nodePath + "' " + project + "/www/index.js");
+child_process.exec('"' + nodePath + '" ' + project + "/www/index.js");
 
 //打开浏览器
 var exec = "open";
