@@ -11,3 +11,7 @@ thinkjs是一款基于Promise的Node.js MVC框架，无缝支持WebSocket，里�
 * [女神网](http://www.ueapp.com)
 
 以及数字公司内部多个系统
+
+## 协议
+
+MIT
