@@ -4,14 +4,11 @@ var child_process = require("child_process");
 var os = require("os");
 var path = require("path");
 
-var project = process.argv[2];
-if (!project) {
-	var files = fs.readdirSync(".");
-	if (files.length) {
-		console.log("path is not empty");
-		return false;
-	}
-	project = ".";
+var project = process.argv[2] || ".";
+var files = fs.readdirSync(project);
+if (files.length) {
+	console.log("path is not empty");
+	return false;
 }
 var nodePath = process.execPath;
 require(__dirname + "/../lib/Common/common.js");
