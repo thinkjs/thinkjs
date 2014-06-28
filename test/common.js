@@ -7,8 +7,83 @@ var should = require('should');
 var assert = require('assert');
 
 describe('Class', function(){
-  it('xxx', function(){
-    (1).should.equal(1);
+  var A = Class(function(){
+    return {
+      value: 'A',
+      fn: function(){},
+      fn2: function(){
+        return this.value;
+      },
+      data: {
+        name: 'CLASS A'
+      }
+    }
+  });
+
+  var B = Class({
+    value2: 'B',
+    fn2: function(){
+      var p = this.super("fn2");
+      return p + this.value2;
+    },
+    data: {
+      name: 'CLASS B'
+    }
+  }, A);
+
+  var C = Class({
+    value: 'C',
+    fn2: function(){
+      var p = this.super("fn2");
+      return p + this.value + this.value2;
+    },
+    data: {
+      name: 'CLASS C'
+    }
+  }, B)
+
+  var a = A();
+  var b = B();
+  var c = C();
+  it('a.value = "A"', function(){
+    assert.equal(a.value, 'A');
+  })
+  it('isFunction(a.fn) = true', function(){
+    assert.equal(isFunction(a.fn), true)
+  })
+  it('b.value = "A"', function(){
+    assert.equal(b.value, 'A')
+  })
+  it('b.value2 = "B"', function(){
+    assert.equal(b.value2, 'B');
+  })
+  it('b.fn = a.fn', function(){
+    assert.equal(a.fn, b.fn)
+  })
+  it('c.value = "C"', function(){
+    assert.equal(c.value, 'C')
+  })
+  it('c.value2 = "B"', function(){
+    assert.equal(c.value2, "B");
+  })
+  it('c.fn = a.fn', function(){
+    assert.equal(a.fn, c.fn)
+  })
+  it('a.fn2() = "A"', function(){
+    assert.equal(a.fn2(), 'A');
+  })
+  it('b.fn2() = "AB"', function(){
+    assert.equal(b.fn2(), 'AB');
+  })
+  it('c.fn2() = "CBCB"', function(){
+    assert.equal(c.fn2(), 'CBCB')
+  })
+  it('a.data', function(){
+    assert.equal(JSON.stringify(a.data), '{"name":"CLASS A"}')
+  })
+  it('A.prototype.data', function(){
+    assert.equal(A.prototype.data, undefined)
+    assert.equal(JSON.stringify(A.__prop.data), '{"name":"CLASS A"}')
   })
 })
 
@@ -267,7 +342,195 @@ describe('isFile', function(){
     fs.rmdirSync('test.b/');
   })
 })
-
+/**
+ * 是否是目录
+ * @return {[type]} [description]
+ */
 describe('isDir', function(){
+  var dir = "test.a";
+  it('isDir("' + dir + '"") = false', function(){
+    assert.equal(isDir(dir), false);
+  })
+  it('isDir("' + dir + '"") = true', function(){
+    mkdir(dir);
+    assert.equal(isDir(dir), true);
+    fs.rmdirSync(dir);
+  })
+  it('isDir("' + dir + '"") = false', function(){
+    fs.writeFileSync(dir, "");
+    assert.equal(isDir(dir), false);
+    fs.unlinkSync(dir);
+  })
+})
+/**
+ * 是否可写
+ * @return {[type]} [description]
+ */
+describe('isWritable', function(){
+  it('isWritable("test/") = true', function(){
+    assert.equal(isWritable('test/'), true)
+  })
+  it('isWritable("/usr/local/testxxx") = false', function(){
+    assert.equal(isWritable('/usr/local/testxxx'), false)
+  })
+  it('isWritable("/usr/sbin/sshd") = false', function(){
+    assert.equal(isWritable('/usr/sbin/sshd'), false)
+  })
+})
+/**
+ * 大写首字母
+ * @return {[type]} [description]
+ */
+describe('ucfirst', function(){
+  it('ucfirst("") = ""', function(){
+    assert.equal(ucfirst(""), "")
+  })
+  it('ucfirst("welefen") = "Welefen"', function(){
+    assert.equal(ucfirst('welefen'), 'Welefen')
+  })
+  it('ucfirst("WELEFEN") = "Welefen"', function(){
+    assert.equal(ucfirst('WELEFEN'), 'Welefen')
+  })
+  it('ucfirst("WELEFEN SUREDY") = "Welefen suredy"', function(){
+    assert.equal(ucfirst('WELEFEN SUREDY'), 'Welefen suredy')
+  })
+  it('ucfirst({}) = "[object object]"', function(){
+    assert.equal(ucfirst({}), '[object object]')
+  })
+})
+/**
+ * 是否是字符型数字
+ * @return {[type]} [description]
+ */
+describe('isNumberString', function(){
+  it('isNumberString(1) = true', function(){
+    assert.equal(isNumberString(1), true)
+  })
+  it('isNumberString("1") = true', function(){
+    assert.equal(isNumberString("1"), true)
+  })
+  it('isNumberString("1.0E10") = true', function(){
+    assert.equal(isNumberString("1.0E10"), true)
+  })
+})
+/**
+ * 字符md5
+ * @return {[type]} [description]
+ */
+describe('md5', function(){
+  it('md5() = "5e543256c480ac577d30f76f9120eb74"', function(){
+    assert.equal(md5(), '5e543256c480ac577d30f76f9120eb74');
+  })
+  it('md5("welefen") = "d044be314c409f92c3ee66f1ed8d3753"', function(){
+    assert.equal(md5('welefen'), 'd044be314c409f92c3ee66f1ed8d3753')
+  })
+})
+/**
+ * 是否是Promise
+ * @return {[type]} [description]
+ */
+describe('isPromise', function(){
+  it('isPromise() = false', function(){
+    assert.equal(isPromise(), false)
+  })
+  it('isPromise({}) = false', function(){
+    assert.equal(isPromise({}), false);
+  })
+  it('isPromise(function(){}) = false', function(){
+    assert.equal(isPromise(function(){}), false)
+  })
+  it('isPromise(getPromise()) = true', function(){
+    assert.equal(isPromise(getPromise()), true)
+  })
+  it('isPromise(getPromise("", true)) = true', function(){
+    assert.equal(isPromise(getPromise('', true)), true)
+  })
+})
+/**
+ * 生成一个Promise
+ * @return {[type]} [description]
+ */
+describe('getPromise', function(){
+  it('getPromise()', function(done){
+    getPromise().then(function(data){
+      assert.equal(data, undefined);
+      done();
+    })
+  });
+  it('getPromise("welefen")', function(done){
+    getPromise('welefen').then(function(data){
+      assert.equal(data, 'welefen');
+      done();
+    })
+  })
+  it('getPromise("error", true)', function(done){
+    getPromise('error', true).catch(function(err){
+      assert.equal(err, 'error');
+      done();
+    })
+  })
+})
 
+describe('getDefer', function(){
+  it('getDefer()', function(){
+    var deferred = getDefer();
+    assert.equal(isObject(deferred.promise), true);
+    assert.equal(isFunction(deferred.resolve), true);
+    assert.equal(isFunction(deferred.reject), true)
+    assert.equal(isFunction(deferred.promise.then), true);
+    assert.equal(isFunction(deferred.promise.catch), true);
+  })
+})
+
+
+describe('getObject', function(){
+  it('getObject()', function(){
+    assert.equal(JSON.stringify(getObject()), '{}');
+  })
+  it('getObject("welefen", "suredy")', function(){
+    var data = getObject('welefen', 'suredy');
+    assert.equal(data.welefen, 'suredy')
+    assert.equal(Object.keys(data).join(''), 'welefen')
+  })
+  it('getObject(["name", "value"], ["welefen", "1"])', function(){
+    var data = getObject(['name', 'value'], ['welefen', '1']);
+    assert.equal(data.name, 'welefen');
+    assert.equal(data.value, '1');
+    assert.equal(JSON.stringify(data), '{"name":"welefen","value":"1"}')
+  })
+  it('getObject(["name", "value"], ["welefen"])', function(){
+    var data = getObject(['name', 'value'], ['welefen'])
+    assert.equal(JSON.stringify(data), '{"name":"welefen"}');
+    assert.equal(data.value, undefined)
+  })
+  it('getObject(["name"], ["welefen", 1])', function(){
+    var data = getObject(['name'], ['welefen', 1]);
+    assert.equal(JSON.stringify(data), '{"name":"welefen"}')
+  })
+})
+
+describe('arrToObj', function(){
+  var data = [{
+    name: 'welefen',
+    value: 1
+  }, {
+    name: 'suredy',
+    value: 2
+  }]
+  it('arrToObj("name")', function(){
+    var res = arrToObj(data, 'name');
+    assert.equal(JSON.stringify(res), '{"welefen":{"name":"welefen","value":1},"suredy":{"name":"suredy","value":2}}')
+  })
+  it('arrToObj("name", "value")', function(){
+    var res = arrToObj(data, 'name', 'value');
+    assert.equal(JSON.stringify(res), '{"welefen":1,"suredy":2}')
+  })
+  it('arrToObj("name", null)', function(){
+    var res = arrToObj(data, 'name', null);
+    assert.equal(JSON.stringify(res), '["welefen","suredy"]')
+  })
+  it('arrToObj("value", null)', function(){
+    var res = arrToObj(data, 'value', null);
+    assert.equal(JSON.stringify(res), '[1,2]')
+  })
 })
