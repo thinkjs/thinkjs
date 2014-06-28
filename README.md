@@ -1,3 +1,5 @@
+![travis-ci](https://travis-ci.org/welefen/thinkjs.svg?branch=master)
+
 ## 介绍
 thinkjs是一款基于Promise的Node.js MVC框架，无缝支持WebSocket，里面很多特性借鉴于ThinkPHP。
 
