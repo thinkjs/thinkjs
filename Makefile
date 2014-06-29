@@ -9,9 +9,10 @@ install:
 test: install
 	@NODE_ENV=test /usr/local/bin/mocha \
 	--reporter $(REPORTER) \
-    --timeout $(TIMEOUT) \
-    $(MOCHA_OPTS) \
-    $(TESTS)
+		--timeout $(TIMEOUT) \
+		$(MOCHA_OPTS) \
+		$(TESTS)
+	@NODE_ENV=test /usr/local/bin/jshint lib/
 
 test-cov:
 	@URLRAR_COV=1 $(MAKE) test MOCHA_OPTS='--require blanket'

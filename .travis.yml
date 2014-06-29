@@ -4,4 +4,4 @@ node_js:
 before_script:
     - "npm install -g jshint"
 script:
-    - "jshint lib/"
+    - "npm test"
