@@ -15,7 +15,7 @@ test: install
 	@NODE_ENV=test ./node_modules/jshint/bin/jshint lib/
 
 test-cov:
-	@URLRAR_COV=1 $(MAKE) test MOCHA_OPTS='--require blanket'
+	@URLRAR_COV=1 $(MAKE) test MOCHA_OPTS='--require blanket -R html-cov > coverage.html'
 
 test-all: test test-cov
 

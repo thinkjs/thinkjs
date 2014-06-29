@@ -31,7 +31,7 @@
   },
   "config": {
     "blanket": {
-      "pattern": "./lib",
+      "pattern": "/thinkjs/lib/",
       "data-cover-never": "node_modules"
     }
   },

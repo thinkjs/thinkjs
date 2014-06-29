@@ -9,9 +9,15 @@ var assert = require('assert');
 describe('Class', function(){
   var A = Class(function(){
     return {
+      init: function(){
+
+      },
       value: 'A',
       fn: function(){},
       fn2: function(){
+        return this.value;
+      },
+      fn4: function(){
         return this.value;
       },
       data: {
@@ -26,6 +32,16 @@ describe('Class', function(){
       var p = this.super("fn2");
       return p + this.value2;
     },
+    fn3: function(){
+      this.super("fn3");
+      return this.value;
+    },
+    fn4: function(){
+      return this.value;
+    },
+    fn6: function(){
+      return this.super('fn5')
+    },
     data: {
       name: 'CLASS B'
     }
@@ -37,14 +53,20 @@ describe('Class', function(){
       var p = this.super("fn2");
       return p + this.value + this.value2;
     },
+    fn5: function(){
+      return this.super("fn4");
+    },
     data: {
       name: 'CLASS C'
     }
   }, B)
 
+  var D = Class(A, true);
+
   var a = A();
   var b = B();
   var c = C();
+  var d = D();
   it('a.value = "A"', function(){
     assert.equal(a.value, 'A');
   })
@@ -85,6 +107,18 @@ describe('Class', function(){
     assert.equal(A.prototype.data, undefined)
     assert.equal(JSON.stringify(A.__prop.data), '{"name":"CLASS A"}')
   })
+  it('d.value = "A"', function(){
+    assert.equal(d.value, 'A');
+  })
+  it('b.fn3() = "A"', function(){
+    assert.equal(b.fn3(), 'A')
+  })
+  it('c.fn5() = "C"', function(){
+    assert.equal(c.fn5(), 'C');
+  })
+  it('b.fn6() = undefined', function(){
+    assert.equal(b.fn6(), undefined)
+  })
 })
 
 /**
@@ -97,6 +131,11 @@ describe('extend', function(){
   var c = {name: 2, value: 'value'};
   var d = {name: {name: 1}, value: {value: 2}};
   var e = {name: [1, 2, 3]};
+  var f = function(){
+    return {
+      name: 5
+    }
+  }
   it('a stringify1', function(){
     extend(a, b);
     assert.equal(JSON.stringify(a), '{"name":1}');
@@ -129,6 +168,11 @@ describe('extend', function(){
     extend(false, a, e);
     e.name[0] = 3;
     assert.equal(a.name[0], 3);
+  })
+  it('a.name = 5', function(){
+    a = {};
+    extend(a, f);
+    assert.equal(a.name, 5);
   })
 })
 
@@ -313,11 +357,23 @@ describe('isEmpty', function(){
   it('isEmpty({}) = true', function(){
     assert.equal(isEmpty({}), true);
   })
+  it('isEmpty({name: 1}) = false', function(){
+    assert.equal(isEmpty({name: 1}), false);
+  })
   it('isEmpty(null) = true', function(){
     assert.equal(isEmpty(null), true)
   })
   it('isEmpty(undefined) = true', function(){
     assert.equal(isEmpty(undefined), true)
+  })
+  it('isEmpty(function(){}) = false', function(){
+    assert.equal(isEmpty(function(){}), false)
+  })
+})
+
+describe('isScalar', function(){
+  it('isScalar(1) = true', function(){
+    assert.equal(isScalar(1), true);
   })
 })
 /**
@@ -469,6 +525,13 @@ describe('getPromise', function(){
   it('getPromise("error", true)', function(done){
     getPromise('error', true).catch(function(err){
       assert.equal(err, 'error');
+      done();
+    })
+  })
+  it('getPromise(promise)', function(done){
+    var promise = getPromise('data');
+    getPromise(promise).then(function(data){
+      assert.equal(data, 'data');
       done();
     })
   })
