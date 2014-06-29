@@ -1,8 +1,4 @@
-node_modules
-doc/
-test/
-web/
+node_modules/
 .gitignore
 nginx.conf
-.jshintrc
 .travis.yml
