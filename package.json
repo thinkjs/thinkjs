@@ -23,6 +23,10 @@
     "mysql": "2.1.1",
     "websocket": "1.0.8"
   },
+  "devDependencies": {
+    "blanket": "^1.1.6",
+    "should": ">=4.0.4"
+  },
   "config": {
     "blanket": {
       "pattern": "./lib",
@@ -52,8 +56,5 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/welefen/thinkjs/issues"
-  },
-  "devDependencies": {
-    "blanket": "^1.1.6"
   }
 }
