@@ -1,4 +1,4 @@
-require('../lib/Common/extend.js');
+require('../../lib/Common/extend.js');
 
 var assert = require('assert');
 

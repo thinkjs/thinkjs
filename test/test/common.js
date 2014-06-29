@@ -1,7 +1,7 @@
 /**
  * lib/Common/common.js里函数的测试
  */
-require('../lib/Common/common.js');
+require('../../lib/Common/common.js');
 var fs = require('fs');
 var should = require('should');
 var assert = require('assert');
