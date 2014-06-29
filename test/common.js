@@ -397,6 +397,9 @@ describe('ucfirst', function(){
   it('ucfirst({}) = "[object object]"', function(){
     assert.equal(ucfirst({}), '[object object]')
   })
+  it('ucfirst() = ""', function(){
+    assert.equal(ucfirst(), '');
+  })
 })
 /**
  * 是否是字符型数字
