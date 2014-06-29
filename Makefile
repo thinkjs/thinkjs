@@ -7,12 +7,12 @@ install:
 	@npm install
 
 test: install
-	@NODE_ENV=test /usr/local/bin/mocha \
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 	--reporter $(REPORTER) \
 		--timeout $(TIMEOUT) \
 		$(MOCHA_OPTS) \
 		$(TESTS)
-	@NODE_ENV=test /usr/local/bin/jshint lib/
+	@NODE_ENV=test ./node_modules/jshint/bin/jshint lib/
 
 test-cov:
 	@URLRAR_COV=1 $(MAKE) test MOCHA_OPTS='--require blanket'
