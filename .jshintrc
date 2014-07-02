@@ -99,6 +99,7 @@
     "isEmpty": true,
     "HTML_PATH": true,
     "isArray": true,
+    "isBuffer": true,
     "md5": true,
     "mkdir": true,
     "isObject": true,

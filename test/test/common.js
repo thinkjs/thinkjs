@@ -206,6 +206,12 @@ describe('isBoolean', function(){
   it('isBoolean({}) = false', function(){
     assert.equal(isBoolean({}), false);
   })
+  it('isBoolean(undefined) = false', function(){
+    assert.equal(isBoolean(), false);
+  })
+  it('isBoolean(null) = false', function(){
+    assert.equal(isBoolean(null), false);
+  })
 })
 
 /**
@@ -216,8 +222,14 @@ describe('isNumber', function(){
   it('isNumber(1) = true', function(){
     assert.equal(isNumber(1), true);
   })
+  it('isNumber(0) = true', function(){
+    assert.equal(isNumber(0), true);
+  })
   it('isNumber(1.1) = true', function(){
     assert.equal(isNumber(1.1), true);
+  })
+  it('isNumber(-1.1) = true', function(){
+    assert.equal(isNumber(-1.1), true);
   })
   it('isNumber(0) = true', function(){
     assert.equal(isNumber(0), true);
@@ -259,6 +271,12 @@ describe('isObject', function(){
   it('isObject("") = false', function(){
     assert.equal(isObject(""), false)
   })
+  it('isObject([]) = false', function(){
+    assert.equal(isObject([]), false)
+  })
+  it('isObject(new Buffer(11)) = false', function(){
+    assert.equal(isObject(new Buffer(11)), false)
+  })
 })
 
 /**
@@ -292,6 +310,10 @@ describe('isFunction', function(){
     var a = function(){}
     assert.equal(isFunction(a), true);
   })
+  it('isFunction(a) = true', function(){
+    function a(){}
+    assert.equal(isFunction(a), true);
+  })
   it('isFunction({}) = false', function(){
     assert.equal(isFunction({}), false);
   })
@@ -307,6 +329,9 @@ describe('isDate', function(){
   it('isDate(12121212) = false', function(){
     assert.equal(isDate(1212121), false)
   })
+  it('isDate(Date.now()) = false', function(){
+    assert.equal(isDate(Date.now()), false)
+  })
 })
 /**
  * 是否是正则
@@ -316,8 +341,23 @@ describe('isRegexp', function(){
   it('isRegexp(/\w+/) = true', function(){
     assert.equal(isRegexp(/\w+/), true)
   })
+  it('isRegexp(/\w+/g) = true', function(){
+    assert.equal(isRegexp(/\w+/g), true)
+  })
+  it('isRegexp(/\w+/i) = true', function(){
+    assert.equal(isRegexp(/\w+/i), true)
+  })
+  it('isRegexp(/\w+/m) = true', function(){
+    assert.equal(isRegexp(/\w+/m), true)
+  })
+  it('isRegexp(/\w+/img) = true', function(){
+    assert.equal(isRegexp(/\w+/img), true)
+  })
   it('isRegexp(new RegExp("\w+")) = true', function(){
     assert.equal(isRegexp(new RegExp("\w+")), true)
+  })
+  it('isRegexp(new RegExp("\w+", "i")) = true', function(){
+    assert.equal(isRegexp(new RegExp("\w+", "i")), true)
   })
 })
 /**
