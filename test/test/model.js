@@ -1310,11 +1310,316 @@ describe('Model', function(){
         })
       })
 
-
-
-
-
+      it('where build sql', function(done){
+        D('Cate').field('id').buildSql().then(function(sql){
+          model.where({
+            id: ['IN', sql, 'exp']
+          }).select().then(function(){
+            var sql = model.getLastSql().trim();
+            assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` IN ( SELECT `id` FROM `meinv_cate`  ) )')
+          })
+          done();
+        })
+      })
     })
+    describe('count', function(){
+      var model = D('Group');
+      it('count id', function(done){
+        model.count('id').then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT COUNT(id) AS thinkjs_count FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+      it('count', function(done){
+        model.count().then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT COUNT(id) AS thinkjs_count FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+    })
+
+    describe('sum', function(){
+      var model = D('Group');
+      it('sum view_nums', function(done){
+        model.sum('view_nums').then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT SUM(view_nums) AS thinkjs_sum FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+      it('sum', function(done){
+        model.sum().then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT SUM(id) AS thinkjs_sum FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+    })
+
+    describe('min', function(){
+      var model = D('Group');
+      it('min view_nums', function(done){
+        model.min('view_nums').then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT MIN(view_nums) AS thinkjs_min FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+      it('min', function(done){
+        model.min().then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT MIN(id) AS thinkjs_min FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+    })
+
+    describe('max', function(){
+      var model = D('Group');
+      it('max view_nums', function(done){
+        model.max('view_nums').then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT MAX(view_nums) AS thinkjs_max FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+      it('max', function(done){
+        model.max().then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT MAX(id) AS thinkjs_max FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+    })
+
+    describe('avg', function(){
+      var model = D('Group');
+      it('avg view_nums', function(done){
+        model.avg('view_nums').then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT AVG(view_nums) AS thinkjs_avg FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+      it('avg', function(done){
+        model.avg().then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT AVG(id) AS thinkjs_avg FROM `meinv_group` LIMIT 1')
+          done();
+        })
+      })
+    })
+
+
+    describe('add', function(){
+      var model = D('Group');
+      it('add single field data', function(done){
+        model.add({title: 'xxx'}).then(function(sql){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, "INSERT INTO `meinv_group` (`title`) VALUES('xxx')")
+          done();
+        })
+      })
+      it('add multi field data', function(done){
+        model.add({title: 'xxx', content: "fasdf'suredyf\n"}).then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "INSERT INTO `meinv_group` (`title`,`content`) VALUES('xxx','fasdf\\'suredyf\\n')")
+          done();
+        })
+      })
+      it('add empty data', function(done){
+        model.add().catch(function(error){
+          assert.equal(error, '_DATA_TYPE_INVALID_');
+          done()
+        })
+      })
+    })
+
+    describe('addAll', function(){
+      var model = D('Group');
+      it('add single field data', function(done){
+        model.addAll([{title: 'xxx'}]).then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "INSERT INTO `meinv_group`(`title`) VALUES ('xxx')")
+          done();
+        })
+      })
+      it('add single field data 1', function(done){
+        model.addAll([{title: 'xxx'}, {title: 'yyyy'}]).then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "INSERT INTO `meinv_group`(`title`) VALUES ('xxx'),('yyyy')")
+          done();
+        })
+      })
+      it('add multi field data', function(done){
+        model.addAll([{title: 'xxx', content: "fasdf'suredyf\n"}]).then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "INSERT INTO `meinv_group`(`title`,`content`) VALUES ('xxx','fasdf\\'suredyf\\n')")
+          done();
+        })
+      })
+      it('add multi field data 1', function(done){
+        model.addAll([{title: 'xxx', content: "fasdf'suredyf\n"}, {title: 'www', content: 'yyy'}]).then(function(sql){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "INSERT INTO `meinv_group`(`title`,`content`) VALUES ('xxx','fasdf\\'suredyf\\n'),('www','yyy')")
+          done();
+        })
+      })
+      it('add empty data', function(done){
+        model.addAll().catch(function(error){
+          assert.equal(error, '_DATA_TYPE_INVALID_');
+          done()
+        })
+      })
+      it('add empty data1', function(done){
+        model.addAll({title: "xxx"}).catch(function(error){
+          assert.equal(error, '_DATA_TYPE_INVALID_');
+          done()
+        })
+      })
+    })
+    
+    describe('delete', function(){
+      var model = D('Group');
+      it('delete empty where', function(done){
+        model.delete().then(function(error){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, 'DELETE FROM `meinv_group`')
+          done();
+        })
+      })
+      it('delete with where', function(done){
+        model.where({
+          id: ['<', 10]
+        }).delete().then(function(error){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, 'DELETE FROM `meinv_group` WHERE ( `id` < 10 )')
+          done();
+        })
+      })
+      it('delete with options', function(done){
+        model.delete({where: {
+          id: ['<', 10]
+        }}).then(function(error){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, 'DELETE FROM `meinv_group` WHERE ( `id` < 10 )')
+          done();
+        })
+      })
+    })
+
+
+    describe('update', function(){
+      var model = D('Group');
+      it('update empty data', function(done){
+        model.update().catch(function(error){
+          //var sql = model.getLastSql().trim();
+          //console.log(error);
+          assert.equal(error, '_DATA_TYPE_INVALID_')
+          done();
+        })
+      })
+      it('update with data', function(done){
+        model.update({title: 'wwww'}).catch(function(error){
+          //var sql = model.getLastSql().trim();
+          //console.log(error);
+          assert.equal(error, '_OPERATION_WRONG_')
+          done();
+        })
+      })
+      it('update with data, has where', function(done){
+        model.where({id: 10}).update({title: 'wwww'}).then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, "UPDATE `meinv_group` SET `title`='wwww' WHERE ( `id` = 10 )")
+          done();
+        })
+      })
+      it('update with data, has options', function(done){
+        model.update({title: 'wwww'}, {where: {id: 10}}).then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, "UPDATE `meinv_group` SET `title`='wwww' WHERE ( `id` = 10 )")
+          done();
+        })
+      })
+    })
+
+    describe('updateAll', function(){
+      var model = D('Group');
+      it('update empty data', function(done){
+        model.updateAll().catch(function(error){
+          //var sql = model.getLastSql().trim();
+          //console.log(error);
+          assert.equal(error, '_DATA_TYPE_INVALID_')
+          done();
+        })
+      })
+      it('update with single data', function(done){
+        model.updateAll({title: 'wwww'}).catch(function(error){
+          //var sql = model.getLastSql().trim();
+          //console.log(error);
+          assert.equal(error, '_DATA_TYPE_INVALID_')
+          done();
+        })
+      })
+      it('update with single data 1', function(done){
+        model.updateAll([{title: 'wwww', id: 10}]).then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, "UPDATE `meinv_group` SET `title`='wwww' WHERE ( `id` = 10 )")
+          done();
+        })
+      })
+      it('update with single data 2', function(done){
+        model.updateAll([{title: 'wwww', id: 10}, {title: 'yyy'}]).catch(function(err){
+          //var sql = model.getLastSql().trim();
+          //console.log(err);
+          assert.equal(err, "_OPERATION_WRONG_")
+          done();
+        })
+      })
+    })
+
+    describe('updateField', function(){
+      var model = D('Group');
+      it('update title error', function(done){
+        model.updateField('title', 'welefen').catch(function(error){
+          assert.equal(error, '_OPERATION_WRONG_');
+          done();
+        })
+      })
+      it('update title', function(done){
+        model.where({id: 10}).updateField('title', 'welefen').then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql);
+          assert.equal(sql, "UPDATE `meinv_group` SET `title`='welefen' WHERE ( `id` = 10 )");
+          done();
+        })
+      })
+    })
+
+  
 
   })
 });
