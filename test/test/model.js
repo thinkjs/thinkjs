@@ -88,9 +88,9 @@ describe('Model', function(){
       })
 
       it('sql with string field', function(done){
-        model.field('id, group').select().then(function(){
+        model.field('id, title').select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT `id`,`group` FROM `meinv_group`');
+          assert.equal(sql, 'SELECT `id`,`title` FROM `meinv_group`');
           done();
         })
       })
@@ -152,6 +152,13 @@ describe('Model', function(){
 
   
     describe('page', function(){
+      it('sql with empty page', function(done){
+        model.page().select().then(function(){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          done();
+        })
+      })
       it('sql with page 0', function(done){
         model.page(0).select().then(function(){
           var sql = model.getLastSql().trim();
@@ -223,7 +230,7 @@ describe('Model', function(){
       })
       it('union all2', function(done){
         model.union({
-          table: 'meinv_pic2',
+          table: 'meinv_pic2'
         }, true).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
@@ -943,6 +950,22 @@ describe('Model', function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
           assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE '%welefen%' )")
+          done();
+        })
+      })
+      it('where like with both %', function(done){
+        model.where({'title|content': ['like', '%welefen%']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE '%welefen%') OR (`content` LIKE '%welefen%') )")
+          done();
+        })
+      })
+      it('where like with both %', function(done){
+        model.where({'title&content': ['like', '%welefen%']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE '%welefen%') AND (`content` LIKE '%welefen%') )")
           done();
         })
       })
