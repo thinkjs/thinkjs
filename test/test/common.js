@@ -6,6 +6,10 @@ var fs = require('fs');
 var should = require('should');
 var assert = require('assert');
 
+/**
+ * 动态创建类
+ * @return {[type]} [description]
+ */
 describe('Class', function(){
   var A = Class(function(){
     return {
@@ -468,8 +472,23 @@ describe('isNumberString', function(){
   it('isNumberString("1") = true', function(){
     assert.equal(isNumberString("1"), true)
   })
+  it('isNumberString("1.5") = true', function(){
+    assert.equal(isNumberString("1.5"), true)
+  })
+  it('isNumberString("-1.5") = true', function(){
+    assert.equal(isNumberString("-1.5"), true)
+  })
+  it('isNumberString("0") = true', function(){
+    assert.equal(isNumberString("0"), true)
+  })
   it('isNumberString("1.0E10") = true', function(){
     assert.equal(isNumberString("1.0E10"), true)
+  })
+  it('isNumberString("1.0E-10") = true', function(){
+    assert.equal(isNumberString("1.0E-10"), true)
+  })
+  it('isNumberString("1E-10") = true', function(){
+    assert.equal(isNumberString("1E-10"), true)
   })
 })
 /**
