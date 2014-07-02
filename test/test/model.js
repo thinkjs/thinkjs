@@ -1286,6 +1286,29 @@ describe('Model', function(){
           done();
         })
       })
+      it('where mixed', function(done){
+        model.where({id: {
+          '>=': 10,
+          '<=': 20
+        }, 'title': ['like', '%welefen%'], date: ['>', '2014-08-12'], _logic: 'OR'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` >= 10 AND `id` <= 20 ) OR ( `title` LIKE '%welefen%' ) OR ( `date` > '2014-08-12' )")
+          done();
+        })
+      })
+      it('where _complex', function(done){
+        model.where({
+          _complex: {
+            id: ['IN', [1, 2, 3]]
+          }
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  ( `id` IN (1,2,3) ) )")
+          done();
+        })
+      })
 
 
 
