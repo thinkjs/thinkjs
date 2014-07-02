@@ -201,9 +201,6 @@ describe('Model', function(){
       })
     })
 
-    describe('where', function(){
-      
-    })
 
     describe('union', function(){
       var model = D('Pic1');
@@ -233,7 +230,7 @@ describe('Model', function(){
           done();
         })
       })
-      it('union all2', function(done){
+      it('union all3', function(done){
         model.union({
           table: 'meinv_pic2',
         }, true).union('select * from meinv_pic3').select().then(function(){
@@ -262,11 +259,27 @@ describe('Model', function(){
           done();
         })
       })
+      it('join on arr', function(done){
+        model.join(['meinv_xxx ON meinv_group.id = meinv_xxx.group_id', 'meinv_xxx ON meinv_group.id = meinv_xxx.group_id']).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id LEFT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
+          done();
+        })
+      })
       it('right join on', function(done){
         model.join('RIGHT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
           assert.equal(sql, 'SELECT * FROM `meinv_group` RIGHT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
+          done();
+        })
+      })
+      it('inner join on', function(done){
+        model.join('INNER JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id').select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` INNER JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
           done();
         })
       })
@@ -278,6 +291,18 @@ describe('Model', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` AS c ON meinv_group.`id`=c.`id`')
+          done();
+        })
+      })
+      it('join on multi condition', function(done){
+        model.join({
+          table: 'cate',
+          as: 'c',
+          on: {id: 'id', title: 'name'}
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` AS c ON (meinv_group.`id`=c.`id` AND meinv_group.`title`=c.`name`)')
           done();
         })
       })
@@ -422,6 +447,28 @@ describe('Model', function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
           assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` ON meinv_group.`id`=meinv_cate.`id` LEFT JOIN `meinv_group_tag` ON meinv_group.`id`=meinv_group_tag.`group_id`')
+          done();
+        })
+      })
+
+      it('multi join6', function(done){
+        model.join({
+          cate: {
+            on: 'id, id'
+          },
+          group_tag: {
+            on: ['id', 'group_id']
+          },
+          tag: {
+            on: {
+              id: 'id',
+              title: 'name'
+            }
+          }
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` ON meinv_group.`id`=meinv_cate.`id` LEFT JOIN `meinv_group_tag` ON meinv_group.`id`=meinv_group_tag.`group_id` LEFT JOIN `meinv_tag` ON (meinv_group.`id`=meinv_tag.`id` AND meinv_group.`title`=meinv_tag.`name`)')
           done();
         })
       })
@@ -605,6 +652,636 @@ describe('Model', function(){
           done();
         })
       })
+    })
+
+    describe('where', function(){
+      it('empty where', function(done){
+        model.where().select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          done();
+        })
+      })
+      it('empty where1', function(done){
+        model.where('').select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          done();
+        })
+      })
+      it('empty where2', function(done){
+        model.where({}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          done();
+        })
+      })
+      it('where1', function(done){
+        model.where({id: 10}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          done();
+        })
+      })
+      it('where =', function(done){
+        model.where({id: ['=', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          done();
+        })
+      })
+      it('where EQ', function(done){
+        model.where({id: ['EQ', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          done();
+        })
+      })
+      it('where eq', function(done){
+        model.where({id: ['eq', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          done();
+        })
+      })
+      it('where field not exist', function(done){
+        model.where({idxxx: 10}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          done();
+        })
+      })
+      it('where field with table alias', function(done){
+        model.alias('c').where({'c.id': 10}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM meinv_group AS c WHERE ( c.id = 10 )')
+          done();
+        })
+      })
+      it('where !=', function(done){
+        model.where({id: ['!=', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          done();
+        })
+      })
+      it('where NEQ', function(done){
+        model.where({id: ['NEQ', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          done();
+        })
+      })
+      it('where neq', function(done){
+        model.where({id: ['neq', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          done();
+        })
+      })
+      it('where <>', function(done){
+        model.where({id: ['<>', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          done();
+        })
+      })
+
+      it('where >', function(done){
+        model.where({id: ['>', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` > 10 )')
+          done();
+        })
+      })
+      it('where GT', function(done){
+        model.where({id: ['GT', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` > 10 )')
+          done();
+        })
+      })
+      it('where gt', function(done){
+        model.where({id: ['gt', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` > 10 )')
+          done();
+        })
+      })
+      it('where >=', function(done){
+        model.where({id: ['>=', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` >= 10 )')
+          done();
+        })
+      })
+      it('where EGT', function(done){
+        model.where({id: ['EGT', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` >= 10 )')
+          done();
+        })
+      })
+      it('where egt', function(done){
+        model.where({id: ['egt', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` >= 10 )')
+          done();
+        })
+      })
+
+      it('where <', function(done){
+        model.where({id: ['<', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` < 10 )')
+          done();
+        })
+      })
+      it('where LT', function(done){
+        model.where({id: ['LT', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` < 10 )')
+          done();
+        })
+      })
+      it('where lt', function(done){
+        model.where({id: ['lt', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` < 10 )')
+          done();
+        })
+      })
+      it('where <=', function(done){
+        model.where({id: ['<=', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` <= 10 )')
+          done();
+        })
+      })
+      it('where ELT', function(done){
+        model.where({id: ['ELT', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` <= 10 )')
+          done();
+        })
+      })
+      it('where elt', function(done){
+        model.where({id: ['elt', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` <= 10 )')
+          done();
+        })
+      })
+      it('where NOTLIKE', function(done){
+        model.where({title: ['NOTLIKE', 'welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen' )")
+          done();
+        })
+      })
+      it('where NOT LIKE', function(done){
+        model.where({title: ['NOT LIKE', 'welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen' )")
+          done();
+        })
+      })
+      it('where not like', function(done){
+        model.where({title: ['not like', 'welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen' )")
+          done();
+        })
+      })
+      it('where not like with left %', function(done){
+        model.where({title: ['not like', '%welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE '%welefen' )")
+          done();
+        })
+      })
+      it('where not like with right %', function(done){
+        model.where({title: ['not like', 'welefen%']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen%' )")
+          done();
+        })
+      })
+      it('where not like with both %', function(done){
+        model.where({title: ['not like', '%welefen%']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE '%welefen%' )")
+          done();
+        })
+      })
+      it('where LIKE', function(done){
+        model.where({title: ['LIKE', 'welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE 'welefen' )")
+          done();
+        })
+      })
+      it('where like', function(done){
+        model.where({title: ['like', 'welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE 'welefen' )")
+          done();
+        })
+      })
+      it('where like with left %', function(done){
+        model.where({title: ['like', '%welefen']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE '%welefen' )")
+          done();
+        })
+      })
+      it('where like with right %', function(done){
+        model.where({title: ['like', 'welefen%']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE 'welefen%' )")
+          done();
+        })
+      })
+      it('where like with both %', function(done){
+        model.where({title: ['like', '%welefen%']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE '%welefen%' )")
+          done();
+        })
+      })
+      it('where multi like', function(done){
+        model.where({title: ['like', ['welefen']]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen') )")
+          done();
+        })
+      })
+      it('where multi like1', function(done){
+        model.where({title: ['like', ['welefen', 'suredy']]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' OR `title` LIKE 'suredy') )")
+          done();
+        })
+      })
+      it('where multi like2', function(done){
+        model.where({title: ['like', ['welefen', '%suredy']]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' OR `title` LIKE '%suredy') )")
+          done();
+        })
+      })
+      it('where multi like3', function(done){
+        model.where({title: ['like', ['%welefen', '%suredy%']]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE '%welefen' OR `title` LIKE '%suredy%') )")
+          done();
+        })
+      })
+      it('where multi like with AND logic', function(done){
+        model.where({title: ['like', ['welefen', 'suredy'], 'AND']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' AND `title` LIKE 'suredy') )")
+          done();
+        })
+      })
+      it('where multi like with XOR logic', function(done){
+        model.where({title: ['like', ['welefen', 'suredy'], 'XOR']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' XOR `title` LIKE 'suredy') )")
+          done();
+        })
+      })
+      it('where multi like with xor logic', function(done){
+        model.where({title: ['like', ['welefen', 'suredy'], 'xor']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' XOR `title` LIKE 'suredy') )")
+          done();
+        })
+      })
+
+
+
+
+      it('where IN single value', function(done){
+        model.where({id: ['IN', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 )")
+          done();
+        })
+      })
+      it('where IN string value', function(done){
+        model.where({id: ['IN', '10,20']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN ('10','20') )")
+          done();
+        })
+      })
+      it('where in string value', function(done){
+        model.where({id: ['in', '10,20']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN ('10','20') )")
+          done();
+        })
+      })
+      it('where IN arr value', function(done){
+        model.where({id: ['IN', [10, 20]]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN (10,20) )")
+          done();
+        })
+      })
+      it('where IN exp', function(done){
+        model.where({id: ['IN', '(10,20)', 'exp']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN (10,20) )")
+          done();
+        })
+      })
+
+      it('where NOT IN single value', function(done){
+        model.where({id: ['NOT IN', 10]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` != 10 )")
+          done();
+        })
+      })
+      it('where NOT IN string value', function(done){
+        model.where({id: ['NOT IN', '10,20']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN ('10','20') )")
+          done();
+        })
+      })
+      it('where not in string value', function(done){
+        model.where({id: ['not in', '10,20']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN ('10','20') )")
+          done();
+        })
+      })
+      it('where NOT IN arr value', function(done){
+        model.where({id: ['NOTIN', [10, 20]]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN (10,20) )")
+          done();
+        })
+      })
+      it('where NOT IN exp', function(done){
+        model.where({id: ['notin', '(10,20)', 'exp']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN (10,20) )")
+          done();
+        })
+      })
+
+      it('where exp', function(done){
+        model.where({id: ['exp', '=10']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` =10) )")
+          done();
+        })
+      })
+      it('where EXP', function(done){
+        model.where({id: ['exp', '=10']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` =10) )")
+          done();
+        })
+      })
+
+
+
+      it('where multi condition', function(done){
+        model.where({id: 10, title: "www"}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) AND ( `title` = 'www' )")
+          done();
+        })
+      })
+      it('where multi condition with OR logic', function(done){
+        model.where({id: 10, title: "www", _logic: 'OR'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) OR ( `title` = 'www' )")
+          done();
+        })
+      })
+      it('where multi condition with or logic', function(done){
+        model.where({id: 10, title: "www", _logic: 'or'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) OR ( `title` = 'www' )")
+          done();
+        })
+      })
+      it('where multi condition with XOR logic', function(done){
+        model.where({id: 10, title: "www", _logic: 'XOR'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) XOR ( `title` = 'www' )")
+          done();
+        })
+      })
+      it('where multi condition with xor logic', function(done){
+        model.where({id: 10, title: "www", _logic: 'xor'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) XOR ( `title` = 'www' )")
+          done();
+        })
+      })
+      it('where string', function(done){
+        model.where('id=10').select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( id=10 )")
+          done();
+        })
+      })
+      it('where string override', function(done){
+        model.where('id=10').where('id=20').select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( id=20 )")
+          done();
+        })
+      })
+      it('where key has |', function(done){
+        model.where({
+          'id|title': 10
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` = 10) OR (`title` = 10) )")
+          done();
+        })
+      })
+      it('where key has &', function(done){
+        model.where({
+          'id&title': 10
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` = 10) AND (`title` = 10) )")
+          done();
+        })
+      })
+
+      it('where BETWEEN', function(done){
+        model.where({id: ['BETWEEN', 1, 2]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  (`id` BETWEEN 1 AND 2) )")
+          done();
+        })
+      })
+      it('where between', function(done){
+        model.where({id: ['between', 1, 2]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  (`id` BETWEEN 1 AND 2) )")
+          done();
+        })
+      })
+      it('where between string', function(done){
+        model.where({id: ['between', '1,2']}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  (`id` BETWEEN '1' AND '2') )")
+          done();
+        })
+      })
+
+
+
+      it('where obj for key value', function(done){
+        model.where({id: {
+          '>': 10,
+          '<': 20
+        }}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` < 20 )")
+          done();
+        })
+      })
+      it('where obj for key value 1', function(done){
+        model.where({id: {
+          'GT': 10,
+          'LT': 20
+        }}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` < 20 )")
+          done();
+        })
+      })
+      it('where obj for key value 2', function(done){
+        model.where({id: {
+          'GT': 10,
+          '<=': 20
+        }}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` <= 20 )")
+          done();
+        })
+      })
+        it('where obj for key value 3', function(done){
+        model.where({id: {
+          'GT': 10,
+          '<=': 20
+        }, title: 'welefen'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` <= 20 ) AND ( `title` = 'welefen' )")
+          done();
+        })
+      })
+      it('where obj for key value with OR logic', function(done){
+        model.where({id: {
+          'GT': 10,
+          'LT': 20,
+          _logic: 'OR'
+        }}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 OR `id` < 20 )")
+          done();
+        })
+      })
+      it('where obj for key value with OR logic', function(done){
+        model.where({id: {
+          'GT': 10,
+          'LT': 20,
+          _logic: 'OR'
+        }, title: 'welefen'}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 OR `id` < 20 ) AND ( `title` = 'welefen' )")
+          done();
+        })
+      })
+
+
+
+
     })
 
   })
