@@ -1278,6 +1278,15 @@ describe('Model', function(){
           done();
         })
       })
+      it('where extra', function(done){
+        model.where({id: [['exp', '= 10 '], ['>', 10], ['<', 20]]}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` = 10 ) AND (`id` > 10) AND (`id` < 20)  )")
+          done();
+        })
+      })
+
 
 
 
