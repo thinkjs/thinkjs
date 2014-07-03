@@ -8,6 +8,9 @@ module.exports = Controller(function(){
     indexAction: function(){
       //render View/Home/index_index.html file
       this.display();
+    },
+    testAction: function(){
+      return 'welefen';
     }
   };
 });

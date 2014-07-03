@@ -188,15 +188,108 @@ describe('tag', function(){
 
 
 describe('A', function(){
-
+  var http = thinkRequire('Http').getDefaultHttp('/index/index');
+  http = thinkRequire('Http')(http.req, http.res).run();
+  it('A("home:index:test")', function(done){
+    var ret = A('home:index:test', http);
+    ret.then(function(value){
+      assert.equal(value, 'welefen')
+      done();
+    })
+  })
+  it('A("home:test:test")', function(done){
+    var ret = A('home:test:test', http);
+    ret.then(function(value){
+      assert.equal(value, 'test:test')
+      done();
+    })
+  })
+  it('A("home:test:other")', function(done){
+    var ret = A('home:test:other', http, 'welefen');
+    ret.then(function(value){
+      assert.equal(value, '{"name":"welefen"}')
+      done();
+    })
+  })
+  it('A("home:test:other") 1', function(done){
+    var ret = A('home:test:other', http, ['welefen', 'suredy']);
+    ret.then(function(value){
+      assert.equal(value, '{"name":"welefen","value":"suredy"}')
+      done();
+    })
+  })
+  it('A("admin:index:test") 1', function(done){
+    var ret = A('admin:index:test', http, ['welefen', 'suredy']);
+    ret.then(function(value){
+      assert.equal(value, 'admin:index:test')
+      done();
+    })
+  })
+  it('A("admin:index")', function(){
+    var ret = A('admin:index', http, ['welefen', 'suredy']);
+    assert.equal(isFunction(ret.get), true);
+    assert.equal(isFunction(ret.post), true);
+  })
+  it('A("admin:xxxxx")', function(){
+    var ret = A('admin:xxxxx', http, ['welefen', 'suredy']);
+    assert.equal(ret, null);
+  })
+  it('A("admin:xxxxx:test")', function(){
+    var ret = A('admin:xxxxx:test', http, ['welefen', 'suredy']);
+    assert.equal(ret, null);
+  })
 })
 
 describe('D', function(){
-
+  it('D("User").hasFile = function', function(){
+    var model = D('User');
+    assert.equal(isFunction(model.hasFile), true);
+  })
+  it('D("User") prop', function(){
+    var model = D('User');
+    var testName = model.constructor.__prop.testName;
+    assert.equal(testName, 'welefen')
+  })
+  it('D("xxx").hasFile = undefined', function(){
+    var model = D('xxx');
+    assert.equal(model.hasFile, undefined)
+  })
+  it('D("xxx").prop', function(){
+    var model = D('xxx');
+    assert.equal(model.constructor.__prop.testName, undefined)
+  })
+  it('D("User:AdvModel")', function(){
+    var model = D('User:AdvModel');
+    assert.equal(isFunction(model.setRelation), false)
+  })
+  it('D("Xxx:AdvModel")', function(){
+    var model = D('Xxx:AdvModel');
+    assert.equal(isFunction(model.setRelation), true)
+  })
 })
 
 describe('M', function(){
-
+  it('D("User").hasFile = undefined', function(){
+    var model = M('User');
+    assert.equal(model.hasFile, undefined);
+  })
+  it('M("User") prop', function(){
+    var model = M('User');
+    var testName = model.constructor.__prop.testName;
+    assert.equal(testName, undefined)
+  })
+  it('M("XXX").hasFile = undefined', function(){
+    var model = M('XXX');
+    assert.equal(model.hasFile, undefined);
+  })
+  it('M("User:AdvModel")', function(){
+    var model = M('User:AdvModel');
+    assert.equal(isFunction(model.setRelation), true)
+  })
+  it('M("Xxx:AdvModel")', function(){
+    var model = D('Xxx:AdvModel');
+    assert.equal(isFunction(model.setRelation), true)
+  })
 })
 
 describe('S', function(){
