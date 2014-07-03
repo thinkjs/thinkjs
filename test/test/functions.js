@@ -147,9 +147,42 @@ describe('F', function(){
 })
 
 describe('tag', function(){
-  it('all tags', function(){
+  var http = thinkRequire('Http').getDefaultHttp('/index/index');
+  http = thinkRequire('Http')(http.req, http.res).run();
+  it('all tags', function(done){
     var tags = C('tag');
     assert.equal(JSON.stringify(tags), '{"app_init":[],"form_parse":[null],"path_info":[],"resource_check":["CheckResource"],"route_check":["CheckRoute"],"app_begin":["ReadHtmlCache"],"action_init":[],"view_init":[],"view_template":["LocationTemplate"],"view_parse":["ParseTemplate"],"view_filter":[],"view_end":["WriteHtmlCache"],"action_end":[],"app_end":[null]}')
+    done();
+  })
+  it('tags not found', function(done){
+    tag('xxxx', http).then(function(data){
+      assert.equal(data, undefined)
+      done();
+    })
+  })
+  it('tag:app_init', function(done){
+    http.then(function(http){
+      return tag('app_init', http)
+    }).then(function(data){
+      assert.equal(data, undefined);
+      done();
+    })
+  })
+  it('tag:form_parse', function(done){
+    http.then(function(http){
+      return tag('form_parse', http)
+    }).then(function(data){
+      assert.equal(data, undefined);
+      done();
+    })
+  })
+  it('tag:path_info', function(done){
+    http.then(function(http){
+      return tag('path_info', http)
+    }).then(function(data){
+      assert.equal(data, undefined);
+      done();
+    })
   })
 })
 
@@ -167,8 +200,135 @@ describe('M', function(){
 })
 
 describe('S', function(){
-
+  describe('FileCache', function(){
+    it('file cache string', function(done){
+      S('name', 'welefen').then(function(){
+        return S('name');
+      }).then(function(value){
+        assert.equal(value, 'welefen');
+        done();
+      })
+    })
+    it('file cache json', function(done){
+      S('json', {name: 'welefen'}).then(function(){
+        return S('json');
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(JSON.stringify(value), '{"name":"welefen"}');
+        done();
+      })
+    })
+    it('file rm cache', function(done){
+      S('json', {name: 'welefen'}).then(function(){
+        return S('json', null);
+      }).then(function(){
+        return S('json')
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(value, undefined);
+        done();
+      })
+    })
+    it('file cache timeout', function(done){
+      S('json', {name: 'welefen'}, -100).then(function(){
+        return S('json');
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(value, undefined);
+        done();
+      })
+    })
+    it('file cache time', function(done){
+      S('json', {name: 'welefen'}, 3).then(function(){
+        return S('json');
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(JSON.stringify(value), '{"name":"welefen"}');
+        done();
+      })
+    })
+    it('file cache, timeout remove', function(done){
+      S('json', {name: 'welefen'}, 0.01).then(function(){
+        var deferred = getDefer();
+        setTimeout(function(){
+          S('json').then(function(data){
+            deferred.resolve(data)
+          })
+        }, 20)
+        return deferred.promise;
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(value, undefined);
+        done();
+      })
+    })
+  })
+  describe('Node.js memory', function(){
+    //使用Node.js内存cache
+    it('Node.js mem, cache string', function(done){
+      S('name', 'welefen', true).then(function(){
+        return S('name');
+      }).then(function(value){
+        assert.equal(value, 'welefen');
+        done();
+      })
+    })
+    it('Node.js mem, cache json', function(done){
+      S('json', {name: 'welefen'}, true).then(function(){
+        return S('json', undefined, true);
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(JSON.stringify(value), '{"name":"welefen"}');
+        done();
+      })
+    })
+    it('Node.js mem, rm cache', function(done){
+      S('json1', {name: 'welefen'}, true).then(function(){
+        return S('json1', null, true);
+      }).then(function(){
+        return S('json1', undefined, true)
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(value, undefined);
+        done();
+      })
+    })
+    it('Node.js mem, cache timeout', function(done){
+      S('json2', {name: 'welefen'}, {type: true, timeout: -100}).then(function(){
+        return S('json2', undefined, true);
+      }).then(function(value){
+        assert.equal(value, undefined);
+        done();
+      })
+    })
+    it('Node.js mem, cache time', function(done){
+      S('json3', {name: 'welefen'}, {type: true, timeout: 3}).then(function(){
+        return S('json3', undefined, true);
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(JSON.stringify(value), '{"name":"welefen"}');
+        done();
+      })
+    })
+    it('Node.js mem, cache timeout remove', function(done){
+      S('json4', {name: 'welefen'}, {type: true, timeout: 0.01}).then(function(){
+        var deferred = getDefer();
+        setTimeout(function(){
+          S('json4', undefined, true).then(function(data){
+            deferred.resolve(data)
+          })
+        }, 20)
+        return deferred.promise;
+      }).then(function(value){
+        //console.log(JSON.stringify(value))
+        assert.equal(value, undefined);
+        done();
+      })
+    })
+  })
 })
+
+
 
 describe('L', function(){
   it('L("welefen") = welefen', function(){
