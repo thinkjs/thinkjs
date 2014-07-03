@@ -42,6 +42,7 @@ paths.forEach(function(item){
 var THINK_PATH = __dirname + "/../lib";
 var sourceFiles = [
 	THINK_PATH + "/View/IndexController.js",
+	THINK_PATH + "/View/BaseController.js",
 	THINK_PATH + "/View/index_index.html",
 	THINK_PATH + "/View/common.js",
 	THINK_PATH + "/View/ctrl.sh",
@@ -51,6 +52,7 @@ var sourceFiles = [
 ];
 var dstFiles = [
 	project + "/App/Lib/Controller/Home/IndexController.js",
+	project + "/App/Lib/Controller/Home/BaseController.js",
 	project + "/App/View/Home/index_index.html",
 	project + "/App/Common/common.js",
 	project + "/ctrl.sh",
