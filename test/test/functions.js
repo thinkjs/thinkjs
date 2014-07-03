@@ -139,9 +139,8 @@ describe('F', function(){
     assert.equal(JSON.stringify(F('welefen')), JSON.stringify(data))
   })
   it('F("welefen", "suredy", tmpPath)', function(){
-    var tmp = require('os').tmpdir();
-    F('welefen', 'suredy', tmp);
-    var value = F('welefen', undefined, tmp);
+    F('welefen', 'suredy', DATA_PATH + '/xxx/other');
+    var value = F('welefen', undefined, DATA_PATH + '/xxx/other');
     assert.equal(value, 'suredy')
   })
 })

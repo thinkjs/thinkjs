@@ -18,7 +18,6 @@ npm test
 * [Git Press +](http://www.gitpress.org)  ([源码](https://github.com/akira-cn/gitpress)) 
 * [welefen的随笔](http://www.welefen.com) ([源码](https://github.com/welefen/thinkpress))
 * [JerryQu 的小站](http://www.imququ.com)
-* [女神网](http://www.ueapp.com)
 * [w3ctech新版官网](http://new.w3ctech.com/)
 
 以及数字公司内部多个系统
