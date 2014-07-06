@@ -63,6 +63,9 @@ describe('inherits from base Class', function(){
 
 
 describe('B', function(){
+  it('B()', function(){
+    assert.equal(B(), undefined)
+  })
   it('B(function(){})', function(){
     var fn = function(){
       return 'welefen';
@@ -124,6 +127,10 @@ describe('C', function(){
 })
 
 describe('F', function(){
+  it('F("not exist")', function(){
+    var value = F('not exist');
+    assert.equal(value, false)
+  })
   it('F("welefen", "suredy")', function(){
     F('welefen', 'suredy');
     var value = F('welefen');
@@ -240,6 +247,11 @@ describe('A', function(){
 })
 
 describe('D', function(){
+  it('D()', function(){
+    var model = D();
+    var Model = thinkRequire('Model');
+    assert.equal(model instanceof Model, true)
+  })
   it('D("User").hasFile = function', function(){
     var model = D('User');
     assert.equal(isFunction(model.hasFile), true);
@@ -268,6 +280,11 @@ describe('D', function(){
 })
 
 describe('M', function(){
+  it('M()', function(){
+    var model = M();
+    var Model = thinkRequire('Model');
+    assert.equal(model instanceof Model, true)
+  })
   it('D("User").hasFile = undefined', function(){
     var model = M('User');
     assert.equal(model.hasFile, undefined);

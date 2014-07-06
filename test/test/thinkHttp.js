@@ -133,8 +133,14 @@ describe('Http', function(){
   })
   it('http.cookie', function(done){
     instance.then(function(http){
-      //console.log(JSON.stringify(http.cookie));
-      assert.equal(JSON.stringify(http.cookie), '{"Hm_lvt_c4ee723718ec2e065e4cb1fb8d84bea1":"1380544681","bdshare_firstime":"1398851688467","visit_count":"5","thinkjs":"qSK6dvvHE1nDqzeMBOnIiw4LlbPdYGMB","Hm_lvt_3a35dfea7bd1bb657c1ecd619a3c6cdd":"1404201763","Hm_lpvt_3a35dfea7bd1bb657c1ecd619a3c6cdd":"1404357406"}');
+      assert.deepEqual(http.cookie, { 
+        Hm_lvt_c4ee723718ec2e065e4cb1fb8d84bea1: '1380544681,1381634417,1381637116,1381660395',
+        bdshare_firstime: '1398851688467',
+        visit_count: '5',
+        thinkjs: 'qSK6dvvHE1nDqzeMBOnIiw4LlbPdYGMB',
+        Hm_lvt_3a35dfea7bd1bb657c1ecd619a3c6cdd: '1404201763,1404205823,1404219513,1404342531',
+        Hm_lpvt_3a35dfea7bd1bb657c1ecd619a3c6cdd: '1404357406' 
+      })
       done();
     })
   })
