@@ -5,7 +5,12 @@ var os = require('os');
 var path = require('path');
 
 var project = process.argv[2] || '.';
-var files = fs.readdirSync(project);
+var files = fs.readdirSync(project).filter(function(item){
+	if (item === '.git' || item === '.svn') {
+		return;
+	}
+	return item;
+});
 if (files.length) {
 	console.log('path is not empty');
 	return false;
