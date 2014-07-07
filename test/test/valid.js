@@ -569,6 +569,45 @@ describe('Valid', function(){
     //console.log(JSON.stringify(ret));
     assert.deepEqual(ret, {"welefen":"required","suredy":"length is 2-10"});
   })
+  it('Valid mix 2', function(){
+    var data = [{
+      name: 'welefen',
+      value: '',
+      valid: ['required', 'length'],
+      msg: 'required'
+    },{
+      name: 'suredy',
+      valid: ['required', 'length'],
+      length_args: [2, 10],
+      msg: {
+        required: 'required',
+        length: 'length is 2-10'
+      }
+    }];
+    var ret = Valid(data);
+    //console.log(JSON.stringify(ret));
+    assert.deepEqual(ret, {"welefen":"required","suredy":"required"});
+  })
+  it('Valid mix 3', function(){
+    var data = [{
+      name: 'welefen',
+      value: '',
+      valid: ['required', 'length'],
+      msg: 'required'
+    },{
+      name: 'suredy',
+      value: 'welefen',
+      valid: ['required', 'length'],
+      length_args: [2, 10],
+      msg: {
+        required: 'required',
+        length: 'length is 2-10'
+      }
+    }];
+    var ret = Valid(data);
+    //console.log(JSON.stringify(ret));
+    assert.deepEqual(ret, {"welefen":"required"});
+  })
 
 
 })

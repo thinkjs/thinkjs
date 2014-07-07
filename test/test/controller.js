@@ -37,6 +37,13 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.initView()', function(done){
+    promise.then(function(instance){
+      var View = thinkRequire('View');
+      assert.equal(instance.initView() instanceof View, true);
+      done();
+    })
+  })
   it('instance.isGet()', function(done){
     promise.then(function(instance){
       assert.equal(instance.isGet(), true);
@@ -67,15 +74,74 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.isAjax() 1', function(done){
+    promise.then(function(instance){
+      instance.http.headers['x-requested-with'] = 'XMLHttpRequest';
+      assert.equal(instance.isAjax(), true);
+      done();
+    })
+  })
+  it('instance.isAjax("post")', function(done){
+    promise.then(function(instance){
+      instance.http.headers['x-requested-with'] = 'XMLHttpRequest';
+      assert.equal(instance.isAjax('post'), false);
+      done();
+    })
+  })
+  it('instance.isAjax("POST")', function(done){
+    promise.then(function(instance){
+      instance.http.headers['x-requested-with'] = 'XMLHttpRequest';
+      assert.equal(instance.isAjax('POST'), false);
+      done();
+    })
+  })
+  it('instance.isAjax("GET")', function(done){
+    promise.then(function(instance){
+      instance.http.headers['x-requested-with'] = 'XMLHttpRequest';
+      assert.equal(instance.isAjax('GET'), true);
+      done();
+    })
+  })
+  it('instance.isAjax("get")', function(done){
+    promise.then(function(instance){
+      instance.http.headers['x-requested-with'] = 'XMLHttpRequest';
+      assert.equal(instance.isAjax('get'), true);
+      done();
+    })
+  })
+
   it('instance.isWebSocket()', function(done){
     promise.then(function(instance){
       assert.equal(instance.isWebSocket(), false);
       done();
     })
   })
+  it('instance.isWebSocket() 1', function(done){
+    promise.then(function(instance){
+      instance.http.websocket = {};
+      assert.equal(instance.isWebSocket(), true);
+      done();
+    })
+  })
+
   it('instance.isCli()', function(done){
     promise.then(function(instance){
       assert.equal(instance.isCli(), true);
+      done();
+    })
+  })
+  it('instance.isCli() 1', function(done){
+    promise.then(function(instance){
+      APP_MODE = '';
+      assert.equal(instance.isCli(), false);
+      APP_MODE = 'cli';
+      done();
+    })
+  })
+
+  it('instance.isJsonp()', function(done){
+    promise.then(function(instance){
+      assert.equal(instance.isJsonp(), false);
       done();
     })
   })
@@ -85,6 +151,24 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.isJsonp() 1', function(done){
+    promise.then(function(instance){
+      instance.http.get.callback = 'callback'
+      assert.equal(instance.isJsonp(), true);
+      delete instance.http.get.callback;
+      done();
+    })
+  })
+  it('instance.isJsonp() 2', function(done){
+    promise.then(function(instance){
+      instance.http.get.callback = 'callback'
+      assert.equal(instance.isJsonp('callback_other_name'), false);
+      delete instance.http.get.callback;
+      done();
+    })
+  })
+
+
   it('instance.get("name")', function(done){
     promise.then(function(instance){
       //console.log(instance.get("name"));
@@ -127,6 +211,128 @@ describe('Controller', function(){
       done();
     })
   })
+
+  it('instance.param()', function(done){
+    promise.then(function(instance){
+      //console.log(instance.param())
+      assert.deepEqual(instance.param(), {"name":"welefen","value":"1111"});
+      done();
+    })
+  })
+  it('instance.param() 1', function(done){
+    promise.then(function(instance){
+      //console.log(instance.param())
+      instance.http.post.name = 'post'
+      assert.deepEqual(instance.param(), {"name":"post"});
+      delete instance.http.post.name;
+      done();
+    })
+  })
+  it('instance.param("name")', function(done){
+    promise.then(function(instance){
+      //console.log(instance.param())
+      assert.equal(instance.param('name'), 'welefen');
+      done();
+    })
+  })
+  it('instance.param("name") 1', function(done){
+    promise.then(function(instance){
+      //console.log(instance.param())
+      instance.http.post.name = 'post'
+      assert.equal(instance.param('name'), 'post');
+      delete instance.http.post.name;
+      done();
+    })
+  })
+  it('instance.file()', function(done){
+    promise.then(function(instance){
+      assert.deepEqual(instance.file(), {});
+      done();
+    })
+  })
+  it('instance.file("xxx")', function(done){
+    promise.then(function(instance){
+      assert.deepEqual(instance.file('xxx'), {});
+      done();
+    })
+  })
+  it('instance.file("xxx") 111', function(done){
+    promise.then(function(instance){
+      instance.http.file = {
+        xxx : {
+          name: 'welefen'
+        }
+      }
+      assert.deepEqual(instance.file('xxx'), {
+          name: 'welefen'
+        });
+      done();
+    })
+  })
+
+
+  it('instance.header()', function(done){
+    promise.then(function(instance){
+      //console.log(instance.userAgent());
+      assert.deepEqual(instance.header(), { 'x-real-ip': '127.0.0.1',
+        'x-forwarded-for': '127.0.0.1',
+        host: 'meinv.ueapp.com',
+        'x-nginx-proxy': 'true',
+        connection: 'close',
+        'cache-control': 'max-age=0',
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36',
+        'accept-encoding': 'gzip,deflate,sdch',
+        'accept-language': 'zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4,nl;q=0.2,zh-TW;q=0.2',
+        cookie: 'Hm_lvt_c4ee723718ec2e065e4cb1fb8d84bea1=1380544681,1381634417,1381637116,1381660395; bdshare_firstime=1398851688467; visit_count=5; thinkjs=qSK6dvvHE1nDqzeMBOnIiw4LlbPdYGMB; Hm_lvt_3a35dfea7bd1bb657c1ecd619a3c6cdd=1404201763,1404205823,1404219513,1404342531; Hm_lpvt_3a35dfea7bd1bb657c1ecd619a3c6cdd=1404357406',
+        'x-requested-with': 'XMLHttpRequest' });
+      done();
+    })
+  })
+  it('instance.header("x-real-ip")', function(done){
+    promise.then(function(instance){
+      //console.log(instance.userAgent());
+      assert.deepEqual(instance.header('x-real-ip'), '127.0.0.1' );
+      done();
+    })
+  })
+  it('instance.header("x-xxx")', function(done){
+    promise.then(function(instance){
+      //console.log(instance.userAgent());
+      assert.deepEqual(instance.header('x-xxx'), '' );
+      done();
+    })
+  })
+  it('instance.header("name", "welefen")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'name');
+        assert.equal(value, 'welefen');
+        done();
+        instance.http.res.setHeader = fn;
+      }
+      instance.header('name', 'welefen');
+    })
+  })
+  it('instance.header({"name": "welefen", "value": "suredy"})', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      var i = 0;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name == 'name' || name == 'value', true);
+        assert.equal(value == 'welefen' || value == 'suredy', true);
+        i++;
+        if (i == 2) {
+          done();
+          instance.http.res.setHeader = fn;
+        };
+      }
+      instance.header({"name": "welefen", "value": "suredy"});
+    })
+  })
+
+
   it('instance.userAgent()', function(done){
     promise.then(function(instance){
       //console.log(instance.userAgent());
@@ -138,6 +344,14 @@ describe('Controller', function(){
     promise.then(function(instance){
       //console.log(instance.userAgent());
       assert.equal(instance.referer(), '');
+      done();
+    })
+  })
+  it('instance.referer()', function(done){
+    promise.then(function(instance){
+      instance.http.headers.referer = 'http://www.thinkjs.org'
+      //console.log(instance.userAgent());
+      assert.equal(instance.referer(), 'http://www.thinkjs.org');
       done();
     })
   })
@@ -231,6 +445,67 @@ describe('Controller', function(){
     })
   })
 
+
+  it('instance.redirect()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'Location');
+        assert.equal(value, '/');
+        assert.equal(instance.http.res.statusCode, 302);
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.redirect();
+    })
+  })
+  it('instance.redirect() 1', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'Location');
+        assert.equal(value, 'http://www.welefen.com');
+        assert.equal(instance.http.res.statusCode, 301);
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.redirect('http://www.welefen.com', 301);
+    })
+  })
+  it('instance.assign()', function(done){
+    promise.then(function(instance){
+      var data = instance.assign()
+      assert.equal(isEmpty(data), false)
+      assert.deepEqual(data.config, C());
+      assert.deepEqual(data.http, instance.http)
+      done();
+    })
+  })
+  it('instance.assign("welefen")', function(done){
+    promise.then(function(instance){
+      var data = instance.assign("welefen")
+      assert.equal(data, undefined)
+      done();
+    })
+  })
+  it('instance.assign("name", "welefen")', function(done){
+    promise.then(function(instance){
+      instance.assign('name', 'welefen')
+      var data = instance.assign('name')
+      assert.equal(data, 'welefen')
+      done();
+    })
+  })
+  it('instance.assign({"name": "welefen", value: "suredy"})', function(done){
+    promise.then(function(instance){
+      instance.assign({"name": "welefen", 'value': "suredy"})
+      var data = instance.assign('name')
+      assert.equal(data, 'welefen')
+      assert.equal(instance.assign('value'), 'suredy')
+      done();
+    })
+  })
 
 
 })
