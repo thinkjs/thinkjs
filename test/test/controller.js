@@ -506,6 +506,85 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.fetch("home:index:index")', function(done){
+    promise.then(function(instance){
+      instance.fetch('home:index:index').then(function(content){
+        assert.equal(content, 'hello, thinkjs!');
+        done();
+      })
+    })
+  })
+  it('instance.fetch("Home/index_index.html")', function(done){
+    promise.then(function(instance){
+      instance.fetch('Home/index_index.html').then(function(content){
+        assert.equal(content, 'hello, thinkjs!');
+        done();
+      })
+    })
+  })
+
+  it('instance.fetch("index:index")', function(done){
+    return promise.then(function(instance){
+      instance.http.group = 'home';
+      instance.fetch('index:index').then(function(content){
+        assert.equal(content, 'hello, thinkjs!');
+        done();
+      })
+    })
+  })
+  it('instance.display("home:index:index")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.echo;
+      instance.http.res.write = function(content, encoding){
+        assert.equal(content, 'hello, thinkjs!');
+        assert.equal(encoding, 'utf8');
+        instance.http.res.echo = fn;
+        done();
+      }
+      instance.display('home:index:index');
+    })
+  })
+  it('instance.display("index:index")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.echo;
+      instance.http.res.write = function(content, encoding){
+        assert.equal(content, 'hello, thinkjs!');
+        assert.equal(encoding, 'utf8');
+        instance.http.res.echo = fn;
+        done();
+      }
+      instance.http.group = 'home';
+      instance.display('index:index');
+    })
+  })
+  it('instance.action("index:test")', function(done){
+    promise.then(function(instance){
+      instance.http.group = 'home';
+      instance.action('index:test').then(function(content){
+        assert.equal(content, 'welefen');
+        done();
+      })
+    })
+  })
+  it('instance.action("test:test")', function(done){
+    promise.then(function(instance){
+      instance.http.group = 'home';
+      instance.action('test:test').then(function(content){
+        assert.equal(content, 'test:test');
+        done();
+      })
+    })
+  })
+  it('instance.action("test:other")', function(done){
+    promise.then(function(instance){
+      instance.http.group = 'home';
+      instance.action('test:other', ['name', 'value']).then(function(content){
+        assert.equal(content, '{"name":"name","value":"value"}');
+        //console.log(content)
+        done();
+      })
+    })
+  })
 
 
 })
