@@ -1466,7 +1466,7 @@ describe('Model', function(){
       })
       it('add empty data', function(done){
         model.add().catch(function(error){
-          assert.equal(error, '_DATA_TYPE_INVALID_');
+          assert.equal(error.message, '_DATA_TYPE_INVALID_');
           done()
         })
       })
@@ -1508,13 +1508,13 @@ describe('Model', function(){
       })
       it('add empty data', function(done){
         model.addAll().catch(function(error){
-          assert.equal(error, '_DATA_TYPE_INVALID_');
+          assert.equal(error.message, '_DATA_TYPE_INVALID_');
           done()
         })
       })
       it('add empty data1', function(done){
         model.addAll({title: "xxx"}).catch(function(error){
-          assert.equal(error, '_DATA_TYPE_INVALID_');
+          assert.equal(error.message, '_DATA_TYPE_INVALID_');
           done()
         })
       })
@@ -1559,7 +1559,7 @@ describe('Model', function(){
         model.update().catch(function(error){
           //var sql = model.getLastSql().trim();
           //console.log(error);
-          assert.equal(error, '_DATA_TYPE_INVALID_')
+          assert.equal(error.message, '_DATA_TYPE_INVALID_')
           done();
         })
       })
@@ -1567,7 +1567,7 @@ describe('Model', function(){
         model.update({title: 'wwww'}).catch(function(error){
           //var sql = model.getLastSql().trim();
           //console.log(error);
-          assert.equal(error, '_OPERATION_WRONG_')
+          assert.equal(error.message, '_OPERATION_WRONG_')
           done();
         })
       })
@@ -1595,7 +1595,7 @@ describe('Model', function(){
         model.updateAll().catch(function(error){
           //var sql = model.getLastSql().trim();
           //console.log(error);
-          assert.equal(error, '_DATA_TYPE_INVALID_')
+          assert.equal(error.message, '_DATA_TYPE_INVALID_')
           done();
         })
       })
@@ -1603,7 +1603,7 @@ describe('Model', function(){
         model.updateAll({title: 'wwww'}).catch(function(error){
           //var sql = model.getLastSql().trim();
           //console.log(error);
-          assert.equal(error, '_DATA_TYPE_INVALID_')
+          assert.equal(error.message, '_DATA_TYPE_INVALID_')
           done();
         })
       })
@@ -1619,7 +1619,7 @@ describe('Model', function(){
         model.updateAll([{title: 'wwww', id: 10}, {title: 'yyy'}]).catch(function(err){
           //var sql = model.getLastSql().trim();
           //console.log(err);
-          assert.equal(err, "_OPERATION_WRONG_")
+          assert.equal(err.message, "_OPERATION_WRONG_")
           done();
         })
       })
@@ -1629,7 +1629,7 @@ describe('Model', function(){
       var model = D('Group');
       it('update title error', function(done){
         model.updateField('title', 'welefen').catch(function(error){
-          assert.equal(error, '_OPERATION_WRONG_');
+          assert.equal(error.message, '_OPERATION_WRONG_');
           done();
         })
       })
