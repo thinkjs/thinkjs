@@ -16,7 +16,7 @@ if (files.length) {
 	return false;
 }
 var nodePath = process.execPath;
-require(__dirname + '/../lib/Common/common.js');
+require(path.normalize(__dirname + '/../lib/Common/common.js'));
 
 //mkdir 
 var paths = [
@@ -68,14 +68,14 @@ var dstFiles = [
 dstFiles.forEach(function(file, i) {
 	if (!isFile(file)) {
 		mkdir(path.dirname(file));
-		var readStream = fs.createReadStream(sourceFiles[i]);
-		var writeStream = fs.createWriteStream(file);
+		var readStream = fs.createReadStream(path.normalize(sourceFiles[i]));
+		var writeStream = fs.createWriteStream(path.normalize(file));
 		readStream.pipe(writeStream);
 		readStream.on('end', function() {});
 	}
 });
 
-child_process.exec('"' + nodePath + '" ' + project + '/www/index.js');
+child_process.exec('"' + nodePath + '" ' + path.normalize(project + '/www/index.js'));
 
 //打开浏览器
 var exec = 'open';
