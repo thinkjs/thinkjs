@@ -355,6 +355,14 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.referer(true)', function(done){
+    promise.then(function(instance){
+      instance.http.headers.referer = 'http://www.thinkjs.org'
+      //console.log(instance.userAgent());
+      assert.equal(instance.referer(true), 'www.thinkjs.org');
+      done();
+    })
+  })
   it('instance.cookie()', function(done){
     promise.then(function(instance){
       assert.deepEqual(instance.cookie(), { 
@@ -379,6 +387,14 @@ describe('Controller', function(){
     promise.then(function(instance){
       //console.log(JSON.stringify(instance.cookie()));
       assert.equal(instance.cookie('Hm_lvt_c4ee723718ec2e065e4cb1fb8d84bea1'), '1380544681,1381634417,1381637116,1381660395');
+      done();
+    })
+  })
+  it('instance.cookie("name", "welefen")', function(done){
+    promise.then(function(instance){
+      instance.http._cookie = {};
+      instance.cookie("name", "welefen");
+      assert.deepEqual(instance.http._cookie, { name: { path: '/', domain: '', name: 'name', value: 'welefen' } })
       done();
     })
   })
@@ -534,11 +550,11 @@ describe('Controller', function(){
   })
   it('instance.display("home:index:index")', function(done){
     promise.then(function(instance){
-      var fn = instance.http.res.echo;
+      var fn = instance.http.res.write;
       instance.http.res.write = function(content, encoding){
         assert.equal(content, 'hello, thinkjs!');
         assert.equal(encoding, 'utf8');
-        instance.http.res.echo = fn;
+        instance.http.res.write = fn;
         done();
       }
       instance.display('home:index:index');
@@ -546,11 +562,11 @@ describe('Controller', function(){
   })
   it('instance.display("index:index")', function(done){
     promise.then(function(instance){
-      var fn = instance.http.res.echo;
+      var fn = instance.http.res.write;
       instance.http.res.write = function(content, encoding){
         assert.equal(content, 'hello, thinkjs!');
         assert.equal(encoding, 'utf8');
-        instance.http.res.echo = fn;
+        instance.http.res.write = fn;
         done();
       }
       instance.http.group = 'Home';
@@ -733,6 +749,451 @@ describe('Controller', function(){
       done();
     })
   })
-
+  it('instance.echo()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(name, value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.echo();
+    })
+  })
+  it('instance.echo(undefined)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(name, value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.echo(undefined);
+    })
+  })
+  it('instance.echo("name")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, 'name');
+        //assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.echo('name');
+    })
+  })
+  it('instance.echo({name: "welefen"})', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, '{"name":"welefen"}');
+        //assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.echo({name: 'welefen'});
+    })
+  })
+  it('instance.echo(["name", "welefen"])', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, '["name","welefen"]');
+        //assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.echo(["name", "welefen"]);
+    })
+  })
+  it('instance.echo(buffer)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(isBuffer(content), true);
+        //assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.echo(new Buffer(120));
+    })
+  })
+  it('instance.end()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.end;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.end = function(){
+        instance.http.res.end = fn;
+        done();
+      }
+      instance.end();
+    })
+  })
+  it('instance.type()', function(done){
+    promise.then(function(instance){
+      instance.type();
+      done();
+    })
+  })
+  it('instance.type("js")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'Content-Type');
+        //console.log(value)
+        assert.equal(value, 'application/javascript; charset=utf8');
+        done();
+      }
+      instance.type('js');
+    })
+  })
+  it('instance.type("png")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'image/png; charset=utf8');
+        done();
+      }
+      instance.type('png');
+    })
+  })
+  it('instance.type("name/test")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'name/test; charset=utf8');
+        done();
+      }
+      instance.type('name/test');
+    })
+  })
+  it('instance.type("xxxfasdfasdfasdfxxx")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'application/octet-stream; charset=utf8');
+        done();
+      }
+      instance.type('xxxfasdfasdfasdfxxx');
+    })
+  })
+  it('instance.download(file)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        if (name === 'Content-Type') {
+          assert.equal(value, 'application/javascript; charset=utf8');
+        };
+        if (name === 'Content-Disposition') {
+          assert.equal(value, 'attachment; filename="index.js"');
+          instance.http.res.setHeader = fn;
+          done();
+        }
+      }
+      instance.download(ROOT_PATH + '/index.js');
+    })
+  })
+  it('instance.download(file, type)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        if (name === 'Content-Type') {
+          //console.log(value)
+          assert.equal(value, 'image/png; charset=utf8');
+        };
+        if (name === 'Content-Disposition') {
+          assert.equal(value, 'attachment; filename="index.js"');
+          instance.http.res.setHeader = fn;
+          done();
+        }
+      }
+      instance.download(ROOT_PATH + '/index.js', 'png');
+    })
+  })
+  it('instance.download(file, type)', function(done){
+    promise.then(function(instance){
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        if (name === 'Content-Type') {
+          //console.log(value)
+          assert.equal(value, 'png/xxx; charset=utf8');
+        };
+        if (name === 'Content-Disposition') {
+          assert.equal(value, 'attachment; filename="index.js"');
+          instance.http.res.setHeader = fn;
+          done();
+        }
+      }
+      instance.download(ROOT_PATH + '/index.js', 'png/xxx');
+    })
+  })
+  it('instance.download(file, filename)', function(done){
+    promise.then(function(instance){
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        if (name === 'Content-Type') {
+          //console.log(value)
+          assert.equal(value, 'application/javascript; charset=utf8');
+        };
+        if (name === 'Content-Disposition') {
+          //console.log(value)
+          assert.equal(value, 'attachment; filename="a.png"');
+          instance.http.res.setHeader = fn;
+          done();
+        }
+      }
+      instance.download(ROOT_PATH + '/index.js', 'a.png');
+    })
+  })
+  it('instance.download(file, type, filename)', function(done){
+    promise.then(function(instance){
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        if (name === 'Content-Type') {
+          //console.log(value)
+          assert.equal(value, 'image/png; charset=utf8');
+        };
+        if (name === 'Content-Disposition') {
+          //console.log(value)
+          assert.equal(value, 'attachment; filename="a.png"');
+          instance.http.res.setHeader = fn;
+          done();
+        }
+      }
+      instance.download(ROOT_PATH + '/index.js', 'png', 'a.png');
+    })
+  })
+  it('instance.success()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        assert.equal(name, '{"errno":0,"errmsg":""}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.success();
+    })
+  })
+  it('instance.success(data)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":0,"errmsg":"","data":{"name":"welefen"}}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.success({name: "welefen"});
+    })
+  })
+  it('instance.error()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":1000,"errmsg":"error"}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error();
+    })
+  })
+  it('instance.error(200)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":200,"errmsg":"error"}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error(200);
+    })
+  })
+  it('instance.error(200, "msg")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":200,"errmsg":"msg"}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error(200, 'msg');
+    })
+  })
+  it('instance.error(200, "msg", data)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":200,"errmsg":"msg","data":{"name":"welefen"}}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error(200, 'msg', {name: "welefen"});
+    })
+  })
+  it('instance.error({})', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error({});
+    })
+  })
+  it('instance.error({errno:1,errmsg: "msg"})', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":1,"errmsg":"msg"}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error({errno:1,errmsg: "msg"});
+    })
+  })
+  it('instance.error({errno:1,errmsg: "msg"}, data)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":1,"errmsg":"msg","data":{"name":"welefen"}}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.error({errno:1,errmsg: "msg"}, {name: "welefen"});
+    })
+  })
+  it('instance.sendTime()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.res.headersSent = false;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'X-EXEC-TIME');
+        //console.log(/^\d+ms$/.test(value))
+        assert.equal(/^\d+ms$/.test(value), true);
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.sendTime();
+    })
+  })
+  it('instance.sendTime("test")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.res.headersSent = false;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'X-test');
+        //console.log(/^\d+ms$/.test(value))
+        assert.equal(/^\d+ms$/.test(value), true);
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.sendTime('test');
+    })
+  })
+  it('instance.filter(10, "id")', function(done){
+    promise.then(function(instance){
+      var result = instance.filter(10, 'id');
+      assert.equal(result, 10);
+      done();
+    })
+  })
+  it('instance.filter(10, "in", [])', function(done){
+    promise.then(function(instance){
+      var result = instance.filter(10, 'in', [11, 12]);
+      assert.equal(result, '');
+      done();
+    })
+  })
+  it('instance.valid(10, "int")', function(done){
+    promise.then(function(instance){
+      var result = instance.valid('10', "int");
+      //console.log(result)
+      assert.equal(result, true);
+      done();
+    })
+  })
+  it('instance.valid([])', function(done){
+    promise.then(function(instance){
+      var data = [{
+        name: 'id',
+        value: '10',
+        valid: 'int'
+      }]
+      var result = instance.valid(data);
+      assert.deepEqual(result, {});
+      done();
+    })
+  })
+  it('instance.valid([]) 1', function(done){
+    promise.then(function(instance){
+      var data = [{
+        name: 'id',
+        value: '10ww',
+        valid: 'int',
+        msg: 'id is not valid'
+      }]
+      var result = instance.valid(data);
+      assert.deepEqual(result, {id: 'id is not valid'});
+      done();
+    })
+  })
 
 })
