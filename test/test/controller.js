@@ -525,7 +525,7 @@ describe('Controller', function(){
 
   it('instance.fetch("index:index")', function(done){
     return promise.then(function(instance){
-      instance.http.group = 'home';
+      instance.http.group = 'Home';
       instance.fetch('index:index').then(function(content){
         assert.equal(content, 'hello, thinkjs!');
         done();
@@ -553,7 +553,7 @@ describe('Controller', function(){
         instance.http.res.echo = fn;
         done();
       }
-      instance.http.group = 'home';
+      instance.http.group = 'Home';
       instance.display('index:index');
     })
   })
