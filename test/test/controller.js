@@ -586,5 +586,153 @@ describe('Controller', function(){
     })
   })
 
+  it('instance.jsonp()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'application/json; charset=utf8');
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.jsonp();
+    })
+  })
+  it('instance.jsonp({name: "welefen"})', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(content, encoding){
+        assert.equal(content, '{"name":"welefen"}');
+        assert.equal(encoding, 'utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.jsonp({name: 'welefen'});
+    })
+  })
+  it('instance.jsonp() with callback', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.get.callback = 'xxxx';
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, 'xxxx()');
+        assert.equal(encoding, 'utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.jsonp();
+    })
+  })
+  it('instance.jsonp({name: "welefen"}) with callback', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.get.callback = 'xxxx';
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, 'xxxx({"name":"welefen"})');
+        //assert.equal(encoding, 'utf8');
+        instance.http.res.write = fn;
+        delete instance.http.get.callback;
+        done();
+      }
+      instance.jsonp({name: "welefen"});
+    })
+  })
+  it('instance.jsonp({name: "welefen"}) with callback 1', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.get.callback = 'xxxx~~~';
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, 'xxxx({"name":"welefen"})');
+        //assert.equal(encoding, 'utf8');
+        instance.http.res.write = fn;
+        delete instance.http.get.callback;
+        done();
+      }
+      instance.jsonp({name: "welefen"});
+    })
+  })
+  it('instance.jsonp({name: "welefen"}) with callback 2', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.get.callback = '~~~';
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, '{"name":"welefen"}');
+        //assert.equal(encoding, 'utf8');
+        instance.http.res.write = fn;
+        delete instance.http.get.callback;
+        done();
+      }
+      instance.jsonp({name: "welefen"});
+    })
+  })
+
+
+  it('instance.json()', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(name, value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'application/json; charset=utf8');
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.json();
+    })
+  })
+  it('instance.json({name: "welefen"})', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(content, '{"name":"welefen"}');
+        assert.equal(encoding, 'utf8');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.json({name: "welefen"});
+    })
+  })
+  it('instance.status()', function(done){
+    promise.then(function(instance){
+      instance.status();
+      var status = instance.http.res.statusCode;
+      assert.equal(status, 404);
+      done();
+    })
+  })
+  it('instance.status(500)', function(done){
+    promise.then(function(instance){
+      instance.http.res.headersSent = false;
+      instance.http.res._header = '';
+      instance.status(500);
+      var status = instance.http.res.statusCode;
+      assert.equal(status, 500);
+      done();
+    })
+  })
+  it('instance.deny()', function(done){
+    promise.then(function(instance){
+      instance.deny();
+      var status = instance.http.res.statusCode;
+      assert.equal(status, 403);
+      done();
+    })
+  })
+  it('instance.deny(401)', function(done){
+    promise.then(function(instance){
+      instance.deny(401);
+      var status = instance.http.res.statusCode;
+      assert.equal(status, 401);
+      done();
+    })
+  })
+
 
 })
