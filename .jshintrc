@@ -150,6 +150,7 @@
     "Db": true,
     "setFileContent": true,
     "D": true,
+    "M": true,
     "Model": true,
     "Controller": true,
     "HAS_ONE": true,

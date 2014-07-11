@@ -488,23 +488,15 @@ describe('Model', function(){
         model.table('xxx').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `xxx`')
+          assert.equal(sql, 'SELECT * FROM `meinv_xxx`')
           done();
         })
       })
       it('table arr', function(done){
-        model.table(['group', 'yyy']).select().then(function(){
+        model.table('xxx', true).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `group`,`yyy`')
-          done();
-        })
-      })
-      it('table obj', function(done){
-        model.table({group: 'a'}).select().then(function(){
-          var sql = model.getLastSql().trim();
-          //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `group` AS `a`')
+          assert.equal(sql, 'SELECT * FROM `xxx`')
           done();
         })
       })
