@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "A MVC Web Framework For Node.js",
-  "version": "0.6.6",
+  "version": "0.6.11",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -20,7 +20,7 @@
     "multiparty": "3.0.0",
     "es6-promise": "0.1.1",
     "mime": "1.2.11",
-    "mysql": "2.1.1",
+    "mysql": "2.3.2",
     "websocket": "1.0.8"
   },
   "devDependencies": {
