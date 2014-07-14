@@ -1198,5 +1198,11 @@ describe('Controller', function(){
       done();
     })
   })
+  it('closeDb', function(done){
+    promise.then(function(instance){
+      instance.closeDb();
+      done();
+    })
+  })
 
 })
