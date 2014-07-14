@@ -635,6 +635,7 @@ describe('Controller', function(){
         assert.equal(content, 'xxxx()');
         assert.equal(encoding, 'utf8');
         instance.http.res.write = fn;
+        delete instance.http.get.callback;
         done();
       }
       instance.jsonp();
@@ -866,6 +867,7 @@ describe('Controller', function(){
         assert.equal(name, 'Content-Type');
         //console.log(value)
         assert.equal(value, 'application/javascript; charset=utf8');
+        instance.http.res.setHeader = fn;
         done();
       }
       instance.type('js');
@@ -880,6 +882,7 @@ describe('Controller', function(){
         //console.log(value)
         assert.equal(name, 'Content-Type');
         assert.equal(value, 'image/png; charset=utf8');
+        instance.http.res.setHeader = fn;
         done();
       }
       instance.type('png');
@@ -894,6 +897,7 @@ describe('Controller', function(){
         //console.log(value)
         assert.equal(name, 'Content-Type');
         assert.equal(value, 'name/test; charset=utf8');
+        instance.http.res.setHeader = fn;
         done();
       }
       instance.type('name/test');
@@ -908,6 +912,7 @@ describe('Controller', function(){
         //console.log(value)
         assert.equal(name, 'Content-Type');
         assert.equal(value, 'application/octet-stream; charset=utf8');
+        instance.http.res.setHeader = fn;
         done();
       }
       instance.type('xxxfasdfasdfasdfxxx');
@@ -918,7 +923,6 @@ describe('Controller', function(){
       var fn = instance.http.res.setHeader;
       instance.http.res._header = '';
       instance.http.cthIsSend = false;
-      var fn = instance.http.res.setHeader;
       instance.http.res.setHeader = function(name, value){
         if (name === 'Content-Type') {
           assert.equal(value, 'application/javascript; charset=utf8');
@@ -937,7 +941,6 @@ describe('Controller', function(){
       var fn = instance.http.res.setHeader;
       instance.http.res._header = '';
       instance.http.cthIsSend = false;
-      var fn = instance.http.res.setHeader;
       instance.http.res.setHeader = function(name, value){
         if (name === 'Content-Type') {
           //console.log(value)
