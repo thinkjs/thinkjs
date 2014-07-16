@@ -5,6 +5,12 @@ var os = require('os');
 var path = require('path');
 
 var project = process.argv[2] || '.';
+//打印版本号
+if (project === '-v') {
+	var version = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json'), 'utf8')).version;
+	console.log(version);
+	return;
+}
 var files = fs.readdirSync(project).filter(function(item){
 	if (item === '.git' || item === '.svn') {
 		return;
@@ -39,6 +45,7 @@ var paths = [
 	project + '/App/Runtime/Cache',
 	project + '/App/Runtime/Data',
 	project + '/App/Runtime/Temp',
+	project + '/App/Runtime/Log',
 	project + '/App/View',
 ];
 paths.forEach(function(item){
