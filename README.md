@@ -1,4 +1,7 @@
-![travis-ci](https://travis-ci.org/welefen/thinkjs.svg?branch=master)
+
+[![travis-ci](https://travis-ci.org/welefen/thinkjs.svg?branch=master)](https://travis-ci.org/welefen/thinkjs)
+
+[![NPM version](https://badge.fury.io/js/thinkjs.svg)](http://badge.fury.io/js/thinkjs)
 
 ## 介绍
 thinkjs是一款基于Promise的Node.js MVC框架，无缝支持命令行调用、WebSocket调用，里面很多特性借鉴于ThinkPHP。
