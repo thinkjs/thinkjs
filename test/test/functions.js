@@ -371,6 +371,18 @@ describe('S', function(){
         done();
       })
     })
+    it('file cache, promise', function(done){
+      S('wwwwwwwwfasdfasdw', function(){
+        return 'welefen';
+      }, -100).then(function(data){
+        assert.equal(data, 'welefen');
+        return S('wwwwwwwwfasdfasdw', null)
+      }).then(function(){
+        done();
+      })
+    })
+
+
   })
   describe('Node.js memory', function(){
     //使用Node.js内存cache
