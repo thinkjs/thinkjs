@@ -5,6 +5,7 @@ require('../../lib/Common/common.js');
 var fs = require('fs');
 var should = require('should');
 var assert = require('assert');
+var path = require('path');
 
 /**
  * 动态创建类
@@ -658,4 +659,107 @@ describe('arrToObj', function(){
     var res = arrToObj(data, 'value', null);
     assert.equal(JSON.stringify(res), '[1,2]')
   })
+})
+
+describe('getFileContent', function(){
+  it('file not exist', function(){
+    var content = getFileContent('filenotexist.txt');
+    assert.equal(content, '');
+  })
+  it('file exist', function(){
+    var content = getFileContent(__dirname + '/common.js');
+    assert.equal(content.length > 0, true);
+  })
+})
+
+describe('setFileContent', function(){
+  it('current path', function(){
+    var file = __dirname + '/setFileContent.txt';
+    setFileContent(file, 'welefen');
+    var content = getFileContent(file);
+    assert.equal(content, 'welefen');
+    fs.unlinkSync(file);
+  })
+  it('not current path', function(done){
+    var file = __dirname + '/xxxx/setFileContent.txt';
+    setFileContent(file, 'welefen');
+    var content = getFileContent(file);
+    assert.equal(content, 'welefen');
+    rmdir(__dirname + '/xxxx').then(function(){
+      done();
+    });
+  })
+})
+
+
+describe('mkdir', function(){
+  it('mkdir 1 grade path', function(done){
+    var dir = __dirname + '/fasdfasdf/';
+    mkdir(dir);
+    assert.equal(isDir(dir), true);
+    rmdir(dir).then(function(){
+      done();
+    }).catch(function(err){
+      console.log(err);
+      done();
+    })
+  });
+  it('mkdir 2 grade path', function(done){
+    var dir = __dirname + '/ww123123123123/wwwwww/';
+    mkdir(dir);
+    assert.equal(isDir(dir), true);
+    rmdir(path.dirname(dir)).then(function(){
+      done();
+    }).catch(function(err){
+      console.log(err);
+      done();
+    })
+  })
+})
+
+
+describe('rmdir', function(){
+  it('rmdir not exist', function(done){
+    var dir = __dirname + '/wfasdfasdfasdf/';
+    rmdir(dir).then(function(){
+      done();
+    })
+  });
+  it('readdir error', function(done){
+    var dir = __dirname + '/werwerwerwer/';
+    var fn = fs.readdir;
+    fs.readdir = function(p, callback){
+      callback && callback(new Error('path error'));
+    }
+    mkdir(dir);
+    rmdir(dir).catch(function(err){
+      assert.equal(err.message, 'path error');
+      fs.readdir = fn;
+      rmdir(dir).then(function(){
+        done();
+      })
+    })
+  });
+  it('rmdir error', function(done){
+    var dir = __dirname + '/fawerwer/';
+    var fn = fs.rmdir;
+    fs.rmdir = function(p, callback){
+      callback && callback(new Error('path error'));
+    }
+    mkdir(dir);
+    rmdir(dir).catch(function(err){
+      assert.equal(err.message, 'path error');
+      fs.rmdir = fn;
+      rmdir(dir).then(function(){
+        done();
+      })
+    })
+  });
+})
+
+
+describe('chmod', function(){
+  it('path not exist', function(){
+    chmod(__dirname + '/fasdfasdfasdf.txt');
+  });
 })

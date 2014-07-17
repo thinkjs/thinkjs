@@ -158,6 +158,7 @@
     "HAS_MANY": true,
     "MANY_TO_MANY": true,
     "isDate": true,
-    "getThinkRequirePath": true
+    "getThinkRequirePath": true,
+    "rmdir": true
   }    
 }
