@@ -25,7 +25,7 @@ start() {
   if [ ! -z $pid ]; then
     echo 'server is already running'
   else
-    nohup $NODE $DIR/www/index.js 2>&1 &
+    nohup $NODE $DIR/www/index.js online 2>&1 &
     echo 'server is running'
   fi
 }

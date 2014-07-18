@@ -7,79 +7,79 @@ var path = require('path');
 var project = process.argv[2] || '.';
 //打印版本号
 if (project === '-v') {
-	var version = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json'), 'utf8')).version;
-	console.log(version);
-	return;
+  var version = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json'), 'utf8')).version;
+  console.log(version);
+  return;
 }
 var files = fs.readdirSync(project).filter(function(item){
-	if (item === '.git' || item === '.svn') {
-		return;
-	}
-	return item;
+  if (item === '.git' || item === '.svn') {
+    return;
+  }
+  return item;
 });
 if (files.length) {
-	console.log('path is not empty');
-	return false;
+  console.log('path is not empty');
+  return false;
 }
 var nodePath = process.execPath;
 require(path.normalize(__dirname + '/../lib/Common/common.js'));
 
 //mkdir 
 var paths = [
-	project + '/www',
-	project + '/www/resource/',
-	project + '/www/resource/js',
-	project + '/www/resource/css',
-	project + '/www/resource/module',
-	project + '/www/resource/swf',
-	project + '/www/resource/font',
-	project + '/www/resource/img',
-	project + '/www/resource/other',
-	project + '/App',
-	project + '/App/Lib',
-	project + '/App/Lib/Model',
-	project + '/App/Lib/Controller/Home',
-	project + '/App/Common',
-	project + '/App/Conf',
-	project + '/App/Runtime',
-	project + '/App/Runtime/Cache',
-	project + '/App/Runtime/Data',
-	project + '/App/Runtime/Temp',
-	project + '/App/Runtime/Log',
-	project + '/App/View',
+  project + '/www',
+  project + '/www/resource/',
+  project + '/www/resource/js',
+  project + '/www/resource/css',
+  project + '/www/resource/module',
+  project + '/www/resource/swf',
+  project + '/www/resource/font',
+  project + '/www/resource/img',
+  project + '/www/resource/other',
+  project + '/App',
+  project + '/App/Lib',
+  project + '/App/Lib/Model',
+  project + '/App/Lib/Controller/Home',
+  project + '/App/Common',
+  project + '/App/Conf',
+  project + '/App/Runtime',
+  project + '/App/Runtime/Cache',
+  project + '/App/Runtime/Data',
+  project + '/App/Runtime/Temp',
+  project + '/App/Runtime/Log',
+  project + '/App/View',
 ];
 paths.forEach(function(item){
-	mkdir(item);
+  mkdir(item);
 });
 var THINK_PATH = __dirname + '/../lib';
 var sourceFiles = [
-	THINK_PATH + '/View/IndexController.js',
-	THINK_PATH + '/View/BaseController.js',
-	THINK_PATH + '/View/index_index.html',
-	THINK_PATH + '/View/common.js',
-	THINK_PATH + '/View/ctrl.sh',
-	THINK_PATH + '/View/config.js',
-	THINK_PATH + '/View/index.js',
-	THINK_PATH + '/View/gitignore.log'
+  THINK_PATH + '/View/IndexController.js',
+  THINK_PATH + '/View/BaseController.js',
+  THINK_PATH + '/View/index_index.html',
+  THINK_PATH + '/View/common.js',
+  THINK_PATH + '/View/ctrl.sh',
+  THINK_PATH + '/View/config.js',
+  THINK_PATH + '/View/index.js',
+  THINK_PATH + '/View/gitignore.log'
 ];
 var dstFiles = [
-	project + '/App/Lib/Controller/Home/IndexController.js',
-	project + '/App/Lib/Controller/Home/BaseController.js',
-	project + '/App/View/Home/index_index.html',
-	project + '/App/Common/common.js',
-	project + '/ctrl.sh',
-	project + '/App/Conf/config.js',
-	project + '/www/index.js',
-	project + '/.gitignore'
+  project + '/App/Lib/Controller/Home/IndexController.js',
+  project + '/App/Lib/Controller/Home/BaseController.js',
+  project + '/App/View/Home/index_index.html',
+  project + '/App/Common/common.js',
+  project + '/ctrl.sh',
+  project + '/App/Conf/config.js',
+  project + '/www/index.js',
+  project + '/.gitignore'
 ];
 dstFiles.forEach(function(file, i) {
-	if (!isFile(file)) {
-		mkdir(path.dirname(file));
-		var readStream = fs.createReadStream(path.normalize(sourceFiles[i]));
-		var writeStream = fs.createWriteStream(path.normalize(file));
-		readStream.pipe(writeStream);
-		readStream.on('end', function() {});
-	}
+  if (!isFile(file)) {
+    mkdir(path.dirname(file));
+    var readStream = fs.createReadStream(path.normalize(sourceFiles[i]));
+    var writeStream = fs.createWriteStream(path.normalize(file));
+    readStream.pipe(writeStream);
+    readStream.on('end', function() {});
+  }
 });
 
 child_process.exec('"' + nodePath + '" ' + path.normalize(project + '/www/index.js'));
@@ -87,8 +87,8 @@ child_process.exec('"' + nodePath + '" ' + path.normalize(project + '/www/index.
 //打开浏览器
 var exec = 'open';
 if (os.platform() === 'win32') {
-	exec = 'start';
+  exec = 'start';
 }
 setTimeout(function(){
-	child_process.exec(exec + ' http://127.0.0.1:8360');
+  child_process.exec(exec + ' http://127.0.0.1:8360');
 }, 1000);
