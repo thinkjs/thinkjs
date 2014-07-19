@@ -25,7 +25,12 @@ start() {
   if [ ! -z $pid ]; then
     echo 'server is already running'
   else
-    nohup $NODE $DIR/www/index.js 2>&1 &
+    nohup $NODE $DIR/www/index.js>/dev/null 2>&1 &
+    # 或者加输出到 Log 文件
+    # LOG='./App/Runtime/Log/rsuccess.log'
+    # ERROR='./App/Runtime/Log/rerror.log'
+    # nohup $NODE $DIR/index.js>>$LOG 2>>$ERROR &
+    echo $! > $PID_FILE
     echo 'server is running'
   fi
 }
