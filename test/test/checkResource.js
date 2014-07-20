@@ -45,14 +45,38 @@ describe('CheckResourceBehavior', function(){
       done();
     })
   })
-  it('pathname is static file', function(done){
+  it('pathname is static js file', function(done){
     var fn = res.end;
     res.end = function(){
       res.end = fn;
       done();
     }
+    var fn1 = res.setHeader;
+    res.setHeader = function(name, value){
+      if (name === 'Content-Type') {
+        assert.strictEqual(value, 'application/javascript; charset=utf8');
+      };
+      res.setHeader = fn1;
+    }
     getTestPromise({
       pathname: 'resource/js/1.js'
+    })
+  })
+  it('pathname is static css file', function(done){
+    var fn = res.end;
+    res.end = function(){
+      res.end = fn;
+      done();
+    }
+    var fn1 = res.setHeader;
+    res.setHeader = function(name, value){
+      if (name === 'Content-Type') {
+        assert.strictEqual(value, 'text/css; charset=utf8');
+      };
+      res.setHeader = fn1;
+    }
+    getTestPromise({
+      pathname: 'resource/css/1.css'
     })
   })
   it('pathname is not static file', function(){
