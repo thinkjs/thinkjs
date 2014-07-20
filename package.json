@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "A MVC Web Framework For Node.js",
-  "version": "0.6.11",
+  "version": "0.6.13",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
