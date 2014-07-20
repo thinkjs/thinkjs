@@ -77,17 +77,22 @@ describe('Session', function(){
     })
   })
   it('Session type memory, debug mode', function(done){
+    var fn = console.log;
+    console.log = function(){}
     instance.then(function(http){
       delete http.session;
       C('session_type', '');
       APP_DEBUG = true;
       Session.start(http);
       assert.equal(http.session.key.length, 32);
-      assert.equal(C('session_type'), 'File')
+      assert.equal(C('session_type'), 'File');
+      console.log = fn;
       done();
     })
   })
   it('Session type memory, cluster mode', function(done){
+    var fn = console.log;
+    console.log = function(){}
     instance.then(function(http){
       delete http.session;
       C('session_type', '');
@@ -95,6 +100,7 @@ describe('Session', function(){
       Session.start(http);
       assert.equal(http.session.key.length, 32);
       assert.equal(C('session_type'), 'File')
+      console.log = fn;
       done();
     })
   })
