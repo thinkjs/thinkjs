@@ -57,6 +57,10 @@ describe('Filter', function(){
     var data = Filter("id asc,name xxx", 'order');
     assert.equal(data, 'id asc');
   })
+  it('filter order obj ', function(){
+    var data = Filter({}, 'order');
+    assert.equal(data, '');
+  })
 
   it('filter id 0', function(){
     var data = Filter(0, 'id');
@@ -99,6 +103,44 @@ describe('Filter', function(){
   it('filter ids {}', function(){
     var data = Filter({}, 'ids');
     assert.equal(JSON.stringify(data), '[]');
+  })
+
+  it('filter in', function(){
+    var data = Filter(1, 'in', 1);
+    assert.equal(data, true);
+  })
+  it('filter in, false', function(){
+    var data = Filter(2, 'in', 1);
+    assert.equal(data, '');
+  })
+  it('filter in 1', function(){
+    var data = Filter(1, 'in', [1]);
+    assert.equal(data, 1);
+  })
+  it('filter strs empty', function(){
+    var data = Filter('', 'strs');
+    assert.deepEqual(data, []);
+  })
+  it('filter strs not array', function(){
+    var data = Filter({}, 'strs');
+    assert.deepEqual(data, []);
+  })
+  it('filter strs value', function(){
+    var data = Filter('1,2', 'strs');
+    assert.deepEqual(data, [1, 2]);
+  })
+  it('filter strs value 1', function(){
+    var data = Filter('1, 2', 'strs');
+    assert.deepEqual(data, [1, 2]);
+  })
+  it('filter strs value 2', function(){
+    var data = Filter('1 2', 'strs', ' ');
+    assert.deepEqual(data, [1, 2]);
+  })
+
+  it('filter xxxx', function(){
+    var data = Filter('1 2', 'xxxx');
+    assert.deepEqual(data, false);
   })
 
 
