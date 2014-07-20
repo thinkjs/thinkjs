@@ -26,7 +26,7 @@ req.url = '/index/index/name/welefen?test=welefen&value=1111';
 var res = new http.ServerResponse(req);
 var instance = Http(req, res).run();
 
-describe('Route', function(){
+describe('CheckRouteBehavior', function(){
   var promise = instance;
   it('url_route_on off', function(done){
     C('url_route_on', false)
