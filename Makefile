@@ -2,20 +2,22 @@ TESTS = test/test/*.js
 REPORTER = spec
 TIMEOUT = 10000
 MOCHA_OPTS =
+ISTANBUL = ./node_modules/.bin/istanbul
+MOCHA = ./node_modules/mocha/bin/_mocha
 
 install:
 	@npm install
 
 test: install
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
-	--reporter $(REPORTER) \
+		--reporter $(REPORTER) \
 		--timeout $(TIMEOUT) \
 		$(MOCHA_OPTS) \
 		$(TESTS)
 	@NODE_ENV=test ./node_modules/jshint/bin/jshint lib/
 
 test-cov:
-	@URLRAR_COV=1 $(MAKE) test MOCHA_OPTS='--require blanket -R html-cov > coverage.html'
+	@$(ISTANBUL) cover --report html $(MOCHA) -- -t $(TIMEOUT) -R spec $(TESTS)
 
 test-all: test test-cov
 

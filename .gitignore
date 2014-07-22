@@ -4,3 +4,4 @@ diff
 log
 npm-debug.log
 test/App/Runtime/Cache/
+coverage
