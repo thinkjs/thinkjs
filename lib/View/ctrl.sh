@@ -14,10 +14,13 @@ usage() {
 
 get_pid() {
   if [ -f $PID_FILE ]; then
-    echo `cat $PID_FILE`
+    PID=$(cat $PID_FILE);
+    EXIST=$(ps axu | grep node | awk '{print $2}' | grep $PID | wc -l);
+    if test $EXIST -gt 0;then
+      echo `cat $PID_FILE`
+    fi
   fi
 }
-
 # start app
 start() {
   pid=`get_pid`
@@ -37,8 +40,10 @@ stop() {
     echo 'server not running'
   else
     echo "server is stopping ..."
-    kill -15 $pid
-    rm -rf $PID_FILE;
+    kill -15 $pid;
+    if [ -f $PID_FILE ];then
+      rm -rf $PID_FILE;
+    fi
     echo "server stopped !"
   fi
 }
