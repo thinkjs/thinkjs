@@ -24,17 +24,11 @@
     "websocket": "1.0.8"
   },
   "devDependencies": {
-    "blanket": "1.1.6",
     "should": "4.0.4",
     "jshint": "2.5.1",
     "mocha": "1.20.1",
-    "muk": "0.3.1"
-  },
-  "config": {
-    "blanket": {
-      "pattern": "/thinkjs/lib/",
-      "data-cover-never": "node_modules"
-    }
+    "muk": "0.3.1",
+    "istanbul": "*"
   },
   "keywords": [
     "thinkjs",
