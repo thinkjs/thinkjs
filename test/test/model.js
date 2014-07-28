@@ -712,10 +712,8 @@ describe('Model', function(){
         })
       })
       it('where field not exist', function(done){
-        model.where({idxxx: 10}).select().then(function(){
-          var sql = model.getLastSql().trim();
-          //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+        model.where({idxxx: 10}).select().catch(function(err){
+          assert.equal(err.message, 'idxxx is not valid');
           done();
         })
       })
