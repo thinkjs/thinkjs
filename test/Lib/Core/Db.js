@@ -1,14 +1,35 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+var path = require('path');
+var fs = require('fs')
+
+global.APP_PATH = path.normalize(__dirname + '/../../App');
+global.RESOURCE_PATH = path.normalize(__dirname + '/../../www')
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../../index.js'));
+
 
 var MysqlSocket = thinkRequire('MysqlSocket');
 
+var clearRequireCache = function(){
+  for(var name in require.cache){
+    delete require.cache[name];
+  }
+}
+
 beforeEach(function(){
   muk(MysqlSocket.prototype, 'query', function(sql){
-    if(sql.indexOf('SHOW COLUMNS ') > -1){
+    if (sql === 'SHOW COLUMNS FROM `meinv_friend`') {
+      var data = [{"Field":"id","Type":"int(11) unsigned", "Default":null,"Extra":""},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
+      return getPromise(data);
+    }else if (sql === 'SHOW COLUMNS FROM `meinv_cate`') {
+      var data = [{"Field":"wid","Type":"int(11) unsigned", "Null":"NO","Key":"PRI", "Default":null,"Extra":""},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
+      return getPromise(data);
+    }else if (sql === 'SHOW COLUMNS FROM `meinv_tag`') {
+      var data = [{"Field":"wid","Type":"int(11) unsigned", "Extra":""},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
+      return getPromise(data);
+    }else if(sql.indexOf('SHOW COLUMNS ') > -1){
       var data = [{"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
       return getPromise(data);
     }
@@ -17,46 +38,150 @@ beforeEach(function(){
   })
 });
 describe('Model', function(){
+  C('db_prefix', 'meinv_');
   var model = D('Group');
 
-  describe('common', function(){
-    it('getModelName', function(){
-      var name = model.getModelName();
-      assert.equal(name, 'Group')
+  describe('init', function(){
+    it('undefined name', function(){
+      var model = D();
+      assert.equal(model.name, "");
     })
-    it('tablePrefix', function(){
-      var tablePrefix = model.tablePrefix;
-      assert.equal(tablePrefix, 'meinv_')
+    it('config is string', function(){
+      var model = D('Group', 'test_');
+      assert.equal(model.tablePrefix, 'test_');
     })
+    it('prototype tablePrefix is set', function(){
+      thinkRequire('Model').__prop.tablePrefix = 'meinv_';
+      var model = D('Group');
+      assert.equal(model.tablePrefix, 'meinv_');
+    })
+  })
+
+  describe('initDb', function(){
+    var model = D('Group');
     it('configKey', function(){
-      model.initDb();
-      assert.equal(model.configKey, '9d4568c009d203ab10e33ea9953a0264')
+      var db = model.initDb();
+      assert.equal(db !== null, true);
+      assert.equal(model.configKey, '9d4568c009d203ab10e33ea9953a0264');
     })
+  })
+
+  describe('getModelName', function(){
+    it('this.name', function(){
+      assert.equal(model.getModelName(), 'Group');
+    })
+    it('this.__filename', function(){
+      var model = D();
+      assert.equal(model.getModelName(), '')
+    })
+    it('__filename', function(){
+      var model = D();
+      model.__filename = '';
+      model.name  = '';
+      assert.equal(model.getModelName(), '')
+    })
+  })
+
+  describe('getTableName', function(){
     it('getTableName', function(){
-      var getTableName = model.getTableName();
-      assert.equal(getTableName, 'meinv_group')
+      assert.equal(model.getTableName(), 'meinv_group');
+      assert.equal(model.getTableName(), 'meinv_group');
     })
+    it('getTableName 1', function(){
+      var model = D('Group');
+      model.tablePrefix = '';
+      assert.equal(model.getTableName(), 'group')
+    })
+  })
+
+  describe('getTableFields', function(){
     it('getTableFields', function(done){
-      model.getTableFields().then(function(data){
-        assert.equal(data.join(','), 'id,title,cate_id,cate_no,md5,width,height,pic_nums,view_nums,content,date,is_hide,is_safe')
+      model.getTableFields().then(function(fields){
+        assert.deepEqual(fields, [ 'id', 'title', 'cate_id', 'cate_no', 'md5', 'width', 'height', 'pic_nums', 'view_nums', 'content', 'date', 'is_hide', 'is_safe' ]);
         done();
       })
     })
+    it('getTableFields cache', function(done){
+      model.fields = {};
+      model.getTableFields().then(function(fields){
+        assert.deepEqual(fields, [ 'id', 'title', 'cate_id', 'cate_no', 'md5', 'width', 'height', 'pic_nums', 'view_nums', 'content', 'date', 'is_hide', 'is_safe' ]);
+        done();
+      })
+    })
+    it('getTableFields 1', function(done){
+      model.getTableFields(true).then(function(fields){
+        //console.log(fields)
+        assert.deepEqual(fields, { _field:    [ 'id',     'title',     'cate_id',     'cate_no',     'md5',     'width',     'height',     'pic_nums',     'view_nums',     'content',     'date',     'is_hide',     'is_safe' ],  _autoinc: true,  _unique: [ 'title' ],  _pk: 'id',  _type:    { id: 'int(11) unsigned',     title: 'varchar(255)',     cate_id: 'tinyint(255)',     cate_no: 'int(11)',     md5: 'varchar(255)',     width: 'int(11)',     height: 'int(11)',     pic_nums: 'int(11)',     view_nums: 'int(11)',     content: 'text',     date: 'int(11)',     is_hide: 'tinyint(11)',     is_safe: 'tinyint(11)' } });
+        done();
+      })
+    })
+    it('getTableFields 2', function(done){
+      model.fields = {};
+      model.getTableFields(true).then(function(fields){
+        //console.log(fields)
+        assert.deepEqual(fields, { _field:    [ 'id',     'title',     'cate_id',     'cate_no',     'md5',     'width',     'height',     'pic_nums',     'view_nums',     'content',     'date',     'is_hide',     'is_safe' ],  _autoinc: true,  _unique: [ 'title' ],  _pk: 'id',  _type:    { id: 'int(11) unsigned',     title: 'varchar(255)',     cate_id: 'tinyint(255)',     cate_no: 'int(11)',     md5: 'varchar(255)',     width: 'int(11)',     height: 'int(11)',     pic_nums: 'int(11)',     view_nums: 'int(11)',     content: 'text',     date: 'int(11)',     is_hide: 'tinyint(11)',     is_safe: 'tinyint(11)' } });
+        done();
+      })
+    })
+    it('getTableFields 3', function(done){
+      var model = D('Group');
+      thinkRequire('Model').clearTableFieldsCache();
+      model.getTableFields(true).then(function(fields){
+        //console.log(fields)
+        assert.deepEqual(fields, { _field: [ 'id',     'title',     'cate_id',     'cate_no',     'md5',     'width',     'height',     'pic_nums',     'view_nums',     'content',     'date',     'is_hide',     'is_safe' ],  _autoinc: true,  _unique: [ 'title' ],  _pk: 'id',  _type:    { id: 'int(11) unsigned',     title: 'varchar(255)',     cate_id: 'tinyint(255)',     cate_no: 'int(11)',     md5: 'varchar(255)',     width: 'int(11)',     height: 'int(11)',     pic_nums: 'int(11)',     view_nums: 'int(11)',     content: 'text',     date: 'int(11)',     is_hide: 'tinyint(11)',     is_safe: 'tinyint(11)' } });
+        done();
+      })
+    })
+    it('getTableFields 4', function(done){
+      var model = D('Group');
+      thinkRequire('Model').clearTableFieldsCache();
+      C('db_fields_cache', false)
+      model.getTableFields(true).then(function(fields){
+        //console.log(fields)
+        assert.deepEqual(fields, { _field:    [ 'id',     'title',     'cate_id',     'cate_no',     'md5',     'width',     'height',     'pic_nums',     'view_nums',     'content',     'date',     'is_hide',     'is_safe' ],  _autoinc: true,  _unique: [ 'title' ],  _pk: 'id',  _type:    { id: 'int(11) unsigned',     title: 'varchar(255)',     cate_id: 'tinyint(255)',     cate_no: 'int(11)',     md5: 'varchar(255)',     width: 'int(11)',     height: 'int(11)',     pic_nums: 'int(11)',     view_nums: 'int(11)',     content: 'text',     date: 'int(11)',     is_hide: 'tinyint(11)',     is_safe: 'tinyint(11)' } });
+        done();
+      })
+    })
+
+  })
+
+  describe('flushFields', function(){
     it('flushFields', function(done){
-      model.flushFields().then(function(data){
-        assert.equal(JSON.stringify(data), '{"_field":["id","title","cate_id","cate_no","md5","width","height","pic_nums","view_nums","content","date","is_hide","is_safe"],"_autoinc":true,"_unique":["title"],"_pk":"id","_type":{"id":"int(11) unsigned","title":"varchar(255)","cate_id":"tinyint(255)","cate_no":"int(11)","md5":"varchar(255)","width":"int(11)","height":"int(11)","pic_nums":"int(11)","view_nums":"int(11)","content":"text","date":"int(11)","is_hide":"tinyint(11)","is_safe":"tinyint(11)"}}')
+      model.flushFields().then(function(fields){
+        assert.deepEqual(fields, { _field:    [ 'id',     'title',     'cate_id',     'cate_no',     'md5',     'width',     'height',     'pic_nums',     'view_nums',     'content',     'date',     'is_hide',     'is_safe' ],  _autoinc: true,  _unique: [ 'title' ],  _pk: 'id',  _type:    { id: 'int(11) unsigned',     title: 'varchar(255)',     cate_id: 'tinyint(255)',     cate_no: 'int(11)',     md5: 'varchar(255)',     width: 'int(11)',     height: 'int(11)',     pic_nums: 'int(11)',     view_nums: 'int(11)',     content: 'text',     date: 'int(11)',     is_hide: 'tinyint(11)',     is_safe: 'tinyint(11)' } });
         done();
       })
     })
-    it('getPk', function(done){
-      model.getTableFields().then(function(){
-        var pk = model.getPk();
-        assert.equal(pk, 'id');
+    it('flushFields no primary', function(done){
+      D('Friend').flushFields().then(function(fields){
+        //console.log(fields)
+        assert.deepEqual(fields,{ _field:    [ 'id',     'title',     'cate_id',     'cate_no',     'md5',     'width',     'height',     'pic_nums',     'view_nums',     'content',     'date',     'is_hide',     'is_safe' ],  _autoinc: false,  _unique: [ 'title' ],  _type:    { id: 'int(11) unsigned',     title: 'varchar(255)',     cate_id: 'tinyint(255)',     cate_no: 'int(11)',     md5: 'varchar(255)',     width: 'int(11)',     height: 'int(11)',     pic_nums: 'int(11)',     view_nums: 'int(11)',     content: 'text',     date: 'int(11)',     is_hide: 'tinyint(11)',     is_safe: 'tinyint(11)' } });
         done();
       })
     })
   })
 
+describe('getPk', function(){
+  it('getPk cate', function(done){
+    D('Cate').getPk().then(function(pk){
+      assert.equal(pk, 'wid');
+      done();
+    })
+  })
+  it('getPk tag', function(done){
+    D('Tag').getPk().then(function(pk){
+      assert.equal(pk, 'id');
+      done();
+    })
+  })
+  it('getPk tag 1', function(done){
+    var model = D('Tag')
+    model.getPk().then(function(){
+      assert.equal(model.getPk(), 'id');
+      done();
+    })
+  })
+})
 
 
   describe('select', function(){
@@ -491,6 +616,10 @@ describe('Model', function(){
           assert.equal(sql, 'SELECT * FROM `meinv_xxx`')
           done();
         })
+      })
+      it('table', function(done){
+        assert.equal(model.table(), model);
+        done();
       })
       it('table arr', function(done){
         model.table('xxx', true).select().then(function(){

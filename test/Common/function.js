@@ -1,17 +1,35 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+var path = require('path');
+var fs = require('fs');
+
+global.APP_PATH = path.normalize(__dirname + '/../App');
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../index.js'));
 
 describe('getThinkRequirePath', function(){
+  it('getThinkRequirePath("AdvModel") with APP_DEBUG', function(done){
+    global.APP_DEBUG = true;
+    var path = getThinkRequirePath('AdvModel');
+    assert.equal(path.indexOf('AdvModel.js') > -1, true);
+    global.APP_DEBUG = false;
+    done();
+  })
   it('getThinkRequirePath("Model")', function(){
     var path = getThinkRequirePath('Model');
     assert.equal(path.indexOf('lib/Lib/Core/Model.js') > -1, true);
   })
+  it('getThinkRequirePath("notExistModule") with APP_DEBUG', function(){
+    global.APP_DEBUG = true;
+    var path = getThinkRequirePath('notExistModule');
+    //console.log(path)
+    assert.equal(path, '');
+    global.APP_DEBUG = false;
+  })
   it('getThinkRequirePath("notExistModule")', function(){
     var path = getThinkRequirePath('notExistModule');
-    assert.equal(path, undefined);
+    assert.equal(path, '');
   })
 })
 
@@ -29,6 +47,11 @@ describe('thinkRequire', function(){
       module = thinkRequire('modulenotexist');
     }catch(e){}
     assert.equal(module, '')
+  })
+  it('thinkRequire("/fasdf")', function(){
+    var filePath = getThinkRequirePath('Controller');
+    var controller = thinkRequire(filePath);
+    assert.equal(isFunction(controller), true)
   })
   var list = [
     'Controller', 'App', 'Behavior', 'Cache', 'Db', 
@@ -61,6 +84,16 @@ describe('inherits from base Class', function(){
   })
 })
 
+describe('aliasImport', function(){
+  it('aliasImport string', function(){
+    aliasImport('test', 'path/to/test');
+    assert.equal(getThinkRequirePath('test'), 'path/to/test');
+  })
+  it('aliasImport obj', function(){
+    aliasImport({test: 'path/to/test1'});
+    assert.equal(getThinkRequirePath('test'), 'path/to/test1')
+  })
+})
 
 describe('B', function(){
   it('B()', function(){
@@ -92,7 +125,7 @@ describe('B', function(){
 describe('C', function(){
   it('C("db_host") = "localhost"', function(){
     var host = C('db_host');
-    assert.equal(host, 'localhost');
+    assert.equal(host, '127.0.0.1');
   })
   it('C("one.two") = undefined', function(){
     assert.equal(C('one.two'), undefined)
@@ -111,7 +144,7 @@ describe('C', function(){
   })
   it('C()', function(){
     var data = C();
-    assert.equal(data.db_host, 'localhost');
+    assert.equal(data.db_host, '127.0.0.1');
     assert.equal(data.db_type, 'mysql');
     assert.equal(data.port, 8360)
   })
@@ -149,6 +182,13 @@ describe('F', function(){
     F('welefen', 'suredy', DATA_PATH + '/xxx/other');
     var value = F('welefen', undefined, DATA_PATH + '/xxx/other');
     assert.equal(value, 'suredy')
+  })
+  it('F() file no content', function(){
+    var filePath = path.normalize(__dirname + '/../App/Runtime/Data/a.json');
+    mkdir(path.dirname(filePath));
+    fs.writeFileSync(filePath, '');
+    var value = F('a');
+    assert.equal(value, false)
   })
 })
 
@@ -190,12 +230,27 @@ describe('tag', function(){
       done();
     })
   })
+  it('tag return value', function(done){
+    C('tag.testtag', [function(){
+      return 'testtag'
+    }]);
+    http.then(function(http){
+      return tag('testtag', http)
+    }).then(function(data){
+      assert.equal(data, 'testtag');
+      done();
+    })
+  })
 })
 
 
 describe('A', function(){
   var http = thinkRequire('Http').getDefaultHttp('/index/index');
   http = thinkRequire('Http')(http.req, http.res).run();
+  var filepath = path.normalize(__dirname + '/../App/Lib/Controller/Home/IndexController.js');
+  mkdir(path.dirname(filepath));
+  fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return "welefen"}})')
+
   it('A("home:index:test")', function(done){
     var ret = A('home:index:test', http);
     ret.then(function(value){
@@ -203,6 +258,9 @@ describe('A', function(){
       done();
     })
   })
+  var filepath = path.normalize(__dirname + '/../App/Lib/Controller/Home/TestController.js');
+  mkdir(path.dirname(filepath));
+  fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return "test:test"},otherAction: function(){return {"name":"welefen"}}})')
   it('A("home:test:test")', function(done){
     var ret = A('home:test:test', http);
     ret.then(function(value){
@@ -213,36 +271,19 @@ describe('A', function(){
   it('A("home:test:other")', function(done){
     var ret = A('home:test:other', http, 'welefen');
     ret.then(function(value){
-      assert.equal(value, '{"name":"welefen"}')
+      assert.deepEqual(value, {"name":"welefen"})
       done();
     })
   })
-  it('A("home:test:other") 1', function(done){
-    var ret = A('home:test:other', http, ['welefen', 'suredy']);
-    ret.then(function(value){
-      assert.equal(value, '{"name":"welefen","value":"suredy"}')
-      done();
-    })
+  it('A("home:test1:other")', function(done){
+    var ret = A('home:test1:other', http, 'welefen');
+    assert.equal(ret, undefined);
+    done();
   })
-  it('A("admin:index:test") 1', function(done){
-    var ret = A('admin:index:test', http, ['welefen', 'suredy']);
-    ret.then(function(value){
-      assert.equal(value, 'admin:index:test')
-      done();
-    })
-  })
-  it('A("admin:index")', function(){
-    var ret = A('admin:index', http, ['welefen', 'suredy']);
-    assert.equal(isFunction(ret.get), true);
-    assert.equal(isFunction(ret.post), true);
-  })
-  it('A("admin:xxxxx")', function(){
-    var ret = A('admin:xxxxx', http, ['welefen', 'suredy']);
-    assert.equal(ret, null);
-  })
-  it('A("admin:xxxxx:test")', function(){
-    var ret = A('admin:xxxxx:test', http, ['welefen', 'suredy']);
-    assert.equal(ret, null);
+  it('A("home:test")', function(done){
+    var ret = A('home:test', http, 'welefen');
+    assert.equal(isFunction(ret.otherAction), true)
+    done();
   })
 })
 
@@ -253,6 +294,9 @@ describe('D', function(){
     assert.equal(model instanceof Model, true)
   })
   it('D("User").hasFile = function', function(){
+    var filepath = path.normalize(__dirname + '/../App/Lib/Model/UserModel.js');
+    mkdir(path.dirname(filepath))
+    fs.writeFileSync(filepath, 'module.exports = Model({testName: "welefen", hasFile: function(){return true;}})')
     var model = D('User');
     assert.equal(isFunction(model.hasFile), true);
   })
@@ -285,7 +329,7 @@ describe('M', function(){
     var Model = thinkRequire('Model');
     assert.equal(model instanceof Model, true)
   })
-  it('D("User").hasFile = undefined', function(){
+  it('M("User").hasFile = undefined', function(){
     var model = M('User');
     assert.equal(model.hasFile, undefined);
   })
@@ -394,6 +438,26 @@ describe('S', function(){
         done();
       })
     })
+    it('Node.js mem, cache function', function(done){
+      S('name', 'welefen', true).then(function(){
+        return S('name', function(){
+          return 'welefen cache'
+        });
+      }).then(function(value){
+        assert.equal(value, 'welefen');
+        done();
+      })
+    })
+    it('Node.js mem, cache function 1', function(done){
+      S('name', 'welefen', true).then(function(){
+        return S('name1', function(){
+          return 'welefen cache'
+        });
+      }).then(function(value){
+        assert.equal(value, 'welefen cache');
+        done();
+      })
+    })
     it('Node.js mem, cache json', function(done){
       S('json', {name: 'welefen'}, true).then(function(){
         return S('json', undefined, true);
@@ -461,3 +525,11 @@ describe('L', function(){
 })
 
 
+
+//删除缓存文件
+//异步删除，不能在after里操作
+describe('rm tmp files', function(){
+  it('rm tmp files', function(done){
+    rmdir(path.normalize(__dirname + '/../App')).then(done)
+  })
+})

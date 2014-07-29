@@ -3,8 +3,11 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+
+global.APP_PATH = path.normalize(__dirname + '/../App');
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../index.js'));
+
 
 describe('Const', function(){
   var consts = [

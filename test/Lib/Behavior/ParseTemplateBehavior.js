@@ -1,8 +1,12 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+var path = require('path');
+var fs = require('fs');
+
+global.APP_PATH = path.normalize(__dirname + '/../../App');
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../../index.js'));
 
 
 var Http = thinkRequire('Http');
@@ -25,7 +29,7 @@ req.httpVersion = '1.1';
 req.url = '/index/index/name/welefen?test=welefen&value=1111';
 var res = new http.ServerResponse(req);
 var instance = Http(req, res).run();
-describe('CheckResourceBehavior', function(){
+describe('ParseTemplateBehavior', function(){
   var httpInstance;
   function getTestPromise(file, vars){
     return instance.then(function(http){
@@ -38,6 +42,10 @@ describe('CheckResourceBehavior', function(){
   }
   it('no template engine', function(done){
     C('tpl_engine_type', '');
+
+    var filepath = path.normalize(__dirname + '/../../App/View/Home/index_index.html');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'hello, thinkjs!')
     getTestPromise(VIEW_PATH + '/Home/index_index.html').then(function(content){
       assert.equal(content, 'hello, thinkjs!');
       done();
@@ -66,3 +74,11 @@ describe('CheckResourceBehavior', function(){
   })
 
 });
+
+//删除缓存文件
+//异步删除，不能在after里操作
+describe('rm tmp files', function(){
+  it('rm tmp files', function(done){
+    rmdir(path.normalize(__dirname + '/../../App')).then(done)
+  })
+})

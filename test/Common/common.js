@@ -1,11 +1,10 @@
-/**
- * lib/Common/common.js里函数的测试
- */
-require('../../lib/Common/common.js');
+
 var fs = require('fs');
 var should = require('should');
 var assert = require('assert');
 var path = require('path');
+
+require(path.normalize(__dirname + '/../../lib/Common/common.js'));
 
 /**
  * 动态创建类
@@ -15,7 +14,7 @@ describe('Class', function(){
   var A = Class(function(){
     return {
       init: function(){
-
+        return 'init';
       },
       value: 'A',
       fn: function(){},
@@ -24,6 +23,12 @@ describe('Class', function(){
       },
       fn4: function(){
         return this.value;
+      },
+      test: function(name){
+        return name;
+      },
+      test1: function(name, value){
+        return [name, value];
       },
       data: {
         name: 'CLASS A'
@@ -72,6 +77,9 @@ describe('Class', function(){
   var b = B();
   var c = C();
   var d = D();
+  var F = Class();
+  var f = F();
+
   it('a.value = "A"', function(){
     assert.equal(a.value, 'A');
   })
@@ -124,6 +132,19 @@ describe('Class', function(){
   it('b.fn6() = undefined', function(){
     assert.equal(b.fn6(), undefined)
   })
+  it('b.super("test")', function(){
+    assert.equal(b.super('test', 'welefen'), 'welefen')
+  })
+  it('b.super("test1")', function(){
+    assert.deepEqual(b.super('test1', ['welefen', 'suredy']), ['welefen', 'suredy'])
+  })
+  it('new A', function(){
+    var a = A();
+    assert.deepEqual(a.__initReturn, 'init')
+  })
+  it('f __initReturn', function(){
+    assert.equal(f.__initReturn, undefined);
+  })
 })
 
 /**
@@ -143,15 +164,15 @@ describe('extend', function(){
   }
   it('a stringify1', function(){
     extend(a, b);
-    assert.equal(JSON.stringify(a), '{"name":1}');
+    assert.deepEqual(a, {"name":1});
   })
   it('a stringify2', function(){
     extend(a, c);
-    assert.equal(JSON.stringify(a), '{"name":2,"value":"value"}')
+    assert.deepEqual(a, {"name":2,"value":"value"})
   })
   it('a stringify3', function(){
     extend(a, d);
-    assert.equal(JSON.stringify(a), '{"name":{"name":1},"value":{"value":2}}')
+    assert.deepEqual(a, {"name":{"name":1},"value":{"value":2}})
   })
   it('a.name.name is 1', function(){
     d.name.name = 2;
@@ -166,7 +187,7 @@ describe('extend', function(){
   it('a.name stringify', function(){
     a = {};
     extend(a, e);
-    assert.equal(JSON.stringify(a), '{"name":[1,2,3]}')
+    assert.deepEqual(a, {"name":[1,2,3]})
   })
   it('a.name[0] is 3', function(){
     a = {};
@@ -178,6 +199,32 @@ describe('extend', function(){
     a = {};
     extend(a, f);
     assert.equal(a.name, 5);
+  })
+  it('extend array', function(){
+    var a = [];
+    var b = [1, 2, 3];
+    extend(a, b)
+    assert.deepEqual(a, [1, 2, 3])
+  })
+  it('extend empty', function(){
+    var a = extend();
+    assert.deepEqual(a, {})
+  })
+  it('extend source empty', function(){
+    var a = extend({}, false);
+    assert.deepEqual(a, {})
+  })
+  it('extend array', function(){
+    var a = extend({name: [1]}, {name: [1, 2, 3]});
+    assert.deepEqual(a, {name: [1, 2, 3]})
+  })
+  it('extend obj', function(){
+    var a = extend({name: {value: 'welefen'}}, {name: {value: 'suredy'}});
+    assert.deepEqual(a, {name: {value: 'suredy'}})
+  })
+  it('extend obj with undefined', function(){
+    var a = extend({}, {name: undefined, value: undefined});
+    assert.deepEqual(a, {});
   })
 })
 
@@ -419,6 +466,12 @@ describe('isEmpty', function(){
 describe('isScalar', function(){
   it('isScalar(1) = true', function(){
     assert.equal(isScalar(1), true);
+  })
+  it('isScalar("1") = true', function(){
+    assert.equal(isScalar("1"), true);
+  })
+  it('isScalar(true) = true', function(){
+    assert.equal(isScalar(true), true);
   })
 })
 /**
@@ -750,6 +803,22 @@ describe('rmdir', function(){
     rmdir(dir).catch(function(err){
       assert.equal(err.message, 'path error');
       fs.rmdir = fn;
+      rmdir(dir).then(function(){
+        done();
+      })
+    })
+  });
+  it('unlink error', function(done){
+    var dir = __dirname + '/fawerfasdfasdfwer/';
+    var fn = fs.unlink;
+    fs.unlink = function(p, callback){
+      callback && callback(new Error('unlink error'));
+    }
+    mkdir(dir);
+    fs.writeFileSync(dir + 'a.txt', 'welefen')
+    rmdir(dir).catch(function(err){
+      assert.equal(err.message, 'unlink error');
+      fs.unlink = fn;
       rmdir(dir).then(function(){
         done();
       })

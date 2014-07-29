@@ -1,8 +1,11 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+var path = require('path');
+
+global.APP_PATH = path.normalize(__dirname + '/../App');
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../../index.js'));
 
 
 var Http = thinkRequire('Http');
@@ -119,6 +122,29 @@ describe('CheckRouteBehavior', function(){
         groupId: '1111',
         page: 2,
         name: 'welefen'
+      });
+      done();
+    })
+  })
+  it('reg rule match with extra pars 1', function(done){
+    C('url_route_rules', [
+      [/^(?:group|zhuanji)\/(\d{8})\/([1-9]\d+)(?:_(\d+))?/,  'group/detail?date=:1&groupId=:2&page=:3'], 
+    ])
+    var httpInstance;
+    promise.then(function(http){
+      httpInstance = http;
+      http.pathname = 'group/20140807/1111/name/welefen/value';
+      http.get = {
+        page: 2
+      };
+      return B('CheckRoute', http);
+    }).then(function(data){
+      assert.deepEqual(httpInstance.get, {
+        date: '20140807',
+        groupId: '1111',
+        page: 2,
+        name: 'welefen',
+        value: ''
       });
       done();
     })
@@ -423,6 +449,47 @@ describe('CheckRouteBehavior', function(){
       console.log(err)
     })
   })
+  it('string rule with :user_id', function(done){
+    C('url_route_rules', [
+      ['user/:user_id',  'index/index?user_id=:1'], 
+    ])
+    var httpInstance;
+    promise.then(function(http){
+      httpInstance = http;
+      http.pathname = 'user/1111';
+      http.get = {};
+      return B('CheckRoute', http);
+    }).then(function(data){
+      assert.deepEqual(httpInstance.get, { user_id: '1111' });
+      assert.equal(httpInstance.group, 'Home');
+      assert.equal(httpInstance.controller, 'Index');
+      assert.equal(httpInstance.action, 'index');
+      done();
+    }).catch(function(err){
+      console.log(err)
+    })
+  })
+  it('string rule with :user_id', function(done){
+    C('url_route_rules', [
+      ['user/:user_id',  'index/index?user_id=:1&page=:2'], 
+    ])
+    var httpInstance;
+    promise.then(function(http){
+      httpInstance = http;
+      http.pathname = 'user/1111';
+      http.get = {};
+      return B('CheckRoute', http);
+    }).then(function(data){
+      assert.equal(httpInstance.group, 'Home');
+      assert.equal(httpInstance.controller, 'Index');
+      assert.equal(httpInstance.action, 'index');
+      console.log(httpInstance.get)
+      assert.deepEqual(httpInstance.get, {user_id: 1111, page: ''})
+      done();
+    }).catch(function(err){
+      console.log(err)
+    })
+  })
   it('string rule with :user_id extra pars', function(done){
     C('url_route_rules', [
       ['user/:user_id',  'index/index'], 
@@ -476,7 +543,53 @@ describe('CheckRouteBehavior', function(){
       done();
     })
   })
-
-
+  it('string rule 111/222', function(done){
+    C('url_route_rules', [
+      ['user/111/222',  'index/index'], 
+    ])
+    var httpInstance;
+    promise.then(function(http){
+      httpInstance = http;
+      http.pathname = 'user/111';
+      http.get = {};
+      return B('CheckRoute', http);
+    }).then(function(data){
+      assert.equal(data, false)
+      done();
+    })
+  })
+  it('string rule 111/222 with extra par', function(done){
+    C('url_route_rules', [
+      ['user/111',  'index/index'], 
+    ])
+    var httpInstance;
+    promise.then(function(http){
+      httpInstance = http;
+      http.pathname = 'user/111/name';
+      http.get = {};
+      return B('CheckRoute', http);
+    }).then(function(data){
+      assert.equal(data, true);
+      assert.deepEqual(httpInstance.get, {
+        name: ''
+      });
+      done();
+    })
+  })
+  it('string rule 111/222 with no route', function(done){
+    C('url_route_rules', [
+      ['user/111',  ''], 
+    ])
+    var httpInstance;
+    promise.then(function(http){
+      httpInstance = http;
+      http.pathname = 'user/111/name';
+      http.get = {};
+      return B('CheckRoute', http);
+    }).then(function(data){
+      assert.equal(data, false);
+      done();
+    })
+  })
 
 })

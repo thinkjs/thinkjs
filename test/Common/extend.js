@@ -1,6 +1,7 @@
-require('../../lib/Common/extend.js');
-
+var path = require('path');
 var assert = require('assert');
+
+require(path.normalize(__dirname + '/../../lib/Common/extend.js'));
 
 describe('Object.values', function(){
   it('Object.values({}) = []', function(){

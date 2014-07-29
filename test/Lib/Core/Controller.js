@@ -1,8 +1,14 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+var path = require('path');
+var fs = require('fs')
+
+
+global.APP_PATH = path.normalize(__dirname + '/../../App');
+global.RESOURCE_PATH = path.normalize(__dirname + '/../../www')
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../../index.js'));
 
 
 var Http = thinkRequire('Http');
@@ -522,7 +528,14 @@ describe('Controller', function(){
       done();
     })
   })
+
+
   it('instance.fetch("home:index:index")', function(done){
+    var filepath = path.normalize(__dirname + '/../../App/View/Home/index_index.html');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'hello, thinkjs!')
+
+
     promise.then(function(instance){
       instance.fetch('home:index:index').then(function(content){
         assert.equal(content, 'hello, thinkjs!');
@@ -573,7 +586,18 @@ describe('Controller', function(){
       instance.display('index:index');
     })
   })
+
+
   it('instance.action("index:test")', function(done){
+    var filepath = path.normalize(__dirname + '/../../App/View/Home/index_test.html');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'welefen')
+    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/IndexController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return this.fetch("index:test")}})')
+
+
+
     promise.then(function(instance){
       instance.http.group = 'home';
       instance.action('index:test').then(function(content){
@@ -583,6 +607,15 @@ describe('Controller', function(){
     })
   })
   it('instance.action("test:test")', function(done){
+    var filepath = path.normalize(__dirname + '/../../App/View/Home/test_test.html');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'test:test')
+    
+    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/TestController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return this.fetch("test:test")}})')
+
+
     promise.then(function(instance){
       instance.http.group = 'home';
       instance.action('test:test').then(function(content){
@@ -591,16 +624,46 @@ describe('Controller', function(){
       })
     })
   })
-  it('instance.action("test:other")', function(done){
+  it('instance.action("test1:other")', function(done){
+    
+    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/Test1Controller.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({otherAction: function(name, value){return {name: name, value: value};}})')
+
+
     promise.then(function(instance){
       instance.http.group = 'home';
-      instance.action('test:other', ['name', 'value']).then(function(content){
-        assert.equal(content, '{"name":"name","value":"value"}');
+      instance.action('test1:other', ['name', 'value']).then(function(content){
+        //console.log(content, 'welefen')
+        assert.deepEqual(content, {"name":"name","value":"value"});
         //console.log(content)
         done();
+      }).catch(function(err){
+        console.log(err)
       })
     })
   })
+  it('instance.action("test2:other")', function(done){
+    
+    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/Test2Controller.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({otherAction: function(name){return {name: name};}})')
+
+
+    promise.then(function(instance){
+      instance.http.group = 'home';
+      instance.action('test2:other', 'welefen').then(function(content){
+        //console.log(content, 'welefen')
+        assert.deepEqual(content, {"name":"welefen"});
+        //console.log(content)
+        done();
+      }).catch(function(err){
+        console.log(err)
+      })
+    })
+  })
+
+
 
   it('instance.jsonp()', function(done){
     promise.then(function(instance){
@@ -918,6 +981,9 @@ describe('Controller', function(){
       instance.type('xxxfasdfasdfasdfxxx');
     })
   })
+
+
+
   it('instance.download(file)', function(done){
     promise.then(function(instance){
       var fn = instance.http.res.setHeader;
@@ -928,12 +994,12 @@ describe('Controller', function(){
           assert.equal(value, 'application/javascript; charset=utf8');
         };
         if (name === 'Content-Disposition') {
-          assert.equal(value, 'attachment; filename="index.js"');
+          assert.equal(value, 'attachment; filename="Controller.js"');
           instance.http.res.setHeader = fn;
           done();
         }
       }
-      instance.download(ROOT_PATH + '/index.js');
+      instance.download(path.normalize(__filename));
     })
   })
   it('instance.download(file, type)', function(done){
@@ -947,12 +1013,12 @@ describe('Controller', function(){
           assert.equal(value, 'image/png; charset=utf8');
         };
         if (name === 'Content-Disposition') {
-          assert.equal(value, 'attachment; filename="index.js"');
+          assert.equal(value, 'attachment; filename="Controller.js"');
           instance.http.res.setHeader = fn;
           done();
         }
       }
-      instance.download(ROOT_PATH + '/index.js', 'png');
+      instance.download(path.normalize(__filename), 'png');
     })
   })
   it('instance.download(file, type)', function(done){
@@ -966,12 +1032,12 @@ describe('Controller', function(){
           assert.equal(value, 'png/xxx; charset=utf8');
         };
         if (name === 'Content-Disposition') {
-          assert.equal(value, 'attachment; filename="index.js"');
+          assert.equal(value, 'attachment; filename="Controller.js"');
           instance.http.res.setHeader = fn;
           done();
         }
       }
-      instance.download(ROOT_PATH + '/index.js', 'png/xxx');
+      instance.download(path.normalize(__filename), 'png/xxx');
     })
   })
   it('instance.download(file, filename)', function(done){
@@ -991,7 +1057,7 @@ describe('Controller', function(){
           done();
         }
       }
-      instance.download(ROOT_PATH + '/index.js', 'a.png');
+      instance.download(path.normalize(__filename), 'a.png');
     })
   })
   it('instance.download(file, type, filename)', function(done){
@@ -1011,9 +1077,12 @@ describe('Controller', function(){
           done();
         }
       }
-      instance.download(ROOT_PATH + '/index.js', 'png', 'a.png');
+      instance.download(path.normalize(__filename), 'png', 'a.png');
     })
   })
+
+
+
   it('instance.success()', function(done){
     promise.then(function(instance){
       var fn = instance.http.res.write;
@@ -1205,4 +1274,12 @@ describe('Controller', function(){
     })
   })
 
+})
+
+//删除缓存文件
+//异步删除，不能在after里操作
+describe('rm tmp files', function(){
+  it('rm tmp files', function(done){
+    rmdir(path.normalize(__dirname + '/../../App')).then(done)
+  })
 })

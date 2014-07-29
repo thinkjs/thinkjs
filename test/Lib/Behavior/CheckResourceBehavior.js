@@ -1,8 +1,13 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
-process.argv[2] = '/'; //命中命令行模式
-require('../www/index.js');
+var path = require('path');
+var fs = require('fs');
+
+global.APP_PATH = path.normalize(__dirname + '/../../App');
+global.RESOURCE_PATH = path.normalize(__dirname + '/../../www')
+process.execArgv.push('--no-app');
+require(path.normalize(__dirname + '/../../../index.js'));
 
 
 var Http = thinkRequire('Http');
@@ -58,8 +63,31 @@ describe('CheckResourceBehavior', function(){
       };
       res.setHeader = fn1;
     }
+    var filepath = path.normalize(__dirname + '/../../www/resource/js/1.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'var a = 1;')
     getTestPromise({
       pathname: 'resource/js/1.js'
+    })
+  })
+  it('pathname is static js file', function(done){
+    var fn = res.end;
+    res.end = function(){
+      res.end = fn;
+      done();
+    }
+    var fn1 = res.setHeader;
+    res.setHeader = function(name, value){
+      if (name === 'Content-Type') {
+        assert.strictEqual(value, 'application/javascript; charset=utf8');
+      };
+      res.setHeader = fn1;
+    }
+    var filepath = path.normalize(__dirname + '/../../www/resource/js/1.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'var a = 1;')
+    getTestPromise({
+      pathname: '/resource/js/1.js'
     })
   })
   it('pathname is static css file', function(done){
@@ -75,11 +103,14 @@ describe('CheckResourceBehavior', function(){
       };
       res.setHeader = fn1;
     }
+    var filepath = path.normalize(__dirname + '/../../www/resource/css/1.css');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'a{color:red}')
     getTestPromise({
       pathname: 'resource/css/1.css'
     })
   })
-  it('pathname is not static file', function(){
+  it('pathname is not static file', function(done){
     var fn = res.end;
     res.end = function(){
       res.end = fn;
@@ -89,5 +120,22 @@ describe('CheckResourceBehavior', function(){
     getTestPromise({
       pathname: 'resource/js/1fasdfasf.js'
     });
+  })
+  it('pathname is not resource', function(done){
+    getTestPromise({
+      pathname: '/fasdf/fsadfasf'
+    }).then(function(data){
+      assert.strictEqual(data, false);
+      done();
+    })
+  })
+})
+
+
+//删除缓存文件
+//异步删除，不能在after里操作
+describe('rm tmp files', function(){
+  it('rm tmp files', function(done){
+    rmdir(path.normalize(__dirname + '/../../www')).then(done)
   })
 })
