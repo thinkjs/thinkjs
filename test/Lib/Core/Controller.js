@@ -346,6 +346,13 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.userAgent() empty', function(done){
+    promise.then(function(instance){
+      delete instance.http.headers['user-agent']
+      assert.equal(instance.userAgent(), '');
+      done();
+    })
+  })
   it('instance.referer()', function(done){
     promise.then(function(instance){
       //console.log(instance.userAgent());
@@ -596,11 +603,25 @@ describe('Controller', function(){
     mkdir(path.dirname(filepath));
     fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return this.fetch("index:test")}})')
 
-
-
     promise.then(function(instance){
       instance.http.group = 'home';
       instance.action('index:test').then(function(content){
+        assert.equal(content, 'welefen');
+        done();
+      })
+    })
+  })
+  it('instance.action("home:index:test")', function(done){
+    var filepath = path.normalize(__dirname + '/../../App/View/Home/index_test.html');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'welefen')
+    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/IndexController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return this.fetch("index:test")}})')
+
+    promise.then(function(instance){
+      instance.http.group = 'home';
+      instance.action('home:index:test').then(function(content){
         assert.equal(content, 'welefen');
         done();
       })
@@ -789,7 +810,6 @@ describe('Controller', function(){
   })
   it('instance.status(500)', function(done){
     promise.then(function(instance){
-      instance.http.res.headersSent = false;
       instance.http.res._header = '';
       instance.status(500);
       var status = instance.http.res.statusCode;
@@ -797,8 +817,20 @@ describe('Controller', function(){
       done();
     })
   })
+  it('instance.status(500) headersSent', function(done){
+    promise.then(function(instance){
+      instance.http.res._header = {};
+      instance.http.res.statusCode = 200;
+      instance.status(500);
+      var status = instance.http.res.statusCode;
+      //console.log(status)
+      assert.equal(status, 200);
+      done();
+    })
+  })
   it('instance.deny()', function(done){
     promise.then(function(instance){
+      instance.http.res._header = '';
       instance.deny();
       var status = instance.http.res.statusCode;
       assert.equal(status, 403);
@@ -807,9 +839,20 @@ describe('Controller', function(){
   })
   it('instance.deny(401)', function(done){
     promise.then(function(instance){
+      instance.http.res._header = '';
       instance.deny(401);
       var status = instance.http.res.statusCode;
       assert.equal(status, 401);
+      done();
+    })
+  })
+  it('instance.deny(401) headersSent', function(done){
+    promise.then(function(instance){
+      instance.http.res._header = {};
+      instance.http.res.statusCode = 200;
+      instance.deny(401);
+      var status = instance.http.res.statusCode;
+      assert.equal(status, 200);
       done();
     })
   })
@@ -903,6 +946,23 @@ describe('Controller', function(){
       instance.echo(new Buffer(120));
     })
   })
+  it('instance.echo(buffer)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.write = function(content, encoding){
+        //console.log(content, encoding)
+        assert.equal(isBuffer(content), true);
+        //assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.write = fn;
+        C('auto_send_content_type', true)
+        done();
+      }
+      C('auto_send_content_type', false)
+      instance.echo(new Buffer(120));
+    })
+  })
   it('instance.end()', function(done){
     promise.then(function(instance){
       var fn = instance.http.res.end;
@@ -979,6 +1039,21 @@ describe('Controller', function(){
         done();
       }
       instance.type('xxxfasdfasdfasdfxxx');
+    })
+  })
+  it('instance.type("text/html") with charset', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res._header = '';
+      instance.http.cthIsSend = false;
+      instance.http.res.setHeader = function(name, value){
+        //console.log(value)
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'text/html; charset=utf8');
+        instance.http.res.setHeader = fn;
+        done();
+      }
+      instance.type('text/html; charset=utf8');
     })
   })
 
@@ -1273,7 +1348,13 @@ describe('Controller', function(){
       done();
     })
   })
-
+  it('set,ok,fail is function', function(){
+    promise.then(function(instance){
+      assert.equal(isFunction(instance.set), true)
+      assert.equal(isFunction(instance.ok), true)
+      assert.equal(isFunction(instance.fail), true)
+    })
+  })
 })
 
 //删除缓存文件
