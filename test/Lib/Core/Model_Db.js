@@ -39,7 +39,7 @@ beforeEach(function(){
   })
 });
 
-describe('Model', function(){
+describe('Model_Db', function(){
   C('db_prefix', 'meinv_');
   var model = D('Group');
 

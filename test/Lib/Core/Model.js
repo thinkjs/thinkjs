@@ -18,7 +18,7 @@ var clearRequireCache = function(){
   }
 }
 
-beforeEach(function(){
+before(function(){
   muk(MysqlSocket.prototype, 'query', function(sql){
     if (sql === 'SHOW COLUMNS FROM `meinv_friend`') {
       var data = [
@@ -427,13 +427,13 @@ describe('Model', function(){
     it('table', function(){
       var model = D('tag');
       model.table('welefen');
-      assert.equal(model._options.table, 'welefen');
+      assert.equal(model._options.table, 'meinv_welefen');
     })
     it('table with prefix', function(){
       C('db_prefix', 'meinv_')
       var model = D('tag');
       model.table('welefen', true);
-      assert.equal(model._options.table, 'meinv_welefen');
+      assert.equal(model._options.table, 'welefen');
     })
     it('table return value', function(){
       var model = D('Tag');
@@ -523,7 +523,7 @@ describe('Model', function(){
     it('table', function(done){
       D('Tag').table('welefen').parseOptions().then(function(options){
         //console.log(options)
-        assert.deepEqual(options, { table: 'welefen', tablePrefix: 'meinv_', model: 'Tag' })
+        assert.deepEqual(options, { table: 'meinv_welefen', tablePrefix: 'meinv_', model: 'Tag' })
         done();
       })
     })
@@ -1461,6 +1461,6 @@ describe('Model', function(){
 
 
 });
-afterEach(function(){
+after(function(){
   muk.restore();
 })
