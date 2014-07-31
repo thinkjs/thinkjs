@@ -18,80 +18,83 @@ var clearRequireCache = function(){
   }
 }
 
-before(function(){
-  muk(MysqlSocket.prototype, 'query', function(sql){
-    if (sql === 'SHOW COLUMNS FROM `meinv_friend`') {
+describe('before', function(){
+  it('before', function(){
+    console.log('Model before')
+    muk(MysqlSocket.prototype, 'query', function(sql){
+      if (sql === 'SHOW COLUMNS FROM `meinv_friend`') {
+        var data = [
+          {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
+          {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return getPromise(data);
+      }else if (sql === 'SHOW COLUMNS FROM `meinv_cate`') {
+        var data = [
+          {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
+          {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return getPromise(data);
+      }else if (sql === 'SHOW COLUMNS FROM `meinv_tag`') {
+        var data = [
+          {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
+          {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return getPromise(data);
+      }else if (sql === 'SHOW COLUMNS FROM `meinv_user`') {
+        var data = [
+          {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
+          {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return getPromise(data);
+      }else if (sql === 'SHOW COLUMNS FROM `meinv_type`') {
+        var data = [
+          {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
+          {"Field":"flo","Type":"float(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return getPromise(data);
+      }else if(sql.indexOf('SHOW COLUMNS ') > -1){
+        var data = [
+          {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":""},
+          {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return getPromise(data);
+      }else if (sql.indexOf("SELECT * FROM `meinv_type` WHERE ( `flo` = 0 ) LIMIT 1") > -1) {
+        return getPromise([]);
+      }else if (sql.indexOf('SELECT COUNT(meinv_tag.wid) AS thinkjs_count FROM `meinv_tag` LIMIT 1') > -1) {
+        return getPromise([{
+          thinkjs_count: 100
+        }])
+      }else if (sql.indexOf("SELECT `wid` FROM `meinv_group` LIMIT 2")> -1) {
+        return getPromise([
+          {"id":7565,"title":"米兰达·可儿干练服装写真大片","cate_id":1,"cate_no":0},
+          {"id":7564,"title":"[Beautyleg]2014.05.21 No.977 Cindy","cate_id":2,"cate_no":977}
+        ])
+      };
       var data = [
-        {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
-        {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-        {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
-        {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
-      ];
-      return getPromise(data);
-    }else if (sql === 'SHOW COLUMNS FROM `meinv_cate`') {
-      var data = [
-        {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
-        {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-        {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
-        {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
-      ];
-      return getPromise(data);
-    }else if (sql === 'SHOW COLUMNS FROM `meinv_tag`') {
-      var data = [
-        {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
-        {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-        {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
-        {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
-      ];
-      return getPromise(data);
-    }else if (sql === 'SHOW COLUMNS FROM `meinv_user`') {
-      var data = [
-        {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
-        {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-        {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
-        {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
-      ];
-      return getPromise(data);
-    }else if (sql === 'SHOW COLUMNS FROM `meinv_type`') {
-      var data = [
-        {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
-        {"Field":"flo","Type":"float(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-        {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":"1","Extra":""},
-        {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
-      ];
-      return getPromise(data);
-    }else if(sql.indexOf('SHOW COLUMNS ') > -1){
-      var data = [
-        {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":""},
-        {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-        {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
-        {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
-      ];
-      return getPromise(data);
-    }else if (sql.indexOf("SELECT * FROM `meinv_type` WHERE ( `flo` = 0 ) LIMIT 1") > -1) {
-      return getPromise([]);
-    }else if (sql.indexOf('SELECT COUNT(meinv_tag.wid) AS thinkjs_count FROM `meinv_tag` LIMIT 1') > -1) {
-      return getPromise([{
-        thinkjs_count: 100
-      }])
-    }else if (sql.indexOf("SELECT `wid` FROM `meinv_group` LIMIT 2")> -1) {
-      return getPromise([
         {"id":7565,"title":"米兰达·可儿干练服装写真大片","cate_id":1,"cate_no":0},
-        {"id":7564,"title":"[Beautyleg]2014.05.21 No.977 Cindy","cate_id":2,"cate_no":977}
-      ])
-    };
-    var data = [
-      {"id":7565,"title":"米兰达·可儿干练服装写真大片","cate_id":1,"cate_no":0},
-      {"id":7564,"title":"[Beautyleg]2014.05.21 No.977 Cindy","cate_id":2,"cate_no":977},
-      {"id":7563,"title":"[DISI第四印象]2014.05.21 NO.281","cate_id":7,"cate_no":281},
-      {"id":7562,"title":"[PANS写真]2014-05-20 NO.242 小倩 套图","cate_id":6,"cate_no":242},
-      {"id":7561,"title":"[ROSI写真]2014.05.20 NO.896","cate_id":3,"cate_no":896},
-      {"id":7560,"title":"[ROSI写真]2014.05.21 NO.897","cate_id":3,"cate_no":897},
-      {"id":7559,"title":"[ROSI写真]2014.05.22 NO.898","cate_id":3,"cate_no":898},
-      {"id":7558,"title":"[ru1mm写真] 2014-05-20 NO.151","cate_id":17,"cate_no":151},
-      {"id":7557,"title":"[ru1mm写真] 2014-05-22 NO.152","cate_id":17,"cate_no":152}
-    ]
-    return getPromise(data);
+        {"id":7564,"title":"[Beautyleg]2014.05.21 No.977 Cindy","cate_id":2,"cate_no":977},
+        {"id":7563,"title":"[DISI第四印象]2014.05.21 NO.281","cate_id":7,"cate_no":281},
+        {"id":7562,"title":"[PANS写真]2014-05-20 NO.242 小倩 套图","cate_id":6,"cate_no":242},
+        {"id":7561,"title":"[ROSI写真]2014.05.20 NO.896","cate_id":3,"cate_no":896},
+        {"id":7560,"title":"[ROSI写真]2014.05.21 NO.897","cate_id":3,"cate_no":897},
+        {"id":7559,"title":"[ROSI写真]2014.05.22 NO.898","cate_id":3,"cate_no":898},
+        {"id":7558,"title":"[ru1mm写真] 2014-05-20 NO.151","cate_id":17,"cate_no":151},
+        {"id":7557,"title":"[ru1mm写真] 2014-05-22 NO.152","cate_id":17,"cate_no":152}
+      ]
+      return getPromise(data);
+    })
   })
 });
 describe('Model', function(){
@@ -1461,6 +1464,8 @@ describe('Model', function(){
 
 
 });
-after(function(){
-  muk.restore();
+describe('after', function(){
+  it('after', function(){
+    muk.restore();
+  })
 })

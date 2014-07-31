@@ -1,4 +1,4 @@
-TESTS = test/Lib/Core/Model.js
+TESTS = test/Lib/Core/*.js
 REPORTER = spec
 TIMEOUT = 10000
 MOCHA_OPTS =
