@@ -3,10 +3,11 @@
 var should = require('should');
 var assert = require('assert');
 var muk = require('muk');
+var path = require('path')
 
-global.APP_PATH = path.normalize(__dirname + '/../App');
+global.APP_PATH = path.normalize(__dirname + '/../../App');
 process.execArgv.push('--no-app');
-require(path.normalize(__dirname + '/../../index.js'));
+require(path.normalize(__dirname + '/../../../index.js'));
 
 
 describe('Const', function(){

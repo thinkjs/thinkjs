@@ -483,7 +483,6 @@ describe('CheckRouteBehavior', function(){
       assert.equal(httpInstance.group, 'Home');
       assert.equal(httpInstance.controller, 'Index');
       assert.equal(httpInstance.action, 'index');
-      console.log(httpInstance.get)
       assert.deepEqual(httpInstance.get, {user_id: 1111, page: ''})
       done();
     }).catch(function(err){

@@ -20,7 +20,6 @@ var clearRequireCache = function(){
 
 describe('before', function(){
   it('before', function(){
-    console.log('Model before')
     muk(MysqlSocket.prototype, 'query', function(sql){
       if (sql === 'SHOW COLUMNS FROM `meinv_friend`') {
         var data = [
