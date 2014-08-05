@@ -82,6 +82,9 @@ describe('Cookie', function(){
     it('ignore non values', function() {
       assert.deepEqual({ foo: '%1', bar: 'bar' }, Cookie.parse('foo=%1;bar=bar;HttpOnly;Secure'));
     });
+    it('multi name', function() {
+      assert.deepEqual({ foo: '%1'}, Cookie.parse('foo=%1;foo=bar;HttpOnly;Secure'));
+    });
 
     it('unencoded', function() {
       //console.log(Cookie.parse('foo="bar=123456789&name=Magic+Mouse"'))

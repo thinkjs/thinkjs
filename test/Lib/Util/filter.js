@@ -103,6 +103,10 @@ describe('Filter', function(){
     var data = Filter('1,2', 'ids');
     assert.equal(JSON.stringify(data), '[1,2]');
   })
+  it('filter ids "1,2,0"', function(){
+    var data = Filter('1,2,0', 'ids');
+    assert.equal(JSON.stringify(data), '[1,2]');
+  })
   it('filter ids {}', function(){
     var data = Filter({}, 'ids');
     assert.equal(JSON.stringify(data), '[]');
