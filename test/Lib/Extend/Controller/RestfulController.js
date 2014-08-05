@@ -69,11 +69,11 @@ describe('before', function(){
 
 
 describe('Restful', function(){
-  C('url_route_rules', [
-    [/^(\w+)(?:\/(\d+))?/,  'RESTFUL'], 
-  ]);
   var httpInstance;
   function getTestPromise(obj){
+    C('url_route_rules', [
+      [/^(\w+)(?:\/(\d+))?/,  'RESTFUL'], 
+    ]);
     return instance.then(function(http){
       for(var name in obj){
         http[name] = obj[name];
