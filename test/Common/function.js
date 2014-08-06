@@ -149,7 +149,7 @@ describe('C', function(){
     assert.equal(data.port, 8360)
   })
   it('C(null)', function(){
-    data = C();
+    var data = C();
     C(null);
     assert.equal(C('db_host'), undefined)
     assert.equal(C('db_type'), undefined);
@@ -195,11 +195,6 @@ describe('F', function(){
 describe('tag', function(){
   var http = thinkRequire('Http').getDefaultHttp('/index/index');
   http = thinkRequire('Http')(http.req, http.res).run();
-  // it('all tags', function(done){
-  //   var tags = C('tag');
-  //   assert.equal(JSON.stringify(tags), '{"app_init":[],"form_parse":[null],"path_info":[],"resource_check":["CheckResource"],"route_check":["CheckRoute"],"app_begin":["ReadHtmlCache"],"action_init":[],"view_init":[],"view_template":["LocationTemplate"],"view_parse":["ParseTemplate"],"view_filter":[],"view_end":["WriteHtmlCache"],"action_end":[],"app_end":[null]}')
-  //   done();
-  // })
   it('tags not found', function(done){
     tag('xxxx', http).then(function(data){
       assert.equal(data, undefined)
@@ -247,21 +242,23 @@ describe('tag', function(){
 describe('A', function(){
   var http = thinkRequire('Http').getDefaultHttp('/index/index');
   http = thinkRequire('Http')(http.req, http.res).run();
-  var filepath = path.normalize(__dirname + '/../App/Lib/Controller/Home/IndexController.js');
-  mkdir(path.dirname(filepath));
-  fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return "welefen"}})')
 
   it('A("home:index:test")', function(done){
+    var filepath = path.normalize(__dirname + '/../App/Lib/Controller/Home/IndexController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return "welefen"}})')
+
     var ret = A('home:index:test', http);
     ret.then(function(value){
       assert.equal(value, 'welefen')
       done();
     })
   })
-  var filepath = path.normalize(__dirname + '/../App/Lib/Controller/Home/TestController.js');
-  mkdir(path.dirname(filepath));
-  fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return "test:test"},otherAction: function(){return {"name":"welefen"}}})')
   it('A("home:test:test")', function(done){
+    var filepath = path.normalize(__dirname + '/../App/Lib/Controller/Home/TestController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({testAction: function(){return "test:test"},otherAction: function(){return {"name":"welefen"}}})')
+    
     var ret = A('home:test:test', http);
     ret.then(function(value){
       assert.equal(value, 'test:test')
@@ -277,8 +274,10 @@ describe('A', function(){
   })
   it('A("home:test1:other")', function(done){
     var ret = A('home:test1:other', http, 'welefen');
-    assert.equal(ret, undefined);
-    done();
+    ret.catch(function(err){
+      assert.equal(isError(err), true)
+      done()
+    })
   })
   it('A("home:test")', function(done){
     var ret = A('home:test', http, 'welefen');

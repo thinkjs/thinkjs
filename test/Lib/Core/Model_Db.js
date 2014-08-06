@@ -743,8 +743,28 @@ describe('getPk', function(){
       it('group by view_nums', function(done){
         model.group('view_nums').select().then(function(){
           var sql = model.getLastSql().trim();
-          //console.log(sql)
           assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY `view_nums`')
+          done();
+        })
+      })
+      it('group by view_nums has alias', function(done){
+        model.group('c.view_nums').select().then(function(){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY c.`view_nums`')
+          done();
+        })
+      })
+      it('group by multi', function(done){
+        model.group('id,view_nums').select().then(function(){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY `id`,`view_nums`')
+          done();
+        })
+      })
+      it('group by multi alias', function(done){
+        model.group('c.id,c.view_nums').select().then(function(){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY c.`id`,c.`view_nums`')
           done();
         })
       })

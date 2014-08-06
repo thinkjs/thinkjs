@@ -1,7 +1,7 @@
-TESTS = test/Lib/Core/*.js
+TESTS = test/
 REPORTER = spec
 TIMEOUT = 10000
-MOCHA_OPTS =
+MOCHA_OPTS = --recursive
 ISTANBUL = ./node_modules/.bin/istanbul
 MOCHA = ./node_modules/mocha/bin/_mocha
 
@@ -17,7 +17,7 @@ test: install
 	@NODE_ENV=test ./node_modules/jshint/bin/jshint lib/
 
 test-cov:
-	@$(ISTANBUL) cover --report html $(MOCHA) -- -t $(TIMEOUT) -R spec $(TESTS)
+	@$(ISTANBUL) cover --report html $(MOCHA) -- -t $(TIMEOUT) --recursive -R spec $(TESTS)
 
 test-all: test test-cov
 

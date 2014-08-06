@@ -105,6 +105,16 @@ describe('Valid', function(){
     var ret = Valid(data);
     assert.equal(isEmpty(ret), true)
   })
+  it('Valid length 3', function(){
+    var data = {
+      name: 'welefen',
+      value: undefined,
+      valid: 'length',
+      msg: "length 1-3"
+    }
+    var ret = Valid(data);
+    assert.equal(isEmpty(ret), true)
+  })
   it('Valid email', function(){
     var data = {
       name: 'welefen',

@@ -506,8 +506,8 @@ describe('Controller', function(){
     promise.then(function(instance){
       var data = instance.assign()
       assert.equal(isEmpty(data), false)
-      assert.deepEqual(data.config, C());
-      assert.deepEqual(data.http, instance.http)
+      assert.equal(isEmpty(data.config), false)
+      assert.equal(isEmpty(data.http), false)
       done();
     })
   })
@@ -645,19 +645,17 @@ describe('Controller', function(){
       })
     })
   })
-  it('instance.action("test1:other")', function(done){
+  it('instance.action("test10:other")', function(done){
     
-    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/Test1Controller.js');
+    var filepath = path.normalize(__dirname + '/../../App/Lib/Controller/Home/Test10Controller.js');
     mkdir(path.dirname(filepath));
     fs.writeFileSync(filepath, 'module.exports = Controller({otherAction: function(name, value){return {name: name, value: value};}})')
 
-
     promise.then(function(instance){
       instance.http.group = 'home';
-      instance.action('test1:other', ['name', 'value']).then(function(content){
-        //console.log(content, 'welefen')
+      console.log('test1')
+      instance.action('test10:other', ['name', 'value']).then(function(content){
         assert.deepEqual(content, {"name":"name","value":"value"});
-        //console.log(content)
         done();
       }).catch(function(err){
         console.log(err)
