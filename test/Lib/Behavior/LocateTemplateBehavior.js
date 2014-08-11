@@ -29,7 +29,7 @@ req.httpVersion = '1.1';
 req.url = '/index/index/name/welefen?test=welefen&value=1111';
 var res = new http.ServerResponse(req);
 var instance = Http(req, res).run();
-describe('LocationTemplateBehavior', function(){
+describe('LocateTemplateBehavior', function(){
   var httpInstance;
   function getTestPromise(file){
     return instance.then(function(http){
@@ -37,7 +37,7 @@ describe('LocationTemplateBehavior', function(){
       http.group = 'Index';
       http.controller = 'Index';
       http.action = 'index'
-      return B('LocationTemplate', http, file);
+      return B('LocateTemplate', http, file);
     })
   }
   it('empty file', function(done){

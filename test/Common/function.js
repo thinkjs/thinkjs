@@ -58,7 +58,7 @@ describe('thinkRequire', function(){
     'Dispatcher', 'Filter', 'Http', 'Model', 
     'Session', 'Think', 'Valid', 'View', 'Cookie', 'WebSocket',
     'AdvModel', 'CheckResourceBehavior', 'CheckRouteBehavior',
-    'DenyIpBehavior', 'LocationTemplateBehavior', 'ParseTemplateBehavior',
+    'DenyIpBehavior', 'LocateTemplateBehavior', 'ParseTemplateBehavior',
     'ReadHtmlCacheBehavior', 'WriteHtmlCacheBehavior', 'FileCache',
     'MemcacheCache', 'MysqlDb', 'DbSession', 'FileSession', 'MemcacheSocket',
     'MysqlSocket', 'EjsTemplate', 'RestController'
