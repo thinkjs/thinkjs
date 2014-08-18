@@ -143,9 +143,10 @@ describe('Cache', function(){
   })
   it('gc not expired', function(){
     var instance = Cache({updateExpire: true});
-    instance.cacheData = {name: {expire: Date.now() + 1000000, data: {}}};
+    var now = Date.now();
+    instance.cacheData = {name: {expire: now + 1000000, data: {}}};
     instance.gc(1);
-    assert.deepEqual(instance.cacheData, {name: {expire: Date.now() + 1000000, data: {}}})
+    assert.deepEqual(instance.cacheData, {name: {expire: now + 1000000, data: {}}})
   })
   it('gc expired', function(){
     var instance = Cache({updateExpire: true});
