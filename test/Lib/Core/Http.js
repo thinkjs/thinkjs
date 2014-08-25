@@ -135,7 +135,7 @@ describe('Http', function(){
         done();
       })
     })
-    it('setCookie', function(){
+    it('setCookie', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.setCookie('name', 'welefen');
         //console.log(http._cookie)
@@ -143,7 +143,7 @@ describe('Http', function(){
         done();
       })
     })
-    it('setCookie with timeout', function(){
+    it('setCookie with timeout', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.setCookie('name', 'welefen', 10000);
         //console.log(http._cookie)
@@ -152,7 +152,19 @@ describe('Http', function(){
         done();
       })
     })
-    it('setCookie, remove cookie', function(){
+    it('setCookie with timeout 1', function(done){
+      Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
+        var opts = {timeout: 20000};
+        http.setCookie('name', 'welefen', opts);
+        http.setCookie('name', 'welefen', opts);
+        //console.log(http._cookie)
+        assert.equal(http._cookie.name.expires !== undefined, true);
+        assert.equal(http._cookie.name.timeout, 20000);
+        assert.equal(http._cookie.name.expires instanceof Date, true)
+        done();
+      })
+    })
+    it('setCookie, remove cookie', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.setCookie('name', null);
         //console.log(http._cookie)
@@ -161,14 +173,14 @@ describe('Http', function(){
         done();
       })
     })
-    it('setCookie, with options', function(){
+    it('setCookie, with options', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.setCookie('name', 'welefen', {path: '/xxx/', Domain: 'welefen.com'});
         assert.deepEqual(http._cookie, {"name":{"path":"/xxx/","domain":"welefen.com","name":"name","value":"welefen"}})
         done();
       })
     })
-    it('sendCookie', function(){
+    it('sendCookie', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.setCookie('name', 'welefen', {path: '/xxx/', Domain: 'welefen.com'});
         var fn = http.res.setHeader;
@@ -182,13 +194,13 @@ describe('Http', function(){
         http.sendCookie();
       })
     })
-    it('sendCookie empty', function(){
+    it('sendCookie empty', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.sendCookie();
         done();
       })
     })
-    it('sendCookie multi', function(){
+    it('sendCookie multi', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.setCookie('name', 'welefen', {path: '/xxx/', Domain: 'welefen.com'});
         http.setCookie('value', 'suredy');
