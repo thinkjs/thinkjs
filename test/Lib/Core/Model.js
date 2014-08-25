@@ -289,6 +289,11 @@ describe('Model', function(){
     it('empty cache', function(){
       assert.equal(model, model.cache());
     })
+    it('cache key is true', function(){
+      var model = D('Tag');
+      model.cache(true);
+      assert.deepEqual(model._options.cache, { key: '', timeout: 3600, type: '', gcType: 'dbCache' });
+    })
     it('cache with key', function(){
       var model = D('Tag');
       model.cache('welefen');
