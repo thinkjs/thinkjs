@@ -418,7 +418,7 @@ describe('Model', function(){
       var model = D('Tag');
       model.field(['welefen', 'suredy'], true);
       assert.deepEqual(model._options.field, 'welefen,suredy');
-      assert.deepEqual(model._options.fieldReverse, true)
+      assert.deepEqual(model._options.fieldReverse, true);
     })
     it('field return value', function(){
       var model = D('Tag');
@@ -564,7 +564,7 @@ describe('Model', function(){
     })
     it('with where, invalid field', function(done){
       D('Tag').where({xxxx: 'welefen'}).parseOptions().catch(function(err){
-        assert.equal(err.message, 'xxxx is not valid')
+        assert.equal(err.message, 'field `xxxx` in where condition is not valid')
         done();
       })
     })
