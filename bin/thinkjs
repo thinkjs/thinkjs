@@ -18,7 +18,7 @@ require(path.normalize(__dirname + '/../lib/Common/common.js'));
 mkdir(project);
 
 var files = fs.readdirSync(project).filter(function(item){
-  if (item === '.git' || item === '.svn') {
+  if (item === '.git' || item === '.svn' || item === 'node_modules') {
     return;
   }
   return item;
