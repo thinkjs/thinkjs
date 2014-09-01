@@ -866,7 +866,7 @@ describe('getPk', function(){
       })
       it('where field not exist', function(done){
         model.where({idxxx: 10}).select().catch(function(err){
-          assert.equal(err.message, 'idxxx is not valid');
+          assert.equal(err.message, 'field `idxxx` in where condition is not valid');
           done();
         })
       })

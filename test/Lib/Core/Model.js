@@ -418,7 +418,7 @@ describe('Model', function(){
       var model = D('Tag');
       model.field(['welefen', 'suredy'], true);
       assert.deepEqual(model._options.field, 'welefen,suredy');
-      assert.deepEqual(model._options.fieldReverse, true)
+      assert.deepEqual(model._options.fieldReverse, true);
     })
     it('field return value', function(){
       var model = D('Tag');
@@ -564,7 +564,7 @@ describe('Model', function(){
     })
     it('with where, invalid field', function(done){
       D('Tag').where({xxxx: 'welefen'}).parseOptions().catch(function(err){
-        assert.equal(err.message, 'xxxx is not valid')
+        assert.equal(err.message, 'field `xxxx` in where condition is not valid')
         done();
       })
     })
@@ -577,7 +577,7 @@ describe('Model', function(){
     it('with field reverse', function(done){
       var model = D('Tag');
       model.field('title', true).parseOptions().then(function(options){
-        assert.deepEqual(options, {"field":"wid,cate_id,cate_no","fieldReverse":true,"table":"meinv_tag","tablePrefix":"meinv_","model":"Tag"});
+        assert.deepEqual(options, {"field":"wid,cate_id,cate_no","fieldReverse":false,"table":"meinv_tag","tablePrefix":"meinv_","model":"Tag"});
         assert.deepEqual(model._options, {})
         done();
       })
@@ -586,7 +586,7 @@ describe('Model', function(){
       var model = D('Tag');
       model.field('title', true).parseOptions(100).then(function(options){
         //console.log(options)
-        assert.deepEqual(options, {"field":"wid,cate_id,cate_no","fieldReverse":true,"table":"meinv_tag","tablePrefix":"meinv_","model":"Tag","where":{"wid":100}});
+        assert.deepEqual(options, {"field":"wid,cate_id,cate_no","fieldReverse":false,"table":"meinv_tag","tablePrefix":"meinv_","model":"Tag","where":{"wid":100}});
         assert.deepEqual(model._options, {})
         done();
       })
