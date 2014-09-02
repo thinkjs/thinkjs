@@ -187,12 +187,8 @@ describe('Dispatcher', function(){
       assert.equal(controller, 'Test');
     })
     it('controller invalid', function(){
-      try{
         var controller = Dispatcher.getController('==fasf');
-        assert.equal(1, 2);
-      }catch(err){
-        assert.equal(err.message, 'controller ==fasf is not valid')
-      }
+        assert.equal(controller, '');
     })
   })
   describe('Dispatcher.getAction', function(){
@@ -209,12 +205,8 @@ describe('Dispatcher', function(){
       assert.equal(action, 'TEST');
     })
     it('action invalid', function(){
-      try{
         var action = Dispatcher.getAction('====werwe');
-        assert.equal(1, 3)
-      }catch(err){
-        assert.equal(err.message, 'action ====werwe is not valid')
-      }
+        assert.equal(action, '')
     })
   })
 
