@@ -27,10 +27,10 @@ describe('before', function(){
         this.events[en] = cb;
       },
       write: function(cmd) {
-        if (cmd == 'set var1 31 0 3\r\n111\r\n') {
+        if (cmd == 'set var1 0 0 3\r\n111\r\n') {
           this.events.data.call(this, 'STORED\r\n');
         } else if (cmd == 'get var1\r\n') {
-          this.events.data.call(this, 'VALUE var1 31 3\r\n111\r\nEND\r\n');
+          this.events.data.call(this, 'VALUE var1 0 3\r\n111\r\nEND\r\n');
         } else if(cmd == 'delete var1\r\n') {
           this.events.data.call(this, 'DELETED\r\n');
         } else if(cmd == 'incr var1 1\r\n') {
@@ -43,18 +43,21 @@ describe('before', function(){
           this.events.data.call(this, '109\r\n');
         } else if(cmd == 'version\r\n') {
           this.events.data.call(this, 'VERSION 1.2.1\r\n');
+        } else if(cmd == 'get timeout\r\n') {
+          this.events.data.call(this, 'TIMEOUT\r\n');
         } else {
           this.events.data.call(this, 'NOT_FOUND\r\n');
         }
       },
       end: function() {
+        this.events.end.call(this);
         this.events.close.call(this);
       },
       timeout: function() {
         this.events.timeout.call(this);
       },
       error: function() {
-        this.events.error.call(this, new Error);
+        this.events.error.call(this, 'ERROR');
       },
       setTimeout: function() {},
       setNoDelay: function() {}
@@ -130,6 +133,16 @@ describe('MemcacheSocket', function(){
     })
   })
   
+  describe('handleError', function() {
+    it('error tag', function() {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      var res = socket.handleError('ERROR\r\n');
+      assert.deepEqual(res, [null, 7, 'ERROR']);
+      res = socket.handleError('ERROR');
+      assert.deepEqual(res, [null, 7, 'ERROR']);
+    })
+  })
+  
   describe('handleVersion', function() {
     it('version tag', function() {
       var socket = MemcacheSocket(8989, '127.0.0.1');
@@ -140,8 +153,15 @@ describe('MemcacheSocket', function(){
   
   describe('memcached CRUD', function() {
     var socket = MemcacheSocket(8989, '127.0.0.1');
-    it('set value', function(done) {
-      socket.store('var1', 111, 'set', '0', '31').then(function() {
+    it('set value 1', function(done) {
+      socket.store('var1', 111, 'set', '0', '0').then(function(value) {
+        assert.equal(value, 'STORED');
+        done();
+      })
+    })
+    it('set value 2', function(done) {
+      socket.store('var1', 111, 'set').then(function(value) {
+        assert.equal(value, 'STORED');
         done();
       })
     })
@@ -158,7 +178,8 @@ describe('MemcacheSocket', function(){
       })
     })
     it('delete value', function(done) {
-      socket.delete('var1').then(function() {
+      socket.delete('var1').then(function(value) {
+        assert.equal(value, 'DELETED');
         done();
       })
     })
@@ -195,6 +216,207 @@ describe('MemcacheSocket', function(){
     it('close connection', function() {
       socket.close();
       assert.equal(socket.handle, null);
+    })
+  })
+  
+  describe('extension methods', function() {
+    var socket = MemcacheSocket(8989, '127.0.0.1');
+    it('set', function(done) {
+      socket.set('var1', 111, '0', '0').then(function(value) {
+        assert.equal(value, 'STORED');
+        done();
+      })
+    })
+    it('add', function(done) {
+      socket.add('var1', 111, '0', '0').then(function(value) {
+        assert.equal(value, 'STORED');
+        done();
+      })
+    })
+    it('replace', function(done) {
+      socket.replace('var1', 111, '0', '0').then(function(value) {
+        assert.equal(value, 'STORED');
+        done();
+      })
+    })
+    it('append', function(done) {
+      socket.append('var1', 111, '0', '0').then(function(value) {
+        assert.equal(value, 'STORED');
+        done();
+      })
+    })
+    it('prepend', function(done) {
+      socket.prepend('var1', 111, '0', '0').then(function(value) {
+        assert.equal(value, 'STORED');
+        done();
+      })
+    })
+  })
+  
+  describe('memcached exception', function() {
+    it('timeout 1', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      muk(socket, 'handleData', function() {
+        socket.handle.timeout();
+      });
+      socket.get('timeout').catch(function(err) {
+        assert.equal(err, 'TIMEOUT');
+        done();
+      });
+    })
+    it('timeout 2', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.handle.timeout();
+      });
+      socket.on('timeout', function(err) {
+        done();
+      })
+      socket.connect();
+    })
+    it('timeout 3', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.callbacks.push({
+          type: 'simple'
+        });
+        socket.handle.timeout();
+      });
+      socket.on('timeout', function() {
+        done();
+      })
+      socket.connect();
+    })
+    it('close connection 1', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.callbacks.push({
+          type: 'simple',
+          callback: function(err) {
+            assert.equal(err, 'CONNECTION_CLOSED');
+            done();
+          }
+        });
+        socket.close();
+      });
+      socket.connect();
+    })
+    it('close connection 2', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.callbacks.push({
+          type: 'simple'
+        });
+        socket.close();
+      });
+      socket.on('close', function() {
+        assert.equal(socket.handle, null);
+        done();
+      })
+      socket.connect();
+    })
+    it('close connection 3', function() {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.close();
+      assert.equal(socket.handle, null);
+    })
+    it('server error 1', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.handle.error();
+      });
+      socket.on('clienterror', function() {
+        assert.equal(socket.handle, null);
+        done();
+      });
+      socket.connect();
+    })
+    it('server error 2', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.callbacks.push({
+          type: 'simple',
+          callback: function(err) {
+            assert.equal(err, 'ERROR');
+            done();
+          }
+        });
+        socket.handle.error();
+      });
+      socket.connect();
+    })
+    it('server error 3', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.callbacks.push({
+          type: 'simple'
+        });
+        socket.handle.error();
+      });
+      socket.on('clienterror', function() {
+        assert.equal(socket.handle, null);
+        done();
+      });
+      socket.connect();
+    })
+    it('handle error 1', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.buffer = 'ERROR';
+        socket.handleData();
+        done();
+      });
+      socket.connect();
+    })
+    it('handle error 2', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.buffer = 'ERROR\r\n';
+        socket.handleData();
+        done();
+      });
+      socket.connect();
+    })
+    it('handle error 3', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.buffer = 'ERROR';
+        socket.callbacks.push({
+          type: 'simple'
+        });
+        socket.handleData();
+        done();
+      });
+      socket.connect();
+    })
+    it('handle error 4', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.getHandleResult('UNKNOW');
+        done();
+      });
+      socket.connect();
+    })
+    it('handle error 5', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      socket.on('connect', function() {
+        socket.getHandleResult('STORED\r\n');
+        done();
+      });
+      socket.connect();
+    })
+    it('handle error 6', function(done) {
+      var socket = MemcacheSocket(8989, '127.0.0.1');
+      muk(socket, 'getHandleResult', function() {
+        return ['', 6];
+      });
+      socket.on('connect', function() {
+        socket.buffer = 'ERROR';
+        socket.handleData();
+        muk.restore();
+        done();
+      });
+      socket.connect();
     })
   })
   
