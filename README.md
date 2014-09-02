@@ -23,6 +23,12 @@ npm test
 
 以及数字公司内部多个系统
 
+## 贡献者
+
+* [akira-cn](https://github.com/akira-cn)
+* [qgy18](https://github.com/qgy18)
+* [maxzhang](https://github.com/maxzhang)
+
 ## 协议
 
 MIT
