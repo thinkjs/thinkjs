@@ -321,6 +321,18 @@ describe('Controller', function(){
       instance.header('name', 'welefen');
     })
   })
+  it('instance.header("Content-Type", "text/html")', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.setHeader;
+      instance.http.res.setHeader = function(name, value){
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'text/html; charset=utf8');
+        done();
+        instance.http.res.setHeader = fn;
+      }
+      instance.header('Content-Type', 'text/html');
+    })
+  })
   it('instance.header({"name": "welefen", "value": "suredy"})', function(done){
     promise.then(function(instance){
       var fn = instance.http.res.setHeader;
@@ -653,7 +665,7 @@ describe('Controller', function(){
 
     promise.then(function(instance){
       instance.http.group = 'home';
-      console.log('test1')
+      //console.log('test1')
       instance.action('test10:other', ['name', 'value']).then(function(content){
         assert.deepEqual(content, {"name":"name","value":"value"});
         done();
@@ -687,6 +699,7 @@ describe('Controller', function(){
   it('instance.jsonp()', function(done){
     promise.then(function(instance){
       var fn = instance.http.res.setHeader;
+      instance.http.cthIsSend = false;
       instance.http.res.setHeader = function(name, value){
         assert.equal(name, 'Content-Type');
         assert.equal(value, 'application/json; charset=utf8');
