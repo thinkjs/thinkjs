@@ -27,6 +27,18 @@ describe('FileSession', function(){
       done();
     })
   })
+  it('initData', function(done){
+    var instance = FileSession({cookie: 'welefen'});
+    var getData = instance.getData;
+    instance.getData = function(){
+      return getPromise();
+    }
+    instance.initData().then(function(data){
+      assert.deepEqual(data, {});
+      instance.getData = getData;
+      done();
+    })
+  })
   it('initData2', function(done){
     var instance = FileSession({cookie: 'welefen'});
     instance.initData().then(function(){
