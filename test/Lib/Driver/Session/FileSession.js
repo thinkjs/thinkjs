@@ -51,14 +51,14 @@ describe('FileSession', function(){
   it('set', function(done){
     var instance = FileSession({cookie: 'welefen'});
     instance.set('name', 'welefen').then(function(data){
-      assert.deepEqual(instance.sessionData, {name: 'welefen'});
+      assert.deepEqual(instance.data, {name: 'welefen'});
       done();
     })
   })
   it('set with timeout', function(done){
     var instance = FileSession({cookie: 'welefen'});
     instance.set('name', 'welefen', 1000).then(function(data){
-      assert.deepEqual(instance.sessionData, {name: 'welefen'});
+      assert.deepEqual(instance.data, {name: 'welefen'});
       assert.equal(instance.options.timeout, 1000)
       done();
     })
@@ -82,37 +82,37 @@ describe('FileSession', function(){
   it('rm name', function(done){
     var instance = FileSession({cookie: 'welefen'});
     instance.rm('name').then(function(data){
-      assert.deepEqual(instance.sessionData, {});
+      assert.deepEqual(instance.data, {});
       done();
     })
   })
   it('rm name', function(done){
     var instance = FileSession({cookie: 'welefen'});
-    instance.sessionData = {'name': 'welefen'}
+    instance.data = {'name': 'welefen'}
     instance.rm('name').then(function(data){
-      assert.deepEqual(instance.sessionData, {});
+      assert.deepEqual(instance.data, {});
       done();
     })
   })
   it('rm name1', function(done){
     var instance = FileSession({cookie: 'welefen'});
-    instance.sessionData = {'name': 'welefen'}
+    instance.data = {'name': 'welefen'}
     instance.rm('name1').then(function(data){
-      assert.deepEqual(instance.sessionData, {name: 'welefen'});
+      assert.deepEqual(instance.data, {name: 'welefen'});
       done();
     })
   })
   it('rm all', function(done){
     var instance = FileSession({cookie: 'welefen'});
-    instance.sessionData = {'name': 'welefen'}
+    instance.data = {'name': 'welefen'}
     instance.rm().then(function(data){
-      assert.deepEqual(instance.sessionData, {});
+      assert.deepEqual(instance.data, {});
       done();
     })
   })
   it('flush', function(done){
     var instance = FileSession({cookie: 'welefen'});
-    instance.sessionData = {'name': 'welefen'}
+    instance.data = {'name': 'welefen'}
     instance.flush().then(function(){
       done();
     })
