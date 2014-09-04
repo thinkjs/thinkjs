@@ -21,7 +21,7 @@
     "es6-promise": "0.1.1",
     "mime": "1.2.11",
     "mysql": "2.3.2",
-    "websocket": "1.0.8"
+    "websocket-driver": "0.3.5"
   },
   "devDependencies": {
     "should": "4.0.4",
