@@ -11,59 +11,60 @@ require(path.normalize(__dirname + '/../../../../index.js'));
 
 var MemcacheSocket = thinkRequire('MemcacheSocket');
 
+var Connection = function() {
+  var self = this;
+  self.readyState = 'close';
+  self.events = {};
+  setTimeout(function() {
+    self.readyState = 'open';
+    self.events.connect.call(self);
+  }, 10);
+};
+Connection.prototype = {
+  on: function(en, cb) {
+    this.events[en] = cb;
+  },
+  write: function(cmd) {
+    if (cmd == 'set var1 0 0 3\r\n111\r\n') {
+      this.events.data.call(this, 'STORED\r\n');
+    } else if (cmd == 'get var1\r\n') {
+      this.events.data.call(this, 'VALUE var1 0 3\r\n111\r\nEND\r\n');
+    } else if(cmd == 'delete var1\r\n') {
+      this.events.data.call(this, 'DELETED\r\n');
+    } else if(cmd == 'incr var1 1\r\n') {
+      this.events.data.call(this, '112\r\n');
+    } else if(cmd == 'decr var1 1\r\n') {
+      this.events.data.call(this, '110\r\n');
+    } else if(cmd == 'incr var1 2\r\n') {
+      this.events.data.call(this, '113\r\n');
+    } else if(cmd == 'decr var1 2\r\n') {
+      this.events.data.call(this, '109\r\n');
+    } else if(cmd == 'version\r\n') {
+      this.events.data.call(this, 'VERSION 1.2.1\r\n');
+    } else if(cmd == 'get timeout\r\n') {
+      this.events.data.call(this, 'TIMEOUT\r\n');
+    } else {
+      this.events.data.call(this, 'NOT_FOUND\r\n');
+    }
+  },
+  end: function() {
+    this.events.end.call(this);
+    this.events.close.call(this);
+  },
+  timeout: function() {
+    this.events.timeout.call(this);
+  },
+  error: function() {
+    this.events.error.call(this, 'ERROR');
+  },
+  setTimeout: function() {},
+  setNoDelay: function() {}
+};
+
 describe('before', function(){
   it('before', function(){
-    var Connection = function() {
-      var self = this;
-      self.readyState = 'close';
-      self.events = {};
-      setTimeout(function() {
-        self.readyState = 'open';
-        self.events.connect.call(self);
-      }, 10);
-    };
-    Connection.prototype = {
-      on: function(en, cb) {
-        this.events[en] = cb;
-      },
-      write: function(cmd) {
-        if (cmd == 'set var1 0 0 3\r\n111\r\n') {
-          this.events.data.call(this, 'STORED\r\n');
-        } else if (cmd == 'get var1\r\n') {
-          this.events.data.call(this, 'VALUE var1 0 3\r\n111\r\nEND\r\n');
-        } else if(cmd == 'delete var1\r\n') {
-          this.events.data.call(this, 'DELETED\r\n');
-        } else if(cmd == 'incr var1 1\r\n') {
-          this.events.data.call(this, '112\r\n');
-        } else if(cmd == 'decr var1 1\r\n') {
-          this.events.data.call(this, '110\r\n');
-        } else if(cmd == 'incr var1 2\r\n') {
-          this.events.data.call(this, '113\r\n');
-        } else if(cmd == 'decr var1 2\r\n') {
-          this.events.data.call(this, '109\r\n');
-        } else if(cmd == 'version\r\n') {
-          this.events.data.call(this, 'VERSION 1.2.1\r\n');
-        } else if(cmd == 'get timeout\r\n') {
-          this.events.data.call(this, 'TIMEOUT\r\n');
-        } else {
-          this.events.data.call(this, 'NOT_FOUND\r\n');
-        }
-      },
-      end: function() {
-        this.events.end.call(this);
-        this.events.close.call(this);
-      },
-      timeout: function() {
-        this.events.timeout.call(this);
-      },
-      error: function() {
-        this.events.error.call(this, 'ERROR');
-      },
-      setTimeout: function() {},
-      setNoDelay: function() {}
-    };
-    muk(net, 'createConnection', function() {
-      return new Connection;
+    muk(net, 'createConnection', function(config) {
+      return new Connection(config);
     })
   });
 });
@@ -413,7 +414,6 @@ describe('MemcacheSocket', function(){
       socket.on('connect', function() {
         socket.buffer = 'ERROR';
         socket.handleData();
-        muk.restore();
         done();
       });
       socket.connect();
