@@ -15,7 +15,6 @@ var DbSession = thinkRequire('DbSession');
 describe('before', function(){
   it('before', function(){
     muk(MysqlSocket.prototype, 'query', function(sql){
-      console.log(sql)
       sql = sql.trim();
       if (sql === 'SHOW COLUMNS FROM `meinv_session`') {
         return getPromise([ 
