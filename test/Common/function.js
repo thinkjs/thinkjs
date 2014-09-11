@@ -312,13 +312,31 @@ describe('D', function(){
     var model = D('xxx');
     assert.equal(model.constructor.__prop.testName, undefined)
   })
-  it('D("User:AdvModel")', function(){
-    var model = D('User:AdvModel');
+  it('D("User", "AdvModel")', function(){
+    var model = D('User', 'AdvModel');
     assert.equal(isFunction(model.setRelation), false)
   })
-  it('D("Xxx:AdvModel")', function(){
-    var model = D('Xxx:AdvModel');
+  it('D("Xxx", "AdvModel")', function(){
+    var model = D('Xxx', 'AdvModel');
     assert.equal(isFunction(model.setRelation), true)
+  })
+  it('D("Xxx/Bbbb")', function(){
+    var model = D('Xxx/Bbbb');
+    assert.equal(isFunction(model.setRelation), false)
+  })
+  it('D("Xxx/Bbbb", "AdvModel")', function(){
+    var model = D('Xxx/Bbbb', 'AdvModel');
+    assert.equal(isFunction(model.setRelation), true)
+  })
+  it('D("Xxx/Ccc")', function(){
+    var filepath = path.normalize(__dirname + '/../App/Lib/Model/Xxx/CccModel.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Model({testName: "welefen", hasFile: function(){return true;}})')
+    var model = D('Xxx/Ccc', 'think_');
+    assert.equal(model.name, 'XxxCcc');
+    assert.equal(model.getTableName(), 'think_xxx_ccc');
+    assert.equal(isFunction(model.hasFile), true)
+    assert.equal(model.testName, 'welefen')
   })
 })
 
@@ -341,12 +359,12 @@ describe('M', function(){
     var model = M('XXX');
     assert.equal(model.hasFile, undefined);
   })
-  it('M("User:AdvModel")', function(){
-    var model = M('User:AdvModel');
+  it('M("User", "AdvModel")', function(){
+    var model = M('User', 'AdvModel');
     assert.equal(isFunction(model.setRelation), true)
   })
-  it('M("Xxx:AdvModel")', function(){
-    var model = D('Xxx:AdvModel');
+  it('M("Xxx", "AdvModel")', function(){
+    var model = M('Xxx', 'AdvModel');
     assert.equal(isFunction(model.setRelation), true)
   })
 })
