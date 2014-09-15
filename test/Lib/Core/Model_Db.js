@@ -22,13 +22,13 @@ var clearRequireCache = function(){
 describe('before', function(){
   it('before', function(){
     muk(MysqlSocket.prototype, 'query', function(sql){
-      if (sql === 'SHOW COLUMNS FROM `meinv_friend`') {
+      if (sql === 'SHOW COLUMNS FROM `think_friend`') {
         var data = [{"Field":"id","Type":"int(11) unsigned", "Default":null,"Extra":""},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
         return getPromise(data);
-      }else if (sql === 'SHOW COLUMNS FROM `meinv_cate`') {
+      }else if (sql === 'SHOW COLUMNS FROM `think_cate`') {
         var data = [{"Field":"wid","Type":"int(11) unsigned", "Null":"NO","Key":"PRI", "Default":null,"Extra":""},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
         return getPromise(data);
-      }else if (sql === 'SHOW COLUMNS FROM `meinv_tag`') {
+      }else if (sql === 'SHOW COLUMNS FROM `think_tag`') {
         var data = [{"Field":"wid","Type":"int(11) unsigned", "Extra":""},{"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},{"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},{"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},{"Field":"md5","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"width","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"height","Type":"int(11)","Null":"NO","Key":"","Default":"0","Extra":""},{"Field":"pic_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"view_nums","Type":"int(11)","Null":"NO","Key":"MUL","Default":"0","Extra":""},{"Field":"content","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"date","Type":"int(11)","Null":"NO","Key":"MUL","Default":null,"Extra":""},{"Field":"is_hide","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"0","Extra":""},{"Field":"is_safe","Type":"tinyint(11)","Null":"YES","Key":"MUL","Default":"1","Extra":""}];
         return getPromise(data);
       }else if(sql.indexOf('SHOW COLUMNS ') > -1){
@@ -42,7 +42,7 @@ describe('before', function(){
 })
 
 describe('Model_Db', function(){
-  C('db_prefix', 'meinv_');
+  C('db_prefix', 'think_');
   var model = D('Group');
 
   describe('init', function(){
@@ -55,9 +55,9 @@ describe('Model_Db', function(){
       assert.equal(model.tablePrefix, 'test_');
     })
     it('prototype tablePrefix is set', function(){
-      thinkRequire('Model').__prop.tablePrefix = 'meinv_';
+      thinkRequire('Model').__prop.tablePrefix = 'think_';
       var model = D('Group');
-      assert.equal(model.tablePrefix, 'meinv_');
+      assert.equal(model.tablePrefix, 'think_');
     })
   })
 
@@ -88,8 +88,8 @@ describe('Model_Db', function(){
 
   describe('getTableName', function(){
     it('getTableName', function(){
-      assert.equal(model.getTableName(), 'meinv_group');
-      assert.equal(model.getTableName(), 'meinv_group');
+      assert.equal(model.getTableName(), 'think_group');
+      assert.equal(model.getTableName(), 'think_group');
     })
     it('getTableName 1', function(){
       var model = D('Group');
@@ -194,14 +194,14 @@ describe('getPk', function(){
       it('select all', function(done){
         model.select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          assert.equal(sql, 'SELECT * FROM `think_group`')
           done();
         })
       })
       it('find one', function(done){
         model.find().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -211,7 +211,7 @@ describe('getPk', function(){
       it('sql with empty field', function(done){
         model.field().select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group`');
+          assert.equal(sql, 'SELECT * FROM `think_group`');
           done();
         })
       })
@@ -219,7 +219,7 @@ describe('getPk', function(){
       it('sql with string field', function(done){
         model.field('id, title').select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT `id`,`title` FROM `meinv_group`');
+          assert.equal(sql, 'SELECT `id`,`title` FROM `think_group`');
           done();
         })
       })
@@ -227,7 +227,7 @@ describe('getPk', function(){
       it('sql with array field', function(done){
         model.field(['id', 'title']).select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT `id`,`title` FROM `meinv_group`');
+          assert.equal(sql, 'SELECT `id`,`title` FROM `think_group`');
           done();
         })
       })
@@ -235,7 +235,7 @@ describe('getPk', function(){
       it('sql with reverse field', function(done){
         model.field(['id', 'title'], true).select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT `cate_id`,`cate_no`,`md5`,`width`,`height`,`pic_nums`,`view_nums`,`content`,`date`,`is_hide`,`is_safe` FROM `meinv_group`');
+          assert.equal(sql, 'SELECT `cate_id`,`cate_no`,`md5`,`width`,`height`,`pic_nums`,`view_nums`,`content`,`date`,`is_hide`,`is_safe` FROM `think_group`');
           done();
         })
       })
@@ -247,7 +247,7 @@ describe('getPk', function(){
         model.limit(10).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 10');
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 10');
           done();
         })
       })
@@ -255,7 +255,7 @@ describe('getPk', function(){
         model.limit(10, 20).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 10,20');
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 10,20');
           done();
         })
       })
@@ -264,7 +264,7 @@ describe('getPk', function(){
         model.limit('10xx').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 0');
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 0');
           done();
         })
       })
@@ -273,7 +273,7 @@ describe('getPk', function(){
         model.limit('10', '').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 10,0');
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 10,0');
           done();
         })
       })
@@ -284,7 +284,7 @@ describe('getPk', function(){
       it('sql with empty page', function(done){
         model.page().select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          assert.equal(sql, 'SELECT * FROM `think_group`')
           done();
         })
       })
@@ -292,7 +292,7 @@ describe('getPk', function(){
         model.page(0).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 0,20')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 0,20')
           done();
         })
       })
@@ -300,7 +300,7 @@ describe('getPk', function(){
         model.page(1).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 0,20')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 0,20')
           done();
         })
       })
@@ -308,7 +308,7 @@ describe('getPk', function(){
         model.page(1, 10).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 0,10')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 0,10')
           done();
         })
       })
@@ -316,7 +316,7 @@ describe('getPk', function(){
         model.page(2, 10).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 10,10')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 10,10')
           done();
         })
       })
@@ -324,7 +324,7 @@ describe('getPk', function(){
         model.page('www').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 0,20')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 0,20')
           done();
         })
       })
@@ -332,7 +332,7 @@ describe('getPk', function(){
         model.page('www', 'www').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LIMIT 0,20')
+          assert.equal(sql, 'SELECT * FROM `think_group` LIMIT 0,20')
           done();
         })
       })
@@ -342,38 +342,38 @@ describe('getPk', function(){
     describe('union', function(){
       var model = D('Pic1');
       it('union 1', function(done){
-        model.union('select * from meinv_pic2').select().then(function(){
+        model.union('select * from think_pic2').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_pic1` UNION (select * from meinv_pic2)')
+          assert.equal(sql, 'SELECT * FROM `think_pic1` UNION (select * from think_pic2)')
           done();
         })
       })
       it('union all', function(done){
-        model.union('select * from meinv_pic2', true).select().then(function(){
+        model.union('select * from think_pic2', true).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_pic1` UNION ALL (select * from meinv_pic2)')
+          assert.equal(sql, 'SELECT * FROM `think_pic1` UNION ALL (select * from think_pic2)')
           done();
         })
       })
       it('union all2', function(done){
         model.union({
-          table: 'meinv_pic2'
+          table: 'think_pic2'
         }, true).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_pic1` UNION ALL (SELECT * FROM `meinv_pic2`)')
+          assert.equal(sql, 'SELECT * FROM `think_pic1` UNION ALL (SELECT * FROM `think_pic2`)')
           done();
         })
       })
       it('union all3', function(done){
         model.union({
-          table: 'meinv_pic2',
-        }, true).union('select * from meinv_pic3').select().then(function(){
+          table: 'think_pic2',
+        }, true).union('select * from think_pic3').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_pic1` UNION ALL (SELECT * FROM `meinv_pic2`) UNION (select * from meinv_pic3)')
+          assert.equal(sql, 'SELECT * FROM `think_pic1` UNION ALL (SELECT * FROM `think_pic2`) UNION (select * from think_pic3)')
           done();
         })
       })
@@ -384,39 +384,39 @@ describe('getPk', function(){
         model.join('xxx').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN xxx')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN xxx')
           done();
         })
       })
       it('join on', function(done){
-        model.join('meinv_xxx ON meinv_group.id = meinv_xxx.group_id').select().then(function(){
+        model.join('think_xxx ON think_group.id = think_xxx.group_id').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN think_xxx ON think_group.id = think_xxx.group_id')
           done();
         })
       })
       it('join on arr', function(done){
-        model.join(['meinv_xxx ON meinv_group.id = meinv_xxx.group_id', 'meinv_xxx ON meinv_group.id = meinv_xxx.group_id']).select().then(function(){
+        model.join(['think_xxx ON think_group.id = think_xxx.group_id', 'think_xxx ON think_group.id = think_xxx.group_id']).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id LEFT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN think_xxx ON think_group.id = think_xxx.group_id LEFT JOIN think_xxx ON think_group.id = think_xxx.group_id')
           done();
         })
       })
       it('right join on', function(done){
-        model.join('RIGHT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id').select().then(function(){
+        model.join('RIGHT JOIN think_xxx ON think_group.id = think_xxx.group_id').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` RIGHT JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
+          assert.equal(sql, 'SELECT * FROM `think_group` RIGHT JOIN think_xxx ON think_group.id = think_xxx.group_id')
           done();
         })
       })
       it('inner join on', function(done){
-        model.join('INNER JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id').select().then(function(){
+        model.join('INNER JOIN think_xxx ON think_group.id = think_xxx.group_id').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` INNER JOIN meinv_xxx ON meinv_group.id = meinv_xxx.group_id')
+          assert.equal(sql, 'SELECT * FROM `think_group` INNER JOIN think_xxx ON think_group.id = think_xxx.group_id')
           done();
         })
       })
@@ -427,7 +427,7 @@ describe('getPk', function(){
           on: ['id', 'id']
         }).select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` AS c ON meinv_group.`id`=c.`id`')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` AS c ON think_group.`id`=c.`id`')
           done();
         })
       })
@@ -439,7 +439,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` AS c ON (meinv_group.`id`=c.`id` AND meinv_group.`title`=c.`name`)')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` AS c ON (think_group.`id`=c.`id` AND think_group.`title`=c.`name`)')
           done();
         })
       })
@@ -452,7 +452,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM meinv_group AS a RIGHT JOIN `meinv_cate` AS c ON a.`id`=c.`id`')
+          assert.equal(sql, 'SELECT * FROM think_group AS a RIGHT JOIN `think_cate` AS c ON a.`id`=c.`id`')
           done();
         })
       })
@@ -465,7 +465,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM meinv_group AS a INNER JOIN `meinv_cate` AS c ON a.`id`=c.`id`')
+          assert.equal(sql, 'SELECT * FROM think_group AS a INNER JOIN `think_cate` AS c ON a.`id`=c.`id`')
           done();
         })
       })
@@ -483,7 +483,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM meinv_group AS a LEFT JOIN `meinv_cate` AS c ON a.`id`=c.`id` LEFT JOIN `meinv_group_tag` AS d ON a.`id`=d.`group_id`')
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON a.`id`=d.`group_id`')
           done();
         })
       })
@@ -502,7 +502,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM meinv_group AS a LEFT JOIN `meinv_cate` AS c ON a.`id`=c.`id` LEFT JOIN `meinv_group_tag` AS d ON a.`id`=d.`group_id`')
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON a.`id`=d.`group_id`')
           done();
         })
       })
@@ -521,7 +521,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` AS c ON meinv_group.`id`=c.`id` LEFT JOIN `meinv_group_tag` AS d ON meinv_group.`id`=d.`group_id`')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` AS c ON think_group.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON think_group.`id`=d.`group_id`')
           done();
         })
       })
@@ -538,7 +538,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` AS c ON meinv_group.`id`=c.`id` LEFT JOIN `meinv_group_tag` AS d ON meinv_group.`id`=d.`group_id`')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` AS c ON think_group.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON think_group.`id`=d.`group_id`')
           done();
         })
       })
@@ -553,7 +553,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` ON meinv_group.`id`=meinv_cate.`id` LEFT JOIN `meinv_group_tag` ON meinv_group.`id`=meinv_group_tag.`group_id`')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` ON think_group.`id`=think_cate.`id` LEFT JOIN `think_group_tag` ON think_group.`id`=think_group_tag.`group_id`')
           done();
         })
       })
@@ -568,7 +568,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` ON meinv_group.`id`=meinv_cate.`id` LEFT JOIN `meinv_group_tag` ON meinv_group.`id`=meinv_group_tag.`group_id`')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` ON think_group.`id`=think_cate.`id` LEFT JOIN `think_group_tag` ON think_group.`id`=think_group_tag.`group_id`')
           done();
         })
       })
@@ -583,7 +583,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` ON meinv_group.`id`=meinv_cate.`id` LEFT JOIN `meinv_group_tag` ON meinv_group.`id`=meinv_group_tag.`group_id`')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` ON think_group.`id`=think_cate.`id` LEFT JOIN `think_group_tag` ON think_group.`id`=think_group_tag.`group_id`')
           done();
         })
       })
@@ -605,7 +605,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` LEFT JOIN `meinv_cate` ON meinv_group.`id`=meinv_cate.`id` LEFT JOIN `meinv_group_tag` ON meinv_group.`id`=meinv_group_tag.`group_id` LEFT JOIN `meinv_tag` ON (meinv_group.`id`=meinv_tag.`id` AND meinv_group.`title`=meinv_tag.`name`)')
+          assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` ON think_group.`id`=think_cate.`id` LEFT JOIN `think_group_tag` ON think_group.`id`=think_group_tag.`group_id` LEFT JOIN `think_tag` ON (think_group.`id`=think_tag.`id` AND think_group.`title`=think_tag.`name`)')
           done();
         })
       })
@@ -617,7 +617,7 @@ describe('getPk', function(){
         model.table('xxx').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_xxx`')
+          assert.equal(sql, 'SELECT * FROM `think_xxx`')
           done();
         })
       })
@@ -640,7 +640,7 @@ describe('getPk', function(){
         model.order('id').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY id')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY id')
           done();
         })
       })
@@ -648,7 +648,7 @@ describe('getPk', function(){
         model.order('id ASC').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY id ASC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY id ASC')
           done();
         })
       })
@@ -656,7 +656,7 @@ describe('getPk', function(){
         model.order('id DESC').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY id DESC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY id DESC')
           done();
         })
       })
@@ -664,7 +664,7 @@ describe('getPk', function(){
         model.order('id DESC,title ASC').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY id DESC,title ASC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY id DESC,title ASC')
           done();
         })
       })
@@ -672,7 +672,7 @@ describe('getPk', function(){
         model.order(['id ASC']).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY id ASC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY id ASC')
           done();
         })
       })
@@ -680,7 +680,7 @@ describe('getPk', function(){
         model.order(['id ASC', 'title DESC']).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY id ASC,title DESC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY id ASC,title DESC')
           done();
         })
       })
@@ -688,7 +688,7 @@ describe('getPk', function(){
         model.order({id: 'ASC'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY `id` ASC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY `id` ASC')
           done();
         })
       })
@@ -696,7 +696,7 @@ describe('getPk', function(){
         model.order({id: 'ASC', title: 'DESC'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` ORDER BY `id` ASC,`title` DESC')
+          assert.equal(sql, 'SELECT * FROM `think_group` ORDER BY `id` ASC,`title` DESC')
           done();
         })
       })
@@ -707,7 +707,7 @@ describe('getPk', function(){
         model.alias('a').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM meinv_group AS a')
+          assert.equal(sql, 'SELECT * FROM think_group AS a')
           done();
         })
       })
@@ -717,7 +717,7 @@ describe('getPk', function(){
         model.having('view_nums > 1000').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` HAVING view_nums > 1000')
+          assert.equal(sql, 'SELECT * FROM `think_group` HAVING view_nums > 1000')
           done();
         })
       })
@@ -725,7 +725,7 @@ describe('getPk', function(){
         model.having('view_nums > 1000 AND view_nums < 2000').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` HAVING view_nums > 1000 AND view_nums < 2000')
+          assert.equal(sql, 'SELECT * FROM `think_group` HAVING view_nums > 1000 AND view_nums < 2000')
           done();
         })
       })
@@ -736,35 +736,35 @@ describe('getPk', function(){
         model.group('title').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY `title`')
+          assert.equal(sql, 'SELECT * FROM `think_group` GROUP BY `title`')
           done();
         })
       })
       it('group by view_nums', function(done){
         model.group('view_nums').select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY `view_nums`')
+          assert.equal(sql, 'SELECT * FROM `think_group` GROUP BY `view_nums`')
           done();
         })
       })
       it('group by view_nums has alias', function(done){
         model.group('c.view_nums').select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY c.`view_nums`')
+          assert.equal(sql, 'SELECT * FROM `think_group` GROUP BY c.`view_nums`')
           done();
         })
       })
       it('group by multi', function(done){
         model.group('id,view_nums').select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY `id`,`view_nums`')
+          assert.equal(sql, 'SELECT * FROM `think_group` GROUP BY `id`,`view_nums`')
           done();
         })
       })
       it('group by multi alias', function(done){
         model.group('c.id,c.view_nums').select().then(function(){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM `meinv_group` GROUP BY c.`id`,c.`view_nums`')
+          assert.equal(sql, 'SELECT * FROM `think_group` GROUP BY c.`id`,c.`view_nums`')
           done();
         })
       })
@@ -775,7 +775,7 @@ describe('getPk', function(){
         model.lock(true).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group`  FOR UPDATE')
+          assert.equal(sql, 'SELECT * FROM `think_group`  FOR UPDATE')
           done();
         })
       })
@@ -783,7 +783,7 @@ describe('getPk', function(){
         model.lock(false).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          assert.equal(sql, 'SELECT * FROM `think_group`')
           done();
         })
       })
@@ -793,7 +793,7 @@ describe('getPk', function(){
         model.distinct('view_nums').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT Distinct  `view_nums` FROM `meinv_group`')
+          assert.equal(sql, 'SELECT Distinct  `view_nums` FROM `think_group`')
           done();
         })
       })
@@ -801,7 +801,7 @@ describe('getPk', function(){
         model.distinct('title').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT Distinct  `title` FROM `meinv_group`')
+          assert.equal(sql, 'SELECT Distinct  `title` FROM `think_group`')
           done();
         })
       })
@@ -812,7 +812,7 @@ describe('getPk', function(){
         model.where().select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          assert.equal(sql, 'SELECT * FROM `think_group`')
           done();
         })
       })
@@ -820,7 +820,7 @@ describe('getPk', function(){
         model.where('').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          assert.equal(sql, 'SELECT * FROM `think_group`')
           done();
         })
       })
@@ -828,7 +828,7 @@ describe('getPk', function(){
         model.where({}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group`')
+          assert.equal(sql, 'SELECT * FROM `think_group`')
           done();
         })
       })
@@ -836,7 +836,7 @@ describe('getPk', function(){
         model.where({id: 10}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 10 )')
           done();
         })
       })
@@ -844,7 +844,7 @@ describe('getPk', function(){
         model.where({id: ['=', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 10 )')
           done();
         })
       })
@@ -852,7 +852,7 @@ describe('getPk', function(){
         model.where({id: ['EQ', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 10 )')
           done();
         })
       })
@@ -860,7 +860,7 @@ describe('getPk', function(){
         model.where({id: ['eq', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` = 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 10 )')
           done();
         })
       })
@@ -874,7 +874,7 @@ describe('getPk', function(){
         model.alias('c').where({'c.id': 10}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM meinv_group AS c WHERE ( c.id = 10 )')
+          assert.equal(sql, 'SELECT * FROM think_group AS c WHERE ( c.id = 10 )')
           done();
         })
       })
@@ -882,7 +882,7 @@ describe('getPk', function(){
         model.where({id: ['!=', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` != 10 )')
           done();
         })
       })
@@ -890,7 +890,7 @@ describe('getPk', function(){
         model.where({id: ['NEQ', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` != 10 )')
           done();
         })
       })
@@ -898,7 +898,7 @@ describe('getPk', function(){
         model.where({id: ['neq', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` != 10 )')
           done();
         })
       })
@@ -906,7 +906,7 @@ describe('getPk', function(){
         model.where({id: ['<>', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` != 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` != 10 )')
           done();
         })
       })
@@ -915,7 +915,7 @@ describe('getPk', function(){
         model.where({id: ['>', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` > 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` > 10 )')
           done();
         })
       })
@@ -923,7 +923,7 @@ describe('getPk', function(){
         model.where({id: ['GT', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` > 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` > 10 )')
           done();
         })
       })
@@ -931,7 +931,7 @@ describe('getPk', function(){
         model.where({id: ['gt', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` > 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` > 10 )')
           done();
         })
       })
@@ -939,7 +939,7 @@ describe('getPk', function(){
         model.where({id: ['>=', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` >= 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` >= 10 )')
           done();
         })
       })
@@ -947,7 +947,7 @@ describe('getPk', function(){
         model.where({id: ['EGT', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` >= 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` >= 10 )')
           done();
         })
       })
@@ -955,7 +955,7 @@ describe('getPk', function(){
         model.where({id: ['egt', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` >= 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` >= 10 )')
           done();
         })
       })
@@ -964,7 +964,7 @@ describe('getPk', function(){
         model.where({id: ['<', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` < 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` < 10 )')
           done();
         })
       })
@@ -972,7 +972,7 @@ describe('getPk', function(){
         model.where({id: ['LT', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` < 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` < 10 )')
           done();
         })
       })
@@ -980,7 +980,7 @@ describe('getPk', function(){
         model.where({id: ['lt', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` < 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` < 10 )')
           done();
         })
       })
@@ -988,7 +988,7 @@ describe('getPk', function(){
         model.where({id: ['<=', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` <= 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` <= 10 )')
           done();
         })
       })
@@ -996,7 +996,7 @@ describe('getPk', function(){
         model.where({id: ['ELT', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` <= 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` <= 10 )')
           done();
         })
       })
@@ -1004,7 +1004,7 @@ describe('getPk', function(){
         model.where({id: ['elt', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` <= 10 )')
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` <= 10 )')
           done();
         })
       })
@@ -1012,7 +1012,7 @@ describe('getPk', function(){
         model.where({title: ['NOTLIKE', 'welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` NOT LIKE 'welefen' )")
           done();
         })
       })
@@ -1020,7 +1020,7 @@ describe('getPk', function(){
         model.where({title: ['NOT LIKE', 'welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` NOT LIKE 'welefen' )")
           done();
         })
       })
@@ -1028,7 +1028,7 @@ describe('getPk', function(){
         model.where({title: ['not like', 'welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` NOT LIKE 'welefen' )")
           done();
         })
       })
@@ -1036,7 +1036,7 @@ describe('getPk', function(){
         model.where({title: ['not like', '%welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE '%welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` NOT LIKE '%welefen' )")
           done();
         })
       })
@@ -1044,7 +1044,7 @@ describe('getPk', function(){
         model.where({title: ['not like', 'welefen%']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE 'welefen%' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` NOT LIKE 'welefen%' )")
           done();
         })
       })
@@ -1052,7 +1052,7 @@ describe('getPk', function(){
         model.where({title: ['not like', '%welefen%']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` NOT LIKE '%welefen%' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` NOT LIKE '%welefen%' )")
           done();
         })
       })
@@ -1060,7 +1060,7 @@ describe('getPk', function(){
         model.where({title: ['LIKE', 'welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` LIKE 'welefen' )")
           done();
         })
       })
@@ -1068,7 +1068,7 @@ describe('getPk', function(){
         model.where({title: ['like', 'welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` LIKE 'welefen' )")
           done();
         })
       })
@@ -1076,7 +1076,7 @@ describe('getPk', function(){
         model.where({title: ['like', '%welefen']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE '%welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` LIKE '%welefen' )")
           done();
         })
       })
@@ -1084,7 +1084,7 @@ describe('getPk', function(){
         model.where({title: ['like', 'welefen%']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE 'welefen%' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` LIKE 'welefen%' )")
           done();
         })
       })
@@ -1092,7 +1092,7 @@ describe('getPk', function(){
         model.where({title: ['like', '%welefen%']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `title` LIKE '%welefen%' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` LIKE '%welefen%' )")
           done();
         })
       })
@@ -1100,7 +1100,7 @@ describe('getPk', function(){
         model.where({'title|content': ['like', '%welefen%']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE '%welefen%') OR (`content` LIKE '%welefen%') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE '%welefen%') OR (`content` LIKE '%welefen%') )")
           done();
         })
       })
@@ -1108,7 +1108,7 @@ describe('getPk', function(){
         model.where({'title&content': ['like', '%welefen%']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE '%welefen%') AND (`content` LIKE '%welefen%') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE '%welefen%') AND (`content` LIKE '%welefen%') )")
           done();
         })
       })
@@ -1116,7 +1116,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['welefen']]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE 'welefen') )")
           done();
         })
       })
@@ -1124,7 +1124,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['welefen', 'suredy']]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' OR `title` LIKE 'suredy') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE 'welefen' OR `title` LIKE 'suredy') )")
           done();
         })
       })
@@ -1132,7 +1132,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['welefen', '%suredy']]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' OR `title` LIKE '%suredy') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE 'welefen' OR `title` LIKE '%suredy') )")
           done();
         })
       })
@@ -1140,7 +1140,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['%welefen', '%suredy%']]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE '%welefen' OR `title` LIKE '%suredy%') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE '%welefen' OR `title` LIKE '%suredy%') )")
           done();
         })
       })
@@ -1148,7 +1148,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['welefen', 'suredy'], 'AND']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' AND `title` LIKE 'suredy') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE 'welefen' AND `title` LIKE 'suredy') )")
           done();
         })
       })
@@ -1156,7 +1156,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['welefen', 'suredy'], 'XOR']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' XOR `title` LIKE 'suredy') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE 'welefen' XOR `title` LIKE 'suredy') )")
           done();
         })
       })
@@ -1164,7 +1164,7 @@ describe('getPk', function(){
         model.where({title: ['like', ['welefen', 'suredy'], 'xor']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`title` LIKE 'welefen' XOR `title` LIKE 'suredy') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`title` LIKE 'welefen' XOR `title` LIKE 'suredy') )")
           done();
         })
       })
@@ -1176,7 +1176,7 @@ describe('getPk', function(){
         model.where({id: ['IN', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` = 10 )")
           done();
         })
       })
@@ -1184,7 +1184,7 @@ describe('getPk', function(){
         model.where({id: ['IN', '10,20']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN ('10','20') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` IN ('10','20') )")
           done();
         })
       })
@@ -1192,7 +1192,7 @@ describe('getPk', function(){
         model.where({id: ['in', '10,20']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN ('10','20') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` IN ('10','20') )")
           done();
         })
       })
@@ -1200,7 +1200,7 @@ describe('getPk', function(){
         model.where({id: ['IN', [10, 20]]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN (10,20) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` IN (10,20) )")
           done();
         })
       })
@@ -1208,7 +1208,7 @@ describe('getPk', function(){
         model.where({id: ['IN', '(10,20)', 'exp']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` IN (10,20) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` IN (10,20) )")
           done();
         })
       })
@@ -1217,7 +1217,7 @@ describe('getPk', function(){
         model.where({id: ['NOT IN', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` != 10 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` != 10 )")
           done();
         })
       })
@@ -1225,7 +1225,7 @@ describe('getPk', function(){
         model.where({id: ['NOT IN', '10,20']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN ('10','20') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` NOT IN ('10','20') )")
           done();
         })
       })
@@ -1233,7 +1233,7 @@ describe('getPk', function(){
         model.where({id: ['not in', '10,20']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN ('10','20') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` NOT IN ('10','20') )")
           done();
         })
       })
@@ -1241,7 +1241,7 @@ describe('getPk', function(){
         model.where({id: ['NOTIN', [10, 20]]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN (10,20) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` NOT IN (10,20) )")
           done();
         })
       })
@@ -1249,7 +1249,7 @@ describe('getPk', function(){
         model.where({id: ['notin', '(10,20)', 'exp']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` NOT IN (10,20) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` NOT IN (10,20) )")
           done();
         })
       })
@@ -1258,7 +1258,7 @@ describe('getPk', function(){
         model.where({id: ['exp', '=10']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` =10) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`id` =10) )")
           done();
         })
       })
@@ -1266,7 +1266,7 @@ describe('getPk', function(){
         model.where({id: ['exp', '=10']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` =10) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`id` =10) )")
           done();
         })
       })
@@ -1277,7 +1277,7 @@ describe('getPk', function(){
         model.where({id: 10, title: "www"}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) AND ( `title` = 'www' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` = 10 ) AND ( `title` = 'www' )")
           done();
         })
       })
@@ -1285,7 +1285,7 @@ describe('getPk', function(){
         model.where({id: 10, title: "www", _logic: 'OR'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) OR ( `title` = 'www' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` = 10 ) OR ( `title` = 'www' )")
           done();
         })
       })
@@ -1293,7 +1293,7 @@ describe('getPk', function(){
         model.where({id: 10, title: "www", _logic: 'or'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) OR ( `title` = 'www' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` = 10 ) OR ( `title` = 'www' )")
           done();
         })
       })
@@ -1301,7 +1301,7 @@ describe('getPk', function(){
         model.where({id: 10, title: "www", _logic: 'XOR'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) XOR ( `title` = 'www' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` = 10 ) XOR ( `title` = 'www' )")
           done();
         })
       })
@@ -1309,7 +1309,7 @@ describe('getPk', function(){
         model.where({id: 10, title: "www", _logic: 'xor'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` = 10 ) XOR ( `title` = 'www' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` = 10 ) XOR ( `title` = 'www' )")
           done();
         })
       })
@@ -1317,7 +1317,7 @@ describe('getPk', function(){
         model.where('id=10').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( id=10 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( id=10 )")
           done();
         })
       })
@@ -1325,7 +1325,7 @@ describe('getPk', function(){
         model.where('id=10').where('id=20').select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( id=20 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( id=20 )")
           done();
         })
       })
@@ -1335,7 +1335,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` = 10) OR (`title` = 10) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`id` = 10) OR (`title` = 10) )")
           done();
         })
       })
@@ -1345,7 +1345,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` = 10) AND (`title` = 10) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`id` = 10) AND (`title` = 10) )")
           done();
         })
       })
@@ -1354,7 +1354,7 @@ describe('getPk', function(){
         model.where({id: ['BETWEEN', 1, 2]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  (`id` BETWEEN 1 AND 2) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE (  (`id` BETWEEN 1 AND 2) )")
           done();
         })
       })
@@ -1362,7 +1362,7 @@ describe('getPk', function(){
         model.where({id: ['between', 1, 2]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  (`id` BETWEEN 1 AND 2) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE (  (`id` BETWEEN 1 AND 2) )")
           done();
         })
       })
@@ -1370,7 +1370,7 @@ describe('getPk', function(){
         model.where({id: ['between', '1,2']}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  (`id` BETWEEN '1' AND '2') )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE (  (`id` BETWEEN '1' AND '2') )")
           done();
         })
       })
@@ -1384,7 +1384,7 @@ describe('getPk', function(){
         }}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` < 20 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` > 10 AND `id` < 20 )")
           done();
         })
       })
@@ -1395,7 +1395,7 @@ describe('getPk', function(){
         }}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` < 20 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` > 10 AND `id` < 20 )")
           done();
         })
       })
@@ -1406,7 +1406,7 @@ describe('getPk', function(){
         }}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` <= 20 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` > 10 AND `id` <= 20 )")
           done();
         })
       })
@@ -1417,7 +1417,7 @@ describe('getPk', function(){
         }, title: 'welefen'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 AND `id` <= 20 ) AND ( `title` = 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` > 10 AND `id` <= 20 ) AND ( `title` = 'welefen' )")
           done();
         })
       })
@@ -1429,7 +1429,7 @@ describe('getPk', function(){
         }}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 OR `id` < 20 )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` > 10 OR `id` < 20 )")
           done();
         })
       })
@@ -1441,7 +1441,7 @@ describe('getPk', function(){
         }, title: 'welefen'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` > 10 OR `id` < 20 ) AND ( `title` = 'welefen' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` > 10 OR `id` < 20 ) AND ( `title` = 'welefen' )")
           done();
         })
       })
@@ -1449,7 +1449,7 @@ describe('getPk', function(){
         model.where({id: [['exp', '= 10 '], ['>', 10], ['<', 20]]}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( (`id` = 10 ) AND (`id` > 10) AND (`id` < 20)  )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( (`id` = 10 ) AND (`id` > 10) AND (`id` < 20)  )")
           done();
         })
       })
@@ -1460,7 +1460,7 @@ describe('getPk', function(){
         }, 'title': ['like', '%welefen%'], date: ['>', '2014-08-12'], _logic: 'OR'}).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE ( `id` >= 10 AND `id` <= 20 ) OR ( `title` LIKE '%welefen%' ) OR ( `date` > '2014-08-12' )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `id` >= 10 AND `id` <= 20 ) OR ( `title` LIKE '%welefen%' ) OR ( `date` > '2014-08-12' )")
           done();
         })
       })
@@ -1472,7 +1472,7 @@ describe('getPk', function(){
         }).select().then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "SELECT * FROM `meinv_group` WHERE (  ( `id` IN (1,2,3) ) )")
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE (  ( `id` IN (1,2,3) ) )")
           done();
         })
       })
@@ -1483,7 +1483,7 @@ describe('getPk', function(){
             id: ['IN', sql, 'exp']
           }).select().then(function(){
             var sql = model.getLastSql().trim();
-            assert.equal(sql, 'SELECT * FROM `meinv_group` WHERE ( `id` IN ( SELECT `id` FROM `meinv_cate`  ) )')
+            assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` IN ( SELECT `id` FROM `think_cate`  ) )')
           })
           done();
         })
@@ -1495,7 +1495,7 @@ describe('getPk', function(){
         model.count('id').then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT COUNT(id) AS thinkjs_count FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT COUNT(id) AS thinkjs_count FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1503,7 +1503,7 @@ describe('getPk', function(){
         model.count().then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT COUNT(id) AS thinkjs_count FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT COUNT(id) AS thinkjs_count FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1515,7 +1515,7 @@ describe('getPk', function(){
         model.sum('view_nums').then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT SUM(view_nums) AS thinkjs_sum FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT SUM(view_nums) AS thinkjs_sum FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1523,7 +1523,7 @@ describe('getPk', function(){
         model.sum().then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT SUM(id) AS thinkjs_sum FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT SUM(id) AS thinkjs_sum FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1535,7 +1535,7 @@ describe('getPk', function(){
         model.min('view_nums').then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT MIN(view_nums) AS thinkjs_min FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT MIN(view_nums) AS thinkjs_min FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1543,7 +1543,7 @@ describe('getPk', function(){
         model.min().then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT MIN(id) AS thinkjs_min FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT MIN(id) AS thinkjs_min FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1555,7 +1555,7 @@ describe('getPk', function(){
         model.max('view_nums').then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT MAX(view_nums) AS thinkjs_max FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT MAX(view_nums) AS thinkjs_max FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1563,7 +1563,7 @@ describe('getPk', function(){
         model.max().then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT MAX(id) AS thinkjs_max FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT MAX(id) AS thinkjs_max FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1575,7 +1575,7 @@ describe('getPk', function(){
         model.avg('view_nums').then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT AVG(view_nums) AS thinkjs_avg FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT AVG(view_nums) AS thinkjs_avg FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1583,7 +1583,7 @@ describe('getPk', function(){
         model.avg().then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, 'SELECT AVG(id) AS thinkjs_avg FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT AVG(id) AS thinkjs_avg FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1595,7 +1595,7 @@ describe('getPk', function(){
       it('add single field data', function(done){
         model.add({title: 'xxx'}).then(function(sql){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, "INSERT INTO `meinv_group` (`title`) VALUES('xxx')")
+          assert.equal(sql, "INSERT INTO `think_group` (`title`) VALUES('xxx')")
           done();
         })
       })
@@ -1603,7 +1603,7 @@ describe('getPk', function(){
         model.add({title: 'xxx', content: "fasdf'suredyf\n"}).then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "INSERT INTO `meinv_group` (`title`,`content`) VALUES('xxx','fasdf\\'suredyf\\n')")
+          assert.equal(sql, "INSERT INTO `think_group` (`title`,`content`) VALUES('xxx','fasdf\\'suredyf\\n')")
           done();
         })
       })
@@ -1621,7 +1621,7 @@ describe('getPk', function(){
         model.addAll([{title: 'xxx'}]).then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "INSERT INTO `meinv_group`(`title`) VALUES ('xxx')")
+          assert.equal(sql, "INSERT INTO `think_group`(`title`) VALUES ('xxx')")
           done();
         })
       })
@@ -1629,7 +1629,7 @@ describe('getPk', function(){
         model.addAll([{title: 'xxx'}, {title: 'yyyy'}]).then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "INSERT INTO `meinv_group`(`title`) VALUES ('xxx'),('yyyy')")
+          assert.equal(sql, "INSERT INTO `think_group`(`title`) VALUES ('xxx'),('yyyy')")
           done();
         })
       })
@@ -1637,7 +1637,7 @@ describe('getPk', function(){
         model.addAll([{title: 'xxx', content: "fasdf'suredyf\n"}]).then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "INSERT INTO `meinv_group`(`title`,`content`) VALUES ('xxx','fasdf\\'suredyf\\n')")
+          assert.equal(sql, "INSERT INTO `think_group`(`title`,`content`) VALUES ('xxx','fasdf\\'suredyf\\n')")
           done();
         })
       })
@@ -1645,7 +1645,7 @@ describe('getPk', function(){
         model.addAll([{title: 'xxx', content: "fasdf'suredyf\n"}, {title: 'www', content: 'yyy'}]).then(function(sql){
           var sql = model.getLastSql().trim();
           //console.log(sql)
-          assert.equal(sql, "INSERT INTO `meinv_group`(`title`,`content`) VALUES ('xxx','fasdf\\'suredyf\\n'),('www','yyy')")
+          assert.equal(sql, "INSERT INTO `think_group`(`title`,`content`) VALUES ('xxx','fasdf\\'suredyf\\n'),('www','yyy')")
           done();
         })
       })
@@ -1669,7 +1669,7 @@ describe('getPk', function(){
         model.delete().then(function(error){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, 'DELETE FROM `meinv_group`')
+          assert.equal(sql, 'DELETE FROM `think_group`')
           done();
         })
       })
@@ -1679,7 +1679,7 @@ describe('getPk', function(){
         }).delete().then(function(error){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, 'DELETE FROM `meinv_group` WHERE ( `id` < 10 )')
+          assert.equal(sql, 'DELETE FROM `think_group` WHERE ( `id` < 10 )')
           done();
         })
       })
@@ -1689,7 +1689,7 @@ describe('getPk', function(){
         }}).then(function(error){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, 'DELETE FROM `meinv_group` WHERE ( `id` < 10 )')
+          assert.equal(sql, 'DELETE FROM `think_group` WHERE ( `id` < 10 )')
           done();
         })
       })
@@ -1718,7 +1718,7 @@ describe('getPk', function(){
         model.where({id: 10}).update({title: 'wwww'}).then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `title`='wwww' WHERE ( `id` = 10 )")
+          assert.equal(sql, "UPDATE `think_group` SET `title`='wwww' WHERE ( `id` = 10 )")
           done();
         })
       })
@@ -1726,7 +1726,7 @@ describe('getPk', function(){
         model.update({title: 'wwww'}, {where: {id: 10}}).then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `title`='wwww' WHERE ( `id` = 10 )")
+          assert.equal(sql, "UPDATE `think_group` SET `title`='wwww' WHERE ( `id` = 10 )")
           done();
         })
       })
@@ -1754,7 +1754,7 @@ describe('getPk', function(){
         model.updateAll([{title: 'wwww', id: 10}]).then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `title`='wwww' WHERE ( `id` = 10 )")
+          assert.equal(sql, "UPDATE `think_group` SET `title`='wwww' WHERE ( `id` = 10 )")
           done();
         })
       })
@@ -1780,7 +1780,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateField('title', 'welefen').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `title`='welefen' WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `title`='welefen' WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1791,7 +1791,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateInc('view_nums').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums+1 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums+1 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1799,7 +1799,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateInc('view_nums', 10).then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums+10 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums+10 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1807,7 +1807,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateInc('view_nums', '10A').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums+10 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums+10 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1815,7 +1815,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateInc('view_nums', 'xxx').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums+1 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums+1 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1828,7 +1828,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateDec('view_nums').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums-1 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums-1 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1836,7 +1836,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateDec('view_nums', 10).then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums-10 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums-10 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1844,7 +1844,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateDec('view_nums', '10A').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums-10 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums-10 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1852,7 +1852,7 @@ describe('getPk', function(){
         model.where({id: 10}).updateDec('view_nums', 'xxx').then(function(){
           var sql = model.getLastSql().trim();
           //console.log(sql);
-          assert.equal(sql, "UPDATE `meinv_group` SET `view_nums`=view_nums-1 WHERE ( `id` = 10 )");
+          assert.equal(sql, "UPDATE `think_group` SET `view_nums`=view_nums-1 WHERE ( `id` = 10 )");
           done();
         })
       })
@@ -1869,7 +1869,7 @@ describe('getPk', function(){
       it('get id field limit 5', function(done){
         model.getField('id', 5).then(function(data){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT `id` FROM `meinv_group` LIMIT 5')
+          assert.equal(sql, 'SELECT `id` FROM `think_group` LIMIT 5')
           done();
         })
       })
@@ -1877,7 +1877,7 @@ describe('getPk', function(){
         model.getField('id', true).then(function(data){
           var sql = model.getLastSql().trim();
           assert.equal(data, 7565);
-          assert.equal(sql, 'SELECT `id` FROM `meinv_group` LIMIT 1')
+          assert.equal(sql, 'SELECT `id` FROM `think_group` LIMIT 1')
           done();
         })
       })
@@ -1885,7 +1885,7 @@ describe('getPk', function(){
         model.getField('id,view_nums').then(function(data){
           var sql = model.getLastSql().trim();
           assert.equal(JSON.stringify(data), '{"id":[7565,7564,7563,7562,7561,7560,7559,7558,7557],"view_nums":[1965,1558,2335,2013,1425,1433,1994,2035,1118]}');
-          assert.equal(sql, 'SELECT `id`,`view_nums` FROM `meinv_group`')
+          assert.equal(sql, 'SELECT `id`,`view_nums` FROM `think_group`')
           done();
         })
       })

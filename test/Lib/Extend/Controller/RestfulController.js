@@ -39,7 +39,7 @@ var MysqlDb = thinkRequire('MysqlDb');
 
 describe('before', function(){
   it('before', function(done){
-    C('db_prefix', 'meinv_')
+    C('db_prefix', 'think_')
     muk(RestController.prototype, 'success', function(data){
       return data;
     })
@@ -163,7 +163,7 @@ describe('Restful', function(){
       return instance.postAction();
     }).then(function(data){
       var sql = controllerInstance.model.getLastSql();
-      assert.equal(sql, "INSERT INTO `meinv_user` (`title`) VALUES('welefentest')");
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES('welefentest')");
       //assert.equal(data.id, 7565);
       done();
     }).catch(function(err){
@@ -185,7 +185,7 @@ describe('Restful', function(){
       return instance.postAction();
     }).then(function(data){
       var sql = controllerInstance.model.getLastSql();
-      assert.equal(sql, "INSERT INTO `meinv_user` (`title`) VALUES('welefentest')");
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES('welefentest')");
       assert.equal(data.id, 100);
       done();
     }).catch(function(err){
@@ -236,7 +236,7 @@ describe('Restful', function(){
       return instance.deleteAction();
     }).then(function(data){
       var sql = controllerInstance.model.getLastSql();
-      assert.equal(sql, "DELETE FROM `meinv_user` WHERE ( `id` = 1111 )");
+      assert.equal(sql, "DELETE FROM `think_user` WHERE ( `id` = 1111 )");
       assert.deepEqual(data, {affectedRows: 1})
       done();
     }).catch(function(err){
@@ -309,7 +309,7 @@ describe('Restful', function(){
       return instance.putAction();
     }).then(function(data){
       var sql = controllerInstance.model.getLastSql();
-      assert.equal(sql, "UPDATE `meinv_user` SET `title`='welefen' WHERE ( `id` = 1111 )");
+      assert.equal(sql, "UPDATE `think_user` SET `title`='welefen' WHERE ( `id` = 1111 )");
       assert.deepEqual(data, {affectedRows: 1})
       done();
     })

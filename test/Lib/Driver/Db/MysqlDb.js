@@ -18,7 +18,7 @@ describe('before', function(){
   it('before', function(){
     muk(MysqlSocket.prototype, 'query', function(sql){
       sql = sql.trim();
-      if (sql === 'SHOW COLUMNS FROM `meinv_session`') {
+      if (sql === 'SHOW COLUMNS FROM `think_session`') {
         return getPromise([ 
           { Field: 'id',Type: 'int(11) unsigned',Null: 'NO',Key: 'PRI',Default: null,Extra: 'auto_increment' },
           { Field: 'key',Type: 'varchar(255)',Null: 'NO',Key: 'UNI',Default: '',Extra: '' },
@@ -104,7 +104,7 @@ describe('MysqlDb', function(){
   })
   it('getFields', function(){
     var instance = MysqlDb({});
-    instance.getFields('meinv_session').then(function(data){
+    instance.getFields('think_session').then(function(data){
       assert.deepEqual(data, {"id":{"name":"id","type":"int(11) unsigned","notnull":false,"default":null,"primary":true,"unique":false,"autoinc":true},"key":{"name":"key","type":"varchar(255)","notnull":false,"default":"","primary":false,"unique":true,"autoinc":false},"data":{"name":"data","type":"text","notnull":false,"default":null,"primary":false,"unique":false,"autoinc":false},"expire":{"name":"expire","type":"bigint(11)","notnull":false,"default":null,"primary":false,"unique":false,"autoinc":false}})
       done();
     })
