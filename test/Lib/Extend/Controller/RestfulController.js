@@ -32,14 +32,18 @@ var res = new http.ServerResponse(req);
 var instance = Http(req, res).run();
 
 
-var RestController = thinkRequire('RestController');
-var MysqlSocket = thinkRequire('MysqlSocket');
-var MysqlDb = thinkRequire('MysqlDb');
+var RestController;
+var MysqlSocket;
+var MysqlDb;
 
 
 describe('before', function(){
   it('before', function(done){
-    C('db_prefix', 'think_')
+    RestController = thinkRequire('RestController');
+    MysqlSocket = thinkRequire('MysqlSocket');
+    MysqlDb = thinkRequire('MysqlDb')
+
+
     muk(RestController.prototype, 'success', function(data){
       return data;
     })

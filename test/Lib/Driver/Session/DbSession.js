@@ -9,11 +9,15 @@ global.RESOURCE_PATH = path.normalize(__dirname + '/../../../www');
 process.execArgv.push('--no-app');
 require(path.normalize(__dirname + '/../../../../index.js'));
 
-var MysqlSocket = thinkRequire('MysqlSocket');
-var DbSession = thinkRequire('DbSession');
+var MysqlSocket;
+var DbSession;
 
 describe('before', function(){
   it('before', function(){
+    MysqlSocket = thinkRequire('MysqlSocket');
+    DbSession = thinkRequire('DbSession')
+
+
     muk(MysqlSocket.prototype, 'query', function(sql){
       sql = sql.trim();
       if (sql === 'SHOW COLUMNS FROM `think_session`') {
@@ -33,6 +37,7 @@ describe('before', function(){
       return getPromise([]);
     })
   })
+
 })
 describe('DbSession', function(){
   it('init', function(){
@@ -46,10 +51,14 @@ describe('DbSession', function(){
     assert.equal(instance.isChanged, false)
   })
   it('initData', function(done){
+
     var instance = DbSession({cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_'});
     instance.initData().then(function(data){
+      console.log(instance.data)
       assert.deepEqual(instance.data, {name: 'suredy'})
       done();
+    }).catch(function(err){
+      console.log(err.stack);
     })
   })
   it('initData emtpy data', function(done){

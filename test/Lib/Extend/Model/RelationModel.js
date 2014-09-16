@@ -10,12 +10,14 @@ process.execArgv.push('--no-app');
 require(path.normalize(__dirname + '/../../../../index.js'));
 
 
-var MysqlSocket = thinkRequire('MysqlSocket');
-var RelationModel = thinkRequire('RelationModel');
+var MysqlSocket;
+var RelationModel;
 
 describe('before', function(){
   it('before', function(){
-    C('db_prefix', 'think_');
+    MysqlSocket = thinkRequire('MysqlSocket');
+    RelationModel = thinkRequire('RelationModel');
+
     muk(MysqlSocket.prototype, 'query', function(sql){
       sql = sql.trim();
       //console.log(sql)
