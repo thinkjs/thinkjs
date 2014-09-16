@@ -1470,6 +1470,18 @@ describe('Model', function(){
     })
   })
 
+  describe('child select', function(){
+    it('cate lastest', function(done){
+      var instance = D('Pic1');
+      return instance.order('id DESC').buildSql().then(function(sql){
+        return instance.table(sql, true).alias('tmp').group('group_id').order('id DESC').select().then(function(){
+          var sql = instance.getLastSql().trim();
+          assert.equal(sql, "SELECT * FROM ( SELECT * FROM `think_pic1` ORDER BY id DESC ) AS tmp GROUP BY `group_id` ORDER BY id DESC");
+          done();
+        })
+      })
+    })
+  })
 
 });
 describe('after', function(){
