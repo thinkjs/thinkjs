@@ -757,6 +757,10 @@ it('postRelation data empty', function(){
       })
     })
   })
+})
 
-
+describe('after', function(){
+  it('after', function(){
+    muk.restore();
+  })
 })
