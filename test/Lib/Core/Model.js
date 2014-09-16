@@ -245,6 +245,10 @@ describe('Model', function(){
       var unique = model.getUniqueField({});
       assert.equal(unique, undefined)
     })
+    it('getUniqueField with data', function(){
+      var unique = model.getUniqueField({title: 1});
+      assert.equal(unique, 'title')
+    })
   })
 
   describe('getLastSql', function(){
