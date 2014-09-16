@@ -411,6 +411,23 @@ describe('Http', function(){
         done();
       });
     })
+    it('common post with ajax data', function(done){
+      var instance = Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.headers = {'transfer-encoding': 'gzip', 'x-filename': '1.js'}
+      instance.req.method = 'POST';
+      process.nextTick(function(){
+        instance.req.emit('data', new Buffer('name=welefen&value=suredy'))
+        instance.req.emit('end');
+      })
+      instance.run().then(function(http){
+        var file = http.file.file;
+        assert.equal(file.originalFilename, '1.js');
+        assert.equal(file.size, 0);
+        assert.equal(file.path.indexOf('.js') > -1, true);
+        done();
+      });
+    })
     it('common post_max_fields', function(done){
       var instance = Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());

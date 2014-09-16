@@ -50,7 +50,7 @@ describe('before', function(){
   });
 });
 
-describe('MemcacheSocket', function(){
+describe('MysqlSocket', function(){
   describe('init', function(){
     it('init', function(){
       var config = {
