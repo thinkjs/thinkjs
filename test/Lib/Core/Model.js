@@ -243,7 +243,7 @@ describe('Model', function(){
     })
     it('getUniqueField1', function(){
       var unique = model.getUniqueField({});
-      assert.equal(unique, '')
+      assert.equal(unique, undefined)
     })
   })
 
