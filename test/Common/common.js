@@ -145,6 +145,30 @@ describe('Class', function(){
   it('f __initReturn', function(){
     assert.equal(f.__initReturn, undefined);
   })
+
+
+  //深度继承并调用super
+  var C1 = Class({
+    init: function(){
+      return 'C1';
+    }
+  })
+  var C2 = Class({
+    init: function(){
+      var c = this.super('init');
+      return c + 'C2';
+    }
+  }, C1);
+  var C3 = Class({
+    init: function(){
+      var c = this.super('init');
+      return c + 'C3';
+    }
+  }, C2);
+  it('deep inherits', function(){
+    var instance = C3();
+    assert.equal(instance.__initReturn, 'C1C2C3');
+  })
 })
 
 /**
