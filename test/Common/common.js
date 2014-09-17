@@ -248,6 +248,40 @@ describe('Class', function(){
   })
 })
 
+describe('super', function(){
+  it('super', function(){
+    var A = Class({
+      name: 'A',
+      getName: function(){
+        return this.name;
+      }
+    })
+    var B = Class({
+      name: 'B',
+      getName: function(){
+        return this.super('getName') + this.name;
+      }
+    }, A)
+    var C = Class({
+      name: 'C',
+      getName: function(){
+        return this.super('getName') + this.name;
+      }
+    }, B)
+    var D = Class({
+      name: 'D',
+      getName: function(){
+        return this.super('getName') + this.name;
+      }
+    }, C)
+    var instance = D();
+    var name = instance.getName();
+    assert.equal(name, 'DDDD');
+    var name2 = instance.getName();
+    assert.equal(name, 'DDDD');
+  })
+})
+
 /**
  * extend 函数
  * @return {[type]} [description]
