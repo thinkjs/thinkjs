@@ -1,5 +1,6 @@
 [![NPM version](https://badge.fury.io/js/thinkjs.svg)](http://badge.fury.io/js/thinkjs)
 [![travis-ci](https://travis-ci.org/75team/thinkjs.svg?branch=master)](https://travis-ci.org/welefen/thinkjs)
+[![Coverage Status](https://coveralls.io/repos/75team/thinkjs/badge.png?branch=master)](https://coveralls.io/r/75team/thinkjs?branch=master)
 
 ## 介绍
 thinkjs是一款基于Promise的Node.js MVC框架，无缝支持命令行调用、WebSocket调用，里面很多特性借鉴于ThinkPHP。
