@@ -17,7 +17,11 @@ test: install
 	@NODE_ENV=test ./node_modules/jshint/bin/jshint lib/
 
 test-cov:
-	@$(ISTANBUL) cover --report html $(MOCHA) -- -t $(TIMEOUT) --recursive -R spec $(TESTS)
+	@$(ISTANBUL) cover --report html $(MOCHA) -- -t $(TIMEOUT) --recursive  -R spec $(TESTS)
+
+test-travis:
+	@NODE_ENV=test ./node_modules/jshint/bin/jshint lib/
+	@$(ISTANBUL) cover --report lcov $(MOCHA) -- -t $(TIMEOUT) --recursive  -R spec $(TESTS)
 
 test-all: test test-cov
 
