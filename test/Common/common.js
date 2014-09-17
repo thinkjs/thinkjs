@@ -149,25 +149,102 @@ describe('Class', function(){
 
   //深度继承并调用super
   var C1 = Class({
+    name: 'C1',
     init: function(){
       return 'C1';
+    },
+    getName: function(){
+      return this.name;
+    },
+    getName1: function(){
+      return this.super('getName');
     }
   })
   var C2 = Class({
+    name: 'C2',
     init: function(){
       var c = this.super('init');
       return c + 'C2';
+    },
+    getName: function(){
+      return this.super('getName') + this.name;
+    },
+    getName3: function(){
+      return this.super('getName', [1, 2, 3, 4])
     }
   }, C1);
   var C3 = Class({
+    name: 'C3',
     init: function(){
       var c = this.super('init');
       return c + 'C3';
+    },
+    getName: function(){
+      return this.super('getName') + this.name;
     }
   }, C2);
-  it('deep inherits', function(){
+  var C4 = Class({
+    name: 'C4',
+    init: function(){
+      var c = this.super('init');
+      return c + 'C4';
+    },
+    getName: function(){
+      return this.super('getName') + this.name;
+    }
+  }, C3);
+  var C5 = Class({
+    init: function(){
+      var c = this.super('init');
+      return c + 'C5';
+    },
+    getName: function(){
+      return this.name;
+    },
+    getName1: function(){
+      return 'getName1';
+    },
+    getName2: function(){
+      return this.super('getName1');
+    }
+  }, C4);
+  it('deep inherits 3', function(){
     var instance = C3();
     assert.equal(instance.__initReturn, 'C1C2C3');
+  })
+  it('deep inherits 4', function(){
+    var instance = C4();
+    assert.equal(instance.__initReturn, 'C1C2C3C4');
+  })
+  it('deep inherits 4 twice', function(){
+    var instance = C4();
+    assert.equal(instance.__initReturn, 'C1C2C3C4');
+    var instance = C4();
+    assert.equal(instance.__initReturn, 'C1C2C3C4');
+  })
+  it('deep inherits 5', function(){
+    var instance = C5();
+    assert.equal(instance.__initReturn, 'C1C2C3C4C5');
+  })
+  it('c4.getName', function(){
+    var instance = C4();
+    var name = instance.getName();
+    assert.equal(name, 'C4C4C4C4');
+  })
+  it('c5.getName', function(){
+    var instance = C5();
+    var name = instance.getName();
+    assert.equal(name, 'C4');
+  })
+  it('c1.getName1', function(){
+    var instance = C1();
+    var name = instance.getName1();
+    assert.equal(name, undefined)
+  })
+  it('c2.getName3', function(){
+    var instance = C2();
+    var name = instance.getName3();
+    assert.equal(name, 'C2')
   })
 })
 
@@ -249,6 +326,12 @@ describe('extend', function(){
   it('extend obj with undefined', function(){
     var a = extend({}, {name: undefined, value: undefined});
     assert.deepEqual(a, {});
+  })
+
+  it('extend', function(){
+    var F = Class();
+    F.extend();
+    assert.deepEqual(F.__prop, {})
   })
 })
 
@@ -640,6 +723,14 @@ describe('isPromise', function(){
   })
   it('isPromise(getPromise("", true)) = true', function(){
     assert.equal(isPromise(getPromise('', true)), true)
+  })
+})
+
+describe('rand', function(){
+  it('rand(0, 10)', function(){
+    var r = rand(0, 10);
+    var f = (r >= 0 && r <= 10);
+    assert.equal(f, true);
   })
 })
 /**
