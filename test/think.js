@@ -15,11 +15,13 @@ describe('before', function(){
   })
 })
 describe('think', function(){
-  it('APP_PATH it not defined', function(){
+  it('APP_PATH it not defined', function(done){
+    global.APP_PATH = undefined;
     try{
       require(path.normalize(__dirname + '/../lib/think.js'));
     }catch(e){
       assert.equal(e.message, 'APP_PATH must be defined');
+      done();
     }
   })
   it('RUNTIME_PATH', function(done){
