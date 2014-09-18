@@ -158,9 +158,10 @@ describe('App', function(){
     assert.deepEqual(data, ['', ''])
   })
   it('exec, controller not exist', function(done){
-    var http = {group: 'home', controller: 'test', action: 'index', pathname: '/test'}
+    var http = {group: 'home', controller: 'test111', action: 'index', pathname: '/test'}
     App.exec(http).catch(function(err){
-      assert.equal(err.message, "Controller `test` not found. pathname is `/test`");
+      console.log(err.message)
+      assert.equal(err.message, "Controller `test111` not found. pathname is `/test`");
       done();
     })
   })
@@ -168,6 +169,16 @@ describe('App', function(){
     var http = {group: 'home', action: 'index', pathname: '/test'}
     App.exec(http).catch(function(err){
       assert.equal(err.message, "Controller not found. pathname is `/test`");
+      done();
+    })
+  })
+  it('exec, action not exist', function(){
+    var filepath = path.normalize(LIB_PATH +　'/Controller/Home/IndexController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({__after: function(){return "__after"}})')
+    var http = {group: 'Home', controller:'Index', action: 'test', pathname: '/test', post: {}, get: {}}
+    App.exec(http).catch(function(err){
+      assert.equal(err.message, "action not found. pathname is `/test`");
       done();
     })
   })
