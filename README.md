@@ -3,9 +3,16 @@
 [![Coverage Status](https://coveralls.io/repos/75team/thinkjs/badge.png?branch=master)](https://coveralls.io/r/75team/thinkjs?branch=master)
 
 ## 介绍
-thinkjs是一款基于Promise的Node.js MVC框架，无缝支持命令行调用、WebSocket调用，里面很多特性借鉴于ThinkPHP。
 
-更多介绍请见 http://www.thinkjs.org/
+thinkjs是一款基于Promise的Node.js MVC框架，借鉴于ThinkPHP。具有如下特性：
+
+* 使用Promise，完美的解决了异步嵌套的问题
+* 支持Http、命令行、WebSocket、Restful等多种访问方式
+* C(Core) + B(Behavior) + D(Driver)架构
+* 封装了Db、Session、Cache等功能
+* 开发模式下修改后立即生效
+
+更多介绍请见 http://www.thinkjs.org/doc.html
 
 ## 测试
 
