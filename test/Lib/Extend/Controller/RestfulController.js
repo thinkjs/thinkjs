@@ -342,6 +342,7 @@ describe('Restful', function(){
 
 describe('after', function(){
   it('after', function(){
+    C('url_route_rules', []);
     muk.restore();
   })
 })
