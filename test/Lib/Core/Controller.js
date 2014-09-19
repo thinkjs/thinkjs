@@ -144,6 +144,40 @@ describe('Controller', function(){
       done();
     })
   })
+  it('token is function', function(done){
+    promise.then(function(instance){
+      assert.equal(typeof instance.token, 'function');
+      done();
+    })
+  })
+  it('token get', function(done){
+    promise.then(function(instance){
+      instance.token().then(function(token){
+        assert.equal(token.length, 32);
+        done();
+      })
+    })
+  })
+  it('token get exist', function(done){
+    promise.then(function(instance){
+      instance.token().then(function(token){
+        instance.token().then(function(t){
+          assert.equal(token, t);
+          done();
+        })
+      })
+    })
+  })
+  it('token get exist', function(done){
+    promise.then(function(instance){
+      instance.token().then(function(token){
+        instance.token(token).then(function(t){
+          assert.equal(true, t);
+          done();
+        })
+      })
+    })
+  })
 
   it('instance.isJsonp()', function(done){
     promise.then(function(instance){

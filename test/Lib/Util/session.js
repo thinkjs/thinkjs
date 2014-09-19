@@ -39,6 +39,10 @@ describe('Session', function(){
       done();
     })
   })
+  it('session.uid', function(){
+    var uid = Session.uid;
+    assert.equal(typeof uid, 'function');
+  })
   it('Session start sign', function(done){
     instance.then(function(http){
       delete http.session;
