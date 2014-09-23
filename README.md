@@ -12,30 +12,38 @@ thinkjs是一款基于Promise的Node.js MVC框架，借鉴于ThinkPHP。具有�
 * 封装了Db、Session、Cache等功能
 * 开发模式下修改后立即生效
 
-更多介绍请见 http://www.thinkjs.org/doc.html
-
-## 测试
+## 安装
 
 ```
-npm test
+npm install -g thinkjs-cmd
 ```
 
-会进行单元测试和jshint代码规范测试。
+## 创建项目
 
-## 使用案例
+```
+# 在合适的位置创建一个新目录，new_dir_name为你想创建的文件夹名字
+mkdir new_dir_name; 
+# 通过thinkjs命令创建项目
+thinkjs new_dir_name
+```
 
-* [Git Press +](http://www.gitpress.org)  ([源码](https://github.com/akira-cn/gitpress)) 
-* [welefen的随笔](http://www.welefen.com) ([源码](https://github.com/welefen/thinkpress))
-* [JerryQu 的小站](http://www.imququ.com)
-* [w3ctech新版官网](http://new.w3ctech.com/)
+执行后，如果当前环境有浏览器，会自动用浏览器打开 http://127.0.0.1:8360，并且会看到如下的内容：
 
-以及数字公司内部多个系统
+```
+hello, thinkjs!
+```
+
+看到这个内容后，说明项目已经成功创建。
+
+更多介绍请见 http://thinkjs.org/doc/start.html
 
 ## 贡献者
 
-* [akira-cn](https://github.com/akira-cn)
-* [qgy18](https://github.com/qgy18)
-* [maxzhang](https://github.com/maxzhang)
+* akira-cn
+* qgy18
+* maxzhang
+* AlphaTr
+* JacksonTian
 
 ## 协议
 
