@@ -16,7 +16,6 @@
     }
   ],
   "dependencies": {
-    "swig": "1.4.2",
     "ejs": "0.8.4",
     "multiparty": "3.0.0",
     "es6-promise": "0.1.1",
