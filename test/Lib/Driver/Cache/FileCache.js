@@ -59,7 +59,7 @@ describe('FileCache', function(){
     var instance = FileCache();
     instance.setData('name4', 'welefen').then(function(){
       var filePath = instance.getStoredFile('name4')
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       content = JSON.parse(content);
       content.expire -= 100000000000;
       fs.writeFileSync(filePath, JSON.stringify(content));
@@ -73,7 +73,7 @@ describe('FileCache', function(){
     var instance = FileCache();
     instance.setData('name4', 'welefen').then(function(){
       var filePath = instance.getStoredFile('name4')
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       content = JSON.parse(content);
       content.expire -= 100000000000;
       fs.writeFileSync(filePath, 'fasdf[www');
@@ -110,7 +110,7 @@ describe('FileCache', function(){
     instance.setData('name6', 'welefen').then(function(){
       //assert.deepEqual(data, undefined)
       var filePath = instance.getStoredFile('name6');
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       content = JSON.parse(content);
       assert.deepEqual(content, {"data":{"name6":"welefen"},"expire":12142812121,"timeout":21600})
       Date.now = now;
@@ -125,7 +125,7 @@ describe('FileCache', function(){
     }
     instance.setData('name6', 'welefen', 20000).then(function(){
       var filePath = instance.getStoredFile('name6');
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       content = JSON.parse(content);
       assert.deepEqual(content, {"data":{"name6":"welefen"},"expire":12141212121,"timeout":20000})
       Date.now = now;
@@ -140,7 +140,7 @@ describe('FileCache', function(){
     }
     instance.setData({name8: 'welefen'}).then(function(){
       var filePath = instance.getStoredFile('name8');
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       content = JSON.parse(content);
       assert.deepEqual(content, {"data":{"name8":"welefen"},"expire":12142812121,"timeout":21600})
       Date.now = now;
@@ -155,7 +155,7 @@ describe('FileCache', function(){
     }
     instance.setData({name8: 'welefen'}, 2220000).then(function(){
       var filePath = instance.getStoredFile('name8');
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       //console.log(content)
       content = JSON.parse(content);
       assert.deepEqual(content, {"data":{"name8":"welefen"},"expire":14341212121,"timeout":2220000})
@@ -171,7 +171,7 @@ describe('FileCache', function(){
     }
     instance.set({name9: 'welefen'}, 2220000).then(function(){
       var filePath = instance.getStoredFile('name9');
-      var content = fs.readFileSync(filePath, 'utf8');
+      var content = fs.readFileSync(filePath, 'utf-8');
       content = JSON.parse(content);
       assert.deepEqual(content, {"data":{"name9":"welefen"},"expire":14341212121,"timeout":2220000})
       Date.now = now;

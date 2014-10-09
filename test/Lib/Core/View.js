@@ -137,7 +137,7 @@ describe('View', function(){
         var fn = httpInstance.res.setHeader;
         httpInstance.res.setHeader = function(name, value){
           if (name === 'Content-Type') {
-            assert.equal(value, 'text/html; charset=utf8')
+            assert.equal(value, 'text/html; charset=utf-8')
           };
            httpInstance.res.setHeader = fn;
           done();
