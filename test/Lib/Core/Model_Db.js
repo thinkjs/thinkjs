@@ -427,7 +427,20 @@ describe('getPk', function(){
           on: ['id', 'id']
         }).select().then(function(){
           var sql = model.getLastSql().trim();
+          //console.log(sql)
           assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` AS c ON think_group.`id`=c.`id`')
+          done();
+        })
+      })
+      it('join with table on', function(done){
+        model.alias('a').join({
+          table: 'cate',
+          as: 'c',
+          on: ['a.id', 'c.id']
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.id=c.id')
           done();
         })
       })
@@ -503,6 +516,25 @@ describe('getPk', function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
           assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON a.`id`=d.`group_id`')
+          done();
+        })
+      })
+      it('multi join1 with table on', function(done){
+        model.alias('a').join({
+          cate: {
+            join: 'left',
+            as: 'c',
+            on: ['id', 'id']
+          },
+          group_tag: {
+            join: 'left',
+            as: 'd',
+            on: ['c.id', 'd.group_id']
+          }
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON c.id=d.group_id')
           done();
         })
       })
