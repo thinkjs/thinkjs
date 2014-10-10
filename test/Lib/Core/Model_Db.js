@@ -1508,6 +1508,37 @@ describe('getPk', function(){
           done();
         })
       })
+      it('where _complex 2', function(done){
+        model.where({
+          title: 'test',
+          _complex: {
+            id: ['IN', [1, 2, 3]],
+            content: 'www',
+            _logic: 'or'
+          }
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` = 'test' ) AND (  ( `id` IN (1,2,3) ) OR ( `content` = 'www' ) )")
+          done();
+        })
+      })
+      it('where _complex 3', function(done){
+        model.where({
+          title: 'test',
+          _complex: {
+            id: ['IN', [1, 2, 3]],
+            content: 'www'
+          },
+          _logic: 'or'
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` = 'test' ) OR (  ( `id` IN (1,2,3) ) AND ( `content` = 'www' ) )")
+          done();
+        })
+      })
+
 
       it('where build sql', function(done){
         D('Cate').field('id').buildSql().then(function(sql){
