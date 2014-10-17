@@ -641,7 +641,33 @@ describe('getPk', function(){
           done();
         })
       })
-
+      // table 子查询表连接
+      it('buildSql join', function(done){
+        model.alias('a').join({
+          table: 'select * from think_group',
+          join: 'left',
+          as: 'b',
+          on: ['id', 'id']
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN (select * from think_group) AS b ON a.`id`=b.`id`')
+          done();
+        })
+      })
+      it('buildSql join with bracet', function(done){
+        model.alias('a').join({
+          table: ' (select * from think_group) ',
+          join: 'left',
+          as: 'b',
+          on: ['id', 'id']
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN (select * from think_group) AS b ON a.`id`=b.`id`')
+          done();
+        })
+      })
     })
 
     describe('table', function(){
