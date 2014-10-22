@@ -36,7 +36,7 @@ describe('Class', function(){
     }
   });
 
-  var B = Class({
+  var B = Class(A, {
     value2: 'B',
     fn2: function(){
       var p = this.super("fn2");
@@ -55,9 +55,9 @@ describe('Class', function(){
     data: {
       name: 'CLASS B'
     }
-  }, A);
+  });
 
-  var C = Class({
+  var C = Class(B, {
     value: 'C',
     fn2: function(){
       var p = this.super("fn2");
@@ -69,9 +69,9 @@ describe('Class', function(){
     data: {
       name: 'CLASS C'
     }
-  }, B)
+  })
 
-  var D = Class(A, true);
+  var D = Class(A, {});
 
   var a = A();
   var b = B();
@@ -160,7 +160,7 @@ describe('Class', function(){
       return this.super('getName');
     }
   })
-  var C2 = Class({
+  var C2 = Class(C1, {
     name: 'C2',
     init: function(){
       var c = this.super('init');
@@ -172,8 +172,8 @@ describe('Class', function(){
     getName3: function(){
       return this.super('getName', [1, 2, 3, 4])
     }
-  }, C1);
-  var C3 = Class({
+  });
+  var C3 = Class(C2, {
     name: 'C3',
     init: function(){
       var c = this.super('init');
@@ -182,8 +182,8 @@ describe('Class', function(){
     getName: function(){
       return this.super('getName') + this.name;
     }
-  }, C2);
-  var C4 = Class({
+  });
+  var C4 = Class(C3, {
     name: 'C4',
     init: function(){
       var c = this.super('init');
@@ -192,8 +192,8 @@ describe('Class', function(){
     getName: function(){
       return this.super('getName') + this.name;
     }
-  }, C3);
-  var C5 = Class({
+  });
+  var C5 = Class(C4, {
     init: function(){
       var c = this.super('init');
       return c + 'C5';
@@ -207,7 +207,7 @@ describe('Class', function(){
     getName2: function(){
       return this.super('getName1');
     }
-  }, C4);
+  });
   it('deep inherits 3', function(){
     var instance = C3();
     assert.equal(instance.__initReturn, 'C1C2C3');
@@ -256,24 +256,24 @@ describe('super', function(){
         return this.name;
       }
     })
-    var B = Class({
+    var B = Class(A, {
       name: 'B',
       getName: function(){
         return this.super('getName') + this.name;
       }
-    }, A)
-    var C = Class({
+    })
+    var C = Class(B, {
       name: 'C',
       getName: function(){
         return this.super('getName') + this.name;
       }
-    }, B)
-    var D = Class({
+    })
+    var D = Class(C, {
       name: 'D',
       getName: function(){
         return this.super('getName') + this.name;
       }
-    }, C)
+    })
     var instance = D();
     var name = instance.getName();
     assert.equal(name, 'DDDD');
