@@ -898,6 +898,13 @@ describe('getPk', function(){
           done();
         })
       })
+      it('where value undefined', function(done){
+        model.where({id: undefined}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 0 )')
+          done();
+        })
+      })
       it('where =', function(done){
         model.where({id: ['=', 10]}).select().then(function(){
           var sql = model.getLastSql().trim();

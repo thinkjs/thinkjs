@@ -288,7 +288,7 @@ describe('super', function(){
  */
 describe('extend', function(){
   var a = {};
-  var b = {name: 1, value: undefined};
+  var b = {name: 1};
   var c = {name: 2, value: 'value'};
   var d = {name: {name: 1}, value: {value: 2}};
   var e = {name: [1, 2, 3]};
@@ -353,7 +353,7 @@ describe('extend', function(){
   })
   it('extend obj with undefined', function(){
     var a = extend({}, {name: undefined, value: undefined});
-    assert.deepEqual(a, {});
+    assert.deepEqual(a, {name: undefined, value: undefined});
   })
 
   it('extend', function(){
