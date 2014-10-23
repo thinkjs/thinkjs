@@ -292,11 +292,6 @@ describe('extend', function(){
   var c = {name: 2, value: 'value'};
   var d = {name: {name: 1}, value: {value: 2}};
   var e = {name: [1, 2, 3]};
-  var f = function(){
-    return {
-      name: 5
-    }
-  }
   it('a stringify1', function(){
     extend(a, b);
     assert.deepEqual(a, {"name":1});
@@ -330,11 +325,6 @@ describe('extend', function(){
     e.name[0] = 3;
     assert.equal(a.name[0], 3);
   })
-  it('a.name = 5', function(){
-    a = {};
-    extend(a, f);
-    assert.equal(a.name, 5);
-  })
   it('extend array', function(){
     var a = [];
     var b = [1, 2, 3];
@@ -352,6 +342,10 @@ describe('extend', function(){
   it('extend array', function(){
     var a = extend({name: [1]}, {name: [1, 2, 3]});
     assert.deepEqual(a, {name: [1, 2, 3]})
+  })
+  it('extend array', function(){
+    var a = extend({name: [1, 2, 3, 4, 5]}, {name: [6, 7]});
+    assert.deepEqual(a, {name: [6, 7]})
   })
   it('extend obj', function(){
     var a = extend({name: {value: 'welefen'}}, {name: {value: 'suredy'}});
