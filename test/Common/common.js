@@ -246,6 +246,22 @@ describe('Class', function(){
     var name = instance.getName3();
     assert.equal(name, 'C2')
   })
+  it('class prop is arr', function(){
+    var F = Class({
+      arr: [],
+      add: function(num){
+        this.arr.push(num);
+      }
+    })
+    var F1 = Class(F, {})
+    var F2 = Class(F, {})
+    var f1 = F1();
+    var f2 = F2();
+    f1.add(1);
+    f2.add(2);
+    assert.deepEqual(f1.arr, [1]);
+    assert.deepEqual(f2.arr, [2]);
+  })
 })
 
 describe('super', function(){
@@ -360,6 +376,14 @@ describe('extend', function(){
     var F = Class();
     F.extend();
     assert.deepEqual(F.__prop, {})
+  })
+  it('extend array', function(){
+    var a1 = [1, 2];
+    var a2 = [];
+    a2 = extend(a2, a1);
+    a1.push(3)
+    assert.deepEqual(a1, [1,2,3]);
+    assert.deepEqual(a2, [1, 2]);
   })
 })
 
