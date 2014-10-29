@@ -85,7 +85,7 @@ describe('View', function(){
       promise.then(function(instance){
         return instance.fetch();
       }).catch(function(err){
-        assert.equal(err.message, "can't find template file")
+        assert.equal(err.message.indexOf("can't find template file") > -1, true)
         done();
       })
     })
