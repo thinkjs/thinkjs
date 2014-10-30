@@ -146,6 +146,9 @@ describe('Model', function(){
       assert.equal(model.getTableName(), 'think_group');
       assert.equal(model.getTableName(), 'think_group');
     })
+    it('getTableName, no model', function(){
+      assert.equal(D().getTableName(), 'think_');
+    })
     it('getTableName 1', function(){
       var model = D('Group');
       model.tablePrefix = '';
