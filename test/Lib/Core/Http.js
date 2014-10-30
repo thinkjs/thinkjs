@@ -514,7 +514,7 @@ describe('Http', function(){
       instance.req.method = 'POST';
       instance.res.statusCode = 200;
       process.nextTick(function(){
-        instance.form.emit('error');
+        instance.form.emit('error', new Error('test'));
       })
       C('post_max_fields', 150);
       C('post_max_fields_size', 1000)
