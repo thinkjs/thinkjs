@@ -158,17 +158,33 @@ describe('App', function(){
     assert.deepEqual(data, ['', ''])
   })
   it('exec, controller not exist', function(done){
+    APP_DEBUG = true;
     var http = {group: 'home', controller: 'test111', action: 'index', pathname: '/test'}
     App.exec(http).catch(function(err){
       console.log(err.message)
       assert.equal(err.message, "Controller `test111` not found. pathname is `/test`");
+      APP_DEBUG = false;
       done();
     })
   })
   it('exec, controller not exist', function(done){
-    var http = {group: 'home', action: 'index', pathname: '/test'}
+    var http = {group: 'home', action: 'index', pathname: '/test'};
+    APP_DEBUG = true;
     App.exec(http).catch(function(err){
       assert.equal(err.message, "Controller not found. pathname is `/test`");
+      APP_DEBUG = false;
+      done();
+    })
+  })
+  it('exec, __call exist, _404 not exist', function(){
+    var filepath = path.normalize(LIB_PATH +　'/Controller/Home/IndexController.js');
+    mkdir(path.dirname(filepath));
+    fs.writeFileSync(filepath, 'module.exports = Controller({__call: function(){return "__call"}})')
+    var http = {group: 'Home', controller:'Index', action: 'test', pathname: '/testddd', post: {}, get: {}}
+    APP_DEBUG = true;
+    App.exec(http).catch(function(err){
+      assert.equal(err.message, "action not found. pathname is `/testddd`");
+      APP_DEBUG = false;
       done();
     })
   })
