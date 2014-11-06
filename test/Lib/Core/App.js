@@ -33,7 +33,7 @@ describe('App', function(){
     var filepath = path.normalize(LIB_PATH +　'/Controller/Home/IndexController.js');
     mkdir(path.dirname(filepath));
     fs.writeFileSync(filepath, 'module.exports = Controller({indexAction: function(){}})')
-    var c = App.getBaseController({group: 'Home', controller: 'index', action: 'index'});
+    var c = App.getBaseController({group: 'Home', controller: 'Index', action: 'index'});
     assert.equal(isObject(c), true);
     rmdir(path.normalize(__dirname + '/../../App')).then(done)
   })
