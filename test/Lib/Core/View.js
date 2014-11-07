@@ -115,6 +115,52 @@ describe('View', function(){
         done();
       })
     })
+    it('fetch file, with variable', function(done){
+
+      var filepath = path.normalize(__dirname + '/../../App/View/Home/index_index.html');
+      mkdir(path.dirname(filepath));
+      fs.writeFileSync(filepath, '<%-name%>')
+
+      promise.then(function(instance){
+        instance.assign('name', 'welefen')
+        return instance.fetch(filepath);
+      }).then(function(content){
+        assert.equal(content, "welefen");
+        done();
+      })
+    })
+    it('fetch file, with promise variable', function(done){
+
+      var filepath = path.normalize(__dirname + '/../../App/View/Home/index_index.html');
+      mkdir(path.dirname(filepath));
+      fs.writeFileSync(filepath, '<%-name%>')
+
+      promise.then(function(instance){
+        instance.assign('name', getPromise('welefen'))
+        return instance.fetch(filepath);
+      }).then(function(content){
+        assert.equal(content, "welefen");
+        done();
+      })
+    })
+    it('fetch file, with promise variable', function(done){
+
+      var filepath = path.normalize(__dirname + '/../../App/View/Home/index_index.html');
+      mkdir(path.dirname(filepath));
+      fs.writeFileSync(filepath, '<%-name%><%-name2%>')
+
+      promise.then(function(instance){
+        instance.assign('name', getPromise('welefen'));
+        var p1 = getPromise().then(function(){
+          instance.assign('name2', 'welefen333');
+        })
+        instance.assign('name1', p1)
+        return instance.fetch(filepath);
+      }).then(function(content){
+        assert.equal(content, "welefenwelefen333");
+        done();
+      })
+    })
     it('fetch file, without view Path', function(done){
 
       var filepath = path.normalize(__dirname + '/../../App/View/Home/index_index.html');
