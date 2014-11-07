@@ -1226,6 +1226,18 @@ describe('Controller', function(){
       instance.success({name: "welefen"});
     })
   })
+  it('instance.success(data, message)', function(done){
+    promise.then(function(instance){
+      var fn = instance.http.res.write;
+      instance.http.res.write = function(name, value){
+        //console.log(name)
+        assert.equal(name, '{"errno":0,"errmsg":"message","data":{"name":"welefen"}}');
+        instance.http.res.write = fn;
+        done();
+      }
+      instance.success({name: "welefen"}, 'message');
+    })
+  })
   it('instance.error()', function(done){
     promise.then(function(instance){
       var fn = instance.http.res.write;
