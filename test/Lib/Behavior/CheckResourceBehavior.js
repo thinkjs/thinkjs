@@ -59,7 +59,7 @@ describe('CheckResourceBehavior', function(){
     var fn1 = res.setHeader;
     res.setHeader = function(name, value){
       if (name === 'Content-Type') {
-        assert.strictEqual(value, 'application/javascript; charset=utf8');
+        assert.strictEqual(value, 'application/javascript; charset=utf-8');
       };
       res.setHeader = fn1;
     }
@@ -79,7 +79,7 @@ describe('CheckResourceBehavior', function(){
     var fn1 = res.setHeader;
     res.setHeader = function(name, value){
       if (name === 'Content-Type') {
-        assert.strictEqual(value, 'application/javascript; charset=utf8');
+        assert.strictEqual(value, 'application/javascript; charset=utf-8');
       };
       res.setHeader = fn1;
     }
@@ -99,7 +99,7 @@ describe('CheckResourceBehavior', function(){
     var fn1 = res.setHeader;
     res.setHeader = function(name, value){
       if (name === 'Content-Type') {
-        assert.strictEqual(value, 'text/css; charset=utf8');
+        assert.strictEqual(value, 'text/css; charset=utf-8');
       };
       res.setHeader = fn1;
     }

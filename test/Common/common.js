@@ -36,7 +36,7 @@ describe('Class', function(){
     }
   });
 
-  var B = Class({
+  var B = Class(A, {
     value2: 'B',
     fn2: function(){
       var p = this.super("fn2");
@@ -55,9 +55,9 @@ describe('Class', function(){
     data: {
       name: 'CLASS B'
     }
-  }, A);
+  });
 
-  var C = Class({
+  var C = Class(B, {
     value: 'C',
     fn2: function(){
       var p = this.super("fn2");
@@ -69,9 +69,9 @@ describe('Class', function(){
     data: {
       name: 'CLASS C'
     }
-  }, B)
+  })
 
-  var D = Class(A, true);
+  var D = Class(A, {});
 
   var a = A();
   var b = B();
@@ -160,7 +160,7 @@ describe('Class', function(){
       return this.super('getName');
     }
   })
-  var C2 = Class({
+  var C2 = Class(C1, {
     name: 'C2',
     init: function(){
       var c = this.super('init');
@@ -172,8 +172,8 @@ describe('Class', function(){
     getName3: function(){
       return this.super('getName', [1, 2, 3, 4])
     }
-  }, C1);
-  var C3 = Class({
+  });
+  var C3 = Class(C2, {
     name: 'C3',
     init: function(){
       var c = this.super('init');
@@ -182,8 +182,8 @@ describe('Class', function(){
     getName: function(){
       return this.super('getName') + this.name;
     }
-  }, C2);
-  var C4 = Class({
+  });
+  var C4 = Class(C3, {
     name: 'C4',
     init: function(){
       var c = this.super('init');
@@ -192,8 +192,8 @@ describe('Class', function(){
     getName: function(){
       return this.super('getName') + this.name;
     }
-  }, C3);
-  var C5 = Class({
+  });
+  var C5 = Class(C4, {
     init: function(){
       var c = this.super('init');
       return c + 'C5';
@@ -207,7 +207,7 @@ describe('Class', function(){
     getName2: function(){
       return this.super('getName1');
     }
-  }, C4);
+  });
   it('deep inherits 3', function(){
     var instance = C3();
     assert.equal(instance.__initReturn, 'C1C2C3');
@@ -246,6 +246,22 @@ describe('Class', function(){
     var name = instance.getName3();
     assert.equal(name, 'C2')
   })
+  it('class prop is arr', function(){
+    var F = Class({
+      arr: [],
+      add: function(num){
+        this.arr.push(num);
+      }
+    })
+    var F1 = Class(F, {})
+    var F2 = Class(F, {})
+    var f1 = F1();
+    var f2 = F2();
+    f1.add(1);
+    f2.add(2);
+    assert.deepEqual(f1.arr, [1]);
+    assert.deepEqual(f2.arr, [2]);
+  })
 })
 
 describe('super', function(){
@@ -256,24 +272,24 @@ describe('super', function(){
         return this.name;
       }
     })
-    var B = Class({
+    var B = Class(A, {
       name: 'B',
       getName: function(){
         return this.super('getName') + this.name;
       }
-    }, A)
-    var C = Class({
+    })
+    var C = Class(B, {
       name: 'C',
       getName: function(){
         return this.super('getName') + this.name;
       }
-    }, B)
-    var D = Class({
+    })
+    var D = Class(C, {
       name: 'D',
       getName: function(){
         return this.super('getName') + this.name;
       }
-    }, C)
+    })
     var instance = D();
     var name = instance.getName();
     assert.equal(name, 'DDDD');
@@ -288,15 +304,10 @@ describe('super', function(){
  */
 describe('extend', function(){
   var a = {};
-  var b = {name: 1, value: undefined};
+  var b = {name: 1};
   var c = {name: 2, value: 'value'};
   var d = {name: {name: 1}, value: {value: 2}};
   var e = {name: [1, 2, 3]};
-  var f = function(){
-    return {
-      name: 5
-    }
-  }
   it('a stringify1', function(){
     extend(a, b);
     assert.deepEqual(a, {"name":1});
@@ -330,11 +341,6 @@ describe('extend', function(){
     e.name[0] = 3;
     assert.equal(a.name[0], 3);
   })
-  it('a.name = 5', function(){
-    a = {};
-    extend(a, f);
-    assert.equal(a.name, 5);
-  })
   it('extend array', function(){
     var a = [];
     var b = [1, 2, 3];
@@ -353,19 +359,31 @@ describe('extend', function(){
     var a = extend({name: [1]}, {name: [1, 2, 3]});
     assert.deepEqual(a, {name: [1, 2, 3]})
   })
+  it('extend array', function(){
+    var a = extend({name: [1, 2, 3, 4, 5]}, {name: [6, 7]});
+    assert.deepEqual(a, {name: [6, 7]})
+  })
   it('extend obj', function(){
     var a = extend({name: {value: 'welefen'}}, {name: {value: 'suredy'}});
     assert.deepEqual(a, {name: {value: 'suredy'}})
   })
   it('extend obj with undefined', function(){
     var a = extend({}, {name: undefined, value: undefined});
-    assert.deepEqual(a, {});
+    assert.deepEqual(a, {name: undefined, value: undefined});
   })
 
   it('extend', function(){
     var F = Class();
     F.extend();
     assert.deepEqual(F.__prop, {})
+  })
+  it('extend array', function(){
+    var a1 = [1, 2];
+    var a2 = [];
+    a2 = extend(a2, a1);
+    a1.push(3)
+    assert.deepEqual(a1, [1,2,3]);
+    assert.deepEqual(a2, [1, 2]);
   })
 })
 

@@ -427,7 +427,20 @@ describe('getPk', function(){
           on: ['id', 'id']
         }).select().then(function(){
           var sql = model.getLastSql().trim();
+          //console.log(sql)
           assert.equal(sql, 'SELECT * FROM `think_group` LEFT JOIN `think_cate` AS c ON think_group.`id`=c.`id`')
+          done();
+        })
+      })
+      it('join with table on', function(done){
+        model.alias('a').join({
+          table: 'cate',
+          as: 'c',
+          on: ['a.id', 'c.id']
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.id=c.id')
           done();
         })
       })
@@ -503,6 +516,25 @@ describe('getPk', function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
           assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON a.`id`=d.`group_id`')
+          done();
+        })
+      })
+      it('multi join1 with table on', function(done){
+        model.alias('a').join({
+          cate: {
+            join: 'left',
+            as: 'c',
+            on: ['id', 'id']
+          },
+          group_tag: {
+            join: 'left',
+            as: 'd',
+            on: ['c.id', 'd.group_id']
+          }
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN `think_cate` AS c ON a.`id`=c.`id` LEFT JOIN `think_group_tag` AS d ON c.id=d.group_id')
           done();
         })
       })
@@ -609,7 +641,33 @@ describe('getPk', function(){
           done();
         })
       })
-
+      // table 子查询表连接
+      it('buildSql join', function(done){
+        model.alias('a').join({
+          table: 'select * from think_group',
+          join: 'left',
+          as: 'b',
+          on: ['id', 'id']
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN (select * from think_group) AS b ON a.`id`=b.`id`')
+          done();
+        })
+      })
+      it('buildSql join with bracet', function(done){
+        model.alias('a').join({
+          table: ' (select * from think_group) ',
+          join: 'left',
+          as: 'b',
+          on: ['id', 'id']
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, 'SELECT * FROM think_group AS a LEFT JOIN (select * from think_group) AS b ON a.`id`=b.`id`')
+          done();
+        })
+      })
     })
 
     describe('table', function(){
@@ -837,6 +895,13 @@ describe('getPk', function(){
           var sql = model.getLastSql().trim();
           //console.log(sql)
           assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 10 )')
+          done();
+        })
+      })
+      it('where value undefined', function(done){
+        model.where({id: undefined}).select().then(function(){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM `think_group` WHERE ( `id` = 0 )')
           done();
         })
       })
@@ -1476,6 +1541,37 @@ describe('getPk', function(){
           done();
         })
       })
+      it('where _complex 2', function(done){
+        model.where({
+          title: 'test',
+          _complex: {
+            id: ['IN', [1, 2, 3]],
+            content: 'www',
+            _logic: 'or'
+          }
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` = 'test' ) AND (  ( `id` IN (1,2,3) ) OR ( `content` = 'www' ) )")
+          done();
+        })
+      })
+      it('where _complex 3', function(done){
+        model.where({
+          title: 'test',
+          _complex: {
+            id: ['IN', [1, 2, 3]],
+            content: 'www'
+          },
+          _logic: 'or'
+        }).select().then(function(){
+          var sql = model.getLastSql().trim();
+          //console.log(sql)
+          assert.equal(sql, "SELECT * FROM `think_group` WHERE ( `title` = 'test' ) OR (  ( `id` IN (1,2,3) ) AND ( `content` = 'www' ) )")
+          done();
+        })
+      })
+
 
       it('where build sql', function(done){
         D('Cate').field('id').buildSql().then(function(sql){

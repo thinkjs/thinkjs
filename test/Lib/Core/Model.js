@@ -20,6 +20,7 @@ var clearRequireCache = function(){
 
 describe('before', function(){
   it('before', function(){
+    var tagCacheKeyNum = 1;
     muk(MysqlSocket.prototype, 'query', function(sql){
       if (sql === 'SHOW COLUMNS FROM `think_friend`') {
         var data = [
@@ -80,7 +81,10 @@ describe('before', function(){
           {"id":7565,"title":"米兰达·可儿干练服装写真大片","cate_id":1,"cate_no":0},
           {"id":7564,"title":"[Beautyleg]2014.05.21 No.977 Cindy","cate_id":2,"cate_no":977}
         ])
-      };
+      }else if(sql.trim() === 'SELECT * FROM `think_cache_tbl`'){
+        ++tagCacheKeyNum;
+        return getPromise(['cache1', 'cache2', tagCacheKeyNum]);
+      }
       var data = [
         {"id":7565,"title":"米兰达·可儿干练服装写真大片","cate_id":1,"cate_no":0},
         {"id":7564,"title":"[Beautyleg]2014.05.21 No.977 Cindy","cate_id":2,"cate_no":977},
@@ -145,6 +149,9 @@ describe('Model', function(){
     it('getTableName', function(){
       assert.equal(model.getTableName(), 'think_group');
       assert.equal(model.getTableName(), 'think_group');
+    })
+    it('getTableName, no model', function(){
+      assert.equal(D().getTableName(), 'think_');
     })
     it('getTableName 1', function(){
       var model = D('Group');
@@ -322,6 +329,46 @@ describe('Model', function(){
       var model = D('Tag');
       model.cache({key: 'welefen', timeout: 100});
       assert.deepEqual(model, model.cache({key: 'welefen', timeout: 100}));
+    })
+    it('cache data, same key', function(done){
+      var model = D('CacheTbl');
+      model.cache('tagCacheKey').select().then(function(data){
+        var sql = model.getLastSql().trim();
+        assert.equal(sql, 'SELECT * FROM `think_cache_tbl`');
+        assert.deepEqual(data, [ 'cache1', 'cache2', 2 ]);
+        process.nextTick(function(){
+          model.cache('tagCacheKey').select().then(function(data){
+            assert.deepEqual(data, [ 'cache1', 'cache2', 2 ]);
+            done();
+          })
+        })
+      })
+    })
+    it('cache data, diffrent key', function(done){
+      var model = D('CacheTbl');
+      model.cache('tagCacheKey1').select().then(function(data){
+        var sql = model.getLastSql().trim();
+        assert.equal(sql, 'SELECT * FROM `think_cache_tbl`');
+        assert.deepEqual(data, [ 'cache1', 'cache2', 3 ]);
+        process.nextTick(function(){
+          model.cache('tagCacheKey2').select().then(function(data){
+            assert.deepEqual(data, [ 'cache1', 'cache2', 4 ]);
+            done();
+          })
+        })
+      })
+    })
+    it('cache data, diffrent key', function(done){
+      var model = D('CacheTbl');
+      model.cache('tagCacheKey3').select().then(function(data){
+        var sql = model.getLastSql().trim();
+        assert.equal(sql, 'SELECT * FROM `think_cache_tbl`');
+        assert.deepEqual(data, [ 'cache1', 'cache2', 5 ]);
+        S('tagCacheKey3', undefined, true).then(function(data){
+          assert.deepEqual(data, [ 'cache1', 'cache2', 5 ]);
+          done();
+        })
+      })
     })
   })
 
