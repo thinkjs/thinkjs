@@ -92,10 +92,13 @@ describe('WebSocket', function(){
 		})
 	})
 	describe('openHandle', function(){
-		it('url is /', function(){
+		it('url is /', function(done){
 			var protocal = 'chat';
 			var req = {'url':'/'};
-			assert.deepEqual(instance.openHandle(req, protocal), getPromise({}));
+			instance.openHandle(req, protocal).then(function(data){
+				assert.deepEqual(data, {});
+				done();
+			})
 		})
 		it('url is /foo/index', function(done){
 			var protocal = 'chat';
