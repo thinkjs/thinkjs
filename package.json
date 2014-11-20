@@ -1,6 +1,6 @@
 {
   "name": "thinkjs",
-  "description": "A Node.js MVC Web Framework Baseed On Promise",
+  "description": "A Node.js MVC Web Framework Based On Promise",
   "version": "1.1.0",
   "author": {
     "name": "welefen",
