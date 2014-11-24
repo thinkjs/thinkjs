@@ -39,11 +39,24 @@ hello, thinkjs!
 
 ## 贡献者
 
-* akira-cn
-* qgy18
-* maxzhang
-* AlphaTr
-* JacksonTian
+```
+   944  welefen                 94.8%
+    14  李成银               1.4%
+     7  akira                   0.7%
+     5  Rayi                    0.5%
+     5  炎燎                  0.5%
+     4  JerryQu                 0.4%
+     3  wavelynn                0.3%
+     3  zhangdaiping            0.3%
+     2  AlphaTr                 0.2%
+     2  Startan                 0.2%
+     2  jiangyuan               0.2%
+     1  snadn                   0.1%
+     1  qgy18                   0.1%
+     1  liupengke               0.1%
+     1  akira-cn                0.1%
+     1  Jackson Tian            0.1%
+```
 
 ## 协议
 
