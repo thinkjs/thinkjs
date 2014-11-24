@@ -41,10 +41,10 @@ hello, thinkjs!
 
 ```
    944  welefen                 94.8%
-    14  李成银               1.4%
+    14  李成银                   1.4%
      7  akira                   0.7%
      5  Rayi                    0.5%
-     5  炎燎                  0.5%
+     5  炎燎                     0.5%
      4  JerryQu                 0.4%
      3  wavelynn                0.3%
      3  zhangdaiping            0.3%
