@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
-  "description": "A Node.js MVC Web Framework Baseed On Promise",
-  "version": "1.0.7",
+  "description": "A Node.js MVC Web Framework Based On Promise",
+  "version": "1.1.6",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -16,12 +16,13 @@
     }
   ],
   "dependencies": {
-    "ejs": "0.8.4",
-    "multiparty": "3.0.0",
-    "es6-promise": "0.1.1",
+    "ejs": "1.0.0",
+    "multiparty": "4.0.0",
+    "es6-promise": "2.0.0",
     "mime": "1.2.11",
-    "mysql": "2.3.2",
-    "websocket-driver": "0.3.5"
+    "mysql": "2.5.3",
+    "websocket-driver": "0.4.0",
+    "thinkjs-util": ">=1.0.0"
   },
   "devDependencies": {
     "should": "4.0.4",
