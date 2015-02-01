@@ -1,6 +1,6 @@
-var index = require('../index.js');
+var thinkjs = require('../index.js');
 
-index({
-  APP_PATH: __dirname
-})
-console.log(think.alias)
+thinkjs({
+  APP_PATH: __dirname,
+  debug: true
+});
