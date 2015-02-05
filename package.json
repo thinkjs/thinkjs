@@ -16,12 +16,12 @@
     }
   ],
   "dependencies": {
-    "ejs": "1.0.0",
-    "multiparty": "4.0.0",
-    "es6-promise": "2.0.0",
+    "ejs": "2.2.4",
+    "multiparty": "4.1.1",
+    "es6-promise": "2.0.1",
     "mime": "1.2.11",
-    "mysql": "2.5.3",
-    "websocket-driver": "0.4.0",
+    "mysql": "2.5.4",
+    "websocket-driver": "0.5.1",
     "thinkjs-util": ">=1.0.0"
   },
   "devDependencies": {
