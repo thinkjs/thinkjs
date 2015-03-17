@@ -267,10 +267,10 @@ describe('App', function(){
     App.sendError(http, 'errormessage'); 
   })
   it('run', function(){
-    App.run();
-    APP_MODE = '';
-    App.run();
-    APP_MODE = 'cli';
+    // App.run();
+    // APP_MODE = '';
+    // App.run();
+    // APP_MODE = 'cli';
   })
 
   it('listener', function(done){
