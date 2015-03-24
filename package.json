@@ -21,7 +21,7 @@
     "es6-promise": "2.0.1",
     "mime": "1.2.11",
     "mysql": "2.5.4",
-    "websocket-driver": "0.5.1",
+    "websocket-driver": "0.5.3",
     "thinkjs-util": ">=1.0.0"
   },
   "devDependencies": {
