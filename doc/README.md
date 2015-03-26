@@ -2,7 +2,7 @@
 
 详细文档请见 <http://thinkjs.org/doc.html>
 
-## 2.0
+## 2.0需要改进的功能
 
 ### 强化websocket，封装socket.io, sockjs等几种常用的websocket库
 
@@ -87,3 +87,11 @@ driver改为adapter，改为adapter更合适一些
 1.x里有auth.js，需要对其完善，并且可以支持其他类型的权限认证。
 
 添加一个adapter
+
+
+## 2.0开发规范
+
+* 缩进使用2个空格，文件顶部添加`use strict`
+* 文件名全部使用小写和下划线
+* 所有代码都要写单元测试
+* 所有注释必须使用英文
