@@ -22,7 +22,7 @@
 
 ### 完善单元测试，官网，文档。多写DEMO
 
-一定要多谢demo
+一定要多写demo
 
 文档改版，支持单一页面查看方式。更改文档书写格式，分为使用和开发2种
 
@@ -70,9 +70,9 @@ var fn = think.co.wrap.call(instance, appFn);
 
 将tag修改为hook, 并提供think.hook 和 this.hook方法
 
-behavior改为middleware，因为express里都是叫middleware，并且thinkjs里的功能与之类似，使用middleware容易被接受
+behavior改为middleware，使用middleware容易被接受
 
-driver改为adapter，改为adapter更合适一些
+driver改为adapter
 
 ### think.config, this.config
 
