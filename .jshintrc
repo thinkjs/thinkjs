@@ -84,6 +84,7 @@
   // Custom Globals
   "globals"       : {
     "think": true,
-    "thinkCache": true
+    "thinkCache": true,
+    "Promise": true
   }    
 }
