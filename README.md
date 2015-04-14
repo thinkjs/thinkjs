@@ -1,5 +1,5 @@
 [![NPM version](https://badge.fury.io/js/thinkjs.svg)](http://badge.fury.io/js/thinkjs)
-[![travis-ci](https://travis-ci.org/75team/thinkjs.svg?branch=master)](https://travis-ci.org/welefen/thinkjs)
+[![travis-ci](https://travis-ci.org/75team/thinkjs.svg?branch=master)](https://travis-ci.org/75team/thinkjs)
 [![Coverage Status](https://coveralls.io/repos/75team/thinkjs/badge.png?branch=master)](https://coveralls.io/r/75team/thinkjs?branch=master)
 
 ## 介绍
