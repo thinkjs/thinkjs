@@ -66,7 +66,7 @@ describe('Model_Db', function(){
     it('configKey', function(){
       var db = model.initDb();
       assert.equal(db !== null, true);
-      assert.equal(model.configKey, '9d4568c009d203ab10e33ea9953a0264');
+      assert.equal(model.configKey, '99914b932bd37a50b983c5e7c90ae93b');
     })
   })
 

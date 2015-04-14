@@ -423,7 +423,7 @@ describe('Http', function(){
       instance.run().then(function(http){
         var file = http.file.file;
         assert.equal(file.originalFilename, '1.js');
-        assert.equal(file.size, 0);
+        assert.equal(file.size, 25);
         assert.equal(file.path.indexOf('.js') > -1, true);
         done();
       });

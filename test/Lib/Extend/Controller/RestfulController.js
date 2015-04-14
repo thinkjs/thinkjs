@@ -29,6 +29,9 @@ req.method = 'GET';
 req.httpVersion = '1.1';
 req.url = '/user';
 var res = new http.ServerResponse(req);
+res.write = function(){
+  return true;
+}
 var instance = Http(req, res).run();
 
 
