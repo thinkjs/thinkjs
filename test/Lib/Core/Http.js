@@ -115,6 +115,14 @@ describe('Http', function(){
         done();
       })
     })
+    it('ip with ::', function(done){
+      Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
+        http.req.connection = {remoteAddress: '::ff:10.0.0.1'};
+        //console.log(http.ip());
+        assert.deepEqual(http.ip(), '10.0.0.1');
+        done();
+      })
+    })
     it('setHeader', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         var fn = http.res.setHeader;
