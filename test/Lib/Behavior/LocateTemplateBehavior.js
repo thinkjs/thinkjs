@@ -28,6 +28,9 @@ req.method = 'GET';
 req.httpVersion = '1.1';
 req.url = '/index/index/name/welefen?test=welefen&value=1111';
 var res = new http.ServerResponse(req);
+res.write = function(){
+  return true;
+}
 var instance = Http(req, res).run();
 describe('LocateTemplateBehavior', function(){
   var httpInstance;

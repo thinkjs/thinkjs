@@ -125,7 +125,7 @@ describe('Model', function(){
     it('configKey', function(){
       var db = model.initDb();
       assert.equal(db !== null, true);
-      assert.equal(model.configKey, '9d4568c009d203ab10e33ea9953a0264');
+      assert.equal(model.configKey, '99914b932bd37a50b983c5e7c90ae93b');
     })
   })
 
@@ -1237,6 +1237,26 @@ describe('Model', function(){
         done();
       })
     })
+    it('countSelect with group', function(done){
+      var model = D('Tag');
+      model.page(2).group('name').countSelect(false).then(function(data){
+        var sql = model.getLastSql().trim();
+        assert.equal(sql, "SELECT * FROM `think_tag` GROUP BY `name` LIMIT 20,20");
+        delete data.data;
+        assert.deepEqual(data, { count: 7565, total: 379, page: 2, num: 20 });
+        done();
+      })
+    })
+    it('countSelect with table', function(done){
+      var model = D('Tag');
+      return model.order('id DESC').buildSql().then(function(sql){
+        model.page(2).table(sql, true).alias('tmp').countSelect(false).then(function(data){
+          var sql = model.getLastSql().trim();
+          assert.equal(sql, 'SELECT * FROM ( SELECT * FROM `think_tag` ORDER BY id DESC ) AS tmp AS tmp LIMIT 20,20');
+          done();
+        })
+      })
+    })
   })
 
   describe('getField', function(){
@@ -1524,6 +1544,30 @@ describe('Model', function(){
         return instance.table(sql, true).alias('tmp').group('group_id').order('id DESC').select().then(function(){
           var sql = instance.getLastSql().trim();
           assert.equal(sql, "SELECT * FROM ( SELECT * FROM `think_pic1` ORDER BY id DESC ) AS tmp GROUP BY `group_id` ORDER BY id DESC");
+          done();
+        })
+      })
+    })
+  })
+  describe('child select & limit ', function(){
+    it('cate lastest', function(done){
+      var instance = D('Pic1');
+      return instance.order('id DESC').buildSql().then(function(sql){
+        return instance.table(sql, true).alias('tmp').group('group_id').limit(20).order('id DESC').select().then(function(){
+          var sql = instance.getLastSql().trim();
+          assert.equal(sql, "SELECT * FROM ( SELECT * FROM `think_pic1` ORDER BY id DESC ) AS tmp GROUP BY `group_id` ORDER BY id DESC LIMIT 20");
+          done();
+        })
+      })
+    })
+  })
+  describe('child select & page ', function(){
+    it('cate lastest', function(done){
+      var instance = D('Pic1');
+      return instance.order('id DESC').buildSql().then(function(sql){
+        return instance.table(sql, true).alias('tmp').group('group_id').page(20).order('id DESC').select().then(function(){
+          var sql = instance.getLastSql().trim();
+          assert.equal(sql, "SELECT * FROM ( SELECT * FROM `think_pic1` ORDER BY id DESC ) AS tmp GROUP BY `group_id` ORDER BY id DESC LIMIT 380,20");
           done();
         })
       })
