@@ -253,7 +253,7 @@ describe('App', function(){
   })
   it('sendError', function(){
     APP_DEBUG = true;
-    var http = {res: {statusCode: 200, end: function(errormessage){
+    var http = {echo: function(){}, end: function(){},res: {statusCode: 200, end: function(errormessage){
       assert.equal(errormessage, 'errormessage')
     }}, setHeader: function(){}}
     App.sendError(http, 'errormessage'); 
@@ -261,7 +261,7 @@ describe('App', function(){
   it('sendError', function(){
     APP_DEBUG = false;
     var fn = function(){};
-    var http = {res: {on: fn,once: fn, emit: fn, write: fn, statusCode: 200, end: function(errormessage){
+    var http = {echo: function(){}, end: function(){},res: {on: fn,once: fn, emit: fn, write: fn, statusCode: 200, end: function(errormessage){
       assert.equal(errormessage, undefined)
     }}, setHeader: function(){}}
     App.sendError(http, 'errormessage'); 
