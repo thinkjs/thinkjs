@@ -97,6 +97,7 @@
     "ucfirst": true,
     "getFileContent": true,
     "isEmpty": true,
+    "isIP": true,
     "HTML_PATH": true,
     "isArray": true,
     "isBuffer": true,

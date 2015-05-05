@@ -94,6 +94,8 @@ describe('Http', function(){
     })
     it('ip', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
+        http.host = '127.0.0.1:8360';
+        C('use_proxy', false); 
         //assert.deepEqual(http.get, { name: 'welefen' });
         assert.deepEqual(http.ip(), '127.0.0.1');
         done();
@@ -101,6 +103,8 @@ describe('Http', function(){
     })
     it('ip with socket', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
+        http.host = '127.0.0.1:8360';
+        C('use_proxy', false);
         http.req.socket = {remoteAddress: '10.0.0.1'};
         //console.log(http.ip());
         assert.deepEqual(http.ip(), '10.0.0.1');
@@ -109,6 +113,8 @@ describe('Http', function(){
     })
     it('ip with connection', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
+        http.host = '127.0.0.1:8360';
+        C('use_proxy', false);
         http.req.connection = {remoteAddress: '10.0.0.1'};
         //console.log(http.ip());
         assert.deepEqual(http.ip(), '10.0.0.1');
@@ -118,6 +124,8 @@ describe('Http', function(){
     it('ip with ::', function(done){
       Http(defaultHttp.req, defaultHttp.res).run().then(function(http){
         http.req.connection = {remoteAddress: '::ff:10.0.0.1'};
+        http.host = '127.0.0.1:8360';
+        C('use_proxy', false);
         //console.log(http.ip());
         assert.deepEqual(http.ip(), '10.0.0.1');
         done();
