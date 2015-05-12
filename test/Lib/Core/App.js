@@ -253,7 +253,7 @@ describe('App', function(){
   })
   it('sendError', function(){
     APP_DEBUG = true;
-    var http = {echo: function(){}, end: function(){},res: {statusCode: 200, end: function(errormessage){
+    var http = {echo: function(){return getPromise('errormessage')}, end: function(){},res: {statusCode: 200, end: function(errormessage){
       assert.equal(errormessage, 'errormessage')
     }}, setHeader: function(){}}
     App.sendError(http, 'errormessage'); 
