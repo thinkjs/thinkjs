@@ -3,84 +3,84 @@
 var fs = require('fs');
 var path = require('path');
 
-module.exports = think.Class({
+module.exports = class extends think.Base{
   /**
    * init
    * @return {void} []
    */
-  init: function(http){
-    this.http = http;
+  constructor(http){
+    super(http);
     this.assign('controller', this);
     this.assign('http', this.http);
     this.assign('config', this.http._config);
-  },
+  }
   /**
    * get client ip
    * @return {String} []
    */
-  ip: function(){
+  ip(){
     return this.http.ip();
-  },
+  }
   /**
    * init view instance
    * @return {Object} []
    */
-  view: function(){
+  view(){
     return this.http.view();
-  },
+  }
   /**
    * check http method is get
    * @return {Boolean} []
    */
-  isGet: function(){
+  isGet(){
     return this.http.method === 'GET';
-  },
+  }
   /**
    * check http method is post
    * @return {Boolean} []
    */
-  isPost: function(){
+  isPost(){
     return this.http.method === 'POST';
-  },
+  }
   /**
    * check http method
    * @param  {String}  method [http method]
    * @return {Boolean}        []
    */
-  isMethod: function(method){
+  isMethod(method){
     return this.http.method === method.toUpperCase();
-  },
+  }
   /**
    * check is ajax request
    * @param  {String}  method [http method]
    * @return {Boolean}        []
    */
-  isAjax: function(method) {
+  isAjax(method) {
     return this.http.isAjax(method);
-  },
+  }
   /**
    * check is websocket request
    * @return {Boolean} []
    */
-  isWebSocket: function(){
+  isWebSocket(){
     return !!this.http.websocket;
-  },
+  }
   /**
    * check is command line invoke
    * @return {Boolean} []
    */
-  isCli: function(){
+  isCli(){
     return think.mode === 'cli';
-  },
+  }
   /**
    * check is jsonp
    * @param  {String}  name [callback name]
    * @return {Boolean}      []
    */
-  isJsonp: function(name){
+  isJsonp(name){
     return this.http.isJsonp(name);
-  },
-  // token: function(token){
+  }
+  // token(token){
   //   var tokenName = this.config('token_name');
   //   var self = this;
   //   if (token) {
@@ -98,63 +98,63 @@ module.exports = think.Class({
   //       })
   //     })
   //   }
-  // },
+  // }
   /**
    * get get params
    * @param  {String} name [query name]
    * @return {String}      []
    */
-  get: function(name, value){
+  get(name, value){
     return this.http.get(name, value);
-  },
+  }
   /**
    * get post params
    * @param  {String} name [query name]
    * @return {String}      []
    */
-  post: function(name, value) {
+  post(name, value) {
     return this.http.post(name, value);
-  },
+  }
   /**
    * get post or get params
    * @param  {String} name []
    * @return {String}      []
    */
-  param: function(name) {
+  param(name) {
     return this.http.param(name);
-  },
+  }
   /**
    * get upload files
    * @param  {String} name []
    * @return {Object}      []
    */
-  file: function(name, value) {
+  file(name, value) {
     return this.http.file(name, value);
-  },
+  }
   /**
    * get or set header
    * @param  {String} name  [header name]
    * @param  {String} value [header value]
    * @return {}       []
    */
-  header: function(name, value) {
+  header(name, value) {
     return this.http.header(name, value);
-  },
+  }
   /**
    * get user agent
    * @return {String} []
    */
-  userAgent: function(){
+  userAgent(){
     return this.http.headers['user-agent'] || '';
-  },
+  }
   /**
    * get page referer
    * @param  {String} host [only get referer host]
    * @return {String}      []
    */
-  referer: function(onlyHost){
+  referer(onlyHost){
     return this.http.referer(onlyHost);
-  },
+  }
   /**
    * get or set cookie
    * @param  {String} name    [cookie name]
@@ -162,18 +162,18 @@ module.exports = think.Class({
    * @param  {Object} options [cookie options]
    * @return {}         []
    */
-  cookie: function(name, value, options) {
+  cookie(name, value, options) {
     return this.http.cookie(name, value, options);
-  },
+  }
   /**
    * get or set session
    * @param  {String} name  [session name]
    * @param  {mixed} value [session value]
    * @return {Promise}       []
    */
-  session: function(name, value) {
+  session(name, value) {
     think.session(this.http);
-    var instance = this.http.session;
+    let instance = this.http.session;
     if (name === undefined) {
       return instance.rm();
     }
@@ -181,34 +181,34 @@ module.exports = think.Class({
       return instance.set(name, value);
     }
     return instance.get(name);
-  },
+  }
   /**
    * redirect
    * @param  {String} url  [redirect url]
    * @param  {Number} code [301 or 302]
    * @return {promise}      [pedding promise]
    */
-  redirect: function(url, code) {
+  redirect(url, code) {
     this.http.redirect(url, code);
     return Promise.defer().promise;
-  },
+  }
   /**
    * assign value to template
    * @param  {String} name  [template name]
    * @param  {mixed} value []
    * @return {}       []
    */
-  assign: function(name, value) {
+  assign(name, value) {
     return this.view().assign(name, value);
-  },
+  }
   /**
    * fetch template content
    * @param  {String} templateFile [template filepath]
    * @return {promise}              []
    */
-  fetch: function(templateFile) {
+  fetch(templateFile) {
     return this.view().fetch(templateFile);
-  },
+  }
   /**
    * display template 
    * @param  {String} templateFile [template filepath]
@@ -216,75 +216,75 @@ module.exports = think.Class({
    * @param  {String} contentType  [content type]
    * @return {Promise}              []
    */
-  display: function(templateFile, charset, contentType) {
+  display(templateFile, charset, contentType) {
     return this.view().display(templateFile, charset, contentType);
-  },
+  }
   /**
    * output with jsonp
    * @param  {Object} data [output data]
    * @return {}      []
    */
-  jsonp: function(data) {
+  jsonp(data) {
     this.http.jsonp(data);
     return Promise.defer().promise;
-  },
+  }
   /**
    * output with json
    * @param  {Object} data [output data]
    * @return {Promise}      []
    */
-  json: function(data){
+  json(data){
     this.http.json(data);
     return Promise.defer().promise;
-  },
+  }
   /**
    * set http status code
    * @param  {Number} status [status code]
    * @return {}        []
    */
-  status: function(status) {
-    var res = this.http.res;
+  status(status) {
+    let res = this.http.res;
     if (!res.headersSent) {
       res.statusCode = status || 404;
     }
     return this;
-  },
+  }
   /**
    * deny request
    * @param  {Number} status [status code]
    * @return {[type]}        []
    */
-  deny: function(status){
+  deny(status){
     this.status(status || 403);
     return this.end();
-  },
+  }
   /**
    * echo content
    * @param  {mixed} obj      []
    * @param  {String} encoding [content encoding]
    * @return {}          []
    */
-  echo: function(obj, encoding) {
+  echo(obj, encoding) {
     return this.http.echo(obj, encoding);
-  },
+  }
   /**
    * end output
    * @param  {Object} obj      []
    * @param  {String} encoding [content encoding]
    * @return {}          []
    */
-  end: function(obj, encoding) {
+  end(obj, encoding) {
     this.http.end(obj, encoding);
     return Promise.defer().promise;
-  },
+  }
   /**
    * get or set content type
    * @param  {String} ext [content type]
    * @return {}     []
    */
-  type: function(ext){
+  type(ext){
     return this.http.type(ext);
-  },
+  }
   /**
    * download file
    * @param  {String} file        [filepath]
@@ -292,7 +292,7 @@ module.exports = think.Class({
    * @param  {String} filename    [download filename]
    * @return {Promise}             []
    */
-  download: function(filepath, contentType, filename) {
+  download(filepath, contentType, filename) {
     if (think.isString(contentType) && contentType.indexOf('.') > -1) {
       filename = contentType;
       contentType = '';
@@ -314,17 +314,17 @@ module.exports = think.Class({
       deferred.reject(err);
     });
     return deferred.promise;
-  },
+  }
   /**
    * output with success errno & errmsg
    * @param  {Object} data    [output data]
    * @param  {String} message [errmsg]
    * @return {Promise}         [pedding promise]
    */
-  success: function(data, message){
+  success(data, message){
     this.http.success(data, message);
     return Promise.defer().promise;
-  },
+  }
   /**
    * output with fail errno & errmsg
    * @param  {Number} errno  [error number]
@@ -332,36 +332,36 @@ module.exports = think.Class({
    * @param  {Object} data   [output data]
    * @return {Promise}        [pedding promise]
    */
-  fail: function(errno, errmsg, data){
+  fail(errno, errmsg, data){
     this.http.fail(errno, errmsg, data);
     return Promise.defer().promise;
-  },
-  error: function(errno, errmsg, data){
+  }
+  error(errno, errmsg, data){
     console.log('this.error() is deprecated, please use this.fail() instead.');
     return this.fail(errno, errmsg, data);
-  },
+  }
   /**
    * close db connections
    * @return {} []
    */
-  closeDb: function(){
+  closeDb(){
     //think.require('Model').close();
-  },
+  }
   /**
    * send exec time
    * @param  {String} name [header name]
    * @return {}      []
    */
-  sendTime: function(name){
+  sendTime(name){
     return this.http.sendTime(name);
-  },
+  }
   /**
    * validate data
    * @param  {Object} data      []
    * @param  {String} validType []
    * @return {}           []
    */
-  valid: function(data) {
+  valid(data) {
     return think.valid(data);
   }
-})
+}

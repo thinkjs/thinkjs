@@ -16,14 +16,14 @@ var multiparty = require('multiparty');
 var mime = require('mime');
 
 
-module.exports = think.Class({
+module.exports = class {
   /**
    * init method
    * @param  {Object} req [request]
    * @param  {Object} res [response]
    * @return {}     []
    */
-  init: function(req, res){
+  constructor(req, res){
     //request object
     this.req = req;
     //response object
@@ -35,12 +35,12 @@ module.exports = think.Class({
     this.http.res = res;
     //set http start time
     this.http.startTime = Date.now();
-  },
+  }
   /**
    * exec
    * @return Promise            []
    */
-  run: function(){
+  run(){
     this.bind();
     //array indexOf is faster than string
     var methods = ['POST', 'PUT', 'PATCH'];
@@ -48,25 +48,24 @@ module.exports = think.Class({
       return this.getPostData();
     }
     return Promise.resolve(this.http);
-  },
+  }
   /**
    * check request has post data
    * @return {Boolean} []
    */
-  hasPostData: function(){
+  hasPostData(){
     if ('transfer-encoding' in this.req.headers) {
       return true;
     }
     var contentLength = this.req.headers['content-length'] | 0;
     return contentLength > 0;
-  },
+  }
   /**
    * get form file post
    * @return {Promise} []
    */
-  getFormFilePost: function(){
+  getFormFilePost(){
     var deferred = Promise.defer();
-    var self = this;
     var uploadDir = think.config('post.file_upload_path');
     if (uploadDir) {
       think.mkdir(uploadDir);
@@ -78,8 +77,8 @@ module.exports = think.Class({
       uploadDir: uploadDir
     });
     //support for file with multiple="multiple"
-    var files = self.http._file;
-    form.on('file', function(name, value){
+    var files = this.http._file;
+    form.on('file', (name, value) => {
       if (name in files) {
         if (!think.isArray(files[name])) {
           files[name] = [files[name]];
@@ -89,81 +88,78 @@ module.exports = think.Class({
         files[name] = value;
       }
     })
-    form.on('field', function(name, value){
-      self.http._post[name] = value;
+    form.on('field', (name, value) => {
+      this.http._post[name] = value;
     });
-    form.on('close', function(){
-      deferred.resolve(self.http);
+    form.on('close', () => {
+      deferred.resolve(this.http);
     });
-    form.on('error', function(){
-      self.res.statusCode = 413;
-      self.res.end();
+    form.on('error', () => {
+      this.res.statusCode = 413;
+      this.res.end();
     });
     form.parse(this.req);
     return deferred.promise;
-  },
+  }
   /**
    * common filed post
    * @return {Promise} []
    */
-  getCommonPost: function(){
+  getCommonPost(){
     var buffers = [];
-    var self = this;
     var deferred = Promise.defer();
-    this.req.on('data', function(chunk){
+    this.req.on('data', (chunk) => {
       buffers.push(chunk);
     });
-    this.req.on('end', function(){
-      self.http.payload = Buffer.concat(buffers).toString();
-      self.parseFormData().then(function(){
-        deferred.resolve(self.http);
+    this.req.on('end', () => {
+      this.http.payload = Buffer.concat(buffers).toString();
+      this.parseFormData().then(() => {
+        deferred.resolve(this.http);
       })
     })
-    this.req.on('error', function(){
-      self.res.statusCode = 413;
-      self.res.end();
+    this.req.on('error', () => {
+      this.res.statusCode = 413;
+      this.res.end();
     })
     return deferred.promise;
-  },
+  }
   /**
    * parse form data
    * @return {Promise} []
    */
-  parseFormData: function(){
-    var self = this;
-    return think.hook('form_parse', this.http).then(function(){
-      if (think.isEmpty(self.http._post) && self.http.payload) {
+  parseFormData(){
+    return think.hook('form_parse', this.http).then(() => {
+      if (think.isEmpty(this.http._post) && this.http.payload) {
         try{
-          self.http._post = querystring.parse(self.http.payload);
+          this.http._post = querystring.parse(this.http.payload);
         }catch(e){
-          self.res.statusCode = 413;
-          self.res.end();
+          this.res.statusCode = 413;
+          this.res.end();
           return Promise.defer().promise;
         }
       }
-      var post = self.http._post;
+      var post = this.http._post;
       var length = Object.keys(post).length;
       if (length > think.config('post.max_fields')) {
-        self.res.statusCode = 413;
-        self.res.end();
+        this.res.statusCode = 413;
+        this.res.end();
         return Promise.defer().promise;
       }
       var maxFilesSize = think.config('post.max_fields_size');
       for(var name in post){
         if (post[name].length > maxFilesSize) {
-          self.res.statusCode = 413;
-          self.res.end();
+          this.res.statusCode = 413;
+          this.res.end();
           return Promise.defer().promise;
         }
       }
     })
-  },
+  }
   /**
    * 通过ajax上传文件
    * @return {[type]} [description]
    */
-  getAjaxFilePost: function(){
-    var self = this;
+  getAjaxFilePost(){
     var filename = this.req.headers[think.config('post.ajax_filename_header')];
     var deferred = Promise.defer();
     var filepath = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
@@ -172,26 +168,26 @@ module.exports = think.Class({
     filepath += '/' + name + path.extname(filename).slice(0, 5);
     var stream = fs.createWriteStream(filepath);
     this.req.pipe(stream);
-    stream.on('error', function(){
-      self.res.statusCode = 413;
-      self.res.end();
+    stream.on('error', () => {
+      this.res.statusCode = 413;
+      this.res.end();
     })
-    stream.on('close', function(){
-      self.http._file.file = {
+    stream.on('close', () => {
+      this.http._file.file = {
         fieldName: 'file',
         originalFilename: filename,
         path: filepath,
         size: fs.statSync(filepath).size
       }
-      deferred.resolve(self.http);
+      deferred.resolve(this.http);
     })
     return deferred.promise;
-  },
+  }
   /**
    * get post data from request
    * @return {Promise} []
    */
-  getPostData: function(){
+  getPostData(){
     if (!this.hasPostData()) {
       return Promise.resolve(this.http);
     }
@@ -205,12 +201,12 @@ module.exports = think.Class({
       return this.getAjaxFilePost();
     }
     return this.getCommonPost();
-  },
+  }
   /**
    * bind props & methods to http
    * @return {} []
    */
-  bind: function(){
+  bind(){
     var http = this.http;
     http.url = this.req.url;
     http.version = this.req.httpVersion;
@@ -253,22 +249,22 @@ module.exports = think.Class({
     http.jsonp = this.jsonp;
     http.json = this.json;
     http.view = this.view;
-  },
+  }
   /*
    * get or set config
    * @param  {string} name  [config name]
    * @param  {mixed} value [config value]
    * @return {mixed}       []
    */
-  config: function(name, value){
+  config(name, value){
     return think.config(name, value, this._config);
-  },
+  }
   /**
    * get or set content type
    * @param  {String} ext [file ext]
    * @return {}     []
    */
-  type: function(contentType, encoding){
+  type(contentType, encoding){
     if (!contentType) {
       return this._type;
     }
@@ -282,46 +278,46 @@ module.exports = think.Class({
       contentType += '; charset=' + (encoding || this.config('encoding'));
     }
     this.header('Content-Type', contentType);
-  },
+  }
   /**
    * get page request referer
    * @param  {String} host [only get referer host]
    * @return {String}      []
    */
-  referer: function(host){
+  referer(host){
     var referer = this.headers.referer || this.headers.referrer || '';
     if (!referer || !host) {
       return referer;
     }
     var info = url.parse(referer);
     return info.hostname;
-  },
+  }
   /**
    * is ajax request
    * @param  {String}  method []
    * @return {Boolean}        []
    */
-  isAjax: function(method) {
+  isAjax(method) {
     if (method && this.method !== method.toUpperCase()) {
       return false;
     }
     return this.headers['x-requested-with'] === 'XMLHttpRequest';
-  },
+  }
   /**
    * is jsonp request
    * @param  {String}  name [callback name]
    * @return {Boolean}      []
    */
-  isJsonp: function(name){
+  isJsonp(name){
     name = name || this.config('callback_name');
     return !!this.get(name);
-  },
+  }
   /**
    * get or set get params
    * @param  {String} name []
    * @return {Object | String}      []
    */
-  get: function(name, value){
+  get(name, value){
     if (value === undefined) {
       if (name === undefined) {
         return this._get;
@@ -332,13 +328,13 @@ module.exports = think.Class({
     }else{
       this._get[name] = value;
     }
-  },
+  }
   /**
    * get or set post params
    * @param  {String} name []
    * @return {Object | String}      []
    */
-  post: function(name, value){
+  post(name, value){
     if (value === undefined) {
       if (name === undefined) {
         return this._post;
@@ -349,24 +345,24 @@ module.exports = think.Class({
     }else {
       this._post[name] = value;
     }
-  },
+  }
   /**
    * get post or get params
    * @param  {String} name []
    * @return {Object | String}      []
    */
-  param: function(name){
+  param(name){
     if (name === undefined) {
       return think.extend({}, this._get, this._post);
     }
     return this._post[name] || this._get[name] || '';
-  },
+  }
   /**
    * get or set file data
    * @param  {String} name []
    * @return {Object}      []
    */
-  file: function(name, value){
+  file(name, value){
     if (value === undefined) {
       if (name === undefined) {
         return this._file;
@@ -374,14 +370,14 @@ module.exports = think.Class({
       return this._file[name] || {};
     }
     this._file[name] = value;
-  },
+  }
   /**
    * get or set header
    * @param  {String} name  [header name]
    * @param  {String} value [header value]
    * @return {}       []
    */
-  header: function(name, value){
+  header(name, value){
     if (name === undefined) {
       return this.headers;
     }else if (value === undefined) {
@@ -398,12 +394,12 @@ module.exports = think.Class({
       }
       this.res.setHeader(name, value);
     }
-  },
+  }
   /**
    * get uesr ip
    * @return {String} [ip4 or ip6]
    */
-  ip: function(){
+  ip(){
     var connection = this.req.connection;
     var socket = this.req.socket;
     var ip;
@@ -422,7 +418,7 @@ module.exports = think.Class({
       ip = ip.split(':').slice(-1).join('');
     }
     return ip;
-  },
+  }
   /**
    * get or set cookie
    * @param  {} name    [description]
@@ -430,13 +426,13 @@ module.exports = think.Class({
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  cookie: function(name, value, options){
+  cookie(name, value, options){
     //send cookies
     if (name === true) {
       if (think.isEmpty(this._sendCookie)) {
         return;
       }
-      var cookies = Object.values(this._sendCookie).map(function(item){
+      var cookies = Object.values(this._sendCookie).map((item) => {
         return cookie.stringify(item.name, item.value, item);
       });
       this.header('Set-Cookie', cookies);
@@ -461,34 +457,34 @@ module.exports = think.Class({
     options.name = name;
     options.value = value;
     this._sendCookie[name] = options;
-  },
+  }
   /**
    * redirect
    * @param  {String} url  [redirect url]
    * @param  {Number} code []
    * @return {}      []
    */
-  redirect: function(url, code){
+  redirect(url, code){
     this.res.statusCode = code || 302;
     this.header('Location', url || '/');
     this.end();
-  },
+  }
   /**
    * send time
    * @param  {String} name [time type]
    * @return {}      []
    */
-  sendTime: function(name){
+  sendTime(name){
     var time = Date.now() - this.startTime;
     this.header('X-' + (name || 'EXEC-TIME'), time + 'ms');
-  },
+  }
   /**
    * output with success errno & errmsg
    * @param  {Object} data    [output data]
    * @param  {String} message [errmsg]
    * @return {Promise}         [pedding promise]
    */
-  success: function(data, message){
+  success(data, message){
     var key = [this.config('error.key'), this.config('error.msg')];
     var obj = think.getObject(key, [0, message || '']);
     if (data !== undefined) {
@@ -496,7 +492,7 @@ module.exports = think.Class({
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
-  },
+  }
   /**
    * output with fail errno & errmsg
    * @param  {Number} errno  [error number]
@@ -504,7 +500,7 @@ module.exports = think.Class({
    * @param  {Object} data   [output data]
    * @return {Promise}        [pedding promise]
    */
-  fail: function(errno, errmsg, data){
+  fail(errno, errmsg, data){
     var obj;
     if (think.isObject(errno)) {
       data = errmsg;
@@ -524,13 +520,13 @@ module.exports = think.Class({
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
-  },
+  }
   /**
    * output with jsonp
    * @param  {Object} data [output data]
    * @return {}      []
    */
-  jsonp: function(data) {
+  jsonp(data) {
     this.type(this.config('json_content_type'));
     var callback = this.get(this.config('callback_name'));
     //remove unsafe chars
@@ -539,33 +535,33 @@ module.exports = think.Class({
       data = callback + '(' + (data !== undefined ? JSON.stringify(data) : '') + ')';
     } 
     this.end(data);
-  },
+  }
   /**
    * output with json
    * @param  {Object} data [output data]
    * @return {Promise}      []
    */
-  json: function(data){
+  json(data){
     this.type(this.config('json_content_type'));
     this.end(data);
-  },
+  }
   /**
    * get view instance
    * @return {Object} []
    */
-  view: function(){
+  view(){
     if (!this._view) {
       this._view = think.require('view')(this);
     }
     return this._view;
-  },
+  }
   /**
    * echo content
    * @param  {mixed} obj      []
    * @param  {String} encoding []
    * @return {Promise}          []
    */
-  echo: function(obj, encoding){
+  echo(obj, encoding){
     this.type(this.config('tpl.content_type'));
     this.cookie(true);
     this.sendTime();
@@ -588,8 +584,8 @@ module.exports = think.Class({
     var fn = think.co.wrap(outputConfig);
     var promise = fn(obj, encoding, this);
     this._outputContentPromise.push(promise);
-  },
-  _end: function(){
+  }
+  _end(){
     this.cookie(true);
     this.sendTime();
     this.res.end();
@@ -598,32 +594,31 @@ module.exports = think.Class({
     //remove upload tmp files
     if (!think.isEmpty(this._file)) {
       var key, filepath;
-      var fn = function(){};
       for(key in this._file){
         filepath = this._file[key].path;
         if (think.isFile(filepath)) {
-          fs.unlink(filepath, fn);
+          fs.unlink(filepath, () => {});
         }
       }
     }
-  },
+  }
   /**
    * http end
    * @return {} []
    */
-  end: function(obj, encoding){
+  end(obj, encoding){
     this.echo(obj, encoding);
     //set http end flag
     this._isEnd = true;
     if (!this._outputContentPromise) {
       this._end();
     }
-    var self = this;
-    Promise.all(this._outputContentPromise).then(function(){
+    
+    Promise.all(this._outputContentPromise).then(() => {
       this._outputContentPromise = undefined;
-      self._end();
-    }).catch(function(){
-      self._end();
+      this._end();
+    }).catch(() => {
+      this._end();
     })
   }
-}, true);
+}

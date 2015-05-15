@@ -22,11 +22,10 @@ var App = module.exports = think.Class({
    * @return {} []
    */
   dispatcher: function(){
-    var self = this;
-    return this.hook('resource_check').then(function(){
-      return self.hook('route_parse');
-    }).then(function(){
-      self.http._config = think.extend({}, think.getModuleConfig(self.http.module));
+    return this.hook('resource_check').then(() => {
+      return this.hook('route_parse');
+    }).then(() => {
+      this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
     })
   },
   /**
@@ -97,13 +96,12 @@ var App = module.exports = think.Class({
    * @return {Promise} []
    */
   exec: function(){
-    var self = this;
-    return this.execLogic().then(function(){
+    return this.execLogic().then(() => {
       //http is end
-      if (self.http._isEnd) {
+      if (this.http._isEnd) {
         return Promise.defer().promise;
       }
-      return self.execController();
+      return this.execController();
     })
   },
   /**
@@ -120,19 +118,18 @@ var App = module.exports = think.Class({
       return;
     }
     var instance = domain.create();
-    var self = this;
-    instance.on('error', function(err){
-      self.error(err);
+    instance.on('error', (err) => {
+      this.error(err);
     });
-    instance.run(function(){
-      self.dispatcher().then(function(){
-        return self.hook('app_begin');
-      }).then(function(){
-        return self.exec();
-      }).then(function(){
-        return self.hook('app_end');
-      }).catch(function(err){
-        self.error(err);
+    instance.run(() => {
+      this.dispatcher().then(() => {
+        return this.hook('app_begin');
+      }).then(() => {
+        return this.exec();
+      }).then(() => {
+        return this.hook('app_end');
+      }).catch((err) => {
+        this.error(err);
       })
     });
   },

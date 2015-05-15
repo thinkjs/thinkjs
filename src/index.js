@@ -14,8 +14,8 @@ module.exports = class{
   constructor(options = {}){
     //extend options to think
     think.extend(think, this.getPath(), options);
-    let argv = process.argv[2];
     let i = 2;
+    let argv = process.argv[i];
     //get app mode from argv
     if (argv === 'online') {
       think.debug = false;
