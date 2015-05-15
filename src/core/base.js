@@ -5,47 +5,46 @@
  * @param  {Object} http 
  * @return {Class}   
  */
-
-module.exports = think.Class({
+module.exports = class{
   /**
-   * init
-   * @param  {Object} http [http object]
+   * constructor
+   * @param  {Object} http []
    * @return {}      []
    */
-  init: function(http){
+  constructor(http){
     this.http = http || {};
-  },
+  }
   /**
    * invoke method, support __before & __after magic methods
    * @param  {String} method []
    * @param  {mixed} data []
    * @return {Promise}     []
    */
-  invoke: function(method, data){
-    var promise = Promise.resolve(), fn, self = this;
+  invoke(method, data){
+    let promise = Promise.resolve();
     if (think.isFunction(this.__before)) {
-      promise = think.co.wrap(this.__before).bind(self)();
+      promise = think.co.wrap(this.__before).bind(this)();
     }
-    promise = promise.then(function(){
-      fn = think.co.wrap(self[method]);
-      return fn.apply(self, data || []);
+    promise = promise.then(() => {
+      let fn = think.co.wrap(this[method]);
+      return fn.apply(this, data || []);
     });
     if (think.isFunction(this.__after)) {
-      promise = promise.then(function(){
-        return think.co.wrap(self.__after).bind(self)();
+      promise = promise.then(() => {
+        return think.co.wrap(this.__after).bind(this)();
       })
     }
     return promise;
-  },
+  }
   /**
    * get or set config
    * @param  {string} name  [config name]
    * @param  {mixed} value [config value]
    * @return {mixed}       []
    */
-  config: function(name, value){
+  config(name, value){
     return think.config(name, value, this.http._config);
-  },
+  }
   /**
    * invoke action
    * @param  {Object} controller [controller instance]
@@ -53,7 +52,7 @@ module.exports = think.Class({
    * @param  {Mixed} data       [action params]
    * @return {}            []
    */
-  action: function(controller, action){
+  action(controller, action){
     if (think.isString(controller)) {
       controller = this.controller(controller);
     }
@@ -61,7 +60,7 @@ module.exports = think.Class({
       action += think.config('action_suffix');
     }
     return controller.invoke(action, [controller]);
-  },
+  }
   /**
    * get or set cache
    * @param  {String} name    [cache name]
@@ -69,44 +68,44 @@ module.exports = think.Class({
    * @param  {Object} options [cache options]
    * @return {}         []
    */
-  cache: function(name, value, options){
+  cache(name, value, options){
     options = think.extend({}, this.config('cache'), options);
     return think.cache(name, value, options);
-  },
+  }
   /**
    * invoke hook
    * @param  {String} event [event name]
    * @return {Promise}       []
    */
-  hook: function(event, data){
+  hook(event, data){
     return think.hook(event, this.http, data);
-  },
+  }
   /**
    * get model
    * @param  {String} name    [model name]
    * @param  {Object} options [model options]
    * @return {Object}         [model instance]
    */
-  model: function(name, options){
+  model(name, options){
     options = think.extend({}, this.config('db'), options);
     return think.model(name, options, this.http.module)
-  },
+  }
   /**
    * get controller
    * this.controller('home/controller/test')
    * @param  {String} name [controller name]
    * @return {Object}      []
    */
-  controller: function(name){
-    var cls = think.lookClass(name, 'controller', this.http.module);
+  controller(name){
+    let cls = think.lookClass(name, 'controller', this.http.module);
     return cls(this.http);
-  },
+  }
   /**
    * get service
    * @param  {String} name [service name]
    * @return {Object}      []
    */
-  service: function(name){
+  service(name){
     return think.service(name, this.http, this.http.module);
   }
-}, true)
+}

@@ -12,13 +12,8 @@ var querystring = require('querystring');
  * global think variable
  * @type {Object}
  */
-global.think = {};
-/**
- * apply thinkit methods to think
- */
-for(var name in thinkit){
-  think[name] = thinkit[name];
-}
+global.think = Object.create(thinkit);
+
 /**
  * check object is http object
  * @param  {Mixed}  http []
@@ -213,7 +208,7 @@ think.require = function(name, flag){
     if (think.isClass(obj)) {
       obj.prototype.__filename = filepath;
     }
-    think._aliasExport[name] = obj;
+    //think._aliasExport[name] = obj;
     return obj;
   }
 
