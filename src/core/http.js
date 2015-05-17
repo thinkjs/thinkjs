@@ -4,16 +4,16 @@
  * wrap for request & response
  * @type {Object}
  */
-var querystring = require('querystring');
-var url = require('url');
-var EventEmitter = require('events').EventEmitter;
-var os = require('os');
-var path = require('path');
-var fs = require('fs');
+let querystring = require('querystring');
+let url = require('url');
+let EventEmitter = require('events').EventEmitter;
+let os = require('os');
+let path = require('path');
+let fs = require('fs');
 
-var cookie = think.require('cookie');
-var multiparty = require('multiparty');
-var mime = require('mime');
+let cookie = think.require('cookie');
+let multiparty = require('multiparty');
+let mime = require('mime');
 
 
 module.exports = class {
@@ -43,7 +43,7 @@ module.exports = class {
   run(){
     this.bind();
     //array indexOf is faster than string
-    var methods = ['POST', 'PUT', 'PATCH'];
+    let methods = ['POST', 'PUT', 'PATCH'];
     if (methods.indexOf(this.req.method) > -1) {
       return this.getPostData();
     }
@@ -57,27 +57,26 @@ module.exports = class {
     if ('transfer-encoding' in this.req.headers) {
       return true;
     }
-    var contentLength = this.req.headers['content-length'] | 0;
-    return contentLength > 0;
+    return this.req.headers['content-length'] | 0 > 0;
   }
   /**
    * get form file post
    * @return {Promise} []
    */
   getFormFilePost(){
-    var deferred = Promise.defer();
-    var uploadDir = think.config('post.file_upload_path');
+    let deferred = Promise.defer();
+    let uploadDir = think.config('post.file_upload_path');
     if (uploadDir) {
       think.mkdir(uploadDir);
     }
-    var form = this.form = new multiparty.Form({
+    let form = this.form = new multiparty.Form({
       maxFieldsSize: think.config('post.max_fields_size'),
       maxFields: think.config('post.max_fields'),
       maxFilesSize: think.config('post.max_file_size'),
       uploadDir: uploadDir
     });
     //support for file with multiple="multiple"
-    var files = this.http._file;
+    let files = this.http._file;
     form.on('file', (name, value) => {
       if (name in files) {
         if (!think.isArray(files[name])) {
@@ -106,8 +105,8 @@ module.exports = class {
    * @return {Promise} []
    */
   getCommonPost(){
-    var buffers = [];
-    var deferred = Promise.defer();
+    let buffers = [];
+    let deferred = Promise.defer();
     this.req.on('data', (chunk) => {
       buffers.push(chunk);
     });
@@ -138,15 +137,15 @@ module.exports = class {
           return Promise.defer().promise;
         }
       }
-      var post = this.http._post;
-      var length = Object.keys(post).length;
+      let post = this.http._post;
+      let length = Object.keys(post).length;
       if (length > think.config('post.max_fields')) {
         this.res.statusCode = 413;
         this.res.end();
         return Promise.defer().promise;
       }
-      var maxFilesSize = think.config('post.max_fields_size');
-      for(var name in post){
+      let maxFilesSize = think.config('post.max_fields_size');
+      for(let name in post){
         if (post[name].length > maxFilesSize) {
           this.res.statusCode = 413;
           this.res.end();
@@ -160,13 +159,13 @@ module.exports = class {
    * @return {[type]} [description]
    */
   getAjaxFilePost(){
-    var filename = this.req.headers[think.config('post.ajax_filename_header')];
-    var deferred = Promise.defer();
-    var filepath = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
+    let filename = this.req.headers[think.config('post.ajax_filename_header')];
+    let deferred = Promise.defer();
+    let filepath = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
     think.mkdir(filepath);
-    var name = think.uuid(20);
+    let name = think.uuid(20);
     filepath += '/' + name + path.extname(filename).slice(0, 5);
-    var stream = fs.createWriteStream(filepath);
+    let stream = fs.createWriteStream(filepath);
     this.req.pipe(stream);
     stream.on('error', () => {
       this.res.statusCode = 413;
@@ -191,7 +190,7 @@ module.exports = class {
     if (!this.hasPostData()) {
       return Promise.resolve(this.http);
     }
-    var multiReg = /^multipart\/(form-data|related);\s*boundary=(?:"([^"]+)"|([^;]+))$/i;
+    let multiReg = /^multipart\/(form-data|related);\s*boundary=(?:"([^"]+)"|([^;]+))$/i;
     //file upload by form or FormData
     if (multiReg.test(this.req.headers['content-type'])) {
       return this.getFilePost();
@@ -207,13 +206,13 @@ module.exports = class {
    * @return {} []
    */
   bind(){
-    var http = this.http;
+    let http = this.http;
     http.url = this.req.url;
     http.version = this.req.httpVersion;
     http.method = this.req.method;
     http.headers = this.req.headers;
 
-    var urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
+    let urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
     http.pathname = path.normalize(urlInfo.pathname).slice(1);
     http.query = urlInfo.query;
     http.host = urlInfo.host;
@@ -285,11 +284,11 @@ module.exports = class {
    * @return {String}      []
    */
   referer(host){
-    var referer = this.headers.referer || this.headers.referrer || '';
+    let referer = this.headers.referer || this.headers.referrer || '';
     if (!referer || !host) {
       return referer;
     }
-    var info = url.parse(referer);
+    let info = url.parse(referer);
     return info.hostname;
   }
   /**
@@ -400,9 +399,9 @@ module.exports = class {
    * @return {String} [ip4 or ip6]
    */
   ip(){
-    var connection = this.req.connection;
-    var socket = this.req.socket;
-    var ip;
+    let connection = this.req.connection;
+    let socket = this.req.socket;
+    let ip;
     if (connection && connection.remoteAddress !== think.localIp) {
       ip = connection.remoteAddress;
     }else if (socket && socket.remoteAddress !== think.localIp) {
@@ -432,7 +431,7 @@ module.exports = class {
       if (think.isEmpty(this._sendCookie)) {
         return;
       }
-      var cookies = Object.values(this._sendCookie).map((item) => {
+      let cookies = Object.values(this._sendCookie).map((item) => {
         return cookie.stringify(item.name, item.value, item);
       });
       this.header('Set-Cookie', cookies);
@@ -475,7 +474,7 @@ module.exports = class {
    * @return {}      []
    */
   sendTime(name){
-    var time = Date.now() - this.startTime;
+    let time = Date.now() - this.startTime;
     this.header('X-' + (name || 'EXEC-TIME'), time + 'ms');
   }
   /**
@@ -485,8 +484,8 @@ module.exports = class {
    * @return {Promise}         [pedding promise]
    */
   success(data, message){
-    var key = [this.config('error.key'), this.config('error.msg')];
-    var obj = think.getObject(key, [0, message || '']);
+    let key = [this.config('error.key'), this.config('error.msg')];
+    let obj = think.getObject(key, [0, message || '']);
     if (data !== undefined) {
       obj.data = data;
     }
@@ -501,7 +500,7 @@ module.exports = class {
    * @return {Promise}        [pedding promise]
    */
   fail(errno, errmsg, data){
-    var obj;
+    let obj;
     if (think.isObject(errno)) {
       data = errmsg;
       obj = think.extend({}, errno);
@@ -511,8 +510,8 @@ module.exports = class {
         errmsg = errno;
         errno = this.config('error.value');
       }
-      var key = [this.config('error.key'), this.config('error.msg')];
-      var value = [errno, errmsg || 'error'];
+      let key = [this.config('error.key'), this.config('error.msg')];
+      let value = [errno, errmsg || 'error'];
       obj = think.getObject(key, value);
     }
     if (data !== undefined) {
@@ -528,7 +527,7 @@ module.exports = class {
    */
   jsonp(data) {
     this.type(this.config('json_content_type'));
-    var callback = this.get(this.config('callback_name'));
+    let callback = this.get(this.config('callback_name'));
     //remove unsafe chars
     callback = callback.replace(/[^\w\.]/g, '');
     if (callback) {
@@ -574,15 +573,15 @@ module.exports = class {
       obj += '';
     }
     encoding = encoding || this.config('encoding');
-    var outputConfig = this.config('output_content');
+    let outputConfig = this.config('output_content');
     if (!outputConfig) {
       return this.res.write(obj, encoding);
     }
     if (!this._outputContentPromise) {
       this._outputContentPromise = [];
     }
-    var fn = think.co.wrap(outputConfig);
-    var promise = fn(obj, encoding, this);
+    let fn = think.co.wrap(outputConfig);
+    let promise = fn(obj, encoding, this);
     this._outputContentPromise.push(promise);
   }
   _end(){

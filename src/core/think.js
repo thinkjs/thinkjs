@@ -36,7 +36,7 @@ think.Class = function(type, clean){
   // think.Class({})
   // think.Class({}, true)
   if (think.isObject(type)) {
-    return clean === true ? think._Class(type) : think._Class(think.Base, type);
+    return clean === true ? think._Class(type) : think._Class(think.base, type);
   }
   // think.Class(function(){}, {})
   else if (think.isFunction(type)) {
@@ -106,7 +106,7 @@ think.lookClass = function(name, type, module){
  * base class
  * @type {}
  */
-think.Base = require('./base.js');
+think.base = require('./base.js');
 
 /**
  * app dir name, can be set in init

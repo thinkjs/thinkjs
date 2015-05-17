@@ -4,36 +4,36 @@
  * view class
  * @return {} []
  */
-module.exports = think.Class({
+module.exports = class extends think.base {
   /**
    * init method
    * @param  {Object} http []
    * @return {}      []
    */
-  init: function(http){
-    this.http = http;
+  constructor(http){
+    super(http);
     this.tVar = {};
-  },
+  }
   /**
    * assign
    * @param  {String} name  []
    * @param  {mixed} value []
    * @return {}       []
    */
-  assign: function(name, value){
+  assign(name, value){
     if (name === undefined) {
       return this.tVar;
     }else if (value === undefined) {
       if (think.isString(name)) {
         return this.tVar[name];
       }else{
-        for(var key in name){
+        for(let key in name){
           this.tVar[key] = name[key];
         }
       }
     }
     this.tVar[name] = value;
-  },
+  }
   /**
    * output template file
    * @param  {String} templateFile [template filepath]
@@ -41,21 +41,20 @@ module.exports = think.Class({
    * @param  {String} contentType  [content type]
    * @return {Promise}              []
    */
-  display: function(templateFile, charset, contentType){
-    var self = this;
-    return this.hook('view_init').then(function(){
-      return self.fetch(templateFile);
-    }).then(function(content){
-      return self.render(content, charset, contentType);
-    }).then(function(content){
-      return self.hook('view_end', content);
-    }).catch(function(err){
-      return think.error(err, self.http);
-    }).then(function(){
-      self.http.end();
+  display(templateFile, charset, contentType){
+    return this.hook('view_init').then(() => {
+      return this.fetch(templateFile);
+    }).then((content) => {
+      return this.render(content, charset, contentType);
+    }).then((content) => {
+      return this.hook('view_end', content);
+    }).catch((err) => {
+      return think.error(err, this.http);
+    }).then(() => {
+      this.http.end();
       return Promise.defer().promise;
     })
-  },
+  }
   /**
    * render template content
    * @param  {String} content     [template content]
@@ -63,19 +62,19 @@ module.exports = think.Class({
    * @param  {String} contentType [contentType]
    * @return {}             []
    */
-  render: function(content, charset, contentType){
+  render(content, charset, contentType){
     this.http.type(contentType || this.http.config('tpl.content_type'), charset);
     this.http.sendTime();
     return this.http.echo(content || '', charset || this.http.config('encoding'));
-  },
+  }
   /**
    * check template filepath exist
    * @param  {String} templateFile [template filepath]
    * @param  {Boolean} inView       []
    * @return {Promise}              []
    */
-  checkTemplateExist: function(templateFile, inView){
-    var cacheData = thinkCache(thinkCache.TEMPLATE);
+  checkTemplateExist(templateFile, inView){
+    let cacheData = thinkCache(thinkCache.TEMPLATE);
     if (templateFile in cacheData) {
       return Promise.resolve(templateFile);
     }
@@ -84,43 +83,42 @@ module.exports = think.Class({
       cacheData[templateFile] = true;
       return Promise.resolve(templateFile);
     }
-    var err = new Error(think.message('TEMPLATE_NOT_EXIST', templateFile));
+    let err = new Error(think.message('TEMPLATE_NOT_EXIST', templateFile));
     return Promise.reject(err);
-  },
+  }
   /**
    * fetch template file content
    * @param  {String} templateFile [template file]
    * @return {Promise}             []
    */
-  fetch: function(templateFile){
-    var self = this;
-    var promise;
-    var tVar = this.tVar;
+  fetch(templateFile){
+    let promise;
+    let tVar = this.tVar;
     if (!templateFile || templateFile[0] !== '/') {
-      promise = this.hook('view_template', templateFile).then(function(file){
-        return self.checkTemplateExist(file, true);
+      promise = this.hook('view_template', templateFile).then((file) => {
+        return this.checkTemplateExist(file, true);
       });
     }else{
       promise = this.checkTemplateExist(templateFile);
     }
-    return promise.then(function(file){
+    return promise.then((file) => {
       templateFile = file;
-      var promises = Object.keys(tVar).map(function(key){
+      let promises = Object.keys(tVar).map((key) => {
         if (!think.isPromise(tVar[key])) {
           return;
         }
-        return tVar[key].then(function(data){
+        return tVar[key].then((data) => {
           tVar[key] = data;
         })
       })
       return Promise.all(promises);
-    }).then(function(){
-      return self.hook('view_parse', {
+    }).then(() => {
+      return this.hook('view_parse', {
         'var': tVar,
         'file': templateFile
       });
-    }).then(function(content){
-      return self.hook('view_filter', content);
+    }).then((content) => {
+      return this.hook('view_filter', content);
     });
   }
-});
+}

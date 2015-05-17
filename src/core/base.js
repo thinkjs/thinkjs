@@ -5,7 +5,7 @@
  * @param  {Object} http 
  * @return {Class}   
  */
-module.exports = class{
+module.exports = class {
   /**
    * constructor
    * @param  {Object} http []
