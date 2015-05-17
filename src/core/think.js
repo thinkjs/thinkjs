@@ -385,18 +385,19 @@ think.hook = function(name, http, data){
   }
   http = http || {};
   http._middleware = data;
-  function execMiddleware(){
+  //exec middleware
+  let execMiddleware = async () => {
     if (index >= length) {
       return Promise.resolve(http._middleware);
     }
     let item = list[index++];
-    return think.middleware(item, http, http._middleware).then(function(data){
-      if (data !== undefined) {
-        http._middleware = data;
-      }
-      return execMiddleware();
-    });
+    let data = await think.middleware(item, http, http._middleware);
+    if (data !== undefined) {
+      http._middleware = data;
+    }
+    return execMiddleware();
   }
+
   return execMiddleware();
 }
 /**
@@ -508,9 +509,9 @@ think.loadAdapter = function(force){
   if (think.isDir(adapterPath)) {
     paths.push(adapterPath);
   }
-  paths.forEach(function(path){
+  paths.forEach((path) => {
     let dirs = fs.readdirSync(path);
-    dirs.forEach(function(dir){
+    dirs.forEach((dir) => {
       think.alias('adapter_' + dir, path + '/' + dir);
     })
   })
@@ -537,9 +538,9 @@ think.alias = function(type, paths, slash){
   if (!think.isArray(paths)) {
     paths = [paths];
   }
-  paths.forEach(function(path){
+  paths.forEach((path) => {
     let files = think.getFiles(path);
-    files.forEach(function(file){
+    files.forEach((file) => {
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
       think._alias[name] = path + '/' + file;
@@ -576,7 +577,7 @@ think.route = function(clear){
   //may be is dynamic save in db
   if (think.isFunction(config)) {
     let fn = think.co.wrap(config);
-    return fn().then(function(route){
+    return fn().then((route) => {
       think._route = route || [];
       return think._route;
     })
@@ -602,7 +603,7 @@ think.gc = function(instance){
   if (think.debug || think.mode === 'cli' || type in think.timer) {
     return;
   }
-  think.timer[type] = setInterval(function(){
+  think.timer[type] = setInterval(() => {
     let hour = (new Date()).getHours();
     let hours = think._config.cache_gc_hour || [];
     if (hours.indexOf(hour) === -1) {
