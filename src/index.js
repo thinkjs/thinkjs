@@ -368,6 +368,8 @@ module.exports = class{
     this.start();
     this.install().then(function(){
       think.require('app').run();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   }
 }

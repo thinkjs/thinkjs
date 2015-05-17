@@ -1,12 +1,12 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var thinkit = require('thinkit');
-var co = require('co');
-var util = require('util');
-var crypto = require('crypto');
-var querystring = require('querystring');
+let fs = require('fs');
+let path = require('path');
+let thinkit = require('thinkit');
+let co = require('co');
+let util = require('util');
+let crypto = require('crypto');
+let querystring = require('querystring');
 
 /**
  * global think variable
@@ -72,7 +72,7 @@ think.Class = function(type, clean){
  * @return {String}        []
  */
 think.lookClass = function(name, type, module){
-  var names = name.split('/');
+  let names = name.split('/');
   switch(names.length){
     // home/controller/base
     case 3:
@@ -82,7 +82,7 @@ think.lookClass = function(name, type, module){
       return think.require(names[0] + '/' + type + '/' + names[1]);
     // base
     case 1:
-      var clsPath, cls;
+      let clsPath, cls;
       // find from current module
       if (module) {
         clsPath = module + '/' + type + '/' + name;
@@ -161,9 +161,9 @@ think.THINK_LIB_PATH = path.normalize(__dirname + '/../');
  * @param  {) []
  * @return {}         []
  */
-think.version = (function(){
-  var packageFile = think.THINK_PATH + '/package.json';
-  var json = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
+think.version = (() => {
+  let packageFile = think.THINK_PATH + '/package.json';
+  let json = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
   return json.version;
 })();
 
@@ -204,7 +204,7 @@ think.require = function(name, flag){
   }
 
   function load(name, filepath){
-    var obj = think.safeRequire(filepath);
+    let obj = think.safeRequire(filepath);
     if (think.isClass(obj)) {
       obj.prototype.__filename = filepath;
     }
@@ -219,7 +219,7 @@ think.require = function(name, flag){
   if (flag) {
     return;
   }
-  var filepath = require.resolve(name);
+  let filepath = require.resolve(name);
   return load(filepath, filepath);
 }
 /**
@@ -312,18 +312,18 @@ think.getModuleConfig = function(module){
   if (!think.debug && module in think._moduleConfig) {
     return think._moduleConfig[module];
   }
-  var rootPath;
+  let rootPath;
   if (module === true) {
     rootPath = think.THINK_LIB_PATH + '/config';
   }else{
     rootPath = think.getModulePath(module) + '/' + think.dirname.config;
   }
   //config.js
-  var file = rootPath + '/config.js';
-  var config = think.safeRequire(file);
+  let file = rootPath + '/config.js';
+  let config = think.safeRequire(file);
   //mode
   file = rootPath + '/' + think.mode + '.js';
-  var modeConfig = think.safeRequire(file);
+  let modeConfig = think.safeRequire(file);
   config = think.extend({}, config, modeConfig);
   if (think.debug) {
     //debug.js
@@ -334,7 +334,7 @@ think.getModuleConfig = function(module){
     config = think.extend({}, think._config, config);
   }
   //transform config
-  var transforms = require(think.THINK_LIB_PATH + '/config/transform.js');
+  let transforms = require(think.THINK_LIB_PATH + '/config/transform.js');
   config = think.transformConfig(config, transforms);
   think._moduleConfig[module] = config;
   return config;
@@ -345,11 +345,11 @@ think.getModuleConfig = function(module){
  * @return {Object}        []
  */
 think.transformConfig = function(config, transforms){
-  for(var key in transforms){
+  for(let key in transforms){
     if (!(key in config)) {
       continue;
     }
-    var value = transforms[key];
+    let value = transforms[key];
     if (think.isFunction(value)) {
       config[key] = value(config[key]);
     }else {
@@ -378,8 +378,8 @@ think.hook = function(name, http, data){
     think._hook[name] = http;
     return;
   }
-  var list = think._hook[name] || [];
-  var index = 0, length = list.length;
+  let list = think._hook[name] || [];
+  let index = 0, length = list.length;
   if (length === 0) {
     return Promise.resolve(data);
   }
@@ -389,7 +389,7 @@ think.hook = function(name, http, data){
     if (index >= length) {
       return Promise.resolve(http._middleware);
     }
-    var item = list[index++];
+    let item = list[index++];
     return think.middleware(item, http, http._middleware).then(function(data){
       if (data !== undefined) {
         http._middleware = data;
@@ -405,11 +405,11 @@ think.hook = function(name, http, data){
  * @param  {Object} methods      []
  * @return {mixed}            []
  */
-var middleware = null;
+let middleware = null;
 think._middleware = {};
 think.middleware = function(superClass, methods, data){
-  var length = arguments.length;
-  var prefix = 'middleware_';
+  let length = arguments.length;
+  let prefix = 'middleware_';
   // register functional middleware
   // think.middleware('parsePayLoad', function(){})
   if (think.isString(superClass) && think.isFunction(methods)) {
@@ -419,12 +419,12 @@ think.middleware = function(superClass, methods, data){
   // exec middleware
   // think.middleware('parsePayLoad', http, data)
   if (length >= 2 && think.isHttp(methods)) {
-    var name = superClass, http = methods;
+    let name = superClass, http = methods;
     if (name in think._middleware) {
-      var fn = think._middleware[name];
+      let fn = think._middleware[name];
       return think.co.wrap(fn)(http, data);
     }else if (think.isString(name)) {
-      var instance = think.require(prefix + name)(http);
+      let instance = think.require(prefix + name)(http);
       return think.co.wrap(instance.run).bind(instance)(data);
     }else if (think.isFunction(name)){
       return think.co.wrap(name)(http, data);
@@ -433,7 +433,7 @@ think.middleware = function(superClass, methods, data){
   // get middleware
   // think.middleware('parsePayLoad')
   if (length === 1 && think.isString(superClass)) {
-    var cls = think.require(prefix + superClass, true);
+    let cls = think.require(prefix + superClass, true);
     if (cls) {
       return cls;
     }
@@ -454,7 +454,7 @@ think.adapter = function(type, name, fn){
   //load sys adapter
   think.loadAdapter();
 
-  var length = arguments.length, key = 'adapter_';
+  let length = arguments.length, key = 'adapter_';
   //register adapter
   //think.adapter('session', 'redis', function(){})
   if (length === 3 && think.isFunction(fn)) {
@@ -471,7 +471,7 @@ think.adapter = function(type, name, fn){
   //think.adapter('session', 'redis')
   if (length === 2 && think.isString(name)) {
     key += type + '_' + name;
-    var cls = think.require(key, true);
+    let cls = think.require(key, true);
     if (cls) {
       return cls;
     }
@@ -480,7 +480,7 @@ think.adapter = function(type, name, fn){
   //create adapter
   //module.exports = think.adapter({})
   //module.exports = think.adapter(function(){}, {});
-  var superClass;
+  let superClass;
   if (think.isFunction(type)) {
     superClass = type;
   }else if (think.isString(type)) {
@@ -496,20 +496,20 @@ think.adapter = function(type, name, fn){
  * load system & comon module adapter
  * @return {} []
  */
-var adapterLoaded = false;
+let adapterLoaded = false;
 think.loadAdapter = function(force){
   if (adapterLoaded && !force) {
     return;
   }
   adapterLoaded = true;
-  var paths = [think.THINK_LIB_PATH + '/adapter'];
+  let paths = [think.THINK_LIB_PATH + '/adapter'];
   //common module adapter
-  var adapterPath = think.getModulePath() + '/' + think.dirname.adapter;
+  let adapterPath = think.getModulePath() + '/' + think.dirname.adapter;
   if (think.isDir(adapterPath)) {
     paths.push(adapterPath);
   }
   paths.forEach(function(path){
-    var dirs = fs.readdirSync(path);
+    let dirs = fs.readdirSync(path);
     dirs.forEach(function(dir){
       think.alias('adapter_' + dir, path + '/' + dir);
     })
@@ -538,9 +538,9 @@ think.alias = function(type, paths, slash){
     paths = [paths];
   }
   paths.forEach(function(path){
-    var files = think.getFiles(path);
+    let files = think.getFiles(path);
     files.forEach(function(file){
-      var name = file.slice(0, -3);
+      let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
       think._alias[name] = path + '/' + file;
     })
@@ -570,12 +570,12 @@ think.route = function(clear){
   if (think._route !== null) {
     return think._route;
   }
-  var file = think.getModulePath() + '/' + think.dirname.config + '/route.js';
-  var config = think.safeRequire(file);
+  let file = think.getModulePath() + '/' + think.dirname.config + '/route.js';
+  let config = think.safeRequire(file);
   //route config is funciton
   //may be is dynamic save in db
   if (think.isFunction(config)) {
-    var fn = think.co.wrap(config);
+    let fn = think.co.wrap(config);
     return fn().then(function(route){
       think._route = route || [];
       return think._route;
@@ -598,13 +598,13 @@ think.gc = function(instance){
   if (!instance || !instance.gcType) {
     throw new Error(think.message('GCTYPE_MUST_SET'));
   }
-  var type = instance.gcType;
+  let type = instance.gcType;
   if (think.debug || think.mode === 'cli' || type in think.timer) {
     return;
   }
   think.timer[type] = setInterval(function(){
-    var hour = (new Date()).getHours();
-    var hours = think._config.cache_gc_hour || [];
+    let hour = (new Date()).getHours();
+    let hours = think._config.cache_gc_hour || [];
     if (hours.indexOf(hour) === -1) {
       return;
     }
@@ -622,7 +622,7 @@ think.localIp = '127.0.0.1';
  * @param  {Object} res [http response]
  * @return {Object}     [http object]
  */
-var http;
+let http;
 think._http = function(data){
   data = data || {};
   if (think.isString(data)) {
@@ -634,11 +634,11 @@ think._http = function(data){
       data = {url: data};
     }
   }
-  var url = data.url || '';
+  let url = data.url || '';
   if (url.indexOf('/') !== 0) {
     url = '/' + url;
   }
-  var req = {
+  let req = {
     httpVersion: '1.1',
     method: (data.method || 'GET').toUpperCase(),
     url: url,
@@ -649,7 +649,7 @@ think._http = function(data){
       remoteAddress: data.ip || think.localIp
     }
   }
-  var res = {
+  let res = {
     end: data.end || data.close || function(){},
     write: data.write || data.send || function(){},
     setHeader: function(){}
@@ -665,20 +665,20 @@ think.http = function(req, res){
   }
   //for cli request
   if (arguments.length === 1) {
-    var data = think._http(req);
+    let data = think._http(req);
     req = data.req;
     res = data.res;
   }
-  return http(req, res).run();
+  return (new http(req, res)).run();
 }
 /**
  * get uuid
  * @param  {Number} length [uid length]
  * @return {String}        []
  */
-think.uuid = function(length){
-  length = length || 32;
-  var str = crypto.randomBytes(Math.ceil(length * 0.75)).toString('base64').slice(0, length);
+think.uuid = function(length = 32){
+  // length = length || 32;
+  let str = crypto.randomBytes(Math.ceil(length * 0.75)).toString('base64').slice(0, length);
   return str.replace(/[\+\/]/g, '_');
 }
 /**
@@ -686,7 +686,7 @@ think.uuid = function(length){
  * @param  {Object} http []
  * @return {}      []
  */
-var Cookie;
+let Cookie;
 think.session = function(http){
   if (http.session) {
     return http.session;
@@ -694,10 +694,10 @@ think.session = function(http){
   if (!Cookie) {
     Cookie = think.require('cookie');
   }
-  var sessionOptions = think.config('session');
-  var name = sessionOptions.name;
-  var sign = sessionOptions.sign;
-  var cookie = http._cookie[name];
+  let sessionOptions = think.config('session');
+  let name = sessionOptions.name;
+  let sign = sessionOptions.sign;
+  let cookie = http._cookie[name];
   //validate cookie sign
   if (cookie && sign) {
     cookie = Cookie.unsign(cookie, sign);
@@ -706,9 +706,9 @@ think.session = function(http){
       http._cookie[name] = cookie;
     }
   }
-  var sessionCookie = cookie;
+  let sessionCookie = cookie;
   if (!cookie) {
-    var options = sessionOptions.cookie || {};
+    let options = sessionOptions.cookie || {};
     cookie = think.uuid(options.length || 32);
     sessionCookie = cookie;
     //sign cookie
@@ -718,15 +718,14 @@ think.session = function(http){
     http._cookie[name] = sessionCookie;
     http.cookie(name, cookie, options);
   }
-  var type = sessionOptions.type;
-  type = type || 'base';
+  let type = sessionOptions.type || 'base';
   if (type === 'base') {
     if (think.debug || think.config('cluster_on')) {
       type = 'file';
       think.log("in debug or cluster mode, session can't use memory for storage, convert to File");
     }
   }
-  var session = think.adapter('session', type)({
+  let session = think.adapter('session', type)({
     cookie: sessionCookie,
     timeout: sessionOptions.timeout
   });
@@ -749,7 +748,7 @@ think.getModule = function(module){
   return module.toLowerCase();
 }
 
-var nameReg = /^[A-Za-z\_]\w*$/;
+let nameReg = /^[A-Za-z\_]\w*$/;
 think.getController = function(controller){
   if (!controller) {
     return think.config('default_controller');
@@ -779,10 +778,10 @@ think.getAction = function(action){
  */
 think._controller = think.Class('controller');
 think.controller = function(superClass, methods, module){
-  var isConfig = think.isHttp(methods) || module;
+  let isConfig = think.isHttp(methods) || module;
   // get controller instance
   if (think.isString(superClass) && isConfig) {
-    var cls = think._controller(superClass, 'controller', module);
+    let cls = think._controller(superClass, 'controller', module);
     return cls(methods);
   }
   //create sub controller class
@@ -794,10 +793,10 @@ think.controller = function(superClass, methods, module){
  */
 think._logic = think.Class('logic');
 think.logic = function(superClass, methods, module){
-  var isConfig = think.isHttp(methods) || module;
+  let isConfig = think.isHttp(methods) || module;
   //get logic instance
   if (think.isString(superClass) && isConfig) {
-    var cls = think.lookClass(superClass, 'logic', module);
+    let cls = think.lookClass(superClass, 'logic', module);
     return cls(methods);
   }
   //create sub logic class
@@ -809,7 +808,7 @@ think.logic = function(superClass, methods, module){
  */
 think._model = think.Class('model');
 think.model = function(superClass, methods, module){
-  var isConfig = methods === true || module;
+  let isConfig = methods === true || module;
   if (!isConfig && methods) {
     //db configs
     if ('host' in methods && 'type' in methods && 'port' in methods) {
@@ -819,7 +818,7 @@ think.model = function(superClass, methods, module){
   //get model instance
   if (think.isString(superClass) && isConfig) {
     methods = think.extend({}, think.config('db'), methods);
-    var cls = think.lookClass(superClass, 'model', module);
+    let cls = think.lookClass(superClass, 'model', module);
     return cls(methods);
   }
   //create model
@@ -837,10 +836,10 @@ think.MANY_TO_MANY = 4;
  */
 think._service = think.Class('service');
 think.service = function(superClass, methods, module){
-  var isConfig = think.isHttp(methods) || methods === true || module;
+  let isConfig = think.isHttp(methods) || methods === true || module;
   //get service instance
   if (think.isString(superClass) && isConfig) {
-    var cls = think.lookClass(superClass, 'service', module);
+    let cls = think.lookClass(superClass, 'service', module);
     if (think.isClass(cls)) {
       return cls(methods);
     }
@@ -860,7 +859,7 @@ think.message = function(type, data){
   if (!think.isArray(data)) {
     data = [].slice.call(arguments, 1);
   }
-  var msg = think._message[type];
+  let msg = think._message[type];
   if (!msg) {
     return;
   }
@@ -876,10 +875,10 @@ think.message = function(type, data){
  */
 think.cache = function(name, value, options){
   options = options || {};
-  var type = options.type || 'base';
-  var instance = think.adapter('cache', type)(options);
-  var isFn = think.isFunction(instance.__before);
-  var promise = Promise.resolve(isFn ? instance.__before(name) : undefined);
+  let type = options.type || 'base';
+  let instance = think.adapter('cache', type)(options);
+  let isFn = think.isFunction(instance.__before);
+  let promise = Promise.resolve(isFn ? instance.__before(name) : undefined);
   return promise.then(function(){
     //get cache
     if (value === undefined) {
@@ -925,15 +924,15 @@ think.valid = function(name, callback){
   }
   // convert object to array
   if (think.isObject(name)) {
-    var data = [];
-    for(var key in name){
-      var value = name[key];
+    let data = [];
+    for(let key in name){
+      let value = name[key];
       value.name = key;
       data.push(value);
     }
     name = data;
   }
-  var ret = {}, msg = {};
+  let ret = {}, msg = {};
   name.forEach(function(item){
     // value required
     if (item.required) {
@@ -954,7 +953,7 @@ think.valid = function(name, callback){
     if (!item.type) {
       return;
     }
-    var type = think._valid[item.type];
+    let type = think._valid[item.type];
     if (!think.isFunction(type)) {
       throw new Error(think.message('CONFIG_NOT_FUNCTION', item.type));
     }
@@ -962,9 +961,9 @@ think.valid = function(name, callback){
       item.args = [item.args];
     }
     item.args = item.args.unshift(item.value);
-    var result = type.apply(think._valid, item.args);
+    let result = type.apply(think._valid, item.args);
     if (!result) {
-      var itemMsg = item.msg || think.message('PARAMS_NOT_VALID');
+      let itemMsg = item.msg || think.message('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
     }
   })

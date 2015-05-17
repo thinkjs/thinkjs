@@ -21,12 +21,10 @@ module.exports = class extends think.base {
    * dispath route
    * @return {} []
    */
-  dispatcher(){
-    return this.hook('resource_check').then(() =>
-      this.hook('route_parse')
-    ).then(() => {
-      this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
-    })
+  async dispatcher(){
+    await this.hook('resource_check');
+    await this.hook('route_parse');
+    this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
   }
   /**
    * exec logic
@@ -95,14 +93,13 @@ module.exports = class extends think.base {
    * exec 
    * @return {Promise} []
    */
-  exec(){
-    return this.execLogic().then(() => {
-      //http is end
-      if (this.http._isEnd) {
-        return Promise.defer().promise;
-      }
-      return this.execController();
-    })
+  async exec(){
+    await this.execLogic();
+    //http is end
+    if (this.http._isEnd) {
+      return Promise.defer().promise;
+    }
+    return this.execController();
   }
   /**
    * run
@@ -121,16 +118,15 @@ module.exports = class extends think.base {
     instance.on('error', (err) => {
       this.error(err);
     });
-    instance.run(() => {
-      this.dispatcher().then(() => 
-        this.hook('app_begin')
-      ).then(() =>
-        this.exec()
-      ).then(() =>
-        this.hook('app_end')
-      ).catch((err) => 
-        this.error(err)
-      )
+    instance.run(async () => {
+      try{
+        await this.dispatcher();
+        await this.hook('app_begin');
+        await this.exec();
+        await this.hook('app_end');
+      }catch(err){
+        this.error(err);
+      }
     });
   }
   /**
@@ -138,19 +134,17 @@ module.exports = class extends think.base {
    * @return {} []
    */
   static createServer(){
-    let app = this;
     let handle = think.config('create_server');
     let host = think.config('host');
     let port = think.port || think.config('port'); 
     //createServer callback
-    let callback = (req, res) => {
-      return think.http(req, res).then((http) => {
-        app(http).run();
-      });
+    let callback = async (req, res) => {
+      let http = await think.http(req, res);
+      return new this(http).run();
     }
     //define createServer in application
     if (handle) {
-      handle(callback, port, host, app);
+      handle(callback, port, host, this);
     }else{
       //create server
       let server = http.createServer(callback);
@@ -158,7 +152,7 @@ module.exports = class extends think.base {
         websocket(server, this).run();
       }
       server.listen(port, host);
-      App.logPid(port);
+      this.logPid(port);
     }
     console.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/');
     if (think.debug) {
@@ -169,16 +163,9 @@ module.exports = class extends think.base {
    * cli mode
    * @return {} []
    */
-  static cli(){
-    think.http(think.url).then((http) =>
-      App(http).listener()
-    )
-    // let timeout = think.config('process_timeout');
-    // if (timeout) {
-    //   setTimeout(function(){
-    //     process.exit();
-    //   }, timeout * 1000)
-    // }
+  static async cli(){
+    let http = await think.http(think.url)
+    return new this(http).listener();
   }
   /**
    * load process id
@@ -209,7 +196,7 @@ module.exports = class extends think.base {
   static http(){
     let nums = think.config('cluster_on');
     if (!nums) {
-      return App.createServer();
+      return this.createServer();
     }
     if (nums === true) {
       nums = os.cpus().length;
@@ -227,7 +214,7 @@ module.exports = class extends think.base {
         });
       });
     }else {
-      App.createServer();
+      this.createServer();
     }
   }
   /**
@@ -236,8 +223,8 @@ module.exports = class extends think.base {
    */
   static run(){
     if (think.mode === 'cli') {
-      return App.cli();
+      return this.cli();
     }
-    return App.http();
+    return this.http();
   }
 }
