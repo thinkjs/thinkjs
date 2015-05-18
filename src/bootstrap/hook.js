@@ -1,17 +1,17 @@
 'use strict';
 
-var fs = require('fs');
+let fs = require('fs');
 
 /**
  * parse payload
  * @param  {Object} http
  * @return {}         []
  */
-think.middleware('parse_json_payload', function(http){
+think.middleware('parse_json_payload', (http) => {
   if (!http.payload) {
     return;
   }
-  var types = http.config.post.json_content_type;
+  let types = http.config.post.json_content_type;
   if (types.indexOf(http.contentType) > -1) {
     try{
       http._post = JSON.parse(http.payload);
@@ -24,28 +24,26 @@ think.middleware('parse_json_payload', function(http){
  * @param  {String} file [file path]
  * @return {}         []
  */
-think.middleware('output_resource', function(http, file){
-  var stream = fs.createReadStream(file);
+think.middleware('output_resource', (http, file) => {
+  let stream = fs.createReadStream(file);
   stream.pipe(http.res);
-  stream.on('end', function(){
-    http.end();
-  });
+  stream.on('end', () => http.end());
 })
 /**
  * rewrite pathname, remove prefix & suffix
  * @param  {Object} http
  * @return {}         []
  */
-think.middleware('rewrite_pathname', function(http){
-  var pathname = http.pathname;
+think.middleware('rewrite_pathname', (http) => {
+  let pathname = http.pathname;
   if (!pathname) {
     return;
   }
-  var prefix = think.config('pathname_prefix');
+  let prefix = think.config('pathname_prefix');
   if (prefix && pathname.indexOf(prefix) === 0) {
     pathname = pathname.substr(prefix.length);
   }
-  var suffix = think.config('pathname_suffix');
+  let suffix = think.config('pathname_suffix');
   if (suffix && pathname.substr(0 - suffix.length) === suffix) {
     pathname = pathname.substr(0, pathname.length - suffix.length);
   }
@@ -56,13 +54,13 @@ think.middleware('rewrite_pathname', function(http){
  * @param  {Object} http){} 
  * @return {}
  */
-think.middleware('subdomain_deploy', function(http){
-  var subdomain = http.config('subdomain');
+think.middleware('subdomain_deploy', (http) => {
+  let subdomain = http.config('subdomain');
   if (think.isEmpty(subdomain)) {
     return;
   }
-  var hostname = http.hostname.split('.')[0];
-  var value = subdomain[hostname];
+  let hostname = http.hostname.split('.')[0];
+  let value = subdomain[hostname];
   if (!value) {
     return;
   }
@@ -73,25 +71,26 @@ think.middleware('subdomain_deploy', function(http){
  * @param  {Object}  http
  * @return {}          
  */
-think.middleware('send_error', function(http, err){
-  var error = think.config('error');
+think.middleware('send_error', (http, err) => {
+  let error = think.config('error');
   if (error.log) {
     think.log(err);
   }
-  if (think.mode === 'cli') {
+  if (think.cli) {
     return;
   }
-  var code = error.code || 500;
-  var msg = err;
+  let code = error.code || 500;
+  let msg = err;
   if (think.isError(err)) {
     msg = think.debug ? err.stack : err.message;
   }
   if (http.isAjax()) {
     return http.fail(code, msg);
   }else if (http.isJsonp()) {
-    var key = [error.key, error.msg];
-    var value = [code, msg];
-    return http.jsonp(think.getObject(key, value));
+    return http.jsonp({
+      [error.key]: error.msg,
+      [code]: msg
+    });
   }
   http.res.statusCode = code;
   http.type('text/html; charset=' + think.config('encoding'));
@@ -99,9 +98,8 @@ think.middleware('send_error', function(http, err){
     return http.end('<pre style="font-size:14px;line-height:20px;">' + msg + '</pre>');
   }
   http.sendTime();
-  var readStream = fs.createReadStream(error.file);
+  //output error file
+  let readStream = fs.createReadStream(error.file);
   readStream.pipe(http.res);
-  readStream.on('end', function(){
-    http.end();
-  });
+  readStream.on('end', () => http.end());
 })
