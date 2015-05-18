@@ -1,7 +1,6 @@
 'use strict';
 /**
  * Base Class
- * all class will inherit this class
  * @param  {Object} http 
  * @return {Class}   
  */
@@ -11,8 +10,16 @@ module.exports = class {
    * @param  {Object} http []
    * @return {}      []
    */
-  constructor(http){
-    this.http = http || {};
+  constructor(...args){
+    this.init(...args);
+  }
+  /**
+   * init
+   * @param  {Object} http []
+   * @return {}      []
+   */
+  init(http = {}){
+    this.http = http;
   }
   /**
    * invoke method, support __before & __after magic methods
@@ -20,13 +27,13 @@ module.exports = class {
    * @param  {mixed} data []
    * @return {Promise}     []
    */
-  async invoke(method, data){
+  async invoke(method, data = []){
     if (think.isFunction(this.__before)) {
-      await think.co.wrap(this.__before).bind(this)();
+      await think.co.wrap(this.__before).bind(this)(this);
     }
-    await think.co.wrap(this[method]).apply(this, data || []);
+    await think.co.wrap(this[method]).apply(this, data);
     if (think.isFunction(this.__after)) {
-      await think.co.wrap(this.__after).bind(this)();
+      await think.co.wrap(this.__after).bind(this)(this);
     }
   }
   /**
@@ -91,7 +98,7 @@ module.exports = class {
    */
   controller(name){
     let cls = think.lookClass(name, 'controller', this.http.module);
-    return cls(this.http);
+    return new cls(this.http);
   }
   /**
    * get service

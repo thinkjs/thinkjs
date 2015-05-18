@@ -3,31 +3,28 @@
  * behavior abstract class
  * @return {} []
  */
-module.exports = think.Class({
-  /**
-   * options
-   * @type {Object}
-   */
-  options: {},
+module.exports = class extends think.base {
   /**
    * init
    * @return {} []
    */
-  init: function(http){
-    this.http = http;
-    //read config from think._config
-    for(var key in this.options){
-      var value = this.config(key);
-      if (value !== undefined) {
-        this.options[key] = value;
+  constructor(http) {
+    super(http);
+    if(this.options){
+      //read config
+      for (let key in this.options) {
+        let value = this.config(key);
+        if (value !== undefined) {
+          this.options[key] = value;
+        }
       }
     }
-  },
+  }
   /**
    * run
    * @return {} []
    */
-  run: function(){
+  run() {
 
   }
-});
+}

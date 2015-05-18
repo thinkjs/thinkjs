@@ -205,7 +205,17 @@ think.getPath = function(module = think.dirname.common, type = think.dirname.con
     case think.mode_mini:
       return `${think.APP_PATH}/${type}/`;
     case think.mode_normal:
-      return `${think.APP_PATH}/${type}/${module}`;
+      let filepath = `${think.APP_PATH}/${type}/`;
+      switch(type){
+        case think.dirname.controller:
+        case think.dirname.model:
+        case think.dirname.logic:
+        case think.dirname.service:
+        case think.dirname.view:
+          filepath += module;
+          break;
+      }
+      return filepath;
     case think.mode_module:
       return `${think.APP_PATH}/${module}/${type}`;
   }
@@ -448,7 +458,7 @@ think.middleware = function(superClass, methods, data){
       let fn = think._middleware[name];
       return think.co.wrap(fn)(http, data);
     }else if (think.isString(name)) {
-      let instance = think.require(prefix + name)(http);
+      let instance = new think.require(prefix + name)(http);
       return think.co.wrap(instance.run).bind(instance)(data);
     }else if (think.isFunction(name)){
       return think.co.wrap(name)(http, data);
