@@ -99,7 +99,7 @@ think.base = require('./base.js');
  * @return {Object} []
  */
 think.defer = () => {
-  var deferred = {};
+  let deferred = {};
   deferred.promise = new Promise((resolve, reject) => {
     deferred.resolve = resolve;
     deferred.reject = reject;

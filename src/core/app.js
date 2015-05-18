@@ -31,7 +31,7 @@ module.exports = class extends think.base {
    * @return {Promise} []
    */
   execLogic(){
-    let name = this.http.module + '/' + think.dirname.logic + '/' + this.http.controller;
+    let name = `${this.http.module}/${think.dirname.logic}/${this.http.controller}`;
     let cls = think.require(name, true);
     if (!cls) {
       return Promise.resolve();
@@ -52,7 +52,7 @@ module.exports = class extends think.base {
    */
   execController(){
     let http = this.http;
-    let name = http.module + '/' + think.dirname.controller + '/' + http.controller;
+    let name = `${http.module}/${think.dirname.controller}/${http.controller}`;
     let cls = think.require(name, true);
     if (cls) {
       return this.execAction(new cls(http));
@@ -107,17 +107,15 @@ module.exports = class extends think.base {
    */
   run(){
     let http = this.http;
-    http.header('X-Powered-By', 'thinkjs-' + think.version);
+    http.header('X-Powered-By', `thinkjs-${think.version}`);
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.websocket) {
       http.res.statusCode = 403;
-      http.end();
+      http.end('proxy on, cannot visit by port');
       return;
     }
     let instance = domain.create();
-    instance.on('error', (err) => {
-      this.error(err);
-    });
+    instance.on('error', (err) => this.error(err));
     instance.run(async () => {
       try{
         await this.dispatcher();
@@ -149,7 +147,7 @@ module.exports = class extends think.base {
       //create server
       let server = http.createServer(callback);
       if (think.config('websocket.on')) {
-        websocket(server, this).run();
+        (new websocket(server, this)).run();
       }
       server.listen(port, host);
       this.logPid(port);
@@ -177,7 +175,7 @@ module.exports = class extends think.base {
     }
     let dir = think.getPath(undefined, think.dirname.runtime) + '/pid';
     think.mkdir(dir);
-    let pidFile = dir + '/' + port + '.pid';
+    let pidFile = `${dir}/${port}.pid`;
     fs.writeFileSync(pidFile, process.pid);
     //change pid file mode
     think.chmod(pidFile);
@@ -209,9 +207,7 @@ module.exports = class extends think.base {
       cluster.on('exit', (worker) => {
         let err = new Error(think.message('WORKER_DIED', worker.process.pid))
         think.log(err, 'worker');
-        process.nextTick(() => {
-          cluster.fork();
-        });
+        process.nextTick(() => cluster.fork());
       });
     }else {
       this.createServer();

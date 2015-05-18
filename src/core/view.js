@@ -10,8 +10,8 @@ module.exports = class extends think.base {
    * @param  {Object} http []
    * @return {}      []
    */
-  constructor(http){
-    super(http);
+  init(http){
+    super.init(http);
     this.tVar = {};
   }
   /**
@@ -31,8 +31,9 @@ module.exports = class extends think.base {
           this.tVar[key] = name[key];
         }
       }
+    }else{
+      this.tVar[name] = value;
     }
-    this.tVar[name] = value;
   }
   /**
    * output template file
@@ -41,19 +42,16 @@ module.exports = class extends think.base {
    * @param  {String} contentType  [content type]
    * @return {Promise}              []
    */
-  display(templateFile, charset, contentType){
-    return this.hook('view_init').then(() => {
-      return this.fetch(templateFile);
-    }).then((content) => {
-      return this.render(content, charset, contentType);
-    }).then((content) => {
-      return this.hook('view_end', content);
-    }).catch((err) => {
-      return think.error(err, this.http);
-    }).then(() => {
-      this.http.end();
-      return think.defer().promise;
-    })
+  async display(templateFile, charset, contentType){
+    try{
+      await this.hook('view_init');
+      await this.fetch(templateFile);
+      await this.render(content, charset, contentType);
+      await this.hook('view_end', content);
+    }catch(err){
+      await think.hook('app_error', this.http, err);
+    }
+    return think.defer().promise;
   }
   /**
    * render template content
@@ -62,10 +60,10 @@ module.exports = class extends think.base {
    * @param  {String} contentType [contentType]
    * @return {}             []
    */
-  render(content, charset, contentType){
-    this.http.type(contentType || this.http.config('tpl.content_type'), charset);
+  render(content = '', charset = this.http.config('encoding'), contentType = this.http.config('tpl.content_type')){
+    this.http.type(contentType, charset);
     this.http.sendTime();
-    return this.http.echo(content || '', charset || this.http.config('encoding'));
+    return this.http.echo(content, charset);
   }
   /**
    * check template filepath exist
@@ -91,34 +89,27 @@ module.exports = class extends think.base {
    * @param  {String} templateFile [template file]
    * @return {Promise}             []
    */
-  fetch(templateFile){
-    let promise;
+  async fetch(templateFile){
     let tVar = this.tVar;
     if (!templateFile || templateFile[0] !== '/') {
-      promise = this.hook('view_template', templateFile).then((file) => {
-        return this.checkTemplateExist(file, true);
-      });
+      templateFile = await this.hook('view_template', templateFile);
+      templateFile = await this.checkTemplateExist(templateFile, true);
     }else{
-      promise = this.checkTemplateExist(templateFile);
+      templateFile = await this.checkTemplateExist(templateFile);
     }
-    return promise.then((file) => {
-      templateFile = file;
-      let promises = Object.keys(tVar).map((key) => {
-        if (!think.isPromise(tVar[key])) {
-          return;
-        }
-        return tVar[key].then((data) => {
-          tVar[key] = data;
-        })
+    let promises = Object.keys(tVar).map((key) => {
+      if (!think.isPromise(tVar[key])) {
+        return;
+      }
+      return tVar[key].then((data) => {
+        tVar[key] = data;
       })
-      return Promise.all(promises);
-    }).then(() => {
-      return this.hook('view_parse', {
-        'var': tVar,
-        'file': templateFile
-      });
-    }).then((content) => {
-      return this.hook('view_filter', content);
-    });
+    })
+    await Promise.all(promises);
+    let content = await this.hook('view_parse', {
+      'var': tVar,
+      'file': templateFile
+    })
+    return this.hook('view_filter', content);
   }
 }
