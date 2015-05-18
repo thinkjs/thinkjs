@@ -14,6 +14,7 @@ module.exports = class {
   constructor(options = {}){
     //extend options to think
     think.extend(think, this.getPath(), options);
+    //parse data from process arguments
     let i = 2;
     let argv = process.argv[i];
     //get app mode from argv
@@ -33,6 +34,7 @@ module.exports = class {
         think.cli = argv;
       }
     }
+    //get app mode
     think.mode = this.getMode();
   }
   /**
@@ -158,7 +160,7 @@ module.exports = class {
       `${think.THINK_LIB_PATH}/middleware`,
       `${think.getPath(undefined, think.dirname.middleware)}`
     ]
-    think.alias(type, paths);
+    think.alias('middleware', paths);
   }
   /**
    * load hook
@@ -195,22 +197,11 @@ module.exports = class {
     let list = [/*'model',*/ 'controller', 'logic', 'service'];
     list.forEach((type) => {
       think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
-      switch(think.mode){
-        case think.mode_mini:
-          let path = `${think.getPath()}/${think.dirname[type]}`;
-          think.alias(`${think.getModule()}/${type}`, path, true);
-          break;
-        case think.mode_normal:
-          think.module.forEach((module) => {
-            think.alias(`${module}/${type}`, `${think.APP_PATH}/${think.dirname[type]}/${module}`, true);
-          });
-          break;
-        case think.mode_module:
-          think.module.forEach((module) => {
-            think.alias(`${module}/${type}`, `${think.getPath(module, think.dirname[type])}/`, true);
-          })
-          break;
-      }
+      think.module.forEach((module) => {
+        let moduleType = `${module}/${type}`;
+        let filepath = `${think.getPath(module, think.dirname[type])}/`;
+        think.alias(moduleType, filepath, true);
+      })
     })
   }
   /**
@@ -281,15 +272,10 @@ module.exports = class {
         data[key] = true;
       })
     }
-    if (think.mini) {
-      filepath = `${think.APP_PATH}/${think.dirname.view}/`;
+    think.module.forEach(function(module){
+      filepath = think.getPath(module, think.dirname.view);
       add(filepath);
-    }else{
-      think.module.forEach(function(module){
-        filepath = `${think.APP_PATH}/${module}/${think.dirname.view}/`;
-        add(filepath);
-      })
-    }
+    })
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**
@@ -340,7 +326,7 @@ module.exports = class {
         return;
       }
       let retainFiles = think.config('auto_reload_except');
-      let fn = function(item){
+      let fn = (item) => {
         if (think.isString(item)) {
           if (process.platform === 'win32') {
             item = item.replace(/\//g, '\\');
@@ -388,12 +374,13 @@ module.exports = class {
    * run
    * @return {} []
    */
-  run(){
+  async run(){
     this.start();
-    this.install().then(function(){
-      think.require('app').run();
-    }).catch(function(err){
-      console.log(err.stack)
-    })
+    await this.install();
+    try{
+      await think.require('app').run();
+    }catch(err){
+      console.log(err.stack);
+    }
   }
 }

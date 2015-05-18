@@ -36,7 +36,7 @@ module.exports = class extends think.base {
     if (!cls) {
       return Promise.resolve();
     }
-    let instance = cls(this.http);
+    let instance = new cls(this.http);
     let action = this.http.action;
     if (think.isFunction(instance[action + think.config('action_suffix')])) {
       return this.action(instance, action);
@@ -55,7 +55,7 @@ module.exports = class extends think.base {
     let name = http.module + '/' + think.dirname.controller + '/' + http.controller;
     let cls = think.require(name, true);
     if (cls) {
-      return this.execAction(cls(http));
+      return this.execAction(new cls(http));
     }
     let call = 'call_controller';
     cls = think.require(call, true);
@@ -164,7 +164,7 @@ module.exports = class extends think.base {
    * @return {} []
    */
   static async cli(){
-    let http = await think.http(think.url)
+    let http = await think.http(think.url);
     return new this(http).listener();
   }
   /**
