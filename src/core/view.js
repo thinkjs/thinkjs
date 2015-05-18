@@ -1,5 +1,7 @@
 'use strict';
 
+let path = require('path');
+
 /**
  * view class
  * @return {} []
@@ -91,7 +93,7 @@ module.exports = class extends think.base {
    */
   async fetch(templateFile){
     let tVar = this.tVar, flag = false;
-    if (!templateFile || templateFile[0] !== '/') {
+    if (!templateFile || !path.isAbsolute(templateFile)) {
       templateFile = await this.hook('view_template', templateFile);
       flag = true;
     }
