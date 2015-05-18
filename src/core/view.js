@@ -90,13 +90,12 @@ module.exports = class extends think.base {
    * @return {Promise}             []
    */
   async fetch(templateFile){
-    let tVar = this.tVar;
+    let tVar = this.tVar, flag = false;
     if (!templateFile || templateFile[0] !== '/') {
       templateFile = await this.hook('view_template', templateFile);
-      templateFile = await this.checkTemplateExist(templateFile, true);
-    }else{
-      templateFile = await this.checkTemplateExist(templateFile);
+      flag = true;
     }
+    templateFile = await this.checkTemplateExist(templateFile, flag);
     let promises = Object.keys(tVar).map((key) => {
       if (!think.isPromise(tVar[key])) {
         return;
