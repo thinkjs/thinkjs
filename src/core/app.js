@@ -97,7 +97,7 @@ module.exports = class extends think.base {
     await this.execLogic();
     //http is end
     if (this.http._isEnd) {
-      return Promise.defer().promise;
+      return think.defer().promise;
     }
     return this.execController();
   }
@@ -175,7 +175,7 @@ module.exports = class extends think.base {
     if (!cluster.isMaster || !think.config('log_pid')) {
       return;
     }
-    let dir = think.getModulePath() + '/runtime/pid';
+    let dir = think.getPath(undefined, think.dirname.runtime) + '/pid';
     think.mkdir(dir);
     let pidFile = dir + '/' + port + '.pid';
     fs.writeFileSync(pidFile, process.pid);

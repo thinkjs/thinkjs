@@ -2,17 +2,110 @@
 
 let fs = require('fs');
 let path = require('path');
-let thinkit = require('thinkit');
-let co = require('co');
 let util = require('util');
 let crypto = require('crypto');
 let querystring = require('querystring');
+
+let thinkit = require('thinkit');
+let co = require('co');
 
 /**
  * global think variable
  * @type {Object}
  */
 global.think = Object.create(thinkit);
+/**
+ * server start time
+ * @type {Number}
+ */
+think.startTime = Date.now();
+/**
+ * app dir name, can be set in init
+ * @type {Object}
+ */
+think.dirname = {
+  config: 'config',
+  controller: 'controller',
+  model: 'model',
+  adapter: 'adapter',
+  logic: 'logic',
+  service: 'service',
+  view: 'view',
+  middleware: 'middleware',
+  runtime: 'runtime',
+  common: 'common',
+  bootstrap: 'bootstrap',
+  local: 'local'
+}
+/**
+ * debug
+ * @type {Boolean}
+ */
+think.debug = false;
+/**
+ * server port
+ * @type {Number}
+ */
+think.port = 0;
+/**
+ * is command line
+ * @type {String}
+ */
+think.cli = false;
+//mode list
+think.mode_mini = 0x0001;
+think.mode_normal = 0x0002;
+think.mode_module = 0x0004;
+/**
+ * app mode
+ * 0x0001: mini
+ * 0x0002: normal
+ * 0x0004: module
+ * @type {Boolean}
+ */
+think.mode = 0x0001;
+/**
+ * thinkjs module lib path
+ * @type {String}
+ */
+think.THINK_LIB_PATH = path.normalize(__dirname + '/../');
+/**
+ * thinkjs module root path
+ * @type {String}
+ */
+think.THINK_PATH = path.dirname(think.THINK_LIB_PATH);
+/**
+ * thinkjs version
+ * @param  {) []
+ * @return {}         []
+ */
+think.version = (() => {
+  let packageFile = think.THINK_PATH + '/package.json';
+  let {version} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
+  return version;
+})();
+/**
+ * module list
+ * @type {Array}
+ */
+think.module = [];
+/**
+ * base class
+ * @type {}
+ */
+think.base = require('./base.js');
+/**
+ * get deferred object
+ * @return {Object} []
+ */
+think.defer = () => {
+  var deferred = {};
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+}
 
 /**
  * check object is http object
@@ -22,11 +115,12 @@ global.think = Object.create(thinkit);
 think.isHttp = function(http){
   return http && think.isObject(http.req) && think.isObject(http.res);
 }
+
 /**
- * server start time
- * @type {Number}
+ * alias co module to think.co
+ * @type {Object}
  */
-think.startTime = Date.now();
+think.co = co;
 /**
  * create class
  * @param {Object} methods [methods and props]
@@ -103,91 +197,18 @@ think.lookClass = function(name, type, module){
   }
 }
 /**
- * base class
- * @type {}
- */
-think.base = require('./base.js');
-
-/**
- * app dir name, can be set in init
- * @type {Object}
- */
-think.dirname = {
-  config: 'config',
-  controller: 'controller',
-  model: 'model',
-  adapter: 'adapter',
-  logic: 'logic',
-  service: 'service',
-  view: 'view',
-  middleware: 'middleware',
-  runtime: 'runtime',
-  common: 'common',
-  bootstrap: 'bootstrap',
-  local: 'local'
-}
-/**
- * debug
- * @type {Boolean}
- */
-think.debug = false;
-/**
- * server port
- * @type {Number}
- */
-think.port = 0;
-/**
- * app mode
- * @type {String}
- */
-think.mode = 'http';
-/**
- * mini app mode
- * @type {Boolean}
- */
-think.mini = false;
-/**
- * thinkjs module root path
- * @type {String}
- */
-think.THINK_PATH = path.normalize(__dirname + '/../../');
-/**
- * thinkjs module lib path
- * @type {String}
- */
-think.THINK_LIB_PATH = path.normalize(__dirname + '/../');
-/**
- * thinkjs version
- * @param  {) []
- * @return {}         []
- */
-think.version = (() => {
-  let packageFile = think.THINK_PATH + '/package.json';
-  let json = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
-  return json.version;
-})();
-
-/**
- * module list
- * @type {Array}
- */
-think.module = [];
-
-/**
- * alias co module to think.co
- * @type {Object}
- */
-think.co = co;
-/**
  * get common module path
  * @return {String} []
  */
-think.getModulePath = function(module){
-  if (think.mini) {
-    return think.APP_PATH;
+think.getPath = function(module = think.dirname.common, type = think.dirname.controller){
+  switch(think.mode){
+    case think.mode_mini:
+      return `${think.APP_PATH}/${type}/`;
+    case think.mode_normal:
+      return `${think.APP_PATH}/${type}/${module}`;
+    case think.mode_module:
+      return `${think.APP_PATH}/${module}/${type}`;
   }
-  module = module || think.dirname.common;
-  return think.APP_PATH + '/' + module;
 }
 
 /**
@@ -307,34 +328,36 @@ think._moduleConfig = {};
  * @param  {String} module []
  * @return {Object}        []
  */
-think.getModuleConfig = function(module){
-  module = module || think.dirname.common;
+think.getModuleConfig = function(module = think.dirname.common){
   if (!think.debug && module in think._moduleConfig) {
     return think._moduleConfig[module];
   }
   let rootPath;
   if (module === true) {
-    rootPath = think.THINK_LIB_PATH + '/config';
+    rootPath = `${think.THINK_LIB_PATH}/config`;
   }else{
-    rootPath = think.getModulePath(module) + '/' + think.dirname.config;
+    rootPath = think.getPath(module, think.dirname.config);
   }
   //config.js
-  let file = rootPath + '/config.js';
+  let file = `${rootPath}/config.js`;
   let config = think.safeRequire(file);
-  //mode
-  file = rootPath + '/' + think.mode + '.js';
-  let modeConfig = think.safeRequire(file);
-  config = think.extend({}, config, modeConfig);
+  //debug.js
   if (think.debug) {
-    //debug.js
-    file = rootPath + '/debug.js';
-    config = think.extend(config, think.safeRequire(file));
+    file = `${rootPath}/debug.js`;
+    config = think.extend({}, config, think.safeRequire(file));
   }
-  if (module && module !== true) {
+  //cli.js
+  if(think.cli){
+    file = `${rootPath}/cli.js`;
+    let cliConfig = think.safeRequire(file);
+    config = think.extend({}, config, cliConfig);
+  }
+  //merge config
+  if (module !== true) {
     config = think.extend({}, think._config, config);
   }
   //transform config
-  let transforms = require(think.THINK_LIB_PATH + '/config/transform.js');
+  let transforms = require(`${think.THINK_LIB_PATH}/config/transform.js`);
   config = think.transformConfig(config, transforms);
   think._moduleConfig[module] = config;
   return config;
@@ -505,7 +528,7 @@ think.loadAdapter = function(force){
   adapterLoaded = true;
   let paths = [think.THINK_LIB_PATH + '/adapter'];
   //common module adapter
-  let adapterPath = think.getModulePath() + '/' + think.dirname.adapter;
+  let adapterPath = think.getPath(undefined, think.dirname.adapter);
   if (think.isDir(adapterPath)) {
     paths.push(adapterPath);
   }
@@ -571,7 +594,7 @@ think.route = function(clear){
   if (think._route !== null) {
     return think._route;
   }
-  let file = think.getModulePath() + '/' + think.dirname.config + '/route.js';
+  let file = think.getPath() + '/' + think.dirname.config + '/route.js';
   let config = think.safeRequire(file);
   //route config is funciton
   //may be is dynamic save in db

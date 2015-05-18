@@ -55,7 +55,7 @@ var WebSocket = module.exports = think.Class({
     if (request.url === '/') {
       return Promise.resolve({});
     }
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     var fn = function(){};
     var cookies = '';
     var res = {setHeader: function(name, value){

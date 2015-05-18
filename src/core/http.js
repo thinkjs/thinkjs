@@ -64,7 +64,7 @@ module.exports = class {
    * @return {Promise} []
    */
   getFormFilePost(){
-    let deferred = Promise.defer();
+    let deferred = think.defer();
     let uploadDir = think.config('post.file_upload_path');
     if (uploadDir) {
       think.mkdir(uploadDir);
@@ -106,7 +106,7 @@ module.exports = class {
    */
   getCommonPost(){
     let buffers = [];
-    let deferred = Promise.defer();
+    let deferred = think.defer();
     this.req.on('data', (chunk) => {
       buffers.push(chunk);
     });
@@ -134,7 +134,7 @@ module.exports = class {
         }catch(e){
           this.res.statusCode = 413;
           this.res.end();
-          return Promise.defer().promise;
+          return think.defer().promise;
         }
       }
       let post = this.http._post;
@@ -142,14 +142,14 @@ module.exports = class {
       if (length > think.config('post.max_fields')) {
         this.res.statusCode = 413;
         this.res.end();
-        return Promise.defer().promise;
+        return think.defer().promise;
       }
       let maxFilesSize = think.config('post.max_fields_size');
       for(let name in post){
         if (post[name].length > maxFilesSize) {
           this.res.statusCode = 413;
           this.res.end();
-          return Promise.defer().promise;
+          return think.defer().promise;
         }
       }
     })
@@ -160,7 +160,7 @@ module.exports = class {
    */
   getAjaxFilePost(){
     let filename = this.req.headers[think.config('post.ajax_filename_header')];
-    let deferred = Promise.defer();
+    let deferred = think.defer();
     let filepath = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
     think.mkdir(filepath);
     let name = think.uuid(20);

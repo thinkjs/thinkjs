@@ -22,7 +22,7 @@ module.exports = think.middleware({
     if (this.checkCacheTime(cacheTime)) {
       this.responseCacheContent();
       //return a pending promise
-      return Promise.defer().promise;
+      return think.defer().promise;
     }
     return false;
   },

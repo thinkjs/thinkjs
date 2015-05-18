@@ -14,7 +14,7 @@ module.exports = think.middleware({
     var http = this.http;
     var depr = this.config('tpl.file_depr');
     var ext = this.config('tpl.file_ext');
-    var pathPrefix = think.getModulePath(http.module) + '/' + think.dirname.view + '/';
+    var pathPrefix = think.getPath(http.module, think.dirname.view) + '/';
     // this.display()
     if (!templateFile) {
       return pathPrefix + http.controller + depr + http.action + ext;
@@ -28,7 +28,7 @@ module.exports = think.middleware({
     var controller = paths.pop() || http.controller;
     var module = paths.pop() || http.module;
     if (module !== http.module) {
-      pathPrefix = think.getModulePath(module) + '/' + think.dirname.view + '/';
+      pathPrefix = think.getPath(module, think.dirname.view) + '/';
     }
     templateFile = pathPrefix + controller + depr + action;
     if (action.indexOf('.') === -1) {

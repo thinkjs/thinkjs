@@ -1,6 +1,6 @@
 'use strict';
 
-var prefix = think.getModulePath();
+var runtimePrefix = think.getPath(undefined, think.dirname.runtime);
 
 module.exports = {
   port: 8360, 
@@ -38,7 +38,7 @@ module.exports = {
     max_fields: 100, 
     max_fields_size: 2 * 1024 * 1024, //2M,
     ajax_filename_header: 'x-filename',
-    file_upload_path: prefix + '/runtime/upload',
+    file_upload_path: runtimePrefix + '/upload',
     file_auto_remove: true
   },
   
@@ -70,7 +70,7 @@ module.exports = {
     auto_start: false,
     start_filter: undefined,
     type: 'file',
-    path: prefix + '/runtime/session',
+    path: runtimePrefix + '/session',
     secret: '',
     timeout: 24 * 3600,
     cookie: { // cookie options
@@ -108,7 +108,7 @@ module.exports = {
     type: 'file',
     prefix: 'thinkjs_',
     timeout: 6 * 3600, //6 hours
-    path: prefix + '/runtime/cache',
+    path: runtimePrefix + '/cache',
     path_depth: 2,
     file_ext: '.json',
     gc: 4

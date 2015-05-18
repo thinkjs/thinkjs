@@ -35,7 +35,7 @@ module.exports = think.adapter(EventEmitter, {
       return this;
     }
     var self = this;
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     this.handle = net.createConnection(this.port, this.host);
     this.handle.on('connect', function(){
       this.setTimeout(0);
@@ -154,7 +154,7 @@ module.exports = think.adapter(EventEmitter, {
   query: function(query, type){
     this.connect();
     var self = this;
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     var callback = function(error, value){
       return error ? deferred.reject(error) : deferred.resolve(value);
     }

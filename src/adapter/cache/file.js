@@ -53,7 +53,7 @@ module.exports = think.adapter({
       return;
     }
     var self = this;
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     fs.readFile(filePath, {encoding: 'utf8'}, function(error, content){
       if (error || !content) {
         return deferred.resolve();
@@ -106,7 +106,7 @@ module.exports = think.adapter({
       expire: Date.now() + timeout * 1000,
       timeout: timeout
     };
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     fs.writeFile(filePath, JSON.stringify(data), function(){
       //change file mod
       think.chmod(filePath);
@@ -131,7 +131,7 @@ module.exports = think.adapter({
   rm: function(name){
     var filePath = this.getStoredFile(name);
     if (think.isFile(filePath)) {
-      var deferred = Promise.defer();
+      var deferred = think.defer();
       fs.unlink(filePath, function(){
         deferred.resolve();
       })

@@ -1,11 +1,11 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+let fs = require('fs');
+let path = require('path');
 
 require('./core/think.js');
 
-module.exports = class{
+module.exports = class {
   /**
    * init
    * @param  {Object} options [project options]
@@ -30,14 +30,27 @@ module.exports = class{
       if (/^\d+$/.test(argv)) {
         think.port = argv;
       }else{
-        think.mode = 'cli';
-        think.url = argv;
+        think.cli = argv;
       }
     }
-    //check app is mini mode
-    if (think.isDir(think.APP_PATH + '/' + think.dirname.controller)) {
-      think.mini = true;
+    think.mode = this.getMode();
+  }
+  /**
+   * get app mode
+   * @return {Number} [app mode]
+   */
+  getMode(){
+    let filepath = `${think.APP_PATH}/${think.dirname.controller}/`;
+    if (think.isDir(filepath)) {
+      let files = fs.readdirSync(filepath);
+      let flag = files.some((file) => {
+        if (think.isFile(filepath + file)) {
+          return true;
+        }
+      })
+      return flag ? think.mode_mini : think.mode_normal;
     }
+    return think.mode_module;
   }
   /**
    * get app path
@@ -45,12 +58,12 @@ module.exports = class{
    */
   getPath(){
     let filepath = process.argv[1];
-    let rootPath = path.dirname(filepath);
-    let appPath = path.dirname(rootPath) + '/app';
+    let ROOT_PATH = path.dirname(filepath);
+    let APP_PATH = `${path.dirname(ROOT_PATH)}/app`;
     return {
-      APP_PATH: appPath,
-      RESOURCE_PATH: rootPath,
-      ROOT_PATH: rootPath
+      APP_PATH,
+      RESOURCE_PATH: ROOT_PATH,
+      ROOT_PATH
     }
   }
   /**
@@ -66,20 +79,23 @@ module.exports = class{
    * @return {} []
    */
   getModule(){
-    if (think.mini) {
-      return [];
+    //only have default module in mini mode
+    if (think.mode === think.mode_mini) {
+      return [think.config('default_module')];
     }
-    let modules = fs.readdirSync(think.APP_PATH);
+    let modulePath = think.APP_PATH;
+    if (think.mode === think.mode_normal) {
+      modulePath += `/${think.dirname.controller}`;
+    }
+    let modules = fs.readdirSync(modulePath);
     let denyModuleList = think.config('deny_module_list') || [];
-    if (denyModuleList.length === 0) {
-      think.module = modules;
-      return modules;
+    if (denyModuleList.length > 0) {
+      modules = modules.filter((module) => {
+        if (denyModuleList.indexOf(module) === -1) {
+          return module;
+        }
+      })
     }
-    modules = modules.filter((module) => {
-      if (denyModuleList.indexOf(module) === -1) {
-        return module;
-      }
-    })
     think.module = modules;
     return modules;
   }
@@ -88,20 +104,21 @@ module.exports = class{
    * @return {} []
    */
   loadAlias(){
-    think._alias = require(think.THINK_LIB_PATH + '/config/alias.js');
+    let aliasPath = `${think.THINK_LIB_PATH}/config/alias.js`;
+    think._alias = require(aliasPath);
   }
   /**
    * load alias module export
    * @return {} []
    */
-  loadAliasExport(){
-    for(var key in think._alias){
-      if (key in think._aliasExport) {
-        continue;
-      }
-      think._aliasExport[key] = think.require(key);
-    }
-  }
+  // loadAliasExport(){
+  //   for(let key in think._alias){
+  //     if (key in think._aliasExport) {
+  //       continue;
+  //     }
+  //     think._aliasExport[key] = think.require(key);
+  //   }
+  // }
   /**
    * load config
    * @return {} []
@@ -114,7 +131,7 @@ module.exports = class{
     think._config = think.extend(config, commonConfig);
     let modules = this.getModule();
     //load modules config
-    modules.forEach(function(module){
+    modules.forEach((module) => {
       think.getModuleConfig(module);
     })
   }
@@ -137,10 +154,9 @@ module.exports = class{
    * @return {} []
    */
   loadMiddleware(){
-    let type = 'middleware';
     let paths = [
-      think.THINK_LIB_PATH + '/' + type,
-      think.getModulePath() + '/' + think.dirname.middleware
+      `${think.THINK_LIB_PATH}/middleware`,
+      `${think.getPath(undefined, think.dirname.middleware)}`
     ]
     think.alias(type, paths);
   }
@@ -149,8 +165,9 @@ module.exports = class{
    * @return {} []
    */
   loadHook(){
-    let hook = require(think.THINK_LIB_PATH + '/config/hook.js');
-    let file = think.getModulePath() + '/' + think.dirname.config + '/hook.js';
+    let hookPath = `${think.THINK_LIB_PATH}/config/hook.js`;
+    let hook = require(hookPath);
+    let file = `${think.getPath(undefined, think.dirname.config)}/hook.js`;
     let data = think.safeRequire(file) || {};
     let key, value;
     for(key in data){
@@ -176,15 +193,23 @@ module.exports = class{
    */
   loadMVC(){
     let list = [/*'model',*/ 'controller', 'logic', 'service'];
-    list.forEach(function(type){
-      think.alias(type, think.THINK_LIB_PATH + '/' + type);
-      if (think.mini) {
-        let path = think.getModulePath() + '/' + think.dirname[type];
-        think.alias(think.getModule() + '/' + type, path, true);
-      }else{
-        think.module.forEach(function(module){
-          think.alias(module + '/' + type, think.getModulePath(module) + '/' + think.dirname[type], true);
-        })
+    list.forEach((type) => {
+      think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
+      switch(think.mode){
+        case think.mode_mini:
+          let path = `${think.getPath()}/${think.dirname[type]}`;
+          think.alias(`${think.getModule()}/${type}`, path, true);
+          break;
+        case think.mode_normal:
+          think.module.forEach((module) => {
+            think.alias(`${module}/${type}`, `${think.APP_PATH}/${think.dirname[type]}/${module}`, true);
+          });
+          break;
+        case think.mode_module:
+          think.module.forEach((module) => {
+            think.alias(`${module}/${type}`, `${think.getPath(module, think.dirname[type])}/`, true);
+          })
+          break;
       }
     })
   }
@@ -193,17 +218,16 @@ module.exports = class{
    * @return {} []
    */
   loadCallController(){
-    //load call controller
     let callController = think.config('call_controller');
     if (!callController) {
       return;
     }
     let call = callController.split('/');
-    let name = call[0] + '/' + think.dirname.controller + '/' + call[1];
+    let name = `${call[0]}/${think.dirname.controller}/${call[1]}`;
     let action = call[2];
-    if (think.mini) {
+    if (think.mode === think.mode_mini) {
       let length = call.length;
-      name = think.config('default_module') + '/' + think.dirname.controller + '/' + call[length - 2];
+      name = `${think.config('default_module')}/${think.dirname.controller}/${call[length - 2]}`;
       action = call[length - 1];
     }
     if (!(name in think._alias)) {
@@ -226,8 +250,8 @@ module.exports = class{
    */
   loadBootstrap(){
     let paths = [
-      think.THINK_LIB_PATH + '/bootstrap',
-      think.APP_PATH + '/' + think.dirname.common + '/' + think.dirname.bootstrap
+      `${think.THINK_LIB_PATH}/bootstrap`,
+      `${think.APP_PATH}/${think.dirname.common}/${think.dirname.bootstrap}`
     ];
     paths.forEach(function(item){
       if (!think.isDir(item)) {
@@ -235,7 +259,7 @@ module.exports = class{
       }
       let files = fs.readdirSync(item);
       files.forEach(function(file){
-        think.safeRequire(item + '/' + file);
+        think.safeRequire(`${item}/${file}`);
       })
     })
   }
@@ -258,11 +282,11 @@ module.exports = class{
       })
     }
     if (think.mini) {
-      filepath = think.APP_PATH + '/' + think.dirname.view + '/';
+      filepath = `${think.APP_PATH}/${think.dirname.view}/`;
       add(filepath);
     }else{
       think.module.forEach(function(module){
-        filepath = think.APP_PATH + '/' + module + '/' + think.dirname.view + '/';
+        filepath = `${think.APP_PATH}/${module}/${think.dirname.view}/`;
         add(filepath);
       })
     }
@@ -273,8 +297,8 @@ module.exports = class{
    * @return {} []
    */
   loadMessage(){
-    let config = require(think.THINK_LIB_PATH + '/config/message.js');
-    let filepath = think.getModulePath() + '/' + think.dirname.config + '/message.js';
+    let config = require(`${think.THINK_LIB_PATH}/config/message.js`);
+    let filepath = `${think.getPath()}/${think.dirname.config}/message.js`;
     let appConfig = think.safeRequire(filepath);
     think._message = think.extend({}, config, appConfig);
   }
@@ -284,7 +308,7 @@ module.exports = class{
    */
   load(){
     think._alias = {};
-    think._aliasExport = {};
+    //think._aliasExport = {};
     
     this.loadConfig();
     
@@ -300,7 +324,7 @@ module.exports = class{
     this.loadMessage();
 
     //load alias export at last
-    this.loadAliasExport();
+    //this.loadAliasExport();
   }
   /**
    * auto reload user modified files

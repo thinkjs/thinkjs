@@ -35,6 +35,6 @@ module.exports = think.middleware({
       res.statusCode = 404;
       res.end();
     }
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
 });

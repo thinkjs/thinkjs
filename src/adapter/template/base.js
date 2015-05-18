@@ -7,7 +7,7 @@ module.exports = think.adapter({
    * @return {} []
    */
   getContent: function(file){
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     fs.readFile(file, 'utf8', function(err, content){
       if (err) {
         deferred.reject(err);

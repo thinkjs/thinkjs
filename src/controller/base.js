@@ -190,7 +190,7 @@ module.exports = class extends think.Base{
    */
   redirect(url, code) {
     this.http.redirect(url, code);
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
   /**
    * assign value to template
@@ -226,7 +226,7 @@ module.exports = class extends think.Base{
    */
   jsonp(data) {
     this.http.jsonp(data);
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
   /**
    * output with json
@@ -235,7 +235,7 @@ module.exports = class extends think.Base{
    */
   json(data){
     this.http.json(data);
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
   /**
    * set http status code
@@ -275,7 +275,7 @@ module.exports = class extends think.Base{
    */
   end(obj, encoding) {
     this.http.end(obj, encoding);
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
   /**
    * get or set content type
@@ -302,7 +302,7 @@ module.exports = class extends think.Base{
     }
     var http = this.http;
     var fileStream = fs.createReadStream(filepath);
-    var deferred = Promise.defer();
+    var deferred = think.defer();
     this.type(contentType);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
     fileStream.pipe(http.res);
@@ -323,7 +323,7 @@ module.exports = class extends think.Base{
    */
   success(data, message){
     this.http.success(data, message);
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
   /**
    * output with fail errno & errmsg
@@ -334,7 +334,7 @@ module.exports = class extends think.Base{
    */
   fail(errno, errmsg, data){
     this.http.fail(errno, errmsg, data);
-    return Promise.defer().promise;
+    return think.defer().promise;
   }
   error(errno, errmsg, data){
     console.log('this.error() is deprecated, please use this.fail() instead.');

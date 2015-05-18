@@ -20,7 +20,7 @@ module.exports = think.middleware({
     if (flag) {
       this.http.res.statusCode = 403;
       this.http.end(); 
-      return Promise.defer().promise;
+      return think.defer().promise;
     }
     return true;
   }

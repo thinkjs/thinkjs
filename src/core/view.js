@@ -52,7 +52,7 @@ module.exports = class extends think.base {
       return think.error(err, this.http);
     }).then(() => {
       this.http.end();
-      return Promise.defer().promise;
+      return think.defer().promise;
     })
   }
   /**
