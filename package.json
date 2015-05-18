@@ -1,6 +1,6 @@
 {
   "name": "thinkjs",
-  "description": "A Node.js MVC & Restful Framework Based On Promise & Generator Function",
+  "description": "A Node.js MVC & Restful Framework Support Promise & Generator Function",
   "version": "2.0.0",
   "author": {
     "name": "welefen",
