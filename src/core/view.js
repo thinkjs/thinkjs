@@ -79,7 +79,7 @@ module.exports = class extends think.base {
     if (!inView && think.isFile(templateFile)) {
       //add template file to cache
       cacheData[templateFile] = true;
-      return Promise.resolve(templateFile);
+      return Promise.resolve();
     }
     let err = new Error(think.message('TEMPLATE_NOT_EXIST', templateFile));
     return Promise.reject(err);
@@ -95,7 +95,7 @@ module.exports = class extends think.base {
       templateFile = await this.hook('view_template', templateFile);
       flag = true;
     }
-    templateFile = await this.checkTemplateExist(templateFile, flag);
+    await this.checkTemplateExist(templateFile, flag);
     let promises = Object.keys(tVar).map((key) => {
       if (!think.isPromise(tVar[key])) {
         return;
