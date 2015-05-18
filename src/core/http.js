@@ -95,7 +95,7 @@ module.exports = class {
     });
     form.on('error', () => {
       this.res.statusCode = 413;
-      this.res.end();
+      this.http.end();
     });
     form.parse(this.req);
     return deferred.promise;
@@ -118,7 +118,7 @@ module.exports = class {
     })
     this.req.on('error', () => {
       this.res.statusCode = 413;
-      this.res.end();
+      this.http.end();
     })
     return deferred.promise;
   }
@@ -133,7 +133,7 @@ module.exports = class {
           this.http._post = querystring.parse(this.http.payload);
         }catch(e){
           this.res.statusCode = 413;
-          this.res.end();
+          this.http.end();
           return think.defer().promise;
         }
       }
@@ -141,14 +141,14 @@ module.exports = class {
       let length = Object.keys(post).length;
       if (length > think.config('post.max_fields')) {
         this.res.statusCode = 413;
-        this.res.end();
+        this.http.end();
         return think.defer().promise;
       }
       let maxFilesSize = think.config('post.max_fields_size');
       for(let name in post){
         if (post[name].length > maxFilesSize) {
           this.res.statusCode = 413;
-          this.res.end();
+          this.http.end();
           return think.defer().promise;
         }
       }
@@ -169,7 +169,7 @@ module.exports = class {
     this.req.pipe(stream);
     stream.on('error', () => {
       this.res.statusCode = 413;
-      this.res.end();
+      this.http.end();
     })
     stream.on('close', () => {
       this.http._file.file = {
@@ -193,7 +193,7 @@ module.exports = class {
     let multiReg = /^multipart\/(form-data|related);\s*boundary=(?:"([^"]+)"|([^;]+))$/i;
     //file upload by form or FormData
     if (multiReg.test(this.req.headers['content-type'])) {
-      return this.getFilePost();
+      return this.getFormFilePost();
     }
     //file upload by ajax
     else if(this.req.headers[think.config('post.ajax_filename_header')]){

@@ -33,7 +33,7 @@ module.exports = think.middleware({
         return false;
       }
       res.statusCode = 404;
-      res.end();
+      this.http.end();
     }
     return think.defer().promise;
   }

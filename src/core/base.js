@@ -20,21 +20,14 @@ module.exports = class {
    * @param  {mixed} data []
    * @return {Promise}     []
    */
-  invoke(method, data){
-    let promise = Promise.resolve();
+  async invoke(method, data){
     if (think.isFunction(this.__before)) {
-      promise = think.co.wrap(this.__before).bind(this)();
+      await think.co.wrap(this.__before).bind(this)();
     }
-    promise = promise.then(() => {
-      let fn = think.co.wrap(this[method]);
-      return fn.apply(this, data || []);
-    });
+    await think.co.wrap(this[method]).apply(this, data || []);
     if (think.isFunction(this.__after)) {
-      promise = promise.then(() => {
-        return think.co.wrap(this.__after).bind(this)();
-      })
+      await think.co.wrap(this.__after).bind(this)();
     }
-    return promise;
   }
   /**
    * get or set config
