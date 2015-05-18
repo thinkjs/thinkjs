@@ -22,7 +22,8 @@
     "mime": "1.2.11",
     "mysql": "2.5.3",
     "websocket-driver": "0.4.0",
-    "thinkit": "2.x.x"
+    "thinkit": "2.x.x",
+    "babel-runtime": "5.4.3"
   },
   "devDependencies": {
     "should": "4.0.4",
