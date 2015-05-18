@@ -1,5 +1,3 @@
 'use strict';
 
-module.exports = think.Class({
-  
-});
+module.exports = class extends think.base;

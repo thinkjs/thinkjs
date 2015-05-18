@@ -70,7 +70,7 @@ module.exports = class extends think.Base{
    * @return {Boolean} []
    */
   isCli(){
-    return think.mode === 'cli';
+    return think.cli;
   }
   /**
    * check is jsonp
@@ -306,11 +306,11 @@ module.exports = class extends think.Base{
     this.type(contentType);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
     fileStream.pipe(http.res);
-    fileStream.on('end', function() {
+    fileStream.on('end', () => {
       http.end();
       deferred.resolve();
     });
-    fileStream.on('error', function(err) {
+    fileStream.on('error', (err) => {
       deferred.reject(err);
     });
     return deferred.promise;

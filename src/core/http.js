@@ -126,33 +126,32 @@ module.exports = class {
    * parse form data
    * @return {Promise} []
    */
-  parseFormData(){
-    return think.hook('form_parse', this.http).then(() => {
-      if (think.isEmpty(this.http._post) && this.http.payload) {
-        try{
-          this.http._post = querystring.parse(this.http.payload);
-        }catch(e){
-          this.res.statusCode = 413;
-          this.http.end();
-          return think.defer().promise;
-        }
-      }
-      let post = this.http._post;
-      let length = Object.keys(post).length;
-      if (length > think.config('post.max_fields')) {
+  async parseFormData(){
+    await think.hook('form_parse', this.http);
+    if (think.isEmpty(this.http._post) && this.http.payload) {
+      try{
+        this.http._post = querystring.parse(this.http.payload);
+      }catch(e){
         this.res.statusCode = 413;
         this.http.end();
         return think.defer().promise;
       }
-      let maxFilesSize = think.config('post.max_fields_size');
-      for(let name in post){
-        if (post[name].length > maxFilesSize) {
-          this.res.statusCode = 413;
-          this.http.end();
-          return think.defer().promise;
-        }
+    }
+    let post = this.http._post;
+    let length = Object.keys(post).length;
+    if (length > think.config('post.max_fields')) {
+      this.res.statusCode = 413;
+      this.http.end();
+      return think.defer().promise;
+    }
+    let maxFilesSize = think.config('post.max_fields_size');
+    for(let name in post){
+      if (post[name].length > maxFilesSize) {
+        this.res.statusCode = 413;
+        this.http.end();
+        return think.defer().promise;
       }
-    })
+    }
   }
   /**
    * 通过ajax上传文件
@@ -483,11 +482,12 @@ module.exports = class {
    * @param  {String} message [errmsg]
    * @return {Promise}         [pedding promise]
    */
-  success(data, message){
-    let key = [this.config('error.key'), this.config('error.msg')];
-    let obj = think.getObject(key, [0, message || '']);
-    if (data !== undefined) {
-      obj.data = data;
+  success(data = '', message = ''){
+    let error = this.config('error');
+    let obj = {
+      [error.key]: 0,
+      [error.msg]: message,
+      data: data
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
@@ -499,8 +499,9 @@ module.exports = class {
    * @param  {Object} data   [output data]
    * @return {Promise}        [pedding promise]
    */
-  fail(errno, errmsg, data){
+  fail(errno, errmsg = 'error', data = ''){
     let obj;
+    let error = this.config('error');
     if (think.isObject(errno)) {
       data = errmsg;
       obj = think.extend({}, errno);
@@ -508,14 +509,13 @@ module.exports = class {
       if (!think.isNumber(errno)) {
         data = errmsg;
         errmsg = errno;
-        errno = this.config('error.value');
+        errno = error.value;
       }
-      let key = [this.config('error.key'), this.config('error.msg')];
-      let value = [errno, errmsg || 'error'];
-      obj = think.getObject(key, value);
-    }
-    if (data !== undefined) {
-      obj.data = data;
+      obj = {
+        [error.key]: errno,
+        [error.msg]: errmsg,
+        data: data
+      }
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
@@ -560,7 +560,7 @@ module.exports = class {
    * @param  {String} encoding []
    * @return {Promise}          []
    */
-  echo(obj, encoding){
+  echo(obj, encoding = this.config('encoding')){
     this.type(this.config('tpl.content_type'));
     this.cookie(true);
     this.sendTime();
@@ -572,7 +572,6 @@ module.exports = class {
     }else if (!think.isBuffer(obj)) {
       obj += '';
     }
-    encoding = encoding || this.config('encoding');
     let outputConfig = this.config('output_content');
     if (!outputConfig) {
       return this.res.write(obj, encoding);
