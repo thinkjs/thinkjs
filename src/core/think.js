@@ -125,18 +125,21 @@ think.co = co;
  * create class
  * @param {Object} methods [methods and props]
  */
-think._Class = think.Class;
+let Class = think.Class;
 think.Class = function(type, clean){
+  // create class
   // think.Class({})
   // think.Class({}, true)
   if (think.isObject(type)) {
-    return clean === true ? think._Class(type) : think._Class(think.base, type);
+    return clean === true ? Class(type) : Class(think.base, type);
   }
+  // create class with superClass
   // think.Class(function(){}, {})
   else if (think.isFunction(type)) {
-    return think._Class(type, clean);
+    return Class(type, clean);
   }
-  //create class
+
+  //create type class
   return function(superClass, methods){
     // think.controller();
     // think.controller({})
@@ -156,7 +159,7 @@ think.Class = function(type, clean){
         return superClass;
       }
     }
-    return think._Class(superClass, methods);
+    return Class(superClass, methods);
   }
 }
 /**
@@ -173,13 +176,13 @@ think.lookClass = function(name, type, module){
       return think.require(name);
     // home/base
     case 2:
-      return think.require(names[0] + '/' + type + '/' + names[1]);
+      return think.require(`${names[0]}/${type}/${names[1]}`);
     // base
     case 1:
       let clsPath, cls;
       // find from current module
       if (module) {
-        clsPath = module + '/' + type + '/' + name;
+        clsPath = `${module}/${type}/${name}`;
         cls = think.require(clsPath, true);
         if (cls) {
           return cls;
@@ -187,17 +190,19 @@ think.lookClass = function(name, type, module){
       }
       // find from common module
       module = think.mini ? think.config('default_module') : think.dirname.common;
-      clsPath = module + '/' + type + '/' + name;
+      clsPath = `${module}/${type}/${name}`;
       cls = think.require(clsPath, true);
       if (cls) {
         return cls;
       }
       // find from sys class
-      return think.require(type + '_' + name);
+      return think.require(`${type}_${name}`);
   }
 }
 /**
  * get common module path
+ * think.getPath(undefined, think.dirname.controller)
+ * think.getPath(home, think.dirname.model)
  * @return {String} []
  */
 think.getPath = function(module = think.dirname.common, type = think.dirname.controller){
@@ -230,6 +235,7 @@ think.require = function(name, flag){
   if (!think.isString(name)) {
     return name;
   }
+  // adapter or middle by register
   if (think._aliasExport[name]) {
     return think._aliasExport[name];
   }
@@ -239,7 +245,7 @@ think.require = function(name, flag){
     if (think.isClass(obj)) {
       obj.prototype.__filename = filepath;
     }
-    //think._aliasExport[name] = obj;
+    think._aliasExport[name] = obj;
     return obj;
   }
 
@@ -294,8 +300,7 @@ think._config = {};
  * get or set config
  * @return {mixed} []
  */
-think.config = function(name, value, data){
-  data = data || think._config;
+think.config = function(name, value, data = think._config){
   // get all config
   // think.config();
   if (name === undefined) {
@@ -401,7 +406,7 @@ think._hook = {};
  * @param  {String} name []
  * @return {}      []
  */
-think.hook = function(name, http, data){
+think.hook = function(name, http = {}, data){
   //get hook data
   if (arguments.length === 1) {
     return think._hook[name] || [];
@@ -411,24 +416,24 @@ think.hook = function(name, http, data){
     think._hook[name] = http;
     return;
   }
+
+  //exec hook 
   let list = think._hook[name] || [];
-  let index = 0, length = list.length;
+  let length = list.length;
   if (length === 0) {
     return Promise.resolve(data);
   }
-  http = http || {};
   http._middleware = data;
+
   //exec middleware
   let execMiddleware = async () => {
-    if (index >= length) {
-      return Promise.resolve(http._middleware);
+    for(let i = 0; i < length; i++){
+      let data = await think.middleware(list[i], http, http._middleware);
+      if (data !== undefined) {
+        http._middleware = data;
+      }
     }
-    let item = list[index++];
-    let data = await think.middleware(item, http, http._middleware);
-    if (data !== undefined) {
-      http._middleware = data;
-    }
-    return execMiddleware();
+    return http._middleware;
   }
 
   return execMiddleware();
@@ -492,7 +497,7 @@ think.adapter = function(type, name, fn){
   //register adapter
   //think.adapter('session', 'redis', function(){})
   if (length === 3 && think.isFunction(fn)) {
-    key += type + '_' + name;
+    key += `${type}_${name}`;
     think._aliasExport[key] = fn;
     return;
   }
@@ -536,7 +541,7 @@ think.loadAdapter = function(force){
     return;
   }
   adapterLoaded = true;
-  let paths = [think.THINK_LIB_PATH + '/adapter'];
+  let paths = [`${think.THINK_LIB_PATH}/adapter`];
   //common module adapter
   let adapterPath = think.getPath(undefined, think.dirname.adapter);
   if (think.isDir(adapterPath)) {
@@ -545,7 +550,7 @@ think.loadAdapter = function(force){
   paths.forEach((path) => {
     let dirs = fs.readdirSync(path);
     dirs.forEach((dir) => {
-      think.alias('adapter_' + dir, path + '/' + dir);
+      think.alias(`adapter_${dir}`, `${path}/${dir}`);
     })
   })
 }
@@ -576,7 +581,7 @@ think.alias = function(type, paths, slash){
     files.forEach((file) => {
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
-      think._alias[name] = path + '/' + file;
+      think._alias[name] = `${path}/${file}`;
     })
   })
 }
@@ -604,7 +609,7 @@ think.route = function(clear){
   if (think._route !== null) {
     return think._route;
   }
-  let file = think.getPath() + '/' + think.dirname.config + '/route.js';
+  let file = think.getPath(undefined, think.dirname.config) + '/route.js';
   let config = think.safeRequire(file);
   //route config is funciton
   //may be is dynamic save in db
@@ -657,8 +662,7 @@ think.localIp = '127.0.0.1';
  * @return {Object}     [http object]
  */
 let http;
-think._http = function(data){
-  data = data || {};
+think._http = function(data = {}){
   if (think.isString(data)) {
     if (data[0] === '{') {
       data = JSON.parse(data);
@@ -776,7 +780,7 @@ think.session = function(http){
  * @return {String}        []
  */
 think.getModule = function(module){
-  if (!module || think.mini) {
+  if (!module || think.mode === think.mode_mini) {
     return think.config('default_module');
   }
   return module.toLowerCase();
@@ -859,10 +863,10 @@ think.model = function(superClass, methods, module){
   return think._model(superClass, methods);
 }
 //model relation type
-think.HAS_ONE = 1;
-think.BELONG_TO = 2;
-think.HAS_MANY = 3;
-think.MANY_TO_MANY = 4;
+think.model.HAS_ONE = 1;
+think.model.BELONG_TO = 2;
+think.model.HAS_MANY = 3;
+think.model.MANY_TO_MANY = 4;
 
 /**
  * create service sub class

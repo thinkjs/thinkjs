@@ -3,13 +3,13 @@
 var fs = require('fs');
 var path = require('path');
 
-module.exports = class extends think.Base{
+module.exports = class extends think.base {
   /**
    * init
    * @return {void} []
    */
-  constructor(http){
-    super(http);
+  init(http){
+    super.init(http);
     this.assign('controller', this);
     this.assign('http', this.http);
     this.assign('config', this.http._config);

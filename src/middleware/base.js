@@ -8,8 +8,8 @@ module.exports = class extends think.base {
    * init
    * @return {} []
    */
-  constructor(http) {
-    super(http);
+  init(http) {
+    super.init(http);
     if(this.options){
       //read config
       for (let key in this.options) {

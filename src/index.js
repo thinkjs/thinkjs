@@ -294,7 +294,7 @@ module.exports = class {
    */
   load(){
     think._alias = {};
-    //think._aliasExport = {};
+    think._aliasExport = {};
     
     this.loadConfig();
     
