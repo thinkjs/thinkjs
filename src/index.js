@@ -382,9 +382,9 @@ module.exports = class {
    * @return {} []
    */
   async run(){
-    this.start();
-    await this.install();
     try{
+      this.start();
+      await this.install();
       await think.require('app').run();
     }catch(err){
       console.log(err.stack);

@@ -1,6 +1,6 @@
 'use strict';
 
-var runtimePrefix = think.getPath(undefined, think.dirname.runtime);
+let runtimePrefix = think.getPath(undefined, think.dirname.runtime);
 
 module.exports = {
   port: 8360, 

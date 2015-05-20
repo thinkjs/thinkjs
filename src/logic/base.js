@@ -1,4 +1,10 @@
 'use strict';
 
-//base logic is alias controller
-module.exports = think.controller('base');
+/**
+ * base logic
+ * inherits from base controller
+ * @type {Class}
+ */
+module.exports = class extends think.controller.base {
+
+}

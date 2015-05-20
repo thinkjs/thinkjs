@@ -573,10 +573,15 @@ think.loadAdapter = force => {
   if (think.isDir(adapterPath)) {
     paths.push(adapterPath);
   }
-  paths.forEach((path) => {
+  paths.forEach(path => {
     let dirs = fs.readdirSync(path);
-    dirs.forEach((dir) => {
+    dirs.forEach(dir => {
       think.alias(`adapter_${dir}`, `${path}/${dir}`);
+      //adapter type base class
+      let cls = think.require(`adapter_${dir}_base`, true);
+      if(cls){
+        think.adapter[dir] = cls;
+      }
     })
   })
 }

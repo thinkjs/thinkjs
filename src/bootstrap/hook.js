@@ -7,7 +7,7 @@ let fs = require('fs');
  * @param  {Object} http
  * @return {}         []
  */
-think.middleware('parse_json_payload', (http) => {
+think.middleware('parse_json_payload', http => {
   if (!http.payload) {
     return;
   }
@@ -34,7 +34,7 @@ think.middleware('output_resource', (http, file) => {
  * @param  {Object} http
  * @return {}         []
  */
-think.middleware('rewrite_pathname', (http) => {
+think.middleware('rewrite_pathname', http => {
   let pathname = http.pathname;
   if (!pathname) {
     return;
@@ -54,7 +54,7 @@ think.middleware('rewrite_pathname', (http) => {
  * @param  {Object} http){} 
  * @return {}
  */
-think.middleware('subdomain_deploy', (http) => {
+think.middleware('subdomain_deploy', http => {
   let subdomain = http.config('subdomain');
   if (think.isEmpty(subdomain)) {
     return;
