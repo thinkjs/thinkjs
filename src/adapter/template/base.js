@@ -1,14 +1,18 @@
 'use strict';
 
-var fs = require('fs');
-module.exports = think.adapter({
+let fs = require('fs');
+/**
+ * template base class
+ * @type {Class}
+ */
+module.exports = class {
   /**
    * get template file content
    * @return {} []
    */
-  getContent: function(file){
-    var deferred = think.defer();
-    fs.readFile(file, 'utf8', function(err, content){
+  getContent(file){
+    let deferred = think.defer();
+    fs.readFile(file, 'utf8', (err, content) => {
       if (err) {
         deferred.reject(err);
       }else{
@@ -16,14 +20,14 @@ module.exports = think.adapter({
       }
     })
     return deferred.promise;
-  },
+  }
   /**
    * run
    * @param  {String} templateFile []
    * @param  {Object} tVar         []
    * @return {promise}             []
    */
-  run: function(templateFile/*, tVar*/){
+  run(templateFile){
     return this.getContent(templateFile);
   }
-})
+}

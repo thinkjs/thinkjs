@@ -4,17 +4,16 @@
  * jade template
  * @type {Class}
  */
-var jade;
+let jade;
 
-module.exports = think.adapter({
-  run: function(templateFile, tVar){
+module.exports = class extends think.adapter.tempalte {
+  async run(templateFile, tVar){
     if (!jade) {
       jade = require('jade');
     }
-    return this.getContent(templateFile).then(function(content){
-      return jade.compile(content, {
-        filename: templateFile
-      })(tVar);
-    })
+    let content = await this.getContent(templateFile);
+    return jade.compile(content, {
+      filename: templateFile
+    })(tVar);
   }
-});
+}

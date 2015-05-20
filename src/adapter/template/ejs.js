@@ -2,23 +2,22 @@
 
 var ejs;
 
-module.exports = think.adapter({
+module.exports = class extends think.adapter.template {
   /**
    * run
    * @param  {String} templateFile []
    * @param  {Object} tVar         []
    * @return {Promise}             []
    */
-  run: function(templateFile, tVar){
+  async run(templateFile, tVar){
     if (!ejs) {
       ejs = require('ejs');
     }
-    var conf = think.extend({
+    let conf = think.extend({
       filename: templateFile,
       cache: true
     }, think.config('tpl.options'));
-    return this.getContent(templateFile).then(function(content){
-      return ejs.compile(content, conf)(tVar);
-    })
+    let content = await this.getContent(templateFile);
+    return ejs.compile(content, conf)(tVar);
   }
-})
+}

@@ -4,12 +4,18 @@
  * swig template
  * @type {Class}
  */
-var swig = require('swig');
+let swig = require('swig');
 
-module.exports = think.adapter({
-  run: function(templateFile, tVar){
+module.exports = class extends think.adapter.template {
+  /**
+   * run
+   * @param  {String} templateFile [template filepath]
+   * @param  {Object} tVar         [data]
+   * @return {String}              []
+   */
+  run(templateFile, tVar){
     swig.setDefaults(think.config('tpl.options'));
-    var tpl = swig.compileFile(templateFile, {autoescape: false});
+    let tpl = swig.compileFile(templateFile, {autoescape: false});
     return tpl(tVar);
   }
-})
+}
