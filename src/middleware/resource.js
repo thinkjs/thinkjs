@@ -1,33 +1,28 @@
 'use strict';
 
-var mime = require('mime');
-
+let mime = require('mime');
 /**
  * resource check
  * @param  {}            
  * @return {}     []
  */
-module.exports = think.middleware({
-  options: {
-    resource_on: false,
-    resource_reg: undefined
-  },
-  run: function(){
-    if (!think.RESOURCE_PATH || !this.options.resource_on || !this.http.pathname) {
+module.exports = class extends think.middleware.base {
+  async run(){
+    if (!think.RESOURCE_PATH || !this.config('resource_on') || !this.http.pathname) {
       return false;
     }
-    var pathname = this.http.pathname;
-    var reg = this.options.resource_reg;
+    let pathname = this.http.pathname;
+    let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
       return false;
     }
-    var file = think.RESOURCE_PATH + '/' + pathname;
-    var res = this.http.res;
+    let file = `${think.RESOURCE_PATH}/${pathname}`;
+    let res = this.http.res;
     //resource exist
     if (think.isFile(file)) {
-      var contentType = mime.lookup(file);
+      let contentType = mime.lookup(file);
       res.setHeader('Content-Type', contentType + '; charset=' + this.config('encoding'));
-      this.hook('resource_output', file);
+      await this.hook('resource_output', file);
     }else{
       if (pathname.indexOf('/') === -1) {
         return false;
@@ -37,4 +32,4 @@ module.exports = think.middleware({
     }
     return think.defer().promise;
   }
-});
+}
