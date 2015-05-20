@@ -46,7 +46,7 @@ module.exports = class extends think.middleware.base {
     /**
      * rules data
      * {
-     *     'index:index': ['index_home', 1800, html_cache_callback]
+     *     'index/index': ['index_home', 1800, html_cache_callback]
      * }
      * @type {}
      */
@@ -76,7 +76,7 @@ module.exports = class extends think.middleware.base {
       html = [html];
     }
     let rule = html[0];
-    //将cookie变量传递进去
+    //cookie value
     let cookiePars = {};
     for(let name in http.cookie){
       cookiePars['cookie.' + name] = http.cookie[name];
@@ -96,8 +96,8 @@ module.exports = class extends think.middleware.base {
   }
   /**
    * 
-   * @param  {[type]} key [description]
-   * @return {[type]}     [description]
+   * @param  {String} key []
+   * @return {String}     [cache file name]
    */
   getCacheFilename(key){
     let value = think.md5(key);

@@ -23,12 +23,12 @@ module.exports = class extends think.middleware.base {
     think.mkdir(path.dirname(file));
     fs.writeFile(file, content);
     return content;
-  },
+  }
   /**
    * record view file
    * @return {} []
    */
-  recordViewFile: function(){
+  recordViewFile(){
     let http = this.http;
     let tplFile = http.tpl_file;
     let key = `${http.module}/${http.controller}/${http.action}`;
