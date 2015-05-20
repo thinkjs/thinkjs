@@ -1,100 +1,88 @@
 'use strict';
 /**
- * REST Controller
- * @return {[type]} [description]
+ * REST Base Controller
+ * @return {} []
  */
-module.exports = think.controller({
-  init: function(http){
-    this.super('init', http);
-    //资源名
+module.exports = class extends think.controller.base {
+  /**
+   * init
+   * @param  {Object} http []
+   * @return {}      []
+   */
+  init(http){
+    super.init(http);
     this.resource = this.get('resource');
-    //资源id
     this.id = this.get('id') | 0;
-    //实例化对应的模型
     this.model = this.model(this.resource);
-  },
-  /**
-   * 获取
-   * @return {[type]} [description]
-   */
-  getAction: function(){
-    var self = this;
-    if (this.id) {
-      return Promise.resolve(this.model.getPk()).then(function(pk){
-        return self.model.where(think.getObject(pk, self.id)).find();
-      }).then(function(data){
-        return self.success(data);
-      }).catch(function(err){
-        return self.error(err.message);
-      })
-    }
-    return this.model.select().then(function(data){
-      return self.success(data);
-    }).catch(function(err){
-      return self.error(err.message);
-    });
-  },
-  /**
-   * 新建
-   * @return {[type]} [description]
-   */
-  postAction: function(){
-    var self = this;
-    return Promise.resolve(this.model.getPk()).then(function(pk){
-      var data = self.post();
-      delete data[pk];
-      if (think.isEmpty(data)) {
-        return self.error('data is empty');
-      }
-      return self.model.add(data);
-    }).then(function(insertId){
-      return self.success({id: insertId});
-    }).catch(function(err){
-      var msg = think.isError(err) ? err.message : err;
-      return self.error(msg);
-    });
-  },
-  /**
-   * 删除
-   * @return {[type]} [description]
-   */
-  deleteAction: function(){
-    if (!this.id) {
-      return this.error('params error');
-    }
-    var self = this;
-    return Promise.resolve(this.model.getPk()).then(function(pk){
-      return self.model.where(think.getObject(pk, self.id)).delete();
-    }).then(function(affectedRows){
-      return self.success({affectedRows: affectedRows});
-    }).catch(function(err){
-      return self.error(err.message);
-    });
-  },
-  /**
-   * 更新
-   * @return {[type]} [description]
-   */
-  putAction: function(){
-    if (!this.id) {
-      return this.error('params error');
-    }
-    var self = this;
-    return Promise.resolve(this.model.getPk()).then(function(pk){
-      var data = self.post();
-      delete data[pk];
-      if (think.isEmpty(data)) {
-        return self.error('data is empty');
-      }
-      return self.model.where(think.getObject(pk, self.id)).update(data);
-    }).then(function(affectedRows){
-      return self.success({affectedRows: affectedRows});
-    }).catch(function(err){
-      var msg = think.isError(err) ? err.message : err;
-      return self.error(msg);
-    });
-  },
-  __call: function(action){
-    return this.error('action `' + action + '` is not allowed');
   }
-})
+  /**
+   * get resource
+   * @return {Promise} []
+   */
+  async getAction(){
+    let data;
+    if (this.id) {
+      let pk = await this.model.getPk();
+      data = await this.model.where({
+        [pk]: this.id
+      }).find();
+      return this.success(data);
+    }
+    data = await this.model.select();
+    return this.success(data);
+  }
+  /**
+   * put resource
+   * @return {Promise} []
+   */
+  async postAction(){
+    let pk = await this.model.getPk();
+    let data = this.post();
+    delete data[pk];
+    if(think.isEmpty(data)){
+      return this.fail('data is empty');
+    }
+    let insertId = await this.model.add(data);
+    return this.success({id: insertId});
+  }
+  /**
+   * delete resource
+   * @return {Promise} []
+   */
+  async deleteAction(){
+    if (!this.id) {
+      return this.fail('params error');
+    }
+    let pk = await this.model.getPk();
+    let rows = await this.model.where({
+      [pk]: this.id
+    }).delete();
+    return this.success({affectedRows: rows});
+  }
+  /**
+   * update resource
+   * @return {Promise} []
+   */
+  async putAction(){
+    if (!this.id) {
+      return this.fail('params error');
+    }
+    let pk = await this.model.getPk();
+    let data = this.post();
+    delete data[pk];
+    if (think.isEmpty(data)) {
+      return this.fail('data is empty');
+    }
+    let rows = await this.model.where({
+      [pk]: this.id
+    }).update(data);
+    return this.success({affectedRows: rows});
+  }
+  /**
+   * call
+   * @return {Promise} []
+   */
+  __call(){
+    return this.fail('action `' + action + '` is not allowed');
+  }
+}

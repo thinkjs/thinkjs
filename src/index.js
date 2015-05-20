@@ -196,15 +196,23 @@ module.exports = class {
    * @return {} []
    */
   loadMVC(){
-    let list = [/*'model',*/ 'controller', 'logic', 'service'];
-    list.forEach((type) => {
+    let types = {
+      model: [],
+      controller: ['base', 'rest'],
+      logic: ['base'],
+      service: ['base']
+    }
+    for(let type in types){
       think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
+      types[type].forEach(item => {
+        think[type][item] = think.require(`${type}_${item}`);
+      })
       think.module.forEach(module => {
         let moduleType = `${module}/${type}`;
         let filepath = `${think.getPath(module, think.dirname[type])}/`;
         think.alias(moduleType, filepath, true);
       })
-    })
+    }
   }
   /**
    * load call controller
