@@ -115,7 +115,7 @@ module.exports = class extends think.base {
       return;
     }
     let instance = domain.create();
-    instance.on('error', (err) => this.error(err));
+    instance.on('error', err => this.error(err));
     instance.run(async () => {
       try{
         await this.dispatcher();
@@ -204,7 +204,7 @@ module.exports = class extends think.base {
       for (let i = 0; i < nums; i++) {
         cluster.fork();
       }
-      cluster.on('exit', (worker) => {
+      cluster.on('exit', worker => {
         let err = new Error(think.message('WORKER_DIED', worker.process.pid))
         think.log(err, 'worker');
         process.nextTick(() => cluster.fork());

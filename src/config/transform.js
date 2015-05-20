@@ -17,10 +17,13 @@ let getFn = (value, config) => {
   let msg = think.message('CONFIG_NOT_FUNCTION', config);
   throw new Error(msg);
 }
-
+/**
+ * config transform
+ * @type {Object}
+ */
 module.exports = {
   post: {
-    json_content_type: (value) => {
+    json_content_type: value => {
       if (think.isString(value)) {
         return [value];
       }
@@ -31,13 +34,13 @@ module.exports = {
       return value;
     }
   },
-  subdomain: (value) => {
+  subdomain: value => {
     if (think.isString(value)) {
       return think.getObject(value, value);
     }
     if (think.isArray(value)) {
       let obj = {};
-      value.forEach((item) => {
+      value.forEach(item => {
         obj[item] = item;
       })
       return obj;
@@ -48,7 +51,7 @@ module.exports = {
     }
     return value;
   },
-  deny_module_list: (value) => {
+  deny_module_list: value => {
     if (think.isString(value)) {
       return [value];
     }
@@ -59,12 +62,12 @@ module.exports = {
     return value;
   },
   error: {
-    callback: (value) => getFn(value, 'error.callback')
+    callback: value => getFn(value, 'error.callback')
   },
-  output_content: (value) => getFn(value, 'output_content'),
-  create_server: (value) => getFn(value, 'create_server'),
+  output_content: value => getFn(value, 'output_content'),
+  create_server: value => getFn(value, 'create_server'),
   html_cache: {
-    rules: (rules) => {
+    rules: rules => {
       let data = {};
       for(let key in rules){
         key = key.replace(/\:/g, '/');
@@ -72,5 +75,13 @@ module.exports = {
       }
       return data;
     }
+  },
+  auto_reload_except: value => {
+    return value.map(item => {
+      if(think.isString(item) && process.platform === 'win32'){
+        item = item.replace(/\//g, '\\');
+      }
+      return item;
+    })
   }
 }

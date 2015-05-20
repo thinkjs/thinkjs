@@ -45,7 +45,7 @@ module.exports = class {
     let filepath = `${think.APP_PATH}/${think.dirname.controller}/`;
     if (think.isDir(filepath)) {
       let files = fs.readdirSync(filepath);
-      let flag = files.some((file) => {
+      let flag = files.some(file => {
         if (think.isFile(filepath + file)) {
           return true;
         }
@@ -92,7 +92,7 @@ module.exports = class {
     let modules = fs.readdirSync(modulePath);
     let denyModuleList = think.config('deny_module_list') || [];
     if (denyModuleList.length > 0) {
-      modules = modules.filter((module) => {
+      modules = modules.filter(module => {
         if (denyModuleList.indexOf(module) === -1) {
           return module;
         }
@@ -133,7 +133,7 @@ module.exports = class {
     think._config = think.extend(config, commonConfig);
     let modules = this.getModule();
     //load modules config
-    modules.forEach((module) => {
+    modules.forEach(module => {
       think.getModuleConfig(module);
     })
   }
@@ -199,7 +199,7 @@ module.exports = class {
     let list = [/*'model',*/ 'controller', 'logic', 'service'];
     list.forEach((type) => {
       think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
-      think.module.forEach((module) => {
+      think.module.forEach(module => {
         let moduleType = `${module}/${type}`;
         let filepath = `${think.getPath(module, think.dirname[type])}/`;
         think.alias(moduleType, filepath, true);
@@ -246,12 +246,12 @@ module.exports = class {
       `${think.THINK_LIB_PATH}/bootstrap`,
       `${think.APP_PATH}/${think.dirname.common}/${think.dirname.bootstrap}`
     ];
-    paths.forEach(function(item){
+    paths.forEach(item => {
       if (!think.isDir(item)) {
         return;
       }
       let files = fs.readdirSync(item);
-      files.forEach(function(file){
+      files.forEach(file => {
         think.safeRequire(`${item}/${file}`);
       })
     })
@@ -264,17 +264,17 @@ module.exports = class {
   loadTemplate(){
     let data = {}, filepath;
 
-    function add(filepath){
+    let add = filepath => {
       if (!think.isDir(filepath)) {
         return;
       }
       let files = fs.readdirSync(filepath);
-      files.forEach(function(file){
+      files.forEach(file => {
         let key = filepath + file;
         data[key] = true;
       })
     }
-    think.module.forEach(function(module){
+    think.module.forEach(module => {
       filepath = think.getPath(module, think.dirname.view);
       add(filepath);
     })
@@ -328,11 +328,8 @@ module.exports = class {
         return;
       }
       let retainFiles = think.config('auto_reload_except');
-      let fn = (item) => {
+      let fn = (item, file) => {
         if (think.isString(item)) {
-          if (process.platform === 'win32') {
-            item = item.replace(/\//g, '\\');
-          }
           if (file.indexOf(item) > -1) {
             return true;
           }
@@ -343,7 +340,7 @@ module.exports = class {
         }
       };
       for(let file in require.cache){
-        let flag = retainFiles.some(fn);
+        let flag = retainFiles.some(item => fn(item, file));
         if (!flag) {
           //remove require cache
           require.cache[file] = null;

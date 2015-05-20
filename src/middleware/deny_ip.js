@@ -13,7 +13,7 @@ module.exports = class extends think.middleware.base {
       return true;
     }
     let sections = this.http.ip().split('.');
-    let flag = ips.some((item) => {
+    let flag = ips.some(item => {
       return item.split('.').every((num, i) => {
         if (num === '*' || num === sections[i]) {
           return true;

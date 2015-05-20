@@ -2,7 +2,7 @@
  * config in debug mode
  * @type {Object}
  */
-var config = {
+let config = {
   auto_reload: true,
   auto_reload_except: ['/node_modules/', '/lib/core/think.js']
 }

@@ -107,7 +107,7 @@ module.exports = class {
   getCommonPost(){
     let buffers = [];
     let deferred = think.defer();
-    this.req.on('data', (chunk) => {
+    this.req.on('data', chunk => {
       buffers.push(chunk);
     });
     this.req.on('end', () => {
