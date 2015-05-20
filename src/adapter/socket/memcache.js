@@ -23,6 +23,10 @@ let readLine = string => {
  * @type {Class}
  */
 module.exports = class extends EventEmitter {
+  constructor(...args){
+    super(...args);
+    this.init(...args);
+  }
   init(port, hostname){
     EventEmitter.call(this);
     this.port = port || 11211;

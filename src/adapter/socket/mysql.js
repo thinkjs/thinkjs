@@ -1,102 +1,110 @@
 'use strict';
 
 /**
- * mysql socket
+ * mysql socket class
  * @return {} []
  */
-var mysql = require('mysql');
-module.exports = think.adapter({
-  init: function(config){
-    this.handle = null;
-    this.config = config;
-    this.deferred = null;
-    this.tryTimes = 0;
-  },
+let mysql = require('mysql');
+
+module.exports = class extends think.adapter.socket {
   /**
-   * 建立数据库连接
-   * @return {[type]} [description]
+   * init
+   * @param  {Object} config [connection options]
+   * @return {}        []
    */
-  connect: function(){
-    if (this.handle) {
-      return this.deferred.promise;
-    }
-    var self = this;
-    var deferred = getDefer();
-    //创建连接
-    var config = extend({
+  init(config){
+    this.config = think.extend({
       host: '127.0.0.1',
       port: 3306,
       user: 'root',
       password: ''
-    }, this.config);
-    var connection = mysql.createConnection(config);
-    //连接
-    connection.connect(function(err){
-      //连接失败
+    }, config);
+
+    this.pool = null;
+    this.connection = null;
+    this.deferred = null;
+  }
+  /**
+   * get connection
+   * @return {Promise} [conneciton handle]
+   */
+  getConnection(){
+    let deferred = think.defer();
+    if(this.pool){
+      this.pool.getConnection((err, connection) => {
+        if(err){
+          deferred.reject(err);
+          this.close();
+        }else{
+          deferred.resolve(connection);
+        }
+      })
+      return deferred.promise;
+    }
+    if(this.config.connectionLimit){
+      this.pool = mysql.createPool(this.config);
+      return this.getConnection();
+    }
+
+    if(this.connection){
+      return this.deferred.promise;
+    }
+    this.connection = mysql.createConnection(this.config);
+    this.connection.connect(err => {
       if (err) {
         deferred.reject(err);
-        self.close();
+        this.close();
       }else{
-        deferred.resolve();
+        deferred.resolve(this.connection);
       }
-    });
-    //错误时关闭当前连接
-    connection.on('error', function(){
-      self.close();
+    })
+    this.connection.on('error', () => {
+      this.close();
     });
     //PROTOCOL_CONNECTION_LOST
-    connection.on('end', function(){
-      self.close();
+    this.connection.on('end', () => {
+      this.close();
     })
-    //连接句柄
-    this.handle = connection;
-    //把上一次的promise reject
-    if (this.deferred) {
-      this.deferred.reject(new Error('connection closed'));
-    }
     this.deferred = deferred;
-    return this.deferred.promise;
-  },
+    return deferred.promise;
+  }
   /**
-   * 查询sql语句，返回一个promise
-   * @param  {[type]} sql [description]
-   * @return {[type]}     [description]
+   * query sql
+   * @param  {String} sql []
+   * @return {[type]}     []
    */
-  query: function(sql){
-    if (C('db_log_sql')) {
-      console.log('sql: ' + sql);
+  async query(sql, nestTables){
+    if (think.config('db.log_sql')) {
+      console.log(`sql: ${sql}`);
     }
-    var self = this;
-    return this.connect().then(function(){
-      var deferred = getDefer();
-      self.handle.query(sql, function(err, rows){
-        if (err) {
-          //当数据量非常大时，可能会出现连接丢失，这里进行重连
-          if (err.code === 'PROTOCOL_CONNECTION_LOST' && self.tryTimes < 3) {
-            self.tryTimes++;
-            self.close();
-            return self.query(sql).then(function(data){
-              deferred.resolve(data);
-            }).catch(function(err){
-              deferred.reject(err);
-            })
-          }
-          return deferred.reject(err);
-        }
-        self.tryTimes = 0;
-        return deferred.resolve(rows || []);
-      });
-      return deferred.promise;
+    let connection = await this.getConnection();
+    let deferred = think.defer();
+    let data = {
+      sql: sql,
+      nestTables: nestTables
+    }
+    //query timeout
+    if(this.config.timeout){
+      data.timeout = this.config.timeout;
+    }
+    connection.query(data, (err, rows = []) => {
+      if (err) {
+        deferred.reject(err);
+      }else{
+        deferred.resolve(rows);
+      }
     });
-  },
+    return deferred.promise;
+  }
   /**
-   * 关闭连接
-   * @return {[type]} [description]
+   * close connections
+   * @return {} []
    */
-  close: function(){
-    if (this.handle) {
-      this.handle.destroy();
-      this.handle = null;
+  close(){
+    if(this.pool){
+      this.pool.end(() => this.pool = null);
+    }else if (this.connection) {
+      this.connection.end(() => this.connection = null);
     }
   }
-});
+}
