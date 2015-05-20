@@ -279,12 +279,32 @@ think.safeRequire = function(file){
   return null;
 }
 /**
+ * prevent next process
+ * @return {Promise} []
+ */
+let preventMessage = 'PREVENT_NEXT_PROCESS';
+think.prevent = function(){
+  let err = new Error(preventMessage);
+  return Promise.reject(err);
+}
+/**
+ * check is prevent error
+ * @param  {Error}  err [error message]
+ * @return {Boolean}     []
+ */
+think.isPrevent = function(err){
+  return think.isError(err) && err.message === preventMessage;
+}
+/**
  * log
  * @TODO
  * @return {} []
  */
 think.log = function(msg/*, type*/){
   if (think.isError(msg)) {
+    if(think.isPrevent(msg)){
+      return;
+    }
     console.log(msg.stack);
     return;
   }
@@ -1052,6 +1072,7 @@ global.thinkCache = function(type, name, value){
 //cache key
 thinkCache.BASE = 'base';
 thinkCache.TEMPLATE = 'template';
+thinkCache.VIEW = 'view';
 thinkCache.DB = 'db';
 thinkCache.SESSION = 'session';
 thinkCache.REDIS = 'redis';

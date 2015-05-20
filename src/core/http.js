@@ -134,7 +134,7 @@ module.exports = class {
       }catch(e){
         this.res.statusCode = 413;
         this.http.end();
-        return think.defer().promise;
+        return think.prevent();
       }
     }
     let post = this.http._post;
@@ -142,14 +142,14 @@ module.exports = class {
     if (length > think.config('post.max_fields')) {
       this.res.statusCode = 413;
       this.http.end();
-      return think.defer().promise;
+      return think.prevent();
     }
     let maxFilesSize = think.config('post.max_fields_size');
     for(let name in post){
       if (post[name].length > maxFilesSize) {
         this.res.statusCode = 413;
         this.http.end();
-        return think.defer().promise;
+        return think.prevent();
       }
     }
   }

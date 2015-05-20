@@ -97,7 +97,7 @@ module.exports = class extends think.base {
     await this.execLogic();
     //http is end
     if (this.http._isEnd) {
-      return think.defer().promise;
+      return think.prevent();
     }
     return this.execController();
   }

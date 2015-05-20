@@ -190,7 +190,7 @@ module.exports = class extends think.base {
    */
   redirect(url, code) {
     this.http.redirect(url, code);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * assign value to template
@@ -226,7 +226,7 @@ module.exports = class extends think.base {
    */
   jsonp(data) {
     this.http.jsonp(data);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * output with json
@@ -235,7 +235,7 @@ module.exports = class extends think.base {
    */
   json(data){
     this.http.json(data);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * set http status code
@@ -275,7 +275,7 @@ module.exports = class extends think.base {
    */
   end(obj, encoding) {
     this.http.end(obj, encoding);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * get or set content type
@@ -323,7 +323,7 @@ module.exports = class extends think.base {
    */
   success(data, message){
     this.http.success(data, message);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * output with fail errno & errmsg
@@ -334,7 +334,7 @@ module.exports = class extends think.base {
    */
   fail(errno, errmsg, data){
     this.http.fail(errno, errmsg, data);
-    return think.defer().promise;
+    return think.prevent();
   }
   error(errno, errmsg, data){
     console.log('this.error() is deprecated, please use this.fail() instead.');

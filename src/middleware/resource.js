@@ -30,6 +30,6 @@ module.exports = class extends think.middleware.base {
       res.statusCode = 404;
       this.http.end();
     }
-    return think.defer().promise;
+    return think.prevent();
   }
 }

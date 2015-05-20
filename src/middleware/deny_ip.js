@@ -24,7 +24,7 @@ module.exports = class extends think.middleware.base {
       this.http.res.statusCode = 403;
       this.http.end(); 
       //return pedding promise to prevent next process
-      return think.defer().promise;
+      return think.prevent();
     }
   }
 }

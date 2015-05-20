@@ -72,6 +72,9 @@ think.middleware('subdomain_deploy', (http) => {
  * @return {}          
  */
 think.middleware('send_error', (http, err) => {
+  if(think.isPrevent(err)){
+    return;
+  }
   let error = think.config('error');
   if (error.log) {
     think.log(err);

@@ -1,48 +1,37 @@
-/**
- * 模版文件列表
- * @type {Object}
- */
-var path = require('path');
-var fs = require('fs');
+'use strict';
 
-var tplFiles = {};
+let path = require('path');
+let fs = require('fs');
+
 /**
- * 写入html缓存
- * @return {[type]} [description]
+ * write html cache
+ * @type {Class}
  */
-module.exports = think.adapter({
-  options: {
-    'html_cache_on': false, //是否开启缓存
-    'html_cache_path': ''
-  },
-  run: function(content){
-    if (!this.options.html_cache_on || !this.http.html_filename) {
+module.exports = class extends think.middleware.base {
+  /**
+   * run
+   * @param  {String} content [view content]
+   * @return {}         []
+   */
+  run(content){
+    let cache = this.config('html_cache');
+    if (!cache.on || !this.http.html_filename) {
       return content;
     }
     this.recordViewFile();
-    var file = this.options.html_cache_path + '/' + this.http.html_filename;
-    mkdir(path.dirname(file));
-    //异步方式写入缓存
+    let file = `${this.cache.path}/${this.http.html_filename}`;
+    think.mkdir(path.dirname(file));
     fs.writeFile(file, content);
     return content;
   },
   /**
-   * 记录模版文件名
-   * @return {[type]} [description]
+   * record view file
+   * @return {} []
    */
   recordViewFile: function(){
-    var tplFile = this.http.tpl_file;
-    var key = this.http.group + ':' + this.http.controller + ':' + this.http.action;
-    tplFiles[key] = tplFile;
+    let http = this.http;
+    let tplFile = http.tpl_file;
+    let key = `${http.module}/${http.controller}/${http.action}`;
+    thinkCache(thinkCache.VIEW, key, tplFile);
   }
-});
-/**
- * 获取模版文件
- * @param  {[type]} http [description]
- * @return {[type]}      [description]
- */
-module.exports.getViewFile = function(http){
-  'use strict';
-  var key = http.group + ':' + http.controller + ':' + http.action;
-  return tplFiles[key];
-};
+}
