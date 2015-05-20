@@ -52,11 +52,11 @@ module.exports = class extends think.middleware.base {
      */
     let rules = this.cache.rules;
     let http = this.http;
-    let group = http.module;
+    let module = http.module;
     let controller = http.controller;
     let action = http.action;
     let list = [
-      `${group}/${controller}/${action}`,
+      `${module}/${controller}/${action}`,
       `${controller}/${action}`,
       `${action}`,
       '*'
@@ -82,7 +82,7 @@ module.exports = class extends think.middleware.base {
       cookiePars['cookie.' + name] = http.cookie[name];
     }
     let pars = think.extend({}, http.get, cookiePars, {
-      ':group': group,
+      ':module': module,
       ':controller': controller,
       ':action': action
     });

@@ -19,9 +19,9 @@ module.exports = class extends think.middleware.base {
       return pathPrefix + http.controller + file_depr + http.action + file_ext;
     }
     // this.display('detail')
-    // this.display('group/detail')
-    // this.display('admin/group/detail')
-    // this.display('admin/group/detail.html')
+    // this.display('index/detail')
+    // this.display('admin/index/detail')
+    // this.display('admin/index/detail.html')
     let paths = templateFile.split('/');
     let action = paths.pop();
     let controller = paths.pop() || http.controller;
