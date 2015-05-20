@@ -1,24 +1,24 @@
+'use strict';
 /**
- * 权限认证
- * 需要创建如下的数据表
+ * auth
   
 DROP TABLE IF EXISTS `think_auth_role`;
 CREATE TABLE `think_auth_role` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `desc` varchar(255) NOT NULL DEFAULT '',
   `status` tinyint(11) NOT NULL DEFAULT '1',
-  `rule_ids` varchar(255) DEFAULT '' COMMENT '含有的权限列表',
+  `rule_ids` varchar(255) DEFAULT '' COMMENT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `think_auth_rule`;
 CREATE TABLE `think_auth_rule` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
-  `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
-  `pid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '父级id',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '',
+  `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '',
+  `pid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '',
   `status` tinyint(11) NOT NULL DEFAULT '1',
-  `condition` varchar(255) DEFAULT '' COMMENT '附加条件',
+  `condition` varchar(255) DEFAULT '' COMMENT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `status` (`status`)
@@ -35,153 +35,129 @@ CREATE TABLE `think_auth_user_role` (
 
  * @type {[type]}
  */
-module.exports = Class({
+module.exports = class extends think.base {
   /**
-   * 初始化
-   * @param  int userId 当前登录用户的id
-   * @param  obj config 配置项
-   * @return this        
+   * init
+   * @param  {Number} userId []
+   * @param  {Object} config []
+   * @param  {Object} http   []
+   * @return {}        []
    */
-  init: function(userId, config){
-    'use strict';
-    if (isObject(userId)) {
+  init(userId, config, http){
+    super.init(http);
+    if (think.isObject(userId)) {
       config = userId;
       userId = config.id;
     }
-    //当前检测的用户id
     this.userId = userId;
-    //这里不能使用默认的深度复制，因为http对象包含了一些循环引用的对象
-    this.config = extend(false, {
-      type: 1, //认证方式，1为实时认证，2为SESSION认证。如果检测非当前登录用户，则不能使用SESSION认证。
-      http: null, //如果type为2，那么必须传入http对象
-      user: 'user', //用户信息表
-      role: 'auth_role', //角色表
-      rule: 'auth_rule', //规则表 
-      user_role: 'auth_user_role', //用户-角色关系表
-      userInfo: null //用户详细信息，用户condition判断。如果没有自动从User表里查询
+    this.config = think.extend({
+      type: 1, //auth type, 2 is session auth
+      user: 'user', //user info table
+      role: 'auth_role', //role table
+      rule: 'auth_rule', //rule table
+      user_role: 'auth_user_role', //user - role relation table
+      userInfo: null 
     }, config);
-  },
+  }
   /**
-   * 检测权限，可以一次检测多个权限
-   * @param  {[type]} name  [description]
-   * @param  {[type]} and [description]
-   * @return {[type]}       [description]
+   * check auth
+   * @param  {String} name [auth type]
+   * @param  {Boolean} and  [condition]
+   * @return {Promise}      []
    */
-  check: function(name, and){
-    'use strict';
-    if (isString(name)) {
+  async check(name, and){
+    if (think.isString(name)) {
       name = name.split(',');
     }
-    return this.getAuthList().then(function(authList){
-      if (name.length === 1) {
-        return authList.indexOf(name[0]) > -1;
-      }
-      var logic = and ? 'every' : 'some';
-      return name[logic](function(item){
-        return authList.indexOf(item) > -1;
-      })
-    });
-  },
-  /**
-   * 获取权限列表
-   * @return {[type]} [description]
-   */
-  getAuthList: function(){
-    'use strict';
-    var authPromise;
+    let authList = this.getAuthList();
+    if (name.length === 1) {
+      return authList.indexOf(name[0]) > -1;
+    }
+    let logic = and ? 'every' : 'some';
+    return name[logic](item => {
+      return authList.indexOf(item) > -1;
+    })
+  }
+  async _getAuthList(){
+    let data;
     if (this.config.type === 1) {
-      authPromise = this.flushAuthList();
+      data = await this.flushAuthList();
     }else{
-      var http = this.config.http;
-      var self = this;
-      //存在Session里的authList Key
-      var key = 'think_auth_list';
-      if (!http) {
-        return getPromise("config.http can't be null", true);
+      let http = this.http;
+      let key = this.config('auth_key');
+      think.session(this.http);
+      let data = await http.session.get(key);
+      if(think.isEmpty(data)){
+        data = await this.flushAuthList();
+        await http.session.set(key, data);
       }
-      thinkRequire('Session').start(http);
-      authPromise = http.session.get(key).then(function(data){
-        if (!isEmpty(data)) {
-          return data;
-        }
-        return self.flushAuthList().then(function(data){
-          http.session.set(key, data);
-          return data;
-        })
-      })
     }
-    var userInfoPromise = this.getUserInfo();
-    return Promise.all([authPromise, userInfoPromise]).then(function(data){
-      var authList = data[0];
-      var userInfo = data[1];
-      var result = [];
-      authList.forEach(function(item){
-        if (!item.condition) {
+    return data;
+  }
+  /**
+   * get auth list
+   * @return {Promise} []
+   */
+  async getAuthList(){
+    let data = await Promise.all([this._getAuthList(), this.getUserInfo()]);
+    let authList = data[0];
+    let userInfo = data[1];
+    let result = [];
+    authList.forEach(item => {
+      if (!item.condition) {
+        result.push(item.name);
+      }else{
+        let condition = item.condition.replace(/\w+/, a => `userInfo.${a}`);
+        /*jslint evil: true */
+        let fn = new Function('userInfo', `return ${condition}`);
+        let flag = fn(userInfo);
+        if (flag) {
           result.push(item.name);
-        }else{
-          var condition = item.condition.replace(/\w+/, function(a){
-            return 'userInfo.' + a;
-          });
-          /*jslint evil: true */
-          var fn = new Function('userInfo', 'return ' + condition);
-          var flag = fn(userInfo);
-          if (flag) {
-            result.push(item.name);
-          }
         }
-      })
-      return result;
+      }
     })
-  },
+    return result;
+  }
   /**
-   * 刷新权限列表，从数据库中拉取
-   * @return {[type]} [description]
+   * flush auth list
+   * @return {Promise} []
    */
-  flushAuthList: function(){
-    'use strict';
-    var self = this;
-    return this.getRuleIds().then(function(ids){
-      return M().field('name,condition').table(self.config.rule).where({id: ['IN', ids], status: 1}).select();
-    });
-  },
+  async flushAuthList(){
+    let ids = await this.getRuleIds();
+    let model = this.model();
+    return model.field('name,condition').table(this.config.table).where({id: ['IN', ids], status: 1}).select();
+  }
   /**
-   * 获取用户信息
-   * @return {[type]} [description]
+   * get user info
+   * @return {Promise} []
    */
-  getUserInfo: function(){
-    'use strict';
-    if (!isEmpty(this.config.userInfo)) {
-      return getPromise(this.config.userInfo);
+  async getUserInfo(){
+    if (!think.isEmpty(this.config.userInfo)) {
+      return this.config.userInfo;
     }
-    var self = this;
-    return M().table(self.config.user).where({id: this.userId}).find().then(function(data){
-      self.config.userInfo = data;
-      return data;
-    })
-  },
+    let data = await this.model().table(this.config.user).where({id: this.userId}).find();
+    this.config.userInfo = data;
+    return data;
+  }
   /**
-   * 获取用户权限rule id列表
-   * @return {[type]} [description]
+   * get rule ids
+   * @return {Promise} []
    */
-  getRuleIds: function(){
-    'use strict';
-    return this.getRoles().then(function(data){
-      var ids = [];
-      data.forEach(function(item){
-        var ruleIds = (item.rule_ids || '').split(',');
-        ids = ids.concat(ruleIds);
-      })
-      return ids;
+  async getRuleIds(){
+    let data = await this.getRoles();
+    let ids = [];
+    data.forEach(item => {
+      let ruleIds = (item.rule_ids || '').split(',');
+      ids = ids.concat(ruleIds);
     })
-  }, 
+    return ids;
+  }
   /**
-   * 获取用户角色列表
-   * @return {[type]} [description]
+   * get roles
+   * @return {Promise} []
    */
-  getRoles: function(){
-    'use strict';
-    var model = M();
-    return model.table(this.config.user_role).alias('a').join({
+  getRoles(){
+    return this.model().table(this.config.user_role).alias('a').join({
       table: this.config.role,
       as: 'b',
       on: ['role_id', 'id']
@@ -190,4 +166,4 @@ module.exports = Class({
       'b.status': 1
     }).select();
   }
-});
+}

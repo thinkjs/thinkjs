@@ -939,8 +939,7 @@ think.message = (type, data) => {
  * @param  {Mixed} value [cache value]
  * @return {}       []
  */
-think.cache = (name, value, options) => {
-  options = options || {};
+think.cache = (name, value, options = {}) => {
   let type = options.type || 'base';
   let instance = think.adapter('cache', type)(options);
   let isFn = think.isFunction(instance.__before);

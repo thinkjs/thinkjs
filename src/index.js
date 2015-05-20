@@ -113,14 +113,14 @@ module.exports = class {
    * load alias module export
    * @return {} []
    */
-  // loadAliasExport(){
-  //   for(let key in think._alias){
-  //     if (key in think._aliasExport) {
-  //       continue;
-  //     }
-  //     think._aliasExport[key] = think.require(key);
-  //   }
-  // }
+  loadAliasExport(){
+    for(let key in think._alias){
+      if (key in think._aliasExport) {
+        continue;
+      }
+      think._aliasExport[key] = think.require(key);
+    }
+  }
   /**
    * load config
    * @return {} []
