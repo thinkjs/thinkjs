@@ -68,7 +68,7 @@ think.mode = 0x0001;
  * thinkjs module lib path
  * @type {String}
  */
-think.THINK_LIB_PATH = path.normalize(__dirname + '/../');
+think.THINK_LIB_PATH = path.normalize(`${__dirname}/../`);
 /**
  * thinkjs module root path
  * @type {String}
@@ -80,7 +80,7 @@ think.THINK_PATH = path.dirname(think.THINK_LIB_PATH);
  * @return {}         []
  */
 think.version = (() => {
-  let packageFile = think.THINK_PATH + '/package.json';
+  let packageFile = `${think.THINK_PATH}/package.json`;
   let {version} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
   return version;
 })();
@@ -467,6 +467,8 @@ think.middleware = function(superClass, methods, data){
       return think.co.wrap(instance.run).bind(instance)(data);
     }else if (think.isFunction(name)){
       return think.co.wrap(name)(http, data);
+    }else{
+      throw new Error(think.message('MIDDLEWARE_NOT_FOUND', superClass));
     }
   }
   // get middleware
@@ -484,6 +486,9 @@ think.middleware = function(superClass, methods, data){
   // create middleware
   return middleware(superClass, methods);
 }
+
+
+
 /**
  * create, register, call adapter
  * @param  {String} name []
@@ -579,6 +584,9 @@ think.alias = function(type, paths, slash){
   paths.forEach((path) => {
     let files = think.getFiles(path);
     files.forEach((file) => {
+      if(file.slice(-3) !== '.js'){
+        return;
+      }
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
       think._alias[name] = `${path}/${file}`;

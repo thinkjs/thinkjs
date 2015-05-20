@@ -161,6 +161,8 @@ module.exports = class {
       `${think.getPath(undefined, think.dirname.middleware)}`
     ]
     think.alias('middleware', paths);
+    //middleware base class
+    think.middleware.base = think.require('middleware_base');
   }
   /**
    * load hook

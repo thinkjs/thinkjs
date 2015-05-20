@@ -1,5 +1,11 @@
 'use strict';
 
+module.exports = class extends think.middleware.base {
+  run(){
+    var ips = this.config('deny_ip');
+  }
+}
+
 module.exports = think.middleware({
   options: {
     //deny ip list
