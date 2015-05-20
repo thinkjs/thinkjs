@@ -1,8 +1,8 @@
 'use strict';
 
-var net = require('net');
+let net = require('net');
 
-var Valid = module.exports = {
+let Valid = module.exports = {
   /**
    * check value length
    * @param  {String} value []
@@ -10,10 +10,10 @@ var Valid = module.exports = {
    * @param  {Number} max   []
    * @return {Boolean}       []
    */
-  length: function(value, min, max){
+  length: (value, min, max) => {
     value = value + '';
     min = min | 0;
-    var length = value.length;
+    let length = value.length;
     if (length < min) {
       return false;
     }
@@ -27,7 +27,7 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  required: function(value){
+  required: value => {
     value = value + '';
     return value.length > 0;
   },
@@ -37,7 +37,7 @@ var Valid = module.exports = {
    * @param  {RegExp} reg   []
    * @return {Boolean}       []
    */
-  regexp: function(value, reg){
+  regexp: (value, reg) => {
     return reg.test(value);
   },
   /**
@@ -45,8 +45,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  email: function(value){
-    var reg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
+  email: value => {
+    let reg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -54,8 +54,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  time: function(value){
-    var reg = /^[1-5]\d{12}$/;
+  time: value => {
+    let reg = /^[1-5]\d{12}$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -63,8 +63,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  cnname: function(value){
-    var reg = /^[\u4e00-\u9fa5\u3002\u2022]{2,32}$/;
+  cnname: value => {
+    let reg = /^[\u4e00-\u9fa5\u3002\u2022]{2,32}$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -72,19 +72,19 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  idnumber: function(value){
+  idnumber: value => {
     if (/^\d{15}$/.test(value)) {
       return true;
     }
     if ((/^\d{17}[0-9xX]$/).test(value)) {
-      var vs = '1,0,x,9,8,7,6,5,4,3,2'.split(','),
+      let vs = '1,0,x,9,8,7,6,5,4,3,2'.split(','),
         ps = '7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2'.split(','),
         ss = value.toLowerCase().split(''),
         r = 0;
-      for (var i = 0; i < 17; i++) {
+      for (let i = 0; i < 17; i++) {
         r += ps[i] * ss[i];
       }
-      var isOk = (vs[r % 11] === ss[17]);
+      let isOk = (vs[r % 11] === ss[17]);
       return isOk;
     }
     return false;
@@ -94,8 +94,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  mobile: function(value){
-    var reg = /^(13|15|18|14|17)\d{9}$/;
+  mobile: value => {
+    let reg = /^(13|15|18|14|17)\d{9}$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -103,8 +103,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  zipcode: function(value){
-    var reg = /^\d{6}$/;
+  zipcode: value => {
+    let reg = /^\d{6}$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -113,15 +113,15 @@ var Valid = module.exports = {
    * @param  {String} cvalue []
    * @return {Boolean}        []
    */
-  confirm: function(value, cvalue){
+  confirm: (value, cvalue) => {
     return value === cvalue;
   },
   /**
    * url
    * @return {Boolean} []
    */
-  url: function(value){
-    var reg = /^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/;
+  url: value => {
+    let reg = /^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -129,7 +129,7 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  int: function(value){
+  int: value => {
     return Valid.regexp(value, /^\d+$/);
   },
   /**
@@ -137,7 +137,7 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  float: function(value){
+  float: value => {
     return think.isNumberString(value);
   },
   /**
@@ -146,7 +146,7 @@ var Valid = module.exports = {
    * @param  {Number} max []
    * @return {Boolean}     []
    */
-  range: function(value, min, max){
+  range: (value, min, max) => {
     if (!Valid.int(value)) {
       return false;
     }
@@ -164,7 +164,7 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {}       []
    */
-  ip4: function(value){
+  ip4: value => {
     return net.isIPv4(value);
   },
   /**
@@ -172,7 +172,7 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  ip6: function(value){
+  ip6: value => {
     return net.isIPv6(value);
   },
   /**
@@ -180,7 +180,7 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {}       []
    */
-  ip: function(value){
+  ip: value => {
     return net.isIP(value);
   },
   /**
@@ -188,8 +188,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  date: function(value){
-    var reg = /^\d{4}-\d{1,2}-\d{1,2}$/;
+  date: value => {
+    let reg = /^\d{4}-\d{1,2}-\d{1,2}$/;
     return Valid.regexp(value, reg);
   },
   /**
@@ -198,7 +198,7 @@ var Valid = module.exports = {
    * @param  {Array} arr   []
    * @return {Boolean}     []
    */
-  in: function(value, arr){
+  in: (value, arr) => {
     return arr.indexOf(value) > -1;
   },
   /**
@@ -206,8 +206,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  order: function(value){
-    return value.split(',').map(function(item){
+  order: value => {
+    return value.split(',').map(item => {
       return Valid.regexp(item, /^\w+\s+(?:ASC|DESC)$/i);
     })
   },
@@ -216,8 +216,8 @@ var Valid = module.exports = {
    * @param  {String} value []
    * @return {}       []
    */
-  field: function(value){
-    return value.split(',').map(function(item){
+  field: value =>{
+    return value.split(',').map(item => {
       return item === '*' || Valid.regexp(item, /^\w+$/);
     })
   }

@@ -1,6 +1,6 @@
 'use strict';
 
-var crypto = require('crypto');
+let crypto = require('crypto');
 /**
  * cookie
  * @type {Object}
@@ -11,18 +11,18 @@ module.exports = {
    * @param  {String} str [cookie string]
    * @return {Object}     []
    */
-  parse: function(str){
-    var data = {};
+  parse: str => {
+    let data = {};
     if (!str) {
       return data;
     }
-    str.split(/; */).forEach(function(item) {
-      var pos = item.indexOf('=');
+    str.split(/; */).forEach(item => {
+      let pos = item.indexOf('=');
       if (pos === -1) {
         return;
       }
-      var key = item.substr(0, pos).trim();
-      var val = item.substr(pos + 1).trim();
+      let key = item.substr(0, pos).trim();
+      let val = item.substr(pos + 1).trim();
       if ('"' === val[0]) {
         val = val.slice(1, -1);
       }
@@ -44,9 +44,9 @@ module.exports = {
    * @param  {Object} options [cookie options]
    * @return {String}         []
    */
-  stringify: function(name, value, options){
+  stringify: (name, value, options) => {
     options = options || {};
-    var item = [name + '=' + encodeURIComponent(value)];
+    let item = [name + '=' + encodeURIComponent(value)];
     if (options.maxage) {
       item.push('Max-Age=' + options.maxage);
     }
@@ -56,7 +56,7 @@ module.exports = {
     if (options.path) {
       item.push('Path=' + options.path);
     }
-    var expires = options.expires;
+    let expires = options.expires;
     if (expires){
       if (!think.isDate(expires)) {
         expires = new Date(expires);
@@ -77,7 +77,7 @@ module.exports = {
    * @param  {String} secret [cookie sign]
    * @return {String}        []
    */
-  sign: function(val, secret){
+  sign: (val, secret) => {
     secret = crypto.createHmac('sha256', secret).update(val).digest('base64');
     secret = secret.replace(/\=+$/, '');
     return val + '.' + secret;
@@ -88,8 +88,8 @@ module.exports = {
    * @param  {String} secret [cookie sign]
    * @return {String}        []
    */
-  unsign: function(val, secret){
-    var str = val.slice(0, val.lastIndexOf('.'));
+  unsign: (val, secret) => {
+    let str = val.slice(0, val.lastIndexOf('.'));
     return this.sign(str, secret) === val ? str : '';
   }
 }
