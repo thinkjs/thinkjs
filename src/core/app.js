@@ -24,7 +24,6 @@ module.exports = class extends think.base {
   async dispatcher(){
     await this.hook('resource_check');
     await this.hook('route_parse');
-    this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
   }
   /**
    * exec logic
@@ -111,7 +110,7 @@ module.exports = class extends think.base {
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.websocket) {
       http.res.statusCode = 403;
-      http.end('proxy on, cannot visit by port');
+      http.end('proxy on, cannot visit with port');
       return;
     }
     let instance = domain.create();
@@ -119,6 +118,8 @@ module.exports = class extends think.base {
     instance.run(async () => {
       try{
         await this.dispatcher();
+        //set module config
+        this.http._config = think.getModuleConfig(this.http.module);
         await this.hook('app_begin');
         await this.exec();
         await this.hook('app_end');
@@ -162,8 +163,8 @@ module.exports = class extends think.base {
    * @return {} []
    */
   static async cli(){
-    let http = await think.http(think.url);
-    return new this(http).listener();
+    let http = await think.http(think.cli);
+    return new this(http).run();
   }
   /**
    * load process id
@@ -218,7 +219,7 @@ module.exports = class extends think.base {
    * @return {} []
    */
   static run(){
-    if (think.mode === 'cli') {
+    if (think.cli) {
       return this.cli();
     }
     return this.http();

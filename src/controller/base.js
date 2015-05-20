@@ -1,7 +1,7 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+let fs = require('fs');
+let path = require('path');
 
 module.exports = class extends think.base {
   /**
@@ -81,8 +81,8 @@ module.exports = class extends think.base {
     return this.http.isJsonp(name);
   }
   // token(token){
-  //   var tokenName = this.config('token_name');
-  //   var self = this;
+  //   let tokenName = this.config('token_name');
+  //   let self = this;
   //   if (token) {
   //     return this.session(tokenName).then(function(value){
   //       return value === token;
@@ -242,10 +242,10 @@ module.exports = class extends think.base {
    * @param  {Number} status [status code]
    * @return {}        []
    */
-  status(status) {
+  status(status = 404) {
     let res = this.http.res;
     if (!res.headersSent) {
-      res.statusCode = status || 404;
+      res.statusCode = status;
     }
     return this;
   }
@@ -254,8 +254,8 @@ module.exports = class extends think.base {
    * @param  {Number} status [status code]
    * @return {[type]}        []
    */
-  deny(status){
-    this.status(status || 403);
+  deny(status = 403){
+    this.status(status);
     return this.end();
   }
   /**
@@ -300,9 +300,9 @@ module.exports = class extends think.base {
     if (!contentType || contentType.indexOf('/') === -1) {
       contentType = require('mime').lookup(contentType || filepath);
     }
-    var http = this.http;
-    var fileStream = fs.createReadStream(filepath);
-    var deferred = think.defer();
+    let http = this.http;
+    let fileStream = fs.createReadStream(filepath);
+    let deferred = think.defer();
     this.type(contentType);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
     fileStream.pipe(http.res);
@@ -310,7 +310,7 @@ module.exports = class extends think.base {
       http.end();
       deferred.resolve();
     });
-    fileStream.on('error', (err) => {
+    fileStream.on('error', err => {
       deferred.reject(err);
     });
     return deferred.promise;

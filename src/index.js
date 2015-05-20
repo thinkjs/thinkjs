@@ -25,7 +25,7 @@ module.exports = class {
       think.debug = true;
       i++;
     }
-    argv = process[i];
+    argv = process.argv[i];
     //get port or cli url from argv
     if (argv) {
       if (/^\d+$/.test(argv)) {
