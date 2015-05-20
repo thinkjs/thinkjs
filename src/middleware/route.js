@@ -1,6 +1,6 @@
 'use strict';
 
-var url = require('url');
+let url = require('url');
 
 /**
  * route rules:
@@ -14,41 +14,32 @@ var url = require('url');
  * ]
  */
 
-module.exports = think.middleware({
-  /**
-   * route options
-   * @type {Object}
-   */
-  options: {
-    'route_on': false
-  },
+module.exports = class extends think.middleware.base {
   /**
    * run
    * @return {Promise} []
    */
-  run: function(){
-    if (!this.options.route_on) {
+  async run(){
+    if (!this.config('route_on')) {
       return this.parsePathname();
     }
-    var self = this;
-    return Promise.resolve(think.route()).then(function(routes){
-      return self.parse(routes);
-    })
-  },
+    let routes = await think.route();
+    return this.parse(routes);
+  }
   /**
    * parse routes
    * @param  {Array} routes [routes]
    * @return {}        []
    */
-  parse: function(routes){
+  parse(routes){
     this.cleanPathname();
-    var length = routes.length;
-    var pathname = this.http.pathname;
+    let length = routes.length;
+    let pathname = this.http.pathname;
     if (length === 0 || !pathname) {
       return this.parsePathname();
     }
-    var match, item, route, rule;
-    for(var i = 0; i < length; i++){
+    let match, item, route, rule;
+    for(let i = 0; i < length; i++){
       item = routes[i];
       route = this.getRoute(item[1]);
       if (!route) {
@@ -70,13 +61,13 @@ module.exports = think.middleware({
       }
     }
     this.parsePathname();
-  },
+  }
   /**
    * remove / start | end of pathname
    * @return {} []
    */
-  cleanPathname: function(){
-    var pathname = this.http.pathname;
+  cleanPathname(){
+    let pathname = this.http.pathname;
     if (pathname[0] === '/') {
       pathname = pathname.slice(1);
     }
@@ -84,21 +75,21 @@ module.exports = think.middleware({
       pathname = pathname.slice(0, -1);
     }
     this.http.pathname = pathname;
-  },
+  }
   /**
    * parse pathname
    * @return {} []
    */
-  parsePathname: function(){
-    var pathname = this.http.pathname;
+  parsePathname(){
+    let pathname = this.http.pathname;
     if (!pathname) {
       this.http.module = think.getModule();
       this.http.controller = think.getController();
       this.http.action = think.getAction();
       return;
     }
-    var paths = pathname.split('/');
-    var module, controller, action, err;
+    let paths = pathname.split('/');
+    let module, controller, action, err;
     if (!think.mini) {
       module = paths[0].toLowerCase();
       if (module && module !== think.dirname.common && think.module.indexOf(module) > -1) {
@@ -109,10 +100,13 @@ module.exports = think.middleware({
     }
     controller = paths.shift();
     action = paths.shift();
+
     this.parseExtPath(paths);
+
     this.http.module = think.getModule(module);
     this.http.controller = think.getController(controller);
     this.http.action = think.getAction(action);
+
     if (!this.http.controller) {
       err = new Error(think.message('CONTROLLER_INVALID', controller, this.http.url));
       return Promise.reject(err);
@@ -121,13 +115,13 @@ module.exports = think.middleware({
       err = new Error(think.message('ACTION_INVALID', action, this.http.url));
       return Promise.reject(err);
     }
-  },
+  }
   /**
    * parse extra path
    * @param  {Array} paths [extra path]
    * @return {}       []
    */
-  parseExtPath: function(paths){
+  parseExtPath(paths){
     if (paths.length === 0) {
       return;
     }
@@ -138,25 +132,25 @@ module.exports = think.middleware({
       paths = paths.split('/');
     }
     if (paths.length) {
-      for(var i = 0, length = Math.ceil(paths.length) / 2; i < length; i++){
+      for(let i = 0, length = Math.ceil(paths.length) / 2; i < length; i++){
         this.http._get[paths[i * 2]] = paths[i * 2 + 1] || '';
       }
     }
-  },
+  }
   /**
    * check url is match
    * @param  {String} rule [url rule]
    * @return {Boolean}      []
    */
-  checkUrlMatch: function(rule){
-    var pathname = this.http.pathname.split('/');
+  checkUrlMatch(rule){
+    let pathname = this.http.pathname.split('/');
     rule = rule.split('/');
-    var i = 0, length = rule.length, plength = pathname.length, item, pitem;
+    let i = 0, length = rule.length, plength = pathname.length, item, pitem;
     //if rule lenth is more then pathname, it will be false
     if (length > plength) {
       return false;
     }
-    var match = {};
+    let match = {};
     for(; i < length; i++){
       item = rule[i];
       pitem = pathname[i];
@@ -169,41 +163,41 @@ module.exports = think.middleware({
       }
     }
     //append match data to this.http._get
-    for(var key in match){
+    for(let key in match){
       this.http._get[key] = Math[key];
     }
     if (plength > length) {
       this.parseExtPath(pathname.slice(length));
     }
     return true;
-  },
+  }
   /**
    * get route
    * @param  {Object} route   []
    * @param  {Array} matches []
    * @return {[type]}         []
    */
-  getRoute: function(route){
+  getRoute(route){
     if (think.isString(route)) {
       return route;
     }
-    for(var method in route){
+    for(let method in route){
       if (method.toUpperCase().indexOf(this.http.method) > -1) {
         return route[method];
       }
     }
     return;
-  },
+  }
   /**
    * parse route string
    * @param  {String} route []
    * @return {}       []
    */
-  parseRoute: function(route){
+  parseRoute(route){
     if (route.indexOf('?') > -1) {
-      var urlInfo = url.parse(route, true);
-      var query = urlInfo.query;
-      for(var key in query){
+      let urlInfo = url.parse(route, true);
+      let query = urlInfo.query;
+      for(let key in query){
         if (query[key] || !(key in this.http._get)) {
           this.http._get[key] = query[key];
         }
@@ -214,21 +208,19 @@ module.exports = think.middleware({
       }
     }
     this.http.pathname = route;
-  },
+  }
   /**
    * parse regexp rule
    * @param  {Array} matches  [route matches]
    * @param  {String | Object} route    [route]
    * @return {Boolean}          []
    */
-  parseRegExpRule: function(matches, route){
+  parseRegExpRule(matches, route){
     //replace :1, :2 in route
     //such as: group/detail?date=:1&groupId=:2&page=:3
-    route = route.replace(/:(\d+)/g, function(a, b){
-      return matches[b] || '';
-    });
-    var pathname = this.http.pathname.slice(matches[0].length);
+    route = route.replace(/:(\d+)/g, (a, b) => (matches[b] || ''));
+    let pathname = this.http.pathname.slice(matches[0].length);
     this.parseExtPath(pathname);
     this.parseRoute(route);
   }
-});
+}
