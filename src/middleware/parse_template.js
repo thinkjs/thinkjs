@@ -6,12 +6,12 @@
  * @param  {Object} 
  * @return {Promise}         []
  */
-module.exports = think.middleware({
-  run: function(data){
-    var file = data.file;
+module.exports = class extends think.middleware.base {
+  run(data){
+    let file = data.file;
     this.http.tpl_file = file;
-    var engine = this.config('tpl.type') || 'base';
-    var cls = think.adapter('template', engine);
-    return cls().run(file, data.var);
+    let engine = this.config('tpl.type') || 'base';
+    let cls = think.adapter('template', engine);
+    return (new cls()).run(file, data.var);
   }
-});
+};
