@@ -550,7 +550,8 @@ module.exports = class {
    */
   view(){
     if (!this._view) {
-      this._view = think.require('view')(this);
+      let cls = think.require('view');
+      this._view = new cls(this);
     }
     return this._view;
   }

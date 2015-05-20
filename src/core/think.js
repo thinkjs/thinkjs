@@ -483,7 +483,8 @@ think.middleware = function(superClass, methods, data){
       let fn = think._middleware[name];
       return think.co.wrap(fn)(http, data);
     }else if (think.isString(name)) {
-      let instance = new think.require(prefix + name)(http);
+      let cls = think.require(prefix + name);
+      let instance = new cls(http);
       return think.co.wrap(instance.run).bind(instance)(data);
     }else if (think.isFunction(name)){
       return think.co.wrap(name)(http, data);

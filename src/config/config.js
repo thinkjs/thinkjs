@@ -50,7 +50,7 @@ module.exports = {
     message_handle: undefined
   },
   error: {
-    file: think.THINK_LIB_PATH + '/tpl/error.html',
+    file: think.THINK_PATH + '/tpl/error.html',
     log: true,
     code: 500, //http status code
     key: 'errno', //error number
