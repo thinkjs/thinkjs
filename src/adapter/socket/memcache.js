@@ -1,17 +1,17 @@
 'use strict';
 
-var net = require('net');
-var EventEmitter = require('events').EventEmitter;
+let net = require('net');
+let EventEmitter = require('events').EventEmitter;
 
-var CRLF = '\r\n'; //line break
-var CRLF_LENGTH = CRLF.length;
-var ERRORS = ['ERROR', 'NOT_FOUND', 'CLIENT_ERROR', 'SERVER_ERROR']; //error message
-var ERRORS_LENGTH = ERRORS.length;
+let CRLF = '\r\n'; //line break
+let CRLF_LENGTH = CRLF.length;
+let ERRORS = ['ERROR', 'NOT_FOUND', 'CLIENT_ERROR', 'SERVER_ERROR']; //error message
+let ERRORS_LENGTH = ERRORS.length;
 
 //read line data
-function readLine(string){
+let readLine = string => {
   'use strict';
-  var pos = string.indexOf(CRLF);
+  let pos = string.indexOf(CRLF);
   if (pos > -1) {
     return string.substr(0, pos);
   }
@@ -19,118 +19,118 @@ function readLine(string){
 }
 
 /**
- * memcache class
+ * memcache socket class
+ * @type {Class}
  */
-module.exports = think.adapter(EventEmitter, {
-  init: function(port, hostname){
+module.exports = class extends EventEmitter {
+  init(port, hostname){
     EventEmitter.call(this);
     this.port = port || 11211;
     this.hostname = hostname || '127.0.0.1';
     this.buffer = '';
     this.callbacks = []; 
     this.handle = null; 
-  },
-  connect: function(){
+  }
+  connect(){
     if (this.handle) {
       return this;
     }
-    var self = this;
-    var deferred = think.defer();
+    let deferred = think.defer();
     this.handle = net.createConnection(this.port, this.host);
-    this.handle.on('connect', function(){
+    this.handle.on('connect', () => {
       this.setTimeout(0);
       this.setNoDelay();
-      self.emit('connect');
+      this.emit('connect');
       deferred.resolve();
     });
-    this.handle.on('data', function(data){
-      self.buffer += data.toString();
-      self.handleData();
+    this.handle.on('data', data => {
+      this.buffer += data.toString();
+      this.handleData();
     });
-    this.handle.on('end', function(){
-      while(self.callbacks.length > 0){
-        var callback = self.callbacks.shift();
+    this.handle.on('end', () => {
+      while(this.callbacks.length > 0){
+        let callback = this.callbacks.shift();
         if (callback && callback.callback) {
           callback.callback('CONNECTION_CLOSED');
         }
       }
-      self.handle = null;
+      this.handle = null;
     });
-    this.handle.on('close', function(){
-      self.handle = null;
-      self.emit('close');
+    this.handle.on('close', () => {
+      this.handle = null;
+      this.emit('close');
     });
-    this.handle.on('timeout', function(){
-      if (self.callbacks.length > 0) {
-        var callback = self.callbacks.shift();
+    this.handle.on('timeout', () => {
+      if (this.callbacks.length > 0) {
+        let callback = this.callbacks.shift();
         if (callback && callback.callback) {
           callback.callback('TIMEOUT');
         }
       }
-      self.emit('timeout');
+      this.emit('timeout');
     });
-    this.handle.on('error', function(error){
-      while(self.callbacks.length > 0){
-        var callback = self.callbacks.shift();
+    this.handle.on('error', error => {
+      while(this.callbacks.length > 0){
+        let callback = this.callbacks.shift();
         if (callback && callback.callback) {
           callback.callback('ERROR');
         }
       }
-      self.handle = null;
-      self.emit('clienterror', error);
+      this.handle = null;
+      this.emit('clienterror', error);
     });
     this.promise = deferred.promise;
     return this;
-  },
-  handleData: function(){
+  }
+  handleData(){
     while(this.buffer.length > 0){
-      var result = this.getHandleResult(this.buffer);
+      let result = this.getHandleResult(this.buffer);
       if(result === false){
         break;
       }
-      var value = result[0];
-      var pos = result[1];
-      var error = result[2];
+      let value = result[0];
+      let pos = result[1];
+      let error = result[2];
       if (pos > this.buffer.length) {
         break;
       }
       this.buffer = this.buffer.substring(pos);
-      var callback = this.callbacks.shift();
+      let callback = this.callbacks.shift();
       if (callback && callback.callback) {
         callback.callback(error, value);
       }
     }
-  },
-  getHandleResult: function(buffer){
+  }
+  getHandleResult(buffer){
     if (buffer.indexOf(CRLF) === -1) {
       return false;
     }
-    for(var i = 0; i < ERRORS_LENGTH; i++){
-      var item = ERRORS[i];
+    for(let i = 0; i < ERRORS_LENGTH; i++){
+      let item = ERRORS[i];
       if (buffer.indexOf(item) > -1) {
         return this.handleError(buffer);
       }
     }
-    var callback = this.callbacks[0];
+    let callback = this.callbacks[0];
     if (callback && callback.type) {
       return this['handle' + ucfirst(callback.type)](buffer);
     }
     return false;
-  },
-  handleError: function(buffer){
-    var line = readLine(buffer);
+  }
+  handleError(buffer){
+    let line = readLine(buffer);
     return [null, line.length + CRLF_LENGTH, line];
-  },
-  handleGet: function(buffer){
-    var value = null;
-    var end = 3;
-    var resultLen = 0;
-    var firstPos;
+  }
+  handleGet(buffer){
+    let value = null;
+    let end = 3;
+    let resultLen = 0;
+    let firstPos;
     if (buffer.indexOf('END') === 0) {
       return [value, end + CRLF_LENGTH];
     }else if (buffer.indexOf('VALUE') === 0 && buffer.indexOf('END') > -1) {
       firstPos = buffer.indexOf(CRLF) + CRLF_LENGTH;
-      var endPos = buffer.indexOf('END');
+      let endPos = buffer.indexOf('END');
       resultLen = endPos - firstPos - CRLF_LENGTH;
       value = buffer.substr(firstPos, resultLen);
       return [value, firstPos + parseInt(resultLen, 10) + CRLF_LENGTH + end + CRLF_LENGTH];
@@ -140,66 +140,72 @@ module.exports = think.adapter(EventEmitter, {
       value = buffer.substr(firstPos, resultLen);
       return [value, firstPos + parseInt(resultLen) + CRLF_LENGTH + end + CRLF_LENGTH];
     }
-  },
-  handleSimple: function(buffer){
-    var line = readLine(buffer);
+  }
+  handleSimple(buffer){
+    let line = readLine(buffer);
     return [line, line.length + CRLF_LENGTH, null];
-  },
-  handleVersion: function(buffer){
-    var pos = buffer.indexOf(CRLF);
+  }
+  handleVersion(buffer){
+    let pos = buffer.indexOf(CRLF);
     //8 is length of 'VERSION '
-    var value = buffer.substr(8, pos - 8);
+    let value = buffer.substr(8, pos - 8);
     return [value, pos + CRLF_LENGTH, null];
-  },
-  query: function(query, type){
+  }
+  query(query, type){
     this.connect();
-    var self = this;
-    var deferred = think.defer();
-    var callback = function(error, value){
+    let deferred = think.defer();
+    let callback = (error, value) => {
       return error ? deferred.reject(error) : deferred.resolve(value);
     }
     this.promise.then(function(){
-      self.callbacks.push({type: type, callback: callback});
-      self.handle.write(query + CRLF);
+      this.callbacks.push({type: type, callback: callback});
+      this.handle.write(query + CRLF);
     });
     return deferred.promise;
-  },
-  get: function(key){
+  }
+  get(key){
     return this.query('get ' + key, 'get');
-  },
-  store: function(key, value, type, lifetime, flags){
+  }
+  store(key, value, type, lifetime, flags){
     lifetime = lifetime || 0;
     flags = flags || 0;
-    var length  = Buffer.byteLength(value.toString());
-    var query = [type, key, flags, lifetime, length].join(' ') + CRLF + value;
+    let length  = Buffer.byteLength(value.toString());
+    let query = [type, key, flags, lifetime, length].join(' ') + CRLF + value;
     return this.query(query, 'simple');
-  },
-  delete: function(key){
+  }
+  delete(key){
     return this.query('delete ' + key, 'simple');
-  },
-  version: function(){
+  }
+  version(){
     return this.query('version', 'version');
-  },
-  increment: function(key, step){
+  }
+  increment(key, step){
     step = step || 1;
     return this.query('incr ' + key + ' ' + step, 'simple');
-  },
-  decrement: function(key, step){
+  }
+  decrement(key, step){
     step = step || 1;
     return this.query('decr ' + key + ' ' + step, 'simple');
-  },
-  close: function(){
+  }
+  set(key, value, lifetime, flags){
+    return this.store(key, value, 'set', lifetime, flags);
+  }
+  add(key, value, lifetime, flags){
+    return this.store(key, value, 'add', lifetime, flags);
+  }
+  replace(key, value, lifetime, flags){
+    return this.store(key, value, 'replace', lifetime, flags);
+  }
+  append(key, value, lifetime, flags){
+    return this.store(key, value, 'append', lifetime, flags);
+  }
+  prepend(key, value, lifetime, flags){
+    return this.store(key, value, 'prepend', lifetime, flags);
+  }
+  close(){
     if (this.handle && this.handle.readyState === 'open') {
       this.handle.end();
       this.handle = null;
     }
   }
-}).extend(function(){
-  var result = {};
-  ['set', 'add', 'replace', 'append', 'prepend'].forEach(function(item){
-    result[item] = function(key, value, lifetime, flags){
-      return this.store(key, value, 'set', lifetime, flags);
-    }
-  });
-  return result;
-});
+}
