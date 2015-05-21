@@ -11,5 +11,6 @@ module.exports = {
   auth: `${root}/util/auth.js`,
   cookie: `${root}/util/cookie.js`,
   valid: `${root}/util/valid.js`,
+  wait: `${root}/util/await.js`,
   //websocket: root + '/util/websocket.js'
 };

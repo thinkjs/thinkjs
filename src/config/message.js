@@ -17,5 +17,8 @@ module.exports = {
   PATH_NOT_EXIST: '`%s` is not exist',
   TEMPLATE_NOT_EXIST: 'can\'t find template file `%s`',
   PARAMS_EMPTY: '`%s` value can\'t empty',
-  PARAMS_NOT_VALID: '`{name}` value not valid'
+  PARAMS_NOT_VALID: '`{name}` value not valid',
+  FIELD_KEY_NOT_VALID: 'field `%s` in where condition is not valid',
+  DATA_EMPTY: 'data can not be empty',
+  MISS_WHERE_CONDITION: 'miss where condition'
 }

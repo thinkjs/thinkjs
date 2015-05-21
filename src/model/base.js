@@ -2,21 +2,15 @@
 
 let util = require('util');
 let querystring = require('querystring');
-let Db = think.adapter('db', 'base');
 let valid = think.require('valid');
+
+let dbInstances = thinkCache(thinkCache.DB);
+let tableFields = thinkCache(thinkCache.TABLE);
 /**
  * model base class
  * @type {Class}
  */
 module.exports = class extends think.base {
-  /**
-   * constructor
-   * @param  {} args []
-   * @return {[type]}         []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
   /**
    * init
    * @param  {} name   []
@@ -24,44 +18,54 @@ module.exports = class extends think.base {
    * @return {}        []
    */
   init(name = '', config = {}){
+    let options = {
+      pk: 'id',
+      tablePrefix: '',
+      tableName: '',
+      trueTableName: '',
+      fields: {}
+    }
+    for(let key in options){
+      if(this[key] === undefined){
+        this[key] = options[key];
+      }
+    }
     this.db = null;
-    this.pk = 'id';
     this.name = name;
     this.config = config;
-    this.configKey = '';
-    this.tablePrefix = '';
-    this.tableName = '';
-    this.trueTableName = '';
-    this._fields = {};
     this._data = {};
     this._options = {};
-    this.fields = {};
     //table prefix
-    if (this.config.prefix) {
+    if (this.config.prefix && !this.tablePrefix) {
       this.tablePrefix = this.config.prefix;
     }
   }
   /**
-   * 初始化数据库连接
-   * @return {[type]} [description]
+   * get config key
+   * @return {} []
    */
-  initDb(){
+  getConfigKey(){
+    return think.md5(JSON.stringify(this.config));
+  }
+  /**
+   * get db instance
+   * @return {Object} []
+   */
+  getDbInstance(){
     if (this.db) {
       return this.db;
     }
-    let config = this.config;
-    let configKey = think.md5(JSON.stringify(config));
+    let configKey = this.getConfigKey();
     if (!dbInstances[configKey]) {
-      dbInstances[configKey] = Db.getInstance(config);
+      let db = think.adapter('db', this.config.type);
+      dbInstances[configKey] = new db(config);
     }
     this.db = dbInstances[configKey];
-    this.configKey = configKey;
     return this.db;
   }
   /**
-   * 获取模型名
-   * @access public
-   * @return string
+   * get model name
+   * @return {String} []
    */
   getModelName(){
     if (this.name) {
@@ -73,120 +77,76 @@ module.exports = class extends think.base {
     return this.name;
   }
   /**
-   * 获取表名
-   * @return {[type]} [description]
+   * get table name
+   * @return {String} []
    */
   getTableName(){
     if (!this.trueTableName) {
-      let tableName = this.tablePrefix || '';
-      tableName += this.tableName || parseName(this.getModelName());
-      this.trueTableName = tableName.toLowerCase();
+      this.trueTableName = (this.tablePrefix || '') + (this.tableName || this.getModelName());
     }
     return this.trueTableName;
   }
   /**
-   * 获取数据表信息
-   * @access protected
-   * @return Promise
+   * get table fields
+   * @param  {String} table [table name]
+   * @return {}       []
    */
-  getTableFields(table, all){
-    this.initDb();
-    if (table === true) {
-      table = undefined;
-      all = true;
+  async getTableFields(table = this.getTableName()){
+    if(!think.isEmpty(this.fields)){
+      return this.fields;
     }
-    if (!think.isEmpty(this._fields)) {
-      return getPromise(all ? this._fields : this._fields._field);
-    }
-    let tableName = table || this.getTableName();
-    let fields = tableFieldsCache[tableName];
-    if (!isEmpty(fields)) {
-      this._fields = fields;
-      return getPromise(all ? fields : fields._field);
-    }
-    let self = this;
-    //从数据表里查询字段信息
-    return this.flushFields(tableName).then(function(fields){
-      self._fields = fields;
-      if (C('db_fields_cache')) {
-        tableFieldsCache[tableName] = fields;
-      }
-      return getPromise(all ? fields : fields._field);
-    });  
-  }
-  /**
-   * 获取数据表信息
-   * @param  {[type]} table [description]
-   * @return Promise       [description]
-   */
-  flushFields(table){
-    table = table || this.getTableName();
-    return this.initDb().getFields(table).then(function(data){
-      let fields = {
-        '_field': Object.keys(data),
-        '_autoinc': false,
-        '_unique': []
-      };
-      let types = {};
-      for(let key in data){
-        let val = data[key];
-        types[key] = val.type;
-        if (val.primary) {
-          fields._pk = key;
-          if (val.autoinc) {
-            fields._autoinc = true;
-          }
-        }else if (val.unique) {
-          fields._unique.push(key);
+    if(tableFields[table]){
+      this.fields = tableFields[table];
+    }else{
+      let fields = await this.getDbInstance().getFields(table);
+      //get primary key
+      for(let name in fields){
+        if(fields[name].primary){
+          this.pk = name;
+          break;
         }
       }
-      fields._type = types;
-      return fields;
-    })
+      this.fields = tableFields[table] = fields;
+    }
+    return this.fields;
   }
   /**
-   * 根据数据获取类型为唯一的字段
-   * @return {[type]} [description]
+   * get unique field
+   * @param  {Object} data []
+   * @return {Promise}      []
    */
-  getUniqueField(data){
-    if (!data) {
-      return this._fields._unique[0];
-    }
-    let fields = this._fields._unique;
-    for(let i = 0, length = fields.length; i < length; i++){
-      if (data[fields[i]]) {
-        return fields[i];
+  async getUniqueField(data){
+    let fields = await this.getTableFields();
+    let result = [];
+    for(let name in fields){
+      if(fields[name].unique){
+        if(!data){
+          return name;
+        }else if(data[name]){
+          return name;
+        }
       }
     }
   }
   /**
-   * 获取上一次操作的sql
-   * @return {[type]} [description]
+   * get last sql
+   * @return {Promise} []
    */
   getLastSql(){
-    return this.initDb().getLastSql();
+    return this.getDbInstance().getLastSql();
   }
   /**
-   * 获取主键名称
-   * @access public
-   * @return string
+   * get primary key
+   * @return {Promise} []
    */
   getPk(){
-    //如果fields为空，那么异步去获取
-    if (isEmpty(this._fields)) {
-      let self = this;
-      return this.getTableFields().then(function(){
-        return self._fields._pk || self.pk;
-      })
-    }
-    return this._fields._pk || this.pk;
+    return this.getTableFields().then(() => this.pk);
   }
   /**
-   * 缓存
-   * @param  {[type]} key    [description]
-   * @param  {[type]} expire [description]
-   * @param  {[type]} type   [description]
-   * @return {[type]}        [description]
+   * set cache options
+   * @param  {String} key     []
+   * @param  {Number} timeout []
+   * @return {}         []
    */
   cache(key, timeout){
     if (key === undefined) {
@@ -227,74 +187,81 @@ module.exports = class extends think.base {
     return options;
   }
   /**
-   * 指定查询数量
-   * @param  {[type]} offset [description]
-   * @param  {[type]} length [description]
-   * @return {[type]}        [description]
+   * set limit options
+   * @param  {Number} offset []
+   * @param  {Number} length []
+   * @return {}        []
    */
   limit(offset, length){
     if (offset === undefined) {
       return this;
     }
-    this._options.limit = length === undefined ? offset : offset + ',' + length;
+    this._options.limit = length === undefined ? [offset] : [offset, length];
     return this;
   }
   /**
-   * 指定分页
-   * @return {[type]} [description]
+   * set page options
+   * @param  {Number} page     []
+   * @param  {} listRows []
+   * @return {}          []
    */
-  page(page, listRows){
+  page(page, listRows = this.config.nums_per_page){
     if (page === undefined) {
       return this;
     }
-    this._options.page = listRows === undefined ? page : page + ',' + listRows;
+    this._options.limit = [listRows * (page - 1), listRows];
     return this;
   }
   /**
-   * where条件
-   * @return {[type]} [description]
+   * set where options
+   * @return {} []
    */
   where(where){
     if (!where) {
       return this;
     }
-    if (isString(where)) {
+    if (think.isString(where)) {
       where = {_string: where};
     }
     this._options.where = think.extend(this._options.where || {}, where);
     return this;
   }
   /**
-   * 要查询的字段
-   * @param  {[type]} field   [description]
-   * @param  {[type]} reverse [description]
-   * @return {[type]}         [description]
+   * set field options
+   * @param  {String} field   []
+   * @param  {Boolean} reverse []
+   * @return {}         []
    */
-  field(field, reverse){
-    if (think.isArray(field)) {
-      field = field.join(',');
-    }else if (!field) {
-      field = '*';
+  field(field, reverse = false){
+    if (think.isString(field)) {
+      field = field.split(',');
     }
     this._options.field = field;
     this._options.fieldReverse = reverse;
     return this;
   }
   /**
-   * 设置表名
-   * @param  {[type]} table [description]
-   * @return {[type]}       [description]
+   * set table name
+   * @param  {String} table []
+   * @return {}       []
    */
   table(table, hasPrefix){
     if (!table) {
       return this;
     }
+    table = table.trim();
+    //table is sql, `SELECT * FROM`
+    if (table.indexOf(' ') > -1) {
+      hasPrefix = true;
+    }
     this._options.table = hasPrefix ? table : this.tablePrefix + table;
     return this;
   }
   /**
-   * 联合查询
-   * @return {[type]} [description]
+   * union options
+   * @param  {} union []
+   * @param  {} all   []
+   * @return {}       []
    */
   union(union, all){
     if (!union) {
@@ -317,7 +284,6 @@ module.exports = class extends think.base {
    *     on: ['id', 'cid']
    *   }
    * })
-   * 联合查询
    * @param  {[type]} join [description]
    * @return {[type]}      [description]
    */
@@ -335,156 +301,158 @@ module.exports = class extends think.base {
     }
     return this;
   }
+  order(value){
+    this._options.order = value;
+    return this;
+  }
+  alias(value){
+    this._options.alias = value;
+    return this;
+  }
+  having(value){
+    this._options.having = value;
+    return this;
+  }
+  group(value){
+    this._options.group = value;
+    return this;
+  }
+  lock(value){
+    this._options.lock = value;
+    return this;
+  }
+  auto(value){
+    this._options.auto = value;
+    return this;
+  }
+  filter(value){
+    this._options.filter = value;
+    return this;
+  }
+  validate(value){
+    this._options.validate = value;
+    return this;
+  }
+  distinct(data){
+    this._options.distinct = data;
+    if (think.isString(data)) {
+      this._options.field = data;
+    }
+    return this;
+  }
   /**
-   * 生成查询SQL 可用于子查询
+   * build sql
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  buildSql(options){
-    let self = this;
-    return this.parseOptions(options).then(function(options){
-      return '( ' + self.db.buildSelectSql(options).trim() + ' )';
-    });
+  async buildSql(options){
+    options = await this.parseOptions(options);
+    return '( ' + this.getDbInstance().buildSelectSql(options).trim() + ' )';
   }
   /**
-   * 解析参数
-   * @param  {[type]} options [description]
-   * @return promise         [description]
+   * parse options
+   * @param  {Object} options []
+   * @return promise         []
    */
-  parseOptions(oriOpts, extraOptions){
-    let options;
-    if (isScalar(oriOpts)) {
-      options = extend({}, this._options);
-    }else{
-      options = extend({}, this._options, oriOpts, extraOptions);
+  async parseOptions(oriOpts, extraOptions){
+    let options = think.extend({}, this._options);
+    if (think.isObject(oriOpts)) {
+      options = think.extend(options, oriOpts, extraOptions);
     }
-    //查询过后清空sql表达式组装 避免影响下次查询
+    //clear options
     this._options = {};
-    //获取表名
-    let table = options.table = options.table || this.getTableName();
-    //表前缀，Db里会使用
+    //get table name
+    options.table = options.table || this.getTableName();
+
     options.tablePrefix = this.tablePrefix;
     options.model = this.getModelName();
-    //数据表别名
+    //table alias
     if (options.alias) {
       options.table += ' AS ' + options.alias;
     }
-    let promise = this.getTableFields(table).then(function(fields){
-      if (isScalar(oriOpts)) {
-        options = extend(options, self.parseWhereOptions(oriOpts), extraOptions);
-      }
-      return fields;
-    })
-    let self = this;
-    return promise.then(function(fields){
-      // 字段类型验证
-      if (isObject(options.where) && !isEmpty(fields)) {
-        let keyReg = /[\.\|\&]/;
-        // 对数组查询条件进行字段类型检查
-        for(let key in options.where){
-          let val = options.where[key];
-          key = key.trim();
-          if (fields.indexOf(key) > -1) {
-            if (isScalar(val) || !val) {
-              options.where[key] = self.parseType(options.where, key)[key];
-            }
-          }else if(key[0] !== '_' && !keyReg.test(key)){ //字段名不合法，报错
-            return getPromise(new Error('field `' + key + '` in where condition is not valid'), true);
-          }
+    let fields = await this.getTableFields(options.table);
+    if(!think.isObject(oriOpts)){
+      options = think.extend(options, this.parseWhereOptions(oriOpts, extraOptions));
+    }
+    //check where key
+    if(options.where && !think.isEmpty(fields)){
+      let keyReg = /^[\w\.\|\&]+$/;
+      for(let key in options.where){
+        if(!keyReg.test(key)){
+          let msg = new Error(think.message('FIELD_KEY_NOT_VALID', key));
+          return Promise.reject(msg);
         }
       }
-      //field反选
-      if (options.field && options.fieldReverse) {
-        //fieldReverse设置为false
-        options.fieldReverse = false;
-        let optionsField = options.field.split(',');
-        options.field = fields.filter(function(item){
-          if (optionsField.indexOf(item) > -1) {
-            return;
-          }
+    }
+    //field reverse
+    if(options.field && options.fieldReverse){
+      options.fieldReverse = false;
+      let optionsField = option.field;
+      options.field = fields.filter(item => {
+        if(optionsField.indexOf(item) === -1){
           return item;
-        }).join(',');
-      }
-      return self._optionsFilter(options, fields);
-    });
+        }
+      })
+    }
+    return this._optionsFilter(options, fields);
   }
   /**
-   * 选项过滤器
-   * 具体的Model类里进行实现
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * options filter
+   * @param  {Object} options []
+   * @return {}         []
    */
   _optionsFilter(options){
     return options;
   }
   /**
-   * 数据类型检测
-   * @param  {[type]} data [description]
-   * @param  {[type]} key  [description]
-   * @return {[type]}      [description]
+   * parse type
+   * @param  {Object} data []
+   * @param  {} key  []
+   * @return {}      []
    */
-  parseType(data, key){
-    let fieldType = this._fields._type[key] || '';
+  parseType(key, value){
+    let fieldType = this.fields[key].type || '';
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
-      data[key] = parseInt(data[key], 10) || 0;
+      return parseInt(value, 10) || 0;
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
-      data[key] = parseFloat(data[key]) || 0.0;
+      return parseFloat(value) || 0.0;
     }else if(fieldType.indexOf('bool') > -1){
-      data[key] = !! data[key];
+      return !! value;
     }
-    return data;
+    return value;
   }
   /**
-   * 对插入到数据库中的数据进行处理，要在parseOptions后执行
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
+   * parse data, after fields getted
+   * @param  {} data []
+   * @return {}      []
    */
   parseData(data){
-    //因为会对data进行修改，所以这里需要深度拷贝
+    //deep clone data
     data = think.extend({}, data);
-    let key;
-    if (!isEmpty(this._fields)) {
-      for(key in data){
-        let val = data[key];
-        if (this._fields._field.indexOf(key) === -1) {
-          delete data[key];
-        }else if(isScalar(val)){
-          data = this.parseType(data, key);
-        }
+    for(let key in data){
+      let val = data[key];
+      //remove data not in fields
+      if (!this.fields[key]) {
+        delete data[key];
+      }else if(think.isNumber(val) || think.isString(val) || think.isBoolean(val)){
+        data[key] = this.parseType(key, val);
       }
     }
-    //安全过滤
-    if (isFunction(this._options.filter)) {
-      for(key in data){
-        let ret = this._options.filter.call(this, key, data[key]);
-        if (ret === undefined) {
-          delete data[key];
-        }else{
-          data[key] = ret;
-        }
-      }
-      delete this._options.filter;
-    }
-    data = this._dataFilter(data);
-    return data;
+    return this._dataFilter(data);
   }
   /**
-   * 数据过滤器
-   * 具体的Model类里进行实现
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
+   * data filter
+   * @param  {Object} data []
+   * @return {}      []
    */
   _dataFilter(data){
     return data;
   }
   /**
-   * 检测数据是否合法
-   * @return {[type]} [description]
+   * check data before insert to db
+   * @return {} []
    */
   _validData(data){
-    if (isEmpty(this.fields) || isEmpty(data)) {
-      return data;
-    }
     let field, value, checkData = [];
     for(field in data){
       if (field in this.fields) {
@@ -505,28 +473,26 @@ module.exports = class extends think.base {
     return getPromise(err, true);
   }
   /**
-   * 数据插入之前操作，可以返回一个promise
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * before add
+   * @param  {Object} data []
+   * @return {}      []
    */
   _beforeAdd(data){
     return this._validData(data);
   }
   /**
-   * 数据插入之后操作，可以返回一个promise
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * after add
+   * @param  {} data []
+   * @return {}      []
    */
   _afterAdd(data){
     return data;
   }
   /**
-   * 添加一条数据
-   * @param {[type]} data    [description]
-   * @param {[type]} options [description]
-   * @param int 返回插入的id
+   * add data
+   * @param {Object} data    []
+   * @param {Object} options []
+   * @param {} replace []
    */
   async add(data, options, replace){
     if (options === true) {
@@ -535,26 +501,26 @@ module.exports = class extends think.base {
     }
     //copy data
     data = think.extend({}, this._data, data);
+    //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      return Promise.reject(new Error('_DATA_TYPE_INVALID_'));
+      let msg = new Error(think.message('DATA_EMPTY'));
+      return Promise.reject(msg);
     }
-    //解析后的选项
-    let parsedOptions = await this.parseOptions(options);
-    //解析后的数据
-    let parsedData = await this._beforeAdd(data, parsedOptions);
+    options = await this.parseOptions(options);
+    data = await this._beforeAdd(data, options);
     data = this.parseData(data);
-    await this.db.insert(data, parsedOptions, replace);
-    let insertId = parsedData[this.getPk()] = this.db.getLastInsertId();
-    await this._afterAdd(parsedData, parsedOptions);
+    await this.db.insert(data, options, replace);
+    let insertId = data[this.pk] = this.db.getLastInsertId();
+    await this._afterAdd(data, options);
     return insertId;
   }
   /**
-   * 如果当前条件的数据不存在，才添加
-   * @param  {[type]} data      要插入的数据
-   * @param  {[type]} where      where条件
-   * @param  boolean returnType 返回值是否包含type
-   * @return {[type]}            promise
+   * then add
+   * @param  {Object} data       []
+   * @param  {Object} where      []
+   * @param  {} returnType []
+   * @return {}            []
    */
   async thenAdd(data, where, returnType){
     if (where === true) {
@@ -570,10 +536,10 @@ module.exports = class extends think.base {
     return returnType ? {[this.pk]: insertId, type: 'add'} : insertId;
   }
   /**
-   * 插入多条数据
-   * @param {[type]} data    [description]
-   * @param {[type]} options [description]
-   * @param {[type]} replace [description]
+   * add multi data
+   * @param {Object} data    []
+   * @param {} options []
+   * @param {} replace []
    */
   async addAll(data, options, replace){
     if (!think.isArray(data) || !think.isObject(data[0])) {
@@ -592,15 +558,16 @@ module.exports = class extends think.base {
     return this.db.getLastInsertId();
   }
   /**
-   * 删除后续操作
-   * @return {[type]} [description]
+   * after delete
+   * @param  {Mixed} data []
+   * @return {}      []
    */
   _afterDelete(data){
     return data;
   }
   /**
-   * 删除数据
-   * @return {[type]} [description]
+   * delete data
+   * @return {} []
    */
   async delete(options){
     options = await this.parseOptions(options);
@@ -609,19 +576,18 @@ module.exports = class extends think.base {
     return rows;
   }
   /**
-   * 更新前置操作
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * before update
+   * @param  {Mixed} data []
+   * @return {}      []
    */
   _beforeUpdate(data){
     return this._validData(data);
   }
   /**
-   * 更新后置操作
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * after update
+   * @param  {} data    []
+   * @param  {} options []
+   * @return {}         []
    */
   _afterUpdate(data){
     return data;
@@ -632,9 +598,10 @@ module.exports = class extends think.base {
    */
   async update(data, options){
     data = extend({}, this._data, data);
+    //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      return Promise.reject(new Error('_DATA_TYPE_INVALID_'));
+      return Promise.reject(new Error(think.message('DATA_EMPTY')));
     }
     options = await this.parseOptions(options);
     data = await this._beforeUpdate(data, options);
@@ -645,7 +612,7 @@ module.exports = class extends think.base {
         options.where = {[pk]: data[pk]};
         delete data[pk];
       }else{
-        return Promise.reject(new Error('_OPERATION_WRONG_'));
+        return Promise.reject(new Error(think.message('MISS_WHERE_CONDITION')));
       }
     }else{
       data[pk] = options.where[pk];
@@ -661,7 +628,7 @@ module.exports = class extends think.base {
    */
   updateAll(dataList){
     if (!think.isArray(dataList) || !think.isObject(dataList[0])) {
-      return Promise.reject(new Error('_DATA_TYPE_INVALID_'));
+      return Promise.reject(new Error(think.message('DATA_EMPTY')));
     }
     let promises = dataList.map(data => {
       return this.update(data);
@@ -669,10 +636,10 @@ module.exports = class extends think.base {
     return Promise.all(promises);
   }
   /**
-   * 更新某个字段的值
-   * @param  {[type]} field [description]
-   * @param  {[type]} value [description]
-   * @return {[type]}       [description]
+   * update field
+   * @param  {String} field []
+   * @param  {Mixed} value []
+   * @return {Promise}       []
    */
   updateField(field, value){
     let data = {};
@@ -684,51 +651,48 @@ module.exports = class extends think.base {
     return this.update(data);
   }
   /**
-   * 字段值增长
+   * update inc
    * @return {[type]} [description]
    */
-  updateInc(field, step){
-    step = parseInt(step, 10) || 1;
+  updateInc(field, step = 1){
     return this.updateField(field, ['exp', field + '+' + step]);
   }
   /**
-   * 字段值减少
-   * @return {[type]} [description]
+   * update dec
+   * @return {} []
    */
-  updateDec(field, step){
-    step = parseInt(step, 10) || 1;
+  updateDec(field, step = 1){
     return this.updateField(field, ['exp', field + '-' + step]);
   }
   /**
-   * 解析options中简洁的where条件
-   * @return {[type]} [description]
+   * parse where options
+   * @return {Object} 
    */
-  parseWhereOptions(options){
+  parseWhereOptions(options = {}){
     if (think.isNumber(options) || think.isString(options)) {
-      let pk = this.getPk();
       options += '';
       let where = {};
       if (options.indexOf(',') > -1) {
-        where[pk] = ['IN', options];
+        where[this.pk] = ['IN', options];
       }else{
-        where[pk] = options;
+        where[this.pk] = options;
       }
       options = {
         where: where
       };
     }
-    return options || {};
+    return options;
   }
   /**
-   * find查询后置操作
-   * @return {[type]} [description]
+   * after find
+   * @return {} []
    */
   _afterFind(result){
     return result;
   }
   /**
-   * 查询一条数据
-   * @return 返回一个promise
+   * find data
+   * @return Promise
    */
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
@@ -736,38 +700,35 @@ module.exports = class extends think.base {
     return this._afterFind(data[0] || {}, options);
   }
   /**
-   * 查询后置操作
-   * @param  {[type]} result  [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * after select
+   * @param  {Mixed} result []
+   * @return {}        []
    */
   _afterSelect(result){
     return result;
   }
   /**
-   * 查询数据
-   * @return 返回一个promise
+   * select
+   * @return Promise
    */
   async select(options){
     options = await this.parseOptions(options);
-    let data = this.db.select(options);
+    let data = await this.db.select(options);
     return this._afterSelect(data, options);
   }
   /**
-   * 查询添加
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * select add
+   * @param  {} options []
+   * @return {Promise}         []
    */
-  selectAdd(options){
-    let self = this;
-    let promise = getPromise(options);
-    if (options instanceof Model) {
+  async selectAdd(options){
+    let promise = Promise.resolve(options);
+    if (options instanceof module.exports) {
       promise = options.parseOptions();
     }
-    return Promise.all([this.parseOptions(), promise]).then(function(data){
-      let fields = data[0].field || self._fields._field;
-      return self.db.selectAdd(fields, data[0].table, data[1]);
-    });
+    let data = await Promise.all([this.parseOptions(), promise]);
+    let fields = data[0].field || Object.keys(this.fields);
+    return this.db.selectAdd(fields, data[0].table, data[1]);
   }
   /**
    * 返回数据里含有count信息的查询
@@ -804,7 +765,7 @@ module.exports = class extends think.base {
     return result;
   }
   /**
-   * 获取某个字段下的记录
+   * get field data
    * @return {[type]} [description]
    */
   async getField(field, one){
@@ -819,7 +780,7 @@ module.exports = class extends think.base {
     if (multi) {
       let fields = field.split(/\s*,\s*/);
       let result = {};
-      fields.forEach(item => result[item] = [])
+      fields.forEach(item => result[item] = []);
       data.every(item => {
         fields.forEach(fItem => {
           if (one === true) {
@@ -841,85 +802,101 @@ module.exports = class extends think.base {
     }
   }
   /**
-   * 根据某个字段值获取一条数据
-   * @param  {[type]} name  [description]
-   * @param  {[type]} value [description]
-   * @return {[type]}       [description]
+   * get count
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  async count(field){
+    field = field || await this.getPk();
+    return this.getField('COUNT(' + field + ') AS thinkjs_count', true);
+  }
+  async sum(field){
+    field = field || await this.getPk();
+    return this.getField('SUM(' + field + ') AS thinkjs_sum', true);
+  }
+  async min(field){
+    field = field || await this.getPk();
+    return this.getField('MIN(' + field + ') AS thinkjs_min', true);
+  }
+  async max(field){
+    field = field || await this.getPk();
+    return this.getField('MAX(' + field + ') AS thinkjs_max', true);
+  }
+  async avg(field){
+    field = field || await this.getPk();
+    return this.getField('AVG(' + field + ') AS thinkjs_avg', true);
+  }
+  /**
+   * get by
+   * @param  {String} name  []
+   * @param  {Mixed} value []
+   * @return {Promise}       []
    */
   getBy(name, value){
     return this.where({[name]: value}).find();
   }
   /**
-   * SQL查询
-   * @return {[type]} [description]
+   * query
+   * @return {Promise} []
    */
-  async query(sql, parse){
-    if (parse !== undefined && !think.isBoolean(parse) && !think.isArray(parse)) {
-      parse = [].slice.call(arguments, 1);
-    }
-    sql = this.parseSql(sql, parse);
-    let data = await this.initDb().select(sql, this._options.cache);
+  async query(sql, ...args){
+    sql = this.parseSql(sql, args);
+    let data = await this.getDbInstance().select(sql, this._options.cache);
     this._options = {};
     return data;
   }
   /**
-   * 执行SQL语法，非查询类的SQL语句，返回值为影响的行数
+   * execute sql
    * @param  {[type]} sql   [description]
    * @param  {[type]} parse [description]
    * @return {[type]}       [description]
    */
-  execute(sql, parse){
-    if (parse !== undefined && !think.isBoolean(parse) && !think.isArray(parse)) {
-      parse = [].slice.call(arguments, 1);
-    }
-    sql = this.parseSql(sql, parse);
-    return this.initDb().execute(sql);
+  execute(sql, ...args){
+    sql = this.parseSql(sql, args);
+    return this.getDbInstance().execute(sql);
   }
   /**
-   * 解析SQL语句
+   * parse sql
    * @return promise [description]
    */
-  parseSql(sql, parse){
-    if (parse === undefined) {
-      parse = [];
-    }else if(!think.isArray(parse)){
-      parse = [parse];
-    }
-    parse.unshift(sql);
-    sql = util.format.apply(null, parse);
-    let map = {
-      '__TABLE__': '`' + this.getTableName() + '`'
-    };
-    sql = sql.replace(/__([A-Z]+)__/g, (a, b) => {
-      return map[a] || ('`' + this.tablePrefix + b.toLowerCase() + '`');
+  parseSql(sql, args){
+    args.unshift(sql);
+    sql = util.format(...args);
+    //replace table name
+    return sql.replace(/__([A-Z]+)__/g, (a, b) => {
+      if(b === 'TABLE'){
+        return '`' + this.getTableName() + '`'
+      }
+      return '`' + this.tablePrefix + b.toLowerCase() + '`';
     });
-    return sql;
   }
   /**
-   * 启动事务
-   * @return {[type]} [description]
+   * start transaction
+   * @return {Promise} []
    */
   async startTrans(){
-    await this.initDb().commit();
-    return this.initDb().startTrans();
+    let db = this.getDbInstance();
+    await db.commit();
+    return db.startTrans();
   }
   /**
-   * 提交事务
-   * @return {[type]} [description]
+   * commit transcation
+   * @return {Promise} []
    */
   commit(){
-    return this.initDb().commit();
+    return this.getDbInstance().commit();
   }
   /**
-   * 回滚事务
-   * @return {[type]} [description]
+   * rollback transaction
+   * @return {Promise} []
    */
   rollback(){
-    return this.initDb().rollback();
+    return this.getDbInstance().rollback();
   }
   /**
-   * 设置数据对象值
-   * @return {[type]} [description]
+   * set data
+   * @param  {Mixed} data []
+   * @return {}      []
    */
   data(data){
     if (data === true) {
@@ -932,9 +909,9 @@ module.exports = class extends think.base {
     return this;
   }
   /**
-   * 设置操作选项
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * set options
+   * @param  {Mixed} options []
+   * @return {}         []
    */
   options(options){
     if (options === true) {
@@ -944,78 +921,23 @@ module.exports = class extends think.base {
     return this;
   }
   /**
-   * 关闭数据库连接
-   * @return {[type]} [description]
+   * close db
+   * @return {} []
    */
   close(){
-    delete dbInstances[this.configKey];
+    delete dbInstances[this.getConfigKey()];
     if (this.db) {
       this.db.close();
       this.db = null;
     }
   }
-}
-
-/*.extend(function(){
-  'use strict';
-  //追加的方法
-  let methods = {};
-  // 链操作方法列表
-  let methodNameList = [
-    'order','alias','having','group',
-    'lock','auto','filter','validate'
-  ];
-  methodNameList.forEach(function(item){
-    methods[item] = function(data){
-      this._options[item] = data;
-      return this;
-    };
-  });
-  methods.distinct = function(data){
-    this._options.distinct = data;
-    //如果传过来一个字段，则映射到field上
-    if (isString(data)) {
-      this._options.field = data;
+  /**
+   * close all db connections
+   * @return {} []
+   */
+  static close(){
+    for(let key in dbInstances){
+      dbInstances[key].close();
     }
-    return this;
-  };
-  ['count','sum','min','max','avg'].forEach(function(item){
-    methods[item] = function(field){
-      field = field || this.pk;
-      return this.getField(item.toUpperCase() + '(' + field + ') AS thinkjs_' + item, true);
-    };
-  });
-  //方法别名
-  let aliasMethodMap = {
-    update: 'save',
-    updateField: 'setField',
-    updateInc: 'setInc',
-    updateDec: 'setDec'
-  };
-  Object.keys(aliasMethodMap).forEach(function(key){
-    let value = aliasMethodMap[key];
-    methods[value] = function(){
-      return this[key].apply(this, arguments);
-    };
-  });
-  return methods;
-});
-/**
- * 关闭所有的数据库连接
- * @return {[type]} [description]
- */
-// Model.close = function(){
-//   'use strict';
-//   for(let key in dbInstances) {
-//     dbInstances[key].close();
-//   }
-//   dbInstances = {};
-// };
-// *
-//  * 清除数据表字段缓存
-//  * @return {[type]} [description]
- 
-// Model.clearTableFieldsCache = function(){
-//   'use strict';
-//   tableFieldsCache = {};
-// }
+  }
+}

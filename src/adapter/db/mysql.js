@@ -1,103 +1,104 @@
+'use strict';
+
+let mysqlSocket = think.adapter('socket', 'mysql');
 /**
- * mysql数据库
- * @return {[type]} [description]
+ * mysql db
+ * @type {Class}
  */
-var mysqlSocket = think.adapter('socket', 'mysql');
-module.exports = think.adapter({
+module.exports = class extends think.adapter.db {
   /**
-   * 连接数据库
-   * @param  {[type]} config  [description]
-   * @param  {[type]} linknum [description]
-   * @return {[type]}         [description]
+   * init
+   * @param  {Object} config []
+   * @return {}        []
    */
-  connect: function(config){
-    return mysqlSocket(config);
-  },
+  init(config){
+    super.init(config);
+    this.transTimes = 0;
+  }
   /**
-   * 获取数据表字段信息
-   * @param  string tableName 数据表名
-   * @return promise 返回一个promise
+   * connect mysql
+   * @param  {Object} config []
+   * @return {}        []
    */
-  getFields: function(tableName){
-    var sql = 'SHOW COLUMNS FROM ' + this.parseKey(tableName);
-    return this.query(sql).then(function(data){
-      var ret = {};
-      data.forEach(function(item){
+  connect(config = {}){
+    return new mysqlSocket(config);
+  }
+  /**
+   * get table info
+   * @param  {String} table [table name]
+   * @return {Promise}       []
+   */
+  getFields(table){
+    return this.query(`SHOW COLUMNS FROM ${this.parseKey(table)}`).then(data => {
+      let ret = {};
+      data.forEach(item => {
         ret[item.Field] = {
           'name': item.Field,
           'type': item.Type,
-          'notnull': item.Null === '',
+          'required': item.Null === '',
           'default': item.Default,
           'primary': item.Key === 'PRI',
           'unique': item.Key === 'UNI',
-          'autoinc': item.Extra.toLowerCase() === 'auto_increment'
+          'auto_increment': item.Extra.toLowerCase() === 'auto_increment'
         };
       });
       return ret;
-    });
-  },
+    })
+  }
   /**
-   * 获取数据库的表信息
-   * @param  {[type]} dbName [description]
-   * @return {[type]}        [description]
+   * get table engine
+   * @param  {String} table [table name]
+   * @return {Promise}       []
    */
-  getTables: function(dbName){
-    var sql = 'SHOW TABLES';
-    if (dbName) {
-      sql += ' FROM ' + dbName;
-    }
-    return this.query(sql).then(function(data){
-      return data.map(function(item){
-        for(var key in item){
-          return item[key];
-        }
-      });
-    });
-  },
+  getEngine(table){
+    return this.query(`SHOW TABLE STATUS WHERE name='${this.parseKey(table)}'`).then(data => {
+      return data[0].Engine.toLowerCase();
+    })
+  }
   /**
-   * 启动事务
-   * @return {[type]} [description]
+   * start transaction
+   * @return {Promise} []
    */
-  startTrans: function(){
+  startTrans(){
     if (this.transTimes === 0) {
       this.transTimes++;
       return this.execute('START TRANSACTION');
     }
     this.transTimes++;
-    return getPromise();
-  },
+    return Promise.resolve();
+  }
   /**
-   * 提交事务
-   * @return {[type]} [description]
+   * commit
+   * @return {Promise} []
    */
-  commit: function(){
+  commit(){
     if (this.transTimes > 0) {
       this.transTimes = 0;
       return this.execute('COMMIT');
     }
-    return getPromise();
-  },
+    return Promise.resolve();
+  }
   /**
-   * 回滚事务
-   * @return {[type]} [description]
+   * rollback
+   * @return {Promise} []
    */
-  rollback: function(){
+  rollback(){
     if (this.transTimes > 0) {
       this.transTimes = 0;
       return this.execute('ROLLBACK');
     }
-    return getPromise();
-  },
+    return Promise.resolve();
+  }
   /**
-   * 解析key
-   * @param  {[type]} key [description]
-   * @return {[type]}     [description]
+   * parse key
+   * @param  {String} key []
+   * @return {String}     []
    */
-  parseKey: function(key){
-    key = (key || '').trim();
+  parseKey(key = ''){
+    key = key.trim();
     if (!(/[,\'\"\*\(\)`.\s]/.test(key))) {
       key = '`' + key + '`';
     }
     return key;
   }
-})
+}

@@ -2,6 +2,8 @@
 
 let querystring = require('querystring');
 
+let awaitInstance = new think.require('await');
+
 //数据库连接
 let dbConnections = {};
 //获取数据配置的基本信息
@@ -31,25 +33,10 @@ module.exports = class {
    * @return {} []
    */
   init(config = {}){
-    // 数据库类型
-    this.dbType = null;
-    // 当前操作所属的模型名
-    this.model = 'think';
-    // 当前SQL指令
     this.sql = '';
-    // 操作的sql列表
-    this.modelSql = {};
-    // 数据库连接参数配置
     this.config = config;
-    // 事务次数
-    this.transTimes = 0;
-    //最后插入的id
     this.lastInsertId = 0;
-    //查询等待
-    this.queryWaiting = {};
-    //用于查询的sql语句，所有select语句根据该语句解析
     this.selectSql = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%';
-    //where条件里的表达式
     this.comparison = {
       'EQ': '=',
       'NEQ': '!=',
@@ -130,39 +117,41 @@ module.exports = class {
     return connection;
   }
   /**
-   * 解析set集合
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
+   * parse set
+   * @param  {Object} data []
+   * @return {String}      []
    */
-  parseSet(data){
-    data = data || {};
+  parseSet(data = {}){
     let set = [];
     for(let key in data){
       let value = this.parseValue(data[key]);
-      if (isScalar(value)) {
+      if (think.isString(value)) {
         set.push(this.parseKey(key) + '=' + value);
       }
     }
-    return ' SET ' + set.join(',');
+    if(set.length){
+      return ' SET ' + set.join(',');
+    }
+    return '';
   }
   /**
-   * 解析字段名，具体的数据库里实现
-   * @param  {[type]} key [description]
-   * @return {[type]}     [description]
+   * parse key
+   * @param  {String} key []
+   * @return {String}     []
    */
   parseKey(key){
     return key;
   }
   /**
-   * value分析
-   * @param  {[type]} value [description]
-   * @return {[type]}       [description]
+   * parse value
+   * @param  {Mixed} value []
+   * @return {Mixed}       []
    */
   parseValue(value){
     if (think.isString(value)) {
       value = '\'' + this.escapeString(value) + '\'';
     }else if(think.isArray(value)){
-      if ((value[0] + '').toLowerCase() === 'exp') {
+      if (/^exp$/.test(value[0])) {
         value = value[1];
       }else{
         value = value.map(item => this.parseValue(item));
@@ -175,14 +164,14 @@ module.exports = class {
     return value;
   }
   /**
-   * field分析
+   * parse field
    * parseField('name');
    * parseField('name,email');
    * parseField({
    *     xx_name: 'name',
    *     xx_email: 'email'
    * })
-   * @return {[type]} [description]
+   * @return {String} []
    */
   parseField(fields){
     if (think.isString(fields) && fields.indexOf(',') > -1) {
@@ -202,41 +191,40 @@ module.exports = class {
     return '*';
   }
   /**
-   * table别名分析
-   * @param  {[type]} tables [description]
-   * @return {[type]}        [description]
+   * parse table
+   * @param  {Mixed} tables []
+   * @return {}        []
    */
-  parseTable(tables){
-    if (think.isString(tables)) {
-      tables = tables.split(',');
+  parseTable(table){
+    if (think.isString(table)) {
+      table = table.split(',');
     }
-    if (think.isArray(tables)) {
-      return tables.map(item => this.parseKey(item)).join(',');
-    }else if (think.isObject(tables)) {
+    if (think.isArray(table)) {
+      return table.map(item => this.parseKey(item)).join(',');
+    }else if (think.isObject(table)) {
       let data = [];
-      for(let key in tables){
-        data.push(this.parseKey(key) + ' AS ' + this.parseKey(tables[key]));
+      for(let key in table){
+        data.push(this.parseKey(key) + ' AS ' + this.parseKey(table[key]));
       }
       return data.join(',');
     }
     return '';
   }
   /**
-   * where条件分析
-   * @param  {[type]} where [description]
-   * @return {[type]}       [description]
+   * parse where
+   * @param  {Mixed} where []
+   * @return {String}       []
    */
   parseWhere(where = {}){
     let whereStr = '';
     if (think.isString(where)) {
       whereStr = where;
     }else{
-      // 定义逻辑运算规则 例如 OR XOR AND NOT
       let oList = ['AND', 'OR', 'XOR'];
       let operate = (where._logic + '').toUpperCase();
       delete where._logic;
       operate = oList.indexOf(operate) > -1 ? ' ' + operate + ' ' : ' AND ';
-      //key值的安全检测正则
+      //safe key regexp
       let keySafeRegExp = /^[\w\|\&\-\.\(\)\,]+$/;
       let multi = where._multi;
       delete where._multi;
@@ -250,7 +238,6 @@ module.exports = class {
         val = where[key];
         whereStr += '( ';
         if (key.indexOf('_') === 0) {
-          // 解析特殊条件表达式
           whereStr += this.parseThinkWhere(key, val);
         }else{
           if (!keySafeRegExp.test(key)) {
@@ -258,7 +245,7 @@ module.exports = class {
             continue;
           }
           let arr;
-          // 支持 name|title|nickname 方式定义查询字段
+          // support name|title|nickname
           if (key.indexOf('|') > -1) {
             arr = key.split('|');
             whereStr += arr.map(fn).join(' OR ');
@@ -276,12 +263,12 @@ module.exports = class {
 
     return whereStr ? (' WHERE ' + whereStr) : '';
   }
-  /**
-   * 解析单个查询条件
-   * @param  {[type]} key [description]
-   * @param  {[type]} val [description]
-   * @return {[type]}     [description]
-   */
+ /**
+  * parse where item
+  * @param  {String} key []
+  * @param  {Mixed} val []
+  * @return {String}     []
+  */
   parseWhereItem(key, val){
     if (think.isObject(val)) { // {id: {'<': 10, '>': 1}}
       let logic = (val._logic || 'AND').toUpperCase();
@@ -294,25 +281,19 @@ module.exports = class {
       } 
       return result.join(' ' + logic + ' ');
     }else if (!think.isArray(val)) {
-      //对字符串类型字段采用模糊匹配
-      if (C('db_like_fields').indexOf(key) > -1) {
-        return key + ' LIKE ' + this.parseValue('%' + val + '%');
-      }else{
-        return key + ' = ' + this.parseValue(val);
-      }
+      return key + ' = ' + this.parseValue(val);
     }
     let whereStr = '';
     let data;
     if (think.isString(val[0])) {
       let val0 = val[0].toUpperCase();
       val0 = this.comparison[val0] || val0;
-      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) { // 比较运算
+      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) { // compare
         whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
-      }else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) { // 模糊查找
-        if (think.isArray(val[1])) { //多个like
+      }else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) { // like
+        if (think.isArray(val[1])) { //
           let likeLogic = (val[2] || 'OR').toUpperCase();
           let likesLogic = ['AND','OR','XOR'];
-          
           if (likesLogic.indexOf(likeLogic) > -1) {
             let like = val[1].map(item => key + ' ' + val0 + ' ' + this.parseValue(item)).join(' ' + likeLogic + ' ');
             whereStr += '(' + like + ')';
@@ -378,36 +359,30 @@ module.exports = class {
     return whereStr;
   }
   /**
-   * 解析一些特殊的where条件
-   * @param  {[type]} key [description]
-   * @param  {[type]} val [description]
-   * @return {[type]}     [description]
+   * parse special condition
+   * @param  {String} key []
+   * @param  {Mixed} val []
+   * @return {String}     []
    */
   parseThinkWhere(key, val){
     switch(key){
-      // 字符串模式查询条件
       case '_string':
         return val;
-      // 复合查询条件
       case '_complex':
         return this.parseWhere(val).substr(6);
-      // 字符串模式查询条件
       case '_query':
         let where = think.isString(val) ? querystring.parse(val) : val;
         let op = ' AND ';
-        if ('_logic' in where) {
+        if (where._logic) {
           op = ' ' + where._logic.toUpperCase() + ' ';
           delete where._logic;
         }
         let arr = [];
         for(let name in where){
-          val = where[name];
-          val = this.parseKey(name) + ' = ' + this.parseValue(val);
+          val = this.parseKey(name) + ' = ' + this.parseValue(where[name]);
           arr.push(val);
         }
         return arr.join(op);
-      default:
-        return '';
     }
     return '';
   }
@@ -417,13 +392,15 @@ module.exports = class {
    * @return {[type]}       [description]
    */
   parseLimit(limit){
-    if (!limit || !think.isString(limit)) {
+    if (!limit) {
       return '';
     }
-    limit = limit.split(',');
-    let data = [];
-    for(let i = 0; i < Math.min(2, limit.length); i++){
-      data[i] = limit[i] | 0;
+    if(think.isString(limit)){
+      limit = limit.split(',');
+    }
+    let data = [limit[0] | 0];
+    if(limit[1]){
+      data.push(limit[1] | 0);
     }
     return ' LIMIT ' + data.join(',');
   }
@@ -651,14 +628,12 @@ module.exports = class {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  parseSql(sql, options){
-    options = options || {};
-    
+  parseSql(sql, options = {}){
     return sql.replace(/\%([A-Z]+)\%/g, (a, type) => {
       type = type.toLowerCase();
       return this['parse' + ucfirst(type)](options[type] || '', options);
     }).replace(/__([A-Z_-]+)__/g, (a, b) => {
-      return '`' + C('db_prefix') + b.toLowerCase() + '`';
+      return '`' + this.config.prefix + b.toLowerCase() + '`';
     });
   }
   /**
@@ -668,16 +643,13 @@ module.exports = class {
    * @param  {[type]} replace [description]
    * @return {[type]}         [description]
    */
-  insert(data, options, replace){
-    data = data || {};
-    options = options || {};
+  insert(data = {}, options = {}, replace){
     let values = [];
     let fields = [];
-    this.model = options.model;
     for(let key in data){
       let val = data[key];
       val = this.parseValue(val);
-      if (isScalar(val)) {
+      if (think.isString(val)) {
         values.push(val);
         fields.push(this.parseKey(key));
       }
@@ -738,7 +710,7 @@ module.exports = class {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  delete(options){
+  delete(options = {}){
     options = options || {};
     this.model = options.model;
     let sql = [
@@ -834,22 +806,6 @@ module.exports = class {
     return model ? this.modelSql[model] : this.sql;
   }
   /**
-   * 设置当前操作的sql
-   * @param {[type]} sql [description]
-   */
-  setSql(sql){
-    this.sql = sql;
-    this.modelSql[this.model] = sql;
-  }
-  /**
-   * 设置模型
-   * @param {[type]} model [description]
-   */
-  setModel(model){
-    this.model = model;
-    return this;
-  }
-  /**
    * 获取最后插入的id
    * @return {[type]} [description]
    */
@@ -862,22 +818,11 @@ module.exports = class {
    * @return promise
    */
   query(str){
-    this.setSql(str);
-    if (!(str in this.queryWaiting)) {
-      this.queryWaiting[str] = [];
+    return awaitInstance.run(str, () => {
       return this.initConnect(false).query(str).then(data => {
-        data = this.bufferToString(data);
-        process.nextTick(() => {
-          this.queryWaiting[str].forEach(deferred => deferred.resolve(data));
-          delete this.queryWaiting[str];
-        })
-        return data;
+        return this.bufferToString(data);
       });
-    }else{
-      let deferred = think.defer();
-      this.queryWaiting[str].push(deferred);
-      return deferred.promise;
-    }
+    })
   }
   /**
    * 将buffer转为string
@@ -903,7 +848,6 @@ module.exports = class {
    * @return {[type]}     [description]
    */
   execute(str){
-    this.setSql(str);
     return this.initConnect(true).query(str).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;

@@ -969,7 +969,7 @@ think.cache = (name, value, options = {}) => {
  *   type: 'xxx',
  *   value: 'xxx',
  *   required: true,
- *   _default: 'xxx',
+ *   default: 'xxx',
  *   args: []
  *   msg: ''
  * }, ...]
@@ -1013,8 +1013,8 @@ think.valid = (name, callback) => {
     }else{
       if (!item.value) {
         //set default value
-        if (item._default) {
-          ret[item.name] = item._default;
+        if (item.default) {
+          ret[item.name] = item.default;
         }
         return;
       }
@@ -1078,6 +1078,7 @@ thinkCache.BASE = 'base';
 thinkCache.TEMPLATE = 'template';
 thinkCache.VIEW = 'view';
 thinkCache.DB = 'db';
+thinkCache.TABLE = 'table';
 thinkCache.SESSION = 'session';
 thinkCache.REDIS = 'redis';
 thinkCache.MEMCACHE = 'memcache';
