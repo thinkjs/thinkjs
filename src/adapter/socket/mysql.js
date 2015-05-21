@@ -16,6 +16,7 @@ module.exports = class extends think.adapter.socket {
     //alias password config
     config.password = config.pwd;
     config.database = config.name;
+    //merge config
     this.config = think.extend({
       host: '127.0.0.1',
       port: 3306,

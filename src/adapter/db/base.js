@@ -632,7 +632,8 @@ module.exports = class {
   parseSql(sql, options = {}){
     return sql.replace(/\%([A-Z]+)\%/g, (a, type) => {
       type = type.toLowerCase();
-      return this['parse' + ucfirst(type)](options[type] || '', options);
+      let ucfirst = type[0].toUpperCase() + type.slice(1);
+      return this['parse' + ucfirst](options[type] || '', options);
     }).replace(/__([A-Z_-]+)__/g, (a, b) => {
       return '`' + this.config.prefix + b.toLowerCase() + '`';
     });
@@ -764,7 +765,7 @@ module.exports = class {
       cache = options.cache;
     }
     
-    if (!isEmpty(cache) && think.config('db_cache_on')) {
+    if (!think.isEmpty(cache) && think.config('db_cache_on')) {
       let key = cache.key || md5(sql);
       return S(key, () => this.query(sql), cache);
     }

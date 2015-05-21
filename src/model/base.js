@@ -96,22 +96,25 @@ module.exports = class extends think.base {
    * @return {}       []
    */
   async getTableFields(table = this.getTableName()){
-    if(!think.isEmpty(this.fields)){
+    if(this.isFieldGetted){
       return this.fields;
     }
+    let fields;
     if(tableFields[table]){
-      this.fields = tableFields[table];
+      fields = tableFields[table];
     }else{
-      let fields = await this.getDbInstance().getFields(table);
-      //get primary key
-      for(let name in fields){
-        if(fields[name].primary){
-          this.pk = name;
-          break;
-        }
-      }
-      this.fields = tableFields[table] = fields;
+      fields = tableFields[table] = await this.getDbInstance().getFields(table);
     }
+    //get primary key
+    for(let name in fields){
+      if(fields[name].primary){
+        this.pk = name;
+        break;
+      }
+    }
+    //merge use set fields config
+    this.fields = think.extend({}, fields, this.fields);
+    this.isFieldGetted = true;
     return this.fields;
   }
   /**
