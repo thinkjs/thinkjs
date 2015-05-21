@@ -30,6 +30,10 @@ module.exports = class extends think.base {
         this[key] = options[key];
       }
     }
+    if(think.isObject(name)){
+      config = name;
+      name = '';
+    }
     this.db = null;
     this.name = name;
     this.config = config;
@@ -58,7 +62,7 @@ module.exports = class extends think.base {
     let configKey = this.getConfigKey();
     if (!dbInstances[configKey]) {
       let db = think.adapter('db', this.config.type);
-      dbInstances[configKey] = new db(config);
+      dbInstances[configKey] = new db(this.config);
     }
     this.db = dbInstances[configKey];
     return this.db;

@@ -2,7 +2,8 @@
 
 let querystring = require('querystring');
 
-let awaitInstance = new think.require('await');
+let wait = think.require('await')
+let awaitInstance = new wait();
 
 //数据库连接
 let dbConnections = {};
@@ -105,7 +106,7 @@ module.exports = class {
    * @return {[type]}            [description]
    */
   getConnection(index, callback, data){
-    let key = md5(JSON.stringify(this.config));
+    let key = think.md5(JSON.stringify(this.config));
     if (!(key in dbConnections)) {
       dbConnections[key] = [];
     }
@@ -604,7 +605,7 @@ module.exports = class {
       }
       page = parseInt(page, 10) || 1;
       if (!listRows) {
-        listRows = isNumberString(options.limit) ? options.limit : C('db_nums_per_page');
+        listRows = isNumberString(options.limit) ? options.limit : think.config('db_nums_per_page');
       }
       let offset = listRows * (page - 1);
       options.limit = offset + ',' + listRows;
@@ -617,7 +618,7 @@ module.exports = class {
    * @return {[type]}         [description]
    */
   buildSelectSql(options){
-    options = this.pageToLimit(options);
+    //options = this.pageToLimit(options);
     let sql = this.parseSql(this.selectSql, options);
     sql += this.parseLock(options.lock);
     return sql;
@@ -763,7 +764,7 @@ module.exports = class {
       cache = options.cache;
     }
     
-    if (!isEmpty(cache) && C('db_cache_on')) {
+    if (!isEmpty(cache) && think.config('db_cache_on')) {
       let key = cache.key || md5(sql);
       return S(key, () => this.query(sql), cache);
     }
@@ -830,7 +831,7 @@ module.exports = class {
    * @return {[type]}      [description]
    */
   bufferToString(data){
-    if (!C('db_buffer_tostring') || !think.isArray(data)) {
+    if (!think.config('db_buffer_tostring') || !think.isArray(data)) {
       return data;
     }
     for(let i = 0, length = data.length; i < length; i++){

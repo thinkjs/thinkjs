@@ -13,6 +13,9 @@ module.exports = class extends think.adapter.socket {
    * @return {}        []
    */
   init(config){
+    //alias password config
+    config.password = config.pwd;
+    config.database = config.name;
     this.config = think.extend({
       host: '127.0.0.1',
       port: 3306,

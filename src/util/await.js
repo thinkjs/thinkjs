@@ -30,13 +30,13 @@ module.exports = class {
       this.queue[key] = [];
       return Promise.resolve(fn()).then(data => {
         process.nextTick(() => {
-          this.queue.forEach(deferred => deferred.resolve(data));
+          this.queue[key].forEach(deferred => deferred.resolve(data));
           delete this.queue[key];
         })
         return data;
       }).catch(err => {
         process.nextTick(() => {
-          this.queue.forEach(deferred => deferred.reject(err));
+          this.queue[key].forEach(deferred => deferred.reject(err));
           delete this.queue[key];
         })
         return Promise.reject(err);

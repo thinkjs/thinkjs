@@ -190,13 +190,13 @@ think.lookClass = (name, type, module) => {
       }
       // find from common module
       module = think.mini ? think.config('default_module') : think.dirname.common;
-      clsPath = `${module}/${type}/${name}`;
-      cls = think.require(clsPath, true);
-      if (cls) {
-        return cls;
-      }
-      // find from sys class
-      return think.require(`${type}_${name}`);
+      let list = [
+        `${module}/${type}/${name}`,
+        `${type}_${name}`,
+        `${type}_base`
+      ];
+      list.some(item => cls = think.require(item, true))
+      return cls;
   }
 }
 /**
@@ -272,9 +272,9 @@ think.safeRequire = file => {
   try{
     return require(file);
   }catch(e){
-    if (think.debug) {
+    //if (think.debug) {
       console.error(e.stack);
-    }
+    //}
   }
   return null;
 }
@@ -426,7 +426,7 @@ think._hook = {};
  * @param  {String} name []
  * @return {}      []
  */
-think.hook = (name, http = {}, data) => {
+think.hook = function(name, http = {}, data) {
   //get hook data
   if (arguments.length === 1) {
     return think._hook[name] || [];
@@ -466,7 +466,7 @@ think.hook = (name, http = {}, data) => {
  */
 let middleware = null;
 think._middleware = {};
-think.middleware = (superClass, methods, data) => {
+think.middleware = function(superClass, methods, data) {
   let length = arguments.length;
   let prefix = 'middleware_';
   // register functional middleware
@@ -508,14 +508,12 @@ think.middleware = (superClass, methods, data) => {
   return middleware(superClass, methods);
 }
 
-
-
 /**
  * create, register, call adapter
  * @param  {String} name []
  * @return {void}      []
  */
-think.adapter = (type, name, fn) => {
+think.adapter = function(type, name, fn){
   //load sys adapter
   think.loadAdapter();
 
@@ -738,7 +736,7 @@ think.http = (req, res) => {
     http = think.require('http');
   }
   //for cli request
-  if (arguments.length === 1) {
+  if (res === undefined) {
     let data = think._http(req);
     req = data.req;
     res = data.res;
@@ -890,7 +888,7 @@ think.model = (superClass, methods, module) => {
   if (think.isString(superClass) && isConfig) {
     methods = think.extend({}, think.config('db'), methods);
     let cls = think.lookClass(superClass, 'model', module);
-    return cls(methods);
+    return new cls(superClass, methods);
   }
   //create model
   return think._model(superClass, methods);
@@ -926,16 +924,13 @@ think.service = (superClass, methods, module) => {
  * @return {}      []
  */
 think._message = {};
-think.message = (type, data) => {
-  if (!think.isArray(data)) {
-    data = [].slice.call(arguments, 1);
-  }
+think.message = (type, ...data) => {
   let msg = think._message[type];
   if (!msg) {
     return;
   }
   data.unshift(msg);
-  return util.format.apply(util, data);
+  return util.format(...data);
 }
 /**
  * get or set cache
