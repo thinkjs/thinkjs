@@ -10,7 +10,7 @@ let tableFields = thinkCache(thinkCache.TABLE);
  * model base class
  * @type {Class}
  */
-module.exports = class extends think.base {
+module.exports = class {
   /**
    * init
    * @param  {} name   []
@@ -25,7 +25,7 @@ module.exports = class extends think.base {
       trueTableName: '',
       fields: {}
     }
-    //if user model is set, can't be override
+    //if is set in user model, can't be override
     for(let key in options){
       if(this[key] === undefined){
         this[key] = options[key];
@@ -156,39 +156,24 @@ module.exports = class extends think.base {
     if (key === undefined) {
       return this;
     }
-    let options = this._getCacheOptions(key, timeout);
+    let options;
+    if(!think.isObject(key)){
+      if(think.isNumber(key)){
+        timeout = key;
+        key = '';
+      }
+      let cache = this.config.cache;
+      options = {
+        key: key,
+        timeout: timeout || cache.timeout,
+        type: cache.type,
+        path: cache.path
+      }
+    }else{
+      options = key;
+    }
     this._options.cache = options;
     return this;
-  }
-  /**
-   * 获取缓存的选项
-   * @param  {[type]} key     [description]
-   * @param  {[type]} timeout [description]
-   * @return {[type]}         [description]
-   */
-  _getCacheOptions(key, timeout, type){
-    if (think.isObject(key)) {
-      return key;
-    }
-    if (isNumber(key)) {
-      timeout = key;
-      key = '';
-    }
-    //如果key为true，那么使用sql的md5值
-    if (key === true) {
-      key = '';
-    }
-    let cacheType = type === undefined ? C('db_cache_type') : type;
-    let options = {
-      key: key,
-      timeout: timeout || C('db_cache_timeout'),
-      type: cacheType,
-      gcType: 'dbCache'
-    }
-    if (cacheType === 'File') {
-      options.cache_path = C('db_cache_path');
-    }
-    return options;
   }
   /**
    * set limit options
@@ -298,7 +283,7 @@ module.exports = class extends think.base {
     if (!this._options.join) {
       this._options.join = [];
     }
-    if (isArray(join)) {
+    if (think.isArray(join)) {
       this._options.join = this._options.join.concat(join);
     }else{
       this._options.join.push(join);
@@ -460,21 +445,21 @@ module.exports = class extends think.base {
     let field, value, checkData = [];
     for(field in data){
       if (field in this.fields) {
-        value = extend({}, this.fields[field], {name: field, value: data[field]});
+        value = think.extend({}, this.fields[field], {name: field, value: data[field]});
         checkData.push(value);
       }
     }
-    if (isEmpty(checkData)) {
+    if (think.isEmpty(checkData)) {
       return data;
     }
     let result = Valid(checkData);
-    if (isEmpty(result)) {
+    if (think.isEmpty(result)) {
       return data;
     }
     let json_message = JSON.stringify(result);
     let err = new Error(json_message.slice(1, -1));
     err.json_message = json_message;
-    return getPromise(err, true);
+    return Promise.reject(err, true);
   }
   /**
    * before add
@@ -814,18 +799,38 @@ module.exports = class extends think.base {
     field = field || await this.getPk();
     return this.getField('COUNT(' + field + ') AS thinkjs_count', true);
   }
+  /**
+   * get sum
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
   async sum(field){
     field = field || await this.getPk();
     return this.getField('SUM(' + field + ') AS thinkjs_sum', true);
   }
+  /**
+   * get min value
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
   async min(field){
     field = field || await this.getPk();
     return this.getField('MIN(' + field + ') AS thinkjs_min', true);
   }
+  /**
+   * get max valud
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
   async max(field){
     field = field || await this.getPk();
     return this.getField('MAX(' + field + ') AS thinkjs_max', true);
   }
+  /**
+   * get value average
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
   async avg(field){
     field = field || await this.getPk();
     return this.getField('AVG(' + field + ') AS thinkjs_avg', true);
