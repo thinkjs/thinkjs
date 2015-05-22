@@ -868,39 +868,3 @@ module.exports = class {
     }
   }
 }
-
-/**
- * 解析配置
- * @param  {[type]} config [description]
- * @return {[type]}        [description]
- */
-// Db.parseConfig = function(config){
-//   'use strict';
-//   config = config || {};
-//   let conf = {
-//     type: config.db_type || C('db_type'),
-//     user: config.db_user || C('db_user'),
-//     password: config.db_pwd || C('db_pwd'),
-//     host: config.db_host || C('db_host'),
-//     port: config.db_port || C('db_port'),
-//     database: config.db_name || C('db_name'),
-//     charset: config.db_charset || C('db_charset'),
-//     rw_separate: config.db_rw_separate || false,
-//     master_num: config.db_master_num || 1,
-//     slave_no: config.db_slave_no
-//   };
-//   conf = extend({}, C('db_ext_config'), config, conf);
-//   return conf;
-// };
-// /**
-//  * 根据配置获取对应的数据库实例
-//  * @param  {[type]} config [description]
-//  * @return {[type]}        [description]
-//  */
-// Db.getInstance = function(config){
-//   'use strict';
-//   let conf = this.parseConfig(config);
-//   let instance = thinkRequire(ucfirst(conf.type) + 'Db')(conf);
-//   instance.dbType = conf.type.toUpperCase();
-//   return instance;
-// };

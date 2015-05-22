@@ -14,6 +14,7 @@ module.exports = class extends think.adapter.db {
   init(config){
     super.init(config);
     this.transTimes = 0;
+    this.engine = ''; //mysql engine
   }
   /**
    * connect mysql
@@ -28,38 +29,54 @@ module.exports = class extends think.adapter.db {
    * @param  {String} table [table name]
    * @return {Promise}       []
    */
-  getFields(table){
-    return this.query(`SHOW COLUMNS FROM ${this.parseKey(table)}`).then(data => {
-      let ret = {};
-      data.forEach(item => {
-        ret[item.Field] = {
-          'name': item.Field,
-          'type': item.Type,
-          'required': item.Null === '',
-          'default': item.Default,
-          'primary': item.Key === 'PRI',
-          'unique': item.Key === 'UNI',
-          'auto_increment': item.Extra.toLowerCase() === 'auto_increment'
-        };
-      });
-      return ret;
-    })
+  async getFields(table){
+    let data = await this.query(`SHOW COLUMNS FROM ${this.parseKey(table)}`);
+    let ret = {};
+    data.forEach(item => {
+      ret[item.Field] = {
+        'name': item.Field,
+        'type': item.Type,
+        'required': item.Null === '',
+        'default': item.Default,
+        'primary': item.Key === 'PRI',
+        'unique': item.Key === 'UNI',
+        'auto_increment': item.Extra.toLowerCase() === 'auto_increment'
+      };
+    });
+    return ret;
   }
   /**
    * get table engine
    * @param  {String} table [table name]
    * @return {Promise}       []
    */
-  getEngine(table){
-    return this.query(`SHOW TABLE STATUS WHERE name='${this.parseKey(table)}'`).then(data => {
-      return data[0].Engine.toLowerCase();
-    })
+  async getEngine(table){
+    if(this.engine){
+      return this.engine;
+    }
+    let data = await this.query(`SHOW TABLE STATUS WHERE name='${this.parseKey(table)}'`);
+    let engine = this.engine = data[0].Engine.toLowerCase();
+    return engine;
+  }
+  /**
+   * check table support transaction
+   * @param  {String} table []
+   * @return {Promise}       []
+   */
+  async supportTrans(table){
+    let engine = await this.getEngine(table);
+    let engines = ['innodb', 'bdb'];
+    return engines.indexOf(engine) > -1;
   }
   /**
    * start transaction
    * @return {Promise} []
    */
-  startTrans(){
+  async startTrans(table){
+    let support = this.supportTrans(table);
+    if(!support){
+      return Promise.reject('table engine is not support transaction');
+    }
     if (this.transTimes === 0) {
       this.transTimes++;
       return this.execute('START TRANSACTION');
