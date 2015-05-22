@@ -23,9 +23,7 @@ module.exports = class extends think.controller.base {
     let data;
     if (this.id) {
       let pk = await this.model.getPk();
-      data = await this.model.where({
-        [pk]: this.id
-      }).find();
+      data = await this.model.where({[pk]: this.id}).find();
       return this.success(data);
     }
     data = await this.model.select();
@@ -54,9 +52,7 @@ module.exports = class extends think.controller.base {
       return this.fail('params error');
     }
     let pk = await this.model.getPk();
-    let rows = await this.model.where({
-      [pk]: this.id
-    }).delete();
+    let rows = await this.model.where({[pk]: this.id}).delete();
     return this.success({affectedRows: rows});
   }
   /**
@@ -73,9 +69,7 @@ module.exports = class extends think.controller.base {
     if (think.isEmpty(data)) {
       return this.fail('data is empty');
     }
-    let rows = await this.model.where({
-      [pk]: this.id
-    }).update(data);
+    let rows = await this.model.where({[pk]: this.id}).update(data);
     return this.success({affectedRows: rows});
   }
   /**
@@ -83,6 +77,6 @@ module.exports = class extends think.controller.base {
    * @return {Promise} []
    */
   __call(){
-    return this.fail('action `' + action + '` is not allowed');
+    return this.fail(`action is not allowed`);
   }
 }

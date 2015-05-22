@@ -197,7 +197,7 @@ module.exports = class {
    */
   loadMVC(){
     let types = {
-      model: [],
+      model: ['base', 'relation'],
       controller: ['base', 'rest'],
       logic: ['base'],
       service: ['base']

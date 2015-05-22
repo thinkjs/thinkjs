@@ -23,4 +23,9 @@ babel --loose all --optional runtime --stage 0 src/ --out-dir lib/ --watch
 上面代码表示用监听的方式将src/目录编译到lib/目录下，这样文件有修改后会自动编译。
 
 
+### 规范
+
+* 必须使用2个空格作为缩进
+* 必须写较为完善的注释，注释使用英文
+* git commit的message也必须是英文
 
