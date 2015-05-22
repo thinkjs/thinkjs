@@ -25,6 +25,7 @@ module.exports = class extends think.base {
       trueTableName: '',
       fields: {}
     }
+    //if user model is set, can't be override
     for(let key in options){
       if(this[key] === undefined){
         this[key] = options[key];
@@ -126,12 +127,8 @@ module.exports = class extends think.base {
     let fields = await this.getTableFields();
     let result = [];
     for(let name in fields){
-      if(fields[name].unique){
-        if(!data){
-          return name;
-        }else if(data[name]){
-          return name;
-        }
+      if(fields[name].unique && (!data || data[name])){
+        return name;
       }
     }
   }

@@ -18,7 +18,6 @@
   "dependencies": {
     "swig": "1.4.2",
     "multiparty": "4.0.0",
-    "es6-promise": "2.0.0",
     "mime": "1.2.11",
     "mysql": "2.5.3",
     "websocket-driver": "0.4.0",
