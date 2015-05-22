@@ -644,14 +644,14 @@ module.exports = class {
    * @return {[type]} [description]
    */
   updateInc(field, step = 1){
-    return this.updateField(field, ['exp', field + '+' + step]);
+    return this.updateField(field, ['exp', `${field}+${step}`]);
   }
   /**
    * update dec
    * @return {} []
    */
   updateDec(field, step = 1){
-    return this.updateField(field, ['exp', field + '-' + step]);
+    return this.updateField(field, ['exp', `${field}-${step}`]);
   }
   /**
    * parse where options
@@ -660,15 +660,10 @@ module.exports = class {
   parseWhereOptions(options = {}){
     if (think.isNumber(options) || think.isString(options)) {
       options += '';
-      let where = {};
-      if (options.indexOf(',') > -1) {
-        where[this.pk] = ['IN', options];
-      }else{
-        where[this.pk] = options;
-      }
-      options = {
-        where: where
+      let where = {
+        [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
       };
+      return {where: where};
     }
     return options;
   }

@@ -348,11 +348,20 @@ module.exports = class {
         }
       };
       for(let file in require.cache){
-        let flag = retainFiles.some(item => fn(item, file));
-        if (!flag) {
-          //remove require cache
-          require.cache[file] = null;
+        if(retainFiles.some(item => fn(item, file))){
+          continue;
         }
+        let mod = require.cache[file];
+        //remove from parent module
+        if(mod && mod.parent){
+          mod.parent.children.splice(mod.parent.children.indexOf(mod), 1);
+        }
+        //remove children
+        if(mod && mod.children){
+          mod.children.length = 0;
+        }
+        //remove require cache
+        require.cache[file] = null;
       }
       this.load();
     }, 1000);
