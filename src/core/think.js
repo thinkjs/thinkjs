@@ -940,22 +940,14 @@ think.message = (type, ...data) => {
  * @return {}       []
  */
 think.cache = (name, value, options = {}) => {
-  let type = options.type || 'base';
-  let instance = think.adapter('cache', type)(options);
-  let isFn = think.isFunction(instance.__before);
-  let promise = Promise.resolve(isFn ? instance.__before(name) : undefined);
-  return promise.then(() => {
-    //get cache
-    if (value === undefined) {
-      return instance.get(name);
-    }
-    //remove cache
-    else if (value === null) {
-      return instance.rm(name);
-    }
-    //set cache
-    return instance.set(name, value);
-  })
+  let cls = think.adapter('cache', options.type || 'base');
+  let instance = new cls(options);
+  if(value === undefined){
+    return instance.get(name);
+  } else if(value === null){
+    return instance.rm(name);
+  }
+  return instance.set(name, value);
 }
 /**
  * valid data

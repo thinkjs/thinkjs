@@ -892,7 +892,7 @@ module.exports = class {
    */
   async startTrans(){
     let db = this.getDbInstance();
-    await db.commit(this.getTableName());
+    await db.commit();
     return db.startTrans(this.getTableName());
   }
   /**

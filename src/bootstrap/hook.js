@@ -98,7 +98,7 @@ think.middleware('send_error', (http, err) => {
   http.res.statusCode = code;
   http.type('text/html; charset=' + think.config('encoding'));
   if (think.debug) {
-    return http.end('<pre style="font-size:14px;line-height:20px;">' + msg + '</pre>');
+    return http.end(`<pre style="font-size:14px;line-height:20px;">${msg}</pre>`);
   }
   http.sendTime();
   //output error file
