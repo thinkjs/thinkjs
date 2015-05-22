@@ -12,6 +12,14 @@ let tableFields = thinkCache(thinkCache.TABLE);
  */
 module.exports = class {
   /**
+   * constructor
+   * @param  {} args []
+   * @return {}         []
+   */
+  constructor(...args){
+    this.init(...args);
+  }
+  /**
    * init
    * @param  {} name   []
    * @param  {} config []
@@ -20,6 +28,7 @@ module.exports = class {
   init(name = '', config = {}){
     let options = {
       pk: 'id',
+      name: '',
       tablePrefix: '',
       tableName: '',
       trueTableName: '',
@@ -36,10 +45,13 @@ module.exports = class {
       name = '';
     }
     this.db = null;
-    this.name = name;
     this.config = config;
     this._data = {};
     this._options = {};
+    //model name
+    if(name){
+      this.name = name;
+    }
     //table prefix
     if (this.config.prefix && !this.tablePrefix) {
       this.tablePrefix = this.config.prefix;
