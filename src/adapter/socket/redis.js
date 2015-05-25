@@ -1,69 +1,112 @@
-var redis = require('redis');
-module.exports = think.adapter({
-  init: function(config){
-    this.config = config || {};
-    this.handle = null;
+'use strict';
+
+let redis = require('redis');
+
+module.exports = class {
+  constructor(...args){
+    this.init(...args);
+  }
+  /**
+   * init
+   * @param  {Object} config []
+   * @return {}        []
+   */
+  init(config){
+    this.config = config;
+    this.connection = null;
     this.deferred = null;
-  },
-  connect: function(){
-    if (this.handle) {
+  }
+  /**
+   * connect redis
+   * @return {Promise} []
+   */
+  connect(){
+    if (this.connection) {
       return this.deferred.promise;
     }
-    var self = this;
-    var deferred = getDefer();
-    var port = this.config.port || '6379';
-    var host = this.config.host || '127.0.0.1';
-    var connection = redis.createClient(port, host, this.config);
+    let deferred = think.defer();
+    let connection = redis.createClient(this.config.port, this.config.host, this.config);
     if (this.config.password) {
-      connection.auth(this.config.password, function(){});
+      connection.auth(this.config.password, () => {});
     }
-    connection.on('ready', function(){
+    connection.on('ready', () => {
       deferred.resolve();
     })
-    connection.on('connect', function(){
+    connection.on('connect', () => {
       deferred.resolve();
     })
-    connection.on('error', function(){
+    connection.on('error', () => {
       self.close();
     })
-    connection.on('end', function(){
+    connection.on('end', () => {
       self.close();
     })
-    this.handle = connection;
-    if (this.deferred) {
-      this.deferred.reject(new Error('connection closed'));
-    }
+    this.connection = connection;
     this.deferred = deferred;
     return this.deferred.promise;
-  },
-  close: function(){
-    if (this.handle) {
-      this.handle.end();
-      this.handle = null;
-    }
-  },
-  wrap: function(name, data){
-    var self = this;
-    return this.connect().then(function(){
-      var deferred = getDefer();
-      if (!isArray(data)) {
-        data = data === undefined ? [] : [data];
-      }
-      data.push(function(err, data){
-        if (err) {
-          deferred.reject(err);
-        }else{
-          deferred.resolve(data);
-        }
-      })
-      self.handle[name].apply(self.handle, data);
-      return deferred.promise;
-    })
-  },
-  get: function(name){
-    return this.wrap('get', [name]);
-  },
-  set: function(name, value){
-    return this.wrap('set', [name, value]);
   }
-});
+  /**
+   * add event
+   * @param  {String}   event    []
+   * @param  {Function} callback []
+   * @return {}            []
+   */
+  on(event, callback){
+    this.connect().then(() => {
+      this.connection.on(event, callback);
+    })
+  }
+  /**
+   * wrap
+   * @param  {String}    name []
+   * @param  {Array} data []
+   * @return {Promise}         []
+   */
+  async wrap(name, ...data){
+    await this.connect();
+    let deferred = think.defer();
+    data.push((err, data) => err ? deferred.reject(err) : deferred.resolve(data));
+    this.connection[name].apply(this.connection, data);
+    return deferred.promise;
+  }
+  /**
+   * get data
+   * @param  {String} name []
+   * @return {Promise}      []
+   */
+  get(name){
+    return this.wrap('get', name);
+  }
+  /**
+   * set data
+   * @param {String} name    []
+   * @param {String} value   []
+   * @param {Number} timeout []
+   */
+  set(name, value, timeout = this.config.timeout){
+    let setP = [this.wrap('set', name, value)];
+    if (timeout) {
+      setP.push(this.expire(name, timeout));
+    }
+    return Promise.all(setP);
+  }
+  /**
+   * set data expire
+   * @param  {String} name    []
+   * @param  {Number} timeout []
+   * @return {Promise}         []
+   */
+  expire(name, timeout){
+    return this.wrap('expire', name, timeout);
+  }
+  /**
+   * close
+   * @return {} []
+   */
+  close(){
+    if (this.connection) {
+      this.connection.end();
+      this.connection = null;
+    }
+  }
+}
