@@ -21,8 +21,8 @@ module.exports = class extends think.adapter.db {
    * @param  {Object} config []
    * @return {}        []
    */
-  connect(config = {}){
-    return new mysqlSocket(config);
+  connect(){
+    return new mysqlSocket(this.config);
   }
   /**
    * get table info

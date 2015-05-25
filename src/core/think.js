@@ -939,13 +939,21 @@ think.message = (type, ...data) => {
  * @param  {Mixed} value [cache value]
  * @return {}       []
  */
-think.cache = (name, value, options = {}) => {
+think.cache = async (name, value, options = {}) => {
   let cls = think.adapter('cache', options.type || 'base');
   let instance = new cls(options);
   if(value === undefined){
     return instance.get(name);
   } else if(value === null){
     return instance.rm(name);
+  } else if(think.isFunction(value)){
+    let data = instance.get(name);
+    if(data !== undefined){
+      return data;
+    }
+    data = await think.co.wrap(value)(name);
+    await instance.set(name, data);
+    return data;
   }
   return instance.set(name, value);
 }

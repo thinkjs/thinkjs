@@ -5,20 +5,10 @@ let querystring = require('querystring');
 let wait = think.require('await')
 let awaitInstance = new wait();
 
-//数据库连接
-let dbConnections = {};
-//获取数据配置的基本信息
-let getDbItem = function(value, index){
-  value = value || "";
-  if (think.isString(value)) {
-    value = value.split(',');
-  }
-  return index !== undefined ? (value[index] || value[0]) : value;
-}
 
 /**
- * 数据库基类
- * @return {[type]} [description]
+ * db base class
+ * @type {Class}
  */
 module.exports = class {
   /**
@@ -51,71 +41,6 @@ module.exports = class {
       'IN': 'IN',
       'NOTIN': 'NOT IN'
     }
-  }
-  /**
-   * 初始化数据库连接
-   * @param  {[type]} master [description]
-   * @return {[type]}        [description]
-   */
-  initConnect(master){
-    let hosts = getDbItem(this.config.host);
-    //单个host
-    if (hosts.length === 1) {
-      return this.getConnection(0, this.connect, [this.config]);
-    }
-    return this.multiConnect(master);
-  }
-  /**
-   * 分布式连接
-   * @return {[type]} [description]
-   */
-  multiConnect(master){
-    let config = this.config;
-    let index = 0;
-    let hostnameLength = getDbItem(config.host).length;
-    //读写分离
-    if (config.rw_separate) {
-      if (master) {
-        index = rand(0, config.master_num - 1);
-      }else{
-        if (isNumber(config.slave_no)) {
-          index = config.slave_no;
-        }else{
-          index = rand(config.master_num, hostnameLength - 1);
-        }
-      }
-    }else{
-      index = rand(0, hostnameLength - 1);
-    }
-    let dbConfig = {
-      user: getDbItem(config.user, index),
-      password: getDbItem(config.password, index),
-      host: getDbItem(config.host, index),
-      port: getDbItem(config.port, index),
-      database: getDbItem(config.database, index),
-      charset: getDbItem(config.charset, index),
-    }
-    dbConfig = extend({}, config, dbConfig);
-    return this.getConnection(index, this.connect, [dbConfig]);
-  }
-  /**
-   * 获取数据连接句柄
-   * @param  {[type]}   index    [description]
-   * @param  {Function} callback [description]
-   * @param  {[type]}   data     [description]
-   * @return {[type]}            [description]
-   */
-  getConnection(index, callback, data){
-    let key = think.md5(JSON.stringify(this.config));
-    if (!(key in dbConnections)) {
-      dbConnections[key] = [];
-    }
-    if (dbConnections[key][index]) {
-      return dbConnections[key][index];
-    }
-    let connection = callback.apply(this, data);
-    this.linkId = dbConnections[key][index] = connection;
-    return connection;
   }
   /**
    * parse set
@@ -388,9 +313,9 @@ module.exports = class {
     return '';
   }
   /**
-   * 解析limit，对非法的limit进行过滤
-   * @param  {[type]} limit [description]
-   * @return {[type]}       [description]
+   * parse limit
+   * @param  {String} limit []
+   * @return {}       []
    */
   parseLimit(limit){
     if (!limit) {
@@ -406,9 +331,9 @@ module.exports = class {
     return ' LIMIT ' + data.join(',');
   }
   /**
-   * 解析join
-   * @param  {[type]} join [description]
-   * @return {[type]}      [description]
+   * parse join
+   * @param  {String} join []
+   * @return {String}      []
    */
   parseJoin(join, options){
     if (!join) {
@@ -423,7 +348,7 @@ module.exports = class {
         'inner': ' INNER JOIN '
       };
       join.forEach(val => {
-        if (think.isString(val)) {//字符串，直接拼接
+        if (think.isString(val)) {
           let hasJoin = val.toLowerCase().indexOf(' join ') > -1;
           joinStr += (hasJoin ? ' ' : defaultJoin) + val;
         }else if (think.isObject(val)) {
@@ -439,7 +364,6 @@ module.exports = class {
           }
           ret.forEach(item => {
             let joinType = joins[item.join] || item.join || defaultJoin;
-            // join 表中包含空格、tab等，认为是sql语句使用情况，与buildSql结合使用
             let table = item.table.trim();
             if( /\s+/.test(table) ) {
               if( table.indexOf('(') !== 0 ) {
@@ -453,11 +377,9 @@ module.exports = class {
             if (item.as) {
               joinStr += ' AS ' + item.as;
             }
-            //ON条件
             if (item.on) {
               let mTable = options.alias || options.table;
               let jTable = item.as || table;
-              //多个＝条件
               if (think.isObject(item.on)) {
                 let where = [];
                 for(let key in item.on){
@@ -485,9 +407,9 @@ module.exports = class {
     return joinStr;
   }
   /**
-   * 解析order
-   * @param  {[type]} order [description]
-   * @return {[type]}       [description]
+   * parse order
+   * @param  {String} order []
+   * @return {String}       []
    */
   parseOrder(order){
     if (think.isArray(order)) {
@@ -504,9 +426,9 @@ module.exports = class {
     return order ? (' ORDER BY ' + order) : '';
   }
   /**
-   * 解析group
-   * @param  {[type]} group [description]
-   * @return {[type]}       [description]
+   * parse group
+   * @param  {String} group []
+   * @return {String}       []
    */
   parseGroup(group){
     if (!group) {
@@ -534,33 +456,33 @@ module.exports = class {
     return ' GROUP BY ' + result.join(',');
   }
   /**
-   * 解析having
-   * @param  {[type]} having [description]
-   * @return {[type]}        [description]
+   * parse having
+   * @param  {String} having []
+   * @return {}        []
    */
   parseHaving(having){
     return having ? (' HAVING ' + having) : '';
   }
   /**
-   * 解析注释，一般情况下用不到
-   * @param  {[type]} comment [description]
-   * @return {[type]}         [description]
+   * parse comment
+   * @param  {String} comment []
+   * @return {String}         []
    */
   parseComment(comment){
     return comment ? (' /* ' + comment + '*/') : '';   
   }
   /**
-   * 解析Distinct
-   * @param  {[type]} distinct [description]
-   * @return {[type]}          [description]
+   * parse distinct
+   * @param  {} distinct []
+   * @return {}          []
    */
   parseDistinct(distinct){
     return distinct ? ' Distinct ' : '';
   }
   /**
-   * 解析Union
-   * @param  {[type]} union [description]
-   * @return {[type]}       [description]
+   * parse union
+   * @param  {String} union []
+   * @return {}       []
    */
   parseUnion(union){
     if (!union) {
@@ -578,9 +500,9 @@ module.exports = class {
     }
   }
   /**
-   * 解析Lock
-   * @param  {[type]} lock [description]
-   * @return {[type]}      [description]
+   * parse lock
+   * @param  {Boolean} lock []
+   * @return {}      []
    */
   parseLock(lock){
     if (!lock) {
@@ -589,42 +511,17 @@ module.exports = class {
     return ' FOR UPDATE ';
   }
   /**
-   * 将page转化为sql里的limit
-   * @return {[type]} [description]
-   */
-  pageToLimit(options){
-    options = options || {};
-    //根据page生成limit
-    if ('page' in options) {
-      let page = options.page + '';
-      let listRows = 0;
-      if (page.indexOf(',') > -1) {
-        page = page.split(',');
-        listRows = page[1] | 0;
-        page = page[0];
-      }
-      page = parseInt(page, 10) || 1;
-      if (!listRows) {
-        listRows = isNumberString(options.limit) ? options.limit : think.config('db_nums_per_page');
-      }
-      let offset = listRows * (page - 1);
-      options.limit = offset + ',' + listRows;
-    }
-    return options;
-  }
-  /**
    * 拼接select查询语句
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
   buildSelectSql(options){
-    //options = this.pageToLimit(options);
     let sql = this.parseSql(this.selectSql, options);
     sql += this.parseLock(options.lock);
     return sql;
   }
   /**
-   * 解析sql语句
+   * parse sql
    * @param  {[type]} sql     [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
@@ -671,7 +568,6 @@ module.exports = class {
    */
   insertAll(data, options, replace){
     let fields = Object.keys(data[0]);
-    
     fields = fields.map(item => this.parseKey(item)).join(',');
     let values = data.map(item => {
       let value = [];
@@ -748,33 +644,28 @@ module.exports = class {
     return this.execute(sql);
   }
   /**
-   * 数据查询
-   * @todo 返回是个promise，缓存调用需要修改
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * select
+   * @param  {Object} options []
+   * @return {Promise}         []
    */
-  select(options){
-    let sql, cache;
-    if (think.isString(options) && options.toUpperCase().indexOf('SELECT ') > -1) {
-      sql = options;
-      cache = arguments[1];
-    }else{
-      options = options || {};
-      this.model = options.model;
+  select(options = {}, cache){
+    let sql;
+    if(think.isObject(options)){
       sql = this.buildSelectSql(options);
       cache = options.cache;
+    }else{
+      sql = options;
     }
-    
-    if (!think.isEmpty(cache) && think.config('db_cache_on')) {
-      let key = cache.key || md5(sql);
-      return S(key, () => this.query(sql), cache);
+    if (!think.isEmpty(cache) && this.config.cache.on) {
+      let key = cache.key || think.md5(sql);
+      return think.cache(key, () => this.query(sql), cache);
     }
     return this.query(sql);
   }
   /**
-   * 转义字符
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
+   * escape string
+   * @param  {String} str []
+   * @return {String}     []
    */
   escapeString(str){
     if (!str) {
@@ -800,39 +691,38 @@ module.exports = class {
     });
   }
   /**
-   * 获取上次的sql语句
-   * @param  {[type]} model [description]
-   * @return {[type]}       [description]
+   * get last sql
+   * @return {String}       []
    */
-  getLastSql(model){
-    return model ? this.modelSql[model] : this.sql;
+  getLastSql(){
+    return this.sql;
   }
   /**
-   * 获取最后插入的id
-   * @return {[type]} [description]
+   * get last insert id
+   * @return {String} []
    */
   getLastInsertId(){
     return this.lastInsertId;
   }
   /**
-   * 查询一条sql
+   * query string
    * @param  string str
    * @return promise
    */
   query(str){
     return awaitInstance.run(str, () => {
-      return this.initConnect(false).query(str).then(data => {
+      return this.connect().query(str).then(data => {
         return this.bufferToString(data);
       });
     })
   }
   /**
-   * 将buffer转为string
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
+   * buffer to string
+   * @param  {Array} data []
+   * @return {Array}      []
    */
   bufferToString(data){
-    if (!think.config('db_buffer_tostring') || !think.isArray(data)) {
+    if (!this.config.buffer_tostring || !think.isArray(data)) {
       return data;
     }
     for(let i = 0, length = data.length; i < length; i++){
@@ -845,12 +735,12 @@ module.exports = class {
     return data;
   }
   /**
-   * 执行一条sql, 返回影响的行数
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
+   * execute sql
+   * @param  {String} str []
+   * @return {}     []
    */
   execute(str){
-    return this.initConnect(true).query(str).then(data => {
+    return this.connect().query(str).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }
@@ -858,8 +748,8 @@ module.exports = class {
     });
   }
   /**
-   * 关闭连接
-   * @return {[type]} [description]
+   * close connect
+   * @return {} []
    */
   close(){
     if (this.linkId) {
