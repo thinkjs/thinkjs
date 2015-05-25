@@ -6,7 +6,7 @@ var path = require('path');
 
 var APP_PATH = path.dirname(__dirname);
 
-thinkjs({
+new thinkjs({
   APP_PATH: APP_PATH,
   debug: false
 }).run();
@@ -36,46 +36,44 @@ describe('core/think', function() {
     };
 
     c = think.Class(obj);
-    o = c(http);
+    o = new c(http);
     assert.equal(o.foo, obj.foo);
     assert.equal(o.http, http);
     assert.equal(c.super_, think.Base);
 
     c = think.Class(obj, true);
-    o = c();
+    o = new c();
     assert.equal(o.foo, obj.foo);
     assert.equal(typeof c.super_, 'undefined');
 
     c = think.Class(fun, obj);
-    o = c(bar);
+    o = new c(bar);
     assert.equal(o.foo, foo);
     assert.equal(o.bar, bar);
 
     e = think.Class('controller');
 
-    c = e();
-    o = c();
+    c = new e();
+    o = new c();
     //assert();
 
-    c = e(obj);
-    o = c();
+    c = new e(obj);
+    o = new c();
 
-    c = e('');
-    o = c();
+    c = new e('');
+    o = new c();
 
-    assert.deepEqual(think.Class(fun, obj), e(fun, obj));
+    assert.deepEqual(think.Class(fun, obj), new e(fun, obj));
 
   });
 
-  it('think.getModulePath', function() {
-    think.mini = true;
-    assert.equal(think.getModulePath(), APP_PATH);
-    assert.equal(think.getModulePath('module'), APP_PATH);
+  // it('think.getPath', function() {
+  //   assert.equal(think.getPath(), APP_PATH);
+  //   assert.equal(think.getPath('module'), APP_PATH);
 
-    think.mini = false;
-    assert.equal(think.getModulePath(), APP_PATH + '/common');
-    assert.equal(think.getModulePath('module'), APP_PATH + '/module');
-  });
+  //   assert.equal(think.getPath(), APP_PATH + '/common');
+  //   assert.equal(think.getPath('module'), APP_PATH + '/module');
+  // });
 
   it('think.require', function() {
 
@@ -91,12 +89,12 @@ describe('core/think', function() {
     };
 
     assert.strictEqual(think.safeRequire('/xxx'), null);
-    assert.strictEqual(error, null);
+    //assert.strictEqual(error, null);
 
     think.debug = false;
 
     assert.strictEqual(think.safeRequire('xxx'), null);
-    assert.strictEqual(error, null);
+    //assert.strictEqual(error, null);
 
     think.debug = true;
 

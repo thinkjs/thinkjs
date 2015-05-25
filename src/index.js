@@ -2,6 +2,7 @@
 
 let fs = require('fs');
 let path = require('path');
+let child_process = require('child_process');
 
 require('./core/think.js');
 
@@ -384,7 +385,22 @@ module.exports = class {
    * @return {Promise} []
    */
   install(){
-    return Promise.resolve();
+    let cmd = 'npm install es6-promise';
+    let deferred = think.defer();
+    console.log('install es6-promise start');
+    child_process.exec(cmd, {
+      cwd: think.THINK_PATH
+    }, (err, stdout, stderr) => {
+      console.log(err, stderr)
+      if(err || stderr){
+        console.log('install es6-promise error')
+        deferred.reject(err || stderr);
+      }else{
+        console.log('instance es6-promise end')
+        deferred.resolve(stdout);
+      }
+    })
+    return deferred.promise;
   }
   /**
    * run
