@@ -2,10 +2,7 @@
 
 let redis = require('redis');
 
-module.exports = class {
-  constructor(...args){
-    this.init(...args);
-  }
+module.exports = class extends think.adapter.socket {
   /**
    * init
    * @param  {Object} config []
