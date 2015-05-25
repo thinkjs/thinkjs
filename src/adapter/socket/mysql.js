@@ -97,6 +97,9 @@ module.exports = class extends think.adapter.socket {
       }else{
         deferred.resolve(rows);
       }
+      if(think.cli){
+        this.close();
+      }
     });
     return deferred.promise;
   }

@@ -44,7 +44,7 @@ module.exports = class {
       config = name;
       name = '';
     }
-    this.db = null;
+    this._db = null;
     this.config = config;
     this._data = {};
     this._options = {};
@@ -68,17 +68,17 @@ module.exports = class {
    * get db instance
    * @return {Object} []
    */
-  getDbInstance(){
-    if (this.db) {
-      return this.db;
+  db(){
+    if (this._db) {
+      return this._db;
     }
     let configKey = this.getConfigKey();
     if (!dbInstances[configKey]) {
       let db = think.adapter('db', this.config.type);
       dbInstances[configKey] = new db(this.config);
     }
-    this.db = dbInstances[configKey];
-    return this.db;
+    this._db = dbInstances[configKey];
+    return this._db;
   }
   /**
    * get model name
@@ -116,7 +116,7 @@ module.exports = class {
     if(tableFields[table]){
       fields = tableFields[table];
     }else{
-      fields = tableFields[table] = await this.getDbInstance().getFields(table);
+      fields = tableFields[table] = await this.db().getFields(table);
     }
     //get primary key
     for(let name in fields){
@@ -149,7 +149,7 @@ module.exports = class {
    * @return {Promise} []
    */
   getLastSql(){
-    return this.getDbInstance().getLastSql();
+    return this.db().getLastSql();
   }
   /**
    * get primary key
@@ -174,13 +174,7 @@ module.exports = class {
         timeout = key;
         key = '';
       }
-      let cache = this.config.cache;
-      options = {
-        key: key,
-        timeout: timeout || cache.timeout,
-        type: cache.type,
-        path: cache.path
-      }
+      options = think.extend({}, this.config.cache, {key, timeout})
     }else{
       options = key;
     }
@@ -348,7 +342,7 @@ module.exports = class {
    */
   async buildSql(options){
     options = await this.parseOptions(options);
-    return '( ' + this.getDbInstance().buildSelectSql(options).trim() + ' )';
+    return '( ' + this.db().buildSelectSql(options).trim() + ' )';
   }
   /**
    * parse options
@@ -857,7 +851,7 @@ module.exports = class {
    */
   async query(sql, ...args){
     sql = this.parseSql(sql, args);
-    let data = await this.getDbInstance().select(sql, this._options.cache);
+    let data = await this.db().select(sql, this._options.cache);
     this._options = {};
     return data;
   }
@@ -869,7 +863,7 @@ module.exports = class {
    */
   execute(sql, ...args){
     sql = this.parseSql(sql, args);
-    return this.getDbInstance().execute(sql);
+    return this.db().execute(sql);
   }
   /**
    * parse sql
@@ -891,7 +885,7 @@ module.exports = class {
    * @return {Promise} []
    */
   async startTrans(){
-    let db = this.getDbInstance();
+    let db = this.db();
     await db.commit();
     return db.startTrans(this.getTableName());
   }
@@ -900,14 +894,14 @@ module.exports = class {
    * @return {Promise} []
    */
   commit(){
-    return this.getDbInstance().commit();
+    return this.db().commit();
   }
   /**
    * rollback transaction
    * @return {Promise} []
    */
   rollback(){
-    return this.getDbInstance().rollback();
+    return this.db().rollback();
   }
   /**
    * set data

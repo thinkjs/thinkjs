@@ -15,7 +15,7 @@ module.exports = class extends think.model.base {
     /**
      * @example
      'profile': {
-        type: 1, //relation type
+        type: think.model.HAS_ONE, //relation type
         model: 'profile', //model name
         name: 'profile', //data name
         key: 'id', 
@@ -159,7 +159,7 @@ module.exports = class extends think.model.base {
   async _getManyToManyRelation(data, mapOpts, options){
     let where = this.parseRelationWhere(data, mapOpts);
     let sql = 'SELECT %s, a.%s FROM %s as a, %s as b %s AND a.%s=b.%s %s';
-    let field = this.getDbInstance().parseField(mapOpts.field).split(',').map(item => `b.${item}`).join(',');
+    let field = this.db().parseField(mapOpts.field).split(',').map(item => `b.${item}`).join(',');
     let pk = await mapOpts.model.getPk();
     let table = mapOpts.rTable || this.getRelationTableName(mapOpts.model);
     let table1 = mapOpts.model.getTableName();
@@ -167,7 +167,7 @@ module.exports = class extends think.model.base {
     let rkey = mapOpts.rfKey || (mapOpts.model.getModelName() + '_id');
     let where2 = mapOpts.where ? (' AND ' + this.db.parseWhere(mapOpts.where).trim().slice(6)) : '';
     sql = this.parseSql(sql, field, mapOpts.fKey, table, table1, where1, rkey, pk, where2);
-    let mapData = await this.getDbInstance().select(sql, options.cache);
+    let mapData = await this.db().select(sql, options.cache);
     return this.parseRelationData(data, mapData, mapOpts, true);
   }
   /**
@@ -341,7 +341,7 @@ module.exports = class extends think.model.base {
     }
   }
   /**
-   * 一对一属于
+   * belongs to
    * @param  {[type]} data [description]
    * @return {[type]}      [description]
    */
