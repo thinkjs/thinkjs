@@ -122,6 +122,10 @@ module.exports = {
     path: '',
     file_ext: '.html'
   },
+  token: {
+    name: '__TOKEN__', //name in session
+    length: 32 //token length
+  }
   memcache: {
     host: '127.0.0.1',
     port: 11211

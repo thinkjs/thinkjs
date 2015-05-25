@@ -80,25 +80,25 @@ module.exports = class extends think.base {
   isJsonp(name){
     return this.http.isJsonp(name);
   }
-  // token(token){
-  //   let tokenName = this.config('token_name');
-  //   let self = this;
-  //   if (token) {
-  //     return this.session(tokenName).then(function(value){
-  //       return value === token;
-  //     })
-  //   }else{
-  //     return this.session(tokenName).then(function(token){
-  //       if (token) {
-  //         return token;
-  //       }
-  //       token = thinkRequire('Session').uid(32);
-  //       return self.session(tokenName, token).then(function(){
-  //         return token;
-  //       })
-  //     })
-  //   }
-  // }
+  /**
+   * get or check token
+   * @param  {String} token []
+   * @return {String | Boolean}       []
+   */
+  async token(token){
+    let tokenConfig = this.config('token');
+    let tokenValue = await this.session(tokenConfig.name);
+    if (token) {
+      return tokenValue === token;
+    }else{
+      if(tokenValue){
+        return tokenValue;
+      }
+      token = think.uuid(tokenConfig.length);
+      await this.session(tokenConfig.name, token);
+      return token;
+    }
+  }
   /**
    * get get params
    * @param  {String} name [query name]
