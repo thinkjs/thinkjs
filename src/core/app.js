@@ -119,7 +119,7 @@ module.exports = class extends think.base {
       try{
         await this.dispatcher();
         //set module config
-        this.http._config = think.getModuleConfig(this.http.module);
+        this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
         await this.hook('app_begin');
         await this.exec();
         await this.hook('app_end');

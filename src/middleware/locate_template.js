@@ -1,8 +1,8 @@
 'use strict';
 /**
  * find template file path
- * @param  {Array}  
- * @return {}
+ * @param  {String}  
+ * @return {Class}
  */
 module.exports = class extends think.middleware.base {
   /**
@@ -18,6 +18,8 @@ module.exports = class extends think.middleware.base {
     if (!templateFile) {
       return pathPrefix + http.controller + file_depr + http.action + file_ext;
     }
+    //replace : to /
+    templateFile = templateFile.replace(/\:/g, '/');
     // this.display('detail')
     // this.display('index/detail')
     // this.display('admin/index/detail')

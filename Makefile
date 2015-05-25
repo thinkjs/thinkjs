@@ -4,9 +4,11 @@ TIMEOUT = 10000
 MOCHA_OPTS = --recursive
 ISTANBUL = ./node_modules/.bin/istanbul
 MOCHA = ./node_modules/mocha/bin/_mocha
+BABEL = ./node_modules/.bin/babel-node
 
 install:
 	@npm install
+	@$(BABEL) src/ --out-dir lib/
 
 test: install
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha \

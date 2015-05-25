@@ -216,7 +216,7 @@ let Valid = module.exports = {
    * @param  {String} value []
    * @return {}       []
    */
-  field: value =>{
+  field: value => {
     return value.split(',').map(item => {
       return item === '*' || Valid.regexp(item, /^\w+$/);
     })

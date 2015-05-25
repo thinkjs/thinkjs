@@ -86,7 +86,7 @@ module.exports = class {
    * @param  {Object} options [model options]
    * @return {Object}         [model instance]
    */
-  model(name = 'base', options){
+  model(name = 'base', options = {}){
     options = think.extend({}, this.config('db'), options);
     return think.model(name, options, this.http.module)
   }
