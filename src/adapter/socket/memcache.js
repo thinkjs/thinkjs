@@ -27,6 +27,12 @@ module.exports = class extends EventEmitter {
     super(...args);
     this.init(...args);
   }
+  /**
+   * init
+   * @param  {Number} port     [memcache port]
+   * @param  {String} hostname [memcache hostname]
+   * @return {}          []
+   */
   init(port, hostname){
     EventEmitter.call(this);
     this.port = port || 11211;
@@ -35,6 +41,10 @@ module.exports = class extends EventEmitter {
     this.callbacks = []; 
     this.handle = null; 
   }
+  /**
+   * connect memcache
+   * @return {} []
+   */
   connect(){
     if (this.handle) {
       return this;
@@ -86,6 +96,10 @@ module.exports = class extends EventEmitter {
     this.promise = deferred.promise;
     return this;
   }
+  /**
+   * parse data
+   * @return {} []
+   */
   handleData(){
     while(this.buffer.length > 0){
       let result = this.getHandleResult(this.buffer);
@@ -117,7 +131,8 @@ module.exports = class extends EventEmitter {
     }
     let callback = this.callbacks[0];
     if (callback && callback.type) {
-      return this['handle' + ucfirst(callback.type)](buffer);
+      let ucfirst = callback.type[0].toUpperCase() + callback.type.slice(1).toLowerCase();
+      return this['handle' + ucfirst](buffer);
     }
     return false;
   }
@@ -161,7 +176,7 @@ module.exports = class extends EventEmitter {
     let callback = (error, value) => {
       return error ? deferred.reject(error) : deferred.resolve(value);
     }
-    this.promise.then(function(){
+    this.promise.then(() => {
       this.callbacks.push({type: type, callback: callback});
       this.handle.write(query + CRLF);
     });
@@ -183,12 +198,10 @@ module.exports = class extends EventEmitter {
   version(){
     return this.query('version', 'version');
   }
-  increment(key, step){
-    step = step || 1;
+  increment(key, step = 1){
     return this.query('incr ' + key + ' ' + step, 'simple');
   }
-  decrement(key, step){
-    step = step || 1;
+  decrement(key, step = 1){
     return this.query('decr ' + key + ' ' + step, 'simple');
   }
   set(key, value, lifetime, flags){
@@ -206,6 +219,10 @@ module.exports = class extends EventEmitter {
   prepend(key, value, lifetime, flags){
     return this.store(key, value, 'prepend', lifetime, flags);
   }
+  /**
+   * close connect
+   * @return {} []
+   */
   close(){
     if (this.handle && this.handle.readyState === 'open') {
       this.handle.end();
