@@ -28,4 +28,5 @@ babel --loose all --optional runtime --stage 0 src/ --out-dir lib/ --watch
 * 必须使用2个空格作为缩进
 * 必须写较为完善的注释，注释使用英文
 * git commit的message也必须是英文
+* 代码必须经过`eslint`检测（通过`npm install -g eslint babel-eslint`安装，然后eslint file.js来检测）
 
