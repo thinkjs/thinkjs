@@ -16,12 +16,12 @@ let getFn = (value, config) => {
   }
   let msg = think.message('CONFIG_NOT_FUNCTION', config);
   throw new Error(msg);
-}
+};
 /**
  * config transform
  * @type {Object}
  */
-module.exports = {
+export default {
   post: {
     json_content_type: value => {
       if (think.isString(value)) {
@@ -42,7 +42,7 @@ module.exports = {
       let obj = {};
       value.forEach(item => {
         obj[item] = item;
-      })
+      });
       return obj;
     }
     if (!think.isObject(value)) {
@@ -82,6 +82,6 @@ module.exports = {
         item = item.replace(/\//g, '\\');
       }
       return item;
-    })
+    });
   }
-}
+};

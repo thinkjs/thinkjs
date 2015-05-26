@@ -2,7 +2,7 @@
  * message
  * @type {Object}
  */
-module.exports = {
+export default {
   CONTROLLER_NOT_FOUND: 'controller `%s` not found. url is `%s`.',
   CONTROLLER_INVALID: 'controller `%s` is not valid. url is `%s`',
   ACTION_NOT_FOUND: 'action `%s` not found. url is `%s`',
@@ -21,4 +21,4 @@ module.exports = {
   FIELD_KEY_NOT_VALID: 'field `%s` in where condition is not valid',
   DATA_EMPTY: 'data can not be empty',
   MISS_WHERE_CONDITION: 'miss where condition'
-}
+};

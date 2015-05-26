@@ -28,16 +28,16 @@ export default class extends think.adapter.socket {
     }
     connection.on('ready', () => {
       deferred.resolve();
-    })
+    });
     connection.on('connect', () => {
       deferred.resolve();
-    })
+    });
     connection.on('error', () => {
-      self.close();
-    })
+      this.close();
+    });
     connection.on('end', () => {
-      self.close();
-    })
+      this.close();
+    });
     this.connection = connection;
     this.deferred = deferred;
     return this.deferred.promise;
@@ -51,7 +51,7 @@ export default class extends think.adapter.socket {
   on(event, callback){
     this.connect().then(() => {
       this.connection.on(event, callback);
-    })
+    });
   }
   /**
    * wrap

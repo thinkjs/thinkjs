@@ -3,7 +3,7 @@
  * @type {Object}
  */
 let root = think.THINK_LIB_PATH;
-module.exports = {
+export default {
   base: `${root}/core/base.js`,
   app: `${root}/core/app.js`,
   http: `${root}/core/http.js`,

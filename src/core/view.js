@@ -47,7 +47,7 @@ export default class extends think.base {
   async display(templateFile, charset, contentType){
     try{
       await this.hook('view_init');
-      await this.fetch(templateFile);
+      let content = await this.fetch(templateFile);
       await this.render(content, charset, contentType);
       await this.hook('view_end', content);
     }catch(err){
@@ -76,14 +76,13 @@ export default class extends think.base {
   checkTemplateExist(templateFile, inView){
     let cacheData = thinkCache(thinkCache.TEMPLATE);
     if (templateFile in cacheData) {
-      return true
+      return true;
     }
     if (!inView && think.isFile(templateFile)) {
       //add template file to cache
       cacheData[templateFile] = true;
       return true;
     }
-    
   }
   /**
    * fetch template file content
@@ -106,13 +105,13 @@ export default class extends think.base {
       }
       return tVar[key].then((data) => {
         tVar[key] = data;
-      })
-    })
+      });
+    });
     await Promise.all(promises);
     let content = await this.hook('view_parse', {
       'var': tVar,
       'file': templateFile
-    })
+    });
     return this.hook('view_filter', content);
   }
 }

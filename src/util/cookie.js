@@ -92,4 +92,4 @@ export default {
     let str = val.slice(0, val.lastIndexOf('.'));
     return this.sign(str, secret) === val ? str : '';
   }
-}
+};

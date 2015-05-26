@@ -7,7 +7,7 @@ export default class {
    * @return {}         []
    */
   constructor(...args){
-    this.init(...args)
+    this.init(...args);
   }
   /**
    * init

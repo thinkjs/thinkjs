@@ -113,7 +113,7 @@ think.defer = () => {
  */
 think.isHttp = function(obj){
   return obj && think.isObject(obj.req) && think.isObject(obj.res);
-}
+};
 
 /**
  * alias co module to think.co
@@ -159,8 +159,8 @@ think.Class = (type, clean) => {
       }
     }
     return Class(superClass, methods);
-  }
-}
+  };
+};
 /**
  * look up class
  * @param  {String} type   [class type, model, controller, service]
@@ -194,10 +194,10 @@ think.lookClass = (name, type, module) => {
         `${type}_${name}`,
         `${type}_base`
       ];
-      list.some(item => cls = think.require(item, true))
+      list.some(item => cls = think.require(item, true));
       return cls;
   }
-}
+};
 /**
  * get common module path
  * think.getPath(undefined, think.dirname.controller)
@@ -223,7 +223,7 @@ think.getPath = (module = think.dirname.common, type = think.dirname.controller)
     case think.mode_module:
       return `${think.APP_PATH}/${module}/${type}`;
   }
-}
+};
 
 /**
  * require module
@@ -246,7 +246,7 @@ think.require = (name, flag) => {
     }
     think._aliasExport[name] = obj;
     return obj;
-  }
+  };
 
   if (think._alias[name]) {
     return load(name, think._alias[name]);
@@ -257,7 +257,7 @@ think.require = (name, flag) => {
   }
   let filepath = require.resolve(name);
   return load(filepath, filepath);
-}
+};
 /**
  * safe require
  * @param  {String} file []
@@ -276,7 +276,7 @@ think.safeRequire = file => {
     //}
   }
   return null;
-}
+};
 /**
  * prevent next process
  * @return {Promise} []
@@ -285,7 +285,7 @@ let preventMessage = 'PREVENT_NEXT_PROCESS';
 think.prevent = () => {
   let err = new Error(preventMessage);
   return Promise.reject(err);
-}
+};
 /**
  * check is prevent error
  * @param  {Error}  err [error message]
@@ -293,7 +293,7 @@ think.prevent = () => {
  */
 think.isPrevent = err => {
   return think.isError(err) && err.message === preventMessage;
-}
+};
 /**
  * log
  * @TODO
@@ -308,7 +308,7 @@ think.log = msg => {
     return;
   }
   console.log(msg);
-}
+};
 
 /**
  * think sys & common config
@@ -351,7 +351,7 @@ think.config = (name, value, data = think._config) => {
     }
     data[name[0]][name[1]] = value;
   }
-}
+};
 /**
  * modules config
  * @type {Object}
@@ -395,7 +395,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   config = think.transformConfig(config, transforms);
   think._moduleConfig[module] = config;
   return config;
-}
+};
 /**
  * transform config
  * @param  {Object} config []
@@ -414,7 +414,7 @@ think.transformConfig = (config, transforms) => {
     }
   }
   return config;
-}
+};
 /**
  * hook list
  * @type {Object}
@@ -453,10 +453,10 @@ think.hook = function(name, http = {}, data) {
       }
     }
     return http._middleware;
-  }
+  };
 
   return execMiddleware();
-}
+};
 /**
  * create or exec middleware
  * @param  {Function} superClass []
@@ -505,7 +505,7 @@ think.middleware = function(superClass, methods, data) {
   }
   // create middleware
   return middleware(superClass, methods);
-}
+};
 
 /**
  * create, register, call adapter
@@ -553,7 +553,7 @@ think.adapter = function(type, name, fn){
     return think.Class(type, true);
   }
   return think.Class(superClass, name);
-}
+};
 /**
  * load system & comon module adapter
  * @return {} []
@@ -579,9 +579,9 @@ think.loadAdapter = force => {
       if(cls){
         think.adapter[dir] = cls;
       }
-    })
-  })
-}
+    });
+  });
+};
 
 /**
  * module alias
@@ -613,9 +613,9 @@ think.alias = (type, paths, slash) => {
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
       think._alias[name] = `${path}/${file}`;
-    })
-  })
-}
+    });
+  });
+};
 /**
  * route list
  * @type {Array}
@@ -649,11 +649,11 @@ think.route = clear => {
     return fn().then((route) => {
       think._route = route || [];
       return think._route;
-    })
+    });
   }
   think._route = config || [];
   return think._route;
-}
+};
 /**
  * thinkjs timer list
  * @type {Object}
@@ -680,7 +680,7 @@ think.gc = instance => {
     }
     return instance.gc && instance.gc(Date.now());
   }, 3600 * 1000);
-}
+};
 /**
  * local ip
  * @type {String}
@@ -717,18 +717,18 @@ think._http = (data = {}) => {
     connection: {
       remoteAddress: data.ip || think.localIp
     }
-  }
+  };
   let empty = () => {};
   let res = {
     end: data.end || data.close || empty,
     write: data.write || data.send || empty,
     setHeader: empty
-  }
+  };
   return {
     req: req,
     res: res
-  }
-}
+  };
+};
 
 think.http = (req, res) => {
   if (!http) {
@@ -741,7 +741,7 @@ think.http = (req, res) => {
     res = data.res;
   }
   return (new http(req, res)).run();
-}
+};
 /**
  * get uuid
  * @param  {Number} length [uid length]
@@ -751,7 +751,7 @@ think.uuid = (length = 32) => {
   // length = length || 32;
   let str = crypto.randomBytes(Math.ceil(length * 0.75)).toString('base64').slice(0, length);
   return str.replace(/[\+\/]/g, '_');
-}
+};
 /**
  * start session
  * @param  {Object} http []
@@ -801,9 +801,9 @@ think.session = http => {
     timeout: sessionOptions.timeout
   });
   http.session = session;
-  http.on('afterEnd', () => session.flush && session.flush())
+  http.on('afterEnd', () => session.flush && session.flush());
   return session;
-}
+};
 /**
  * get module name
  * @param  {String} module []
@@ -814,7 +814,7 @@ think.getModule = module => {
     return think.config('default_module');
   }
   return module.toLowerCase();
-}
+};
 
 let nameReg = /^[A-Za-z\_]\w*$/;
 think.getController = controller => {
@@ -825,7 +825,7 @@ think.getController = controller => {
     return controller.toLowerCase();
   }
   return '';
-}
+};
 /**
  * get action
  * @param  {String} action [action name]
@@ -839,7 +839,7 @@ think.getAction = action => {
     return action;
   }
   return '';
-}
+};
 /**
  * create controller sub class
  * @type {Function}
@@ -854,7 +854,7 @@ think.controller = (superClass, methods, module) => {
   }
   //create sub controller class
   return think._controller(superClass, methods);
-}
+};
 /**
  * create logic class
  * @type {Function}
@@ -869,7 +869,7 @@ think.logic = (superClass, methods, module) => {
   }
   //create sub logic class
   return think._logic(superClass, methods);
-}
+};
 /**
  * create model sub class
  * @type {Function}
@@ -891,7 +891,7 @@ think.model = (superClass, methods, module) => {
   }
   //create model
   return think._model(superClass, methods);
-}
+};
 //model relation type
 think.model.HAS_ONE = 1;
 think.model.BELONG_TO = 2;
@@ -915,7 +915,7 @@ think.service = (superClass, methods, module) => {
   }
   //create sub service class
   return this._service(superClass, methods);
-}
+};
 /**
  * get error message
  * @param  {String} type [error type]
@@ -930,7 +930,7 @@ think.message = (type, ...data) => {
   }
   data.unshift(msg);
   return util.format(...data);
-}
+};
 /**
  * get or set cache
  * @param  {String} type  [cache type]
@@ -955,7 +955,7 @@ think.cache = async (name, value, options = {}) => {
     return data;
   }
   return instance.set(name, value);
-}
+};
 /**
  * valid data
  * [{

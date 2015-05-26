@@ -10,13 +10,12 @@ let ERRORS_LENGTH = ERRORS.length;
 
 //read line data
 let readLine = string => {
-  'use strict';
   let pos = string.indexOf(CRLF);
   if (pos > -1) {
     return string.substr(0, pos);
   }
   return string;
-}
+};
 
 /**
  * memcache socket class
@@ -175,7 +174,7 @@ module.exports = class extends EventEmitter {
     let deferred = think.defer();
     let callback = (error, value) => {
       return error ? deferred.reject(error) : deferred.resolve(value);
-    }
+    };
     this.promise.then(() => {
       this.callbacks.push({type: type, callback: callback});
       this.handle.write(query + CRLF);
@@ -188,7 +187,7 @@ module.exports = class extends EventEmitter {
   store(key, value, type, lifetime, flags){
     lifetime = lifetime || 0;
     flags = flags || 0;
-    let length  = Buffer.byteLength(value.toString());
+    let length = Buffer.byteLength(value.toString());
     let query = [type, key, flags, lifetime, length].join(' ') + CRLF + value;
     return this.query(query, 'simple');
   }
@@ -229,4 +228,4 @@ module.exports = class extends EventEmitter {
       this.handle = null;
     }
   }
-}
+};

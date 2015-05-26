@@ -6,7 +6,6 @@ import mysql from 'mysql';
  * mysql socket class
  * @return {} []
  */
-
 export default class extends think.adapter.socket {
   /**
    * init
@@ -43,7 +42,7 @@ export default class extends think.adapter.socket {
         }else{
           deferred.resolve(connection);
         }
-      })
+      });
       return deferred.promise;
     }
     if(this.config.connectionLimit){
@@ -62,14 +61,14 @@ export default class extends think.adapter.socket {
       }else{
         deferred.resolve(this.connection);
       }
-    })
+    });
     this.connection.on('error', () => {
       this.close();
     });
     //PROTOCOL_CONNECTION_LOST
     this.connection.on('end', () => {
       this.close();
-    })
+    });
     this.deferred = deferred;
     return deferred.promise;
   }
@@ -87,7 +86,7 @@ export default class extends think.adapter.socket {
     let data = {
       sql: sql,
       nestTables: nestTables
-    }
+    };
     //query timeout
     if(this.config.timeout){
       data.timeout = this.config.timeout;

@@ -17,7 +17,7 @@ think.middleware('parse_json_payload', http => {
       http._post = JSON.parse(http.payload);
     }catch(e){}
   }
-})
+});
 /**
  * output resource
  * @param  {Object} http    []
@@ -28,7 +28,7 @@ think.middleware('output_resource', (http, file) => {
   let stream = fs.createReadStream(file);
   stream.pipe(http.res);
   stream.on('end', () => http.end());
-})
+});
 /**
  * rewrite pathname, remove prefix & suffix
  * @param  {Object} http
@@ -48,7 +48,7 @@ think.middleware('rewrite_pathname', http => {
     pathname = pathname.substr(0, pathname.length - suffix.length);
   }
   http.pathname = pathname;
-})
+});
 /**
  * sub domain deploy
  * @param  {Object} http){} 
@@ -65,7 +65,7 @@ think.middleware('subdomain_deploy', http => {
     return;
   }
   http.pathname = value + '/' + http.pathname;
-})
+});
 /**
  * send error message
  * @param  {Object}  http
@@ -105,4 +105,4 @@ think.middleware('send_error', (http, err) => {
   let readStream = fs.createReadStream(error.file);
   readStream.pipe(http.res);
   readStream.on('end', () => http.end());
-})
+});
