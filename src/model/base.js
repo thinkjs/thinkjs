@@ -1,7 +1,8 @@
 'use strict';
 
-let util = require('util');
-let querystring = require('querystring');
+import * as util from 'util';
+import * as querystring from 'querystring';
+
 let valid = think.require('valid');
 
 let dbInstances = thinkCache(thinkCache.DB);
@@ -10,7 +11,7 @@ let tableFields = thinkCache(thinkCache.TABLE);
  * model base class
  * @type {Class}
  */
-module.exports = class {
+export default class {
   /**
    * constructor
    * @param  {} args []

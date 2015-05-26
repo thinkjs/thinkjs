@@ -1,12 +1,11 @@
 'use strict';
 
-let fs = require('fs');
-let path = require('path');
-let child_process = require('child_process');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as child_process from 'child_process';
+import {} from './core/think.js';
 
-require('./core/think.js');
-
-module.exports = class {
+export default class {
   /**
    * init
    * @param  {Object} options [project options]
@@ -409,7 +408,7 @@ module.exports = class {
   async run(){
     try{
       this.start();
-      await this.install();
+      //await this.install();
       await think.require('app').run();
     }catch(err){
       console.log(err.stack);

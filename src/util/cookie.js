@@ -1,11 +1,11 @@
 'use strict';
 
-let crypto = require('crypto');
+import * as crypto from 'crypto';
 /**
  * cookie
  * @type {Object}
  */
-module.exports = {
+export default {
   /**
    * parse cookie
    * @param  {String} str [cookie string]

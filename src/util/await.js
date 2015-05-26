@@ -3,7 +3,7 @@
  * waiting class
  * @type {}
  */
-module.exports = class {
+export default class {
   /**
    * constructor
    * @param  {} args []

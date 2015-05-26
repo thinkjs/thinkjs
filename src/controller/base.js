@@ -1,9 +1,9 @@
 'use strict';
 
-let fs = require('fs');
-let path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
-module.exports = class extends think.base {
+export default class extends think.base {
   /**
    * init
    * @return {void} []

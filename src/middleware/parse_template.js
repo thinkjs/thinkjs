@@ -6,7 +6,7 @@
  * @param  {Object} 
  * @return {Promise}         []
  */
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
   run(data){
     let file = data.file;
     this.http.tpl_file = file;

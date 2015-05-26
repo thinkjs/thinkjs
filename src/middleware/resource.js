@@ -1,12 +1,17 @@
 'use strict';
 
 let mime = require('mime');
+
 /**
  * resource check
  * @param  {}            
  * @return {}     []
  */
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
+  /**
+   * run
+   * @return {Promise} []
+   */
   async run(){
     if (!think.RESOURCE_PATH || !this.config('resource_on') || !this.http.pathname) {
       return false;
@@ -21,7 +26,7 @@ module.exports = class extends think.middleware.base {
     //resource exist
     if (think.isFile(file)) {
       let contentType = mime.lookup(file);
-      res.setHeader('Content-Type', contentType + '; charset=' + this.config('encoding'));
+      res.setHeader('Content-Type', `${contentType}; charset=${this.config('encoding')}`);
       await this.hook('resource_output', file);
     }else{
       if (pathname.indexOf('/') === -1) {

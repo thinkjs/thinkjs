@@ -1,14 +1,14 @@
 'use strict';
 
-let cluster = require('cluster');
-let fs = require('fs');
-let domain = require('domain');
-let os = require('os');
-let http = require('http');
+import * as cluster from 'cluster';
+import * as fs from 'fs';
+import * as domain from 'domain';
+import * as os from 'os';
+import * as http from 'http';
 
 let websocket = think.require('websocket');
 
-module.exports = class extends think.base {
+export default class extends think.base {
   /**
    * send error
    * @param  {Error} err []
@@ -139,7 +139,12 @@ module.exports = class extends think.base {
     //createServer callback
     let callback = async (req, res) => {
       let http = await think.http(req, res);
-      return new this(http).run();
+      try{
+        return new this(http).run();
+      }catch(e){
+        console.log(e.stack)
+      }
+      
     }
     //define createServer in application
     if (handle) {

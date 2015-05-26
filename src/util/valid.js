@@ -1,8 +1,8 @@
 'use strict';
 
-let net = require('net');
+import * as net from 'net';
 
-let Valid = module.exports = {
+let Valid = {
   /**
    * check value length
    * @param  {String} value []
@@ -222,3 +222,5 @@ let Valid = module.exports = {
     })
   }
 };
+
+export default Valid;

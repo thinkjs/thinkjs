@@ -1,6 +1,6 @@
 'use strict';
 
-let url = require('url');
+import * as url from 'url';
 
 /**
  * route rules:
@@ -14,7 +14,7 @@ let url = require('url');
  * ]
  */
 
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
   /**
    * run
    * @return {Promise} []

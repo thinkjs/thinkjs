@@ -3,6 +3,6 @@
  * base service
  * @type {Class}
  */
-module.exports = class extends think.base {
+export default class extends think.base {
   
 }

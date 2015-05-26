@@ -3,7 +3,7 @@
  * relation model
  * @type {Class}
  */
-module.exports = class extends think.model.base {
+export default class extends think.model.base {
   /**
    * init
    * @param  {String} name   []

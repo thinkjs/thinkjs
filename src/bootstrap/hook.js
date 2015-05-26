@@ -1,6 +1,6 @@
 'use strict';
 
-let fs = require('fs');
+import * as fs from 'fs';
 
 /**
  * parse payload

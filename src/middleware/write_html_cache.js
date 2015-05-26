@@ -1,13 +1,12 @@
 'use strict';
 
-let path = require('path');
-let fs = require('fs');
+import * as path from 'path';
 
 /**
  * write html cache
  * @type {Class}
  */
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
   /**
    * run
    * @param  {String} content [view content]

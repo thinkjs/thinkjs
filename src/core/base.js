@@ -4,7 +4,7 @@
  * @param  {Object} http 
  * @return {Class}   
  */
-module.exports = class {
+export default class {
   /**
    * constructor
    * @param  {Object} http []

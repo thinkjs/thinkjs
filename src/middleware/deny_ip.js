@@ -3,7 +3,7 @@
  * deny ip access
  * @type {}
  */
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
   async run(){
     let ips = this.config('deny_ip');
     if(think.isFunction(ips)){

@@ -4,19 +4,18 @@
  * wrap for request & response
  * @type {Object}
  */
-let querystring = require('querystring');
-let url = require('url');
-let EventEmitter = require('events').EventEmitter;
-let os = require('os');
-let path = require('path');
-let fs = require('fs');
+import * as querystring from 'querystring';
+import * as url from 'url';
+import {EventEmitter} from 'events';
+import * as os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as multiparty from 'multiparty';
+import * as mime from 'mime';
 
 let cookie = think.require('cookie');
-let multiparty = require('multiparty');
-let mime = require('mime');
 
-
-module.exports = class {
+export default class {
   /**
    * init method
    * @param  {Object} req [request]

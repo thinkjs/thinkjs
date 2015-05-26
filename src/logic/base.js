@@ -5,6 +5,6 @@
  * inherits from base controller
  * @type {Class}
  */
-module.exports = class extends think.controller.base {
+export default class extends think.controller.base {
 
 }

@@ -3,7 +3,7 @@
  * REST Base Controller
  * @return {} []
  */
-module.exports = class extends think.controller.base {
+export default class extends think.controller.base {
   /**
    * init
    * @param  {Object} http []

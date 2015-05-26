@@ -4,7 +4,7 @@
  * @param  {String}  
  * @return {Class}
  */
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
   /**
    * run
    * @param  {String} templateFile [template filepath]

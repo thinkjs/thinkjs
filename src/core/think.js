@@ -1,13 +1,12 @@
 'use strict';
 
-let fs = require('fs');
-let path = require('path');
-let util = require('util');
-let crypto = require('crypto');
-let querystring = require('querystring');
-
-let thinkit = require('thinkit');
-let co = require('co');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as util from 'util';
+import * as crypto from 'crypto';
+import * as querystring from 'querystring';
+import * as thinkit from 'thinkit';
+import * as co from 'co';
 
 /**
  * global think variable

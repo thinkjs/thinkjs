@@ -6,7 +6,7 @@ let fs = require('fs');
  * @param  {} )
  * @return {}     []
  */
-module.exports = class extends think.middleware.base {
+export default class extends think.middleware.base {
   /**
    * run
    * @return {} []
