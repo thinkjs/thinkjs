@@ -1,8 +1,8 @@
 'use strict';
 /**
  * Base Class
- * @param  {Object} http 
- * @return {Class}   
+ * @param  {Object} http
+ * @return {Class}
  */
 export default class {
   /**
@@ -88,7 +88,7 @@ export default class {
    */
   model(name = 'base', options = {}){
     options = think.extend({}, this.config('db'), options);
-    return think.model(name, options, this.http.module)
+    return think.model(name, options, this.http.module);
   }
   /**
    * get controller
@@ -97,8 +97,8 @@ export default class {
    * @return {Object}      []
    */
   controller(name){
-    let cls = think.lookClass(name, 'controller', this.http.module);
-    return new cls(this.http);
+    let Cls = think.lookClass(name, 'controller', this.http.module);
+    return new Cls(this.http);
   }
   /**
    * get service

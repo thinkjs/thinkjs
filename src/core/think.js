@@ -35,7 +35,7 @@ think.dirname = {
   common: 'common',
   bootstrap: 'bootstrap',
   local: 'local'
-}
+};
 /**
  * debug
  * @type {Boolean}
@@ -104,15 +104,15 @@ think.defer = () => {
     deferred.reject = reject;
   });
   return deferred;
-}
+};
 
 /**
  * check object is http object
- * @param  {Mixed}  http []
+ * @param  {Mixed}  obj []
  * @return {Boolean}      []
  */
-think.isHttp = function(http){
-  return http && think.isObject(http.req) && think.isObject(http.res);
+think.isHttp = function(obj){
+  return obj && think.isObject(obj.req) && think.isObject(obj.res);
 }
 
 /**
@@ -793,7 +793,7 @@ think.session = http => {
   if (type === 'base') {
     if (think.debug || think.config('cluster_on')) {
       type = 'file';
-      think.log("in debug or cluster mode, session can't use memory for storage, convert to File");
+      think.log('in debug or cluster mode, session can\'t use memory for storage, convert to File');
     }
   }
   let session = think.adapter('session', type)({
@@ -1030,12 +1030,12 @@ think.valid = (name, callback) => {
       let itemMsg = item.msg || think.message('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
     }
-  })
+  });
   return {
     msg: msg,
     data: ret
-  }
-}
+  };
+};
 
 
 /**

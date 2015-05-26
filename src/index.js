@@ -47,7 +47,7 @@ export default class {
         if (think.isFile(filepath + file)) {
           return true;
         }
-      })
+      });
       return flag ? think.mode_mini : think.mode_normal;
     }
     return think.mode_module;
@@ -64,7 +64,7 @@ export default class {
       APP_PATH,
       RESOURCE_PATH: ROOT_PATH,
       ROOT_PATH
-    }
+    };
   }
   /**
    * check node env
@@ -72,7 +72,7 @@ export default class {
    * @return {Boolean} []
    */
   checkEnv(){
-    
+    //
   }
   /**
    * get app module list
@@ -94,7 +94,7 @@ export default class {
         if (denyModuleList.indexOf(module) === -1) {
           return module;
         }
-      })
+      });
     }
     think.module = modules;
     return modules;
@@ -133,7 +133,7 @@ export default class {
     //load modules config
     modules.forEach(module => {
       think.getModuleConfig(module);
-    })
+    });
   }
   /**
    * load route
@@ -157,7 +157,7 @@ export default class {
     let paths = [
       `${think.THINK_LIB_PATH}/middleware`,
       `${think.getPath(undefined, think.dirname.middleware)}`
-    ]
+    ];
     think.alias('middleware', paths);
     //middleware base class
     think.middleware.base = think.require('middleware_base');
@@ -199,17 +199,17 @@ export default class {
       controller: ['base', 'rest'],
       logic: ['base'],
       service: ['base']
-    }
+    };
     for(let type in types){
       think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
       types[type].forEach(item => {
         think[type][item] = think.require(`${type}_${item}`);
-      })
+      });
       think.module.forEach(module => {
         let moduleType = `${module}/${type}`;
         let filepath = `${think.getPath(module, think.dirname[type])}/`;
         think.alias(moduleType, filepath, true);
-      })
+      });
     }
   }
   /**
@@ -259,8 +259,8 @@ export default class {
       let files = fs.readdirSync(item);
       files.forEach(file => {
         think.safeRequire(`${item}/${file}`);
-      })
-    })
+      });
+    });
   }
   /**
    * load template file
@@ -268,7 +268,7 @@ export default class {
    * @return {} []
    */
   loadTemplate(){
-    let data = {}, filepath;
+    let data = {};
 
     let add = filepath => {
       if (!think.isDir(filepath)) {
@@ -278,12 +278,11 @@ export default class {
       files.forEach(file => {
         let key = filepath + file;
         data[key] = true;
-      })
-    }
+      });
+    };
     think.module.forEach(module => {
-      filepath = think.getPath(module, think.dirname.view);
-      add(filepath);
-    })
+      add(think.getPath(module, think.dirname.view));
+    });
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**
@@ -303,9 +302,7 @@ export default class {
   load(){
     think._alias = {};
     think._aliasExport = {};
-    
     this.loadConfig();
-    
     this.loadBootstrap();
     this.loadRoute();
     this.loadAlias();
@@ -316,7 +313,6 @@ export default class {
     this.loadHook();
     this.loadTemplate();
     this.loadMessage();
-
     //load alias export at last
     //this.loadAliasExport();
   }
@@ -328,7 +324,7 @@ export default class {
     let timer = setInterval(() => {
       let time = Date.now();
       //auto clear interval when running more than 2 days
-      if (time - think.startTime >  2 * 24 * 3600 * 1000) {
+      if (time - think.startTime > 2 * 24 * 3600 * 1000) {
         think.log('file auto reload is stoped');
         clearInterval(timer);
         return;
@@ -388,15 +384,15 @@ export default class {
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
     }, (err, stdout, stderr) => {
-      console.log(err, stderr)
+      console.log(err, stderr);
       if(err || stderr){
-        console.log('install es6-promise error')
+        console.log('install es6-promise error');
         deferred.reject(err || stderr);
       }else{
-        console.log('instance es6-promise end')
+        console.log('instance es6-promise end');
         deferred.resolve(stdout);
       }
-    })
+    });
     return deferred.promise;
   }
   /**

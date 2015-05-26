@@ -56,7 +56,7 @@ export default class {
     if ('transfer-encoding' in this.req.headers) {
       return true;
     }
-    return this.req.headers['content-length'] | 0 > 0;
+    return (this.req.headers['content-length'] | 0) > 0;
   }
   /**
    * get form file post
@@ -85,7 +85,7 @@ export default class {
       }else{
         files[name] = value;
       }
-    })
+    });
     form.on('field', (name, value) => {
       this.http._post[name] = value;
     });
@@ -113,12 +113,12 @@ export default class {
       this.http.payload = Buffer.concat(buffers).toString();
       this.parseFormData().then(() => {
         deferred.resolve(this.http);
-      })
-    })
+      });
+    });
     this.req.on('error', () => {
       this.res.statusCode = 413;
       this.http.end();
-    })
+    });
     return deferred.promise;
   }
   /**
@@ -168,16 +168,16 @@ export default class {
     stream.on('error', () => {
       this.res.statusCode = 413;
       this.http.end();
-    })
+    });
     stream.on('close', () => {
       this.http._file.file = {
         fieldName: 'file',
         originalFilename: filename,
         path: filepath,
         size: fs.statSync(filepath).size
-      }
+      };
       deferred.resolve(this.http);
-    })
+    });
     return deferred.promise;
   }
   /**
@@ -449,7 +449,7 @@ export default class {
       options.timeout = -1000;
     }
     if (options.timeout !== 0) {
-      options.expires = new Date (Date.now() + options.timeout * 1000);
+      options.expires = new Date(Date.now() + options.timeout * 1000);
     }
     options.name = name;
     options.value = value;
@@ -487,7 +487,7 @@ export default class {
       [error.key]: 0,
       [error.msg]: message,
       data: data
-    }
+    };
     this.type(this.config('json_content_type'));
     this.end(obj);
   }
@@ -514,7 +514,7 @@ export default class {
         [error.key]: errno,
         [error.msg]: errmsg,
         data: data
-      }
+      };
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
@@ -617,6 +617,6 @@ export default class {
       this._end();
     }).catch(() => {
       this._end();
-    })
+    });
   }
 }

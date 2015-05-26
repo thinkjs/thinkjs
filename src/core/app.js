@@ -142,10 +142,9 @@ export default class extends think.base {
       try{
         return new this(http).run();
       }catch(e){
-        console.log(e.stack)
+        console.log(e.stack);
       }
-      
-    }
+    };
     //define createServer in application
     if (handle) {
       handle(callback, port, host, this);
@@ -211,7 +210,7 @@ export default class extends think.base {
         cluster.fork();
       }
       cluster.on('exit', worker => {
-        let err = new Error(think.message('WORKER_DIED', worker.process.pid))
+        let err = new Error(think.message('WORKER_DIED', worker.process.pid));
         think.log(err, 'worker');
         process.nextTick(() => cluster.fork());
       });
