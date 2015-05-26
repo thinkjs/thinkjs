@@ -721,9 +721,9 @@ export default class {
     return this.db.selectAdd(fields, data[0].table, data[1]);
   }
   /**
-   * 返回数据里含有count信息的查询
-   * @param  options  查询选项
-   * @param  pageFlag 当页面不合法时的处理方式，true为获取第一页，false为获取最后一页，undefined获取为空
+   * count select
+   * @param  options  
+   * @param  pageFlag 
    * @return promise         
    */
   async countSelect(options, pageFlag){
@@ -732,12 +732,18 @@ export default class {
       options = {};
     }
     options = await this.parseOptions(options);
+    let pk = await this.getPk();
+    let table = options.alias || this.getTableName();
+    //get count
     let count = await this.options({
       where: options.where,
       cache: options.cache,
       join: options.join,
-      alias: options.alias
-    }).count((options.alias || this.getTableName()) + '.' + this.getPk());
+      alias: options.alias,
+      table: options.table,
+      group: options.group
+    }).count(`${table}.${pk}`);
+    //get page options
     let pageOptions = {page: 1, num: this.config.nums_per_page};
     if(options.limit){
       pageOptions.page = parseInt((options.limit[0] / options.limit[1]) + 1);
@@ -753,8 +759,7 @@ export default class {
     if (!options.page) {
       options.page = pageOptions.page;
     }
-    let data = await this.select(options);
-    result.data = data;
+    result.data = await this.select(options);
     return result;
   }
   /**
