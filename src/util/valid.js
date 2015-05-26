@@ -209,7 +209,7 @@ let Valid = {
   order: value => {
     return value.split(',').map(item => {
       return Valid.regexp(item, /^\w+\s+(?:ASC|DESC)$/i);
-    })
+    });
   },
   /**
    * sql field
@@ -219,7 +219,7 @@ let Valid = {
   field: value => {
     return value.split(',').map(item => {
       return item === '*' || Valid.regexp(item, /^\w+$/);
-    })
+    });
   }
 };
 

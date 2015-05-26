@@ -14,4 +14,4 @@ export default class extends think.middleware.base {
     let cls = think.adapter('template', engine);
     return (new cls()).run(file, data.var);
   }
-};
+}

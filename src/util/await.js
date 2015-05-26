@@ -32,15 +32,15 @@ export default class {
         process.nextTick(() => {
           this.queue[key].forEach(deferred => deferred.resolve(data));
           delete this.queue[key];
-        })
+        });
         return data;
       }).catch(err => {
         process.nextTick(() => {
           this.queue[key].forEach(deferred => deferred.reject(err));
           delete this.queue[key];
-        })
+        });
         return Promise.reject(err);
-      })
+      });
     }else{
       let deferred = think.defer();
       this.queue[key].push(deferred);

@@ -1,6 +1,7 @@
 'use strict';
 
 import path from 'path';
+import fs from 'fs';
 
 /**
  * write html cache
