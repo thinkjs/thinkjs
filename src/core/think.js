@@ -51,9 +51,11 @@ think.port = 0;
  * @type {String}
  */
 think.cli = false;
-//mode list
+//mini mode, no module
 think.mode_mini = 0x0001;
+//normal mode
 think.mode_normal = 0x0002;
+//module mode
 think.mode_module = 0x0004;
 /**
  * app mode

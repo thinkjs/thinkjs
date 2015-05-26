@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "make test",
-    "compile": "babel src/ --out-dir lib/",
+    "compile": "./node_modules/.bin/babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
     "prepublish": "npm run compile"
   },
   "contributors": [
@@ -41,7 +41,8 @@
     "restful",
     "router",
     "app",
-    "api"
+    "api",
+    "es6"
   ],
   "repository": {
     "type": "git",
