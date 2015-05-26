@@ -34,7 +34,7 @@ export default class {
       tableName: '',
       trueTableName: '',
       fields: {}
-    }
+    };
     //if is set in user model, can't be override
     for(let key in options){
       if(this[key] === undefined){
@@ -138,7 +138,6 @@ export default class {
    */
   async getUniqueField(data){
     let fields = await this.getTableFields();
-    let result = [];
     for(let name in fields){
       if(fields[name].unique && (!data || data[name])){
         return name;
@@ -175,7 +174,7 @@ export default class {
         timeout = key;
         key = '';
       }
-      options = think.extend({}, this.config.cache, {key, timeout})
+      options = think.extend({}, this.config.cache, {key, timeout});
     }else{
       options = key;
     }
@@ -188,11 +187,11 @@ export default class {
    * @param  {Number} length []
    * @return {}        []
    */
-  limit(offset, length){
+  limit(offset, length = this.config.nums_per_page){
     if (offset === undefined) {
       return this;
     }
-    this._options.limit = length === undefined ? [offset] : [offset, length];
+    this._options.limit = [offset, length];
     return this;
   }
   /**
@@ -383,12 +382,12 @@ export default class {
     //field reverse
     if(options.field && options.fieldReverse){
       options.fieldReverse = false;
-      let optionsField = option.field;
+      let optionsField = options.field;
       options.field = fields.filter(item => {
         if(optionsField.indexOf(item) === -1){
           return item;
         }
-      })
+      });
     }
     return this._optionsFilter(options, fields);
   }
@@ -413,7 +412,7 @@ export default class {
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
       return parseFloat(value) || 0.0;
     }else if(fieldType.indexOf('bool') > -1){
-      return !! value;
+      return !!value;
     }
     return value;
   }
@@ -459,7 +458,7 @@ export default class {
     if (think.isEmpty(checkData)) {
       return data;
     }
-    let result = Valid(checkData);
+    let result = valid(checkData);
     if (think.isEmpty(result)) {
       return data;
     }
@@ -547,7 +546,7 @@ export default class {
     }
     let promises = data.map(item => {
       return this._beforeAdd(item);
-    })
+    });
     await Promise.all(promises);
     options = await this.parseOptions(options);
     await this.db.insertAll(data, options, replace);
@@ -593,7 +592,7 @@ export default class {
    * @return {[type]} [description]
    */
   async update(data, options){
-    data = extend({}, this._data, data);
+    data = think.extend({}, this._data, data);
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
@@ -739,7 +738,10 @@ export default class {
       join: options.join,
       alias: options.alias
     }).count((options.alias || this.getTableName()) + '.' + this.getPk());
-    let pageOptions = parsePage(options);
+    let pageOptions = {page: 1, num: this.config.nums_per_page};
+    if(options.limit){
+      pageOptions.page = parseInt((options.limit[0] / options.limit[1]) + 1);
+    }
     let totalPage = Math.ceil(count / pageOptions.num);
     if (think.isBoolean(pageFlag)) {
       if (pageOptions.page > totalPage) {
@@ -747,7 +749,7 @@ export default class {
       }
       options.page = pageOptions.page + ',' + pageOptions.num;
     }
-    result = think.extend({count: count, total: totalPage}, pageOptions);
+    let result = think.extend({count: count, total: totalPage}, pageOptions);
     if (!options.page) {
       options.page = pageOptions.page;
     }
@@ -779,16 +781,16 @@ export default class {
           }else{
             result[fItem].push(item[fItem]);
           }
-        })
+        });
         return one !== true;
-      })
+      });
       return result;
     }else{
       data = data.map(item => {
         for(let key in item){
           return item[key];
         }
-      })
+      });
       return one === true ? data[0] : data;
     }
   }
@@ -876,7 +878,7 @@ export default class {
     //replace table name
     return sql.replace(/__([A-Z]+)__/g, (a, b) => {
       if(b === 'TABLE'){
-        return '`' + this.getTableName() + '`'
+        return '`' + this.getTableName() + '`';
       }
       return '`' + this.tablePrefix + b.toLowerCase() + '`';
     });
