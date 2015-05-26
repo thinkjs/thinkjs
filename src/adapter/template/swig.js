@@ -6,7 +6,7 @@
  */
 let swig = require('swig');
 
-module.exports = class extends think.adapter.template {
+export default class extends think.adapter.template {
   /**
    * run
    * @param  {String} templateFile [template filepath]

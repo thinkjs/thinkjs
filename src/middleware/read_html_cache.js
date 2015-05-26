@@ -1,6 +1,6 @@
 'use strict';
 
-let fs = require('fs');
+import fs from 'fs';
 /**
  * read html cache
  * @param  {} )

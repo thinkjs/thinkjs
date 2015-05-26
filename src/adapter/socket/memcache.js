@@ -1,7 +1,7 @@
 'use strict';
 
-let net = require('net');
-let EventEmitter = require('events').EventEmitter;
+import net from 'net';
+import {EventEmitter} from 'events';
 
 let CRLF = '\r\n'; //line break
 let CRLF_LENGTH = CRLF.length;

@@ -1,6 +1,6 @@
 'use strict';
 
-import * as url from 'url';
+import url from 'url';
 
 /**
  * route rules:

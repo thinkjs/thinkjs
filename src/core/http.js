@@ -4,14 +4,14 @@
  * wrap for request & response
  * @type {Object}
  */
-import * as querystring from 'querystring';
-import * as url from 'url';
+import querystring from 'querystring';
+import url from 'url';
 import {EventEmitter} from 'events';
-import * as os from 'os';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as multiparty from 'multiparty';
-import * as mime from 'mime';
+import os from 'os';
+import path from 'path';
+import fs from 'fs';
+import multiparty from 'multiparty';
+import mime from 'mime';
 
 let cookie = think.require('cookie');
 

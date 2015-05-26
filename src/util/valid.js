@@ -1,6 +1,6 @@
 'use strict';
 
-import * as net from 'net';
+import net from 'net';
 
 let Valid = {
   /**

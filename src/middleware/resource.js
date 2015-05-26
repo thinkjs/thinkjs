@@ -1,6 +1,6 @@
 'use strict';
 
-let mime = require('mime');
+import mime from 'mime';
 
 /**
  * resource check

@@ -1,6 +1,6 @@
 'use strict';
 
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 /**
  * cookie
  * @type {Object}

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = class {
+export default class {
   /**
    * constructor
    * @param  {} args []

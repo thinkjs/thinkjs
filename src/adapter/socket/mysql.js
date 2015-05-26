@@ -1,12 +1,13 @@
 'use strict';
 
+import mysql from 'mysql';
+
 /**
  * mysql socket class
  * @return {} []
  */
-let mysql = require('mysql');
 
-module.exports = class extends think.adapter.socket {
+export default class extends think.adapter.socket {
   /**
    * init
    * @param  {Object} config [connection options]

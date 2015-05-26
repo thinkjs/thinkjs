@@ -1,12 +1,12 @@
 'use strict';
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as util from 'util';
-import * as crypto from 'crypto';
-import * as querystring from 'querystring';
-import * as thinkit from 'thinkit';
-import * as co from 'co';
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+import crypto from 'crypto';
+import querystring from 'querystring';
+import thinkit from 'thinkit';
+import co from 'co';
 
 /**
  * global think variable

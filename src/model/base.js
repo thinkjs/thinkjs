@@ -1,7 +1,7 @@
 'use strict';
 
-import * as util from 'util';
-import * as querystring from 'querystring';
+import util from 'util';
+import querystring from 'querystring';
 
 let valid = think.require('valid');
 

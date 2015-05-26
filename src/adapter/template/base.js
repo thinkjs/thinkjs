@@ -1,11 +1,12 @@
 'use strict';
 
-let fs = require('fs');
+import fs from 'fs';
+
 /**
  * template base class
  * @type {Class}
  */
-module.exports = class {
+export default class {
   /**
    * get template file content
    * @return {} []

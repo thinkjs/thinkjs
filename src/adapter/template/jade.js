@@ -6,7 +6,7 @@
  */
 let jade;
 
-module.exports = class extends think.adapter.tempalte {
+export default class extends think.adapter.tempalte {
   async run(templateFile, tVar){
     if (!jade) {
       jade = require('jade');

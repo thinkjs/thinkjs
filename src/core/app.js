@@ -1,10 +1,10 @@
 'use strict';
 
-import * as cluster from 'cluster';
-import * as fs from 'fs';
-import * as domain from 'domain';
-import * as os from 'os';
-import * as http from 'http';
+import cluster from 'cluster';
+import fs from 'fs';
+import domain from 'domain';
+import os from 'os';
+import http from 'http';
 
 let websocket = think.require('websocket');
 

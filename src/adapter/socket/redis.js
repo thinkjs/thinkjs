@@ -1,8 +1,8 @@
 'use strict';
 
-let redis = require('redis');
+import redis from 'redis';
 
-module.exports = class extends think.adapter.socket {
+export default class extends think.adapter.socket {
   /**
    * init
    * @param  {Object} config []
