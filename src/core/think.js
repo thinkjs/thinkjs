@@ -92,7 +92,7 @@ think.version = (() => {
 think.module = [];
 /**
  * base class
- * @type {}
+ * @type {Class}
  */
 think.base = require('./base.js');
 /**
@@ -114,7 +114,7 @@ think.defer = () => {
  * @return {Boolean}      []
  */
 think.isHttp = function(obj){
-  return obj && think.isObject(obj.req) && think.isObject(obj.res);
+  return !!(obj && think.isObject(obj.req) && think.isObject(obj.res));
 };
 
 /**
@@ -153,7 +153,7 @@ think.Class = (type, clean) => {
       superClass = think.lookClass(superClass, type);
     }
     if (think.isString(superClass)) {
-      superClass = think.require(superClass);
+      superClass = think.require(superClass, true);
       // get class
       // think.controller('rest')
       if (!methods) {
@@ -243,7 +243,7 @@ think.require = (name, flag) => {
 
   let load = (name, filepath) => {
     let obj = think.safeRequire(filepath);
-    if (think.isClass(obj)) {
+    if (think.isFunction(obj)) {
       obj.prototype.__filename = filepath;
     }
     think._aliasExport[name] = obj;
@@ -846,7 +846,7 @@ think.getAction = action => {
  * create controller sub class
  * @type {Function}
  */
-think._controller = think.Class('controller');
+let controller = null;
 think.controller = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   // get controller instance
@@ -854,14 +854,17 @@ think.controller = (superClass, methods, module) => {
     let cls = think._controller(superClass, 'controller', module);
     return cls(methods);
   }
+  if(!controller){
+    controller = think.Class('controller');
+  }
   //create sub controller class
-  return think._controller(superClass, methods);
+  return controller(superClass, methods);
 };
 /**
  * create logic class
  * @type {Function}
  */
-think._logic = think.Class('logic');
+let logic = null;
 think.logic = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   //get logic instance
@@ -869,14 +872,17 @@ think.logic = (superClass, methods, module) => {
     let cls = think.lookClass(superClass, 'logic', module);
     return cls(methods);
   }
+  if(!logic){
+    logic = think.Class('logic');
+  }
   //create sub logic class
-  return think._logic(superClass, methods);
+  return logic(superClass, methods);
 };
 /**
  * create model sub class
  * @type {Function}
  */
-think._model = think.Class('model');
+let model = null;
 think.model = (superClass, methods, module) => {
   let isConfig = methods === true || module;
   if (!isConfig && methods) {
@@ -891,8 +897,11 @@ think.model = (superClass, methods, module) => {
     let cls = think.lookClass(superClass, 'model', module);
     return new cls(superClass, methods);
   }
+  if(!model){
+    model = think.Class('model');
+  }
   //create model
-  return think._model(superClass, methods);
+  return model(superClass, methods);
 };
 //model relation type
 think.model.HAS_ONE = 1;
@@ -904,19 +913,22 @@ think.model.MANY_TO_MANY = 4;
  * create service sub class
  * @type {Function}
  */
-think._service = think.Class('service');
+let service = null;
 think.service = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || methods === true || module;
   //get service instance
   if (think.isString(superClass) && isConfig) {
     let cls = think.lookClass(superClass, 'service', module);
-    if (think.isClass(cls)) {
-      return cls(methods);
+    if (think.isFunction(cls)) {
+      return new cls(methods);
     }
     return cls;
   }
+  if(!service){
+    service = think.Class('service');
+  }
   //create sub service class
-  return this._service(superClass, methods);
+  return service(superClass, methods);
 };
 /**
  * get error message
@@ -973,20 +985,20 @@ think.cache = async (name, value, options = {}) => {
  * @param  {Function} callback []
  * @return {}            []
  */
-think._valid = null;
+let valid = null;
 think.valid = (name, callback) => {
-  if (!think._valid) {
-    think._valid = think.require('valid');
+  if (!valid) {
+    valid = think.require('valid');
   }
   if (think.isString(name)) {
     // register valid callback
     // think.valid('test', function(){})
     if (think.isFunction(callback)) {
-      think._valid[name] = callback;
+      valid[name] = callback;
       return;
     }
     // get valid callback
-    return think._valid[name];
+    return valid[name];
   }
   // convert object to array
   if (think.isObject(name)) {
@@ -1019,7 +1031,7 @@ think.valid = (name, callback) => {
     if (!item.type) {
       return;
     }
-    let type = think._valid[item.type];
+    let type = valid[item.type];
     if (!think.isFunction(type)) {
       throw new Error(think.message('CONFIG_NOT_FUNCTION', item.type));
     }
@@ -1027,7 +1039,7 @@ think.valid = (name, callback) => {
       item.args = [item.args];
     }
     item.args = item.args.unshift(item.value);
-    let result = type.apply(think._valid, item.args);
+    let result = type.apply(valid, item.args);
     if (!result) {
       let itemMsg = item.msg || think.message('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
