@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import querystring from 'querystring';
 import thinkit from 'thinkit';
 import co from 'co';
+import base from './base';
 
 /**
  * global think variable
@@ -94,7 +95,7 @@ think.module = [];
  * base class
  * @type {Class}
  */
-think.base = require('./base.js');
+think.base = base;
 /**
  * get deferred object
  * @return {Object} []
@@ -960,7 +961,7 @@ think.cache = async (name, value, options = {}) => {
   } else if(value === null){
     return instance.rm(name);
   } else if(think.isFunction(value)){
-    let data = instance.get(name);
+    let data = await instance.get(name);
     if(data !== undefined){
       return data;
     }
