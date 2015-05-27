@@ -1002,15 +1002,15 @@ think.valid = (name, callback) => {
   }
   // convert object to array
   if (think.isObject(name)) {
-    let data = [];
+    let d = [];
     for(let key in name){
       let value = name[key];
       value.name = key;
-      data.push(value);
+      d.push(value);
     }
-    name = data;
+    name = d;
   }
-  let ret = {}, msg = {};
+  let data = {}, msg = {};
   name.forEach(item => {
     // value required
     if (item.required) {
@@ -1022,12 +1022,12 @@ think.valid = (name, callback) => {
       if (!item.value) {
         //set default value
         if (item.default) {
-          ret[item.name] = item.default;
+          data[item.name] = item.default;
         }
         return;
       }
     }
-    ret[item.name] = item.value;
+    data[item.name] = item.value;
     if (!item.type) {
       return;
     }
@@ -1045,10 +1045,7 @@ think.valid = (name, callback) => {
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
     }
   });
-  return {
-    msg: msg,
-    data: ret
-  };
+  return {msg, data};
 };
 
 
