@@ -1,6 +1,6 @@
-var thinkjs = require('../index.js');
+var thinkjs = require('../lib/index.js');
 
-new thinkjs({
-  APP_PATH: __dirname,
-  debug: true
-});
+// new thinkjs({
+//   APP_PATH: __dirname,
+//   debug: true
+// });

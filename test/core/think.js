@@ -1,25 +1,11 @@
 'use strict';
 
-var thinkjs = require('../../index.js');
+var thinkjs = require('../../lib/index.js');
 var assert = require('assert');
 var path = require('path');
+var thinkit = require('thinkit');
 
 var APP_PATH = path.dirname(__dirname);
-
-new thinkjs({
-  APP_PATH: APP_PATH,
-  debug: false
-}).run();
-
-var _think = {};
-
-beforeEach(function() {
-  think.extend(_think, think);
-});
-
-afterEach(function() {
-  global.think = _think;
-});
 
 describe('core/think', function() {
 
@@ -272,3 +258,83 @@ describe('core/think', function() {
   });
 
 });
+
+
+describe('core/think.js', function(){
+  describe('think', function(){
+    it('methods from thinkit', function(){
+      for(var name in thinkit){
+        assert.equal(typeof think[name] === 'function' || think[name] === thinkit[name], true);
+      }
+    })
+    it('think.startTime', function(){
+      assert.equal(typeof think.startTime, 'number')
+    })
+    it('think.dirname', function(){
+      assert.deepEqual(think.dirname, {
+        config: 'config',
+        controller: 'controller',
+        model: 'model',
+        adapter: 'adapter',
+        logic: 'logic',
+        service: 'service',
+        view: 'view',
+        middleware: 'middleware',
+        runtime: 'runtime',
+        common: 'common',
+        bootstrap: 'bootstrap',
+        local: 'local'
+      })
+    })
+    it('think.debug', function(){
+      assert.equal(typeof think.debug, 'boolean');
+    })
+    it('think.port', function(){
+      assert.equal(typeof think.port, 'number');
+    })
+    it('think.cli', function(){
+      assert.equal(typeof think.cli, 'boolean');
+    })
+    it('think.mode', function(){
+      assert.equal(think.mode, 1);
+      assert.equal(think.mode_mini, 1);
+      assert.equal(think.mode_normal, 2);
+      assert.equal(think.mode_module, 4);
+    })
+    it('think.THINK_LIB_PATH', function(){
+      assert.equal(typeof think.THINK_LIB_PATH, 'string');
+      assert.equal(typeof think.THINK_PATH, 'string');
+    })
+    it('think.version', function(){
+      assert.equal(typeof think.version, 'string');
+    })
+    it('think.module', function(){
+      assert.deepEqual(think.module, []);
+    })
+    it('think.base', function(){
+      assert.deepEqual(typeof think.base, 'function');
+      var instance = new think.base();
+      assert.deepEqual(typeof instance.init, 'function');
+    })
+    it('think.defer', function(){
+      var deferred = think.defer();
+      assert.equal(typeof deferred.promise, 'object')
+      assert.equal(typeof deferred.resolve, 'function')
+      assert.equal(typeof deferred.reject, 'function')
+    })
+    it('think.isHttp', function(){
+      assert.equal(think.isHttp(), false);
+      assert.equal(think.isHttp(null), false);
+      assert.equal(think.isHttp([]), false);
+      assert.equal(think.isHttp({}), false);
+      assert.equal(think.isHttp({req: {}, res: {}}), true);
+    })
+    it('think.co', function(){
+      assert.equal(typeof think.co, 'function');
+      assert.equal(typeof think.co.wrap, 'function');
+    })
+    it('think.Class()', function(){
+      
+    })
+  })
+})
