@@ -191,7 +191,7 @@ think.lookClass = (name, type, module) => {
         }
       }
       // find from common module
-      module = think.mini ? think.config('default_module') : think.dirname.common;
+      module = think.mode !== think.mode_module ? think.config('default_module') : think.dirname.common;
       let list = [
         `${module}/${type}/${name}`,
         `${type}_${name}`,
@@ -256,7 +256,7 @@ think.require = (name, flag) => {
   }
   // only check in alias
   if (flag) {
-    return;
+    return null;
   }
   let filepath = require.resolve(name);
   return load(filepath, filepath);
