@@ -1,7 +1,5 @@
 'use strict';
 
-var ejs;
-
 export default class extends think.adapter.template {
   /**
    * run
@@ -10,9 +8,7 @@ export default class extends think.adapter.template {
    * @return {Promise}             []
    */
   async run(templateFile, tVar){
-    if (!ejs) {
-      ejs = require('ejs');
-    }
+    let ejs = await think.npm('ejs');
     let conf = think.extend({
       filename: templateFile,
       cache: true

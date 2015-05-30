@@ -5,6 +5,7 @@ import path from 'path';
 import util from 'util';
 import crypto from 'crypto';
 import querystring from 'querystring';
+import child_process from 'child_process';
 import thinkit from 'thinkit';
 import co from 'co';
 import base from './base';
@@ -1047,6 +1048,33 @@ think.valid = (name, callback) => {
     }
   });
   return {msg, data};
+};
+
+/**
+ * install node package
+ * @param  {String} pkg [package name]
+ * @return {Promise}     []
+ */
+think.npm = (pkg) => {
+  try{
+    return Promise.resolve(require(pkg));
+  } catch(e){
+    let cmd = `npm install ${pkg}`;
+    let deferred = think.defer();
+    console.log(`install ${pkg} start`);
+    child_process.exec(cmd, {
+      cwd: think.THINK_PATH
+    }, (err, stdout, stderr) => {
+      if(err || stderr){
+        console.log(`install ${pkg} error`);
+        deferred.reject(err || stderr);
+      }else{
+        console.log(`install ${pkg} finish`);
+        deferred.resolve(require(pkg));
+      }
+    });
+    return deferred.promise;
+  }
 };
 
 

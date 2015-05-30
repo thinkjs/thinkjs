@@ -1,7 +1,5 @@
 'use strict';
 
-import redis from 'redis';
-
 export default class extends think.adapter.socket {
   /**
    * init
@@ -17,11 +15,12 @@ export default class extends think.adapter.socket {
    * connect redis
    * @return {Promise} []
    */
-  connect(){
+  async connect(){
     if (this.connection) {
       return this.deferred.promise;
     }
     let deferred = think.defer();
+    let redis = await think.npm('redis');
     let connection = redis.createClient(this.config.port, this.config.host, this.config);
     if (this.config.password) {
       connection.auth(this.config.password, () => {});
