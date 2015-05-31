@@ -28,6 +28,10 @@ export default class extends think.adapter.db {
         auto_increment: false
       }
     })
+    if(data.length === 0){
+      let msg = new Error(think.message('TABLE_NO_COLUMNS', table));
+      return Promise.reject(msg);
+    }
     return ret;
   }
   /**

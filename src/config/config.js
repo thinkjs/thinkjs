@@ -92,6 +92,7 @@ module.exports = {
     prefix: 'think_',
     encoding: 'utf8',
     nums_per_page: 10,
+    log_sql: true,
     cache: {
       on: true,
       type: '',

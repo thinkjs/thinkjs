@@ -20,5 +20,6 @@ export default {
   PARAMS_NOT_VALID: '`{name}` value not valid',
   FIELD_KEY_NOT_VALID: 'field `%s` in where condition is not valid',
   DATA_EMPTY: 'data can not be empty',
-  MISS_WHERE_CONDITION: 'miss where condition'
+  MISS_WHERE_CONDITION: 'miss where condition',
+  TABLE_NO_COLUMNS: 'table `%s` has no columns'
 };
