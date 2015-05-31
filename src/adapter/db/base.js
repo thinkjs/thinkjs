@@ -236,7 +236,7 @@ export default class extends _parse {
    * @return {}     []
    */
   execute(str){
-    return this.connect().query(str).then(data => {
+    return this.connect().execute(str).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }

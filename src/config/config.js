@@ -135,5 +135,9 @@ module.exports = {
     port: 6379,
     password: '',
     timeout: 0
+  },
+  package: { //extra package version
+    redis: '0.12.1',
+    sqlite3: '3.0.8'
   }
 };

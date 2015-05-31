@@ -1059,17 +1059,26 @@ think.npm = (pkg) => {
   try{
     return Promise.resolve(require(pkg));
   } catch(e){
-    let cmd = `npm install ${pkg}`;
+    let npmPkg = pkg;
+    //get package version
+    if(pkg.indexOf('@') === -1){
+      let package = think.config('package');
+      let version = package[pkg];
+      if(version){
+        npmPkg += '@' + version;
+      }
+    }
+    let cmd = `npm install ${npmPkg}`;
     let deferred = think.defer();
-    console.log(`install ${pkg} start`);
+    console.log(`install ${npmPkg} start`);
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
     }, (err, stdout, stderr) => {
       if(err || stderr){
-        console.log(`install ${pkg} error`);
+        console.log(`install ${npmPkg} error`);
         deferred.reject(err || stderr);
       }else{
-        console.log(`install ${pkg} finish`);
+        console.log(`install ${npmPkg} finish`);
         deferred.resolve(require(pkg));
       }
     });

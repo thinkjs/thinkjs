@@ -104,6 +104,14 @@ export default class extends think.adapter.socket {
     return deferred.promise;
   }
   /**
+   * execute
+   * @param  {Array} args []
+   * @return {Promise}         []
+   */
+  execute(...args){
+    return this.query(...args);
+  }
+  /**
    * close connections
    * @return {} []
    */
