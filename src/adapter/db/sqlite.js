@@ -19,13 +19,13 @@ export default class extends think.adapter.db {
     let data = await this.query(`PRAGMA table_info( ${table} )`);
     let ret = {};
     data.forEach(item => {
-      ret[item.field] = {
-        name: item.field,
+      ret[item.name] = {
+        name: item.name,
         type: item.type,
-        required: item.null === '',
-        default: item.default,
-        primary: item.key.toLowerCase() === 'pri',
-        auto_increment: item.key.toLowerCase() === 'auto_increment'
+        required: !!item.notnull,
+        default: item.dflt_value,
+        primary: !!item.pk,
+        auto_increment: false
       }
     })
     return ret;
@@ -36,7 +36,7 @@ export default class extends think.adapter.db {
    * @return {String}     []
    */
   escapeString(str){
-    return str.replace(/\'/, "''");
+    return str.replace(/\'/g, "''");
   }
   /**
    * parse limit

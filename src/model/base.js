@@ -505,8 +505,8 @@ export default class {
     options = await this.parseOptions(options);
     data = await this._beforeAdd(data, options);
     data = this.parseData(data);
-    await this.db.insert(data, options, replace);
-    let insertId = data[this.pk] = this.db.getLastInsertId();
+    await this.db().insert(data, options, replace);
+    let insertId = data[this.pk] = this.db().getLastInsertId();
     await this._afterAdd(data, options);
     return insertId;
   }
@@ -549,8 +549,8 @@ export default class {
     });
     await Promise.all(promises);
     options = await this.parseOptions(options);
-    await this.db.insertAll(data, options, replace);
-    return this.db.getLastInsertId();
+    await this.db().insertAll(data, options, replace);
+    return this.db().getLastInsertId();
   }
   /**
    * after delete
@@ -566,7 +566,7 @@ export default class {
    */
   async delete(options){
     options = await this.parseOptions(options);
-    let rows = await this.db.delete(options);
+    let rows = await this.db().delete(options);
     await this._afterDelete(options.where || {}, options);
     return rows;
   }
@@ -612,7 +612,7 @@ export default class {
     }else{
       data[pk] = options.where[pk];
     }
-    let rows = await this.db.update(data, options);
+    let rows = await this.db().update(data, options);
     await this._afterUpdate(data, options);
     return rows;
   }
@@ -686,7 +686,7 @@ export default class {
    */
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
-    let data = await this.db.select(options);
+    let data = await this.db().select(options);
     return this._afterFind(data[0] || {}, options);
   }
   /**
@@ -703,7 +703,7 @@ export default class {
    */
   async select(options){
     options = await this.parseOptions(options);
-    let data = await this.db.select(options);
+    let data = await this.db().select(options);
     return this._afterSelect(data, options);
   }
   /**
@@ -718,7 +718,7 @@ export default class {
     }
     let data = await Promise.all([this.parseOptions(), promise]);
     let fields = data[0].field || Object.keys(this.fields);
-    return this.db.selectAdd(fields, data[0].table, data[1]);
+    return this.db().selectAdd(fields, data[0].table, data[1]);
   }
   /**
    * count select
@@ -773,7 +773,7 @@ export default class {
     }else if (one === true) {
       options.limit = 1;
     }
-    let data = await this.db.select(options);
+    let data = await this.db().select(options);
     let multi = field.indexOf(',') > -1;
     if (multi) {
       let fields = field.split(/\s*,\s*/);
@@ -945,7 +945,7 @@ export default class {
   close(){
     delete dbInstances[this.getConfigKey()];
     if (this.db) {
-      this.db.close();
+      this.db().close();
       this.db = null;
     }
   }

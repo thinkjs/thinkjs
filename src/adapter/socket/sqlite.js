@@ -1,5 +1,7 @@
 'use strict';
-
+/**
+ * sqlite socket
+ */
 export default class extends think.adapter.socket {
   /**
    * init
@@ -29,7 +31,7 @@ export default class extends think.adapter.socket {
       sqlite = sqlite.verbose();
     }
     let deferred = think.defer();
-    let db = new sqlite3.Database(this.config.path, err => {
+    let db = new sqlite.Database(this.config.path, err => {
       if(err){
         deferred.reject(err);
         this.close();
@@ -37,6 +39,10 @@ export default class extends think.adapter.socket {
         deferred.resolve(db);
       }
     });
+    //set timeout
+    if(this.config.timeout){
+      db.configure('busyTimeout', this.config.timeout * 1000);
+    }
     this.connection = db;
     this.deferred = deferred;
     return deferred.promise;
@@ -46,24 +52,38 @@ export default class extends think.adapter.socket {
    * @param  {String} sql []
    * @return {Promise}     []
    */
-  async query(sql){
+  async execute(sql){
     let connection = await this.getConnection();
+    let deferred = think.defer();
     //can not use arrow functions in here
-    return connection.run(sql, function() {
-      return {
-        insertId: this.lastID,
-        affectedRows: this.changes
+    connection.run(sql, function(err) {
+      if(err){
+        deferred.reject(err);
+      }else{
+        deferred.resolve({
+          insertId: this.lastID,
+          affectedRows: this.changes
+        });
       }
     })
+    return deferred.promise;
   }
   /**
    * execute sql
    * @param  {String} sql []
    * @return {Promise}     []
    */
-  async execute(sql){
+  async query(sql){
     let connection = await this.getConnection();
-    return connection.all(sql);
+    let deferred = think.defer();
+    connection.all(sql, function(err, data){
+      if(err){
+        deferred.reject(err);
+      }else{
+        deferred.resolve(data);
+      }
+    });
+    return deferred.promise;
   }
   /**
    * close connections
