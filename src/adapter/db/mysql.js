@@ -5,7 +5,7 @@ let mysqlSocket = think.adapter('socket', 'mysql');
  * mysql db
  * @type {Class}
  */
-module.exports = class extends think.adapter.db {
+export default class extends think.adapter.db {
   /**
    * init
    * @param  {Object} config []
