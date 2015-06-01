@@ -56,10 +56,19 @@ export default class extends think.base {
     if (cls) {
       return this.execAction(new cls(http));
     }
-    let call = 'call_controller';
-    cls = think.require(call, true);
+    return this.execCallController();
+  }
+  /**
+   * exec call controller
+   * @return {Promise} []
+   */
+  execCallController(flag){
+    let cls = think.require('call_controller', true);
     if (cls) {
-      return this.execAction(cls(http), true);
+      return this.execAction(new cls(this.http), true);
+    }
+    if(flag){
+      return false;
     }
     let err = new Error(think.message('CONTROLLER_NOT_FOUND', http.controller, http.url));
     return Promise.reject(err);
@@ -71,22 +80,28 @@ export default class extends think.base {
    * @return {Promise}            []
    */
   execAction(controller, isCall){
-    let action;
-    if (isCall) {
-      action = think.config('call_action');
-    }else{
-      action = this.http.action;
-      //action not exist
-      if (!think.isFunction(controller[action + think.config('action_suffix')])) {
-        //__call not exist
-        if (!think.isFunction(controller.__call)) {
-          let err = new Error(think.message('ACTION_NOT_FOUND', action, this.http.url));
-          return Promise.reject(err);
-        }
-        action = '__call';
+    if(isCall){
+      return this.action(controller, think.config('call_action'));
+    }
+    let action = this.http.action;
+    let actionWithSuffix = action + think.config('action_suffix');
+    //action is exist
+    if(think.isFunction(controller[actionWithSuffix])){
+      return this.action(controller, action);
+    }
+    //call action
+    if(think.isFunction(controller.__call)){
+      return this.action(controller, '__call');
+    }
+    //try to exec call controller
+    if(!isCall){
+      let ret = this.execCallController(true);
+      if(ret){
+        return ret;
       }
     }
-    return this.action(controller, action);
+    let err = new Error(think.message('ACTION_NOT_FOUND', action, this.http.url));
+    return Promise.reject(err);
   }
   /**
    * exec 

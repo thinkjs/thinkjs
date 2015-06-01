@@ -211,9 +211,9 @@ think.lookClass = (name, type, module) => {
 think.getPath = (module = think.dirname.common, type = think.dirname.controller) => {
   switch(think.mode){
     case think.mode_mini:
-      return `${think.APP_PATH}/${type}/`;
+      return `${think.APP_PATH}/${type}`;
     case think.mode_normal:
-      let filepath = `${think.APP_PATH}/${type}/`;
+      let filepath = `${think.APP_PATH}/${type}`;
       switch(type){
         case think.dirname.controller:
         case think.dirname.model:
@@ -1059,26 +1059,25 @@ think.npm = (pkg) => {
   try{
     return Promise.resolve(require(pkg));
   } catch(e){
-    let npmPkg = pkg;
+    let pkgWithVersion = pkg;
     //get package version
-    if(pkg.indexOf('@') === -1){
-      let package = think.config('package');
-      let version = package[pkg];
+    if(pkgWithVersion.indexOf('@') === -1){
+      let version = think.config('package')[pkg];
       if(version){
-        npmPkg += '@' + version;
+        pkgWithVersion += '@' + version;
       }
     }
-    let cmd = `npm install ${npmPkg}`;
+    let cmd = `npm install ${pkgWithVersion}`;
     let deferred = think.defer();
-    console.log(`install ${npmPkg} start`);
+    console.log(`install ${pkgWithVersion} start`);
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
     }, (err, stdout, stderr) => {
       if(err || stderr){
-        console.log(`install ${npmPkg} error`);
+        console.log(`install ${pkgWithVersion} error`);
         deferred.reject(err || stderr);
       }else{
-        console.log(`install ${npmPkg} finish`);
+        console.log(`install ${pkgWithVersion} finish`);
         deferred.resolve(require(pkg));
       }
     });

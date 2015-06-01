@@ -40,11 +40,11 @@ export default class {
    * @return {Number} [app mode]
    */
   getMode(){
-    let filepath = `${think.APP_PATH}/${think.dirname.controller}/`;
+    let filepath = `${think.APP_PATH}/${think.dirname.controller}`;
     if (think.isDir(filepath)) {
       let files = fs.readdirSync(filepath);
       let flag = files.some(file => {
-        if (think.isFile(filepath + file)) {
+        if (think.isFile(`${filepath}/${file}`)) {
           return true;
         }
       });
@@ -81,7 +81,7 @@ export default class {
   getModule(){
     //only have default module in mini mode
     if (think.mode === think.mode_mini) {
-      return [think.config('default_module')];
+      return think.module = [think.config('default_module')];
     }
     let modulePath = think.APP_PATH;
     if (think.mode === think.mode_normal) {
@@ -207,7 +207,7 @@ export default class {
       });
       think.module.forEach(module => {
         let moduleType = `${module}/${type}`;
-        let filepath = `${think.getPath(module, think.dirname[type])}/`;
+        let filepath = think.getPath(module, think.dirname[type]);
         think.alias(moduleType, filepath, true);
       });
     }
@@ -313,6 +313,7 @@ export default class {
     this.loadHook();
     this.loadTemplate();
     this.loadMessage();
+
     //load alias export at last
     //this.loadAliasExport();
   }

@@ -29,9 +29,6 @@ export default class extends think.middleware.base {
       res.setHeader('Content-Type', `${contentType}; charset=${this.config('encoding')}`);
       await this.hook('resource_output', file);
     }else{
-      if (pathname.indexOf('/') === -1) {
-        return false;
-      }
       res.statusCode = 404;
       this.http.end();
     }
