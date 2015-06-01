@@ -13,6 +13,7 @@ export default class extends think.base {
     this.assign('controller', this);
     this.assign('http', this.http);
     this.assign('config', this.http._config);
+    this.assign('_', this.local.bind(this));
   }
   /**
    * get client ip
@@ -181,6 +182,33 @@ export default class extends think.base {
       return instance.set(name, value);
     }
     return instance.get(name);
+  }
+  /**
+   * get language
+   * @param  {Boolean} useCookie [get from cookie set]
+   * @return {String}           []
+   */
+  lang(useCookie){
+    if(useCookie){
+      let key = this.config('think_lang').name;
+      let value = this.cookie(key);
+      if(value){
+        return value;
+      }
+    }
+    var lang = this.header('accept-language');
+    return lang.split(',')[0];
+  }
+  /**
+   * get local value
+   * @param  {String} key []
+   * @return {String}     []
+   */
+  local(key){
+    let lang = this.lang(true);
+    let locals = this.config(think.dirname.local);
+    let values = locals[lang] || locals[this.config('local.default')] || {};
+    return values[key] || key;
   }
   /**
    * redirect
@@ -362,6 +390,7 @@ export default class extends think.base {
    * @return {}           []
    */
   valid(data) {
-    return think.valid(data);
+    let ret = think.valid(data);
+    return ret;
   }
 }

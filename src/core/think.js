@@ -400,9 +400,9 @@ think.getModuleConfig = (module = think.dirname.common) => {
         if(conf){
           extraConfig = think.extend(extraConfig, {[item]: conf});
         }
-      })
+      });
       return extraConfig;
-    }
+    };
     extraConfig = loadConf(rootPath, extraConfig);
   }
   //cli.js
@@ -1104,14 +1104,6 @@ think.npm = (pkg) => {
     return deferred.promise;
   }
 };
-/**
- * locals
- * @param  {String} key []
- * @return {}     []
- */
-think._ = key => {
-  return key;
-}
 
 /**
  * global cache
