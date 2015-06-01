@@ -386,19 +386,24 @@ think.getModuleConfig = (module = think.dirname.common) => {
   //load extra config by key
   if(think.isDir(rootPath) && module !== true){
     let filters = ['config', 'debug', 'cli'];
-    fs.readdirSync(rootPath).forEach(item => {
-      if(think.isDir(`${rootPath}/${item}`) || item[0] === '_'){
-        return;
-      }
-      item = item.slice(0, -3);
-      if(filters.indexOf(item) > -1){
-        return;
-      }
-      let conf = think.safeRequire(`${rootPath}/${item}.js`);
-      if(conf){
-        extraConfig = think.extend(extraConfig, {[item]: conf});
-      }
-    })
+    //load conf
+    let loadConf = (path, extraConfig) => {
+      fs.readdirSync(path).forEach(item => {
+        if(think.isDir(`${path}/${item}`)){
+          extraConfig[item] = loadConf(`${path}/${item}`, extraConfig[item] || {});
+        }
+        item = item.slice(0, -3);
+        if(item[0] === '_' || filters.indexOf(item) > -1){
+          return;
+        }
+        let conf = think.safeRequire(`${path}/${item}.js`);
+        if(conf){
+          extraConfig = think.extend(extraConfig, {[item]: conf});
+        }
+      })
+      return extraConfig;
+    }
+    extraConfig = loadConf(rootPath, extraConfig);
   }
   //cli.js
   if(think.cli){
