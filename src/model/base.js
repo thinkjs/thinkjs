@@ -459,13 +459,11 @@ export default class {
       return data;
     }
     let result = valid(checkData);
-    if (think.isEmpty(result)) {
+    if (think.isEmpty(result.msg)) {
       return data;
     }
-    let json_message = JSON.stringify(result);
-    let err = new Error(json_message.slice(1, -1));
-    err.json_message = json_message;
-    return Promise.reject(err, true);
+    let err = new Error(JSON.stringify(result.msg));
+    return Promise.reject(err);
   }
   /**
    * before add
