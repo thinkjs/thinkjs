@@ -377,19 +377,34 @@ think.getModuleConfig = (module = think.dirname.common) => {
     rootPath = think.getPath(module, think.dirname.config);
   }
   //config.js
-  let file = `${rootPath}/config.js`;
-  let config = think.safeRequire(file);
+  let config = think.safeRequire(`${rootPath}/config.js`);
+  let debugConfig = {}, cliConfig = {}, extraConfig = {};
   //debug.js
   if (think.debug) {
-    file = `${rootPath}/debug.js`;
-    config = think.extend({}, config, think.safeRequire(file));
+    debugConfig = think.safeRequire(`${rootPath}/debug.js`);
+  }
+  //load extra config by key
+  if(think.isDir(rootPath) && module !== true){
+    let filters = ['config', 'debug', 'cli'];
+    fs.readdirSync(rootPath).forEach(item => {
+      if(think.isDir(`${rootPath}/${item}`) || item[0] === '_'){
+        return;
+      }
+      item = item.slice(0, -3);
+      if(filters.indexOf(item) > -1){
+        return;
+      }
+      let conf = think.safeRequire(`${rootPath}/${item}.js`);
+      if(conf){
+        extraConfig = think.extend(extraConfig, {[item]: conf});
+      }
+    })
   }
   //cli.js
   if(think.cli){
-    file = `${rootPath}/cli.js`;
-    let cliConfig = think.safeRequire(file);
-    config = think.extend({}, config, cliConfig);
+    cliConfig = think.safeRequire(`${rootPath}/cli.js`);
   }
+  config = think.extend({}, config, debugConfig, extraConfig, cliConfig);
   //merge config
   if (module !== true) {
     config = think.extend({}, think._config, config);
@@ -1084,7 +1099,14 @@ think.npm = (pkg) => {
     return deferred.promise;
   }
 };
-
+/**
+ * locals
+ * @param  {String} key []
+ * @return {}     []
+ */
+think._ = key => {
+  return key;
+}
 
 /**
  * global cache
