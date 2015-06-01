@@ -67,9 +67,9 @@ module.exports = {
   },
   session: {
     name: 'thinkjs',
+    type: 'file',
     auto_start: false,
     start_filter: undefined,
-    type: 'file',
     path: runtimePrefix + '/session',
     secret: '',
     auth_key: 'think_auth_list',
@@ -80,7 +80,7 @@ module.exports = {
   },
   local: { //i18n
     name: 'think_lang',
-    _default: 'en'
+    default: 'en'
   }, 
   db: {
     type: 'mysql',

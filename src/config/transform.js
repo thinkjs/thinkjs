@@ -23,6 +23,11 @@ let getFn = (value, config) => {
  */
 export default {
   post: {
+    /**
+     * json content type list
+     * @param  {Array} value []
+     * @return {Array}       []
+     */
     json_content_type: value => {
       if (think.isString(value)) {
         return [value];
@@ -34,9 +39,14 @@ export default {
       return value;
     }
   },
+  /**
+   * sub doamin deploy
+   * @param  {Object} value []
+   * @return {Object}       []
+   */
   subdomain: value => {
     if (think.isString(value)) {
-      return think.getObject(value, value);
+      return {value};
     }
     if (think.isArray(value)) {
       let obj = {};
@@ -51,6 +61,11 @@ export default {
     }
     return value;
   },
+  /**
+   * deby module list
+   * @param  {Array} value []
+   * @return {Array}       []
+   */
   deny_module_list: value => {
     if (think.isString(value)) {
       return [value];
@@ -61,11 +76,29 @@ export default {
     }
     return value;
   },
+  /**
+   * error callback
+   * @type {Object}
+   */
   error: {
     callback: value => getFn(value, 'error.callback')
   },
+  /**
+   * output content
+   * @param  {String} value []
+   * @return {Function}       []
+   */
   output_content: value => getFn(value, 'output_content'),
+  /**
+   * create server
+   * @param  {String} value []
+   * @return {Function}       []
+   */
   create_server: value => getFn(value, 'create_server'),
+  /**
+   * html cache config
+   * @type {Object}
+   */
   html_cache: {
     rules: rules => {
       let data = {};
@@ -76,6 +109,11 @@ export default {
       return data;
     }
   },
+  /**
+   * auto reload except files
+   * @param  {Array} value []
+   * @return {Array}       []
+   */
   auto_reload_except: value => {
     return value.map(item => {
       if(think.isString(item) && process.platform === 'win32'){
@@ -83,5 +121,19 @@ export default {
       }
       return item;
     });
+  },
+  /**
+   * cache config
+   * @type {Object}
+   */
+  cache: {
+    type: value => value.toLowerCase()
+  },
+  /**
+   * session config
+   * @type {Object}
+   */
+  session: {
+    type: value => value.toLowerCase()
   }
 };
