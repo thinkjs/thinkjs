@@ -612,7 +612,7 @@ export default class {
       this._end();
     }
     
-    Promise.all(this._outputContentPromise).then(() => {
+    return Promise.all(this._outputContentPromise).then(() => {
       this._outputContentPromise = undefined;
       this._end();
     }).catch(() => {
