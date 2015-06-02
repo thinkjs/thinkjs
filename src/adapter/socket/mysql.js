@@ -97,6 +97,7 @@ export default class extends think.adapter.socket {
       }else{
         deferred.resolve(rows);
       }
+      //auto close connection in cli mode
       if(think.cli){
         this.close();
       }
