@@ -77,8 +77,8 @@ export default class extends think.adapter.session {
    * @return {Promise}      []
    */
   get(name){
-    return this.getData().then(data => {
-      return name ? data[name] : data;
+    return this.getData().then(() => {
+      return name ? this.data[name] : this.data;
     });
   }
   /**

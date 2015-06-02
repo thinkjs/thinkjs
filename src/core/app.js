@@ -44,6 +44,10 @@ export default class extends think.base {
     else if (think.isFunction(instance.__call)) {
       return this.action(instance, '__call');
     }
+    //only has before method
+    else if(think.isFunction(instance.__before)){
+      return instance.__before(instance);
+    }
   }
   /**
    * exec controller
@@ -63,9 +67,10 @@ export default class extends think.base {
    * @return {Promise} []
    */
   execCallController(flag){
+    let http = this.http;
     let cls = think.require('call_controller', true);
     if (cls) {
-      return this.execAction(new cls(this.http), true);
+      return this.execAction(new cls(http), true);
     }
     if(flag){
       return false;

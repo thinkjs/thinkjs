@@ -14,7 +14,7 @@ module.exports = {
   sub_domain: false,
 
   resource_on: true,
-  resource_reg: /^(resource\/|[^\/]+\.(?!js)\w+$)/, 
+  resource_reg: /^((?:resource|static)\/|[^\/]+\.(?!js)\w+$)/, 
 
   route_on: true,
   
@@ -102,6 +102,7 @@ module.exports = {
     file_ext: '.html',
     file_depr: '_',
     root_path: '',
+    theme: '',
     type: 'ejs',
     options: {}
   },

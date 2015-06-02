@@ -274,15 +274,20 @@ export default class {
       if (!think.isDir(filepath)) {
         return;
       }
-      let files = fs.readdirSync(filepath);
+      let files = think.getFiles(filepath);
       files.forEach(file => {
-        let key = filepath + file;
+        let key = `${filepath}/${file}`;
         data[key] = true;
       });
     };
-    think.module.forEach(module => {
-      add(think.getPath(module, think.dirname.view));
-    });
+    let {root_path} = think.config('tpl');
+    if(root_path){
+      add(root_path);
+    }else{
+      think.module.forEach(module => {
+        add(think.getPath(module, think.dirname.view));
+      });
+    }
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**

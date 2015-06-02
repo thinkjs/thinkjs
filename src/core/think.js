@@ -823,9 +823,9 @@ think.session = http => {
       think.log('in debug or cluster mode, session can\'t use memory for storage, convert to File');
     }
   }
-  let session = think.adapter('session', type)(think.extend({
-    cookie: sessionCookie,
-  }, sessionOptions));
+  let cls = think.adapter('session', type);
+  let conf = think.extend({}, sessionOptions, {cookie: sessionCookie})
+  let session = new cls(conf);
   http.session = session;
   http.on('afterEnd', () => session.flush && session.flush());
   return session;
