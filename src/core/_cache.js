@@ -5,7 +5,7 @@
  * @type {Object}
  */
 global.thinkCache = (type, name, value) => {
-  type = '_' + type;
+  type = `_${type}`;
   if (!(type in thinkCache)) {
     thinkCache[type] = {};
   }
@@ -34,47 +34,43 @@ global.thinkCache = (type, name, value) => {
  * @type {String}
  */
 /**
- * base
+ * memory cache
  * @type {String}
  */
 thinkCache.BASE = 'base';
 /**
- * [TEMPLATE description]
+ * for store template file list
+ * fast check template file is exist, no file io
  * @type {String}
  */
 thinkCache.TEMPLATE = 'template';
 /**
- * [VIEW description]
+ * store controller/action template file
  * @type {String}
  */
 thinkCache.VIEW = 'view';
 /**
- * [DB description]
+ * store db instance
  * @type {String}
  */
 thinkCache.DB = 'db';
 /**
- * [TABLE description]
+ * store table fields
  * @type {String}
  */
 thinkCache.TABLE = 'table';
 /**
- * [SESSION description]
+ * memory session
  * @type {String}
  */
 thinkCache.SESSION = 'session';
 /**
- * [REDIS description]
+ * store redis instance
  * @type {String}
  */
 thinkCache.REDIS = 'redis';
 /**
- * [MEMCACHE description]
+ * store memcache instance
  * @type {String}
  */
 thinkCache.MEMCACHE = 'memcache';
-/**
- * [FILE description]
- * @type {String}
- */
-thinkCache.FILE = 'file';
