@@ -9,6 +9,7 @@ import child_process from 'child_process';
 import thinkit from 'thinkit';
 import co from 'co';
 import base from './base';
+import cache from './_cache.js';
 
 /**
  * global think variable
@@ -115,7 +116,7 @@ think.defer = () => {
  * @param  {Mixed}  obj []
  * @return {Boolean}      []
  */
-think.isHttp = function(obj){
+think.isHttp = obj => {
   return !!(obj && think.isObject(obj.req) && think.isObject(obj.res));
 };
 
@@ -449,9 +450,10 @@ think._hook = {};
  * @param  {String} name []
  * @return {}      []
  */
-think.hook = function(name, http = {}, data) {
+think.hook = (...args) => {
+  let [name, http = {}, data] = args;
   //get hook data
-  if (arguments.length === 1) {
+  if (args.length === 1) {
     return think._hook[name] || [];
   }
   //set hook data
@@ -489,8 +491,9 @@ think.hook = function(name, http = {}, data) {
  */
 let middleware = null;
 think._middleware = {};
-think.middleware = function(superClass, methods, data) {
-  let length = arguments.length;
+think.middleware = (...args) => {
+  let [superClass, methods, data] = args;
+  let length = args.length;
   let prefix = 'middleware_';
   // register functional middleware
   // think.middleware('parsePayLoad', function(){})
@@ -536,11 +539,12 @@ think.middleware = function(superClass, methods, data) {
  * @param  {String} name []
  * @return {void}      []
  */
-think.adapter = function(type, name, fn){
+think.adapter = (...args) => {
+  let [type, name, fn] = args;
   //load sys adapter
   think.loadAdapter();
 
-  let length = arguments.length, key = 'adapter_';
+  let length = args.length, key = 'adapter_';
   //register adapter
   //think.adapter('session', 'redis', function(){})
   if (length === 3 && think.isFunction(fn)) {
@@ -1104,43 +1108,3 @@ think.npm = (pkg) => {
     return deferred.promise;
   }
 };
-
-/**
- * global cache
- * @type {Object}
- */
-global.thinkCache = (type, name, value) => {
-  type = '_' + type;
-  if (!(type in thinkCache)) {
-    thinkCache[type] = {};
-  }
-  // get cache
-  if (name === undefined) {
-    return thinkCache[type];
-  }
-  // get cache
-  else if (value === undefined) {
-    if (think.isString(name)) {
-      return thinkCache[type][name];
-    }
-    thinkCache[type] = name;
-    return;
-  }
-  //remove cache
-  else if (value === null) {
-    delete thinkCache[type][name];
-    return;
-  }
-  //set cache
-  thinkCache[type][name] = value;
-};
-//cache key
-thinkCache.BASE = 'base';
-thinkCache.TEMPLATE = 'template';
-thinkCache.VIEW = 'view';
-thinkCache.DB = 'db';
-thinkCache.TABLE = 'table';
-thinkCache.SESSION = 'session';
-thinkCache.REDIS = 'redis';
-thinkCache.MEMCACHE = 'memcache';
-thinkCache.FILE = 'file';
