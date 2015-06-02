@@ -114,9 +114,6 @@ export default class extends think.adapter.session {
    * @return {Promise} []
    */
   flush(){
-    if(!this.data){
-      return Promise.resolve();
-    }
     let filepath = this.getFilepath();
     let data = {
       data: this.data,
