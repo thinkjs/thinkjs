@@ -68,8 +68,6 @@ module.exports = {
   session: {
     name: 'thinkjs',
     type: 'file',
-    auto_start: false,
-    start_filter: undefined,
     path: runtimePrefix + '/session',
     secret: '',
     auth_key: 'think_auth_list',

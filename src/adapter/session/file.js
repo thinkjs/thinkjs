@@ -1,86 +1,152 @@
+'use strict';
+
+import fs from 'fs';
+import os from 'os';
+
 /**
- * 文件Session
- * @return {[type]} [description]
+ * file session
  */
-
-var os = require('os');
-var fileCache = think.adapter('cache', 'file');
-
-module.exports = think.adapter(fileCache, {
-  gcType: 'FileSession',
+export default class extends think.adapter.session {
   /**
-   * 差异化的init
-   * @return {[type]} [description]
+   * init
+   * @param  {Object} options []
+   * @return {}         []
    */
-  init: function(options){
-    options = options || {};
-    options.cache_path = C('session_path') || (os.tmpdir() + '/thinkjs');
-    this.super_('init', options);
+  init(options = {}){
+    this.timeout = options.timeout;
     this.key = options.cookie;
-    this.data = {};
-  },
-  /**
-   * 初始化数据
-   * @return {[type]} [description]
-   */
-  initData: function(){
-    if (!this.promise) {
-      var self = this;
-      this.promise = this.getData().then(function(data){
-        self.data = data || {};
-        return self.data;
-      })
-    }
-    return this.promise;
-  },
-  /**
-   * 获取数据
-   * @param  {[type]} name [description]
-   * @return {[type]}      [description]
-   */
-  get: function(name){
-    var self = this;
-    return this.initData().then(function(){
-      return self.data[name];
-    });
-  },
-  /**
-   * 设置数据
-   * @param {[type]} name    [description]
-   * @param {[type]} value   [description]
-   * @param {[type]} timeout [description]
-   */
-  set: function(name, value, timeout){
-    var self = this;
-    return this.initData().then(function(){
-      self.data[name] = value;
-      if (timeout) {
-        self.options.timeout = timeout;
-      }
-    });
-  },
-  /**
-   * 删除数据
-   * @return {[type]} [description]
-   */
-  rm: function(name){
-    var self = this;
-    return this.initData().then(function(){
-      if (name) {
-        delete self.data[name];
-      }else{
-        self.data = {};
-      }
-    })
-  },
-  /**
-   * 将数据写入到文件中
-   * @return {[type]} [description]
-   */
-  flush: function(){
-    var self = this;
-    return this.initData().then(function(){
-      return self.setData(self.data);
-    })
+    this.path = options.path || (os.tmpdir() + '/thinkjs');
+    this.path_depth = options.path_depth || 1;
+
+    this.gcType = `session_file`;
+    think.gc(this);
   }
-});
+  /**
+   * get stored file path
+   * @return {String} []
+   */
+  getFilepath(){
+    let name = this.key;
+    let dir = name.slice(0, this.path_depth).split('').join('/');
+    think.mkdir(`${this.path}/${dir}`);
+    return `${this.path}/${dir}/${name}.json`;
+  }
+  /**
+   * get session data
+   * @return {Promise} []
+   */
+  getData(){
+    if(this.data){
+      return Promise.resolve(this.data);
+    }
+    let filepath = this.getFilepath();
+    if(!think.isFile(filepath)){
+      this.data = {};
+      return Promise.resolve();
+    }
+    let deferred = think.defer();
+    fs.readFile(filepath, {encoding: 'utf8'}, (err, content) => {
+      //has error or no content
+      if(err || !content){
+        this.data = {};
+        return deferred.resolve();
+      }
+      try{
+        let data = JSON.parse(content);
+        if(Date.now() > data.expire){
+          fs.unlink(filepath, () => {
+            this.data = {};
+            deferred.resolve();
+          });
+        }else{
+          this.data = data.data;
+          deferred.resolve(data.data);
+        }
+      }catch(e){
+        fs.unlink(filepath, () => {
+          this.data = {};
+          deferred.resolve();
+        });
+      }
+    });
+    return deferred.promise;
+  }
+  /**
+   * get data
+   * @param  {String} name []
+   * @return {Promise}      []
+   */
+  get(name){
+    return this.getData().then(data => {
+      return name ? data[name] : data;
+    });
+  }
+  /**
+   * set data
+   * @param {String} name    []
+   * @param {Mixed} value   []
+   * @param {Number} timeout []
+   */
+  set(name, value, timeout){
+    if(timeout){
+      this.timeout = timeout;
+    }
+    return this.getData().then(() => {
+      this.data[name] = value;
+    });
+  }
+  /**
+   * remove data
+   * @param  {String} name []
+   * @return {Promise}      []
+   */
+  rm(name){
+    return this.getData().then(() => {
+      if(name){
+        delete this.data[name];
+      }else{
+        this.data = {};
+      }
+    });
+  }
+  /**
+   * flush data to file
+   * @return {Promise} []
+   */
+  flush(){
+    if(!this.data){
+      return Promise.resolve();
+    }
+    let filepath = this.getFilepath();
+    let data = {
+      data: this.data,
+      expire: Date.now() + this.timeout * 1000,
+      timeout: this.timeout
+    };
+    let deferred = think.defer();
+    fs.writeFile(filepath, JSON.stringify(data), () => {
+      think.chmod(filepath);
+      deferred.resolve();
+    });
+    return deferred.promise;
+  }
+  /**
+   * gc
+   * @return {} []
+   */
+  gc(){
+    let files = think.getFiles(this.path);
+    files.forEach(file => {
+      let filepath = `${this.path}/${file}`;
+      let content = fs.readFileSync(filepath, 'utf8');
+      try{
+        let data = JSON.parse(content);
+        if(Date.now() > data.expire){
+          fs.unlink(filepath, () => {});
+        }
+      }catch(e){
+        fs.unlink(filepath, () => {});
+      }
+    });
+  }
+}

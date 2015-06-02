@@ -1,5 +1,7 @@
 'use strict';
-
+/**
+ * memory session
+ */
 export default class {
   /**
    * constructor
@@ -54,17 +56,20 @@ export default class {
    */
   set(name, value, timeout = this.timeout){
     value = think.clone(value);
+    let data;
     if(this.key in this.data){
-      this.data[this.key].data[name] = value;
+      data = this.data[this.key].data;
+      data[name] = value;
     }else{
-      this.data[this.key] = {
-        expire: Date.now() + timeout * 1000,
-        timeout: timeout,
-        data: {
-          [name]: value
-        }
-      };
+      data = {
+        [name]: value
+      }
     }
+    this.data[this.key] = {
+      expire: Date.now() + timeout * 1000,
+      timeout,
+      data
+    };
     return Promise.resolve();
   }
   /**

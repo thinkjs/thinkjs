@@ -794,8 +794,7 @@ think.session = http => {
     Cookie = think.require('cookie');
   }
   let sessionOptions = think.config('session');
-  let name = sessionOptions.name;
-  let sign = sessionOptions.sign;
+  let {name, sign} = sessionOptions;
   let cookie = http._cookie[name];
   //validate cookie sign
   if (cookie && sign) {
@@ -824,10 +823,9 @@ think.session = http => {
       think.log('in debug or cluster mode, session can\'t use memory for storage, convert to File');
     }
   }
-  let session = think.adapter('session', type)({
+  let session = think.adapter('session', type)(think.extend({
     cookie: sessionCookie,
-    timeout: sessionOptions.timeout
-  });
+  }, sessionOptions));
   http.session = session;
   http.on('afterEnd', () => session.flush && session.flush());
   return session;
