@@ -11,7 +11,7 @@ think.middleware('parse_json_payload', http => {
   if (!http.payload) {
     return;
   }
-  let types = http.config.post.json_content_type;
+  let types = http._config.post.json_content_type;
   if (types.indexOf(http.contentType) > -1) {
     try{
       http._post = JSON.parse(http.payload);

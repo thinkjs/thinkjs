@@ -190,7 +190,7 @@ export default class extends think.base {
    */
   lang(useCookie){
     if(useCookie){
-      let key = this.config('think_lang').name;
+      let key = this.config('local').name;
       let value = this.cookie(key);
       if(value){
         return value;
