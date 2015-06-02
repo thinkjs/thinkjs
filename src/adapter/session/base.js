@@ -1,118 +1,99 @@
 'use strict';
 
-module.exports = think.Class({
+export default class {
   /**
-   * gc type
-   * @type {String}
+   * constructor
+   * @param  {Object} args []
+   * @return {}         []
    */
-  gcType: thinkCache.SESSION,
+  constructor(...args){
+    this.init(...args);
+  }
   /**
-   * init
+   * init 
    * @param  {Object} options []
    * @return {}         []
    */
-  init: function(options){
-    //merge default cache options
-    this.options = think.extend({}, think.config('cache'), options);
-
-    //set gc type
-    if (this.options.gcType) {
-      this.gcType = this.options.gcType;
-    }
-    // if gc type is set, register gc timer
-    if (this.gcType) {
-      think.gc(this);
-    }
-    //cache key
-    this.key = this.options.cookie;
-  },
+  init(options = {}){
+    this.timeout = options.timeout;
+    //key is session cookie value
+    this.key = options.cookie;
+    //all session data
+    this.data = thinkCache(thinkCache.SESSION);
+    //set gc type & start gc
+    this.gcType = 'session_base';
+    think.gc(this);
+  }
   /**
-   * before method
-   * @return {Object} [session data]
-   */
-  __before: function(){
-    this.data = thinkCache(this.gcType);
-  },
-  /**
-   * clone data
-   * @param  {Mixed} value [cache data]
-   * @return {Mixed}       []
-   */
-  clone: function(value){
-    if (think.isObject(value)) {
-      return think.extend({}, value);
-    }else if (think.isArray(value)) {
-      return think.extend([], value);
-    }
-    return value;
-  },
-  /**
-   * get data
-   * @param  {String} name [cache key]
+   * get session data
+   * @param  {String} name []
    * @return {Promise}      []
    */
-  get: function(name){
-    var key = this.key || name;
-    if (!(key in this.data)) {
-      return;
+  get(name){
+    //cookie is not exist
+    if(!(this.key in this.data)){
+      return Promise.resolve();
     }
-    var value = this.data[key];
-    if (Date.now() > value.expire) {
-      delete this.data[key];
-      return;
+    let data = this.data[this.key];
+    //data is expire
+    if(Date.now() > data.expire){
+      delete this.data[this.key];
+      return Promise.resolve();
     }
-    this.data[key].expire = Date.now() + value.timeout * 1000;
-    return this.clone(value);
-  },
+    //update data expire
+    this.data[this.key].expire = Date.now() + data.timeout * 1000;
+    let value = name ? think.clone(data[name]) : think.clone(data);
+    return Promise.resolve(value);
+  }
   /**
    * set session data
-   * @param {String} name    [session key]
-   * @param {mixed} value   [session value]
-   * @param {Number} timeout [session timeout]
+   * @param {String} name    []
+   * @param {Mixed} value   []
+   * @param {Number} timeout []
+   * @return {Promise} []
    */
-  set: function(name, value, timeout){
-    if (timeout === undefined) {
-      timeout = this.options.timeout;
-    }
-    var key = this.key;
-    value = this.clone(value);
-    if (key in this.data) {
-      this.data[key].data[name] = value;
+  set(name, value, timeout = this.timeout){
+    value = think.clone(value);
+    if(this.key in this.data){
+      this.data[this.key].data[name] = value;
     }else{
-      this.data[key] = {
-        data: think.getObject(name, value),
+      this.data[this.key] = {
+        expire: Date.now() + timeout * 1000,
         timeout: timeout,
-        expire: Date.now() + timeout * 1000
+        data: {
+          [name]: value
+        }
       };
     }
-  },
+    return Promise.resolve();
+  }
   /**
    * remove session data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm: function(name){
-    var key = this.key;
-    if (key in this.data) {
-      if (name) {
-        delete this.data[key].data[name];
+  rm(name){
+    if(this.key in this.data){
+      if(name){
+        delete this.data[this.key].data[name];
       }else{
-        delete this.data[key];
+        delete this.data[this.key];
       }
     }
-  },
+    return Promise.resolve();
+  }
   /**
    * gc
-   * @param  {Number} now [now time]
-   * @return {}     []
+   * is internal method
+   * @return {} []
    */
-  gc: function(now){
-    now = now || Date.now();
-    for(var key in this.data){
-      var item = this.data[key];
-      if (item && now > item.expire) {
+  gc(){
+    let now = Date.now();
+    for(let key in this.data){
+      let item = this.data[key];
+      if(item && now > item.expire){
         delete this.data[key];
       }
     }
   }
-}, true);
+}
