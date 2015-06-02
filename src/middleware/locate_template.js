@@ -14,7 +14,7 @@ export default class extends think.middleware.base {
    */
   run(templateFile){
     let http = this.http;
-    let {file_depr, file_ext, root_path} = this.config('tpl');
+    let {file_depr, file_ext, root_path, theme} = this.config('tpl');
     let pathPrefix;
     //view root path is defined
     if(root_path){
@@ -24,6 +24,10 @@ export default class extends think.middleware.base {
       }
     }else{
       pathPrefix = think.getPath(http.module, think.dirname.view);
+    }
+    //support theme
+    if(theme){
+      pathPrefix += `/${theme}`;
     }
     // this.display()
     if (!templateFile) {
