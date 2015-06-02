@@ -63,7 +63,7 @@ export default class {
     }else{
       data = {
         [name]: value
-      }
+      };
     }
     this.data[this.key] = {
       expire: Date.now() + timeout * 1000,

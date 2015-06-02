@@ -35,7 +35,7 @@ CREATE TABLE `think_auth_user_role` (
 
  * @type {[type]}
  */
-module.exports = class extends think.base {
+export default class extends think.base {
   /**
    * init
    * @param  {Number} userId []

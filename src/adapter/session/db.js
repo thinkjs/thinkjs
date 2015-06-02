@@ -62,7 +62,7 @@ export default class extends think.adapter.session {
   get(name){
     return this.getData().then(() => {
       return name ? this.data[name] : this.data;
-    })
+    });
   }
   /**
    * set data
@@ -77,7 +77,7 @@ export default class extends think.adapter.session {
     return this.getData().then(() => {
       this.isChanged = true;
       this.data[name] = value;
-    })
+    });
   }
   /**
    * rm data
@@ -92,7 +92,7 @@ export default class extends think.adapter.session {
       }else{
         this.data = {};
       }
-    })
+    });
   }
   /**
    * flush data
@@ -109,7 +109,7 @@ export default class extends think.adapter.session {
         data.data = JSON.stringify(this.data);
       }
       return this.model.where({key: this.key}).update(data);
-    })
+    });
   }
   /**
    * gc
