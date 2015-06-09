@@ -60,7 +60,6 @@ module.exports = {
   cookie: {
     domain: '',
     path: '/',
-    maxage: 0,
     httponly: false,
     secure: false,
     timeout: 0

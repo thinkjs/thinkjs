@@ -451,6 +451,9 @@ export default class {
     if (options.timeout !== 0) {
       options.expires = new Date(Date.now() + options.timeout * 1000);
     }
+    if(options.timeout > 0){
+      options.maxage = options.timeout;
+    }
     options.name = name;
     options.value = value;
     this._sendCookie[name] = options;
