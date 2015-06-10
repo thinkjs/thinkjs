@@ -34,6 +34,15 @@ export default class {
     this.http.res = res;
     //set http start time
     this.http.startTime = Date.now();
+    
+    //set request timeout
+    let timeout = think.config('timeout');
+    if(timeout){
+      res.setTimeout(timeout * 1000, () => {
+        this.http.emit('timeout');
+        this.http.end();
+      });
+    }
   }
   /**
    * exec

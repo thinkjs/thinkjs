@@ -13,6 +13,8 @@ module.exports = {
   cluster_on: false,
   sub_domain: false,
 
+  timeout: 10, //10 seconds
+
   resource_on: true,
   resource_reg: /^((?:resource|static)\/|[^\/]+\.(?!js)\w+$)/, 
 
