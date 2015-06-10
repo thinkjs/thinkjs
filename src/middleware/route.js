@@ -109,11 +109,11 @@ export default class extends think.middleware.base {
 
     if (!this.http.controller) {
       err = new Error(think.message('CONTROLLER_INVALID', controller, this.http.url));
-      return Promise.reject(err);
+      return think.reject(err);
     }
     if (!this.http.action) {
       err = new Error(think.message('ACTION_INVALID', action, this.http.url));
-      return Promise.reject(err);
+      return think.reject(err);
     }
   }
   /**

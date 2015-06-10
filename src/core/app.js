@@ -76,7 +76,7 @@ export default class extends think.base {
       return false;
     }
     let err = new Error(think.message('CONTROLLER_NOT_FOUND', http.controller, http.url));
-    return Promise.reject(err);
+    return think.reject(err);
   }
   /**
    * exec action
@@ -106,7 +106,7 @@ export default class extends think.base {
       }
     }
     let err = new Error(think.message('ACTION_NOT_FOUND', action, this.http.url));
-    return Promise.reject(err);
+    return think.reject(err);
   }
   /**
    * exec 

@@ -97,7 +97,7 @@ export default class extends think.base {
     }
     if(!this.checkTemplateExist(templateFile, flag)){
       let err = new Error(think.message('TEMPLATE_NOT_EXIST', templateFile));
-      return Promise.reject(err);
+      return think.reject(err);
     }
     let promises = Object.keys(tVar).map((key) => {
       if (!think.isPromise(tVar[key])) {

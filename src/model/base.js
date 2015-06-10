@@ -375,7 +375,7 @@ export default class {
       for(let key in options.where){
         if(!keyReg.test(key)){
           let msg = new Error(think.message('FIELD_KEY_NOT_VALID', key));
-          return Promise.reject(msg);
+          return think.reject(msg);
         }
       }
     }
@@ -463,7 +463,7 @@ export default class {
       return data;
     }
     let err = new Error(JSON.stringify(result.msg));
-    return Promise.reject(err);
+    return think.reject(err);
   }
   /**
    * before add
@@ -498,7 +498,7 @@ export default class {
     this._data = {};
     if (think.isEmpty(data)) {
       let msg = new Error(think.message('DATA_EMPTY'));
-      return Promise.reject(msg);
+      return think.reject(msg);
     }
     options = await this.parseOptions(options);
     data = await this._beforeAdd(data, options);
@@ -536,7 +536,7 @@ export default class {
    */
   async addAll(data, options, replace){
     if (!think.isArray(data) || !think.isObject(data[0])) {
-      return Promise.reject(new Error('_DATA_TYPE_INVALID_'));
+      return think.reject(new Error('_DATA_TYPE_INVALID_'));
     }
     if (options === true) {
       replace = true;
@@ -594,7 +594,7 @@ export default class {
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      return Promise.reject(new Error(think.message('DATA_EMPTY')));
+      return think.reject(new Error(think.message('DATA_EMPTY')));
     }
     options = await this.parseOptions(options);
     data = await this._beforeUpdate(data, options);
@@ -605,7 +605,7 @@ export default class {
         options.where = {[pk]: data[pk]};
         delete data[pk];
       }else{
-        return Promise.reject(new Error(think.message('MISS_WHERE_CONDITION')));
+        return think.reject(new Error(think.message('MISS_WHERE_CONDITION')));
       }
     }else{
       data[pk] = options.where[pk];
@@ -621,12 +621,12 @@ export default class {
    */
   updateAll(dataList){
     if (!think.isArray(dataList) || !think.isObject(dataList[0])) {
-      return Promise.reject(new Error(think.message('DATA_EMPTY')));
+      return think.reject(new Error(think.message('DATA_EMPTY')));
     }
     let promises = dataList.map(data => {
       return this.update(data);
     });
-    return Promise.all(promises);
+    return think.all(promises);
   }
   /**
    * update field

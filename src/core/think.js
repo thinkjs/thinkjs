@@ -110,6 +110,19 @@ think.defer = () => {
   });
   return deferred;
 };
+/**
+ * [description]
+ * @param  {[type]} err [description]
+ * @return {[type]}     [description]
+ */
+think.reject = (err) => {
+  //delay to show error
+  setTimeout(() => {
+    think.log(err);
+  }, 500);
+  return Promise.reject(err);
+}
+
 
 /**
  * check object is http object
@@ -304,11 +317,13 @@ think.isPrevent = err => {
  * @TODO
  * @return {} []
  */
+let preErr = null;
 think.log = msg => {
   if (think.isError(msg)) {
-    if(think.isPrevent(msg)){
+    if(think.isPrevent(msg) || msg === preErr){
       return;
     }
+    preErr = msg;
     console.log(msg.stack);
     return;
   }

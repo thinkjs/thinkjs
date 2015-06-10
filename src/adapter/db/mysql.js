@@ -75,7 +75,7 @@ export default class extends think.adapter.db {
   async startTrans(table){
     let support = this.supportTrans(table);
     if(!support){
-      return Promise.reject('table engine is not support transaction');
+      return think.reject('table engine is not support transaction');
     }
     if (this.transTimes === 0) {
       this.transTimes++;

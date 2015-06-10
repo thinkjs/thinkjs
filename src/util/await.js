@@ -39,7 +39,7 @@ export default class {
           this.queue[key].forEach(deferred => deferred.reject(err));
           delete this.queue[key];
         });
-        return Promise.reject(err);
+        return think.reject(err);
       });
     }else{
       let deferred = think.defer();
