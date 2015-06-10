@@ -6,8 +6,11 @@ import util from 'util';
 import crypto from 'crypto';
 import querystring from 'querystring';
 import child_process from 'child_process';
+
 import thinkit from 'thinkit';
 import co from 'co';
+import colors from 'colors/safe';
+
 import base from './base';
 import cache from './_cache.js';
 
@@ -318,16 +321,19 @@ think.isPrevent = err => {
  * @return {} []
  */
 let preErr = null;
-think.log = msg => {
+think.log = (msg, type) => {
   if (think.isError(msg)) {
     if(think.isPrevent(msg) || msg === preErr){
       return;
     }
     preErr = msg;
-    console.log(msg.stack);
+    console.log(colors.red(msg.stack));
     return;
   }
-  console.log(msg);
+  if(type){
+    console.log(colors.green(`[${type}] `) + msg);
+  }
+  colors.green(msg);
 };
 
 /**

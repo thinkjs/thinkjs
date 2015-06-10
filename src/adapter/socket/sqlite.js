@@ -54,7 +54,7 @@ export default class extends think.adapter.socket {
    */
   async execute(sql){
     if (think.config('db.log_sql')) {
-      console.log(`sql: ${sql}`);
+      think.log(sql, 'sql');
     }
     let connection = await this.getConnection();
     let deferred = think.defer();
@@ -78,7 +78,7 @@ export default class extends think.adapter.socket {
    */
   async query(sql){
     if (think.config('db.log_sql')) {
-      console.log(`sql: ${sql}`);
+      think.log(sql, 'sql');
     }
     let connection = await this.getConnection();
     let deferred = think.defer();
