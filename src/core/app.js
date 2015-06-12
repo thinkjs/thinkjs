@@ -162,7 +162,7 @@ export default class extends think.base {
       try{
         return new this(http).run();
       }catch(e){
-        console.log(e.stack);
+        think.log(e);
       }
     };
     //define createServer in application
@@ -177,9 +177,9 @@ export default class extends think.base {
       server.listen(port, host);
       this.logPid(port);
     }
-    console.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/');
+    think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
     if (think.debug) {
-      console.log('app debug is open');
+      think.log('App debug is open', 'THINK');
     }
   }
   /**

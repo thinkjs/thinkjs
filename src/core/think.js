@@ -322,18 +322,33 @@ think.isPrevent = err => {
  */
 let preErr = null;
 think.log = (msg, type) => {
+
+  let d = new Date();
+  let date = [
+    d.getFullYear(),
+    ('0' + (d.getMonth() + 1)).slice(-2),
+    ('0' + d.getDate()).slice(-2)
+  ].join('-');
+  let time = [
+    ('0' + d.getHours()).slice(-2),
+    ('0' + d.getMinutes()).slice(-2),
+    ('0' + d.getSeconds()).slice(-2)
+  ].join(':');
+  let dateTime = colors.green(`[${date} ${time}] `);
+
   if (think.isError(msg)) {
     if(think.isPrevent(msg) || msg === preErr){
       return;
     }
     preErr = msg;
-    console.log(colors.red(msg.stack));
+    console.error(colors.red('[Error] ') + dateTime + msg.stack);
     return;
   }
   if(type){
-    console.log(colors.green(`[${type}] `) + msg);
+    console.log(colors.cyan(`[${type}] `) + dateTime + msg);
+  }else{
+    console.log(dateTime + msg); 
   }
-  colors.green(msg);
 };
 
 /**
