@@ -364,9 +364,9 @@ export default class extends think.base {
     this.http.fail(errno, errmsg, data);
     return think.prevent();
   }
-  error(errno, errmsg, data){
+  error(...args){
     console.log('this.error() is deprecated, please use this.fail() instead.');
-    return this.fail(errno, errmsg, data);
+    return this.fail(...args);
   }
   /**
    * close db connections
