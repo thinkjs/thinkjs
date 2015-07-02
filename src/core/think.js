@@ -1127,15 +1127,15 @@ think.npm = (pkg) => {
     }
     let cmd = `npm install ${pkgWithVersion}`;
     let deferred = think.defer();
-    console.log(`install ${pkgWithVersion} start`);
+    think.log(`install ${pkgWithVersion} start`, 'NPM');
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
     }, (err, stdout, stderr) => {
       if(err || stderr){
-        console.log(`install ${pkgWithVersion} error`);
+        think.log(new Error(`install ${pkgWithVersion} error`), 'NPM');
         deferred.reject(err || stderr);
       }else{
-        console.log(`install ${pkgWithVersion} finish`);
+        think.log(`install ${pkgWithVersion} finish`, 'NPM');
         deferred.resolve(require(pkg));
       }
     });
