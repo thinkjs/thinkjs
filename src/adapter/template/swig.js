@@ -1,10 +1,11 @@
 'use strict';
 
+import swig from 'swig';
+
 /**
  * swig template
  * @type {Class}
  */
-
 export default class extends think.adapter.template {
   /**
    * run
@@ -13,7 +14,6 @@ export default class extends think.adapter.template {
    * @return {String}              []
    */
   async run(templateFile, tVar){
-    let swig = await think.npm('swig');
     swig.setDefaults(think.config('tpl.options'));
     let tpl = swig.compileFile(templateFile, {autoescape: false});
     return tpl(tVar);
