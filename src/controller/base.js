@@ -2,7 +2,10 @@
 
 import fs from 'fs';
 import path from 'path';
-
+/**
+ * base controller class
+ * all controllers will inherits this class
+ */
 export default class extends think.base {
   /**
    * init

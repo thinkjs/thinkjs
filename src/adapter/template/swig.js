@@ -4,7 +4,6 @@
  * swig template
  * @type {Class}
  */
-let swig = require('swig');
 
 export default class extends think.adapter.template {
   /**
@@ -13,7 +12,8 @@ export default class extends think.adapter.template {
    * @param  {Object} tVar         [data]
    * @return {String}              []
    */
-  run(templateFile, tVar){
+  async run(templateFile, tVar){
+    let swig = await think.npm('swig');
     swig.setDefaults(think.config('tpl.options'));
     let tpl = swig.compileFile(templateFile, {autoescape: false});
     return tpl(tVar);
