@@ -225,7 +225,7 @@ think.lookClass = (name, type, module) => {
  * think.getPath(home, think.dirname.model)
  * @return {String} []
  */
-think.getPath = (module = think.dirname.common, type = think.dirname.controller) => {
+think.getPath = (module, type = think.dirname.controller) => {
   switch(think.mode){
     case think.mode_mini:
       return `${think.APP_PATH}/${type}`;
@@ -237,11 +237,13 @@ think.getPath = (module = think.dirname.common, type = think.dirname.controller)
         case think.dirname.logic:
         case think.dirname.service:
         case think.dirname.view:
-          filepath += module;
+          module = module || think.config('default_module');
+          filepath += '/' + module;
           break;
       }
       return filepath;
     case think.mode_module:
+      module = module || think.dirname.common;
       return `${think.APP_PATH}/${module}/${type}`;
   }
 };

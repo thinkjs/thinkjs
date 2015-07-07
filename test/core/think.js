@@ -6,10 +6,10 @@ for(var filepath in require.cache){
 
 var thinkjs = require('../../lib/core/think.js');
 var assert = require('assert');
-var path = require('path');
 var thinkit = require('thinkit');
+var path = require('path');
 
-var APP_PATH = path.dirname(__dirname);
+think.APP_PATH = path.dirname(__dirname);
 
 describe('core/think.js', function(){
   it('methods from thinkit', function(){
@@ -208,7 +208,7 @@ describe('core/think.js', function(){
     })
   })
   describe('think.lookClass', function(){
-    it('think.lookClass("module/not/found") is not found', function(){
+    it('think.lookClass("module/not/found") not found', function(){
       try{
         think.lookClass('module/not/found')
       }catch(e){
@@ -224,7 +224,7 @@ describe('core/think.js', function(){
       assert.equal(fn(), 'module/is/exist');
       think._aliasExport = {};
     })
-    it('think.lookClass("home/group", "controller") is not found', function(){
+    it('think.lookClass("home/group", "controller") not found', function(){
       try{
         think.lookClass("home/group", "controller")
       }catch(e){
@@ -239,7 +239,7 @@ describe('core/think.js', function(){
       assert.equal(fn(), 'home/service/group');
       think._aliasExport = {};
     })
-    it('think.lookClass("detail", "controller", "home") is not found', function(){
+    it('think.lookClass("detail", "controller", "home") not found', function(){
       var cls = think.lookClass('detail', 'controller', 'home');
       assert.equal(cls, null);
     })
@@ -249,6 +249,131 @@ describe('core/think.js', function(){
       }
       var fn = think.lookClass('group', 'controller', 'home');
       assert.equal(fn(), 'home/controller/group');
+      delete think._aliasExport['home/controller/group'];
+    })
+    it('think.lookClass("group", "controller", "home1") is function', function(){
+      var mode = think.mode;
+      think.mode = think.mode_module;
+      think._aliasExport['common/controller/group'] = function(){
+        return 'common/controller/group';
+      }
+      var fn = think.lookClass('group', 'controller', 'home1');
+      assert.equal(fn(), 'common/controller/group');
+      think.mode = mode;
+      delete think._aliasExport['common/controller/group'];
+    })
+  })
+
+  describe('think.getPath', function(){
+    it('think.getPath is function', function(){
+      assert.equal(think.isFunction(think.getPath), true);
+    })
+    it('mode mini', function(){
+      var mode = think.mode;
+      think.mode = think.mode_mini;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+
+      var path = think.getPath();
+      assert.equal(path, '/path/to/project/app/controller');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode mini with model', function(){
+      var mode = think.mode;
+      think.mode = think.mode_mini;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+
+      var path = think.getPath(think.dirname.common, think.dirname.model);
+      assert.equal(path, '/path/to/project/app/model');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode mini with view', function(){
+      var mode = think.mode;
+      think.mode = think.mode_mini;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+
+      var path = think.getPath(think.dirname.common, think.dirname.view);
+      assert.equal(path, '/path/to/project/app/view');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode normal', function(){
+      var mode = think.mode;
+      think.mode = think.mode_normal;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      think.config('default_module', 'home')
+      var path = think.getPath();
+      assert.equal(path, '/path/to/project/app/controller/home');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode normal with model', function(){
+      var mode = think.mode;
+      think.mode = think.mode_normal;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      think.config('default_module', 'home')
+      var path = think.getPath(undefined, think.dirname.model);
+      assert.equal(path, '/path/to/project/app/model/home');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode normal with view', function(){
+      var mode = think.mode;
+      think.mode = think.mode_normal;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      think.config('default_module', 'home')
+      var path = think.getPath(undefined, think.dirname.view);
+      assert.equal(path, '/path/to/project/app/view/home');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode normal with view & module', function(){
+      var mode = think.mode;
+      think.mode = think.mode_normal;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      think.config('default_module', 'home')
+      var path = think.getPath('welefen', think.dirname.view);
+      assert.equal(path, '/path/to/project/app/view/welefen');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode module', function(){
+      var mode = think.mode;
+      think.mode = think.mode_module;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      var path = think.getPath();
+      assert.equal(path, '/path/to/project/app/common/controller');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode module with model', function(){
+      var mode = think.mode;
+      think.mode = think.mode_module;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      var path = think.getPath(undefined, think.dirname.model);
+      assert.equal(path, '/path/to/project/app/common/model');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
+    it('mode module with model & module', function(){
+      var mode = think.mode;
+      think.mode = think.mode_module;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+      var path = think.getPath('test', think.dirname.model);
+      assert.equal(path, '/path/to/project/app/test/model');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
     })
   })
 })
