@@ -19,7 +19,7 @@ export default class {
       }else{
         deferred.resolve(content);
       }
-    })
+    });
     return deferred.promise;
   }
   /**

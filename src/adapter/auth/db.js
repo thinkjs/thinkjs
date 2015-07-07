@@ -76,7 +76,7 @@ export default class extends think.base {
     let logic = and ? 'every' : 'some';
     return name[logic](item => {
       return authList.indexOf(item) > -1;
-    })
+    });
   }
   async _getAuthList(){
     let data;
@@ -115,7 +115,7 @@ export default class extends think.base {
           result.push(item.name);
         }
       }
-    })
+    });
     return result;
   }
   /**
@@ -149,7 +149,7 @@ export default class extends think.base {
     data.forEach(item => {
       let ruleIds = (item.rule_ids || '').split(',');
       ids = ids.concat(ruleIds);
-    })
+    });
     return ids;
   }
   /**

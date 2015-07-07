@@ -12,7 +12,7 @@ import co from 'co';
 import colors from 'colors/safe';
 
 import base from './base';
-import cache from './_cache.js';
+import {} from './_cache.js';
 
 /**
  * global think variable
@@ -124,8 +124,7 @@ think.reject = (err) => {
     think.log(err);
   }, 500);
   return Promise.reject(err);
-}
-
+};
 
 /**
  * check object is http object
@@ -862,7 +861,7 @@ think.session = http => {
     }
   }
   let cls = think.adapter('session', type);
-  let conf = think.extend({}, sessionOptions, {cookie: sessionCookie})
+  let conf = think.extend({}, sessionOptions, {cookie: sessionCookie});
   let session = new cls(conf);
   http.session = session;
   http.on('afterEnd', () => session.flush && session.flush());
