@@ -1,17 +1,16 @@
 'use strict';
 
-let querystring = require('querystring');
+import querystring from 'querystring';
+import Parse from './_parse.js';
 
-let _parse = require('./_parse.js');
 let wait = think.require('await');
-
 let awaitInstance = new wait();
 
 /**
  * db base class
  * @type {Class}
  */
-export default class extends _parse {
+export default class extends Parse {
   /**
    * init
    * @return {} []
@@ -24,9 +23,9 @@ export default class extends _parse {
     this.selectSql = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%';
   }
   /**
-   * 拼接select查询语句
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * get select sql
+   * @param  {Object} options []
+   * @return {String}         [sql string]
    */
   buildSelectSql(options){
     let sql = this.parseSql(this.selectSql, options);

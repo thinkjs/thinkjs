@@ -31,10 +31,11 @@ export default class {
     if (think.isFunction(this.__before)) {
       await think.co.wrap(this.__before).bind(this)(this);
     }
-    await think.co.wrap(this[method]).apply(this, data);
+    let result = await think.co.wrap(this[method]).apply(this, data);
     if (think.isFunction(this.__after)) {
       await think.co.wrap(this.__after).bind(this)(this);
     }
+    return result;
   }
   /**
    * get or set config

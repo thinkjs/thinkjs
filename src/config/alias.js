@@ -11,6 +11,6 @@ export default {
   auth: `${root}/util/auth.js`,
   cookie: `${root}/util/cookie.js`,
   valid: `${root}/util/valid.js`,
-  await: `${root}/util/await.js`,
+  await: `${root}/util/await.js`
   //websocket: root + '/util/websocket.js'
 };

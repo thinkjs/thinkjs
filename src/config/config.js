@@ -140,6 +140,8 @@ module.exports = {
   },
   package: { //extra package version
     redis: '0.12.1',
-    sqlite3: '3.0.8'
+    sqlite3: '3.0.8',
+    ejs: '2.3.2',
+    jade: '1.11.0'
   }
 };

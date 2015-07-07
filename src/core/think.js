@@ -12,7 +12,7 @@ import co from 'co';
 import colors from 'colors/safe';
 
 import base from './base';
-import cache from './_cache.js';
+import {} from './_cache.js';
 
 /**
  * global think variable
@@ -124,8 +124,7 @@ think.reject = (err) => {
     think.log(err);
   }, 500);
   return Promise.reject(err);
-}
-
+};
 
 /**
  * check object is http object
@@ -225,7 +224,7 @@ think.lookClass = (name, type, module) => {
  * think.getPath(home, think.dirname.model)
  * @return {String} []
  */
-think.getPath = (module = think.dirname.common, type = think.dirname.controller) => {
+think.getPath = (module, type = think.dirname.controller) => {
   switch(think.mode){
     case think.mode_mini:
       return `${think.APP_PATH}/${type}`;
@@ -237,11 +236,13 @@ think.getPath = (module = think.dirname.common, type = think.dirname.controller)
         case think.dirname.logic:
         case think.dirname.service:
         case think.dirname.view:
-          filepath += module;
+          module = module || think.config('default_module');
+          filepath += '/' + module;
           break;
       }
       return filepath;
     case think.mode_module:
+      module = module || think.dirname.common;
       return `${think.APP_PATH}/${module}/${type}`;
   }
 };
@@ -265,7 +266,9 @@ think.require = (name, flag) => {
     if (think.isFunction(obj)) {
       obj.prototype.__filename = filepath;
     }
-    think._aliasExport[name] = obj;
+    if(obj){
+      think._aliasExport[name] = obj;
+    }
     return obj;
   };
 
@@ -291,10 +294,8 @@ think.safeRequire = file => {
   }
   try{
     return require(file);
-  }catch(e){
-    //if (think.debug) {
-      console.error(e.stack);
-    //}
+  }catch(err){
+    think.log(err);
   }
   return null;
 };
@@ -860,7 +861,7 @@ think.session = http => {
     }
   }
   let cls = think.adapter('session', type);
-  let conf = think.extend({}, sessionOptions, {cookie: sessionCookie})
+  let conf = think.extend({}, sessionOptions, {cookie: sessionCookie});
   let session = new cls(conf);
   http.session = session;
   http.on('afterEnd', () => session.flush && session.flush());
@@ -1127,15 +1128,15 @@ think.npm = (pkg) => {
     }
     let cmd = `npm install ${pkgWithVersion}`;
     let deferred = think.defer();
-    console.log(`install ${pkgWithVersion} start`);
+    think.log(`install ${pkgWithVersion} start`, 'NPM');
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
     }, (err, stdout, stderr) => {
       if(err || stderr){
-        console.log(`install ${pkgWithVersion} error`);
+        think.log(new Error(`install ${pkgWithVersion} error`), 'NPM');
         deferred.reject(err || stderr);
       }else{
-        console.log(`install ${pkgWithVersion} finish`);
+        think.log(`install ${pkgWithVersion} finish`, 'NPM');
         deferred.resolve(require(pkg));
       }
     });

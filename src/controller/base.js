@@ -2,7 +2,10 @@
 
 import fs from 'fs';
 import path from 'path';
-
+/**
+ * base controller class
+ * all controllers will inherits this class
+ */
 export default class extends think.base {
   /**
    * init
@@ -364,8 +367,12 @@ export default class extends think.base {
     this.http.fail(errno, errmsg, data);
     return think.prevent();
   }
+  /**
+   * alias for fail
+   * @param  {} args []
+   * @return {Promise}         []
+   */
   error(...args){
-    console.log('this.error() is deprecated, please use this.fail() instead.');
     return this.fail(...args);
   }
   /**

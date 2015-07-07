@@ -1,6 +1,7 @@
+'use strict';
+
 import fs from 'fs';
 import path from 'path';
-import child_process from 'child_process';
 import {} from './core/think.js';
 
 export default class {
@@ -81,7 +82,8 @@ export default class {
   getModule(){
     //only have default module in mini mode
     if (think.mode === think.mode_mini) {
-      return think.module = [think.config('default_module')];
+      think.module = [think.config('default_module')];
+      return think.module;
     }
     let modulePath = think.APP_PATH;
     if (think.mode === think.mode_normal) {
@@ -387,7 +389,7 @@ export default class {
       this.start();
       await think.require('app').run();
     }catch(err){
-      console.log(err.stack);
+      think.log(err);
     }
   }
 }

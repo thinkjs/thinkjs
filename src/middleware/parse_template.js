@@ -7,6 +7,11 @@
  * @return {Promise}         []
  */
 export default class extends think.middleware.base {
+  /**
+   * run
+   * @param  {Object} data [render template data]
+   * @return {Promise}      []
+   */
   run(data){
     let file = data.file;
     this.http.tpl_file = file;

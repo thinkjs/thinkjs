@@ -1,7 +1,9 @@
 'use strict';
 
 let sqliteSocket = think.adapter('socket', 'sqlite');
-
+/**
+ * sqlite db
+ */
 export default class extends think.adapter.db {
   /**
    * connect
@@ -26,8 +28,8 @@ export default class extends think.adapter.db {
         default: item.dflt_value,
         primary: !!item.pk,
         auto_increment: false
-      }
-    })
+      };
+    });
     if(data.length === 0){
       let msg = new Error(think.message('TABLE_NO_COLUMNS', table));
       return think.reject(msg);
@@ -40,7 +42,7 @@ export default class extends think.adapter.db {
    * @return {String}     []
    */
   escapeString(str){
-    return str.replace(/\'/g, "''");
+    return str.replace(/\'/g, '\'\'');
   }
   /**
    * parse limit

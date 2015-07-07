@@ -68,7 +68,7 @@ export default class extends think.adapter.socket {
           affectedRows: this.changes
         });
       }
-    })
+    });
     return deferred.promise;
   }
   /**
