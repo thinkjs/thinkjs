@@ -266,7 +266,9 @@ think.require = (name, flag) => {
     if (think.isFunction(obj)) {
       obj.prototype.__filename = filepath;
     }
-    think._aliasExport[name] = obj;
+    if(obj){
+      think._aliasExport[name] = obj;
+    }
     return obj;
   };
 

@@ -395,9 +395,64 @@ describe('core/think.js', function(){
       assert.equal(result, fn);
       think._aliasExport = data;
     })
+    it('think.require is in _alias', function(){
+      var data = think._alias;
+      think._alias = {
+        '_test_': __filename + '/a.js'
+      }
+      var result = think.require('_test_');
+      assert.equal(result, null);
+      think._alias = data;
+    })
+    it('think.require is in _alias', function(){
+      var data = think._alias;
+      think._alias = {
+        '_test_': path.normalize(__dirname + '/../../lib/index.js')
+      }
+      var result = think.require('_test_');
+      assert.equal(think.isFunction(result), true)
+      think._alias = data;
+    })
+
+    it('think.require is not in _alias, try it', function(){
+      try{
+        var result = think.require('_test_ww');
+        assert.equal(1, 2)
+      }catch(e){
+        assert.equal(true, true)
+      }
+    })
+    it('think.require is not in _alias, return null', function(){
+      var result = think.require('_test_ww', true);
+      assert.equal(result, null)
+    })
+    it('think.require is not in _alias, mime module', function(){
+      var result = think.require('mime');
+      assert.equal(think.isObject(result), true)
+    })
+
+
   })
 
+  describe('think.safeRequire', function(){
+    it('think.safeRequire is function', function(){
+      assert.equal(think.isFunction(think.safeRequire), true)
+    })
+    it('think.safeRequire absoslute file not exist', function(){
+      var data = think.safeRequire('/dddd');
+      assert.equal(data, null)
+    })
+    it('think.safeRequire relative file not exist', function(){
+      var log = think.log;
+      think.log = function(err){
+        assert.equal(err.message, "Cannot find module 'dddd/aaa.js'");
+      }
+      var data = think.safeRequire('dddd/aaa.js');
+      assert.equal(data, null);
+      think.log = log;
+    })
 
+  })
 
 
 
