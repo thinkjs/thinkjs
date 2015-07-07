@@ -101,11 +101,12 @@ describe('core/think.js', function(){
     it('think.reject is reject', function(){
       assert.equal(typeof think.reject, 'function')
     })
-    it('think.reject methods', function(){
+    it('think.reject methods', function(done){
       var err = new Error();
       var reject = think.reject(err);
       reject.catch(function(e){
         assert.equal(err, e);
+        done();
       })
     })
   })
@@ -458,9 +459,10 @@ describe('core/think.js', function(){
     it('think.prevent is function', function(){
       assert.equal(think.isFunction(think.prevent), true)
     })
-    it('think.prevent', function(){
+    it('think.prevent', function(done){
       think.prevent().catch(function(err){
-        assert.equal(err.message, 'PREVENT_NEXT_PROCESS')
+        assert.equal(err.message, 'PREVENT_NEXT_PROCESS');
+        done();
       })
     })
   })
@@ -468,9 +470,53 @@ describe('core/think.js', function(){
     it('think.isPrevent is function', function(){
       assert.equal(think.isFunction(think.isPrevent), true)
     })
-    it('think.isPrevent', function(){
+    it('think.isPrevent', function(done){
       think.prevent().catch(function(err){
-        assert.equal(think.isPrevent(err), true)
+        assert.equal(think.isPrevent(err), true);
+        done();
+      })
+    })
+  })
+
+
+  describe('think.log', function(){
+    it('think.log is function', function(){
+      assert.equal(think.isFunction(think.log), true)
+    })
+    it('think.log', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true)
+      }
+      think.log('test');
+      console.log = log;
+    })
+    it('think.log with type', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true);
+        assert.equal(msg.indexOf('[TEST]') > -1, true);
+      }
+      think.log('test', 'TEST');
+      console.log = log;
+    })
+    it('think.log with error', function(){
+      var log = console.error;
+      console.error = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true);
+      }
+      think.log(new Error('test'));
+      console.error = log;
+    })
+    it('think.log with prevent', function(done){
+      var error = console.error;
+      console.error = function(){
+        assert.equal(1, 2);
+      }
+      think.prevent().catch(function(err){
+        think.log(err);
+        console.error = error;
+        done();
       })
     })
   })
