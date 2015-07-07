@@ -1,4 +1,7 @@
 'use strict';
+
+import querystring from 'querystring';
+
 /**
  * sql parse class
  */
@@ -11,6 +14,10 @@ export default class {
   constructor(...args){
     this.init(...args);
   }
+  /**
+   * init
+   * @return {} []
+   */
   init(){
     //operate
     this.comparison = {

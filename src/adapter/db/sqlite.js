@@ -1,7 +1,9 @@
 'use strict';
 
 let sqliteSocket = think.adapter('socket', 'sqlite');
-
+/**
+ * sqlite db
+ */
 export default class extends think.adapter.db {
   /**
    * connect
