@@ -4,7 +4,7 @@ for(var filepath in require.cache){
   delete require.cache[filepath];
 }
 
-var thinkjs = require('../../lib/index.js');
+var thinkjs = require('../../lib/core/think.js');
 var assert = require('assert');
 var path = require('path');
 var thinkit = require('thinkit');
@@ -95,6 +95,18 @@ describe('core/think.js', function(){
       assert.equal(typeof deferred.promise, 'object')
       assert.equal(typeof deferred.resolve, 'function')
       assert.equal(typeof deferred.reject, 'function')
+    })
+  })
+  describe('think.reject', function(){
+    it('think.reject is reject', function(){
+      assert.equal(typeof think.reject, 'function')
+    })
+    it('think.reject methods', function(){
+      var err = new Error();
+      var reject = think.reject(err);
+      reject.catch(function(e){
+        assert.equal(err, e);
+      })
     })
   })
   
