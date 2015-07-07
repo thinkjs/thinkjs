@@ -4,6 +4,10 @@
  * @type {}
  */
 export default class extends think.middleware.base {
+  /**
+   * run
+   * @return {Promise} []
+   */
   async run(){
     let ips = this.config('deny_ip');
     if(think.isFunction(ips)){
