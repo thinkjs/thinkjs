@@ -454,6 +454,27 @@ describe('core/think.js', function(){
 
   })
 
+  describe('think.prevent', function(){
+    it('think.prevent is function', function(){
+      assert.equal(think.isFunction(think.prevent), true)
+    })
+    it('think.prevent', function(){
+      think.prevent().catch(function(err){
+        assert.equal(err.message, 'PREVENT_NEXT_PROCESS')
+      })
+    })
+  })
+  describe('think.isPrevent', function(){
+    it('think.isPrevent is function', function(){
+      assert.equal(think.isFunction(think.isPrevent), true)
+    })
+    it('think.isPrevent', function(){
+      think.prevent().catch(function(err){
+        assert.equal(think.isPrevent(err), true)
+      })
+    })
+  })
+
 
 
 
