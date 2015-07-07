@@ -387,7 +387,7 @@ export default class {
       this.start();
       await think.require('app').run();
     }catch(err){
-      console.log(err.stack);
+      think.log(err);
     }
   }
 }
