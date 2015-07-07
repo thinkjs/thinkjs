@@ -292,10 +292,8 @@ think.safeRequire = file => {
   }
   try{
     return require(file);
-  }catch(e){
-    //if (think.debug) {
-      console.error(e.stack);
-    //}
+  }catch(err){
+    think.log(err);
   }
   return null;
 };

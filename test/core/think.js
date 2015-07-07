@@ -376,6 +376,33 @@ describe('core/think.js', function(){
       think.APP_PATH = APP_PATH;
     })
   })
+  
+  describe('think.require', function(){
+    it('think.require is function', function(){
+      assert.equal(think.isFunction(think.require), true)
+    })
+    it('think.require({})', function(){
+      var data = think.require({});
+      assert.deepEqual(data, {})
+    })
+    it('think.require is in _aliasExport', function(){
+      var data = think._aliasExport;
+      var fn = function(){};
+      think._aliasExport = {
+        '_test_': fn
+      }
+      var result = think.require('_test_')
+      assert.equal(result, fn);
+      think._aliasExport = data;
+    })
+  })
+
+
+
+
+
+
+
 })
 
 
