@@ -22,6 +22,11 @@ let readLine = string => {
  * @type {Class}
  */
 module.exports = class extends EventEmitter {
+  /**
+   * constructor
+   * @param  {} args []
+   * @return {}         []
+   */
   constructor(...args){
     super(...args);
     this.init(...args);
@@ -118,6 +123,11 @@ module.exports = class extends EventEmitter {
       }
     }
   }
+  /**
+   * get handle result
+   * @param  {String} buffer []
+   * @return {}        []
+   */
   getHandleResult(buffer){
     if (buffer.indexOf(CRLF) === -1) {
       return false;
@@ -135,10 +145,20 @@ module.exports = class extends EventEmitter {
     }
     return false;
   }
+  /**
+   * handle error
+   * @param  {String} buffer []
+   * @return {Array}        []
+   */
   handleError(buffer){
     let line = readLine(buffer);
     return [null, line.length + CRLF_LENGTH, line];
   }
+  /**
+   * handle get
+   * @param  {String} buffer []
+   * @return {Array}        []
+   */
   handleGet(buffer){
     let value = null;
     let end = 3;
@@ -159,16 +179,32 @@ module.exports = class extends EventEmitter {
       return [value, firstPos + parseInt(resultLen) + CRLF_LENGTH + end + CRLF_LENGTH];
     }
   }
+  /**
+   * handle simple data
+   * @param  {String} buffer []
+   * @return {Array}        []
+   */
   handleSimple(buffer){
     let line = readLine(buffer);
     return [line, line.length + CRLF_LENGTH, null];
   }
+  /**
+   * handle version
+   * @param  {String} buffer []
+   * @return {Array}        []
+   */
   handleVersion(buffer){
     let pos = buffer.indexOf(CRLF);
     //8 is length of 'VERSION '
     let value = buffer.substr(8, pos - 8);
     return [value, pos + CRLF_LENGTH, null];
   }
+  /**
+   * exec command
+   * @param  {String} query []
+   * @param  {String} type  []
+   * @return {Promise}       []
+   */
   query(query, type){
     this.connect();
     let deferred = think.defer();
@@ -181,9 +217,22 @@ module.exports = class extends EventEmitter {
     });
     return deferred.promise;
   }
+  /**
+   * get data
+   * @param  {String} key []
+   * @return {Promise}     []
+   */
   get(key){
     return this.query('get ' + key, 'get');
   }
+  /**
+   * store data
+   * @param  {String} key      []
+   * @param  {Mixed} value    []
+   * @param  {Number} lifetime []
+   * @param  {} flags    []
+   * @return {Promise}          []
+   */
   store(key, value, type, lifetime, flags){
     lifetime = lifetime || 0;
     flags = flags || 0;
@@ -191,30 +240,91 @@ module.exports = class extends EventEmitter {
     let query = [type, key, flags, lifetime, length].join(' ') + CRLF + value;
     return this.query(query, 'simple');
   }
+  /**
+   * delete data
+   * @param  {String} key []
+   * @return {Promise}     []
+   */
   delete(key){
     return this.query('delete ' + key, 'simple');
   }
+  /**
+   * get version
+   * @return {Promise} []
+   */
   version(){
     return this.query('version', 'version');
   }
+  /**
+   * increment value
+   * @param  {String} key  []
+   * @param  {Number} step []
+   * @return {Promise}      []
+   */
   increment(key, step = 1){
     return this.query('incr ' + key + ' ' + step, 'simple');
   }
+  /**
+   * decrement value
+   * @param  {String} key  []
+   * @param  {Number} step []
+   * @return {Promise}      []
+   */
   decrement(key, step = 1){
     return this.query('decr ' + key + ' ' + step, 'simple');
   }
+  /**
+   * set data
+   * @param  {String} key      []
+   * @param  {Mixed} value    []
+   * @param  {Number} lifetime []
+   * @param  {} flags    []
+   * @return {Promise}          []
+   */
   set(key, value, lifetime, flags){
     return this.store(key, value, 'set', lifetime, flags);
   }
+  /**
+   * add
+   * @param  {String} key      []
+   * @param  {Mixed} value    []
+   * @param  {Number} lifetime []
+   * @param  {} flags    []
+   * @return {Promise}          []
+   */
   add(key, value, lifetime, flags){
     return this.store(key, value, 'add', lifetime, flags);
   }
+  /**
+   * replace
+   * @param  {String} key      []
+   * @param  {Mixed} value    []
+   * @param  {Number} lifetime []
+   * @param  {} flags    []
+   * @return {Promise}          []
+   */
   replace(key, value, lifetime, flags){
     return this.store(key, value, 'replace', lifetime, flags);
   }
+  /**
+   * append
+   * @param  {String} key      []
+   * @param  {Mixed} value    []
+   * @param  {Number} lifetime []
+   * @param  {} flags    []
+   * @return {Promise}          []
+   */
   append(key, value, lifetime, flags){
     return this.store(key, value, 'append', lifetime, flags);
   }
+  /**
+   * prepend
+   * @param  {String} key      []
+   * @param  {Mixed} value    []
+   * @param  {Number} lifetime []
+   * @param  {} flags    []
+   * @return {Promise}          []
+   */
   prepend(key, value, lifetime, flags){
     return this.store(key, value, 'prepend', lifetime, flags);
   }
