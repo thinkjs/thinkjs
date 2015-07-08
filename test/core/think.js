@@ -521,8 +521,105 @@ describe('core/think.js', function(){
     })
   })
 
-
-
+  describe('think.log', function(){
+    it('think.config is function', function(){
+      assert.equal(think.isFunction(think.config), true);
+    })
+    it('think.config get all data', function(){
+      var data = think._config;
+      think._config = {name: 'welefen'}
+      var result = think.config();
+      assert.deepEqual(result, {name: 'welefen'});
+      think._config = data;
+    })
+    it('think.config set data', function(){
+      var data = think._config;
+      think._config = {};
+      think.config({name: 'welefen'});
+      var result = think.config();
+      assert.deepEqual(result, {name: 'welefen'});
+      think._config = data;
+    })
+    it('think.config get data', function(){
+      var data = think._config;
+      think._config = {};
+      think.config({name: 'welefen'});
+      var result = think.config('name');
+      assert.deepEqual(result, 'welefen');
+      think._config = data;
+    })
+    it('think.config set data with value', function(){
+      var data = think._config;
+      think._config = {};
+      think.config('name', 'welefen');
+      var result = think.config('name');
+      assert.deepEqual(result, 'welefen');
+      think._config = data;
+    })
+    it('think.config set data with value 2', function(){
+      var data = think._config;
+      think._config = {};
+      think.config('name.value', 'welefen');
+      var result = think.config('name.value');
+      assert.deepEqual(result, 'welefen');
+      think._config = data;
+    })
+    it('think.config set data with value 3', function(){
+      var data = think._config;
+      think._config = {};
+      think.config('name.value', 'welefen');
+      var result = think.config('name');
+      assert.deepEqual(result, {value: 'welefen'});
+      think._config = data;
+    })
+    it('think.config set data with value 4', function(){
+      var data = think._config;
+      think._config = {};
+      think.config('name.value', 'welefen');
+      think.config('name.test', 'suredy')
+      var result = think.config('name');
+      assert.deepEqual(result, {value: 'welefen', test: 'suredy'});
+      think._config = data;
+    })
+    it('think.config set data with value 5', function(){
+      var data = think._config;
+      think._config = {};
+      think.config('name.value', 'welefen');
+      var result = think.config('name.value111');
+      assert.deepEqual(result, undefined);
+      think._config = data;
+    })
+    it('think.config set data with value 6', function(){
+      var data = think._config;
+      think._config = {};
+      think.config('name.value', 'welefen');
+      var result = think.config('name1111.value111');
+      assert.deepEqual(result, undefined);
+      think._config = data;
+    })
+    it('think.config set data with value 7', function(){
+      var data = think._config;
+      think._config = {};
+      think.config([]);
+      var result = think.config('name1111.value111');
+      assert.deepEqual(result, undefined);
+      think._config = data;
+    })
+    it('think.config get value with data', function(){
+      var result = think.config('name', undefined, {name: 'welefen'});
+      assert.deepEqual(result, 'welefen');
+    })
+    it('think.config set value with data', function(){
+      var data = {name: 'welefen'};
+      think.config('name', 'suredy', data);
+      assert.deepEqual(data, {name: 'suredy'});
+    })
+    it('think.config set value with data 2', function(){
+      var data = {name: 'welefen'};
+      think.config('name1', 'suredy', data);
+      assert.deepEqual(data, {name: 'welefen', name1: 'suredy'});
+    })
+  })
 
 
 })
