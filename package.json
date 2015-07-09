@@ -7,9 +7,9 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter spec --timeout 10000 --recursive test/",
-    "test-cov": "./node_modules/.bin/istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 10000 --recursive  -R spec test/",
-    "compile": "./node_modules/.bin/babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "test": "mocha --reporter spec --timeout 10000 --recursive test/",
+    "test-cov": "istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 10000 --recursive  -R spec test/",
+    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
     "prepublish": "npm run compile"
   },
   "contributors": [

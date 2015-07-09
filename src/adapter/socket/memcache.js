@@ -41,7 +41,7 @@ module.exports = class extends EventEmitter {
     EventEmitter.call(this);
     this.port = port || 11211;
     this.hostname = hostname || '127.0.0.1';
-    this.buffer = '';
+    this.string = '';
     this.callbacks = []; 
     this.handle = null; 
   }
@@ -56,13 +56,13 @@ module.exports = class extends EventEmitter {
     let deferred = think.defer();
     this.handle = net.createConnection(this.port, this.host);
     this.handle.on('connect', () => {
-      this.setTimeout(0);
-      this.setNoDelay();
+      this.handle.setTimeout(0);
+      this.handle.setNoDelay();
       this.emit('connect');
       deferred.resolve();
     });
     this.handle.on('data', data => {
-      this.buffer += data.toString();
+      this.string += data.toString();
       this.handleData();
     });
     this.handle.on('end', () => {
@@ -105,18 +105,18 @@ module.exports = class extends EventEmitter {
    * @return {} []
    */
   handleData(){
-    while(this.buffer.length > 0){
-      let result = this.getHandleResult(this.buffer);
+    while(this.string.length > 0){
+      let result = this.getHandleResult(this.string);
       if(result === false){
         break;
       }
       let value = result[0];
       let pos = result[1];
       let error = result[2];
-      if (pos > this.buffer.length) {
+      if (pos > this.string.length) {
         break;
       }
-      this.buffer = this.buffer.substring(pos);
+      this.string = this.string.substring(pos);
       let callback = this.callbacks.shift();
       if (callback && callback.callback) {
         callback.callback(error, value);
@@ -125,78 +125,78 @@ module.exports = class extends EventEmitter {
   }
   /**
    * get handle result
-   * @param  {String} buffer []
+   * @param  {String} string []
    * @return {}        []
    */
-  getHandleResult(buffer){
-    if (buffer.indexOf(CRLF) === -1) {
+  getHandleResult(string){
+    if (string.indexOf(CRLF) === -1) {
       return false;
     }
     for(let i = 0; i < ERRORS_LENGTH; i++){
       let item = ERRORS[i];
-      if (buffer.indexOf(item) > -1) {
-        return this.handleError(buffer);
+      if (string.indexOf(item) > -1) {
+        return this.handleError(string);
       }
     }
     let callback = this.callbacks[0];
     if (callback && callback.type) {
       let ucfirst = callback.type[0].toUpperCase() + callback.type.slice(1).toLowerCase();
-      return this['handle' + ucfirst](buffer);
+      return this['handle' + ucfirst](string);
     }
     return false;
   }
   /**
    * handle error
-   * @param  {String} buffer []
+   * @param  {String} string []
    * @return {Array}        []
    */
-  handleError(buffer){
-    let line = readLine(buffer);
+  handleError(string){
+    let line = readLine(string);
     return [null, line.length + CRLF_LENGTH, line];
   }
   /**
    * handle get
-   * @param  {String} buffer []
+   * @param  {String} string []
    * @return {Array}        []
    */
-  handleGet(buffer){
+  handleGet(string){
     let value = null;
     let end = 3;
     let resultLen = 0;
     let firstPos;
-    if (buffer.indexOf('END') === 0) {
+    if (string.indexOf('END') === 0) {
       return [value, end + CRLF_LENGTH];
-    }else if (buffer.indexOf('VALUE') === 0 && buffer.indexOf('END') > -1) {
-      firstPos = buffer.indexOf(CRLF) + CRLF_LENGTH;
-      let endPos = buffer.indexOf('END');
+    }else if (string.indexOf('VALUE') === 0 && string.indexOf('END') > -1) {
+      firstPos = string.indexOf(CRLF) + CRLF_LENGTH;
+      let endPos = string.indexOf('END');
       resultLen = endPos - firstPos - CRLF_LENGTH;
-      value = buffer.substr(firstPos, resultLen);
+      value = string.substr(firstPos, resultLen);
       return [value, firstPos + parseInt(resultLen, 10) + CRLF_LENGTH + end + CRLF_LENGTH];
     }else{
-      firstPos = buffer.indexOf(CRLF) + CRLF_LENGTH;
-      resultLen = buffer.substr(0, firstPos).split(' ')[3];
-      value = buffer.substr(firstPos, resultLen);
+      firstPos = string.indexOf(CRLF) + CRLF_LENGTH;
+      resultLen = string.substr(0, firstPos).split(' ')[3];
+      value = string.substr(firstPos, resultLen);
       return [value, firstPos + parseInt(resultLen) + CRLF_LENGTH + end + CRLF_LENGTH];
     }
   }
   /**
    * handle simple data
-   * @param  {String} buffer []
+   * @param  {String} string []
    * @return {Array}        []
    */
-  handleSimple(buffer){
-    let line = readLine(buffer);
+  handleSimple(string){
+    let line = readLine(string);
     return [line, line.length + CRLF_LENGTH, null];
   }
   /**
    * handle version
-   * @param  {String} buffer []
+   * @param  {String} string []
    * @return {Array}        []
    */
-  handleVersion(buffer){
-    let pos = buffer.indexOf(CRLF);
+  handleVersion(string){
+    let pos = string.indexOf(CRLF);
     //8 is length of 'VERSION '
-    let value = buffer.substr(8, pos - 8);
+    let value = string.substr(8, pos - 8);
     return [value, pos + CRLF_LENGTH, null];
   }
   /**
