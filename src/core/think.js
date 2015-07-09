@@ -409,6 +409,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
     return think._moduleConfig[module];
   }
   let rootPath;
+  //get sys config
   if (module === true) {
     rootPath = `${think.THINK_LIB_PATH}/config`;
   }else{

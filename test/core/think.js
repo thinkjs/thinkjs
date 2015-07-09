@@ -9,7 +9,7 @@ var assert = require('assert');
 var thinkit = require('thinkit');
 var path = require('path');
 
-think.APP_PATH = path.dirname(__dirname);
+think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
 describe('core/think.js', function(){
   it('methods from thinkit', function(){
@@ -521,7 +521,7 @@ describe('core/think.js', function(){
     })
   })
 
-  describe('think.log', function(){
+  describe('think.config', function(){
     it('think.config is function', function(){
       assert.equal(think.isFunction(think.config), true);
     })
@@ -621,6 +621,118 @@ describe('core/think.js', function(){
     })
   })
 
+
+  describe('think.getModuleConfig', function(){
+      it('think.getModuleConfig is function', function(){
+        assert.equal(think.isFunction(think.getModuleConfig), true);
+      })
+      it('think.getModuleConfig get sys config', function(){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var configs = think.getModuleConfig(true);
+        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
+        assert.equal(think.isObject(configs), true);
+        think._moduleConfig = _moduleConfig;
+      })
+      it('think.getModuleConfig get sys config', function(){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var configs = think.getModuleConfig(true);
+        var configs2 = think.getModuleConfig(true);
+        assert.equal(configs, configs2);
+        think._moduleConfig = _moduleConfig;
+      })
+      it('think.getModuleConfig get sys config, with cli', function(){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var cli = think.cli;
+        think.cli = true;
+        var configs = think.getModuleConfig(true);
+        assert.equal(think.isObject(configs), true);
+        assert.equal(configs.auto_reload, false);
+        think._moduleConfig = _moduleConfig;
+        think.cli = cli;
+      })
+      it('think.getModuleConfig get sys config, with debug', function(){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var debug = think.debug;
+        think.debug = true;
+        var configs = think.getModuleConfig(true);
+        assert.equal(think.isObject(configs), true);
+        assert.equal(configs.auto_reload, true);
+        think._moduleConfig = _moduleConfig;
+        think.debug = debug;
+      })
+      it('think.getModuleConfig get common config', function(){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var debug = think.debug;
+        think.debug = true;
+        var configs = think.getModuleConfig();
+        assert.equal(think.isObject(configs), true);
+        assert.equal(configs.auto_reload, undefined);
+        think._moduleConfig = _moduleConfig;
+        think.debug = debug;
+      })
+
+      it('think.getModuleConfig get common config', function(done){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var appPath = think.APP_PATH + '/config/';
+        think.mkdir(appPath);
+
+        var fs = require('fs');
+        fs.writeFileSync(appPath + '/config.js', 'module.exports = {welefen: "suredy"}');
+        think.mode = think.mode_mini;
+        var configs = think.getModuleConfig();
+        assert.equal(configs.welefen, 'suredy');
+        think._moduleConfig = _moduleConfig;
+        think.rmdir(think.APP_PATH).then(done);
+      })
+      it('think.getModuleConfig get common config', function(done){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var appPath = think.APP_PATH + '/config/';
+        think.mkdir(appPath);
+
+        var fs = require('fs');
+        fs.writeFileSync(appPath + '/aaa.js', 'module.exports = {welefen: "suredy"}');
+        think.mode = think.mode_mini;
+        var configs = think.getModuleConfig();
+        assert.deepEqual(configs.aaa, {welefen: 'suredy'});
+        think._moduleConfig = _moduleConfig;
+        think.rmdir(think.APP_PATH).then(done);
+      })
+      it('think.getModuleConfig get common config', function(done){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var appPath = think.APP_PATH + '/config/';
+        think.mkdir(appPath);
+
+        var fs = require('fs');
+        fs.writeFileSync(appPath + '/_aaa.js', 'module.exports = {welefen: "suredy"}');
+        think.mode = think.mode_mini;
+        var configs = think.getModuleConfig();
+        assert.deepEqual(configs.aaa, undefined);
+        think._moduleConfig = _moduleConfig;
+        think.rmdir(think.APP_PATH).then(done);
+      })
+      it('think.getModuleConfig get common config', function(done){
+        var _moduleConfig = think._moduleConfig;
+        think._moduleConfig = {};
+        var appPath = think.APP_PATH + '/config/local';
+        think.mkdir(appPath);
+
+        var fs = require('fs');
+        fs.writeFileSync(appPath + '/en.js', 'module.exports = {welefen: "suredy"}');
+        think.mode = think.mode_mini;
+        var configs = think.getModuleConfig();
+        assert.deepEqual(configs.local, { en: { welefen: 'suredy' } });
+        think._moduleConfig = _moduleConfig;
+        think.rmdir(think.APP_PATH).then(done);
+      })
+  })
 
 })
 
