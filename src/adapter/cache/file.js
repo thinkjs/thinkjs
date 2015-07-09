@@ -15,7 +15,7 @@ export default class extends think.adapter.cache {
    */
   init(options = {}){
     this.timeout = options.timeout;
-    this.file_ext = options.file_ext || '.json';
+    this.file_ext = options.file_ext;
     this.path = options.path || path.normalize(os.tmpdir() + '/thinkjs');
     this.path_depth = options.path_depth || 1;
 
