@@ -27,7 +27,7 @@ describe('adapter/cache/redis.js', function() {
     tjs.loadAlias();
 
     var RedisCache = think.adapter('cache', 'redis');
-    instance = new RedisCache();
+    instance = new RedisCache(think.config('cache'));
 
     var data = {};
     muk(instance.redis, 'set', function(name, value, timeout) {

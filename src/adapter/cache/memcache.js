@@ -2,6 +2,8 @@
 
 let memcacheSocket = think.adapter('socket', 'memcache');
 
+let instances = {};
+
 /**
  * memcache cache
  */
@@ -14,8 +16,13 @@ export default class extends think.adapter.cache {
   init(options = {}){
     options = think.extend({}, think.config('memcache'), options);
     this.timeout = options.timeout;
-    this.keyPrefix = options.prefix || 'thinkjs_';
-    this.memcache = new memcacheSocket(options.host, options.port);
+    this.keyPrefix = options.prefix;
+
+    let key = think.md5(JSON.stringify(options));
+    if (!(key in instances)) {
+      instances[key] = new memcacheSocket(options.host, options.port);
+    }
+    this.memcache = instances[key];
   }
   /**
    * get data

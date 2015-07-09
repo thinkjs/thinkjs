@@ -27,7 +27,7 @@ describe('adapter/cache/memcache.js', function() {
     tjs.loadAlias();
 
     var MemcacheCache = think.adapter('cache', 'memcache');
-    instance = new MemcacheCache();
+    instance = new MemcacheCache(think.config('cache'));
 
     var data = {};
     muk(instance.memcache, 'set', function(name, value, timeout) {

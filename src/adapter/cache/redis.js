@@ -2,6 +2,8 @@
 
 let redisSocket = think.adapter('socket', 'redis');
 
+let instances = {};
+
 /**
  * redis cache
  */
@@ -14,8 +16,13 @@ export default class extends think.adapter.cache {
   init(options = {}){
     options = think.extend({}, think.config('redis'), options);
     this.timeout = options.timeout;
-    this.keyPrefix = options.prefix || 'thinkjs_';
-    this.redis = new redisSocket(options);
+    this.keyPrefix = options.prefix;
+
+    let key = think.md5(JSON.stringify(options));
+    if (!(key in instances)) {
+      instances[key] = new redisSocket(options);
+    }
+    this.redis = instances[key];
   }
   /**
    * get data

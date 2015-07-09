@@ -2,19 +2,32 @@
 
 var assert = require('assert');
 var fs = require('fs');
+var path = require('path');
 
 var thinkjs = require('../../../lib/index.js');
 
-var tjs = new thinkjs();
-tjs.loadAlias();
-
-var FileCache = think.adapter('cache', 'file');
+var testAppPath = path.resolve(__dirname, '../../testApp');
+if (!fs.existsSync(testAppPath)) {
+  [testAppPath, testAppPath + '/app', testAppPath + '/common', testAppPath + '/www'].forEach(function(v) {
+    if (!fs.existsSync(v)) {
+      fs.mkdirSync(v);
+    }
+  });
+}
 
 describe('adapter/cache/file.js', function() {
   var instance;
+  var FileCache;
 
   before(function() {
-    instance = new FileCache();
+    var tjs = new thinkjs();
+    think.APP_PATH = testAppPath + '/app';
+    think.RESOURCE_PATH = testAppPath + '/www';
+    tjs.loadConfig();
+    tjs.loadAlias();
+
+    FileCache = think.adapter('cache', 'file');
+    instance = new FileCache(think.config('cache'));
 
     ['thinkjs', 'thinkjs1', 'thinkjs2', 'thinkjs3'].forEach(function(v) {
       var filepath = instance.getFilepath(v);
@@ -27,14 +40,14 @@ describe('adapter/cache/file.js', function() {
   it('new file cache instance', function() {
     assert.equal(instance.gcType, 'cache_file');
     assert.equal(instance.file_ext, '.json');
-    assert.equal(instance.path_depth, 1);
+    assert.equal(instance.path_depth, 2);
   });
 
   it('get file path', function() {
     var filepath = instance.getFilepath('maxzhang');
-    assert.equal(filepath, instance.path + '/c/cbc21016fc89ec482594a22e03e02834.json');
+    assert.equal(filepath, instance.path + '/c/b/cbc21016fc89ec482594a22e03e02834.json');
     filepath = instance.getFilepath('Max Zhang');
-    assert.equal(filepath, instance.path + '/5/5e98a6842702de206202d9ddd0a6bbc2.json');
+    assert.equal(filepath, instance.path + '/5/e/5e98a6842702de206202d9ddd0a6bbc2.json');
   });
 
   it('get empty data', function(done) {
@@ -116,7 +129,7 @@ describe('adapter/cache/file.js', function() {
   });
 
   it('custom data timeout', function(done) {
-    var instance = new FileCache({ timeout: 0.1 });
+    var instance = new FileCache(think.extend(think.config('cache'), { timeout: 0.1 }));
     instance.set('thinkjs3', 'maxzhang', 10).then(function() {
       setTimeout(function() {
         instance.gc();
