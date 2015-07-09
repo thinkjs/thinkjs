@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import os from 'os';
+import path from 'path';
 
 /**
  * file session
@@ -15,10 +16,10 @@ export default class extends think.adapter.session {
   init(options = {}){
     this.timeout = options.timeout;
     this.key = options.cookie;
-    this.path = options.path || (os.tmpdir() + '/thinkjs');
+    this.path = options.path || path.normalize(os.tmpdir() + 'thinkjs');
     this.path_depth = options.path_depth || 1;
 
-    this.gcType = `session_file`;
+    this.gcType = 'session_file';
     think.gc(this);
   }
   /**
@@ -133,12 +134,13 @@ export default class extends think.adapter.session {
    */
   gc(){
     let files = think.getFiles(this.path);
+    let now = Date.now();
     files.forEach(file => {
       let filepath = `${this.path}/${file}`;
       let content = fs.readFileSync(filepath, 'utf8');
       try{
         let data = JSON.parse(content);
-        if(Date.now() > data.expire){
+        if(now > data.expire){
           fs.unlink(filepath, () => {});
         }
       }catch(e){

@@ -1,169 +1,130 @@
 'use strict';
 
-var fs = require('fs');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+
 /**
- * file cache class
- * @return {} 
+ * file cache
  */
-module.exports = think.adapter({
-  /**
-   * gc type
-   * @type {String}
-   */
-  gcType: thinkCache.FILE,
+export default class extends think.adapter.cache {
   /**
    * init
-   * @param  {Object} options [options]
+   * @param  {Object} options []
    * @return {}         []
    */
-  init: function(options){
-    this.super('init', options);
-    //check path
-    var path = this.options.path;
-    if (!path) {
-      throw new Error(think.message('PATH_EMPTY', 'cache.path'));
-    }
-    think.mkdir(path);
-    if (think.isDir(path)) {
-      throw new Error(think.message('PATH_NOT_EXIST', path));
-    }
-    this.gcType += ':' + path;
-  },
+  init(options = {}){
+    this.timeout = options.timeout;
+    this.file_ext = options.file_ext || '.json';
+    this.path = options.path || path.normalize(os.tmpdir() + '/thinkjs');
+    this.path_depth = options.path_depth || 1;
+
+    this.gcType = 'cache_file';
+    think.gc(this);
+  }
   /**
-   * get store file
-   * @param  {String} name []
-   * @return {String}      []
+   * get stored file path
+   * @return {String} []
    */
-  getStoredFile: function(name){
+  getFilepath(name){
     name = think.md5(name);
-    var depth = this.options.path_depth || 1;
-    var dir = name.slice(0, depth).split('').join('/');
-    think.mkdir(this.options.path + '/' + dir);
-    var filepath = this.options.path + '/' + dir + '/' + name + this.options.file_ext;
-    return filepath;
-  },
+    let dir = name.slice(0, this.path_depth).split('').join('/');
+    think.mkdir(`${this.path}/${dir}`);
+    return `${this.path}/${dir}/${name}${this.file_ext}`;
+  }
   /**
-   * get cache data
-   * @param  {} name []
-   * @return {}      []
+   * get data
+   * @param  {String} name []
+   * @return {Promise}      []
    */
-  __before: function(name){
-    var filePath = this.getStoredFile(name);
-    if (!think.isFile(filePath)) {
-      return;
+  get(name){
+    let filepath = this.getFilepath(name);
+    if (!think.isFile(filepath)) {
+      return Promise.resolve();
     }
-    var self = this;
-    var deferred = think.defer();
-    fs.readFile(filePath, {encoding: 'utf8'}, function(error, content){
-      if (error || !content) {
+    let deferred = think.defer();
+    fs.readFile(filepath, {encoding: 'utf8'}, (err, content) => {
+      //has error or no content
+      if(err || !content){
         return deferred.resolve();
       }
       try{
-        var data = JSON.parse(content);
-        if (Date.now() > data.expire) {
-          fs.unlink(filePath, function(){
+        let data = JSON.parse(content);
+        if(data.expire && Date.now() > data.expire){
+          fs.unlink(filepath, () => {
             deferred.resolve();
           });
         }else{
-          //set this.data
-          self.data = data.data;
           deferred.resolve(data.data);
         }
       }catch(e){
-        fs.unlink(filePath, function(){
+        fs.unlink(filepath, () => {
           deferred.resolve();
         });
       }
     });
     return deferred.promise;
-  },
+  }
   /**
-   * get data
-   * @param  {String} name []
-   * @return {}      []
+   * set data
+   * @param {String} name    []
+   * @param {Mixed} value   []
+   * @param {Number} timeout []
    */
-  get: function(name){
-    return this.data;
-  },
-  /**
-   * set cache data
-   * @param {String} name    [cache key]
-   * @param {mixed} value   [cache value]
-   * @param {Number} timeout [cache timeout]
-   */
-  setData: function(name, value, timeout){
-    var key = name;
+  set(name, value, timeout = this.timeout){
     if (think.isObject(name)) {
       timeout = value;
-      key = Object.keys(name)[0];
+      let key = Object.keys(name)[0];
+      value = name[key];
+      name = key;
     }
-    if (timeout === undefined) {
-      timeout = this.options.timeout;
-    }
-    var filePath = this.getStoredFile(key);
-    var data = {
-      data: think.isObject(name) ? name : think.getObject(name, value),
+    let filepath = this.getFilepath(name);
+    let data = {
+      data: value,
       expire: Date.now() + timeout * 1000,
       timeout: timeout
     };
-    var deferred = think.defer();
-    fs.writeFile(filePath, JSON.stringify(data), function(){
-      //change file mod
-      think.chmod(filePath);
+    let deferred = think.defer();
+    fs.writeFile(filepath, JSON.stringify(data), () => {
+      think.chmod(filepath);
       deferred.resolve();
-    })
+    });
     return deferred.promise;
-  },
+  }
   /**
-   * set cache data
-   * @param {String} name    [cache key]
-   * @param {mixed} value   [cache value]
-   * @param {Number} timeout [cache timeout]
-   */
-  set: function(name, value, timeout){
-    return this.setData(name, value, timeout);
-  },
-  /**
-   * remove cache
+   * remove data
    * @param  {String} name []
-   * @return {}      []
+   * @return {Promise}      []
    */
-  rm: function(name){
-    var filePath = this.getStoredFile(name);
-    if (think.isFile(filePath)) {
-      var deferred = think.defer();
-      fs.unlink(filePath, function(){
+  rm(name){
+    let filepath = this.getFilepath(name);
+    if (think.isFile(filepath)) {
+      let deferred = think.defer();
+      fs.unlink(filepath, () => {
         deferred.resolve();
-      })
+      });
       return deferred.promise;
     }
     return Promise.resolve();
-  },
+  }
   /**
    * gc
-   * @param  {Number} now [date now]
-   * @return {}     []
+   * @return {} []
    */
-  gc: function(now, path){
-    path = path || this.options.path;
-    var self = this;
-    var files = fs.readdirSync(path);
-    files.forEach(function(item){
-      var filePath = path + '/' + item;
-      var stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
-        self.gc(now, filePath);
-      }else if (stat.isFile()) {
-        var data = fs.readFileSync(filePath, 'utf-8');
-        try{
-          data = JSON.parse(data);
-          if (now > data.expire) {
-            fs.unlink(filePath, function(){});
-          }
-        }catch(e){
-          fs.unlink(filePath, function(){});
+  gc(){
+    let files = think.getFiles(this.path);
+    let now = Date.now();
+    files.forEach(file => {
+      let filepath = `${this.path}/${file}`;
+      let content = fs.readFileSync(filepath, 'utf8');
+      try{
+        let data = JSON.parse(content);
+        if(now > data.expire){
+          fs.unlink(filepath, () => {});
         }
+      }catch(e){
+        fs.unlink(filepath, () => {});
       }
     });
   }
-});
+}

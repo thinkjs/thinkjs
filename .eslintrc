@@ -1,7 +1,8 @@
 {
   "parser": "babel-eslint",
   "env": {
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "rules": {
     "strict": [0],
