@@ -643,7 +643,7 @@ export default class {
     //set http end flag
     this._isEnd = true;
     if (!this._outputContentPromise) {
-      this._end();
+      return this._end();
     }
     
     return Promise.all(this._outputContentPromise).then(() => {
