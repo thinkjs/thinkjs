@@ -142,6 +142,7 @@ module.exports = {
     redis: '0.12.1',
     sqlite3: '3.0.8',
     ejs: '2.3.2',
-    jade: '1.11.0'
+    jade: '1.11.0',
+    mongodb: '2.0.36'
   }
 };
