@@ -45,7 +45,9 @@
     "router",
     "app",
     "api",
-    "es6"
+    "es6",
+    "websocket",
+    "generator-function"
   ],
   "repository": {
     "type": "git",
