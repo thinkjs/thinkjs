@@ -1,8 +1,11 @@
 'use strict';
 
 let redisSocket = think.adapter('socket', 'redis');
-
-let instances = {};
+/**
+ * store redis socket instances
+ * @type {Object}
+ */
+let instances = thinkCache(thinkCache.REDIS);
 
 /**
  * redis cache
