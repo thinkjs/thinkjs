@@ -234,6 +234,7 @@ export default class {
 
     http.config = this.config;
     http.referer = this.referer;
+    http.userAgent = this.userAgent;
     http.isAjax = this.isAjax;
     http.isJsonp = this.isJsonp;
     http.get = this.get;
@@ -284,6 +285,13 @@ export default class {
       contentType += '; charset=' + (encoding || this.config('encoding'));
     }
     this.header('Content-Type', contentType);
+  }
+  /**
+   * get user agent
+   * @return {String} []
+   */
+  userAgent(){
+    return this.headers['user-agent'] || '';
   }
   /**
    * get page request referer
@@ -573,9 +581,11 @@ export default class {
    * @return {Promise}          []
    */
   echo(obj, encoding = this.config('encoding')){
+    if(!this.res.connection){
+      return;
+    }
     this.type(this.config('tpl.content_type'));
     this.cookie(true);
-    this.sendTime();
     if (obj === undefined) {
       return;
     }
@@ -597,9 +607,21 @@ export default class {
   }
   _end(){
     this.cookie(true);
-    this.sendTime();
     this.res.end();
     this.emit('afterEnd', this);
+
+    //show request info
+    if(think.debug){
+      let time = Date.now() - this.startTime;
+      think.log(colors => {
+        let msg = [
+          this.method, this.url,
+          colors.cyan(`${this.res.statusCode}`),
+          colors.green(`${time}ms`)
+        ].join(' ');
+        return msg;
+      });
+    }
 
     //remove upload tmp files
     if (!think.isEmpty(this._file)) {

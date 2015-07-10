@@ -225,7 +225,7 @@ export default class extends think.base {
       nums = os.cpus().length;
     }
     if (cluster.isMaster) {
-      think.log('use cluster, fork nums ' + nums, 'CLUSTER');
+      think.log('use cluster, fork nums ' + nums, 'THINK');
       for (let i = 0; i < nums; i++) {
         cluster.fork();
       }

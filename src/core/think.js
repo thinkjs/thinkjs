@@ -342,11 +342,13 @@ think.log = (msg, type) => {
       return;
     }
     preErr = msg;
-    console.error(colors.red('[Error] ') + dateTime + msg.stack);
+    console.error(dateTime + colors.red('[Error] ') + msg.stack);
     return;
+  }else if(think.isFunction(msg)){
+    msg = msg(colors);
   }
   if(type){
-    console.log(colors.cyan(`[${type}] `) + dateTime + msg);
+    console.log(dateTime + colors.cyan(`[${type}] `) + msg);
   }else{
     console.log(dateTime + msg); 
   }
