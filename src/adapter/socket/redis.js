@@ -96,6 +96,14 @@ export default class extends think.adapter.socket {
     return this.wrap('expire', name, timeout);
   }
   /**
+   * delete data
+   * @param  {String} name []
+   * @return {Promise}      []
+   */
+  delete(name){
+    return this.wrap('del', name);
+  }
+  /**
    * close
    * @return {} []
    */
