@@ -2,7 +2,11 @@
 
 let memcacheSocket = think.adapter('socket', 'memcache');
 
-let instances = {};
+/**
+ * store memcache socket instances
+ * @type {Object}
+ */
+let instances = thinkCache(thinkCache.MEMCACHE);
 
 /**
  * memcache cache
