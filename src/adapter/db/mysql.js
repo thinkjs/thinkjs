@@ -1,6 +1,6 @@
 'use strict';
 
-let mysqlSocket = think.adapter('socket', 'mysql');
+let MysqlSocket = think.adapter('socket', 'mysql');
 /**
  * mysql db
  * @type {Class}
@@ -22,7 +22,11 @@ export default class extends think.adapter.db {
    * @return {}        []
    */
   connect(){
-    return new mysqlSocket(this.config);
+    if(this.socket){
+      return this.socket;
+    }
+    this.socket = new MysqlSocket(this.config);
+    return this.socket;
   }
   /**
    * get table info

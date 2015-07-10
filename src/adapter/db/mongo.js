@@ -1,70 +1,50 @@
 'use strict';
 
-var mongoSocket;
-var dbConnections = {};
-
-module.exports = think.adapter({
+let MongoSocket = think.adapter('socket', 'mongo');
+/**
+ * mongo db class
+ */
+export default class {
   /**
-   * mongoSocket连接句柄
-   * @type {[type]}
+   * constructor
+   * @param  {Array} args []
+   * @return {}         []
    */
-  linkId: null,
-  /**
-   * 初始化
-   * @param  {[type]} config         [description]
-   * @param  {[type]} modelName      [description]
-   * @param  {[type]} fields         [description]
-   * @param  {[type]} schema_options [description]
-   * @return {[type]}                [description]
-   */
-  init: function(config, modelName, fields, schema_options){
-    if (!mongoSocket) {
-      mongoSocket = think.adapter('socket', 'mongo');
-    };
-    this.config = config;
-    this.modelName = modelName;
-    this.fields = fields;
-    this.schema_options = schema_options;
-  },
-  /**
-   * 连接
-   * @return {[type]} [description]
-   */
-  connect: function(){
-    if (this.linkId) {
-      return this.linkId.connect();
-    }
-    var key = md5(this.config);
-    if (key in dbConnections) {
-      this.linkId = dbConnections[key];
-    }else{
-      this.linkId = dbConnections[key] = mongoSocket(this.config);
-    }
-    return this.linkId.connect();
-  },
-  /**
-   * 获取模型实例
-   * @param  {[type]} modelName      [description]
-   * @param  {[type]} fields         [description]
-   * @param  {[type]} schema_options [description]
-   * @return {[type]}                [description]
-   */
-  model: function(){
-    var self = this;
-    return this.connect().then(function(handle){
-      var schema = self.linkId.mongoose.Schema(self.fields, self.schema_options);
-      var model = handle.model(self.modelName, schema);
-      return model;
-    })
-  },
-  /**
-   * 关闭mongoSocket连接
-   * @return {[type]} [description]
-   */
-  close: function(){
-    if (this.linkId) {
-      this.linkId.close();
-      this.linkId = null;
-    }
+  constructor(...args){
+    this.init(...args);
   }
-})
+  /**
+   * init
+   * @param  {Object} config []
+   * @return {}        []
+   */
+  init(config){
+    this.config = config;
+    this.socket = null;
+    this.db = null;
+  }
+  /**
+   * connect mongo socket
+   * @return {Promise} []
+   */
+  connect(){
+    if(this.socket){
+      return Promise.reoslve(this.db);
+    }
+    let instance = new MongoSocket(this.config);
+    return instance.getConnection().then(db => {
+      this.socket = instance;
+      this.db = db;
+      return db;
+    })
+  }
+  /**
+   * get connection
+   * @return {Promise} []
+   */
+  collection(){
+    return this.connect().then(db => {
+      return db.collection(this.config.table);
+    })
+  }
+}

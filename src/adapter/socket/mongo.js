@@ -31,6 +31,8 @@ export default class extends think.adapter.socket {
     let Logger = mongo.Logger;
     let auth = '';
     let config = this.config;
+
+    this.mongo = mongo;
     if(this.config.user){
       auth = `${config.user}:${config.pwd}@`;
     }
