@@ -42,9 +42,9 @@ export default class {
    * get connection
    * @return {Promise} []
    */
-  collection(){
+  collection(table){
     return this.connect().then(db => {
-      return db.collection(this.config.table);
+      return db.collection(table);
     })
   }
 }

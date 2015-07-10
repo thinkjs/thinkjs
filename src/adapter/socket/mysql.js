@@ -79,7 +79,7 @@ export default class extends think.adapter.socket {
    */
   async query(sql, nestTables){
     if (think.config('db.log_sql')) {
-      think.log(sql, 'sql');
+      think.log(sql, 'SQL');
     }
     let connection = await this.getConnection();
     let deferred = think.defer();

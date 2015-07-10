@@ -15,6 +15,7 @@ export default class extends think.adapter.db {
     super.init(config);
     this.transTimes = 0;
     this.engine = ''; //mysql engine
+    this.socket = null;
   }
   /**
    * connect mysql
