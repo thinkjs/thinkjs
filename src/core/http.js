@@ -413,23 +413,36 @@ export default class {
    * get uesr ip
    * @return {String} [ip4 or ip6]
    */
-  ip(){
-    let connection = this.req.connection;
-    let socket = this.req.socket;
+  ip(forward){
+    let proxy = think.config('proxy') || this.host === this.hostname;
     let ip;
-    if (connection && connection.remoteAddress !== think.localIp) {
-      ip = connection.remoteAddress;
-    }else if (socket && socket.remoteAddress !== think.localIp) {
-      ip = socket.remoteAddress;
+    if (proxy) {
+      if (forward) {
+        return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
+          item = item.trim();
+          if (think.isIP(item)) {
+            return item;
+          }
+        })
+      }
+      ip = this.headers['x-real-ip'];
     }else{
-      ip = this.headers['x-forwarded-for'] || this.headers['x-real-ip'];
+      let connection = this.req.connection;
+      let socket = this.req.socket;
+      if (connection && connection.remoteAddress !== think.localIp) {
+        ip = connection.remoteAddress;
+      }else if (socket && socket.remoteAddress !== think.localIp) {
+        ip = socket.remoteAddress;
+      }
     }
     if (!ip) {
       return think.localIp;
     }
-    // in node v0.12.0, ip is like ::ff:100.168.148.100
     if (ip.indexOf(':') > -1) {
-      ip = ip.split(':').slice(-1).join('');
+      ip = ip.split(':').slice(-1)[0];
+    }
+    if (!think.isIP(ip)) {
+      return think.localIp;
     }
     return ip;
   }
