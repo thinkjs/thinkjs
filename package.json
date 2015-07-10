@@ -10,6 +10,7 @@
     "test": "mocha --reporter spec --timeout 10000 --recursive test/",
     "test-cov": "istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 10000 --recursive  -R spec test/",
     "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "watch-compile": "npm run compile -- --watch",
     "prepublish": "npm run compile"
   },
   "contributors": [
