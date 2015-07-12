@@ -1,58 +1,71 @@
 'use strict';
 
-var mongoose;
+import querystring from 'querystring';
 
-module.exports = think.adapter({
-  init: function(config){
-    if (!mongoose) {
-      mongoose = require('mongoose');
-    }
-    this.handle = null;
+/**
+ * mongodb socket
+ */
+export default class extends think.adapter.socket {
+  /**
+   * init
+   * @param  {Object} config []
+   * @return {}        []
+   */
+  init(config){
+    this.config = think.extend({}, {
+      host: '127.0.0.1',
+      port: 27017
+    }, config);
+
+    this.connection = null;
     this.deferred = null;
-    this.config = config;
-    this.mongoose = mongoose;
-  },
+  }
   /**
-   * 连接，虽然mongoose在连接之前会缓存所有的执行命令
-   * 但为了后续切换需要，这里通过Promise来保证连接后才执行命令
-   * @return {[type]} [description]
+   * get connection
+   * @return {Promise} []
    */
-  connect: function(){
-    if (this.handle) {
-      return this.deferred.promise;
+  async getConnection(){
+    let deferred = think.defer();
+    let mongo = await think.npm('mongodb');
+    let client = mongo.MongoClient;
+    let Logger = mongo.Logger;
+    let auth = '';
+    let config = this.config;
+
+    this.mongo = mongo;
+    if(this.config.user){
+      auth = `${config.user}:${config.pwd}@`;
     }
-    var self = this;
-    var deferred = getDefer();
-    //创建连接
-    var config = extend({
-      db_host: '127.0.0.1',
-      db_port: 27017,
-    }, this.config);
-    config = 'mongodb://' + config.db_host + ':' + config.db_port + '/' + config.db_name;
-    var connection = mongoose.createConnection(config);
-    connection.on('open', function(){
-      deferred.resolve(connection);
+    // connection options
+    // http://mongodb.github.io/node-mongodb-native/2.0/tutorials/urls/
+    let options = '';
+    if(config.options){
+      options = '?' + querystring.stringify(config.options);
+    }
+    let url = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
+    client.connect(url, this.config, (err, connection) => {
+      if(err){
+        deferred.reject(err);
+        this.close();
+      }else{
+        //set logger level
+        if(config.log_level){
+          Logger.setLevel(config.log_level);
+        }
+        this.connection = connection;
+        deferred.resolve(this.connection);
+      }
     });
-    connection.on('error', function(){
-      self.close();
-    })
-    //连接句柄
-    this.handle = connection;
-    //把上一次的promise reject
-    if (this.deferred) {
-      this.deferred.reject(new Error('connection closed'));
-    }
-    this.deferred = deferred;
-    return this.deferred.promise;
-  },
+    return deferred.promise;
+  }
   /**
-   * 关闭连接
-   * @return {[type]} [description]
+   * close mongo socket connection
+   * @return {} []
    */
-  close: function(){
-    if (this.handle) {
-      this.handle.destroy();
-      this.handle = null;
+  close(){
+    if(this.connection){
+      this.connection.close();
+      this.connection = null;
     }
   }
-})
+}

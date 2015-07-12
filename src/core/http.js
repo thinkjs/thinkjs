@@ -234,6 +234,7 @@ export default class {
 
     http.config = this.config;
     http.referer = this.referer;
+    http.userAgent = this.userAgent;
     http.isAjax = this.isAjax;
     http.isJsonp = this.isJsonp;
     http.get = this.get;
@@ -284,6 +285,13 @@ export default class {
       contentType += '; charset=' + (encoding || this.config('encoding'));
     }
     this.header('Content-Type', contentType);
+  }
+  /**
+   * get user agent
+   * @return {String} []
+   */
+  userAgent(){
+    return this.headers['user-agent'] || '';
   }
   /**
    * get page request referer
@@ -405,23 +413,36 @@ export default class {
    * get uesr ip
    * @return {String} [ip4 or ip6]
    */
-  ip(){
-    let connection = this.req.connection;
-    let socket = this.req.socket;
+  ip(forward){
+    let proxy = think.config('proxy') || this.host === this.hostname;
     let ip;
-    if (connection && connection.remoteAddress !== think.localIp) {
-      ip = connection.remoteAddress;
-    }else if (socket && socket.remoteAddress !== think.localIp) {
-      ip = socket.remoteAddress;
+    if (proxy) {
+      if (forward) {
+        return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
+          item = item.trim();
+          if (think.isIP(item)) {
+            return item;
+          }
+        })
+      }
+      ip = this.headers['x-real-ip'];
     }else{
-      ip = this.headers['x-forwarded-for'] || this.headers['x-real-ip'];
+      let connection = this.req.connection;
+      let socket = this.req.socket;
+      if (connection && connection.remoteAddress !== think.localIp) {
+        ip = connection.remoteAddress;
+      }else if (socket && socket.remoteAddress !== think.localIp) {
+        ip = socket.remoteAddress;
+      }
     }
     if (!ip) {
       return think.localIp;
     }
-    // in node v0.12.0, ip is like ::ff:100.168.148.100
     if (ip.indexOf(':') > -1) {
-      ip = ip.split(':').slice(-1).join('');
+      ip = ip.split(':').slice(-1)[0];
+    }
+    if (!think.isIP(ip)) {
+      return think.localIp;
     }
     return ip;
   }
@@ -573,9 +594,11 @@ export default class {
    * @return {Promise}          []
    */
   echo(obj, encoding = this.config('encoding')){
+    if(!this.res.connection){
+      return;
+    }
     this.type(this.config('tpl.content_type'));
     this.cookie(true);
-    this.sendTime();
     if (obj === undefined) {
       return;
     }
@@ -597,9 +620,21 @@ export default class {
   }
   _end(){
     this.cookie(true);
-    this.sendTime();
     this.res.end();
     this.emit('afterEnd', this);
+
+    //show request info
+    if(think.debug){
+      let time = Date.now() - this.startTime;
+      think.log(colors => {
+        let msg = [
+          this.method, this.url,
+          colors.cyan(`${this.res.statusCode}`),
+          colors.green(`${time}ms`)
+        ].join(' ');
+        return msg;
+      });
+    }
 
     //remove upload tmp files
     if (!think.isEmpty(this._file)) {
@@ -621,7 +656,7 @@ export default class {
     //set http end flag
     this._isEnd = true;
     if (!this._outputContentPromise) {
-      this._end();
+      return this._end();
     }
     
     return Promise.all(this._outputContentPromise).then(() => {

@@ -247,9 +247,9 @@ export default class extends Parse {
    * @return {} []
    */
   close(){
-    if (this.linkId) {
-      this.linkId.close();
-      this.linkId = null;
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
     }
   }
 }

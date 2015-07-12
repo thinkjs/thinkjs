@@ -149,7 +149,7 @@ export default class extends think.base {
    * @return {String} []
    */
   userAgent(){
-    return this.http.headers['user-agent'] || '';
+    return this.http.userAgent();
   }
   /**
    * get page referer

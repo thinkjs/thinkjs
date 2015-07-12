@@ -10,6 +10,7 @@
     "test": "mocha --reporter spec --timeout 10000 --recursive test/",
     "test-cov": "istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 10000 --recursive  -R spec test/",
     "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "watch-compile": "npm run compile -- --watch",
     "prepublish": "npm run compile"
   },
   "contributors": [
@@ -26,8 +27,8 @@
     "mysql": "2.5.3",
     "websocket-driver": "0.4.0",
     "thinkit": "2.x.x",
-    "babel-runtime": "5.6.15",
-    "co": "4.5.4",
+    "babel-runtime": "5.6.17",
+    "co": "4.6.0",
     "colors": "1.1.0"
   },
   "devDependencies": {
@@ -45,7 +46,9 @@
     "router",
     "app",
     "api",
-    "es6"
+    "es6",
+    "websocket",
+    "generator-function"
   ],
   "repository": {
     "type": "git",
