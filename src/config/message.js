@@ -21,5 +21,6 @@ export default {
   FIELD_KEY_NOT_VALID: 'field `%s` in where condition is not valid',
   DATA_EMPTY: 'data can not be empty',
   MISS_WHERE_CONDITION: 'miss where condition',
-  TABLE_NO_COLUMNS: 'table `%s` has no columns'
+  TABLE_NO_COLUMNS: 'table `%s` has no columns',
+  NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction'
 };

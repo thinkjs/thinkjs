@@ -3,8 +3,8 @@
 import querystring from 'querystring';
 import Parse from './_parse.js';
 
-let wait = think.require('await');
-let awaitInstance = new wait();
+let Await = think.require('await');
+let awaitInstance = new Await();
 
 /**
  * db base class
@@ -21,6 +21,14 @@ export default class extends Parse {
     this.config = config;
     this.lastInsertId = 0;
     this.selectSql = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%';
+    this.socket = null;
+  }
+  /**
+   * get socket instance, override by sub class
+   * @return {Object} [socket instance]
+   */
+  getSocketInstance(){
+
   }
   /**
    * get select sql
@@ -33,11 +41,11 @@ export default class extends Parse {
     return sql;
   }
   /**
-   * 插入一条记录
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @param  {[type]} replace [description]
-   * @return {[type]}         [description]
+   * insert data
+   * @param  {Object} data    []
+   * @param  {Object} options []
+   * @param  {Boolean} replace []
+   * @return {Promise}         []
    */
   insert(data = {}, options = {}, replace){
     let values = [];
@@ -57,11 +65,11 @@ export default class extends Parse {
     return this.execute(sql);
   }
   /**
-   * 插入多条记录
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @param  {[type]} replace [description]
-   * @return {[type]}         [description]
+   * insert multi data
+   * @param  {Array} data    [data list]
+   * @param  {Object} options []
+   * @param  {Boolean} replace []
+   * @return {Promise}         []
    */
   insertAll(data, options, replace){
     let fields = Object.keys(data[0]);
@@ -82,14 +90,13 @@ export default class extends Parse {
     return this.execute(sql);
   }
   /**
-   * 从一个选择条件的结果插入记录
-   * @param  {[type]} fields  [description]
-   * @param  {[type]} table   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * select data
+   * @param  {String} fields  []
+   * @param  {String} table   []
+   * @param  {Object} options []
+   * @return {Promise}         []
    */
   selectAdd(fields, table, options = {}){
-    this.model = options.model;
     if (think.isString(fields)) {
       fields = fields.split(',');
     }
@@ -99,12 +106,11 @@ export default class extends Parse {
     return this.execute(sql);
   }
   /**
-   * 删除记录
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * delete data
+   * @param  {Object} options []
+   * @return {Promise}         []
    */
   delete(options = {}){
-    options = options || {};
     this.model = options.model;
     let sql = [
       'DELETE FROM ',
@@ -118,13 +124,12 @@ export default class extends Parse {
     return this.execute(sql);
   }
   /**
-   * 更新数据
-   * @param  {[type]} data    [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * update data
+   * @param  {Object} data    []
+   * @param  {Object} options []
+   * @return {Promise}         []
    */
-  update(data, options){
-    options = options || {};
+  update(data, options = {}){
     this.model = options.model;
     let sql = [
       'UPDATE ',
@@ -206,7 +211,7 @@ export default class extends Parse {
    */
   query(str){
     return awaitInstance.run(str, () => {
-      return this.connect().query(str).then(data => {
+      return this.getSocketInstance().query(str).then(data => {
         return this.bufferToString(data);
       });
     })
@@ -235,7 +240,7 @@ export default class extends Parse {
    * @return {}     []
    */
   execute(str){
-    return this.connect().execute(str).then(data => {
+    return this.getSocketInstance().execute(str).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }
