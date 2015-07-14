@@ -475,7 +475,7 @@ export default class extends Base {
    * query
    * @return {Promise} []
    */
-  async query(...args){
+  query(...args){
     let sql = this.parseSql(...args);
     return this.db().select(sql, this._options.cache);
   }
@@ -507,10 +507,8 @@ export default class extends Base {
    * start transaction
    * @return {Promise} []
    */
-  async startTrans(){
-    let db = this.db();
-    await db.commit();
-    return db.startTrans(this.getTableName());
+  startTrans(){
+    return this.db().startTrans(this.getTableName());
   }
   /**
    * commit transcation
@@ -535,7 +533,7 @@ export default class extends Base {
     let result;
     await this.startTrans();
     try{
-      result = await fn();
+      result = await think.co(fn);
       await this.commit();
     }catch(e){
       await this.rollback();
