@@ -1,16 +1,21 @@
 'use strict';
 
-let sqliteSocket = think.adapter('socket', 'sqlite');
+let SqliteSocket = think.adapter('socket', 'sqlite');
 /**
  * sqlite db
  */
 export default class extends think.adapter.db {
   /**
-   * connect
-   * @return {Object} [class instance]
+   * get sqlite socket instance
+   * @param  {Object} config []
+   * @return {}        []
    */
-  connect(){
-    return new sqliteSocket(this.config);
+  getSocketInstance(){
+    if(this.socket){
+      return this.socket;
+    }
+    this.socket = new SqliteSocket(this.config);
+    return this.socket;
   }
   /**
    * get table info

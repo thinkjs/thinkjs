@@ -20,31 +20,26 @@ export default class {
    */
   init(config){
     this.config = config;
-    this.socket = null;
-    this.db = null;
+    this.socket = null; //Mongo socket instance
   }
   /**
    * connect mongo socket
    * @return {Promise} []
    */
-  connect(){
+  getSocketInstance(){
     if(this.socket){
-      return Promise.reoslve(this.db);
+      return this.socket;
     }
-    let instance = new MongoSocket(this.config);
-    return instance.getConnection().then(db => {
-      this.socket = instance;
-      this.db = db;
-      return db;
-    })
+    this.socket = new MongoSocket(this.config);
+    return this.socket;
   }
   /**
    * get connection
    * @return {Promise} []
    */
   collection(table){
-    return this.connect().then(db => {
+    return this.getSocketInstance().getConnection().then(db => {
       return db.collection(table);
-    })
+    });
   }
 }
