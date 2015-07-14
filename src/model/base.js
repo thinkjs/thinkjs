@@ -195,7 +195,7 @@ export default class extends Base {
     options = await this.parseOptions(options);
     data = await this._beforeAdd(data, options);
     data = this.parseData(data);
-    await this.db().insert(data, options, replace);
+    await this.db().add(data, options, replace);
     let insertId = data[this.pk] = this.db().getLastInsertId();
     await this._afterAdd(data, options);
     return insertId;
@@ -226,7 +226,7 @@ export default class extends Base {
    * @param {} options []
    * @param {} replace []
    */
-  async addAll(data, options, replace){
+  async addMany(data, options, replace){
     if (!think.isArray(data) || !think.isObject(data[0])) {
       return think.reject(new Error('_DATA_TYPE_INVALID_'));
     }
@@ -239,7 +239,7 @@ export default class extends Base {
     });
     await Promise.all(promises);
     options = await this.parseOptions(options);
-    await this.db().insertAll(data, options, replace);
+    await this.db().addMany(data, options, replace);
     return this.db().getLastInsertId();
   }
   /**

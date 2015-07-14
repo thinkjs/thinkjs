@@ -47,7 +47,7 @@ export default class extends Parse {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  insert(data = {}, options = {}, replace){
+  add(data = {}, options = {}, replace){
     let values = [];
     let fields = [];
     for(let key in data){
@@ -71,7 +71,7 @@ export default class extends Parse {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  insertAll(data, options, replace){
+  addMany(data, options, replace){
     let fields = Object.keys(data[0]);
     fields = fields.map(item => this.parseKey(item)).join(',');
     let values = data.map(item => {
