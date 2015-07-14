@@ -23,16 +23,16 @@ describe('before', function(){
       if (sql === 'SHOW COLUMNS FROM `think_session`') {
         return getPromise([ 
           { Field: 'id',Type: 'int(11) unsigned',Null: 'NO',Key: 'PRI',Default: null,Extra: 'auto_increment' },
-          { Field: 'key',Type: 'varchar(255)',Null: 'NO',Key: 'UNI',Default: '',Extra: '' },
+          { Field: 'cookie',Type: 'varchar(255)',Null: 'NO',Key: 'UNI',Default: '',Extra: '' },
           { Field: 'data',Type: 'text',Null: 'YES',Key: '',Default: null,Extra: '' },
           { Field: 'expire',Type: 'bigint(11)',Null: 'NO',Key: 'MUL',Default: null,Extra: '' } 
         ]);
-      }else if (sql === "SELECT * FROM `think_session` WHERE ( `key` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' ) LIMIT 1") {
-        return getPromise([ { id: 1,key: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 1509896404697 } ])
-      }else if (sql === "SELECT * FROM `think_session` WHERE ( `key` = 'expired' ) LIMIT 1") {
-        return getPromise([ { id: 1,key: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 1309896404697 } ])
-      }else if (sql === "SELECT * FROM `think_session` WHERE ( `key` = 'dataempty' ) LIMIT 1") {
-        return getPromise([ { id: 1,key: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '',expire: 1409896404697 } ])
+      }else if (sql === "SELECT * FROM `think_session` WHERE ( `cookie` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' ) LIMIT 1") {
+        return getPromise([ { id: 1,cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 1509896404697 } ])
+      }else if (sql === "SELECT * FROM `think_session` WHERE ( `cookie` = 'expired' ) LIMIT 1") {
+        return getPromise([ { id: 1,cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 1309896404697 } ])
+      }else if (sql === "SELECT * FROM `think_session` WHERE ( `cookie` = 'dataempty' ) LIMIT 1") {
+        return getPromise([ { id: 1,cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '',expire: 1409896404697 } ])
       }
       return getPromise([]);
     })
@@ -42,12 +42,12 @@ describe('before', function(){
 describe('DbSession', function(){
   it('init', function(){
     var instance = DbSession();
-    assert.equal(instance.key, undefined);
+    assert.equal(instance.cookie, undefined);
     assert.equal(instance.isChanged, false)
   })
   it('init with cookie', function(){
     var instance = DbSession({cookie: 'welefen'});
-    assert.equal(instance.key, 'welefen');
+    assert.equal(instance.cookie, 'welefen');
     assert.equal(instance.isChanged, false)
   })
   it('initData', function(done){
@@ -148,7 +148,7 @@ describe('DbSession', function(){
     }
     instance.flush().then(function(data){
       var sql = instance.model.getLastSql().trim();
-      assert.equal(sql, "UPDATE `think_session` SET `expire`=1409859026812 WHERE ( `key` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' )")
+      assert.equal(sql, "UPDATE `think_session` SET `expire`=1409859026812 WHERE ( `cookie` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' )")
       Date.now = now;
       done();
     })
@@ -162,7 +162,7 @@ describe('DbSession', function(){
     instance.isChanged = true;
     instance.flush().then(function(data){
       var sql = instance.model.getLastSql().trim();
-      var s = "UPDATE `think_session` SET `expire`=1409880626812,`data`='{\\\"name\\\":\\\"suredy\\\"}' WHERE ( `key` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' )";
+      var s = "UPDATE `think_session` SET `expire`=1409880626812,`data`='{\\\"name\\\":\\\"suredy\\\"}' WHERE ( `cookie` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' )";
       assert.equal(sql, s)
       Date.now = now;
       done();
