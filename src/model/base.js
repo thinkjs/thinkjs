@@ -296,33 +296,24 @@ export default class extends Base {
     return think.all(promises);
   }
   /**
-   * update field
-   * @param  {String} field []
-   * @param  {Mixed} value []
-   * @return {Promise}       []
+   * increment field data
+   * @return {[type]} [description]
    */
-  updateField(field, value){
-    let data = {};
-    if (think.isObject(field)) {
-      data = field;
-    }else{
-      data[field] = value;
+  increment(field, step = 1){
+    let data = {
+      [field]: ['exp', `${field}+${step}`]
     }
     return this.update(data);
   }
   /**
-   * update inc
-   * @return {[type]} [description]
-   */
-  updateInc(field, step = 1){
-    return this.updateField(field, ['exp', `${field}+${step}`]);
-  }
-  /**
-   * update dec
+   * decrement field data
    * @return {} []
    */
-  updateDec(field, step = 1){
-    return this.updateField(field, ['exp', `${field}-${step}`]);
+  decrement(field, step = 1){
+    let data = {
+      [field]: ['exp', `${field}-${step}`]
+    }
+    return this.update(data);
   }
   /**
    * find data
