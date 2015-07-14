@@ -83,12 +83,12 @@ describe('MemcacheSocket', function(){
     it('default setting', function(){
       var socket = MemcacheSocket();
       assert.equal(socket.port, 11211);
-      assert.equal(socket.hostname, 'localhost');
+      assert.equal(socket.host, 'localhost');
     })
-    it('set hostname & port', function() {
+    it('set host & port', function() {
       var socket = MemcacheSocket(8989, '127.0.0.1');
       assert.equal(socket.port, 8989);
-      assert.equal(socket.hostname, '127.0.0.1');
+      assert.equal(socket.host, '127.0.0.1');
     })
   })
   
