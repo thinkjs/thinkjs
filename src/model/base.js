@@ -16,7 +16,7 @@ export default class extends Base {
    */
   async getTableFields(table){
     table = table || this.getTableName();
-    if(this.isFieldGetted){
+    if(this._isFieldGetted){
       return this.fields;
     }
     let fields;
@@ -37,7 +37,7 @@ export default class extends Base {
     }
     //merge use set fields config
     this.fields = think.extend({}, fields, this.fields);
-    this.isFieldGetted = true;
+    this._isFieldGetted = true;
     return this.fields;
   }
   /**

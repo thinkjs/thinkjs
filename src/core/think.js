@@ -11,7 +11,8 @@ import thinkit from 'thinkit';
 import co from 'co';
 import colors from 'colors/safe';
 
-import base from './base';
+import _base from './_base.js'
+import base from './base.js';
 import {} from './_cache.js';
 
 /**
@@ -96,6 +97,11 @@ think.version = (() => {
  * @type {Array}
  */
 think.module = [];
+/**
+ * base class
+ * @type {[type]}
+ */
+think._base = _base;
 /**
  * base class
  * @type {Class}
