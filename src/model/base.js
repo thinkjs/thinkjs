@@ -67,7 +67,6 @@ export default class extends Base {
   getPk(){
     return this.getTableFields().then(() => this.pk);
   }
-  
   /**
    * build sql
    * @param  {[type]} options [description]
@@ -123,6 +122,20 @@ export default class extends Base {
       });
     }
     return this._optionsFilter(options, fields);
+  }
+  /**
+   * parse where options
+   * @return {Object} 
+   */
+  parseWhereOptions(options = {}){
+    if (think.isNumber(options) || think.isString(options)) {
+      options += '';
+      let where = {
+        [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
+      };
+      return {where: where};
+    }
+    return options;
   }
   /**
    * parse type
@@ -312,20 +325,6 @@ export default class extends Base {
     return this.updateField(field, ['exp', `${field}-${step}`]);
   }
   /**
-   * parse where options
-   * @return {Object} 
-   */
-  parseWhereOptions(options = {}){
-    if (think.isNumber(options) || think.isString(options)) {
-      options += '';
-      let where = {
-        [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
-      };
-      return {where: where};
-    }
-    return options;
-  }
-  /**
    * find data
    * @return Promise
    */
@@ -482,23 +481,12 @@ export default class extends Base {
     return this.getField('AVG(' + field + ') AS thinkjs_avg', true);
   }
   /**
-   * get by
-   * @param  {String} name  []
-   * @param  {Mixed} value []
-   * @return {Promise}       []
-   */
-  getBy(name, value){
-    return this.where({[name]: value}).find();
-  }
-  /**
    * query
    * @return {Promise} []
    */
   async query(...args){
     let sql = this.parseSql(...args);
-    let data = await this.db().select(sql, this._options.cache);
-    this._options = {};
-    return data;
+    return this.db().select(sql, this._options.cache);
   }
   /**
    * execute sql
@@ -517,11 +505,11 @@ export default class extends Base {
   parseSql(...args){
     let sql = util.format(...args);
     //replace table name
-    return sql.replace(/__([A-Z]+)__/g, (a, b) => {
+    return sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
       if(b === 'TABLE'){
-        return '`' + this.getTableName() + '`';
+        return ' `' + this.getTableName() + '` ';
       }
-      return '`' + this.tablePrefix + b.toLowerCase() + '`';
+      return ' `' + this.tablePrefix + b.toLowerCase() + '` ';
     });
   }
   /**
@@ -546,5 +534,21 @@ export default class extends Base {
    */
   rollback(){
     return this.db().rollback();
+  }
+  /**
+   * transaction exec functions
+   * @param  {Function} fn [exec function]
+   * @return {Promise}      []
+   */
+  async transaction(fn){
+    let result;
+    await this.startTrans();
+    try{
+      result = await fn();
+      await this.commit();
+    }catch(e){
+      await this.rollback();
+    }
+    return result;
   }
 }

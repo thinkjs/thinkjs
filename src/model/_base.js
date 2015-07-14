@@ -25,12 +25,12 @@ export default class {
    */
   init(name = '', config = {}){
     let options = {
-      pk: 'id',
-      name: '',
-      tablePrefix: '',
-      tableName: '',
-      trueTableName: '',
-      fields: {}
+      pk: 'id', //primary key
+      name: '', //model name
+      tablePrefix: '', //table prefix
+      tableName: '', //table name, without prefix
+      trueTableName: '', //table name, with prefix
+      fields: {} //table fields
     };
     //if is set in user model, can't be override
     for(let key in options){
