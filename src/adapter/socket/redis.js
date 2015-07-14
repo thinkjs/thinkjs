@@ -7,7 +7,10 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config){
-    this.config = config;
+    this.config = think.extend({}, {
+      port: 6379,
+      host: '127.0.0.1'
+    }, config);
     this.connection = null;
     this.deferred = null;
   }

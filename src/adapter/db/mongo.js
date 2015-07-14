@@ -38,8 +38,7 @@ export default class {
    * @return {Promise} []
    */
   collection(table){
-    return this.getSocketInstance().getConnection().then(db => {
-      return db.collection(table);
-    });
+    let instance = this.getSocketInstance();
+    return instance.getConnection().then(db => db.collection(table));
   }
 }

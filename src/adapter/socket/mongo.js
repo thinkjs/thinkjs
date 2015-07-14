@@ -25,10 +25,11 @@ export default class extends think.adapter.socket {
    * @return {Promise} []
    */
   async getConnection(){
+    if(this.connection){
+      return this.deferred.promise;
+    }
     let deferred = think.defer();
     let mongo = await think.npm('mongodb');
-    let client = mongo.MongoClient;
-    let Logger = mongo.Logger;
     let auth = '';
     let config = this.config;
 
@@ -43,14 +44,13 @@ export default class extends think.adapter.socket {
       options = '?' + querystring.stringify(config.options);
     }
     let url = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
-    client.connect(url, this.config, (err, connection) => {
+    mongo.MongoClient.connect(url, this.config, (err, connection) => {
       if(err){
         deferred.reject(err);
-        this.close();
       }else{
         //set logger level
         if(config.log_level){
-          Logger.setLevel(config.log_level);
+          mongo.Logger.setLevel(config.log_level);
         }
         this.connection = connection;
         deferred.resolve(this.connection);
