@@ -1,20 +1,20 @@
 'use strict';
 
-for(var filepath in require.cache){
-  delete require.cache[filepath];
-}
-
-var thinkjs = require('../../lib/core/think.js');
 var assert = require('assert');
 var thinkit = require('thinkit');
 var path = require('path');
 
+
+for(var filepath in require.cache){
+  delete require.cache[filepath];
+}
+var Index = require('../../lib/index.js');
+var instance = new Index();
+instance.load();
+
+
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
-think._alias = {};
-think.cli = false;
-think.mode = think.mode_mini;
-think.module = [];
 
 describe('core/think.js', function(){
   it('methods from thinkit', function(){
@@ -188,10 +188,10 @@ describe('core/think.js', function(){
         var cls = fn({});
         assert.equal(typeof cls, 'function');
       })
-      it('controller() is null', function(){
+      it('controller() is function', function(){
         var fn = think.Class('controller');
         var cls2 = fn();
-        assert.equal(cls2, null);
+        assert.equal(typeof cls2, 'function');
       })
       it('controller("controller_base") is function', function(){
         var fn = think.Class('controller');
