@@ -114,10 +114,10 @@ describe('adapter/cache/base.js', function() {
   });
 
   after(function() {
-    think._alias = {};
-    think.cli = false;
-    think.mode = think.mode_mini;
-    think.module = [];
+    // think._alias = {};
+    // think.cli = false;
+    // think.mode = think.mode_mini;
+    // think.module = [];
   });
 
 });

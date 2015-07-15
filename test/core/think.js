@@ -17,6 +17,14 @@ think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
 
 describe('core/think.js', function(){
+  before(function(){
+    think.cli = false;
+    think.mode = think.mode_mini;
+    think.module = [];
+    think._config = {};
+    think._alias = {};
+  })
+
   it('methods from thinkit', function(){
     for(var name in thinkit){
       assert.equal(typeof think[name] === 'function' || think[name] === thinkit[name], true);

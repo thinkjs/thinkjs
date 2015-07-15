@@ -126,13 +126,13 @@ describe('adapter/cache/memcache.js', function() {
   });
 
   after(function() {
-    think._alias = {};
-    think._config = {};
+    // think._alias = {};
+    // think._config = {};
     think.APP_PATH = think.RESOURCE_PATH = testAppPath;
     think.rmdir(testAppPath);
-    think.cli = false;
-    think.mode = think.mode_mini;
-    think.module = [];
+    // think.cli = false;
+    // think.mode = think.mode_mini;
+    // think.module = [];
   });
 
 });
