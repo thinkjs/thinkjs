@@ -103,8 +103,9 @@ export default {
     rules: rules => {
       let data = {};
       for(let key in rules){
+        let value = rules[key];
         key = key.replace(/\:/g, '/');
-        data[key] = rules[key];
+        data[key] = value;
       }
       return data;
     }
@@ -115,6 +116,9 @@ export default {
    * @return {Array}       []
    */
   auto_reload_except: value => {
+    if(!think.isArray(value)){
+      value = [value];
+    }
     return value.map(item => {
       if(think.isString(item) && process.platform === 'win32'){
         item = item.replace(/\//g, '\\');
