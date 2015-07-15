@@ -123,5 +123,8 @@ describe('Valid', function(){
   it('field', function(){
     assert.equal(Valid.field('name,*'), true);
   })
+  it('field fail', function(){
+    assert.equal(Valid.field('name-www,*'), false);
+  })
 
 })
