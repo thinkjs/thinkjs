@@ -1,5 +1,7 @@
 'use strict';
-
+/**
+ * Redis socket class
+ */
 export default class extends think.adapter.socket {
   /**
    * init

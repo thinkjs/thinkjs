@@ -56,6 +56,7 @@ export default class extends think.adapter.socket {
         deferred.resolve(this.connection);
       }
     });
+    this.deferred = deferred;
     return deferred.promise;
   }
   /**

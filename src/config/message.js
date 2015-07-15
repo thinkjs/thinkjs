@@ -22,5 +22,6 @@ export default {
   DATA_EMPTY: 'data can not be empty',
   MISS_WHERE_CONDITION: 'miss where condition',
   TABLE_NO_COLUMNS: 'table `%s` has no columns',
-  NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction'
+  NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction',
+  DATA_NOT_ARRAY_LIST: 'data is not array list'
 };

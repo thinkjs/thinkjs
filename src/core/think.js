@@ -187,7 +187,7 @@ think.Class = (type, clean) => {
  * @param  {String} module [module name]
  * @return {String}        []
  */
-think.lookClass = (name, type, module) => {
+think.lookClass = (name, type, module, base) => {
   let names = name.split('/');
   switch(names.length){
     // home/controller/base
@@ -212,7 +212,7 @@ think.lookClass = (name, type, module) => {
       let list = [
         `${module}/${type}/${name}`,
         `${type}_${name}`,
-        `${type}_base`
+        base || `${type}_base`
       ];
       list.some(item => cls = think.require(item, true));
       return cls;
@@ -958,7 +958,8 @@ think.model = (superClass, methods, module) => {
   //get model instance
   if (think.isString(superClass) && isConfig) {
     methods = think.extend({}, think.config('db'), methods);
-    let cls = think.lookClass(superClass, 'model', module);
+    let base =  methods.type === 'mongo' ? 'model_mongo' : '';
+    let cls = think.lookClass(superClass, 'model', module, base);
     return new cls(superClass, methods);
   }
   if(!model){
@@ -1131,15 +1132,16 @@ think.npm = (pkg) => {
     }
     let cmd = `npm install ${pkgWithVersion}`;
     let deferred = think.defer();
-    think.log(`install ${pkgWithVersion} start`, 'NPM');
+    think.log(`install package ${pkgWithVersion} start`, 'NPM');
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
     }, (err, stdout, stderr) => {
-      if(err || stderr){
-        think.log(new Error(`install ${pkgWithVersion} error`), 'NPM');
-        deferred.reject(err || stderr);
+      if(err){
+        let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
+        think.log(error, 'NPM');
+        deferred.reject(err);
       }else{
-        think.log(`install ${pkgWithVersion} finish`, 'NPM');
+        think.log(`install package ${pkgWithVersion} finish`, 'NPM');
         deferred.resolve(require(pkg));
       }
     });

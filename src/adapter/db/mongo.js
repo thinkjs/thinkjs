@@ -20,6 +20,7 @@ export default class {
    */
   init(config){
     this.config = config;
+    this.lastInsertId = 0;
     this.socket = null; //Mongo socket instance
   }
   /**
@@ -40,5 +41,44 @@ export default class {
   collection(table){
     let instance = this.getSocketInstance();
     return instance.getConnection().then(db => db.collection(table));
+  }
+  /**
+   * get last insert id
+   * @return {String} []
+   */
+  getLastInsertId(){
+    return this.lastInsertId;
+  }
+  /**
+   * add data
+   * @param {Objec} data    []
+   * @param {Object} options []
+   */
+  async add(data, options){
+    let collection = await this.collection(options.table);
+    let result = await collection.insertOne(data, options);
+    this.lastInsertId = result.insertedId;
+    return result;
+  }
+  /**
+   * add multi data
+   * @param {Array} dataList []
+   * @param {Object} options  []
+   */
+  async addMany(dataList, options){
+    let collection = await this.collection(options.table);
+    let result = await collection.insertMany(data, options);
+    this.lastInsertId = result.insertedIds;
+    return result;
+  }
+  /**
+   * close socket
+   * @return {} []
+   */
+  close(){
+    if(this.socket){
+      this.socket.close();
+      this.socket = null;
+    }
   }
 }
