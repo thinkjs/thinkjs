@@ -11,6 +11,11 @@ var path = require('path');
 
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
+think._alias = {};
+think.cli = false;
+think.mode = think.mode_mini;
+think.module = [];
+
 describe('core/think.js', function(){
   it('methods from thinkit', function(){
     for(var name in thinkit){
