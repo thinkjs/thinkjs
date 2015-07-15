@@ -5,11 +5,11 @@
   DROP TABLE IF EXISTS `think_session`;
   CREATE TABLE `think_session` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `key` varchar(255) NOT NULL DEFAULT '',
+    `cookie` varchar(255) NOT NULL DEFAULT '',
     `data` text,
     `expire` bigint(11) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `cookie` (`key`),
+    UNIQUE KEY `cookie` (`cookie`),
     KEY `expire` (`expire`)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -21,7 +21,7 @@ export default class extends think.adapter.session {
    * @return {}         []
    */
   init(options = {}){
-    this.key = options.cookie;
+    this.cookie = options.cookie;
     this.timeout = options.timeout;
 
     this.isChanged = false;
@@ -38,9 +38,9 @@ export default class extends think.adapter.session {
     if(this.data){
       return Promise.resolve(this.data);
     }
-    let data = await this.model.where({key: this.key}).find();
+    let data = await this.model.where({cookie: this.cookie}).find();
     if(think.isEmpty(data)){
-      await this.model.add({key: this.key, expire: Date.now() + this.timeout * 1000});
+      await this.model.add({cookie: this.cookie, expire: Date.now() + this.timeout * 1000});
       this.data = {};
       return;
     }
@@ -108,7 +108,7 @@ export default class extends think.adapter.session {
       if(this.isChanged){
         data.data = JSON.stringify(this.data);
       }
-      return this.model.where({key: this.key}).update(data);
+      return this.model.where({cookie: this.cookie}).update(data);
     });
   }
   /**

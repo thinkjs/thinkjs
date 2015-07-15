@@ -15,7 +15,7 @@ export default class extends think.adapter.session {
    */
   init(options = {}){
     this.timeout = options.timeout;
-    this.key = options.cookie;
+    this.cookie = options.cookie;
     this.path = options.path || path.normalize(os.tmpdir() + 'thinkjs');
     this.path_depth = options.path_depth || 1;
 
@@ -27,7 +27,7 @@ export default class extends think.adapter.session {
    * @return {String} []
    */
   getFilepath(){
-    let name = this.key;
+    let name = this.cookie;
     let dir = name.slice(0, this.path_depth).split('').join('/');
     think.mkdir(`${this.path}/${dir}`);
     return `${this.path}/${dir}/${name}.json`;
