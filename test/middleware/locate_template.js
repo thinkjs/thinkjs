@@ -277,6 +277,22 @@ describe('middleware/locate_template', function(){
       done();
     })
   })
+  it('mode module, xxx:yyy:zzz.hhh', function(done){
+    think.mode = think.mode_module;
+    execMiddleware('locate_template', {
+      tpl: {
+        file_depr: '_',
+        file_ext: '.txt',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }, 'xxx:yyy:zzz.hhh').then(function(data){
+      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.hhh');
+      done();
+    })
+  })
   it('mode module, absolute file path', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
