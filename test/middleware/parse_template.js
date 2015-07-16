@@ -35,7 +35,7 @@ describe('middleware/parse_template', function(){
       done();
     })
   })
-  it('base 1', function(done){
+  it('base, file exist', function(done){
     var filePath = __dirname + '/parse_template.js';
     execMiddleware('parse_template', {
       tpl: {
@@ -44,6 +44,17 @@ describe('middleware/parse_template', function(){
     }, {}, {file: filePath, var: {}}).then(function(data){
       assert.equal(data.length > 0, true);
       assert.equal(data.indexOf('describe') > -1, true);
+      done();
+    })
+  })
+  it('base, file not exist', function(done){
+    var filePath = __dirname + '/parse_template11111.js';
+    execMiddleware('parse_template', {
+      tpl: {
+        type: undefined
+      }
+    }, {}, {file: filePath, var: {}}).catch(function(err){
+      assert.equal(err.stack.indexOf('no such file or directory') > -1, true);
       done();
     })
   })
