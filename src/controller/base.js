@@ -274,11 +274,8 @@ export default class extends think.base {
    * @return {}        []
    */
   status(status = 404) {
-    let res = this.http.res;
-    if (!res.headersSent) {
-      res.statusCode = status;
-    }
-    return this;
+    this.http.status(status);
+    return think.prevent();
   }
   /**
    * deny request

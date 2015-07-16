@@ -333,7 +333,7 @@ describe('middle/read_html_cache', function(){
         path: cachePath,
         file_ext: '.js',
         rules: {
-          'home/group/detail': ['test_value_{:module}_{:controller}_{:action}_{name}_{cookie.welefen}', 1000, function(key){
+          'home/group/detail': ['test_value_{:module}_{:controller}_{:action}_{name}_{cookie.welefen}', Date.now(), function(key){
             assert.equal(key, 'test_value_home_group_detail_welefen_suredy');
             return 'read_html_cache';
           }]
@@ -391,7 +391,7 @@ describe('middle/read_html_cache', function(){
         path: cachePath,
         file_ext: '.js',
         rules: {
-          'home/group/detail': ['test_value_{:module}_{:controller}_{:action}_{name}_{cookie.welefen}', 1000, function(key){
+          'home/group/detail': ['test_value_{:module}_{:controller}_{:action}_{name}_{cookie.welefen}', Date.now(), function(key){
             assert.equal(key, 'test_value_home_group_detail_welefen_suredy');
             return 'read_html_cache';
           }]

@@ -250,6 +250,7 @@ export default class {
     http.param = this.param;
     http.file = this.file;
     http.header = this.header;
+    http.status = this.status;
     http.ip = this.ip;
     http.cookie = this.cookie;
     http.redirect = this.redirect;
@@ -415,6 +416,18 @@ export default class {
       }
       this.res.setHeader(name, value);
     }
+  }
+  /**
+   * set http status
+   * @param  {Number} status []
+   * @return {}        []
+   */
+  status(status = 200){
+    let res = this.res;
+    if (!res.headersSent) {
+      res.statusCode = status;
+    }
+    return this;
   }
   /**
    * get uesr ip
