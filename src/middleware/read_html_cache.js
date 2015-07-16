@@ -17,13 +17,11 @@ export default class extends think.middleware.base {
       return;
     }
     let cacheTime = this.getCacheTime();
-    if (cacheTime === false) {
+    if (this.isCacheExpired(cacheTime)) {
       return;
     }
-    if (!this.isCacheExpired(cacheTime)) {
-      this.responseCacheContent();
-      return think.prevent();
-    }
+    this.responseCacheContent();
+    return think.prevent();
   }
   /**
    * repsonse cache content
@@ -33,10 +31,9 @@ export default class extends think.middleware.base {
     let http = this.http;
     let fileStream = fs.createReadStream(this.cache.path + '/' + http.html_filename);
     http.setHeader('Content-Type', 'text/html');
-    http.sendTime('Exec-Time');
     http.sendCookie();
     fileStream.pipe(http.res);
-    fileStream.on('end', (http.end));
+    fileStream.on('end', () => http.end());
   }
   /**
    * get cache time
@@ -117,6 +114,9 @@ export default class extends think.middleware.base {
    * @return {Boolean} []
    */
   isCacheExpired(cacheTime){
+    if(cacheTime === false){
+      return true;
+    }
     let cacheFile = `${this.cache.path}/${this.http.html_filename}`;
     if (!think.isFile(cacheFile)) {
       return true;
