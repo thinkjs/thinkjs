@@ -4,7 +4,7 @@ var path = require('path');
 
 var _http = require('../_http.js');
 
-function execMiddleware(middleware, config, options, data){
+function getHttp(config, options){
   think.APP_PATH = path.dirname(__dirname) + '/testApp';
   var req = think.extend({}, _http.req);
   var res = think.extend({}, _http.res);
@@ -17,8 +17,14 @@ function execMiddleware(middleware, config, options, data){
         http[key] = options[key];
       }
     }
-    return think.middleware(middleware, http, data);
+    return http;
   })
+}
+
+function execMiddleware(middleware, config, options, data){
+  return getHttp(config, options).then(function(http){
+    return think.middleware(middleware, http, data);
+  }) 
 }
 
 describe('middleware/resource', function(){
@@ -71,6 +77,20 @@ describe('middleware/resource', function(){
       done();
     })
   })
+  it('base, file is dir', function(done){
+    var RESOURCE_PATH = think.RESOURCE_PATH;
+    think.RESOURCE_PATH = path.dirname(__dirname);
+    execMiddleware('resource', {
+      resource_on: true,
+      resource_reg: /^\w+$/
+    }, {
+      pathname: 'middleware'
+    }).catch(function(err){
+      assert.equal(think.isPrevent(err), true);
+      think.RESOURCE_PATH = RESOURCE_PATH;
+      done();
+    })
+  })
   it('base, file exist', function(done){
     var RESOURCE_PATH = think.RESOURCE_PATH;
     think.RESOURCE_PATH = __dirname;
@@ -83,6 +103,27 @@ describe('middleware/resource', function(){
       assert.equal(think.isPrevent(err), true);
       think.RESOURCE_PATH = RESOURCE_PATH;
       done();
+    })
+  })
+  it('base, file exist with http', function(done){
+    var RESOURCE_PATH = think.RESOURCE_PATH;
+    think.RESOURCE_PATH = __dirname;
+    getHttp({
+      resource_on: true,
+      resource_reg: /^resource\.js/,
+      encoding: 'utf-8'
+    }, {
+      pathname: 'resource.js'
+    }).then(function(http){
+      http.res.setHeader = function(name, value){
+        assert.equal(name, 'Content-Type');
+        assert.equal(value, 'application/javascript; charset=utf-8');
+      }
+      think.middleware('resource', http).catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        think.RESOURCE_PATH = RESOURCE_PATH;
+        done();
+      });
     })
   })
 })
