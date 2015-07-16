@@ -19,7 +19,7 @@ describe('await', function(){
       var deferred = think.defer();
       setTimeout(function(){
         deferred.resolve(1);
-      }, 100)
+      }, 3)
       return deferred.promise;
     }).then(function(data){
       assert.equal(data, 1);
@@ -33,7 +33,7 @@ describe('await', function(){
         var deferred = think.defer();
         setTimeout(function(){
           deferred.resolve(item);
-        }, 100)
+        }, 2)
         return deferred.promise;
       }).then(function(data){
         assert.equal(data, 1);
@@ -51,7 +51,7 @@ describe('await', function(){
         var deferred = think.defer();
         setTimeout(function(){
           deferred.reject(item);
-        }, 100)
+        }, 3)
         return deferred.promise;
       }).catch(function(data){
         assert.equal(data, 1);

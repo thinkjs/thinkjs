@@ -760,7 +760,7 @@ think.localIp = '127.0.0.1';
  * @param  {Object} res [http response]
  * @return {Object}     [http object]
  */
-let http;
+
 think._http = (data = {}) => {
   if (think.isString(data)) {
     if (data[0] === '{') {
@@ -798,17 +798,17 @@ think._http = (data = {}) => {
   };
 };
 
+let Http = null;
 think.http = (req, res) => {
-  if (!http) {
-    http = think.require('http');
+  if (!Http) {
+    Http = think.require('http');
   }
   //for cli request
   if (res === undefined) {
-    let data = think._http(req);
-    req = data.req;
-    res = data.res;
+    ({req, res} = think._http(req));
   }
-  return (new http(req, res)).run();
+  let instance = new Http(req, res);
+  return instance.run();
 };
 /**
  * get uuid

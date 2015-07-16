@@ -6,7 +6,9 @@ var path = require('path');
 var _http = require('../_http.js');
 
 function execMiddleware(middleware, config){
-  return think.http(_http.req, _http.res).then(function(http){
+  var req = think.extend({}, _http.req);
+  var res = think.extend({}, _http.res);
+  return think.http(req, res).then(function(http){
     if(config){
       http._config = config;
     }
@@ -94,6 +96,14 @@ describe('middleware/deny_ip', function(){
   it('deny_ip 10.0.0.1,192.168.1.1', function(done){
     execMiddleware('deny_ip', {
       deny_ip: ['10.0.0.1', '192.168.1.1']
+    }).then(function(data){
+      assert.equal(data, true);
+      done();
+    })
+  })
+  it('deny_ip 10.0.0.1,192.168.1.1,10.1.2.3', function(done){
+    execMiddleware('deny_ip', {
+      deny_ip: ['10.0.0.1', '192.168.1.1', '10.1.2.3']
     }).then(function(data){
       assert.equal(data, true);
       done();

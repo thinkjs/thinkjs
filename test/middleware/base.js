@@ -3,9 +3,17 @@ var assert = require('assert');
 var muk = require('muk');
 var path = require('path');
 
+var Index = require('../../lib/index.js');
+var instance = new Index();
+instance.load();
+    
 var Base = require('../../lib/middleware/base.js');
 
 describe('middleware/base', function(){
+  before(function(){
+    console.log('before')
+
+  })
   it('base is function', function(){
     assert.equal(think.isFunction(Base), true);
   })

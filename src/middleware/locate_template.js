@@ -13,6 +13,10 @@ export default class extends think.middleware.base {
    * @return {}              []
    */
   run(templateFile){
+    //is absolute file path
+    if(templateFile && path.isAbsolute(templateFile)){
+      return templateFile;
+    }
     let http = this.http;
     let {file_depr, file_ext, root_path, theme} = this.config('tpl');
     let pathPrefix;

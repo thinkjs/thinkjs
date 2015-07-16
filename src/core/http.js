@@ -17,12 +17,20 @@ let cookie = think.require('cookie');
 
 export default class {
   /**
+   * constructor
+   * @param  {} args []
+   * @return {}         []
+   */
+  constructor(...args){
+    this.init(...args);
+  }
+  /**
    * init method
    * @param  {Object} req [request]
    * @param  {Object} res [response]
    * @return {}     []
    */
-  constructor(req, res){
+  init(req, res){
     //request object
     this.req = req;
     //response object
@@ -162,8 +170,8 @@ export default class {
     }
   }
   /**
-   * 通过ajax上传文件
-   * @return {[type]} [description]
+   * upload file by ajax
+   * @return {Promise} []
    */
   getAjaxFilePost(){
     let filename = this.req.headers[think.config('post.ajax_filename_header')];
@@ -618,6 +626,10 @@ export default class {
     let promise = fn(obj, encoding, this);
     this._outputContentPromise.push(promise);
   }
+  /**
+   * end
+   * @return {} []
+   */
   _end(){
     this.cookie(true);
     this.res.end();

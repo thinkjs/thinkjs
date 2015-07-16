@@ -115,13 +115,13 @@ describe('adapter/cache/redis.js', function() {
   });
 
   it('get expired data', function(done) {
-    instance.set('thinkjs2', 'maxzhang', 0.1).then(function() {
+    instance.set('thinkjs2', 'maxzhang', 0.01).then(function() {
       setTimeout(function() {
         instance.get('thinkjs2').then(function(value) {
           assert.equal(value, undefined);
           done();
         });
-      }, 150);
+      }, 15);
     });
   });
 
