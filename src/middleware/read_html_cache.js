@@ -30,8 +30,8 @@ export default class extends think.middleware.base {
   responseCacheContent(){
     let http = this.http;
     let fileStream = fs.createReadStream(this.cache.path + '/' + http.html_filename);
-    http.setHeader('Content-Type', 'text/html');
-    http.sendCookie();
+    http.header('Content-Type', 'text/html');
+    http.cookie(true);
     fileStream.pipe(http.res);
     fileStream.on('end', () => http.end());
   }
@@ -72,18 +72,22 @@ export default class extends think.middleware.base {
     if (!think.isArray(html)) {
       html = [html];
     }
+    if(think.isFunction(html[1])){
+      html[2] = html[1];
+      html[1] = 0;
+    }
     let rule = html[0];
     //cookie value
     let cookiePars = {};
-    for(let name in http.cookie){
-      cookiePars['cookie.' + name] = http.cookie[name];
+    for(let name in http._cookie){
+      cookiePars['cookie.' + name] = http._cookie[name];
     }
-    let pars = think.extend({}, http.get, cookiePars, {
+    let pars = think.extend({}, http._get, cookiePars, {
       ':module': module,
       ':controller': controller,
       ':action': action
     });
-    rule = rule.replace(/\{([\w\:]+)\}/g, (a, name) => (pars[name] || ''));
+    rule = rule.replace(/\{([\w\:\.]+)\}/g, (a, name) => (pars[name] || ''));
     let callback = html[2] || this.cache.callback || this.getCacheFilename;
     let filename = callback(rule, this.http) + this.cache.file_ext;
     //set html cache filename, for write_html_cache middleware

@@ -252,7 +252,6 @@ export default class {
     http.header = this.header;
     http.ip = this.ip;
     http.cookie = this.cookie;
-    http.sendCookie = this.sendCookie;
     http.redirect = this.redirect;
     http.echo = this.echo;
     http.end = this.end;

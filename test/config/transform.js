@@ -59,11 +59,16 @@ describe('config/transform', function(){
   })
   it('html_cache/rules', function(){
     var data = Transform.html_cache.rules({welefen: 'suredy'});
-    assert.deepEqual(data, {welefen: 'suredy'})
+    assert.deepEqual(data, {welefen: ['suredy']})
   })
   it('html_cache/rules', function(){
     var data = Transform.html_cache.rules({'home:group:detail': 'suredy'});
-    assert.deepEqual(data, {'home/group/detail': 'suredy'})
+    assert.deepEqual(data, {'home/group/detail': ['suredy']})
+  })
+  it('html_cache/rules', function(){
+    var fn = function(){}
+    var data = Transform.html_cache.rules({'home:group:detail': ['suredy', fn]});
+    assert.deepEqual(data, {'home/group/detail': ['suredy', 0, fn]})
   })
   it('create_server undefined', function(){
     var data = Transform.create_server();
