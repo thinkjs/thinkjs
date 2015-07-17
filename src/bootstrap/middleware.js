@@ -108,9 +108,5 @@ think.middleware('send_error', (http, err) => {
   if (think.debug) {
     return http.end(`<pre style="font-size:14px;line-height:20px;">${msg}</pre>`);
   }
-  http.sendTime();
-  //output error file
-  let readStream = fs.createReadStream(error.file);
-  readStream.pipe(http.res);
-  readStream.on('end', () => http.end());
+  return think.hook('resource_output', http, error.file);
 });
