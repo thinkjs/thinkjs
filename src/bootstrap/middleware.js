@@ -19,15 +19,23 @@ think.middleware('parse_json_payload', http => {
   }
 });
 /**
- * output resource
+ * output file
  * @param  {Object} http    []
  * @param  {String} file [file path]
  * @return {}         []
  */
 think.middleware('output_resource', (http, file) => {
+  let deferred = think.defer();
   let stream = fs.createReadStream(file);
   stream.pipe(http.res);
-  stream.on('end', () => http.end());
+  stream.on('end', () => {
+    http.end();
+    deferred.resolve();
+  });
+  stream.on('error', err => {
+    deferred.reject(err);
+  });
+  return deferred.promise;
 });
 /**
  * rewrite pathname, remove prefix & suffix

@@ -330,18 +330,9 @@ export default class extends think.base {
     }
     let http = this.http;
     let fileStream = fs.createReadStream(filepath);
-    let deferred = think.defer();
     this.type(contentType);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
-    fileStream.pipe(http.res);
-    fileStream.on('end', () => {
-      http.end();
-      deferred.resolve();
-    });
-    fileStream.on('error', err => {
-      deferred.reject(err);
-    });
-    return deferred.promise;
+    return this.hook('file_output', filepath);
   }
   /**
    * output with success errno & errmsg
