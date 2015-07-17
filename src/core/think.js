@@ -1052,8 +1052,9 @@ think.local = (key, ...data) => {
   let config = think.config('local');
   let values = config[lang] || config[_default];
   let value = values[key] || key;
-  data.push(value);
-  return util.format(...data);
+  data.unshift(value);
+  var msg =  util.format(...data);
+  return msg;
 }
 /**
  * valid data
