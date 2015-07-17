@@ -73,6 +73,13 @@ export default class extends think.controller.base {
     return this.success({affectedRows: rows});
   }
   /**
+   * for check child class is rest class
+   * @return {Boolean} []
+   */
+  __isRest(){
+    return true;
+  }
+  /**
    * call
    * @return {Promise} []
    */
