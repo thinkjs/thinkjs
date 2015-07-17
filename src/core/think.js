@@ -538,19 +538,28 @@ think.middleware = (...args) => {
   let [superClass, methods, data] = args;
   let length = args.length;
   let prefix = 'middleware_';
-  // register functional middleware
+  // register functional or class middleware
   // think.middleware('parsePayLoad', function(){})
   if (think.isString(superClass) && think.isFunction(methods)) {
-    think._middleware[superClass] = methods;
+    think._middleware[superClass] = {
+      fn: methods,
+      isClass: data === true
+    };
     return;
   }
   // exec middleware
   // think.middleware('parsePayLoad', http, data)
   if (length >= 2 && think.isHttp(methods)) {
     let name = superClass, http = methods;
+    // name is in middleware cache
     if (name in think._middleware) {
       let fn = think._middleware[name];
-      return think.co.wrap(fn)(http, data);
+      if(fn.isClass){
+        return think.co.wrap(fn.fn)(http, data);
+      }else{
+        let instance = new fn.fn(http);
+        return think.co.wrap(instance.run).bind(instance)(data);
+      }
     }else if (think.isString(name)) {
       let cls = think.require(prefix + name);
       let instance = new cls(http);
