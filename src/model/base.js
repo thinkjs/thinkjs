@@ -106,7 +106,7 @@ export default class extends Base {
       let keyReg = /^[\w\.\|\&]+$/;
       for(let key in options.where){
         if(!keyReg.test(key)){
-          let msg = new Error(think.message('FIELD_KEY_NOT_VALID', key));
+          let msg = new Error(think.local('FIELD_KEY_NOT_VALID', key));
           return think.reject(msg);
         }
       }
@@ -189,7 +189,7 @@ export default class extends Base {
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      let msg = new Error(think.message('DATA_EMPTY'));
+      let msg = new Error(think.local('DATA_EMPTY'));
       return think.reject(msg);
     }
     options = await this.parseOptions(options);
@@ -261,7 +261,7 @@ export default class extends Base {
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      return think.reject(new Error(think.message('DATA_EMPTY')));
+      return think.reject(new Error(think.local('DATA_EMPTY')));
     }
     options = await this.parseOptions(options);
     data = await this._beforeUpdate(data, options);
@@ -272,7 +272,7 @@ export default class extends Base {
         options.where = {[pk]: data[pk]};
         delete data[pk];
       }else{
-        return think.reject(new Error(think.message('MISS_WHERE_CONDITION')));
+        return think.reject(new Error(think.local('MISS_WHERE_CONDITION')));
       }
     }else{
       data[pk] = options.where[pk];
@@ -288,7 +288,7 @@ export default class extends Base {
    */
   updateAll(dataList){
     if (!think.isArray(dataList) || !think.isObject(dataList[0])) {
-      return think.reject(new Error(think.message('DATA_EMPTY')));
+      return think.reject(new Error(think.local('DATA_EMPTY')));
     }
     let promises = dataList.map(data => {
       return this.update(data);

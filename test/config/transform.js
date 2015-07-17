@@ -5,7 +5,7 @@ var path = require('path');
 
 var Index = require('../../lib/index.js');
 var instance = new Index();
-instance.loadMessage();
+instance.load();
 
 var Transform = require('../../lib/config/transform.js');
 

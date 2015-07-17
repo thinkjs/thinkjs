@@ -293,16 +293,6 @@ export default class {
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**
-   * load error message
-   * @return {} []
-   */
-  loadMessage(){
-    let config = require(`${think.THINK_LIB_PATH}/config/message.js`);
-    let filepath = `${think.getPath()}/${think.dirname.config}/message.js`;
-    let appConfig = think.safeRequire(filepath);
-    think._message = think.extend({}, config, appConfig);
-  }
-  /**
    * load all config or modules
    * @return {} []
    */
@@ -319,7 +309,6 @@ export default class {
     this.loadCallController();
     this.loadHook();
     this.loadTemplate();
-    this.loadMessage();
 
     //load alias export at last
     //this.loadAliasExport();

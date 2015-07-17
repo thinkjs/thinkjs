@@ -79,7 +79,7 @@ export default class extends think.adapter.db {
   async startTrans(table){
     let support = await this.supportTrans(table);
     if(!support){
-      let err = new Error(think.message('NOT_SUPPORT_TRANSACTION'));
+      let err = new Error(think.local('NOT_SUPPORT_TRANSACTION'));
       return think.reject(err);
     }
     if (this.transTimes === 0) {

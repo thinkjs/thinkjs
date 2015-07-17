@@ -425,8 +425,11 @@ think.getModuleConfig = (module = think.dirname.common) => {
     debugConfig = think.safeRequire(`${rootPath}/debug.js`);
   }
   //load extra config by key
-  if(think.isDir(rootPath) && module !== true){
+  if(think.isDir(rootPath)){
     let filters = ['config', 'debug', 'cli'];
+    if(module === true){
+      filters.push('alias', 'hook', 'transform');
+    }
     //load conf
     let loadConf = (path, extraConfig) => {
       fs.readdirSync(path).forEach(item => {
@@ -555,7 +558,7 @@ think.middleware = (...args) => {
     }else if (think.isFunction(name)){
       return think.co.wrap(name)(http, data);
     }else{
-      throw new Error(think.message('MIDDLEWARE_NOT_FOUND', superClass));
+      throw new Error(think.local('MIDDLEWARE_NOT_FOUND', superClass));
     }
   }
   // get middleware
@@ -565,7 +568,7 @@ think.middleware = (...args) => {
     if (cls) {
       return cls;
     }
-    throw new Error(think.message('MIDDLEWARE_NOT_FOUND', superClass));
+    throw new Error(think.local('MIDDLEWARE_NOT_FOUND', superClass));
   }
   if (!middleware) {
     middleware = think.Class('middleware');
@@ -605,7 +608,7 @@ think.adapter = (...args) => {
     if (cls) {
       return cls;
     }
-    throw new Error(think.message('ADAPTER_NOT_FOUND', key));
+    throw new Error(think.local('ADAPTER_NOT_FOUND', key));
   }
   //create adapter
   //module.exports = think.adapter({})
@@ -734,7 +737,7 @@ think.timer = {};
  */
 think.gc = instance => {
   if (!instance || !instance.gcType) {
-    throw new Error(think.message('GCTYPE_MUST_SET'));
+    throw new Error(think.local('GCTYPE_MUST_SET'));
   }
   let type = instance.gcType;
   if (think.debug || think.mode === 'cli' || type in think.timer) {
@@ -996,21 +999,6 @@ think.service = (superClass, methods, module) => {
   return service(superClass, methods);
 };
 /**
- * get error message
- * @param  {String} type [error type]
- * @param  {Array} data []
- * @return {}      []
- */
-think._message = {};
-think.message = (type, ...data) => {
-  let msg = think._message[type];
-  if (!msg) {
-    return;
-  }
-  data.unshift(msg);
-  return util.format(...data);
-};
-/**
  * get or set cache
  * @param  {String} type  [cache type]
  * @param  {String} name  [cache name]
@@ -1035,6 +1023,22 @@ think.cache = async (name, value, options = {}) => {
   }
   return instance.set(name, value);
 };
+/**
+ * get local message
+ * @param  {String} key  []
+ * @param  {String} lang []
+ * @return {String}      []
+ */
+think.local = (key, ...data) => {
+  let _default = think.config('local.default');
+  //@TODO node in windows no LANG property
+  let lang = process.env.LANG.split('.')[0].replace('_', '-') || _default;
+  let config = think.config('local');
+  let values = config[lang] || config[_default];
+  let value = values[key] || key;
+  data.push(value);
+  return util.format(...data);
+}
 /**
  * valid data
  * [{
@@ -1080,7 +1084,7 @@ think.valid = (name, callback) => {
     // value required
     if (item.required) {
       if (!item.value) {
-        msg[item.name] = think.message('PARAMS_EMPTY', item.name);
+        msg[item.name] = think.local('PARAMS_EMPTY', item.name);
         return;
       }
     }else{
@@ -1098,7 +1102,7 @@ think.valid = (name, callback) => {
     }
     let type = valid[item.type];
     if (!think.isFunction(type)) {
-      throw new Error(think.message('CONFIG_NOT_FUNCTION', item.type));
+      throw new Error(think.local('CONFIG_NOT_FUNCTION', item.type));
     }
     if (!think.isArray(item.args)) {
       item.args = [item.args];
@@ -1106,7 +1110,7 @@ think.valid = (name, callback) => {
     item.args = item.args.unshift(item.value);
     let result = type.apply(valid, item.args);
     if (!result) {
-      let itemMsg = item.msg || think.message('PARAMS_NOT_VALID');
+      let itemMsg = item.msg || think.local('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
     }
   });

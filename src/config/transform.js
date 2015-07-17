@@ -14,7 +14,7 @@ let getFn = (value, config) => {
   if (think.isFunction(value)) {
     return value;
   }
-  let msg = think.message('CONFIG_NOT_FUNCTION', config);
+  let msg = think.local('CONFIG_NOT_FUNCTION', config);
   throw new Error(msg);
 };
 /**
@@ -33,7 +33,7 @@ export default {
         return [value];
       }
       if (!think.isArray(value)) {
-        let msg = think.message('CONFIG_NOT_VALID', 'post.json_content_type');
+        let msg = think.local('CONFIG_NOT_VALID', 'post.json_content_type');
         throw new Error(msg);
       }
       return value;
@@ -56,7 +56,7 @@ export default {
       return obj;
     }
     if (!think.isObject(value)) {
-      let msg = think.message('CONFIG_NOT_VALID', 'subdomain');
+      let msg = think.local('CONFIG_NOT_VALID', 'subdomain');
       throw new Error(msg);
     }
     return value;
@@ -71,7 +71,7 @@ export default {
       return [value];
     }
     if (!think.isArray(value)) {
-      let msg = think.message('CONFIG_NOT_VALID', 'deny_module_list');
+      let msg = think.local('CONFIG_NOT_VALID', 'deny_module_list');
       throw new Error(msg);
     }
     return value;

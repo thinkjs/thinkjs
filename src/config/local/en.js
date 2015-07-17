@@ -1,5 +1,5 @@
 /**
- * message
+ * error message
  * @type {Object}
  */
 export default {
@@ -23,5 +23,5 @@ export default {
   MISS_WHERE_CONDITION: 'miss where condition',
   TABLE_NO_COLUMNS: 'table `%s` has no columns',
   NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction',
-  DATA_NOT_ARRAY_LIST: 'data is not array list'
+  DATA_MUST_BE_ARRAY: 'data is not array list'
 };
