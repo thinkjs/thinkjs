@@ -562,10 +562,10 @@ think.middleware = (...args) => {
     if (name in think._middleware) {
       let fn = think._middleware[name];
       if(fn.isClass){
-        return think.co.wrap(fn.fn)(http, data);
-      }else{
         let instance = new fn.fn(http);
         return think.co.wrap(instance.run).bind(instance)(data);
+      }else{
+        return think.co.wrap(fn.fn)(http, data);
       }
     }else if (think.isString(name)) {
       let cls = think.require(prefix + name);
