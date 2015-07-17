@@ -241,7 +241,7 @@ export default class {
     http._type = (http.headers['content-type'] || '').split(';')[0].trim();
 
     http.config = this.config;
-    http.referer = this.referer;
+    http.referrer = this.referrer;
     http.userAgent = this.userAgent;
     http.isAjax = this.isAjax;
     http.isJsonp = this.isJsonp;
@@ -302,16 +302,16 @@ export default class {
     return this.headers['user-agent'] || '';
   }
   /**
-   * get page request referer
-   * @param  {String} host [only get referer host]
+   * get page request referrer
+   * @param  {String} host [only get referrer host]
    * @return {String}      []
    */
-  referer(host){
-    let referer = this.headers.referer || this.headers.referrer || '';
-    if (!referer || !host) {
-      return referer;
+  referrer(host){
+    let referrer = this.headers.referer || this.headers.referrer || '';
+    if (!referrer || !host) {
+      return referrer;
     }
-    let info = url.parse(referer);
+    let info = url.parse(referrer);
     return info.hostname;
   }
   /**

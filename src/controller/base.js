@@ -156,8 +156,16 @@ export default class extends think.base {
    * @param  {String} host [only get referer host]
    * @return {String}      []
    */
-  referer(onlyHost){
+  referrer(onlyHost){
     return this.http.referer(onlyHost);
+  }
+  /**
+   * get page referer
+   * @param  {String} host [only get referer host]
+   * @return {String}      []
+   */
+  referer(onlyHost){
+    return this.http.referrer(onlyHost);
   }
   /**
    * get or set cookie
