@@ -82,6 +82,7 @@ describe('middleware/write_html_cache', function(){
       assert.equal(value, 'welefen.test');
       assert.equal(think.isFile(filePath + '/welefen/test/xxx/test.html'), true);
       require('fs').unlinkSync(filePath + '/welefen/test/xxx/test.html');
+      think.rmdir(filePath + '/welefen')
       done();
     })
   })
