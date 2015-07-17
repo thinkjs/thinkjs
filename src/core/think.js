@@ -48,6 +48,12 @@ think.dirname = {
  */
 think.debug = false;
 /**
+ * env
+ * env | test | online
+ * @type {String}
+ */
+think.env = 'dev';
+/**
  * server port
  * @type {Number}
  */
@@ -57,12 +63,7 @@ think.port = 0;
  * @type {String}
  */
 think.cli = false;
-//mini mode, no module
-think.mode_mini = 0x0001;
-//normal mode
-think.mode_normal = 0x0002;
-//module mode
-think.mode_module = 0x0004;
+
 /**
  * app mode
  * 0x0001: mini
@@ -71,6 +72,12 @@ think.mode_module = 0x0004;
  * @type {Boolean}
  */
 think.mode = 0x0001;
+//mini mode, no module
+think.mode_mini = 0x0001;
+//normal mode
+think.mode_normal = 0x0002;
+//module mode
+think.mode_module = 0x0004;
 /**
  * thinkjs module lib path
  * @type {String}
