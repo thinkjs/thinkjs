@@ -229,7 +229,7 @@ export default class extends think.base {
    */
   redirect(url, code) {
     this.http.redirect(url, code);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * assign value to template
@@ -265,7 +265,7 @@ export default class extends think.base {
    */
   jsonp(data) {
     this.http.jsonp(data);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * output with json
@@ -274,7 +274,7 @@ export default class extends think.base {
    */
   json(data){
     this.http.json(data);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * set http status code
@@ -283,7 +283,7 @@ export default class extends think.base {
    */
   status(status = 404) {
     this.http.status(status);
-    return think.prevent();
+    return this;
   }
   /**
    * deny request
@@ -292,7 +292,8 @@ export default class extends think.base {
    */
   deny(status = 403){
     this.status(status);
-    return this.end();
+    this.end();
+    return think.defer().promise;
   }
   /**
    * echo content
@@ -311,7 +312,7 @@ export default class extends think.base {
    */
   end(obj, encoding) {
     this.http.end(obj, encoding);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * get or set content type
@@ -350,7 +351,7 @@ export default class extends think.base {
    */
   success(data, message){
     this.http.success(data, message);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * output with fail errno & errmsg
@@ -361,7 +362,7 @@ export default class extends think.base {
    */
   fail(errno, errmsg, data){
     this.http.fail(errno, errmsg, data);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * alias for fail
@@ -370,13 +371,6 @@ export default class extends think.base {
    */
   error(...args){
     return this.fail(...args);
-  }
-  /**
-   * close db connections
-   * @return {} []
-   */
-  closeDb(){
-    //think.require('Model').close();
   }
   /**
    * send exec time
