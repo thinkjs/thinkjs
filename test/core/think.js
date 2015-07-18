@@ -42,8 +42,8 @@ describe('core/think.js', function(){
     think.cli = false;
     think.mode = think.mode_mini;
     think.module = [];
-    think._config = {};
-    think._alias = {};
+    //think._config = {};
+    //think._alias = {};
   })
 
   it('methods from thinkit', function(){
@@ -266,8 +266,8 @@ describe('core/think.js', function(){
       assert.equal(fn(), 'home/service/group');
       think._aliasExport = {};
     })
-    it('think.lookClass("detail", "controller", "home") not found', function(){
-      var cls = think.lookClass('detail', 'controller', 'home');
+    it('think.lookClass("detail", "controller", "homwwwe") not found', function(){
+      var cls = think.lookClass('detail', 'controller', 'homwwwe', 'homwwww');
       assert.equal(cls, null);
     })
     it('think.lookClass("group", "controller", "home") is function', function(){
@@ -708,12 +708,12 @@ describe('core/think.js', function(){
         think.debug = true;
         var configs = think.getModuleConfig();
         assert.equal(think.isObject(configs), true);
-        assert.equal(configs.auto_reload, undefined);
+        assert.equal(configs.auto_reload, false);
         think._moduleConfig = _moduleConfig;
         think.debug = debug;
       })
 
-      it('think.getModuleConfig get common config', function(done){
+      it('think.getModuleConfig get common config 2', function(done){
         var _moduleConfig = think._moduleConfig;
         think._moduleConfig = {};
         var appPath = think.APP_PATH + '/config/';
@@ -727,7 +727,7 @@ describe('core/think.js', function(){
         think._moduleConfig = _moduleConfig;
         think.rmdir(think.APP_PATH).then(done);
       })
-      it('think.getModuleConfig get common config', function(done){
+      it('think.getModuleConfig get common config 3', function(done){
         var _moduleConfig = think._moduleConfig;
         think._moduleConfig = {};
         var appPath = think.APP_PATH + '/config/';
@@ -741,7 +741,7 @@ describe('core/think.js', function(){
         think._moduleConfig = _moduleConfig;
         think.rmdir(think.APP_PATH).then(done);
       })
-      it('think.getModuleConfig get common config', function(done){
+      it('think.getModuleConfig get common config 4', function(done){
         var _moduleConfig = think._moduleConfig;
         think._moduleConfig = {};
         var appPath = think.APP_PATH + '/config/';
@@ -755,9 +755,11 @@ describe('core/think.js', function(){
         think._moduleConfig = _moduleConfig;
         think.rmdir(think.APP_PATH).then(done);
       })
-      it('think.getModuleConfig get common config', function(done){
+      it('think.getModuleConfig get common config 5', function(done){
         var _moduleConfig = think._moduleConfig;
+        var _config = think._config;
         think._moduleConfig = {};
+        think._config = {};
         var appPath = think.APP_PATH + '/config/local';
         think.mkdir(appPath);
 
@@ -767,6 +769,7 @@ describe('core/think.js', function(){
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.local, { en: { welefen: 'suredy' } });
         think._moduleConfig = _moduleConfig;
+        think._config = _config;
         think.rmdir(think.APP_PATH).then(done);
       })
   })
@@ -865,8 +868,145 @@ describe('core/think.js', function(){
       })
     })
 
+    it('exec hook, class', function(done){
+      var cls = think.Class({
+        init: function(){
+
+        },
+        run: function(){
+          return 'run';
+        }
+      }, true)
+      think.hook('__test__', cls);
+      getHttp().then(function(http){
+        think.hook('__test__', http, '__test__').then(function(data){
+          assert.equal(data, 'run');
+          delete think._hook['__test__'];
+          done();
+        })
+      })
+    })
+  })
+
+  describe('think.middleware', function(){
+    it('register middleware, function', function(){
+      var fn = function(){}
+      var data = think.middleware('___test', fn)
+      assert.equal(think._middleware['___test'], fn);
+      assert.equal(data, undefined);
+      delete think._middleware['___test'];
+    })
+    it('register middleware, class', function(){
+      var fn = think.Class({
+        run: function(){}
+      }, true)
+      var data = think.middleware('___test', fn)
+      assert.equal(think._middleware['___test'], fn);
+      assert.equal(data, undefined);
+      delete think._middleware['___test'];
+    })
+    it('exec middleware, no data', function(done){
+      think.middleware('___test', function(){
+        return 'http';
+      })
+      getHttp().then(function(http){
+        think.middleware('___test', http).then(function(data){
+          assert.equal(data, 'http');
+          delete think._middleware['___test'];
+          done();
+        })
+      })
+    })
+    it('exec middleware, with data', function(done){
+      think.middleware('___test', function(http, data){
+        return data;
+      })
+      getHttp().then(function(http){
+        think.middleware('___test', http, '___http').then(function(data){
+          assert.equal(data, '___http');
+          delete think._middleware['___test'];
+          done();
+        })
+      })
+    })
+    it('exec middleware, not exist', function(done){
+      getHttp().then(function(http){
+        return think.middleware('___testxxx', http, '___http').catch(function(err){
+          assert.equal(err.stack.indexOf('`___testxxx`') > -1, true);
+          delete think._middleware['___test'];
+          done();
+        })
+      })
+    })
+    it('exec middleware, function', function(done){
+      getHttp().then(function(http){
+        return think.middleware(function(http, data){
+          return data;
+        }, http, '___http').then(function(data){
+          assert.equal(data, '___http');
+          done();
+        })
+      })
+    })
+    it('exec middleware, object', function(){
+      getHttp().then(function(http){
+        var data = think.middleware({
+          getNwwwwame: function(){
+            return 'test';
+          }
+        }, http, '___http');
+        assert.equal(think.isFunction(data.prototype.getNwwwwame), true);
+      })
+    })
+    it('get middleware', function(){
+      var fn = function(){};
+      think.middleware('fasdfasf', fn);
+      var fn1 = think.middleware("fasdfasf");
+      assert.equal(fn1, fn);
+      delete think._middleware['fasdfasf'];
+    })
+    it('get sys middleware', function(){
+      var fn1 = think.middleware("deny_ip");
+      assert.equal(think.isFunction(fn1), true);
+    })
+    it('get sys middleware, not found', function(){
+      try{
+        var fn1 = think.middleware("deny_ip11");
+      }catch(err){
+        assert.equal(err.stack.indexOf('`deny_ip11`') > -1, true);
+      }
+    })
+    it('create middleware', function(){
+      var cls = think.middleware({
+        getTest: function(){
+          return 'getTest';
+        }
+      })
+      assert.equal(think.isFunction(cls.prototype.getTest), true);
+      var instance = new cls({});
+      assert.equal(instance.getTest(), 'getTest');
+    })
+    it('create middleware, superClass', function(){
+      var superClass = think.middleware({
+        getTest: function(){
+          return 'getTest';
+        }
+      })
+      var childClass = think.middleware(superClass, {
+        getTest2: function(){
+          return 'getTest2';
+        }
+      })
+      assert.equal(think.isFunction(childClass.prototype.getTest), true);
+      var instance = new childClass({});
+      assert.equal(instance.getTest(), 'getTest');
+      assert.equal(instance.getTest2(), 'getTest2');
+    })
 
   })
+
+
+
 
 })
 

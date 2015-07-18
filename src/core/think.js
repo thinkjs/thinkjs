@@ -585,24 +585,29 @@ think.middleware = (...args) => {
   // think.middleware('parsePayLoad', http, data)
   if (length >= 2 && think.isHttp(methods)) {
     let name = superClass, http = methods;
-    // name is in middleware cache
-    if (name in think._middleware) {
-      let fn = think._middleware[name];
-      //class middleware must have run method
-      if(think.isFunction(fn.prototype.run)){
-        let instance = new fn(http);
-        return think.co.wrap(instance.run).bind(instance)(data);
+    if (think.isString(name)) {
+      // name is in middleware cache
+      if (name in think._middleware) {
+        let fn = think._middleware[name];
+        //class middleware must have run method
+        if(think.isFunction(fn.prototype.run)){
+          let instance = new fn(http);
+          return think.co.wrap(instance.run).bind(instance)(data);
+        }else{
+          return think.co.wrap(fn)(http, data);
+        }
       }else{
-        return think.co.wrap(fn)(http, data);
+        let Cls = think.require(prefix + name, true);
+        if(Cls){
+          let instance = new Cls(http);
+          return think.co.wrap(instance.run).bind(instance)(data);
+        }
+        let err = new Error(think.local('MIDDLEWARE_NOT_FOUND', name));
+        return Promise.reject(err);
       }
-    }else if (think.isString(name)) {
-      let cls = think.require(prefix + name);
-      let instance = new cls(http);
-      return think.co.wrap(instance.run).bind(instance)(data);
-    }else if (think.isFunction(name)){
+    }
+    else if (think.isFunction(name)){
       return think.co.wrap(name)(http, data);
-    }else{
-      throw new Error(think.local('MIDDLEWARE_NOT_FOUND', superClass));
     }
   }
   // get middleware
