@@ -89,6 +89,9 @@ export default class {
     if (think.mode === think.mode_normal) {
       modulePath += `/${think.dirname.controller}`;
     }
+    if(!think.isDir(modulePath)){
+      return [];
+    }
     let modules = fs.readdirSync(modulePath);
     let denyModuleList = think.config('deny_module_list') || [];
     if (denyModuleList.length > 0) {

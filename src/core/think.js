@@ -506,15 +506,26 @@ think.hook = (...args) => {
   if (args.length === 1) {
     return think._hook[name] || [];
   }
+  // set hook data
+  // think.hook('test', ['middleware1', 'middleware2'])
+  else if(think.isArray(http)){
+    if(data !== 'append' && data !== 'prepend'){
+      think._hook[name] = [];
+    }
+    http.forEach(item => {
+      think.hook(name, item, data);
+    })
+    return;
+  }
+  //remove hook
+  else if(http === null){
+    think._hook[name] = [];
+    return;
+  }
   //set hook data
   else if (!think.isHttp(http)){
-    // think.hook('test', ['middleware1', 'middleware2'])
-    if(think.isArray(http)){
-      think._hook[name] = http;
-      return;
-    }
     // think.hook('test', function or class);
-    else if(think.isFunction(http)){
+    if(think.isFunction(http)){
       let name = 'middleware_' + think.uuid();
       think.middleware(name, http);
       http = name;
@@ -597,6 +608,9 @@ think.middleware = (...args) => {
   // get middleware
   // think.middleware('parsePayLoad')
   if (length === 1 && think.isString(superClass)) {
+    if(superClass in think._middleware){
+      return think._middleware[superClass];
+    }
     let cls = think.require(prefix + superClass, true);
     if (cls) {
       return cls;

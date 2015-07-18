@@ -16,6 +16,27 @@ instance.load();
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
 
+var _http = require('../_http.js');
+
+function getHttp(config, options){
+  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  var req = think.extend({}, _http.req);
+  var res = think.extend({}, _http.res);
+  return think.http(req, res).then(function(http){
+    if(config){
+      http._config = config;
+    }
+    if(options){
+      for(var key in options){
+        http[key] = options[key];
+      }
+    }
+    return http;
+  })
+}
+
+
+
 describe('core/think.js', function(){
   before(function(){
     think.cli = false;
@@ -59,19 +80,17 @@ describe('core/think.js', function(){
     assert.equal(typeof think.cli, 'boolean');
   })
 
-  describe('think.mode', function(){
-    it('think.mode is 1', function(){
-      assert.equal(think.mode, 1);
-    })
-    it('think.mode_mini is 1', function(){
-      assert.equal(think.mode_mini, 1);
-    })
-    it('think.mode_normal is 2', function(){
-      assert.equal(think.mode_normal, 2);
-    })
-    it('think.mode_module is 4', function(){
-      assert.equal(think.mode_module, 4);
-    })
+  it('think.mode is 1', function(){
+    assert.equal(think.mode, 1);
+  })
+  it('think.mode_mini is 1', function(){
+    assert.equal(think.mode_mini, 1);
+  })
+  it('think.mode_normal is 2', function(){
+    assert.equal(think.mode_normal, 2);
+  })
+  it('think.mode_module is 4', function(){
+    assert.equal(think.mode_module, 4);
   })
 
   it('think.THINK_LIB_PATH is string', function(){
@@ -87,40 +106,34 @@ describe('core/think.js', function(){
     assert.deepEqual(think.module, []);
   })
 
-  describe('think.base', function(){
-    it('think.base is class', function(){
-      assert.deepEqual(typeof think.base, 'function');
-    })
-    it('think.base methods', function(){
-      var instance = new think.base();
-      var methods = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];
-      methods.forEach(function(item){
-        assert.deepEqual(typeof instance.init, 'function');
-      })
+  it('think.base is class', function(){
+    assert.deepEqual(typeof think.base, 'function');
+  })
+  it('think.base methods', function(){
+    var instance = new think.base();
+    var methods = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];
+    methods.forEach(function(item){
+      assert.deepEqual(typeof instance.init, 'function');
     })
   })
-  describe('think.defer', function(){
-    it('think.defer is function', function(){
-      assert.equal(typeof think.defer, 'function')
-    })
-    it('think.defer methods', function(){
-      var deferred = think.defer();
-      assert.equal(typeof deferred.promise, 'object')
-      assert.equal(typeof deferred.resolve, 'function')
-      assert.equal(typeof deferred.reject, 'function')
-    })
+  it('think.defer is function', function(){
+    assert.equal(typeof think.defer, 'function')
   })
-  describe('think.reject', function(){
-    it('think.reject is reject', function(){
-      assert.equal(typeof think.reject, 'function')
-    })
-    it('think.reject methods', function(done){
-      var err = new Error();
-      var reject = think.reject(err);
-      reject.catch(function(e){
-        assert.equal(err, e);
-        done();
-      })
+  it('think.defer methods', function(){
+    var deferred = think.defer();
+    assert.equal(typeof deferred.promise, 'object')
+    assert.equal(typeof deferred.resolve, 'function')
+    assert.equal(typeof deferred.reject, 'function')
+  })
+  it('think.reject is reject', function(){
+    assert.equal(typeof think.reject, 'function')
+  })
+  it('think.reject methods', function(done){
+    var err = new Error();
+    var reject = think.reject(err);
+    reject.catch(function(e){
+      assert.equal(err, e);
+      done();
     })
   })
   
@@ -513,6 +526,17 @@ describe('core/think.js', function(){
       think.log('test', 'TEST');
       console.log = log;
     })
+    it('think.log with function', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true);
+        assert.equal(msg.indexOf('[TEST]') > -1, true);
+      }
+      think.log(function(){
+        return 'test';
+      }, 'TEST');
+      console.log = log;
+    })
     it('think.log with error', function(){
       var log = console.error;
       console.error = function(msg){
@@ -745,6 +769,103 @@ describe('core/think.js', function(){
         think._moduleConfig = _moduleConfig;
         think.rmdir(think.APP_PATH).then(done);
       })
+  })
+
+  describe('think.hook', function(){
+    it('get all hook', function(){
+      var data = Object.keys(think._hook).sort();
+      assert.deepEqual(data, ["app_begin","app_end","app_error","form_parse","resource_check","resource_output","route_parse","view_end","view_filter","view_init","view_parse","view_template"])
+    })
+    it('get item hook', function(){
+      var data = think.hook('route_parse');
+      assert.deepEqual(data, ['rewrite_pathname', 'subdomain_deploy', 'route'])
+    })
+    it('get item hook, not exist', function(){
+      var data = think.hook('route_parse111');
+      assert.deepEqual(data, [])
+    })
+    it('set hook data, array', function(){
+      think.hook('test', ['welefen']);
+      assert.deepEqual(think.hook('test'), ['welefen']);
+      delete think._hook['test'];
+    })
+    it('set hook data, array 1', function(){
+      think._hook['test'] = ['suredy'];
+      think.hook('test', ['welefen']);
+      assert.deepEqual(think.hook('test'), ['welefen']);
+      delete think.hook['test'];
+    })
+    it('set hook data, append', function(){
+      think._hook['test'] = ['suredy'];
+      think.hook('test', ['welefen'], 'append');
+      assert.deepEqual(think.hook('test'), ['suredy', 'welefen']);
+      delete think.hook['test'];
+    })
+    it('set hook data, prepend', function(){
+      think._hook['test'] = ['suredy'];
+      think.hook('test', ['welefen'], 'prepend');
+      assert.deepEqual(think.hook('test'), ['welefen', 'suredy']);
+      delete think.hook['test'];
+    })
+    it('remove hook data', function(){
+      think._hook['test'] = ['suredy'];
+      think.hook('test', null);
+      assert.deepEqual(think.hook('test'), []);
+      delete think.hook['test'];
+    })
+    it('add hook, append', function(){
+      think.hook('__test', 'welefen');
+      assert.deepEqual(think.hook('__test'), ['welefen']);
+      delete think.hook['__test'];
+    })
+    it('add hook, function', function(){
+      var fn = function(){};
+      think.hook('__test', fn);
+      var data = think.hook('__test');
+      assert.equal(data[0].length, 43);
+      var fn1 = think.middleware(data[0]);
+      assert.equal(fn, fn1);
+      delete think.hook['__test'];
+    })
+    it('exec hook, emtpy', function(done){
+      getHttp().then(function(http){
+        think.hook('__not_exist', http, '__not_exist').then(function(data){
+          assert.equal(data, '__not_exist');
+          done();
+        })
+      })
+    })
+
+    it('exec hook', function(done){
+      think.hook('__test__', function(http, data){
+        return data;
+      })
+      getHttp().then(function(http){
+        think.hook('__test__', http, '__test__').then(function(data){
+          assert.equal(data, '__test__');
+          delete think._hook['__test__'];
+          done();
+        })
+      })
+    })
+
+    it('exec hook, no return', function(done){
+      think.hook('__test__', function(http, data){
+        return 'test';
+      })
+      think.hook('__test__', function(http, data){
+        return;
+      }, 'append')
+      getHttp().then(function(http){
+        think.hook('__test__', http, '__test__').then(function(data){
+          assert.equal(data, 'test');
+          delete think._hook['__test__'];
+          done();
+        })
+      })
+    })
+
+
   })
 
 })
