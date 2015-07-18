@@ -507,8 +507,27 @@ think.hook = (...args) => {
     return think._hook[name] || [];
   }
   //set hook data
-  else if (think.isArray(http)) {
-    think._hook[name] = http;
+  else if (!think.isHttp(http)){
+    // think.hook('test', ['middleware1', 'middleware2'])
+    if(think.isArray(http)){
+      think._hook[name] = http;
+      return;
+    }
+    // think.hook('test', function or class);
+    else if(think.isFunction(http)){
+      let name = 'middleware_' + think.uuid();
+      think.middleware(name, http);
+      http = name;
+    }
+    let hooks = think._hook[name] || [];
+    if(data === 'append'){
+      hooks.push(http);
+    }else if(data === 'prepend'){
+      hooks.unshift(http);
+    }else{
+      hooks = [http];
+    }
+    think._hook[name] = hooks;
     return;
   }
 
@@ -548,10 +567,7 @@ think.middleware = (...args) => {
   // register functional or class middleware
   // think.middleware('parsePayLoad', function(){})
   if (think.isString(superClass) && think.isFunction(methods)) {
-    think._middleware[superClass] = {
-      fn: methods,
-      isClass: data === true
-    };
+    think._middleware[superClass] = methods;
     return;
   }
   // exec middleware
@@ -561,11 +577,12 @@ think.middleware = (...args) => {
     // name is in middleware cache
     if (name in think._middleware) {
       let fn = think._middleware[name];
-      if(fn.isClass){
-        let instance = new fn.fn(http);
+      //class middleware must have run method
+      if(think.isFunction(fn.prototype.run)){
+        let instance = new fn(http);
         return think.co.wrap(instance.run).bind(instance)(data);
       }else{
-        return think.co.wrap(fn.fn)(http, data);
+        return think.co.wrap(fn)(http, data);
       }
     }else if (think.isString(name)) {
       let cls = think.require(prefix + name);
