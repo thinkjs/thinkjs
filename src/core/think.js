@@ -640,28 +640,39 @@ think.adapter = (...args) => {
   think.loadAdapter();
 
   let length = args.length, key = 'adapter_';
-  //register adapter
-  //think.adapter('session', 'redis', function(){})
-  if (length === 3 && think.isFunction(fn)) {
-    key += `${type}_${name}`;
-    think._aliasExport[key] = fn;
-    return;
-  }
-  //create adapter
-  //module.exports = think.adapter('session', 'base', {})
-  if (length === 3 && think.isObject(fn)) {
-    return think.Class(think.adapter(type, name), fn);
-  }
-  //get adapter
-  //think.adapter('session', 'redis')
-  if (length === 2 && think.isString(name)) {
-    key += type + '_' + name;
-    let cls = think.require(key, true);
-    if (cls) {
-      return cls;
+  if(length === 3){
+    //register adapter
+    //think.adapter('session', 'redis', function(){})
+    if (think.isFunction(fn)) {
+      key += `${type}_${name}`;
+      think._aliasExport[key] = fn;
+      return;
     }
-    throw new Error(think.local('ADAPTER_NOT_FOUND', key));
+    //create adapter
+    //module.exports = think.adapter('session', 'base', {})
+    else if(think.isObject(fn)){
+      return think.Class(think.adapter(type, name), fn);
+    }
   }
+  //type has not _
+  else if(length === 2 && think.isString(type) && type.indexOf('_') === -1){
+    //create adapter
+    //module.exports = think.adapter('session', {})
+    if(think.isObject(name)){
+      return think.Class(think.adapter(type, 'base'), name);
+    }
+    //get adapter
+    //think.adapter('session', 'redis')
+    else if (think.isString(name)) {
+      key += type + '_' + name;
+      let cls = think.require(key, true);
+      if (cls) {
+        return cls;
+      }
+      throw new Error(think.local('ADAPTER_NOT_FOUND', key));
+    }
+  }
+  
   //create adapter
   //module.exports = think.adapter({})
   //module.exports = think.adapter(function(){}, {});
@@ -938,6 +949,11 @@ think.getModule = module => {
 };
 
 let nameReg = /^[A-Za-z\_]\w*$/;
+/**
+ * get controller name
+ * @param  {String} controller []
+ * @return {String}            []
+ */
 think.getController = controller => {
   if (!controller) {
     return think.config('default_controller');

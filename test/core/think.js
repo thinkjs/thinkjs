@@ -1005,7 +1005,84 @@ describe('core/think.js', function(){
 
   })
 
+  describe('think.uuid', function(){
+    it('is function', function(){
+      assert.equal(think.isFunction(think.uuid), true)
+    })
+    it('default length is 32', function(){
+      var data = think.uuid();
+      assert.equal(data.length, 32);
+    })
+    it('change length to 40', function(){
+      var data = think.uuid(40);
+      assert.equal(data.length, 40);
+    })
+  })
 
+  describe('think.adapter', function(){
+    it('add adapter', function(){
+      var fn = function(){}
+      var key = 'adapter_welefen_suredy';
+      think.adapter('welefen', 'suredy', fn);
+      var fn1 = think._aliasExport[key];
+      assert.equal(fn, fn1);
+      delete think._aliasExport[key];
+    })
+    it('create adapter', function(){
+      var fn = think.adapter('session', 'base', {
+        getTest1: function(){
+          return '___getTest';
+        }
+      })
+      assert.equal(think.isFunction(fn.prototype.getTest1), true);
+      var instance = new fn();
+      var data = instance.getTest1();
+      assert.equal(data, '___getTest');
+    })
+    it('get adapter', function(){
+      var fn = think.adapter('session', 'base');
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.get), true);
+    })
+    it('get adapter, not found', function(){
+      try{
+        var fn = think.adapter('session', 'welefen111');
+      }catch(err){
+        assert.equal(err.stack.indexOf('`adapter_session_welefen111`') > -1, true);
+      }
+    })
+    it('create adapter', function(){
+      var fn = think.adapter('session', {
+        getTest1: function(){
+          return '___getTest';
+        }
+      })
+      assert.equal(think.isFunction(fn.prototype.getTest1), true);
+      var instance = new fn();
+      var data = instance.getTest1();
+      assert.equal(data, '___getTest');
+    })
+    it('create adapter', function(){
+      var fn = think.adapter({});
+      assert.equal(think.isFunction(fn), true);
+    })
+    it('create adapter, super', function(){
+      var cls = think.Class({
+        getName: function(){
+          return 'super';
+        }
+      }, true)
+      var fn = think.adapter(cls, {});
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.getName), true);
+    })
+    it('create adapter, super', function(){
+      var fn = think.adapter('adapter_session_base', {});
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.get), true);
+    })
+
+  })
 
 
 })
