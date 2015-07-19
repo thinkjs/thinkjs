@@ -399,18 +399,14 @@ think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
   }
 };
 /**
- * modules config
- * @type {Object}
- */
-think._moduleConfig = {};
-/**
  * get module config
  * @param  {String} module []
  * @return {Object}        []
  */
 think.getModuleConfig = (module = think.dirname.common) => {
-  if (!think.debug && module in think._moduleConfig) {
-    return think._moduleConfig[module];
+  let moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+  if (!think.debug && module in moduleConfig) {
+    return moduleConfig[module];
   }
   let rootPath;
   //get sys config
@@ -463,7 +459,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   //transform config
   let transforms = require(`${think.THINK_LIB_PATH}/config/transform.js`);
   config = think.transformConfig(config, transforms);
-  think._moduleConfig[module] = config;
+  thinkCache(thinkCache.MODULE_CONFIG, module, config);
   return config;
 };
 /**

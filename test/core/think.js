@@ -663,58 +663,58 @@ describe('core/think.js', function(){
         assert.equal(think.isFunction(think.getModuleConfig), true);
       })
       it('think.getModuleConfig get sys config', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
         assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
         assert.equal(think.isObject(configs), true);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
       it('think.getModuleConfig get sys config', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
         var configs2 = think.getModuleConfig(true);
         assert.equal(configs, configs2);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
       it('think.getModuleConfig get sys config, with cli', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var cli = think.cli;
         think.cli = true;
         var configs = think.getModuleConfig(true);
         assert.equal(think.isObject(configs), true);
         assert.equal(configs.auto_reload, false);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.cli = cli;
       })
       it('think.getModuleConfig get sys config, with debug', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var debug = think.debug;
         think.debug = true;
         var configs = think.getModuleConfig(true);
         assert.equal(think.isObject(configs), true);
         assert.equal(configs.auto_reload, true);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.debug = debug;
       })
       it('think.getModuleConfig get common config', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var debug = think.debug;
         think.debug = true;
         var configs = think.getModuleConfig();
         assert.equal(think.isObject(configs), true);
         assert.equal(configs.auto_reload, false);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.debug = debug;
       })
 
       it('think.getModuleConfig get common config 2', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var appPath = think.APP_PATH + '/config/';
         think.mkdir(appPath);
 
@@ -723,12 +723,12 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.equal(configs.welefen, 'suredy');
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.rmdir(think.APP_PATH).then(done);
       })
       it('think.getModuleConfig get common config 3', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var appPath = think.APP_PATH + '/config/';
         think.mkdir(appPath);
 
@@ -737,12 +737,12 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.aaa, {welefen: 'suredy'});
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.rmdir(think.APP_PATH).then(done);
       })
       it('think.getModuleConfig get common config 4', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var appPath = think.APP_PATH + '/config/';
         think.mkdir(appPath);
 
@@ -751,13 +751,13 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.aaa, undefined);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.rmdir(think.APP_PATH).then(done);
       })
       it('think.getModuleConfig get common config 5', function(done){
-        var _moduleConfig = think._moduleConfig;
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         var _config = thinkCache(thinkCache.CONFIG);
-        think._moduleConfig = {};
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         thinkCache(thinkCache.CONFIG, {})
         var appPath = think.APP_PATH + '/config/local';
         think.mkdir(appPath);
@@ -767,7 +767,7 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.local, { en: { welefen: 'suredy' } });
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         thinkCache(thinkCache.CONFIG, _config);
         think.rmdir(think.APP_PATH).then(done);
       })
