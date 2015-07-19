@@ -133,7 +133,8 @@ export default class {
     let config = think.getModuleConfig(true);
     //common module config
     let commonConfig = think.getModuleConfig();
-    think._config = think.extend(config, commonConfig);
+    let configs = think.extend(config, commonConfig);
+    thinkCache(thinkCache.CONFIG, configs);
     let modules = this.getModule();
     //load modules config
     modules.forEach(module => {

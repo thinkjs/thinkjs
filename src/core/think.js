@@ -362,15 +362,10 @@ think.log = (msg, type) => {
 };
 
 /**
- * think sys & common config
- * @type {Object}
- */
-think._config = {};
-/**
  * get or set config
  * @return {mixed} []
  */
-think.config = (name, value, data = think._config) => {
+think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
   // get all config
   // think.config();
   if (name === undefined) {
@@ -463,7 +458,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   config = think.extend({}, config, debugConfig, extraConfig, cliConfig);
   //merge config
   if (module !== true) {
-    config = think.extend({}, think._config, config);
+    config = think.extend({}, thinkCache(thinkCache.CONFIG), config);
   }
   //transform config
   let transforms = require(`${think.THINK_LIB_PATH}/config/transform.js`);
@@ -759,18 +754,17 @@ think._route = null;
  * load route
  * @return {} []
  */
-think.route = clear => {
-  if (clear) {
-    //clear route
-    if (clear === true) {
-      think._route = null;
-    }
-    //set route
-    else if (think.isArray(clear)) {
-      think._route = clear;
-    }
+think.route = routes => {
+  if(routes === null){
+    think._route = null;
     return;
   }
+  //set route
+  else if (think.isArray(routes)) {
+    think._route = routes;
+    return;
+  }
+
   if (think._route !== null) {
     return think._route;
   }
@@ -808,7 +802,7 @@ think.gc = instance => {
   }
   think.timer[type] = setInterval(() => {
     let hour = (new Date()).getHours();
-    let hours = think._config.cache_gc_hour || [];
+    let hours = thinkCache(thinkCache.CONFIG).cache_gc_hour || [];
     if (hours.indexOf(hour) === -1) {
       return;
     }

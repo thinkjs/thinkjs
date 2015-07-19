@@ -74,3 +74,38 @@ thinkCache.REDIS = 'redis';
  * @type {String}
  */
 thinkCache.MEMCACHE = 'memcache';
+/**
+ * think config
+ * @type {String}
+ */
+thinkCache.CONFIG = 'config';
+/**
+ * think module config
+ * @type {String}
+ */
+thinkCache.MODULE_CONFIG = 'module_config';
+/**
+ * think alias
+ * @type {String}
+ */
+thinkCache.ALIAS = 'alias';
+/**
+ * think alias_export
+ * @type {String}
+ */
+thinkCache.ALIAS_EXPORT = 'alias_export';
+/**
+ * think route
+ * @type {String}
+ */
+thinkCache.ROUTE = 'route';
+/**
+ * think middleware
+ * @type {String}
+ */
+thinkCache.MIDDLEWARE = 'middleware';
+/**
+ * think timer
+ * @type {String}
+ */
+thinkCache.TIMER = 'timer';

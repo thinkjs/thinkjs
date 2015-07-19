@@ -42,7 +42,6 @@ describe('core/think.js', function(){
     think.cli = false;
     think.mode = think.mode_mini;
     think.module = [];
-    //think._config = {};
     //think._alias = {};
   })
 
@@ -563,84 +562,84 @@ describe('core/think.js', function(){
       assert.equal(think.isFunction(think.config), true);
     })
     it('think.config get all data', function(){
-      var data = think._config;
-      think._config = {name: 'welefen'}
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {name: 'welefen'})
       var result = think.config();
       assert.deepEqual(result, {name: 'welefen'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data);
     })
     it('think.config set data', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config({name: 'welefen'});
       var result = think.config();
       assert.deepEqual(result, {name: 'welefen'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data);
     })
     it('think.config get data', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config({name: 'welefen'});
       var result = think.config('name');
       assert.deepEqual(result, 'welefen');
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data);
     })
     it('think.config set data with value', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name', 'welefen');
       var result = think.config('name');
       assert.deepEqual(result, 'welefen');
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 2', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name.value');
       assert.deepEqual(result, 'welefen');
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 3', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name');
       assert.deepEqual(result, {value: 'welefen'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 4', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       think.config('name.test', 'suredy')
       var result = think.config('name');
       assert.deepEqual(result, {value: 'welefen', test: 'suredy'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 5', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name.value111');
       assert.deepEqual(result, undefined);
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 6', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG)
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name1111.value111');
       assert.deepEqual(result, undefined);
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 7', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config([]);
       var result = think.config('name1111.value111');
       assert.deepEqual(result, undefined);
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config get value with data', function(){
       var result = think.config('name', undefined, {name: 'welefen'});
@@ -757,9 +756,9 @@ describe('core/think.js', function(){
       })
       it('think.getModuleConfig get common config 5', function(done){
         var _moduleConfig = think._moduleConfig;
-        var _config = think._config;
+        var _config = thinkCache(thinkCache.CONFIG);
         think._moduleConfig = {};
-        think._config = {};
+        thinkCache(thinkCache.CONFIG, {})
         var appPath = think.APP_PATH + '/config/local';
         think.mkdir(appPath);
 
@@ -769,7 +768,7 @@ describe('core/think.js', function(){
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.local, { en: { welefen: 'suredy' } });
         think._moduleConfig = _moduleConfig;
-        think._config = _config;
+        thinkCache(thinkCache.CONFIG, _config);
         think.rmdir(think.APP_PATH).then(done);
       })
   })
@@ -1084,6 +1083,40 @@ describe('core/think.js', function(){
 
   })
 
+  describe('think.loadAdapter', function(){
+    it('base', function(done){
+      var mode = think.mode;
+      var path = think.getPath(undefined, think.dirname.adapter);;
+      think.mkdir(path);
+      think.loadAdapter(true);
+      think.rmdir(path).then(done);
+    })
+    it('extra adapter', function(done){
+      var mode = think.mode;
+      var path = think.getPath(undefined, think.dirname.adapter);;
+      think.mkdir(path + '/welefentest');
+      require('fs').writeFileSync(path+ '/welefentest/base.js', 'module.exports=think.Class({}, true)')
+      think.loadAdapter(true);
+      assert.equal(think.isFunction(think.adapter.welefentest), true);
+      delete think.adapter.welefentest;
+      think.rmdir(path).then(done);
+    })
+  })
+
+  describe('think.route', function(){
+    it('clear route', function(){
+      var routes = think._route;
+      think.route(null);
+      assert.equal(think._route, null);
+      think._route = routes;
+    })
+    it('set routes, array', function(){
+      var routes = think._route;
+      think.route(['welefen']);
+      assert.deepEqual(think._route, ['welefen']);
+      think._route = routes;
+    })
+  })
 
 })
 
