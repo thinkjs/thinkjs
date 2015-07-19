@@ -13,6 +13,11 @@ global.thinkCache = (type, name, value) => {
   if (name === undefined) {
     return thinkCache[type];
   }
+  //remove cache
+  else if(name === null){
+    thinkCache[type] = {};
+    return;
+  }
   // get cache
   else if (value === undefined) {
     if (think.isString(name)) {
@@ -109,3 +114,8 @@ thinkCache.MIDDLEWARE = 'middleware';
  * @type {String}
  */
 thinkCache.TIMER = 'timer';
+/**
+ * think hook
+ * @type {String}
+ */
+thinkCache.HOOK = 'hook';

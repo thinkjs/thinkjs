@@ -45,4 +45,13 @@ describe('core/_cache.js', function(){
     var value = thinkCache('welefen', 'name');
     assert.equal(value, undefined);
   })
+  it('remove all cache data', function(){
+    var data = {
+      name: 'fasdfasdf'
+    }
+    thinkCache('welefen', data);
+    thinkCache('welefen', null);
+    var value = thinkCache('welefen');
+    assert.deepEqual(value, {});
+  })
 })

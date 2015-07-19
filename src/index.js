@@ -193,7 +193,7 @@ export default class {
         hook[key] = hook[key].concat(value);
       }
     }
-    think._hook = hook;
+    thinkCache(thinkCache.HOOK, hook);
   }
   /**
    * load controller, model, logic, service files

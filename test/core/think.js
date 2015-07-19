@@ -775,7 +775,7 @@ describe('core/think.js', function(){
 
   describe('think.hook', function(){
     it('get all hook', function(){
-      var data = Object.keys(think._hook).sort();
+      var data = Object.keys(thinkCache(thinkCache.HOOK)).sort();
       assert.deepEqual(data, ["app_begin","app_end","app_error","form_parse","resource_check","resource_output","route_parse","view_end","view_filter","view_init","view_parse","view_template"])
     })
     it('get item hook', function(){
@@ -789,36 +789,36 @@ describe('core/think.js', function(){
     it('set hook data, array', function(){
       think.hook('test', ['welefen']);
       assert.deepEqual(think.hook('test'), ['welefen']);
-      delete think._hook['test'];
+      thinkCache(thinkCache.HOOK, 'test', null);
     })
     it('set hook data, array 1', function(){
-      think._hook['test'] = ['suredy'];
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
       think.hook('test', ['welefen']);
       assert.deepEqual(think.hook('test'), ['welefen']);
-      delete think.hook['test'];
+      thinkCache(thinkCache.HOOK, 'test', null)
     })
     it('set hook data, append', function(){
-      think._hook['test'] = ['suredy'];
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
       think.hook('test', ['welefen'], 'append');
       assert.deepEqual(think.hook('test'), ['suredy', 'welefen']);
-      delete think.hook['test'];
+      thinkCache(thinkCache.HOOK, 'test', null);
     })
     it('set hook data, prepend', function(){
-      think._hook['test'] = ['suredy'];
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
       think.hook('test', ['welefen'], 'prepend');
       assert.deepEqual(think.hook('test'), ['welefen', 'suredy']);
-      delete think.hook['test'];
+      thinkCache(thinkCache.HOOK, 'test', null);
     })
     it('remove hook data', function(){
-      think._hook['test'] = ['suredy'];
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
       think.hook('test', null);
       assert.deepEqual(think.hook('test'), []);
-      delete think.hook['test'];
+      thinkCache(thinkCache.HOOK, 'test', null);
     })
     it('add hook, append', function(){
       think.hook('__test', 'welefen');
       assert.deepEqual(think.hook('__test'), ['welefen']);
-      delete think.hook['__test'];
+      thinkCache(thinkCache.HOOK, 'test', null);
     })
     it('add hook, function', function(){
       var fn = function(){};
@@ -827,7 +827,7 @@ describe('core/think.js', function(){
       assert.equal(data[0].length, 43);
       var fn1 = think.middleware(data[0]);
       assert.equal(fn, fn1);
-      delete think.hook['__test'];
+      thinkCache(thinkCache.HOOK, 'test', null);
     })
     it('exec hook, emtpy', function(done){
       getHttp().then(function(http){
@@ -845,7 +845,8 @@ describe('core/think.js', function(){
       getHttp().then(function(http){
         think.hook('__test__', http, '__test__').then(function(data){
           assert.equal(data, '__test__');
-          delete think._hook['__test__'];
+          thinkCache(thinkCache.HOOK, '__test__', null)
+          
           done();
         })
       })
@@ -861,7 +862,7 @@ describe('core/think.js', function(){
       getHttp().then(function(http){
         think.hook('__test__', http, '__test__').then(function(data){
           assert.equal(data, 'test');
-          delete think._hook['__test__'];
+          thinkCache(thinkCache.HOOK, '__test__', null)
           done();
         })
       })
@@ -880,7 +881,7 @@ describe('core/think.js', function(){
       getHttp().then(function(http){
         think.hook('__test__', http, '__test__').then(function(data){
           assert.equal(data, 'run');
-          delete think._hook['__test__'];
+          thinkCache(thinkCache.HOOK, '__test__', null)
           done();
         })
       })

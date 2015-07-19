@@ -482,11 +482,6 @@ think.transformConfig = (config, transforms) => {
   return config;
 };
 /**
- * hook list
- * @type {Object}
- */
-think._hook = {};
-/**
  * exec hook
  * @param  {String} name []
  * @return {}      []
@@ -495,13 +490,13 @@ think.hook = (...args) => {
   let [name, http = {}, data] = args;
   //get hook data
   if (args.length === 1) {
-    return think._hook[name] || [];
+    return thinkCache(thinkCache.HOOK, name) || [];
   }
   // set hook data
   // think.hook('test', ['middleware1', 'middleware2'])
   else if(think.isArray(http)){
     if(data !== 'append' && data !== 'prepend'){
-      think._hook[name] = [];
+      thinkCache(thinkCache.HOOK, name, []);
     }
     http.forEach(item => {
       think.hook(name, item, data);
@@ -510,7 +505,7 @@ think.hook = (...args) => {
   }
   //remove hook
   else if(http === null){
-    think._hook[name] = [];
+    thinkCache(thinkCache.HOOK, name, []);
     return;
   }
   //set hook data
@@ -521,7 +516,7 @@ think.hook = (...args) => {
       think.middleware(name, http);
       http = name;
     }
-    let hooks = think._hook[name] || [];
+    let hooks = thinkCache(thinkCache.HOOK, name) || [];
     if(data === 'append'){
       hooks.push(http);
     }else if(data === 'prepend'){
@@ -529,12 +524,12 @@ think.hook = (...args) => {
     }else{
       hooks = [http];
     }
-    think._hook[name] = hooks;
+    thinkCache(thinkCache.HOOK, name, hooks);
     return;
   }
 
   //exec hook 
-  let list = think._hook[name] || [];
+  let list = thinkCache(thinkCache.HOOK, name) || [];
   let length = list.length;
   if (length === 0) {
     return Promise.resolve(data);
