@@ -1106,16 +1106,16 @@ describe('core/think.js', function(){
 
   describe('think.route', function(){
     it('clear route', function(){
-      var routes = think._route;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
       think.route(null);
-      assert.equal(think._route, null);
-      think._route = routes;
+      assert.equal(thinkCache(thinkCache.COLLECTION, 'route'), undefined);
+      thinkCache(thinkCache.COLLECTION, 'route', routes);
     })
     it('set routes, array', function(){
-      var routes = think._route;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
       think.route(['welefen']);
-      assert.deepEqual(think._route, ['welefen']);
-      think._route = routes;
+      assert.deepEqual(thinkCache(thinkCache.COLLECTION, 'route'), ['welefen']);
+      thinkCache(thinkCache.COLLECTION, 'route', routes);
     })
   })
 

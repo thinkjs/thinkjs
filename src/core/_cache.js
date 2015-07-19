@@ -100,11 +100,6 @@ thinkCache.ALIAS = 'alias';
  */
 thinkCache.ALIAS_EXPORT = 'alias_export';
 /**
- * think route
- * @type {String}
- */
-thinkCache.ROUTE = 'route';
-/**
  * think middleware
  * @type {String}
  */

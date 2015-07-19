@@ -731,47 +731,38 @@ think.alias = (type, paths, slash) => {
   });
 };
 /**
- * route list
- * @type {Array}
- */
-think._route = null;
-/**
  * load route
  * @return {} []
  */
 think.route = routes => {
+  let key = 'route';
   if(routes === null){
-    think._route = null;
+    thinkCache(thinkCache.COLLECTION, key, null);
     return;
   }
   //set route
   else if (think.isArray(routes)) {
-    think._route = routes;
+    thinkCache(thinkCache.COLLECTION, key, routes);
     return;
   }
-
-  if (think._route !== null) {
-    return think._route;
+  routes = thinkCache(thinkCache.COLLECTION, key);
+  if (routes) {
+    return routes;
   }
   let file = think.getPath(undefined, think.dirname.config) + '/route.js';
-  let config = think.safeRequire(file);
+  let config = think.safeRequire(file) || [];
   //route config is funciton
   //may be is dynamic save in db
   if (think.isFunction(config)) {
     let fn = think.co.wrap(config);
-    return fn().then((route) => {
-      think._route = route || [];
-      return think._route;
+    return fn().then((route = []) => {
+      thinkCache(thinkCache.COLLECTION, key, route);
+      return route;
     });
   }
-  think._route = config || [];
-  return think._route;
+  thinkCache(thinkCache.COLLECTION, key, config);
+  return config ;
 };
-/**
- * thinkjs timer list
- * @type {Object}
- */
-think.timer = {};
 /**
  * regist gc
  * @param  {Object} instance [class instance]
@@ -782,10 +773,11 @@ think.gc = instance => {
     throw new Error(think.local('GCTYPE_MUST_SET'));
   }
   let type = instance.gcType;
-  if (think.debug || think.mode === 'cli' || type in think.timer) {
+  let timers = thinkCache(thinkCache.TIMER);
+  if (think.debug || think.mode === 'cli' || type in timers) {
     return;
   }
-  think.timer[type] = setInterval(() => {
+  let timer = setInterval(() => {
     let hour = (new Date()).getHours();
     let hours = thinkCache(thinkCache.CONFIG).cache_gc_hour || [];
     if (hours.indexOf(hour) === -1) {
@@ -793,6 +785,7 @@ think.gc = instance => {
     }
     return instance.gc && instance.gc(Date.now());
   }, 3600 * 1000);
+  thinkCache(thinkCache.TIMER, type, timer);
 };
 /**
  * local ip
