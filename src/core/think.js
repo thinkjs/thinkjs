@@ -555,15 +555,16 @@ think.hook = (...args) => {
  * @param  {Object} methods      []
  * @return {mixed}            []
  */
-think._middleware = {};
 think.middleware = (...args) => {
   let [superClass, methods, data] = args;
   let length = args.length;
   let prefix = 'middleware_';
+
+  let middlwares = thinkCache(thinkCache.MIDDLEWARE);
   // register functional or class middleware
   // think.middleware('parsePayLoad', function(){})
   if (think.isString(superClass) && think.isFunction(methods)) {
-    think._middleware[superClass] = methods;
+    thinkCache(thinkCache.MIDDLEWARE, superClass, methods);
     return;
   }
   // exec middleware
@@ -572,8 +573,8 @@ think.middleware = (...args) => {
     let name = superClass, http = methods;
     if (think.isString(name)) {
       // name is in middleware cache
-      if (name in think._middleware) {
-        let fn = think._middleware[name];
+      if (name in middlwares) {
+        let fn = middlwares[name];
         //class middleware must have run method
         if(think.isFunction(fn.prototype.run)){
           let instance = new fn(http);
@@ -598,8 +599,8 @@ think.middleware = (...args) => {
   // get middleware
   // think.middleware('parsePayLoad')
   if (length === 1 && think.isString(superClass)) {
-    if(superClass in think._middleware){
-      return think._middleware[superClass];
+    if(superClass in middlwares){
+      return middlwares[superClass];
     }
     let cls = think.require(prefix + superClass, true);
     if (cls) {
@@ -1068,11 +1069,16 @@ think.service = (superClass, methods, module) => {
 think.cache = async (name, value, options = {}) => {
   let cls = think.adapter('cache', options.type || 'base');
   let instance = new cls(options);
+  // get cache
   if(value === undefined){
     return instance.get(name);
-  } else if(value === null){
+  } 
+  //remove cache
+  else if(value === null){
     return instance.rm(name);
-  } else if(think.isFunction(value)){
+  } 
+  //get cache waiting for function
+  else if(think.isFunction(value)){
     let data = await instance.get(name);
     if(data !== undefined){
       return data;
@@ -1081,6 +1087,7 @@ think.cache = async (name, value, options = {}) => {
     await instance.set(name, data);
     return data;
   }
+  //set cache
   return instance.set(name, value);
 };
 /**
