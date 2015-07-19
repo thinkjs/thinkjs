@@ -555,7 +555,6 @@ think.hook = (...args) => {
  * @param  {Object} methods      []
  * @return {mixed}            []
  */
-let middleware = null;
 think._middleware = {};
 think.middleware = (...args) => {
   let [superClass, methods, data] = args;
@@ -608,8 +607,10 @@ think.middleware = (...args) => {
     }
     throw new Error(think.local('MIDDLEWARE_NOT_FOUND', superClass));
   }
+  let middleware = thinkCache(thinkCache.COLLECTION, 'middleware');
   if (!middleware) {
     middleware = think.Class('middleware');
+    thinkCache(thinkCache.COLLECTION, 'middleware', middleware);
   }
   // create middleware
   return middleware(superClass, methods);
@@ -849,10 +850,11 @@ think._http = (data = {}) => {
   };
 };
 
-let Http = null;
 think.http = (req, res) => {
+  let Http = thinkCache(thinkCache.COLLECTION, 'http');
   if (!Http) {
     Http = think.require('http');
+    thinkCache(thinkCache.COLLECTION, 'http', Http);
   }
   //for cli request
   if (res === undefined) {
@@ -876,13 +878,14 @@ think.uuid = (length = 32) => {
  * @param  {Object} http []
  * @return {}      []
  */
-let Cookie;
 think.session = http => {
   if (http.session) {
     return http.session;
   }
+  let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
   if (!Cookie) {
     Cookie = think.require('cookie');
+    thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
   }
   let sessionOptions = think.config('session');
   let {name, sign} = sessionOptions;
@@ -966,7 +969,6 @@ think.getAction = action => {
  * create controller sub class
  * @type {Function}
  */
-let controller = null;
 think.controller = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   // get controller instance
@@ -974,8 +976,10 @@ think.controller = (superClass, methods, module) => {
     let cls = think._controller(superClass, 'controller', module);
     return cls(methods);
   }
+  let controller = thinkCache(thinkCache.COLLECTION, 'controller');
   if(!controller){
     controller = think.Class('controller');
+    thinkCache(thinkCache.COLLECTION, 'controller', controller);
   }
   //create sub controller class
   return controller(superClass, methods);
@@ -984,7 +988,6 @@ think.controller = (superClass, methods, module) => {
  * create logic class
  * @type {Function}
  */
-let logic = null;
 think.logic = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   //get logic instance
@@ -992,8 +995,10 @@ think.logic = (superClass, methods, module) => {
     let cls = think.lookClass(superClass, 'logic', module);
     return cls(methods);
   }
+  let logic = thinkCache(thinkCache.COLLECTION, 'logic');
   if(!logic){
     logic = think.Class('logic');
+    thinkCache(thinkCache.COLLECTION, 'logic', logic);
   }
   //create sub logic class
   return logic(superClass, methods);
@@ -1002,7 +1007,6 @@ think.logic = (superClass, methods, module) => {
  * create model sub class
  * @type {Function}
  */
-let model = null;
 think.model = (superClass, methods, module) => {
   let isConfig = methods === true || module;
   if (!isConfig && methods) {
@@ -1018,8 +1022,10 @@ think.model = (superClass, methods, module) => {
     let cls = think.lookClass(superClass, 'model', module, base);
     return new cls(superClass, methods);
   }
+  let model = thinkCache(thinkCache.COLLECTION, 'model');
   if(!model){
     model = think.Class('model');
+    thinkCache(thinkCache.COLLECTION, 'model', model);
   }
   //create model
   return model(superClass, methods);
@@ -1034,7 +1040,6 @@ think.model.MANY_TO_MANY = 4;
  * create service sub class
  * @type {Function}
  */
-let service = null;
 think.service = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || methods === true || module;
   //get service instance
@@ -1045,8 +1050,10 @@ think.service = (superClass, methods, module) => {
     }
     return cls;
   }
+  let service = thinkCache(thinkCache.COLLECTION, 'service');
   if(!service){
     service = think.Class('service');
+    thinkCache(thinkCache.COLLECTION, 'service', service);
   }
   //create sub service class
   return service(superClass, methods);
@@ -1108,10 +1115,11 @@ think.local = (key, ...data) => {
  * @param  {Function} callback []
  * @return {}            []
  */
-let valid = null;
 think.valid = (name, callback) => {
+  let valid = thinkCache(thinkCache.COLLECTION, 'valid');
   if (!valid) {
     valid = think.require('valid');
+    thinkCache(thinkCache.COLLECTION, 'valid', valid);
   }
   if (think.isString(name)) {
     // register valid callback

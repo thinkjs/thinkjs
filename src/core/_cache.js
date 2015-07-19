@@ -119,3 +119,8 @@ thinkCache.TIMER = 'timer';
  * @type {String}
  */
 thinkCache.HOOK = 'hook';
+/**
+ * think collection class or function
+ * @type {String}
+ */
+thinkCache.COLLECTION = 'collection';
