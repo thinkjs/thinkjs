@@ -142,7 +142,6 @@ describe('adapter/cache/file.js', function() {
   });
 
   after(function() {
-    // think._alias = {};
     // think.cli = false;
     // think.mode = think.mode_mini;
     // think.module = [];

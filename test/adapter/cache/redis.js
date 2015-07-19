@@ -126,7 +126,6 @@ describe('adapter/cache/redis.js', function() {
   });
 
   after(function() {
-    // think._alias = {};
     think.APP_PATH = think.RESOURCE_PATH = testAppPath;
     think.rmdir(testAppPath);
     // think.cli = false;

@@ -264,8 +264,9 @@ think.require = (name, flag) => {
     return name;
   }
   // adapter or middle by register
-  if (think._aliasExport[name]) {
-    return think._aliasExport[name];
+  let Cls = thinkCache(thinkCache.ALIAS_EXPORT, name);
+  if (Cls) {
+    return Cls;
   }
 
   let load = (name, filepath) => {
@@ -274,19 +275,20 @@ think.require = (name, flag) => {
       obj.prototype.__filename = filepath;
     }
     if(obj){
-      think._aliasExport[name] = obj;
+      thinkCache(thinkCache.ALIAS_EXPORT, name, obj);
     }
     return obj;
   };
 
-  if (think._alias[name]) {
-    return load(name, think._alias[name]);
+  let filepath = thinkCache(thinkCache.ALIAS, name);
+  if (filepath) {
+    return load(name, filepath);
   }
   // only check in alias
   if (flag) {
     return null;
   }
-  let filepath = require.resolve(name);
+  filepath = require.resolve(name);
   return load(filepath, filepath);
 };
 /**
@@ -633,7 +635,7 @@ think.adapter = (...args) => {
     //think.adapter('session', 'redis', function(){})
     if (think.isFunction(fn)) {
       key += `${type}_${name}`;
-      think._aliasExport[key] = fn;
+      thinkCache(thinkCache.ALIAS_EXPORT, key, fn);
       return;
     }
     //create adapter
@@ -706,16 +708,6 @@ think.loadAdapter = force => {
 };
 
 /**
- * module alias
- * @type {Object}
- */
-think._alias = {};
-/**
- * module alias export
- * @type {Object}
- */
-think._aliasExport = {};
-/**
  * load alias
  * @param  {String} type  []
  * @param  {Array} paths []
@@ -734,7 +726,7 @@ think.alias = (type, paths, slash) => {
       }
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
-      think._alias[name] = `${path}/${file}`;
+      thinkCache(thinkCache.ALIAS, name, `${path}/${file}`);
     });
   });
 };

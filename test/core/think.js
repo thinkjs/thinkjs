@@ -42,7 +42,6 @@ describe('core/think.js', function(){
     think.cli = false;
     think.mode = think.mode_mini;
     think.module = [];
-    //think._alias = {};
   })
 
   it('methods from thinkit', function(){
@@ -243,12 +242,12 @@ describe('core/think.js', function(){
       }
     })
     it('think.lookClass("module/is/exist") is function', function(){
-      think._aliasExport['module/is/exist'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'module/is/exist', function(){
         return 'module/is/exist';
-      }
+      })
       var fn = think.lookClass('module/is/exist');
       assert.equal(fn(), 'module/is/exist');
-      think._aliasExport = {};
+      thinkCache(thinkCache.ALIAS_EXPORT, 'module/is/exist', null);
     })
     it('think.lookClass("home/group", "controller") not found', function(){
       try{
@@ -258,35 +257,35 @@ describe('core/think.js', function(){
       }
     })
     it('think.lookClass("home/group", "service") is function', function(){
-      think._aliasExport['home/service/group'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/group', function(){
         return 'home/service/group';
-      }
+      })
       var fn = think.lookClass("home/group", "service");
       assert.equal(fn(), 'home/service/group');
-      think._aliasExport = {};
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/group', null);
     })
     it('think.lookClass("detail", "controller", "homwwwe") not found', function(){
       var cls = think.lookClass('detail', 'controller', 'homwwwe', 'homwwww');
       assert.equal(cls, null);
     })
     it('think.lookClass("group", "controller", "home") is function', function(){
-      think._aliasExport['home/controller/group'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/controller/group', function(){
         return 'home/controller/group';
-      }
+      })
       var fn = think.lookClass('group', 'controller', 'home');
       assert.equal(fn(), 'home/controller/group');
-      delete think._aliasExport['home/controller/group'];
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/controller/group', null);
     })
     it('think.lookClass("group", "controller", "home1") is function', function(){
       var mode = think.mode;
       think.mode = think.mode_module;
-      think._aliasExport['common/controller/group'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'common/controller/group', function(){
         return 'common/controller/group';
-      }
+      })
       var fn = think.lookClass('group', 'controller', 'home1');
       assert.equal(fn(), 'common/controller/group');
       think.mode = mode;
-      delete think._aliasExport['common/controller/group'];
+      thinkCache(thinkCache.ALIAS_EXPORT, 'common/controller/group', null);
     })
   })
 
@@ -411,33 +410,33 @@ describe('core/think.js', function(){
       var data = think.require({});
       assert.deepEqual(data, {})
     })
-    it('think.require is in _aliasExport', function(){
-      var data = think._aliasExport;
+    it('think.require is in aliasExport', function(){
+      var data = thinkCache(thinkCache.ALIAS_EXPORT);
       var fn = function(){};
-      think._aliasExport = {
+      thinkCache(thinkCache.ALIAS_EXPORT, {
         '_test_': fn
-      }
+      })
       var result = think.require('_test_')
       assert.equal(result, fn);
-      think._aliasExport = data;
+      thinkCache(thinkCache.ALIAS_EXPORT, data);
     })
-    it('think.require is in _alias', function(){
-      var data = think._alias;
-      think._alias = {
+    it('think.require is in alias', function(){
+      var data = thinkCache(thinkCache.ALIAS);
+      thinkCache(thinkCache.ALIAS, {
         '_test_': __filename + '/a.js'
-      }
+      })
       var result = think.require('_test_');
       assert.equal(result, null);
-      think._alias = data;
+      thinkCache(thinkCache.ALIAS, data);
     })
     it('think.require is in _alias', function(){
-      var data = think._alias;
-      think._alias = {
+      var data = thinkCache(thinkCache.ALIAS);
+      thinkCache(thinkCache.ALIAS, {
         '_test_': path.normalize(__dirname + '/../../lib/index.js')
-      }
+      })
       var result = think.require('_test_');
       assert.equal(think.isFunction(result), true)
-      think._alias = data;
+      thinkCache(thinkCache.ALIAS, data);
     })
 
     it('think.require is not in _alias, try it', function(){
@@ -1025,9 +1024,9 @@ describe('core/think.js', function(){
       var fn = function(){}
       var key = 'adapter_welefen_suredy';
       think.adapter('welefen', 'suredy', fn);
-      var fn1 = think._aliasExport[key];
+      var fn1 = thinkCache(thinkCache.ALIAS_EXPORT, key);
       assert.equal(fn, fn1);
-      delete think._aliasExport[key];
+      thinkCache(thinkCache.ALIAS_EXPORT, key, null);
     })
     it('create adapter', function(){
       var fn = think.adapter('session', 'base', {
