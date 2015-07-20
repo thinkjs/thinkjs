@@ -750,11 +750,18 @@ think.route = routes => {
   //route config is funciton
   //may be is dynamic save in db
   if (think.isFunction(config)) {
-    let fn = think.co.wrap(config);
-    return fn().then((route = []) => {
-      thinkCache(thinkCache.COLLECTION, key, route);
-      return route;
-    });
+    let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
+    if(!awaitInstance){
+      awaitInstance = new think.require('await');
+      thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
+    }
+    return awaitInstance.run('route', () => {
+      let fn = think.co.wrap(config);
+      return fn().then((route = []) => {
+        thinkCache(thinkCache.COLLECTION, key, route);
+        return route;
+      });
+    })
   }
   thinkCache(thinkCache.COLLECTION, key, config);
   return config ;
