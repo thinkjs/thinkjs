@@ -363,7 +363,7 @@ export default class {
       }
       this.load();
     }, 1000);
-    think.timer.autoReload = timer;
+    thinkCache(thinkCache.TIMER, 'auto_reload', timer);
   }
   /**
    * start

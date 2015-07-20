@@ -67,7 +67,7 @@ think.cli = false;
  * get platform language
  * @type {String}
  */
-think.lang = process.env.LANG.split('.')[0].replace('_', '-');
+think.lang = 'en';
 
 /**
  * app mode
