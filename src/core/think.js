@@ -67,8 +67,7 @@ think.cli = false;
  * get platform language
  * @type {String}
  */
-think.lang = 'en';
-
+think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');;
 /**
  * app mode
  * 0x0001: mini
