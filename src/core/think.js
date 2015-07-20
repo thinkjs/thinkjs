@@ -803,7 +803,7 @@ think._http = (data = {}) => {
   if (think.isString(data)) {
     if (data[0] === '{') {
       data = JSON.parse(data);
-    }else if (/^[\w]+\=/.test(data)) {
+    }else if (/^\w+\=/.test(data)) {
       data = querystring.parse(data);
     }else{
       data = {url: data};
@@ -826,6 +826,7 @@ think._http = (data = {}) => {
   };
   let empty = () => {};
   let res = {
+    setTimeout: empty,
     end: data.end || data.close || empty,
     write: data.write || data.send || empty,
     setHeader: empty

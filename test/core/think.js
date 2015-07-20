@@ -1206,12 +1206,71 @@ describe('core/think.js', function(){
         var data = fn();
         assert.equal(data, 'gc');
         think.config('gc.filter', filter);
+        global.setInterval = interval;
         done();
       }
       var Cls = think.Class({gcType: 'test', gc: function(){
         return 'gc';
       }}, true);
       var data = think.gc(new Cls);
+    })
+  })
+
+  describe('think._http', function(){
+    it('json stringify, with url', function(){
+      var data = {url: "/welefen/suredy"};
+      var result = think._http(JSON.stringify(data));
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('json stringify, without url', function(){
+      var data = {method: "post"};
+      var result = think._http(JSON.stringify(data));
+      assert.equal(result.req.url, "/");
+      assert.equal(result.req.method, 'POST');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('json stringify, url.parse', function(){
+      var data = 'url=/welefen/suredy&method=delete';
+      var result = think._http(data);
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'DELETE');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('data is string', function(){
+      var data = '/welefen/suredy';
+      var result = think._http(data);
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('data is obj', function(){
+      var data = {url: '/welefen/suredy'};
+      var result = think._http(data);
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('data empty', function(){
+      var result = think._http();
+      assert.equal(result.req.url, "/");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('end is function', function(){
+      var result = think._http();
+      assert.equal(think.isFunction(result.res.end), true);
+      assert.equal(result.res.end(), undefined)
+    })
+  })
+
+  describe('think.http', function(){
+    it('get monitor http', function(done){
+      think.http('/welefen/suredy').then(function(http){
+        assert.equal(http.url, '/welefen/suredy');
+        done();
+      })
     })
   })
 
