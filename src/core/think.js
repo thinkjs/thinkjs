@@ -289,7 +289,7 @@ think.require = (name, flag) => {
     return null;
   }
   filepath = require.resolve(name);
-  return load(filepath, filepath);
+  return load(name, filepath);
 };
 /**
  * safe require
@@ -333,17 +333,13 @@ think.isPrevent = err => {
 let preErr = null;
 think.log = (msg, type) => {
 
+  let fn = d => {
+    return ('0' + d).slice(-1);
+  }
+
   let d = new Date();
-  let date = [
-    d.getFullYear(),
-    ('0' + (d.getMonth() + 1)).slice(-2),
-    ('0' + d.getDate()).slice(-2)
-  ].join('-');
-  let time = [
-    ('0' + d.getHours()).slice(-2),
-    ('0' + d.getMinutes()).slice(-2),
-    ('0' + d.getSeconds()).slice(-2)
-  ].join(':');
+  let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
+  let time = `${fn(d.getHours())}:${fn(d.getMinutes())}:${fn(d.getSeconds())}`;
   let dateTime = colors.green(`[${date} ${time}] `);
 
   if (think.isError(msg)) {
