@@ -4,5 +4,8 @@
 export default {
   auto_reload: false,
   log_pid: false,
-  process_timeout: 0
+  process_timeout: 0,
+  gc: {
+    on: false
+  }
 };

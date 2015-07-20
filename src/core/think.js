@@ -774,22 +774,17 @@ think.route = routes => {
  * @return {}          []
  */
 think.gc = instance => {
-  if (!instance || !instance.gcType) {
-    throw new Error(think.local('GCTYPE_MUST_SET'));
-  }
   let type = instance.gcType;
   let timers = thinkCache(thinkCache.TIMER);
-  if (think.debug || think.mode === 'cli' || type in timers) {
+  let gc = think.config('gc');
+  if (!gc.on || type in timers) {
     return;
   }
   let timer = setInterval(() => {
-    let hour = (new Date()).getHours();
-    let hours = thinkCache(thinkCache.CONFIG).cache_gc_hour || [];
-    if (hours.indexOf(hour) === -1) {
-      return;
+    if(gc.filter()){
+      return instance.gc && instance.gc(Date.now());
     }
-    return instance.gc && instance.gc(Date.now());
-  }, 3600 * 1000);
+  }, gc.interval * 1000);
   thinkCache(thinkCache.TIMER, type, timer);
 };
 /**

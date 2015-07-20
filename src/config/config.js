@@ -114,8 +114,17 @@ module.exports = {
     timeout: 6 * 3600, //6 hours
     path: runtimePrefix + '/cache',
     path_depth: 2,
-    file_ext: '.json',
-    gc: 4
+    file_ext: '.json'
+  },
+  gc: {
+    on: true,
+    interval: 3600, // one hour
+    filter: function(){
+      let hour = (new Date()).getHours();
+      if(hour === 4){
+        return true;
+      }
+    }
   },
   html_cache: {
     on: false,

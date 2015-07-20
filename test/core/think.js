@@ -665,7 +665,7 @@ describe('core/think.js', function(){
         var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
-        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
+        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
         assert.equal(think.isObject(configs), true);
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
@@ -1123,7 +1123,7 @@ describe('core/think.js', function(){
       thinkCache(thinkCache.COLLECTION, 'route', null);
 
       delete require.cache[filepath];
-      
+
       var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
       think.mkdir(path.dirname(filepath));
       require('fs').writeFileSync(filepath, 'module.exports=function(){return ["welefen", "suredy"]}');
@@ -1170,8 +1170,49 @@ describe('core/think.js', function(){
         think.rmdir(think.APP_PATH).then(done);
       });
     })
+  })
 
-
+  describe('think.gc', function(){
+    it('gc off', function(){
+      var on = think.config('gc.on');
+      think.config('gc.on', false);
+      var Cls = think.Class({gcType: 'test'}, true);
+      var data = think.gc(new Cls);
+      assert.equal(data, undefined);
+      think.config('gc.on', on);
+    })
+    it('timers', function(done){
+      think.config('gc.on', true);
+      var interval = global.setInterval;
+      global.setInterval = function(fn, interval){
+        assert.equal(interval, 3600000);
+        assert.equal(think.isFunction(fn), true);
+        fn();
+        done();
+      }
+      var Cls = think.Class({gcType: 'test', gc: function(){}}, true);
+      var data = think.gc(new Cls);
+    })
+    it('timers, filter', function(done){
+      think.config('gc.on', true);
+      var filter = think.config('gc.filter');
+      think.config('gc.filter', function(){
+        return true;
+      })
+      var interval = global.setInterval;
+      global.setInterval = function(fn, interval){
+        assert.equal(interval, 3600000);
+        assert.equal(think.isFunction(fn), true);
+        var data = fn();
+        assert.equal(data, 'gc');
+        think.config('gc.filter', filter);
+        done();
+      }
+      var Cls = think.Class({gcType: 'test', gc: function(){
+        return 'gc';
+      }}, true);
+      var data = think.gc(new Cls);
+    })
   })
 
 })

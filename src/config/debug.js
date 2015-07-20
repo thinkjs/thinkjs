@@ -5,7 +5,9 @@
 let config = {
   auto_reload: true,
   auto_reload_except: ['/node_modules/', '/lib/core/think.js'],
-
+  gc: {
+    on: false
+  },
   error: {
     detail: true
   }
