@@ -330,7 +330,6 @@ think.isPrevent = err => {
  * @TODO
  * @return {} []
  */
-let preErr = null;
 think.log = (msg, type) => {
 
   let fn = d => {
@@ -342,11 +341,12 @@ think.log = (msg, type) => {
   let time = `${fn(d.getHours())}:${fn(d.getMinutes())}:${fn(d.getSeconds())}`;
   let dateTime = colors.green(`[${date} ${time}] `);
 
+  let preError = thinkCache(thinkCache.COLLECTION, 'prev_error');
   if (think.isError(msg)) {
-    if(think.isPrevent(msg) || msg === preErr){
+    if(think.isPrevent(msg) || msg === preError){
       return;
     }
-    preErr = msg;
+    thinkCache(thinkCache.COLLECTION, 'prev_error', msg);
     console.error(dateTime + colors.red('[Error] ') + msg.stack);
     return;
   }else if(think.isFunction(msg)){
