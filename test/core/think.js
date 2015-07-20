@@ -1322,6 +1322,24 @@ describe('core/think.js', function(){
     })
   })
 
+  describe('think.local', function(){
+    it('base', function(){
+      var msg = think.local('CONTROLLER_NOT_FOUND', 'welefen');
+      assert.equal(msg.indexOf('`welefen`') > -1, true)
+    })
+    it('key not found', function(){
+      var msg = think.local('KEY_NOT_FOUND');
+      assert.equal(msg, 'KEY_NOT_FOUND')
+    })
+    it('lang is empty', function(){
+      var lang = think.lang;
+      think.lang = '';
+      var msg = think.local('CONTROLLER_NOT_FOUND', 'welefen');
+      assert.equal(msg.indexOf('`welefen`') > -1, true);
+      think.lang = lang;
+    })
+  })
+
 })
 
 

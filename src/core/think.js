@@ -63,6 +63,11 @@ think.port = 0;
  * @type {String}
  */
 think.cli = false;
+/**
+ * get platform language
+ * @type {String}
+ */
+think.lang = process.env.LANG.split('.')[0].replace('_', '-');
 
 /**
  * app mode
@@ -1085,7 +1090,7 @@ think.cache = async (name, value, options = {}) => {
 think.local = (key, ...data) => {
   let _default = think.config('local.default');
   //@TODO node in windows no LANG property
-  let lang = process.env.LANG.split('.')[0].replace('_', '-') || _default;
+  let lang = think.lang || _default;
   let config = think.config('local');
   let value;
   if(config[lang] && config[lang][key]){
