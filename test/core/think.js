@@ -1274,6 +1274,54 @@ describe('core/think.js', function(){
     })
   })
 
+  describe('think.getModule', function(){
+    it('get default module', function(){
+      var module = think.getModule();
+      assert.equal(module, 'home');
+    })
+    it('get mode_mini module', function(){
+      think.mode = think.mode_mini;
+      var module = think.getModule('test');
+      assert.equal(module, 'home');
+    })
+    it('get  module', function(){
+      think.mode = think.mode_normal;
+      var module = think.getModule('test');
+      assert.equal(module, 'test');
+      think.mode = think.mode_mini;
+    })
+  })
+
+  describe('think.getController', function(){
+    it('get default controller', function(){
+      var controller = think.getController();
+      assert.equal(controller, 'index');
+    })
+    it('get controller', function(){
+      var controller = think.getController('TEST');
+      assert.equal(controller, 'test');
+    })
+    it('get invalid controller', function(){
+      var controller = think.getController('011test');
+      assert.equal(controller, '');
+    })
+  })
+
+  describe('think.getAction', function(){
+    it('get default action', function(){
+      var action = think.getAction();
+      assert.equal(action, 'index');
+    })
+    it('get action', function(){
+      var action = think.getAction('TEST');
+      assert.equal(action, 'TEST');
+    })
+    it('get invalid action', function(){
+      var action = think.getAction('011test');
+      assert.equal(action, '');
+    })
+  })
+
 })
 
 

@@ -1087,8 +1087,14 @@ think.local = (key, ...data) => {
   //@TODO node in windows no LANG property
   let lang = process.env.LANG.split('.')[0].replace('_', '-') || _default;
   let config = think.config('local');
-  let values = config[lang] || config[_default];
-  let value = values[key] || key;
+  let value;
+  if(config[lang] && config[lang][key]){
+    value = config[lang][key];
+  }else if(config[_default][key]){
+    value = config[_default][key];
+  }else{
+    value = key;
+  }
   data.unshift(value);
   var msg =  util.format(...data);
   return msg;
