@@ -747,12 +747,14 @@ think.route = routes => {
   }
   let file = think.getPath(undefined, think.dirname.config) + '/route.js';
   let config = think.safeRequire(file) || [];
+
   //route config is funciton
   //may be is dynamic save in db
   if (think.isFunction(config)) {
     let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
     if(!awaitInstance){
-      awaitInstance = new think.require('await');
+      let Await = think.require('await');
+      awaitInstance = new Await();
       thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
     }
     return awaitInstance.run('route', () => {

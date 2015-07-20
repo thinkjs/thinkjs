@@ -123,7 +123,7 @@ describe('core/think.js', function(){
     assert.equal(typeof deferred.resolve, 'function')
     assert.equal(typeof deferred.reject, 'function')
   })
-  it('think.reject is reject', function(){
+  it('think.reject is function', function(){
     assert.equal(typeof think.reject, 'function')
   })
   it('think.reject methods', function(done){
@@ -134,7 +134,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  
+
   it('think.isHttp', function(){
     assert.equal(think.isHttp(), false);
     assert.equal(think.isHttp(null), false);
@@ -1117,6 +1117,61 @@ describe('core/think.js', function(){
       assert.deepEqual(thinkCache(thinkCache.COLLECTION, 'route'), ['welefen']);
       thinkCache(thinkCache.COLLECTION, 'route', routes);
     })
+    it('route config exports is function', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      delete require.cache[filepath];
+      
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports=function(){return ["welefen", "suredy"]}');
+
+      think.route().then(function(data){
+        assert.deepEqual(data, ['welefen', 'suredy']);
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+    it('route config exports is function 2', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+
+      delete require.cache[filepath];
+
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports=function(){return ["welefen", "suredy", "1111"]}');
+
+      think.route().then(function(data){
+        assert.deepEqual(data, ['welefen', 'suredy', '1111']);
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+    it('route config exports is function, no return', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+
+      delete require.cache[filepath];
+
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports=function(){return;}');
+
+      think.route().then(function(data){
+        assert.deepEqual(data, []);
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+
+
   })
 
 })
