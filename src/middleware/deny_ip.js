@@ -30,5 +30,6 @@ export default class extends think.middleware.base {
       //prevent next process
       return think.prevent();
     }
+    return true;
   }
 }

@@ -1,17 +1,49 @@
 'use strict';
 
-for(var filepath in require.cache){
-  delete require.cache[filepath];
-}
-
-var thinkjs = require('../../lib/core/think.js');
 var assert = require('assert');
 var thinkit = require('thinkit');
 var path = require('path');
 
+
+for(var filepath in require.cache){
+  delete require.cache[filepath];
+}
+var Index = require('../../lib/index.js');
+var instance = new Index();
+instance.load();
+
+
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
+
+var _http = require('../_http.js');
+
+function getHttp(config, options){
+  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  var req = think.extend({}, _http.req);
+  var res = think.extend({}, _http.res);
+  return think.http(req, res).then(function(http){
+    if(config){
+      http._config = config;
+    }
+    if(options){
+      for(var key in options){
+        http[key] = options[key];
+      }
+    }
+    return http;
+  })
+}
+
+
+
 describe('core/think.js', function(){
+  before(function(){
+    think.cli = false;
+    think.mode = think.mode_mini;
+    think.module = [];
+  })
+
   it('methods from thinkit', function(){
     for(var name in thinkit){
       assert.equal(typeof think[name] === 'function' || think[name] === thinkit[name], true);
@@ -46,19 +78,17 @@ describe('core/think.js', function(){
     assert.equal(typeof think.cli, 'boolean');
   })
 
-  describe('think.mode', function(){
-    it('think.mode is 1', function(){
-      assert.equal(think.mode, 1);
-    })
-    it('think.mode_mini is 1', function(){
-      assert.equal(think.mode_mini, 1);
-    })
-    it('think.mode_normal is 2', function(){
-      assert.equal(think.mode_normal, 2);
-    })
-    it('think.mode_module is 4', function(){
-      assert.equal(think.mode_module, 4);
-    })
+  it('think.mode is 1', function(){
+    assert.equal(think.mode, 1);
+  })
+  it('think.mode_mini is 1', function(){
+    assert.equal(think.mode_mini, 1);
+  })
+  it('think.mode_normal is 2', function(){
+    assert.equal(think.mode_normal, 2);
+  })
+  it('think.mode_module is 4', function(){
+    assert.equal(think.mode_module, 4);
   })
 
   it('think.THINK_LIB_PATH is string', function(){
@@ -74,43 +104,37 @@ describe('core/think.js', function(){
     assert.deepEqual(think.module, []);
   })
 
-  describe('think.base', function(){
-    it('think.base is class', function(){
-      assert.deepEqual(typeof think.base, 'function');
-    })
-    it('think.base methods', function(){
-      var instance = new think.base();
-      var methods = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];
-      methods.forEach(function(item){
-        assert.deepEqual(typeof instance.init, 'function');
-      })
+  it('think.base is class', function(){
+    assert.deepEqual(typeof think.base, 'function');
+  })
+  it('think.base methods', function(){
+    var instance = new think.base();
+    var methods = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];
+    methods.forEach(function(item){
+      assert.deepEqual(typeof instance.init, 'function');
     })
   })
-  describe('think.defer', function(){
-    it('think.defer is function', function(){
-      assert.equal(typeof think.defer, 'function')
-    })
-    it('think.defer methods', function(){
-      var deferred = think.defer();
-      assert.equal(typeof deferred.promise, 'object')
-      assert.equal(typeof deferred.resolve, 'function')
-      assert.equal(typeof deferred.reject, 'function')
+  it('think.defer is function', function(){
+    assert.equal(typeof think.defer, 'function')
+  })
+  it('think.defer methods', function(){
+    var deferred = think.defer();
+    assert.equal(typeof deferred.promise, 'object')
+    assert.equal(typeof deferred.resolve, 'function')
+    assert.equal(typeof deferred.reject, 'function')
+  })
+  it('think.reject is function', function(){
+    assert.equal(typeof think.reject, 'function')
+  })
+  it('think.reject methods', function(done){
+    var err = new Error();
+    var reject = think.reject(err);
+    reject.catch(function(e){
+      assert.equal(err, e);
+      done();
     })
   })
-  describe('think.reject', function(){
-    it('think.reject is reject', function(){
-      assert.equal(typeof think.reject, 'function')
-    })
-    it('think.reject methods', function(done){
-      var err = new Error();
-      var reject = think.reject(err);
-      reject.catch(function(e){
-        assert.equal(err, e);
-        done();
-      })
-    })
-  })
-  
+
   it('think.isHttp', function(){
     assert.equal(think.isHttp(), false);
     assert.equal(think.isHttp(null), false);
@@ -183,10 +207,10 @@ describe('core/think.js', function(){
         var cls = fn({});
         assert.equal(typeof cls, 'function');
       })
-      it('controller() is null', function(){
+      it('controller() is function', function(){
         var fn = think.Class('controller');
         var cls2 = fn();
-        assert.equal(cls2, null);
+        assert.equal(typeof cls2, 'function');
       })
       it('controller("controller_base") is function', function(){
         var fn = think.Class('controller');
@@ -218,12 +242,12 @@ describe('core/think.js', function(){
       }
     })
     it('think.lookClass("module/is/exist") is function', function(){
-      think._aliasExport['module/is/exist'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'module/is/exist', function(){
         return 'module/is/exist';
-      }
+      })
       var fn = think.lookClass('module/is/exist');
       assert.equal(fn(), 'module/is/exist');
-      think._aliasExport = {};
+      thinkCache(thinkCache.ALIAS_EXPORT, 'module/is/exist', null);
     })
     it('think.lookClass("home/group", "controller") not found', function(){
       try{
@@ -233,35 +257,35 @@ describe('core/think.js', function(){
       }
     })
     it('think.lookClass("home/group", "service") is function', function(){
-      think._aliasExport['home/service/group'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/group', function(){
         return 'home/service/group';
-      }
+      })
       var fn = think.lookClass("home/group", "service");
       assert.equal(fn(), 'home/service/group');
-      think._aliasExport = {};
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/group', null);
     })
-    it('think.lookClass("detail", "controller", "home") not found', function(){
-      var cls = think.lookClass('detail', 'controller', 'home');
+    it('think.lookClass("detail", "controller", "homwwwe") not found', function(){
+      var cls = think.lookClass('detail', 'controller', 'homwwwe', 'homwwww');
       assert.equal(cls, null);
     })
     it('think.lookClass("group", "controller", "home") is function', function(){
-      think._aliasExport['home/controller/group'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/controller/group', function(){
         return 'home/controller/group';
-      }
+      })
       var fn = think.lookClass('group', 'controller', 'home');
       assert.equal(fn(), 'home/controller/group');
-      delete think._aliasExport['home/controller/group'];
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/controller/group', null);
     })
     it('think.lookClass("group", "controller", "home1") is function', function(){
       var mode = think.mode;
       think.mode = think.mode_module;
-      think._aliasExport['common/controller/group'] = function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'common/controller/group', function(){
         return 'common/controller/group';
-      }
+      })
       var fn = think.lookClass('group', 'controller', 'home1');
       assert.equal(fn(), 'common/controller/group');
       think.mode = mode;
-      delete think._aliasExport['common/controller/group'];
+      thinkCache(thinkCache.ALIAS_EXPORT, 'common/controller/group', null);
     })
   })
 
@@ -386,33 +410,33 @@ describe('core/think.js', function(){
       var data = think.require({});
       assert.deepEqual(data, {})
     })
-    it('think.require is in _aliasExport', function(){
-      var data = think._aliasExport;
+    it('think.require is in aliasExport', function(){
+      var data = thinkCache(thinkCache.ALIAS_EXPORT);
       var fn = function(){};
-      think._aliasExport = {
+      thinkCache(thinkCache.ALIAS_EXPORT, {
         '_test_': fn
-      }
+      })
       var result = think.require('_test_')
       assert.equal(result, fn);
-      think._aliasExport = data;
+      thinkCache(thinkCache.ALIAS_EXPORT, data);
     })
-    it('think.require is in _alias', function(){
-      var data = think._alias;
-      think._alias = {
+    it('think.require is in alias', function(){
+      var data = thinkCache(thinkCache.ALIAS);
+      thinkCache(thinkCache.ALIAS, {
         '_test_': __filename + '/a.js'
-      }
+      })
       var result = think.require('_test_');
       assert.equal(result, null);
-      think._alias = data;
+      thinkCache(thinkCache.ALIAS, data);
     })
     it('think.require is in _alias', function(){
-      var data = think._alias;
-      think._alias = {
+      var data = thinkCache(thinkCache.ALIAS);
+      thinkCache(thinkCache.ALIAS, {
         '_test_': path.normalize(__dirname + '/../../lib/index.js')
-      }
+      })
       var result = think.require('_test_');
       assert.equal(think.isFunction(result), true)
-      think._alias = data;
+      thinkCache(thinkCache.ALIAS, data);
     })
 
     it('think.require is not in _alias, try it', function(){
@@ -500,6 +524,17 @@ describe('core/think.js', function(){
       think.log('test', 'TEST');
       console.log = log;
     })
+    it('think.log with function', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true);
+        assert.equal(msg.indexOf('[TEST]') > -1, true);
+      }
+      think.log(function(){
+        return 'test';
+      }, 'TEST');
+      console.log = log;
+    })
     it('think.log with error', function(){
       var log = console.error;
       console.error = function(msg){
@@ -526,84 +561,84 @@ describe('core/think.js', function(){
       assert.equal(think.isFunction(think.config), true);
     })
     it('think.config get all data', function(){
-      var data = think._config;
-      think._config = {name: 'welefen'}
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {name: 'welefen'})
       var result = think.config();
       assert.deepEqual(result, {name: 'welefen'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data);
     })
     it('think.config set data', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config({name: 'welefen'});
       var result = think.config();
       assert.deepEqual(result, {name: 'welefen'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data);
     })
     it('think.config get data', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config({name: 'welefen'});
       var result = think.config('name');
       assert.deepEqual(result, 'welefen');
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data);
     })
     it('think.config set data with value', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name', 'welefen');
       var result = think.config('name');
       assert.deepEqual(result, 'welefen');
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 2', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name.value');
       assert.deepEqual(result, 'welefen');
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 3', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name');
       assert.deepEqual(result, {value: 'welefen'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 4', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       think.config('name.test', 'suredy')
       var result = think.config('name');
       assert.deepEqual(result, {value: 'welefen', test: 'suredy'});
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 5', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name.value111');
       assert.deepEqual(result, undefined);
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 6', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG)
+      thinkCache(thinkCache.CONFIG, {})
       think.config('name.value', 'welefen');
       var result = think.config('name1111.value111');
       assert.deepEqual(result, undefined);
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config set data with value 7', function(){
-      var data = think._config;
-      think._config = {};
+      var data = thinkCache(thinkCache.CONFIG);
+      thinkCache(thinkCache.CONFIG, {})
       think.config([]);
       var result = think.config('name1111.value111');
       assert.deepEqual(result, undefined);
-      think._config = data;
+      thinkCache(thinkCache.CONFIG, data)
     })
     it('think.config get value with data', function(){
       var result = think.config('name', undefined, {name: 'welefen'});
@@ -627,58 +662,58 @@ describe('core/think.js', function(){
         assert.equal(think.isFunction(think.getModuleConfig), true);
       })
       it('think.getModuleConfig get sys config', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
-        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
+        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
         assert.equal(think.isObject(configs), true);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
       it('think.getModuleConfig get sys config', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
         var configs2 = think.getModuleConfig(true);
         assert.equal(configs, configs2);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
       it('think.getModuleConfig get sys config, with cli', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var cli = think.cli;
         think.cli = true;
         var configs = think.getModuleConfig(true);
         assert.equal(think.isObject(configs), true);
         assert.equal(configs.auto_reload, false);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.cli = cli;
       })
       it('think.getModuleConfig get sys config, with debug', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var debug = think.debug;
         think.debug = true;
         var configs = think.getModuleConfig(true);
         assert.equal(think.isObject(configs), true);
         assert.equal(configs.auto_reload, true);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.debug = debug;
       })
       it('think.getModuleConfig get common config', function(){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var debug = think.debug;
         think.debug = true;
         var configs = think.getModuleConfig();
         assert.equal(think.isObject(configs), true);
-        assert.equal(configs.auto_reload, undefined);
-        think._moduleConfig = _moduleConfig;
+        assert.equal(configs.auto_reload, false);
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.debug = debug;
       })
 
-      it('think.getModuleConfig get common config', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+      it('think.getModuleConfig get common config 2', function(done){
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var appPath = think.APP_PATH + '/config/';
         think.mkdir(appPath);
 
@@ -687,12 +722,12 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.equal(configs.welefen, 'suredy');
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.rmdir(think.APP_PATH).then(done);
       })
-      it('think.getModuleConfig get common config', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+      it('think.getModuleConfig get common config 3', function(done){
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var appPath = think.APP_PATH + '/config/';
         think.mkdir(appPath);
 
@@ -701,12 +736,12 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.aaa, {welefen: 'suredy'});
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.rmdir(think.APP_PATH).then(done);
       })
-      it('think.getModuleConfig get common config', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+      it('think.getModuleConfig get common config 4', function(done){
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
         var appPath = think.APP_PATH + '/config/';
         think.mkdir(appPath);
 
@@ -715,12 +750,14 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.aaa, undefined);
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.rmdir(think.APP_PATH).then(done);
       })
-      it('think.getModuleConfig get common config', function(done){
-        var _moduleConfig = think._moduleConfig;
-        think._moduleConfig = {};
+      it('think.getModuleConfig get common config 5', function(done){
+        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+        var _config = thinkCache(thinkCache.CONFIG);
+        thinkCache(thinkCache.MODULE_CONFIG, {})
+        thinkCache(thinkCache.CONFIG, {})
         var appPath = think.APP_PATH + '/config/local';
         think.mkdir(appPath);
 
@@ -729,9 +766,453 @@ describe('core/think.js', function(){
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
         assert.deepEqual(configs.local, { en: { welefen: 'suredy' } });
-        think._moduleConfig = _moduleConfig;
+        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
+        thinkCache(thinkCache.CONFIG, _config);
         think.rmdir(think.APP_PATH).then(done);
       })
+  })
+
+  describe('think.hook', function(){
+    it('get all hook', function(){
+      var data = Object.keys(thinkCache(thinkCache.HOOK)).sort();
+      assert.deepEqual(data, ["app_begin","app_end","app_error","form_parse","resource_check","resource_output","route_parse","view_end","view_filter","view_init","view_parse","view_template"])
+    })
+    it('get item hook', function(){
+      var data = think.hook('route_parse');
+      assert.deepEqual(data, ['rewrite_pathname', 'subdomain_deploy', 'route'])
+    })
+    it('get item hook, not exist', function(){
+      var data = think.hook('route_parse111');
+      assert.deepEqual(data, [])
+    })
+    it('set hook data, array', function(){
+      think.hook('test', ['welefen']);
+      assert.deepEqual(think.hook('test'), ['welefen']);
+      thinkCache(thinkCache.HOOK, 'test', null);
+    })
+    it('set hook data, array 1', function(){
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
+      think.hook('test', ['welefen']);
+      assert.deepEqual(think.hook('test'), ['welefen']);
+      thinkCache(thinkCache.HOOK, 'test', null)
+    })
+    it('set hook data, append', function(){
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
+      think.hook('test', ['welefen'], 'append');
+      assert.deepEqual(think.hook('test'), ['suredy', 'welefen']);
+      thinkCache(thinkCache.HOOK, 'test', null);
+    })
+    it('set hook data, prepend', function(){
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
+      think.hook('test', ['welefen'], 'prepend');
+      assert.deepEqual(think.hook('test'), ['welefen', 'suredy']);
+      thinkCache(thinkCache.HOOK, 'test', null);
+    })
+    it('remove hook data', function(){
+      thinkCache(thinkCache.HOOK, 'test', ['suredy'])
+      think.hook('test', null);
+      assert.deepEqual(think.hook('test'), []);
+      thinkCache(thinkCache.HOOK, 'test', null);
+    })
+    it('add hook, append', function(){
+      think.hook('__test', 'welefen');
+      assert.deepEqual(think.hook('__test'), ['welefen']);
+      thinkCache(thinkCache.HOOK, 'test', null);
+    })
+    it('add hook, function', function(){
+      var fn = function(){};
+      think.hook('__test', fn);
+      var data = think.hook('__test');
+      assert.equal(data[0].length, 43);
+      var fn1 = think.middleware(data[0]);
+      assert.equal(fn, fn1);
+      thinkCache(thinkCache.HOOK, 'test', null);
+    })
+    it('exec hook, emtpy', function(done){
+      getHttp().then(function(http){
+        think.hook('__not_exist', http, '__not_exist').then(function(data){
+          assert.equal(data, '__not_exist');
+          done();
+        })
+      })
+    })
+
+    it('exec hook', function(done){
+      think.hook('__test__', function(http, data){
+        return data;
+      })
+      getHttp().then(function(http){
+        think.hook('__test__', http, '__test__').then(function(data){
+          assert.equal(data, '__test__');
+          thinkCache(thinkCache.HOOK, '__test__', null)
+          
+          done();
+        })
+      })
+    })
+
+    it('exec hook, no return', function(done){
+      think.hook('__test__', function(http, data){
+        return 'test';
+      })
+      think.hook('__test__', function(http, data){
+        return;
+      }, 'append')
+      getHttp().then(function(http){
+        think.hook('__test__', http, '__test__').then(function(data){
+          assert.equal(data, 'test');
+          thinkCache(thinkCache.HOOK, '__test__', null)
+          done();
+        })
+      })
+    })
+
+    it('exec hook, class', function(done){
+      var cls = think.Class({
+        init: function(){
+
+        },
+        run: function(){
+          return 'run';
+        }
+      }, true)
+      think.hook('__test__', cls);
+      getHttp().then(function(http){
+        think.hook('__test__', http, '__test__').then(function(data){
+          assert.equal(data, 'run');
+          thinkCache(thinkCache.HOOK, '__test__', null)
+          done();
+        })
+      })
+    })
+  })
+
+  describe('think.middleware', function(){
+    it('register middleware, function', function(){
+      var fn = function(){}
+      var data = think.middleware('___test', fn)
+      assert.equal(thinkCache(thinkCache.MIDDLEWARE, '___test'), fn);
+      assert.equal(data, undefined);
+      thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+      
+    })
+    it('register middleware, class', function(){
+      var fn = think.Class({
+        run: function(){}
+      }, true)
+      var data = think.middleware('___test', fn)
+      assert.equal(thinkCache(thinkCache.MIDDLEWARE, '___test'), fn);
+      assert.equal(data, undefined);
+      thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+    })
+    it('exec middleware, no data', function(done){
+      think.middleware('___test', function(){
+        return 'http';
+      })
+      getHttp().then(function(http){
+        think.middleware('___test', http).then(function(data){
+          assert.equal(data, 'http');
+          thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+          done();
+        })
+      })
+    })
+    it('exec middleware, with data', function(done){
+      think.middleware('___test', function(http, data){
+        return data;
+      })
+      getHttp().then(function(http){
+        think.middleware('___test', http, '___http').then(function(data){
+          assert.equal(data, '___http');
+          thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+          done();
+        })
+      })
+    })
+    it('exec middleware, not exist', function(done){
+      getHttp().then(function(http){
+        return think.middleware('___testxxx', http, '___http').catch(function(err){
+          assert.equal(err.stack.indexOf('`___testxxx`') > -1, true);
+          thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+          done();
+        })
+      })
+    })
+    it('exec middleware, function', function(done){
+      getHttp().then(function(http){
+        return think.middleware(function(http, data){
+          return data;
+        }, http, '___http').then(function(data){
+          assert.equal(data, '___http');
+          done();
+        })
+      })
+    })
+    it('exec middleware, object', function(){
+      getHttp().then(function(http){
+        var data = think.middleware({
+          getNwwwwame: function(){
+            return 'test';
+          }
+        }, http, '___http');
+        assert.equal(think.isFunction(data.prototype.getNwwwwame), true);
+      })
+    })
+    it('get middleware', function(){
+      var fn = function(){};
+      think.middleware('fasdfasf', fn);
+      var fn1 = think.middleware("fasdfasf");
+      assert.equal(fn1, fn);
+      thinkCache(thinkCache.MIDDLEWARE, 'fasdfasf')
+    })
+    it('get sys middleware', function(){
+      var fn1 = think.middleware("deny_ip");
+      assert.equal(think.isFunction(fn1), true);
+    })
+    it('get sys middleware, not found', function(){
+      try{
+        var fn1 = think.middleware("deny_ip11");
+      }catch(err){
+        assert.equal(err.stack.indexOf('`deny_ip11`') > -1, true);
+      }
+    })
+    it('create middleware', function(){
+      var cls = think.middleware({
+        getTest: function(){
+          return 'getTest';
+        }
+      })
+      assert.equal(think.isFunction(cls.prototype.getTest), true);
+      var instance = new cls({});
+      assert.equal(instance.getTest(), 'getTest');
+    })
+    it('create middleware, superClass', function(){
+      var superClass = think.middleware({
+        getTest: function(){
+          return 'getTest';
+        }
+      })
+      var childClass = think.middleware(superClass, {
+        getTest2: function(){
+          return 'getTest2';
+        }
+      })
+      assert.equal(think.isFunction(childClass.prototype.getTest), true);
+      var instance = new childClass({});
+      assert.equal(instance.getTest(), 'getTest');
+      assert.equal(instance.getTest2(), 'getTest2');
+    })
+
+  })
+
+  describe('think.uuid', function(){
+    it('is function', function(){
+      assert.equal(think.isFunction(think.uuid), true)
+    })
+    it('default length is 32', function(){
+      var data = think.uuid();
+      assert.equal(data.length, 32);
+    })
+    it('change length to 40', function(){
+      var data = think.uuid(40);
+      assert.equal(data.length, 40);
+    })
+  })
+
+  describe('think.adapter', function(){
+    it('add adapter', function(){
+      var fn = function(){}
+      var key = 'adapter_welefen_suredy';
+      think.adapter('welefen', 'suredy', fn);
+      var fn1 = thinkCache(thinkCache.ALIAS_EXPORT, key);
+      assert.equal(fn, fn1);
+      thinkCache(thinkCache.ALIAS_EXPORT, key, null);
+    })
+    it('create adapter', function(){
+      var fn = think.adapter('session', 'base', {
+        getTest1: function(){
+          return '___getTest';
+        }
+      })
+      assert.equal(think.isFunction(fn.prototype.getTest1), true);
+      var instance = new fn();
+      var data = instance.getTest1();
+      assert.equal(data, '___getTest');
+    })
+    it('get adapter', function(){
+      var fn = think.adapter('session', 'base');
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.get), true);
+    })
+    it('get adapter, not found', function(){
+      try{
+        var fn = think.adapter('session', 'welefen111');
+      }catch(err){
+        assert.equal(err.stack.indexOf('`adapter_session_welefen111`') > -1, true);
+      }
+    })
+    it('create adapter', function(){
+      var fn = think.adapter('session', {
+        getTest1: function(){
+          return '___getTest';
+        }
+      })
+      assert.equal(think.isFunction(fn.prototype.getTest1), true);
+      var instance = new fn();
+      var data = instance.getTest1();
+      assert.equal(data, '___getTest');
+    })
+    it('create adapter', function(){
+      var fn = think.adapter({});
+      assert.equal(think.isFunction(fn), true);
+    })
+    it('create adapter, super', function(){
+      var cls = think.Class({
+        getName: function(){
+          return 'super';
+        }
+      }, true)
+      var fn = think.adapter(cls, {});
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.getName), true);
+    })
+    it('create adapter, super', function(){
+      var fn = think.adapter('adapter_session_base', {});
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.get), true);
+    })
+
+  })
+
+  describe('think.loadAdapter', function(){
+    it('base', function(done){
+      var mode = think.mode;
+      var path = think.getPath(undefined, think.dirname.adapter);;
+      think.mkdir(path);
+      think.loadAdapter(true);
+      think.rmdir(path).then(done);
+    })
+    it('extra adapter', function(done){
+      var mode = think.mode;
+      var path = think.getPath(undefined, think.dirname.adapter);;
+      think.mkdir(path + '/welefentest');
+      require('fs').writeFileSync(path+ '/welefentest/base.js', 'module.exports=think.Class({}, true)')
+      think.loadAdapter(true);
+      assert.equal(think.isFunction(think.adapter.welefentest), true);
+      delete think.adapter.welefentest;
+      think.rmdir(path).then(done);
+    })
+  })
+
+  describe('think.route', function(){
+    it('clear route', function(){
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      think.route(null);
+      assert.equal(thinkCache(thinkCache.COLLECTION, 'route'), undefined);
+      thinkCache(thinkCache.COLLECTION, 'route', routes);
+    })
+    it('set routes, array', function(){
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      think.route(['welefen']);
+      assert.deepEqual(thinkCache(thinkCache.COLLECTION, 'route'), ['welefen']);
+      thinkCache(thinkCache.COLLECTION, 'route', routes);
+    })
+    it('route config exports is function', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      delete require.cache[filepath];
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports=function(){return ["welefen", "suredy"]}');
+
+      think.route().then(function(data){
+        assert.deepEqual(data, ['welefen', 'suredy']);
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+    it('route config exports is function 2', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+
+      delete require.cache[filepath];
+
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports=function(){return ["welefen", "suredy", "1111"]}');
+
+      think.route().then(function(data){
+        assert.deepEqual(data, ['welefen', 'suredy', '1111']);
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+    it('route config exports is function, no return', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+
+      delete require.cache[filepath];
+
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports=function(){return;}');
+
+      think.route().then(function(data){
+        assert.deepEqual(data, []);
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+  })
+
+  describe('think.gc', function(){
+    it('gc off', function(){
+      var on = think.config('gc.on');
+      think.config('gc.on', false);
+      var Cls = think.Class({gcType: 'test'}, true);
+      var data = think.gc(new Cls);
+      assert.equal(data, undefined);
+      think.config('gc.on', on);
+    })
+    it('timers', function(done){
+      think.config('gc.on', true);
+      var interval = global.setInterval;
+      global.setInterval = function(fn, interval){
+        assert.equal(interval, 3600000);
+        assert.equal(think.isFunction(fn), true);
+        fn();
+        done();
+      }
+      var Cls = think.Class({gcType: 'test', gc: function(){}}, true);
+      var data = think.gc(new Cls);
+    })
+    it('timers, filter', function(done){
+      think.config('gc.on', true);
+      var filter = think.config('gc.filter');
+      think.config('gc.filter', function(){
+        return true;
+      })
+      var interval = global.setInterval;
+      global.setInterval = function(fn, interval){
+        assert.equal(interval, 3600000);
+        assert.equal(think.isFunction(fn), true);
+        var data = fn();
+        assert.equal(data, 'gc');
+        think.config('gc.filter', filter);
+        done();
+      }
+      var Cls = think.Class({gcType: 'test', gc: function(){
+        return 'gc';
+      }}, true);
+      var data = think.gc(new Cls);
+    })
   })
 
 })

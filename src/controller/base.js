@@ -156,8 +156,16 @@ export default class extends think.base {
    * @param  {String} host [only get referer host]
    * @return {String}      []
    */
-  referer(onlyHost){
+  referrer(onlyHost){
     return this.http.referer(onlyHost);
+  }
+  /**
+   * get page referer
+   * @param  {String} host [only get referer host]
+   * @return {String}      []
+   */
+  referer(onlyHost){
+    return this.http.referrer(onlyHost);
   }
   /**
    * get or set cookie
@@ -221,7 +229,7 @@ export default class extends think.base {
    */
   redirect(url, code) {
     this.http.redirect(url, code);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * assign value to template
@@ -257,7 +265,7 @@ export default class extends think.base {
    */
   jsonp(data) {
     this.http.jsonp(data);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * output with json
@@ -266,7 +274,7 @@ export default class extends think.base {
    */
   json(data){
     this.http.json(data);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * set http status code
@@ -274,10 +282,7 @@ export default class extends think.base {
    * @return {}        []
    */
   status(status = 404) {
-    let res = this.http.res;
-    if (!res.headersSent) {
-      res.statusCode = status;
-    }
+    this.http.status(status);
     return this;
   }
   /**
@@ -287,7 +292,8 @@ export default class extends think.base {
    */
   deny(status = 403){
     this.status(status);
-    return this.end();
+    this.end();
+    return think.defer().promise;
   }
   /**
    * echo content
@@ -306,7 +312,7 @@ export default class extends think.base {
    */
   end(obj, encoding) {
     this.http.end(obj, encoding);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * get or set content type
@@ -333,18 +339,9 @@ export default class extends think.base {
     }
     let http = this.http;
     let fileStream = fs.createReadStream(filepath);
-    let deferred = think.defer();
     this.type(contentType);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
-    fileStream.pipe(http.res);
-    fileStream.on('end', () => {
-      http.end();
-      deferred.resolve();
-    });
-    fileStream.on('error', err => {
-      deferred.reject(err);
-    });
-    return deferred.promise;
+    return this.hook('file_output', filepath);
   }
   /**
    * output with success errno & errmsg
@@ -354,7 +351,7 @@ export default class extends think.base {
    */
   success(data, message){
     this.http.success(data, message);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * output with fail errno & errmsg
@@ -365,7 +362,7 @@ export default class extends think.base {
    */
   fail(errno, errmsg, data){
     this.http.fail(errno, errmsg, data);
-    return think.prevent();
+    return think.defer().promise;
   }
   /**
    * alias for fail
@@ -374,13 +371,6 @@ export default class extends think.base {
    */
   error(...args){
     return this.fail(...args);
-  }
-  /**
-   * close db connections
-   * @return {} []
-   */
-  closeDb(){
-    //think.require('Model').close();
   }
   /**
    * send exec time

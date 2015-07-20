@@ -11,7 +11,7 @@ think.middleware('parse_json_payload', http => {
   if (!http.payload) {
     return;
   }
-  let types = think.config('post.json_content_type');
+  let types = http.config('post.json_content_type');
   if (types.indexOf(http.contentType) > -1) {
     try{
       http._post = JSON.parse(http.payload);
@@ -19,15 +19,23 @@ think.middleware('parse_json_payload', http => {
   }
 });
 /**
- * output resource
+ * output file
  * @param  {Object} http    []
  * @param  {String} file [file path]
  * @return {}         []
  */
 think.middleware('output_resource', (http, file) => {
+  let deferred = think.defer();
   let stream = fs.createReadStream(file);
   stream.pipe(http.res);
-  stream.on('end', () => http.end());
+  stream.on('end', () => {
+    http.end();
+    deferred.resolve(file);
+  });
+  stream.on('error', err => {
+    deferred.reject(err);
+  });
+  return deferred.promise;
 });
 /**
  * rewrite pathname, remove prefix & suffix
@@ -39,11 +47,11 @@ think.middleware('rewrite_pathname', http => {
   if (!pathname) {
     return;
   }
-  let prefix = think.config('pathname_prefix');
+  let prefix = http.config('pathname_prefix');
   if (prefix && pathname.indexOf(prefix) === 0) {
     pathname = pathname.substr(prefix.length);
   }
-  let suffix = think.config('pathname_suffix');
+  let suffix = http.config('pathname_suffix');
   if (suffix && pathname.substr(0 - suffix.length) === suffix) {
     pathname = pathname.substr(0, pathname.length - suffix.length);
   }
@@ -75,7 +83,7 @@ think.middleware('send_error', (http, err) => {
   if(think.isPrevent(err)){
     return;
   }
-  let error = think.config('error');
+  let error = http.config('error');
   if (error.log) {
     think.log(err);
   }
@@ -85,24 +93,20 @@ think.middleware('send_error', (http, err) => {
   let code = error.code || 500;
   let msg = err;
   if (think.isError(err)) {
-    msg = think.debug ? err.stack : err.message;
+    msg = error.detail ? err.stack : err.message;
   }
   if (http.isAjax()) {
     return http.fail(code, msg);
   }else if (http.isJsonp()) {
     return http.jsonp({
-      [error.key]: error.msg,
-      [code]: msg
+      [error.key]: code,
+      [error.msg]: msg
     });
   }
   http.res.statusCode = code;
-  http.type('text/html; charset=' + think.config('encoding'));
-  if (think.debug) {
+  http.type('text/html; charset=' + http.config('encoding'));
+  if (error.detail) {
     return http.end(`<pre style="font-size:14px;line-height:20px;">${msg}</pre>`);
   }
-  http.sendTime();
-  //output error file
-  let readStream = fs.createReadStream(error.file);
-  readStream.pipe(http.res);
-  readStream.on('end', () => http.end());
+  return think.hook('resource_output', http, error.file);
 });

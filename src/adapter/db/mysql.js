@@ -13,16 +13,15 @@ export default class extends think.adapter.db {
    */
   init(config){
     super.init(config);
-    this.transTimes = 0;
-    this.engine = ''; //mysql engine
-    this.socket = null;
+    this.transTimes = 0; //transaction times
+    this.engine = ''; //table engine
   }
   /**
-   * connect mysql
+   * get mysql socket instance
    * @param  {Object} config []
    * @return {}        []
    */
-  connect(){
+  getSocketInstance(){
     if(this.socket){
       return this.socket;
     }
@@ -60,11 +59,11 @@ export default class extends think.adapter.db {
       return this.engine;
     }
     let data = await this.query(`SHOW TABLE STATUS WHERE name='${this.parseKey(table)}'`);
-    let engine = this.engine = data[0].Engine.toLowerCase();
-    return engine;
+    this.engine = data[0].Engine.toLowerCase();
+    return this.engine;
   }
   /**
-   * check table support transaction
+   * check table is support transaction
    * @param  {String} table []
    * @return {Promise}       []
    */
@@ -78,9 +77,10 @@ export default class extends think.adapter.db {
    * @return {Promise} []
    */
   async startTrans(table){
-    let support = this.supportTrans(table);
+    let support = await this.supportTrans(table);
     if(!support){
-      return think.reject('table engine is not support transaction');
+      let err = new Error(think.local('NOT_SUPPORT_TRANSACTION'));
+      return think.reject(err);
     }
     if (this.transTimes === 0) {
       this.transTimes++;

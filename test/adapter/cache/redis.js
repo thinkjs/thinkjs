@@ -115,24 +115,22 @@ describe('adapter/cache/redis.js', function() {
   });
 
   it('get expired data', function(done) {
-    instance.set('thinkjs2', 'maxzhang', 0.1).then(function() {
+    instance.set('thinkjs2', 'maxzhang', 0.01).then(function() {
       setTimeout(function() {
         instance.get('thinkjs2').then(function(value) {
           assert.equal(value, undefined);
           done();
         });
-      }, 150);
+      }, 15);
     });
   });
 
   after(function() {
-    think._alias = {};
-    think._config = {};
     think.APP_PATH = think.RESOURCE_PATH = testAppPath;
     think.rmdir(testAppPath);
-    think.cli = false;
-    think.mode = think.mode_mini;
-    think.module = [];
+    // think.cli = false;
+    // think.mode = think.mode_mini;
+    // think.module = [];
   });
 
 });

@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * Base Class
  * @param  {Object} http

@@ -22,14 +22,13 @@ export default class extends think.middleware.base {
       return false;
     }
     let file = `${think.RESOURCE_PATH}/${pathname}`;
-    let res = this.http.res;
     //resource exist
     if (think.isFile(file)) {
       let contentType = mime.lookup(file);
-      res.setHeader('Content-Type', `${contentType}; charset=${this.config('encoding')}`);
+      this.http.header('Content-Type', `${contentType}; charset=${this.config('encoding')}`);
       await this.hook('resource_output', file);
     }else{
-      res.statusCode = 404;
+      this.http.status(404);
       this.http.end();
     }
     return think.prevent();

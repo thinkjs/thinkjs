@@ -19,7 +19,7 @@ export default class {
   init(options = {}){
     this.timeout = options.timeout;
     //key is session cookie value
-    this.key = options.cookie;
+    this.cookie = options.cookie;
     //all session data
     this.data = thinkCache(thinkCache.SESSION);
     //set gc type & start gc
@@ -33,17 +33,17 @@ export default class {
    */
   get(name){
     //cookie is not exist
-    if(!(this.key in this.data)){
+    if(!(this.cookie in this.data)){
       return Promise.resolve();
     }
-    let data = this.data[this.key];
+    let data = this.data[this.cookie];
     //data is expire
     if(Date.now() > data.expire){
-      delete this.data[this.key];
+      delete this.data[this.cookie];
       return Promise.resolve();
     }
     //update data expire
-    this.data[this.key].expire = Date.now() + data.timeout * 1000;
+    this.data[this.cookie].expire = Date.now() + data.timeout * 1000;
     let value = name ? think.clone(data[name]) : think.clone(data);
     return Promise.resolve(value);
   }
@@ -57,15 +57,15 @@ export default class {
   set(name, value, timeout = this.timeout){
     value = think.clone(value);
     let data;
-    if(this.key in this.data){
-      data = this.data[this.key].data;
+    if(this.cookie in this.data){
+      data = this.data[this.cookie].data;
       data[name] = value;
     }else{
       data = {
         [name]: value
       };
     }
-    this.data[this.key] = {
+    this.data[this.cookie] = {
       expire: Date.now() + timeout * 1000,
       timeout,
       data
@@ -78,11 +78,11 @@ export default class {
    * @return {Promise}      []
    */
   rm(name){
-    if(this.key in this.data){
+    if(this.cookie in this.data){
       if(name){
-        delete this.data[this.key].data[name];
+        delete this.data[this.cookie].data[name];
       }else{
-        delete this.data[this.key];
+        delete this.data[this.cookie];
       }
     }
     return Promise.resolve();

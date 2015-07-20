@@ -10,9 +10,7 @@ let Valid = {
    * @param  {Number} max   []
    * @return {Boolean}       []
    */
-  length: (value, min, max) => {
-    value = value + '';
-    min = min | 0;
+  length: (value = '', min = 0, max) => {
     let length = value.length;
     if (length < min) {
       return false;
@@ -27,8 +25,7 @@ let Valid = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  required: value => {
-    value = value + '';
+  required: (value = '') => {
     return value.length > 0;
   },
   /**
@@ -63,7 +60,7 @@ let Valid = {
    * @param  {String} value []
    * @return {Boolean}       []
    */
-  cnname: value => {
+  cname: value => {
     let reg = /^[\u4e00-\u9fa5\u3002\u2022]{2,32}$/;
     return Valid.regexp(value, reg);
   },
@@ -181,7 +178,7 @@ let Valid = {
    * @return {}       []
    */
   ip: value => {
-    return net.isIP(value);
+    return !!net.isIP(value);
   },
   /**
    * date
@@ -207,7 +204,8 @@ let Valid = {
    * @return {Boolean}       []
    */
   order: value => {
-    return value.split(',').map(item => {
+    return value.split(',').every(item => {
+      item = item.trim();
       return Valid.regexp(item, /^\w+\s+(?:ASC|DESC)$/i);
     });
   },
@@ -217,7 +215,8 @@ let Valid = {
    * @return {}       []
    */
   field: value => {
-    return value.split(',').map(item => {
+    return value.split(',').every(item => {
+      item = item.trim();
       return item === '*' || Valid.regexp(item, /^\w+$/);
     });
   }

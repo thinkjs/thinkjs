@@ -12,7 +12,7 @@ export default class extends think.adapter.socket {
    * @param  {Object} config [connection options]
    * @return {}        []
    */
-  init(config){
+  init(config = {}){
     //alias password config
     config.password = config.pwd;
     config.database = config.name;
@@ -78,7 +78,7 @@ export default class extends think.adapter.socket {
    * @return {[type]}     []
    */
   async query(sql, nestTables){
-    if (think.config('db.log_sql')) {
+    if (this.config.log_sql) {
       think.log(sql, 'SQL');
     }
     let connection = await this.getConnection();

@@ -19,9 +19,9 @@ export default class extends think.middleware.base {
       return content;
     }
     this.recordViewFile();
-    let file = `${this.cache.path}/${this.http.html_filename}`;
+    let file = `${cache.path}/${this.http.html_filename}`;
     think.mkdir(path.dirname(file));
-    fs.writeFile(file, content);
+    fs.writeFileSync(file, content);
     return content;
   }
   /**

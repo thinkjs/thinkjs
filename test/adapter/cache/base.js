@@ -78,30 +78,30 @@ describe('adapter/cache/base.js', function() {
   });
 
   it('get expried data', function(done) {
-    instance.set('thinkjs2', 'maxzhang', 0.1).then(function() {
+    instance.set('thinkjs2', 'maxzhang', 0.01).then(function() {
       setTimeout(function() {
         instance.get('thinkjs2').then(function(value) {
           assert.equal(value, undefined);
           done();
         });
-      }, 150);
+      }, 15);
     });
   });
 
   it('run cache gc', function(done) {
-    instance.set('thinkjs3', 'maxzhang', 0.1).then(function() {
+    instance.set('thinkjs3', 'maxzhang', 0.01).then(function() {
       setTimeout(function() {
         instance.gc();
         instance.get('thinkjs3').then(function(value) {
           assert.equal(value, undefined);
           done();
         });
-      }, 150);
+      }, 15);
     });
   });
 
   it('custom data timeout', function(done) {
-    var instance = new BaseCache({ timeout: 0.1 });
+    var instance = new BaseCache({ timeout: 0.01 });
     instance.set('thinkjs4', 'maxzhang', 10).then(function() {
       setTimeout(function() {
         instance.gc();
@@ -109,15 +109,14 @@ describe('adapter/cache/base.js', function() {
           assert.equal(value, 'maxzhang');
           done();
         });
-      }, 150);
+      }, 15);
     });
   });
 
   after(function() {
-    think._alias = {};
-    think.cli = false;
-    think.mode = think.mode_mini;
-    think.module = [];
+    // think.cli = false;
+    // think.mode = think.mode_mini;
+    // think.module = [];
   });
 
 });

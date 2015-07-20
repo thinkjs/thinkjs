@@ -13,6 +13,11 @@ global.thinkCache = (type, name, value) => {
   if (name === undefined) {
     return thinkCache[type];
   }
+  //remove cache
+  else if(name === null){
+    thinkCache[type] = {};
+    return;
+  }
   // get cache
   else if (value === undefined) {
     if (think.isString(name)) {
@@ -74,3 +79,43 @@ thinkCache.REDIS = 'redis';
  * @type {String}
  */
 thinkCache.MEMCACHE = 'memcache';
+/**
+ * think config
+ * @type {String}
+ */
+thinkCache.CONFIG = 'config';
+/**
+ * think module config
+ * @type {String}
+ */
+thinkCache.MODULE_CONFIG = 'module_config';
+/**
+ * think alias
+ * @type {String}
+ */
+thinkCache.ALIAS = 'alias';
+/**
+ * think alias_export
+ * @type {String}
+ */
+thinkCache.ALIAS_EXPORT = 'alias_export';
+/**
+ * think middleware
+ * @type {String}
+ */
+thinkCache.MIDDLEWARE = 'middleware';
+/**
+ * think timer
+ * @type {String}
+ */
+thinkCache.TIMER = 'timer';
+/**
+ * think hook
+ * @type {String}
+ */
+thinkCache.HOOK = 'hook';
+/**
+ * think collection class or function
+ * @type {String}
+ */
+thinkCache.COLLECTION = 'collection';

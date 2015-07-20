@@ -8,7 +8,7 @@ export default class extends think.adapter.socket {
    * @param  {Object} config []
    * @return {}        []
    */
-  init(config){
+  init(config = {}){
     if(config.path === true){
       config.path = ':memory:';
     }else if(!config.path){
@@ -53,8 +53,8 @@ export default class extends think.adapter.socket {
    * @return {Promise}     []
    */
   async execute(sql){
-    if (think.config('db.log_sql')) {
-      think.log(sql, 'sql');
+    if (this.config.log_sql) {
+      think.log(sql, 'SQL');
     }
     let connection = await this.getConnection();
     let deferred = think.defer();
@@ -77,8 +77,8 @@ export default class extends think.adapter.socket {
    * @return {Promise}     []
    */
   async query(sql){
-    if (think.config('db.log_sql')) {
-      think.log(sql, 'sql');
+    if (this.config.log_sql) {
+      think.log(sql, 'SQL');
     }
     let connection = await this.getConnection();
     let deferred = think.defer();

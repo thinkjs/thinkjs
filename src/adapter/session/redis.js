@@ -13,7 +13,7 @@ export default class extends think.adapter.session {
    */
   init(options = {}){
     this.timeout = options.timeout;
-    this.key = options.cookie;
+    this.cookie = options.cookie;
     this.redis = new redisSocket(options);
   }
   /**
@@ -24,7 +24,7 @@ export default class extends think.adapter.session {
     if(this.data){
       return Promise.resolve();
     }
-    return this.redis.get(this.key).then(data => {
+    return this.redis.get(this.cookie).then(data => {
       this.data = JSON.parse(data) || {};
     });
   }
@@ -71,6 +71,6 @@ export default class extends think.adapter.session {
    * @return {Promise} []
    */
   flush(){
-    return this.redis.set(this.key, JSON.stringify(this.data), this.timeout);
+    return this.redis.set(this.cookie, JSON.stringify(this.data), this.timeout);
   }
 }

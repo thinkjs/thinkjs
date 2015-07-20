@@ -75,7 +75,7 @@ export default class extends think.base {
     if(flag){
       return false;
     }
-    let err = new Error(think.message('CONTROLLER_NOT_FOUND', http.controller, http.url));
+    let err = new Error(think.local('CONTROLLER_NOT_FOUND', http.controller, http.url));
     return think.reject(err);
   }
   /**
@@ -105,7 +105,7 @@ export default class extends think.base {
         return ret;
       }
     }
-    let err = new Error(think.message('ACTION_NOT_FOUND', action, this.http.url));
+    let err = new Error(think.local('ACTION_NOT_FOUND', action, this.http.url));
     return think.reject(err);
   }
   /**
@@ -230,7 +230,7 @@ export default class extends think.base {
         cluster.fork();
       }
       cluster.on('exit', worker => {
-        let err = new Error(think.message('WORKER_DIED', worker.process.pid));
+        let err = new Error(think.local('WORKER_DIED', worker.process.pid));
         think.log(err, 'worker');
         process.nextTick(() => cluster.fork());
       });

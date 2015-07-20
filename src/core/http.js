@@ -17,12 +17,20 @@ let cookie = think.require('cookie');
 
 export default class {
   /**
+   * constructor
+   * @param  {} args []
+   * @return {}         []
+   */
+  constructor(...args){
+    this.init(...args);
+  }
+  /**
    * init method
    * @param  {Object} req [request]
    * @param  {Object} res [response]
    * @return {}     []
    */
-  constructor(req, res){
+  init(req, res){
     //request object
     this.req = req;
     //response object
@@ -162,8 +170,8 @@ export default class {
     }
   }
   /**
-   * 通过ajax上传文件
-   * @return {[type]} [description]
+   * upload file by ajax
+   * @return {Promise} []
    */
   getAjaxFilePost(){
     let filename = this.req.headers[think.config('post.ajax_filename_header')];
@@ -233,7 +241,7 @@ export default class {
     http._type = (http.headers['content-type'] || '').split(';')[0].trim();
 
     http.config = this.config;
-    http.referer = this.referer;
+    http.referrer = this.referrer;
     http.userAgent = this.userAgent;
     http.isAjax = this.isAjax;
     http.isJsonp = this.isJsonp;
@@ -242,9 +250,9 @@ export default class {
     http.param = this.param;
     http.file = this.file;
     http.header = this.header;
+    http.status = this.status;
     http.ip = this.ip;
     http.cookie = this.cookie;
-    http.sendCookie = this.sendCookie;
     http.redirect = this.redirect;
     http.echo = this.echo;
     http.end = this.end;
@@ -294,16 +302,16 @@ export default class {
     return this.headers['user-agent'] || '';
   }
   /**
-   * get page request referer
-   * @param  {String} host [only get referer host]
+   * get page request referrer
+   * @param  {String} host [only get referrer host]
    * @return {String}      []
    */
-  referer(host){
-    let referer = this.headers.referer || this.headers.referrer || '';
-    if (!referer || !host) {
-      return referer;
+  referrer(host){
+    let referrer = this.headers.referer || this.headers.referrer || '';
+    if (!referrer || !host) {
+      return referrer;
     }
-    let info = url.parse(referer);
+    let info = url.parse(referrer);
     return info.hostname;
   }
   /**
@@ -408,6 +416,18 @@ export default class {
       }
       this.res.setHeader(name, value);
     }
+  }
+  /**
+   * set http status
+   * @param  {Number} status []
+   * @return {}        []
+   */
+  status(status = 200){
+    let res = this.res;
+    if (!res.headersSent) {
+      res.statusCode = status;
+    }
+    return this;
   }
   /**
    * get uesr ip
@@ -618,6 +638,10 @@ export default class {
     let promise = fn(obj, encoding, this);
     this._outputContentPromise.push(promise);
   }
+  /**
+   * end
+   * @return {} []
+   */
   _end(){
     this.cookie(true);
     this.res.end();

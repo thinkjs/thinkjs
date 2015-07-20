@@ -89,6 +89,9 @@ export default class {
     if (think.mode === think.mode_normal) {
       modulePath += `/${think.dirname.controller}`;
     }
+    if(!think.isDir(modulePath)){
+      return [];
+    }
     let modules = fs.readdirSync(modulePath);
     let denyModuleList = think.config('deny_module_list') || [];
     if (denyModuleList.length > 0) {
@@ -107,18 +110,19 @@ export default class {
    */
   loadAlias(){
     let aliasPath = `${think.THINK_LIB_PATH}/config/alias.js`;
-    think._alias = require(aliasPath);
+    thinkCache(thinkCache.ALIAS, require(aliasPath));
   }
   /**
    * load alias module export
    * @return {} []
    */
   loadAliasExport(){
-    for(let key in think._alias){
-      if (key in think._aliasExport) {
+    var alias = thinkCache(thinkCache.ALIAS);
+    for(let key in alias){
+      if (thinkCache(thinkCache.ALIAS_EXPORT, key)) {
         continue;
       }
-      think._aliasExport[key] = think.require(key);
+      thinkCache(thinkCache.ALIAS_EXPORT, key, think.require(key));
     }
   }
   /**
@@ -130,7 +134,8 @@ export default class {
     let config = think.getModuleConfig(true);
     //common module config
     let commonConfig = think.getModuleConfig();
-    think._config = think.extend(config, commonConfig);
+    let configs = think.extend(config, commonConfig);
+    thinkCache(thinkCache.CONFIG, configs);
     let modules = this.getModule();
     //load modules config
     modules.forEach(module => {
@@ -189,7 +194,7 @@ export default class {
         hook[key] = hook[key].concat(value);
       }
     }
-    think._hook = hook;
+    thinkCache(thinkCache.HOOK, hook);
   }
   /**
    * load controller, model, logic, service files
@@ -231,17 +236,18 @@ export default class {
       name = `${think.config('default_module')}/${think.dirname.controller}/${call[length - 2]}`;
       action = call[length - 1];
     }
-    if (!(name in think._alias)) {
+    let filepath = thinkCache(thinkCache.ALIAS, name);
+    if (!filepath) {
       return;
     }
     let cls = think.require(name);
     let method = cls.prototype[action + think.config('action_suffix')];
     let callMethod = cls.prototype.__call;
     if (think.isFunction(method)) {
-      think._alias.call_controller = think._alias[name];
+      thinkCache(thinkCache.ALIAS, 'call_controller', filepath);
       think.config('call_action', action);
     }else if (think.isFunction(callMethod)) {
-      think._alias.call_controller = think._alias[name];
+      thinkCache(thinkCache.ALIAS, 'call_controller', filepath);
       think.config('call_action', '__call');
     }
   }
@@ -293,22 +299,13 @@ export default class {
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**
-   * load error message
-   * @return {} []
-   */
-  loadMessage(){
-    let config = require(`${think.THINK_LIB_PATH}/config/message.js`);
-    let filepath = `${think.getPath()}/${think.dirname.config}/message.js`;
-    let appConfig = think.safeRequire(filepath);
-    think._message = think.extend({}, config, appConfig);
-  }
-  /**
    * load all config or modules
    * @return {} []
    */
   load(){
-    think._alias = {};
-    think._aliasExport = {};
+    thinkCache(thinkCache.ALIAS, null);
+    thinkCache(thinkCache.ALIAS_EXPORT, null);
+
     this.loadConfig();
     this.loadBootstrap();
     this.loadRoute();
@@ -319,7 +316,6 @@ export default class {
     this.loadCallController();
     this.loadHook();
     this.loadTemplate();
-    this.loadMessage();
 
     //load alias export at last
     //this.loadAliasExport();

@@ -14,7 +14,7 @@ let getFn = (value, config) => {
   if (think.isFunction(value)) {
     return value;
   }
-  let msg = think.message('CONFIG_NOT_FUNCTION', config);
+  let msg = think.local('CONFIG_NOT_FUNCTION', config);
   throw new Error(msg);
 };
 /**
@@ -33,7 +33,7 @@ export default {
         return [value];
       }
       if (!think.isArray(value)) {
-        let msg = think.message('CONFIG_NOT_VALID', 'post.json_content_type');
+        let msg = think.local('CONFIG_NOT_VALID', 'post.json_content_type');
         throw new Error(msg);
       }
       return value;
@@ -56,7 +56,7 @@ export default {
       return obj;
     }
     if (!think.isObject(value)) {
-      let msg = think.message('CONFIG_NOT_VALID', 'subdomain');
+      let msg = think.local('CONFIG_NOT_VALID', 'subdomain');
       throw new Error(msg);
     }
     return value;
@@ -71,7 +71,7 @@ export default {
       return [value];
     }
     if (!think.isArray(value)) {
-      let msg = think.message('CONFIG_NOT_VALID', 'deny_module_list');
+      let msg = think.local('CONFIG_NOT_VALID', 'deny_module_list');
       throw new Error(msg);
     }
     return value;
@@ -103,8 +103,17 @@ export default {
     rules: rules => {
       let data = {};
       for(let key in rules){
+        let value = rules[key];
         key = key.replace(/\:/g, '/');
-        data[key] = rules[key];
+        //to array
+        if(!think.isArray(value)){
+          value = [value];
+        }
+        if(think.isFunction(value[1])){
+          value[2] = value[1];
+          value[1] = 0;
+        }
+        data[key] = value;
       }
       return data;
     }
@@ -115,6 +124,9 @@ export default {
    * @return {Array}       []
    */
   auto_reload_except: value => {
+    if(!think.isArray(value)){
+      value = [value];
+    }
     return value.map(item => {
       if(think.isString(item) && process.platform === 'win32'){
         item = item.replace(/\//g, '\\');

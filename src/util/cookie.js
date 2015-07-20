@@ -5,7 +5,7 @@ import crypto from 'crypto';
  * cookie
  * @type {Object}
  */
-export default {
+let Cookie = {
   /**
    * parse cookie
    * @param  {String} str [cookie string]
@@ -77,7 +77,7 @@ export default {
    * @param  {String} secret [cookie sign]
    * @return {String}        []
    */
-  sign: (val, secret) => {
+  sign: (val, secret = '') => {
     secret = crypto.createHmac('sha256', secret).update(val).digest('base64');
     secret = secret.replace(/\=+$/, '');
     return val + '.' + secret;
@@ -90,6 +90,8 @@ export default {
    */
   unsign: (val, secret) => {
     let str = val.slice(0, val.lastIndexOf('.'));
-    return this.sign(str, secret) === val ? str : '';
+    return Cookie.sign(str, secret) === val ? str : '';
   }
 };
+
+export default Cookie;
