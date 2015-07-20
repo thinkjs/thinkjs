@@ -1340,6 +1340,67 @@ describe('core/think.js', function(){
     })
   })
 
+  describe('think.npm', function(){
+    it('package is exist', function(done){
+      think.npm('multiparty').then(function(data){
+        assert.equal(think.isFunction(data.Form), true);
+        done();
+      })
+    })
+    it('install package redis', function(done){
+      var log = think.log;
+      think.log = function(){}
+
+      think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+        return think.npm('redis');
+      }).then(function(data){
+        assert.equal(think.isFunction(data.RedisClient), true);
+        think.log = log;
+        done();
+      })
+      
+    })
+    it('install package redis@0.12.1', function(done){
+      var log = think.log;
+      think.log = function(){}
+
+      think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+        return think.npm('redis@0.12.1');
+      }).then(function(data){
+        //console.log(data);
+        assert.equal(think.isFunction(data.RedisClient), true);
+        think.log = log;
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
+      
+    })
+    it('install extra package', function(done){
+      var log = think.log;
+      think.log = function(){}
+
+      think.rmdir(think.THINK_PATH + '/node_modules/uisu-test').then(function(){
+        return think.npm('uisu-test');
+      }).then(function(data){
+        assert.equal(think.isFunction(data.printMsg), true);
+        think.log = log;
+        done();
+      })
+      
+    })
+    it('install package not exist', function(done){
+      var log = think.log;
+      think.log = function(){}
+      think.npm('package-not-exist-welefen').catch(function(err){
+        assert.equal(err.stack.indexOf('Not Found: package-not-exist-welefen') > -1, true);
+        think.log = log;
+        done();
+      })
+      
+    })
+  })
+
 })
 
 

@@ -338,7 +338,7 @@ think.isPrevent = err => {
 think.log = (msg, type) => {
 
   let fn = d => {
-    return ('0' + d).slice(-1);
+    return ('0' + d).slice(-2);
   }
 
   let d = new Date();
@@ -1199,13 +1199,15 @@ think.npm = (pkg) => {
       if(version){
         pkgWithVersion += '@' + version;
       }
+    }else{
+      pkg = pkgWithVersion.split('@')[0];
     }
     let cmd = `npm install ${pkgWithVersion}`;
     let deferred = think.defer();
     think.log(`install package ${pkgWithVersion} start`, 'NPM');
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
-    }, (err, stdout, stderr) => {
+    }, err => {
       if(err){
         let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
         think.log(error, 'NPM');
