@@ -3,9 +3,6 @@
 import querystring from 'querystring';
 import Parse from './_parse.js';
 
-let Await = think.require('await');
-let awaitInstance = new Await();
-
 /**
  * db base class
  * @type {Class}
@@ -210,7 +207,7 @@ export default class extends Parse {
    * @return promise
    */
   query(str){
-    return awaitInstance.run(str, () => {
+    return think.await(str, () => {
       return this.getSocketInstance().query(str).then(data => {
         return this.bufferToString(data);
       });

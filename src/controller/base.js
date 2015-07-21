@@ -33,6 +33,13 @@ export default class extends think.base {
     return this.http.view();
   }
   /**
+   * get http method
+   * @return {String} []
+   */
+  method(){
+    return this.http.method.toLowerCase();
+  }
+  /**
    * check http method is get
    * @return {Boolean} []
    */
@@ -74,7 +81,7 @@ export default class extends think.base {
    * @return {Boolean} []
    */
   isCli(){
-    return think.cli;
+    return !!think.cli;
   }
   /**
    * check is jsonp
@@ -157,7 +164,7 @@ export default class extends think.base {
    * @return {String}      []
    */
   referrer(onlyHost){
-    return this.http.referer(onlyHost);
+    return this.http.referrer(onlyHost);
   }
   /**
    * get page referer
@@ -187,7 +194,7 @@ export default class extends think.base {
     think.session(this.http);
     let instance = this.http.session;
     if (name === undefined) {
-      return instance.rm();
+      return instance.delete();
     }
     if (value !== undefined) {
       return instance.set(name, value);
@@ -218,8 +225,8 @@ export default class extends think.base {
   local(key){
     let lang = this.lang(true);
     let locals = this.config(think.dirname.local);
-    let values = locals[lang] || locals[this.config('local.default')] || {};
-    return values[key] || key;
+    let values = locals[lang] || {};
+    return values[key] || locals[this.config('local.default')][key] || key;
   }
   /**
    * redirect
@@ -379,18 +386,5 @@ export default class extends think.base {
    */
   sendTime(name){
     return this.http.sendTime(name);
-  }
-  /**
-   * validate data
-   * @param  {Object} data      []
-   * @param  {String} validType []
-   * @return {}           []
-   */
-  valid(data) {
-    let ret = think.validate(data);
-    if(!think.isEmpty(ret.msg)){
-      return this.fail(ret.msg);
-    }
-    return ret;
   }
 }
