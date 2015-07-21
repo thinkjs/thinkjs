@@ -10,7 +10,7 @@ export default {
   view: `${root}/core/view.js`,
   auth: `${root}/util/auth.js`,
   cookie: `${root}/util/cookie.js`,
-  valid: `${root}/util/valid.js`,
+  validate: `${root}/util/validate.js`,
   await: `${root}/util/await.js`
   //websocket: root + '/util/websocket.js'
 };

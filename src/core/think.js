@@ -1104,13 +1104,12 @@ think.local = (key, ...data) => {
   return msg;
 }
 /**
- * valid data
+ * validate data
  * [{
  *   name: 'xxx',
  *   type: 'xxx',
  *   value: 'xxx',
  *   required: true,
- *   default: 'xxx',
  *   args: []
  *   msg: ''
  * }, ...]
@@ -1118,21 +1117,21 @@ think.local = (key, ...data) => {
  * @param  {Function} callback []
  * @return {}            []
  */
-think.valid = (name, callback) => {
-  let valid = thinkCache(thinkCache.COLLECTION, 'valid');
-  if (!valid) {
-    valid = think.require('valid');
-    thinkCache(thinkCache.COLLECTION, 'valid', valid);
+think.validate = (name, callback) => {
+  let validate = thinkCache(thinkCache.VALIDATE);
+  if (!validate) {
+    validate = think.require('validate');
+    thinkCache(thinkCache.VALIDATE, validate);
   }
   if (think.isString(name)) {
     // register valid callback
     // think.valid('test', function(){})
     if (think.isFunction(callback)) {
-      valid[name] = callback;
+      thinkCache(thinkCache.VALIDATE, name, callback);
       return;
     }
     // get valid callback
-    return valid[name];
+    return thinkCache(thinkCache.VALIDATE, name);
   }
   // convert object to array
   if (think.isObject(name)) {
@@ -1144,7 +1143,8 @@ think.valid = (name, callback) => {
     }
     name = d;
   }
-  let data = {}, msg = {};
+
+  let msg = {};
   name.forEach(item => {
     // value required
     if (item.required) {
@@ -1154,18 +1154,17 @@ think.valid = (name, callback) => {
       }
     }else{
       if (!item.value) {
-        //set default value
-        if (item.default) {
-          data[item.name] = item.default;
-        }
         return;
       }
     }
-    data[item.name] = item.value;
-    if (!item.type) {
-      return;
+    let type = item.type;
+    if(think.isString(type)){
+      type = validate[item.type];
+    }else if(think.isRegExp(type)){
+      type = function(value){
+        return item.type.test(value);
+      }
     }
-    let type = valid[item.type];
     if (!think.isFunction(type)) {
       throw new Error(think.local('CONFIG_NOT_FUNCTION', item.type));
     }
@@ -1173,13 +1172,13 @@ think.valid = (name, callback) => {
       item.args = [item.args];
     }
     item.args = item.args.unshift(item.value);
-    let result = type.apply(valid, item.args);
+    let result = type.apply(validate, item.args);
     if (!result) {
       let itemMsg = item.msg || think.local('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
     }
   });
-  return {msg, data};
+  return msg;
 };
 
 /**

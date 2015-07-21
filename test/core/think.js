@@ -1401,6 +1401,12 @@ describe('core/think.js', function(){
     })
   })
 
+  describe('think.validate', function(){
+    it('get validate', function(){
+      
+    })
+  })
+
 })
 
 

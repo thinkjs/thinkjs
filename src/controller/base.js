@@ -387,7 +387,10 @@ export default class extends think.base {
    * @return {}           []
    */
   valid(data) {
-    let ret = think.valid(data);
+    let ret = think.validate(data);
+    if(!think.isEmpty(ret.msg)){
+      return this.fail(ret.msg);
+    }
     return ret;
   }
 }

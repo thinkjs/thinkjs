@@ -115,6 +115,11 @@ thinkCache.TIMER = 'timer';
  */
 thinkCache.HOOK = 'hook';
 /**
+ * think validate
+ * @type {String}
+ */
+thinkCache.VALIDATE = 'validate';
+/**
  * think collection class or function
  * @type {String}
  */
