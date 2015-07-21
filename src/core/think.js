@@ -1119,7 +1119,7 @@ think.local = (key, ...data) => {
  */
 think.validate = (name, callback) => {
   let validate = thinkCache(thinkCache.VALIDATE);
-  if (!validate) {
+  if (think.isEmpty(validate)) {
     validate = think.require('validate');
     thinkCache(thinkCache.VALIDATE, validate);
   }
@@ -1149,7 +1149,7 @@ think.validate = (name, callback) => {
     // value required
     if (item.required) {
       if (!item.value) {
-        msg[item.name] = think.local('PARAMS_EMPTY', item.name);
+        msg[item.name] = item.required_msg || think.local('PARAMS_EMPTY', item.name);
         return;
       }
     }else{
@@ -1166,13 +1166,13 @@ think.validate = (name, callback) => {
       }
     }
     if (!think.isFunction(type)) {
-      throw new Error(think.local('CONFIG_NOT_FUNCTION', item.type));
+      throw new Error(think.local('CONFIG_NOT_FUNCTION', `${item.name} type`));
     }
     if (!think.isArray(item.args)) {
       item.args = [item.args];
     }
-    item.args = item.args.unshift(item.value);
-    let result = type.apply(validate, item.args);
+    item.args.unshift(item.value);
+    let result = type(...item.args);
     if (!result) {
       let itemMsg = item.msg || think.local('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
