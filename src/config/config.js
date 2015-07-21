@@ -153,6 +153,7 @@ module.exports = {
     sqlite3: '3.0.8',
     ejs: '2.3.2',
     jade: '1.11.0',
-    mongodb: '2.0.36'
+    mongodb: '2.0.36',
+    memjs: '0.8.5'
   }
 };

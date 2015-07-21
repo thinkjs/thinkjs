@@ -1350,55 +1350,129 @@ describe('core/think.js', function(){
     })
     it('install package redis', function(done){
       var log = think.log;
-      think.log = function(){}
+      think.log = function(){};
+      var exec = require('child_process').exec;
+      var trequire = think.require;
+      var flag = false;
+      think.require = function(){
+        if(flag){
+          return {
+            Client: function(){}
+          };
+        }
+        throw new Error('')
+      }
+      require('child_process').exec = function(cmd, options, callback){
+        assert.equal(cmd, 'npm install package-not-exist');
+        flag = true;
+        callback && callback();
+      }
 
-      think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
-        return think.npm('redis');
-      }).then(function(data){
-        assert.equal(think.isFunction(data.RedisClient), true);
+      think.npm('package-not-exist').then(function(data){
+        require('child_process').exec = exec;
+        think.require = trequire;
         think.log = log;
+
+        assert.equal(think.isFunction(data.Client), true);
         done();
       })
       
     })
     it('install package redis@0.12.1', function(done){
       var log = think.log;
-      think.log = function(){}
+      think.log = function(){};
+      var exec = require('child_process').exec;
+      var trequire = think.require;
+      var flag = false;
+      think.require = function(){
+        if(flag){
+          return {
+            RedisClient: function(){}
+          };
+        }
+        throw new Error('')
+      }
+      require('child_process').exec = function(cmd, options, callback){
+        assert.equal(cmd, 'npm install redis@0.12.1');
+        flag = true;
+        callback && callback();
+      }
 
       think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
         return think.npm('redis@0.12.1');
       }).then(function(data){
-        //console.log(data);
-        assert.equal(think.isFunction(data.RedisClient), true);
+        require('child_process').exec = exec;
+        think.require = trequire;
         think.log = log;
+
+        assert.equal(think.isFunction(data.RedisClient), true);
         done();
-      }).catch(function(err){
-        console.log(err.stack)
       })
       
     })
-    it('install extra package', function(done){
+    it('install package redis', function(done){
       var log = think.log;
-      think.log = function(){}
+      think.log = function(){};
+      var exec = require('child_process').exec;
+      var trequire = think.require;
+      var flag = false;
+      think.require = function(){
+        if(flag){
+          return {
+            RedisClient: function(){}
+          };
+        }
+        throw new Error('')
+      }
+      require('child_process').exec = function(cmd, options, callback){
+        assert.equal(cmd, 'npm install redis@0.12.1');
+        flag = true;
+        callback && callback();
+      }
 
-      think.rmdir(think.THINK_PATH + '/node_modules/uisu-test').then(function(){
-        return think.npm('uisu-test');
+      think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+        return think.npm('redis');
       }).then(function(data){
-        assert.equal(think.isFunction(data.printMsg), true);
+        require('child_process').exec = exec;
+        think.require = trequire;
         think.log = log;
+
+        assert.equal(think.isFunction(data.RedisClient), true);
         done();
       })
       
     })
     it('install package not exist', function(done){
       var log = think.log;
-      think.log = function(){}
-      think.npm('package-not-exist-welefen').catch(function(err){
-        assert.equal(err.stack.indexOf('Not Found: package-not-exist-welefen') > -1, true);
+      think.log = function(){};
+      var exec = require('child_process').exec;
+      var trequire = think.require;
+      var flag = false;
+      think.require = function(){
+        if(flag){
+          return {
+            RedisClient: function(){}
+          };
+        }
+        throw new Error('')
+      }
+      require('child_process').exec = function(cmd, options, callback){
+        assert.equal(cmd, 'npm install package_not_exist');
+        flag = true;
+        callback && callback(new Error('not exist'));
+      }
+      return think.npm('package_not_exist').catch(function(err){
+        require('child_process').exec = exec;
+        think.require = trequire;
         think.log = log;
+
+        assert.equal(err.message, 'not exist');
         done();
       })
+      
     })
+
+
   })
 
   describe('think.validate', function(){

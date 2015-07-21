@@ -1187,7 +1187,7 @@ think.validate = (name, callback) => {
  */
 think.npm = (pkg) => {
   try{
-    return Promise.resolve(require(pkg));
+    return Promise.resolve(think.require(pkg));
   } catch(e){
     let pkgWithVersion = pkg;
     //get package version
@@ -1211,7 +1211,7 @@ think.npm = (pkg) => {
         deferred.reject(err);
       }else{
         think.log(`install package ${pkgWithVersion} finish`, 'NPM');
-        deferred.resolve(require(pkg));
+        deferred.resolve(think.require(pkg));
       }
     });
     return deferred.promise;
