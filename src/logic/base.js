@@ -70,11 +70,14 @@ export default class extends think.controller.base {
         }
         //add method for set default value
         itemData.get = getValueMethod === 'get' ? 'get' : 'post';
+        if(think.isFunction(itemData.default)){
+          itemData.default = itemData.default(itemData);
+        }
         let value = this[getValueMethod](nameItem) || itemData.default || '';
         itemData.value = value;
         result.push(itemData);
-      })
-    })
+      });
+    });
     return result;
   }
   /**
@@ -94,7 +97,7 @@ export default class extends think.controller.base {
       if(item.default && item.get){
         this[item.get](item.name, item.value);
       }
-    })
+    });
   }
   /**
    * before magic method
