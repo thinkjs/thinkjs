@@ -26,10 +26,7 @@ export default class extends think.adapter.socket {
     }
     let memjs = await think.npm('memjs');
     let config = this.config;
-    let str = `${config.host}:${config.port}`;
-    if(config.username){
-      str = `${config.username}:${config.password}@${str}`;
-    }
+    let str = `${config.username}:${config.password}@${config.host}:${config.port}`;
     this.connection = memjs.Client.create(str);
     return this.connection;
   }
@@ -41,7 +38,7 @@ export default class extends think.adapter.socket {
   async get(key){
     let connection = await this.getConnection();
     let deferred = think.defer();
-    connection.get(key, (err, data) => err ? deferred.reject(err) : deferred.resolve(data));
+    connection.get(key, (err, data) => err ? deferred.reject(err) : deferred.resolve(data && data.toString()));
     return deferred.promise;
   }
   /**

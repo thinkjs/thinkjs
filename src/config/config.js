@@ -141,13 +141,13 @@ module.exports = {
   memcache: {
     host: '127.0.0.1',
     port: 11211,
+    username: '',
     password: '',
     timeout: 0
   },
   redis: {
     host: '127.0.0.1',
     port: 6379,
-    username: '',
     password: '',
     timeout: 0
   },
