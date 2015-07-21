@@ -53,11 +53,11 @@ export default class extends think.adapter.session {
     });
   }
   /**
-   * rm data
+   * delete data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     return this.getData().then(() => {
       if(name){
         delete this.data[name];

@@ -81,7 +81,7 @@ export default class extends think.base {
    * @return {Boolean} []
    */
   isCli(){
-    return think.cli;
+    return !!think.cli;
   }
   /**
    * check is jsonp
@@ -164,7 +164,7 @@ export default class extends think.base {
    * @return {String}      []
    */
   referrer(onlyHost){
-    return this.http.referer(onlyHost);
+    return this.http.referrer(onlyHost);
   }
   /**
    * get page referer
@@ -194,7 +194,7 @@ export default class extends think.base {
     think.session(this.http);
     let instance = this.http.session;
     if (name === undefined) {
-      return instance.rm();
+      return instance.delete();
     }
     if (value !== undefined) {
       return instance.set(name, value);
@@ -225,8 +225,8 @@ export default class extends think.base {
   local(key){
     let lang = this.lang(true);
     let locals = this.config(think.dirname.local);
-    let values = locals[lang] || locals[this.config('local.default')] || {};
-    return values[key] || key;
+    let values = locals[lang] || {};
+    return values[key] || locals[this.config('local.default')][key] || key;
   }
   /**
    * redirect
