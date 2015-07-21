@@ -1785,6 +1785,89 @@ describe('core/think.js', function(){
     })
   })
 
+  describe('think.session', function(){
+    it('get session, exist', function(done){
+      getHttp().then(function(http){
+        http.session = 'welefen';
+        var session = think.session(http);
+        assert.equal(session, 'welefen')
+        done();
+      })
+    })
+    it('get session', function(done){
+      getHttp().then(function(http){
+        var session = think.session(http);
+        assert.equal(http._cookie.thinkjs.length, 32);
+        done();
+      })
+    })
+    it('get session, options, sign error', function(done){
+      getHttp().then(function(http){
+        var options = think.config('session');
+        think.config('session', {
+          name: 'test',
+          sign: 'welefen'
+        })
+        http._cookie.test = 'test';
+        var session = think.session(http);
+        assert.equal(http._cookie.test.length, 32);
+        done();
+      })
+    })
+    it('get session, options, sign success', function(done){
+      getHttp().then(function(http){
+        var options = think.config('session');
+        think.config('session', {
+          name: 'test',
+          sign: 'welefen'
+        })
+
+        http._cookie.test = 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ.yeZHK5ympKa2jZIqRyvHCYJGPhPXemEtQF0ZU8V1Yhg';
+        var session = think.session(http);
+        assert.equal(http._cookie.test, 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ');
+        done();
+      })
+    })
+    it('get session, options, debug', function(done){
+      getHttp().then(function(http){
+        var options = think.config('session');
+        think.config('session', {
+          name: 'test',
+          sign: 'welefen'
+        })
+
+        http._cookie.test = 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ.yeZHK5ympKa2jZIqRyvHCYJGPhPXemEtQF0ZU8V1Yhg';
+        think.debug = true;
+        var log = think.log;
+        think.log = function(){}
+        var session = think.session(http);
+        assert.equal(http._cookie.test, 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ');
+        think.debug = false;
+        think.log = log;
+        done();
+      })
+    })
+    it('get session, options, flush', function(done){
+      getHttp().then(function(http){
+        var options = think.config('session');
+        think.config('session', {
+          name: 'test',
+          sign: 'welefen'
+        })
+        var value = '111';
+        var session = think.session(http);
+        session.flush = function(){
+          value = '222';
+        }
+        http.emit('afterEnd');
+        setTimeout(function(){
+          assert.equal(value, '222')
+          done();
+        }, 10)
+      })
+    })
+  })
+
 
 })
 

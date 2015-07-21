@@ -884,7 +884,7 @@ think.session = http => {
   //validate cookie sign
   if (cookie && sign) {
     cookie = Cookie.unsign(cookie, sign);
-    //set unsigned cookie to http._cookie
+    //set cookie to http._cookie
     if (cookie) {
       http._cookie[name] = cookie;
     }
