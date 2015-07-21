@@ -1,7 +1,7 @@
 'use strict';
 
 
-let Valid = think.require('valid');
+let Validate = think.require('validate');
 
 let dbInstances = thinkCache(thinkCache.DB);
 
@@ -345,7 +345,7 @@ export default class {
     if (think.isEmpty(checkData)) {
       return data;
     }
-    let result = Valid(checkData);
+    let result = Validate(checkData);
     if (think.isEmpty(result.msg)) {
       return data;
     }

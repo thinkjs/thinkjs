@@ -63,7 +63,11 @@ think.port = 0;
  * @type {String}
  */
 think.cli = false;
-
+/**
+ * get platform language
+ * @type {String}
+ */
+think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');;
 /**
  * app mode
  * 0x0001: mini
@@ -333,7 +337,7 @@ think.isPrevent = err => {
 think.log = (msg, type) => {
 
   let fn = d => {
-    return ('0' + d).slice(-1);
+    return ('0' + d).slice(-2);
   }
 
   let d = new Date();
@@ -803,7 +807,7 @@ think._http = (data = {}) => {
   if (think.isString(data)) {
     if (data[0] === '{') {
       data = JSON.parse(data);
-    }else if (/^[\w]+\=/.test(data)) {
+    }else if (/^\w+\=/.test(data)) {
       data = querystring.parse(data);
     }else{
       data = {url: data};
@@ -826,6 +830,7 @@ think._http = (data = {}) => {
   };
   let empty = () => {};
   let res = {
+    setTimeout: empty,
     end: data.end || data.close || empty,
     write: data.write || data.send || empty,
     setHeader: empty
@@ -1052,8 +1057,8 @@ think.service = (superClass, methods, module) => {
  * @return {}       []
  */
 think.cache = async (name, value, options = {}) => {
-  let cls = think.adapter('cache', options.type || 'base');
-  let instance = new cls(options);
+  let Cls = think.adapter('cache', options.type || 'base');
+  let instance = new Cls(options);
   // get cache
   if(value === undefined){
     return instance.get(name);
@@ -1083,23 +1088,27 @@ think.cache = async (name, value, options = {}) => {
  */
 think.local = (key, ...data) => {
   let _default = think.config('local.default');
-  //@TODO node in windows no LANG property
-  let lang = process.env.LANG.split('.')[0].replace('_', '-') || _default;
+  let lang = think.lang || _default;
   let config = think.config('local');
-  let values = config[lang] || config[_default];
-  let value = values[key] || key;
+  let value;
+  if(config[lang] && config[lang][key]){
+    value = config[lang][key];
+  }else if(config[_default][key]){
+    value = config[_default][key];
+  }else{
+    value = key;
+  }
   data.unshift(value);
   var msg =  util.format(...data);
   return msg;
 }
 /**
- * valid data
+ * validate data
  * [{
  *   name: 'xxx',
  *   type: 'xxx',
  *   value: 'xxx',
  *   required: true,
- *   default: 'xxx',
  *   args: []
  *   msg: ''
  * }, ...]
@@ -1107,21 +1116,21 @@ think.local = (key, ...data) => {
  * @param  {Function} callback []
  * @return {}            []
  */
-think.valid = (name, callback) => {
-  let valid = thinkCache(thinkCache.COLLECTION, 'valid');
-  if (!valid) {
-    valid = think.require('valid');
-    thinkCache(thinkCache.COLLECTION, 'valid', valid);
+think.validate = (name, callback) => {
+  let validate = thinkCache(thinkCache.VALIDATE);
+  if (think.isEmpty(validate)) {
+    validate = think.require('validate');
+    thinkCache(thinkCache.VALIDATE, validate);
   }
   if (think.isString(name)) {
     // register valid callback
     // think.valid('test', function(){})
     if (think.isFunction(callback)) {
-      valid[name] = callback;
+      thinkCache(thinkCache.VALIDATE, name, callback);
       return;
     }
     // get valid callback
-    return valid[name];
+    return thinkCache(thinkCache.VALIDATE, name);
   }
   // convert object to array
   if (think.isObject(name)) {
@@ -1133,42 +1142,42 @@ think.valid = (name, callback) => {
     }
     name = d;
   }
-  let data = {}, msg = {};
+
+  let msg = {};
   name.forEach(item => {
     // value required
     if (item.required) {
       if (!item.value) {
-        msg[item.name] = think.local('PARAMS_EMPTY', item.name);
+        msg[item.name] = item.required_msg || think.local('PARAMS_EMPTY', item.name);
         return;
       }
     }else{
       if (!item.value) {
-        //set default value
-        if (item.default) {
-          data[item.name] = item.default;
-        }
         return;
       }
     }
-    data[item.name] = item.value;
-    if (!item.type) {
-      return;
+    let type = item.type;
+    if(think.isString(type)){
+      type = validate[item.type];
+    }else if(think.isRegExp(type)){
+      type = function(value){
+        return item.type.test(value);
+      }
     }
-    let type = valid[item.type];
     if (!think.isFunction(type)) {
-      throw new Error(think.local('CONFIG_NOT_FUNCTION', item.type));
+      throw new Error(think.local('CONFIG_NOT_FUNCTION', `${item.name} type`));
     }
     if (!think.isArray(item.args)) {
       item.args = [item.args];
     }
-    item.args = item.args.unshift(item.value);
-    let result = type.apply(valid, item.args);
+    item.args.unshift(item.value);
+    let result = type(...item.args);
     if (!result) {
       let itemMsg = item.msg || think.local('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
     }
   });
-  return {msg, data};
+  return msg;
 };
 
 /**
@@ -1187,13 +1196,15 @@ think.npm = (pkg) => {
       if(version){
         pkgWithVersion += '@' + version;
       }
+    }else{
+      pkg = pkgWithVersion.split('@')[0];
     }
     let cmd = `npm install ${pkgWithVersion}`;
     let deferred = think.defer();
     think.log(`install package ${pkgWithVersion} start`, 'NPM');
     child_process.exec(cmd, {
       cwd: think.THINK_PATH
-    }, (err, stdout, stderr) => {
+    }, err => {
       if(err){
         let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
         think.log(error, 'NPM');

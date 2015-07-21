@@ -1184,10 +1184,11 @@ describe('core/think.js', function(){
     it('timers', function(done){
       think.config('gc.on', true);
       var interval = global.setInterval;
-      global.setInterval = function(fn, interval){
-        assert.equal(interval, 3600000);
+      global.setInterval = function(fn, inter){
+        assert.equal(inter, 3600000);
         assert.equal(think.isFunction(fn), true);
         fn();
+        global.setInterval = interval;
         done();
       }
       var Cls = think.Class({gcType: 'test', gc: function(){}}, true);
@@ -1200,18 +1201,435 @@ describe('core/think.js', function(){
         return true;
       })
       var interval = global.setInterval;
-      global.setInterval = function(fn, interval){
-        assert.equal(interval, 3600000);
+      global.setInterval = function(fn, inter){
+        assert.equal(inter, 3600000);
         assert.equal(think.isFunction(fn), true);
         var data = fn();
         assert.equal(data, 'gc');
         think.config('gc.filter', filter);
+        global.setInterval = interval;
         done();
       }
       var Cls = think.Class({gcType: 'test', gc: function(){
         return 'gc';
       }}, true);
       var data = think.gc(new Cls);
+    })
+  })
+
+  describe('think._http', function(){
+    it('json stringify, with url', function(){
+      var data = {url: "/welefen/suredy"};
+      var result = think._http(JSON.stringify(data));
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('json stringify, without url', function(){
+      var data = {method: "post"};
+      var result = think._http(JSON.stringify(data));
+      assert.equal(result.req.url, "/");
+      assert.equal(result.req.method, 'POST');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('json stringify, url.parse', function(){
+      var data = 'url=/welefen/suredy&method=delete';
+      var result = think._http(data);
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'DELETE');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('data is string', function(){
+      var data = '/welefen/suredy';
+      var result = think._http(data);
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('data is obj', function(){
+      var data = {url: '/welefen/suredy'};
+      var result = think._http(data);
+      assert.equal(result.req.url, "/welefen/suredy");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('data empty', function(){
+      var result = think._http();
+      assert.equal(result.req.url, "/");
+      assert.equal(result.req.method, 'GET');
+      assert.equal(result.req.httpVersion, '1.1')
+    })
+    it('end is function', function(){
+      var result = think._http();
+      assert.equal(think.isFunction(result.res.end), true);
+      assert.equal(result.res.end(), undefined)
+    })
+  })
+
+  describe('think.http', function(){
+    it('get monitor http', function(done){
+      think.http('/welefen/suredy').then(function(http){
+        assert.equal(http.url, '/welefen/suredy');
+        done();
+      })
+    })
+  })
+
+  describe('think.getModule', function(){
+    it('get default module', function(){
+      var module = think.getModule();
+      assert.equal(module, 'home');
+    })
+    it('get mode_mini module', function(){
+      think.mode = think.mode_mini;
+      var module = think.getModule('test');
+      assert.equal(module, 'home');
+    })
+    it('get  module', function(){
+      think.mode = think.mode_normal;
+      var module = think.getModule('test');
+      assert.equal(module, 'test');
+      think.mode = think.mode_mini;
+    })
+  })
+
+  describe('think.getController', function(){
+    it('get default controller', function(){
+      var controller = think.getController();
+      assert.equal(controller, 'index');
+    })
+    it('get controller', function(){
+      var controller = think.getController('TEST');
+      assert.equal(controller, 'test');
+    })
+    it('get invalid controller', function(){
+      var controller = think.getController('011test');
+      assert.equal(controller, '');
+    })
+  })
+
+  describe('think.getAction', function(){
+    it('get default action', function(){
+      var action = think.getAction();
+      assert.equal(action, 'index');
+    })
+    it('get action', function(){
+      var action = think.getAction('TEST');
+      assert.equal(action, 'TEST');
+    })
+    it('get invalid action', function(){
+      var action = think.getAction('011test');
+      assert.equal(action, '');
+    })
+  })
+
+  describe('think.local', function(){
+    it('base', function(){
+      var msg = think.local('CONTROLLER_NOT_FOUND', 'welefen');
+      assert.equal(msg.indexOf('`welefen`') > -1, true)
+    })
+    it('key not found', function(){
+      var msg = think.local('KEY_NOT_FOUND');
+      assert.equal(msg, 'KEY_NOT_FOUND')
+    })
+    it('lang is empty', function(){
+      var lang = think.lang;
+      think.lang = '';
+      var msg = think.local('CONTROLLER_NOT_FOUND', 'welefen');
+      assert.equal(msg.indexOf('`welefen`') > -1, true);
+      think.lang = lang;
+    })
+  })
+
+  describe('think.npm', function(){
+    // it('package is exist', function(done){
+    //   think.npm('multiparty').then(function(data){
+    //     assert.equal(think.isFunction(data.Form), true);
+    //     done();
+    //   })
+    // })
+    // it('install package redis', function(done){
+    //   var log = think.log;
+    //   think.log = function(){}
+
+    //   think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+    //     return think.npm('redis');
+    //   }).then(function(data){
+    //     assert.equal(think.isFunction(data.RedisClient), true);
+    //     think.log = log;
+    //     done();
+    //   })
+      
+    // })
+    // it('install package redis@0.12.1', function(done){
+    //   var log = think.log;
+    //   think.log = function(){}
+
+    //   think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+    //     return think.npm('redis@0.12.1');
+    //   }).then(function(data){
+    //     //console.log(data);
+    //     assert.equal(think.isFunction(data.RedisClient), true);
+    //     think.log = log;
+    //     done();
+    //   }).catch(function(err){
+    //     console.log(err.stack)
+    //   })
+      
+    // })
+    // it('install extra package', function(done){
+    //   var log = think.log;
+    //   think.log = function(){}
+
+    //   think.rmdir(think.THINK_PATH + '/node_modules/uisu-test').then(function(){
+    //     return think.npm('uisu-test');
+    //   }).then(function(data){
+    //     assert.equal(think.isFunction(data.printMsg), true);
+    //     think.log = log;
+    //     done();
+    //   })
+      
+    // })
+    // it('install package not exist', function(done){
+    //   var log = think.log;
+    //   think.log = function(){}
+    //   think.npm('package-not-exist-welefen').catch(function(err){
+    //     assert.equal(err.stack.indexOf('Not Found: package-not-exist-welefen') > -1, true);
+    //     think.log = log;
+    //     done();
+    //   })
+    // })
+  })
+
+  describe('think.validate', function(){
+    it('get validate', function(){
+      var email = think.validate('email');
+      assert.equal(think.isFunction(email), true);
+      assert.equal(email('welefen@gmail.com'), true);
+    })
+    it('register validate', function(){
+      think.validate('welefen', function(value){
+        return value === 'welefen';
+      })
+      var welefen = think.validate('welefen');
+      assert.equal(welefen('welefen'), true);
+    })
+    it('validate array', function(){
+      var data = [{
+        name: 'welefen',
+        value: 'welefen',
+        type: 'email',
+        msg: 'email not valid'
+      }]
+      var msg = think.validate(data);
+      assert.deepEqual(msg, { welefen: 'email not valid' })
+    })
+    it('validate object', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'email',
+          required: true,
+          msg: 'email not valid'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, { welefen: 'email not valid' })
+    })
+    it('validate object, required', function(){
+      var data = {
+        welefen: {
+          value: '',
+          type: 'email',
+          required: true,
+          msg: 'email not valid',
+          required_msg: 'welefen can not be blank'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, { welefen: 'welefen can not be blank' })
+    })
+    it('validate object, required', function(){
+      var data = {
+        welefen: {
+          value: '',
+          type: 'email',
+          required: true,
+          msg: 'email not valid',
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, not required', function(){
+      var data = {
+        welefen: {
+          value: '',
+          type: 'email',
+          msg: 'email not valid',
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {});
+    })
+    it('validate object, regexp, valid', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: /welefen/g,
+          msg: 'not valid',
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {});
+    })
+    it('validate object, regexp, not valid', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: /welefens/g,
+          msg: 'not valid',
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {welefen: 'not valid'});
+    })
+    it('validate object, function', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: function(value){
+            return value === 'welefen';
+          },
+          msg: 'not valid',
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {});
+    })
+    it('validate object, type not function', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: [],
+          msg: 'not valid',
+        }
+      }
+      try{
+        var msg = think.validate(data);
+        assert.equal(1, 2)
+      }catch(e){
+        
+      }
+      
+    })
+    it('validate object, function, args', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: function(value, val){
+            return val === 'suredy';
+          },
+          msg: 'not valid',
+          args: 'suredy'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {});
+    })
+    it('validate object, function, args', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: function(value, val){
+            return val === 'suredy';
+          },
+          msg: 'not valid',
+          args: ['suredy']
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {});
+    })
+
+    it('validate object, no msg', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: function(value){
+            return value === 'fadfasdf';
+          }
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+  })
+
+  describe('think.cache', function(){
+    it('get cache not exist', function(done){
+      think.config('gc.on', false);
+      think.cache('not_exist_xx').then(function(data){
+        assert.equal(data, undefined);
+        done();
+      })
+    })
+    it('get cache exist', function(done){
+      think.config('gc.on', false);
+      think.cache('fadfasdfasd', 'welefen').then(function(){
+        return think.cache('fadfasdfasd');
+      }).then(function(data){
+        assert.equal(data, 'welefen');
+        return think.cache('fadfasdfasd', null)
+      }).then(function(){
+        done();
+      })
+    })
+    it('waiting for function', function(done){
+      think.config('gc.on', false);
+      think.cache('faswwwwwdddf', function(){
+        return 'data__'
+      }).then(function(data){
+        assert.equal(data, 'data__');
+      }).then(function(){
+        return think.cache('faswwwwwdddf')
+      }).then(function(data){
+        assert.equal(data, 'data__');
+        return think.cache('faswwwwwdddf', null);
+      }).then(function(){
+        return think.cache('faswwwwwdddf')
+      }).then(function(data){
+        assert.equal(data, undefined);
+        done();
+      })
+    })
+    it('waiting for function, exist', function(done){
+      think.config('gc.on', false);
+      think.cache('welefen++++', 'welefen').then(function(){
+        return think.cache('welefen++++', function(){
+          assert.equal(1, 2)
+          return 'suredy';
+        }).then(function(data){
+          assert.equal(data, 'welefen');
+          return think.cache('welefen++++', null)
+        }).then(function(){
+          done();
+        })
+      })
+    })
+    it('waiting for function, exist', function(done){
+      think.config('gc.on', false);
+      think.cache('welefen++++', 'welefen', {}).then(function(){
+        return think.cache('welefen++++', function(){
+          assert.equal(1, 2)
+          return 'suredy';
+        }).then(function(data){
+          assert.equal(data, 'welefen');
+          return think.cache('welefen++++', null)
+        }).then(function(){
+          done();
+        })
+      })
     })
   })
 
