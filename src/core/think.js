@@ -755,13 +755,7 @@ think.route = routes => {
   //route config is funciton
   //may be is dynamic save in db
   if (think.isFunction(config)) {
-    let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
-    if(!awaitInstance){
-      let Await = think.require('await');
-      awaitInstance = new Await();
-      thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
-    }
-    return awaitInstance.run('route', () => {
+    return think.await('route', () => {
       let fn = think.co.wrap(config);
       return fn().then((route = []) => {
         thinkCache(thinkCache.COLLECTION, key, route);
@@ -1179,6 +1173,21 @@ think.validate = (name, callback) => {
   });
   return msg;
 };
+/**
+ * await 
+ * @param  {String}   key      []
+ * @param  {Function} callback []
+ * @return {Promise}            []
+ */
+think.await = (key, callback) => {
+  let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
+  if(!awaitInstance){
+    let Await = think.require('await');
+    awaitInstance = new Await();
+    thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
+  }
+  return awaitInstance.run(key, callback);
+}
 
 /**
  * install node package
@@ -1200,20 +1209,21 @@ think.npm = (pkg) => {
       pkg = pkgWithVersion.split('@')[0];
     }
     let cmd = `npm install ${pkgWithVersion}`;
-    let deferred = think.defer();
-    think.log(`install package ${pkgWithVersion} start`, 'NPM');
-    child_process.exec(cmd, {
-      cwd: think.THINK_PATH
-    }, err => {
-      if(err){
-        let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
-        think.log(error, 'NPM');
-        deferred.reject(err);
-      }else{
-        think.log(`install package ${pkgWithVersion} finish`, 'NPM');
-        deferred.resolve(think.require(pkg));
-      }
-    });
-    return deferred.promise;
+    return think.await(cmd, () => {
+      let deferred = think.defer();
+      think.log(`install package ${pkgWithVersion} start`, 'NPM');
+      child_process.exec(cmd, {
+        cwd: think.THINK_PATH
+      }, err => {
+        if(err){
+          let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
+          deferred.reject(err);
+        }else{
+          think.log(`install package ${pkgWithVersion} finish`, 'NPM');
+          deferred.resolve(think.require(pkg));
+        }
+      });
+      return deferred.promise;
+    })
   }
 };
