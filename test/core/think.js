@@ -1184,10 +1184,11 @@ describe('core/think.js', function(){
     it('timers', function(done){
       think.config('gc.on', true);
       var interval = global.setInterval;
-      global.setInterval = function(fn, interval){
-        assert.equal(interval, 3600000);
+      global.setInterval = function(fn, inter){
+        assert.equal(inter, 3600000);
         assert.equal(think.isFunction(fn), true);
         fn();
+        global.setInterval = interval;
         done();
       }
       var Cls = think.Class({gcType: 'test', gc: function(){}}, true);
@@ -1200,8 +1201,8 @@ describe('core/think.js', function(){
         return true;
       })
       var interval = global.setInterval;
-      global.setInterval = function(fn, interval){
-        assert.equal(interval, 3600000);
+      global.setInterval = function(fn, inter){
+        assert.equal(inter, 3600000);
         assert.equal(think.isFunction(fn), true);
         var data = fn();
         assert.equal(data, 'gc');
@@ -1341,12 +1342,12 @@ describe('core/think.js', function(){
   })
 
   describe('think.npm', function(){
-    it('package is exist', function(done){
-      think.npm('multiparty').then(function(data){
-        assert.equal(think.isFunction(data.Form), true);
-        done();
-      })
-    })
+    // it('package is exist', function(done){
+    //   think.npm('multiparty').then(function(data){
+    //     assert.equal(think.isFunction(data.Form), true);
+    //     done();
+    //   })
+    // })
     // it('install package redis', function(done){
     //   var log = think.log;
     //   think.log = function(){}
@@ -1561,13 +1562,75 @@ describe('core/think.js', function(){
         }
       }
       var msg = think.validate(data);
-      console.log(msg)
-      assert.deepEqual(msg.welefen.length >0, true);
+      assert.deepEqual(msg.welefen.length > 0, true);
     })
+  })
 
-
-
-
+  describe('think.cache', function(){
+    it('get cache not exist', function(done){
+      think.config('gc.on', false);
+      think.cache('not_exist_xx').then(function(data){
+        assert.equal(data, undefined);
+        done();
+      })
+    })
+    it('get cache exist', function(done){
+      think.config('gc.on', false);
+      think.cache('fadfasdfasd', 'welefen').then(function(){
+        return think.cache('fadfasdfasd');
+      }).then(function(data){
+        assert.equal(data, 'welefen');
+        return think.cache('fadfasdfasd', null)
+      }).then(function(){
+        done();
+      })
+    })
+    it('waiting for function', function(done){
+      think.config('gc.on', false);
+      think.cache('faswwwwwdddf', function(){
+        return 'data__'
+      }).then(function(data){
+        assert.equal(data, 'data__');
+      }).then(function(){
+        return think.cache('faswwwwwdddf')
+      }).then(function(data){
+        assert.equal(data, 'data__');
+        return think.cache('faswwwwwdddf', null);
+      }).then(function(){
+        return think.cache('faswwwwwdddf')
+      }).then(function(data){
+        assert.equal(data, undefined);
+        done();
+      })
+    })
+    it('waiting for function, exist', function(done){
+      think.config('gc.on', false);
+      think.cache('welefen++++', 'welefen').then(function(){
+        return think.cache('welefen++++', function(){
+          assert.equal(1, 2)
+          return 'suredy';
+        }).then(function(data){
+          assert.equal(data, 'welefen');
+          return think.cache('welefen++++', null)
+        }).then(function(){
+          done();
+        })
+      })
+    })
+    it('waiting for function, exist', function(done){
+      think.config('gc.on', false);
+      think.cache('welefen++++', 'welefen', {}).then(function(){
+        return think.cache('welefen++++', function(){
+          assert.equal(1, 2)
+          return 'suredy';
+        }).then(function(data){
+          assert.equal(data, 'welefen');
+          return think.cache('welefen++++', null)
+        }).then(function(){
+          done();
+        })
+      })
+    })
   })
 
 })

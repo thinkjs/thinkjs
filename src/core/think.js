@@ -1057,8 +1057,8 @@ think.service = (superClass, methods, module) => {
  * @return {}       []
  */
 think.cache = async (name, value, options = {}) => {
-  let cls = think.adapter('cache', options.type || 'base');
-  let instance = new cls(options);
+  let Cls = think.adapter('cache', options.type || 'base');
+  let instance = new Cls(options);
   // get cache
   if(value === undefined){
     return instance.get(name);
@@ -1088,7 +1088,6 @@ think.cache = async (name, value, options = {}) => {
  */
 think.local = (key, ...data) => {
   let _default = think.config('local.default');
-  //@TODO node in windows no LANG property
   let lang = think.lang || _default;
   let config = think.config('local');
   let value;
