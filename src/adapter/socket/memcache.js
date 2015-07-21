@@ -100,7 +100,7 @@ export default class extends think.adapter.socket {
   close(){
     if(this.connection){
       this.connection.close();
-      this.connection = null
+      this.connection = null;
     }
   }
 }

@@ -67,7 +67,7 @@ think.cli = false;
  * get platform language
  * @type {String}
  */
-think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');;
+think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
 /**
  * app mode
  * 0x0001: mini
@@ -338,7 +338,7 @@ think.log = (msg, type) => {
 
   let fn = d => {
     return ('0' + d).slice(-2);
-  }
+  };
 
   let d = new Date();
   let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
@@ -502,7 +502,7 @@ think.hook = (...args) => {
     }
     http.forEach(item => {
       think.hook(name, item, data);
-    })
+    });
     return;
   }
   //remove hook
@@ -761,10 +761,10 @@ think.route = routes => {
         thinkCache(thinkCache.COLLECTION, key, route);
         return route;
       });
-    })
+    });
   }
   thinkCache(thinkCache.COLLECTION, key, config);
-  return config ;
+  return config;
 };
 /**
  * regist gc
@@ -1003,7 +1003,7 @@ think.model = (superClass, methods, module) => {
   //get model instance
   if (think.isString(superClass) && isConfig) {
     methods = think.extend({}, think.config('db'), methods);
-    let base =  methods.type === 'mongo' ? 'model_mongo' : '';
+    let base = methods.type === 'mongo' ? 'model_mongo' : '';
     let cls = think.lookClass(superClass, 'model', module, base);
     return new cls(superClass, methods);
   }
@@ -1093,9 +1093,9 @@ think.local = (key, ...data) => {
     value = key;
   }
   data.unshift(value);
-  var msg =  util.format(...data);
+  var msg = util.format(...data);
   return msg;
-}
+};
 /**
  * validate data
  * [{
@@ -1156,7 +1156,7 @@ think.validate = (name, callback) => {
     }else if(think.isRegExp(type)){
       type = function(value){
         return item.type.test(value);
-      }
+      };
     }
     if (!think.isFunction(type)) {
       throw new Error(think.local('CONFIG_NOT_FUNCTION', `${item.name} type`));
@@ -1187,7 +1187,7 @@ think.await = (key, callback) => {
     thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
   }
   return awaitInstance.run(key, callback);
-}
+};
 
 /**
  * install node package
@@ -1216,7 +1216,7 @@ think.npm = (pkg) => {
         cwd: think.THINK_PATH
       }, err => {
         if(err){
-          let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
+          think.log(new Error(`install package ${pkgWithVersion} error`));
           deferred.reject(err);
         }else{
           think.log(`install package ${pkgWithVersion} finish`, 'NPM');
@@ -1224,6 +1224,6 @@ think.npm = (pkg) => {
         }
       });
       return deferred.promise;
-    })
+    });
   }
 };
