@@ -964,8 +964,8 @@ think.controller = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   // get controller instance
   if (think.isString(superClass) && isConfig) {
-    let cls = think._controller(superClass, 'controller', module);
-    return cls(methods);
+    let Cls = think.lookClass(superClass, 'controller', module);
+    return new Cls(methods);
   }
   let controller = thinkCache(thinkCache.COLLECTION, 'controller');
   if(!controller){
@@ -983,8 +983,8 @@ think.logic = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   //get logic instance
   if (think.isString(superClass) && isConfig) {
-    let cls = think.lookClass(superClass, 'logic', module);
-    return cls(methods);
+    let Cls = think.lookClass(superClass, 'logic', module);
+    return new Cls(methods);
   }
   let logic = thinkCache(thinkCache.COLLECTION, 'logic');
   if(!logic){
@@ -999,10 +999,10 @@ think.logic = (superClass, methods, module) => {
  * @type {Function}
  */
 think.model = (superClass, methods, module) => {
-  let isConfig = methods === true || module;
+  let isConfig = !!module;
   if (!isConfig && methods) {
-    //db configs
-    if ('host' in methods && 'type' in methods && 'port' in methods) {
+    //check is db configs
+    if ('host' in methods && 'type' in methods) {
       isConfig = true;
     }
   }
@@ -1032,14 +1032,14 @@ think.model.MANY_TO_MANY = 4;
  * @type {Function}
  */
 think.service = (superClass, methods, module) => {
-  let isConfig = think.isHttp(methods) || methods === true || module;
+  let isConfig = think.isHttp(methods) || module;
   //get service instance
   if (think.isString(superClass) && isConfig) {
-    let cls = think.lookClass(superClass, 'service', module);
-    if (think.isFunction(cls)) {
-      return new cls(methods);
+    let Cls = think.lookClass(superClass, 'service', module);
+    if (think.isFunction(Cls)) {
+      return new Cls(methods);
     }
-    return cls;
+    return Cls;
   }
   let service = thinkCache(thinkCache.COLLECTION, 'service');
   if(!service){

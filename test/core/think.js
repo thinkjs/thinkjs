@@ -1342,63 +1342,63 @@ describe('core/think.js', function(){
   })
 
   describe('think.npm', function(){
-    // it('package is exist', function(done){
-    //   think.npm('multiparty').then(function(data){
-    //     assert.equal(think.isFunction(data.Form), true);
-    //     done();
-    //   })
-    // })
-    // it('install package redis', function(done){
-    //   var log = think.log;
-    //   think.log = function(){}
+    it('package is exist', function(done){
+      think.npm('multiparty').then(function(data){
+        assert.equal(think.isFunction(data.Form), true);
+        done();
+      })
+    })
+    it('install package redis', function(done){
+      var log = think.log;
+      think.log = function(){}
 
-    //   think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
-    //     return think.npm('redis');
-    //   }).then(function(data){
-    //     assert.equal(think.isFunction(data.RedisClient), true);
-    //     think.log = log;
-    //     done();
-    //   })
+      think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+        return think.npm('redis');
+      }).then(function(data){
+        assert.equal(think.isFunction(data.RedisClient), true);
+        think.log = log;
+        done();
+      })
       
-    // })
-    // it('install package redis@0.12.1', function(done){
-    //   var log = think.log;
-    //   think.log = function(){}
+    })
+    it('install package redis@0.12.1', function(done){
+      var log = think.log;
+      think.log = function(){}
 
-    //   think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
-    //     return think.npm('redis@0.12.1');
-    //   }).then(function(data){
-    //     //console.log(data);
-    //     assert.equal(think.isFunction(data.RedisClient), true);
-    //     think.log = log;
-    //     done();
-    //   }).catch(function(err){
-    //     console.log(err.stack)
-    //   })
+      think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
+        return think.npm('redis@0.12.1');
+      }).then(function(data){
+        //console.log(data);
+        assert.equal(think.isFunction(data.RedisClient), true);
+        think.log = log;
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
       
-    // })
-    // it('install extra package', function(done){
-    //   var log = think.log;
-    //   think.log = function(){}
+    })
+    it('install extra package', function(done){
+      var log = think.log;
+      think.log = function(){}
 
-    //   think.rmdir(think.THINK_PATH + '/node_modules/uisu-test').then(function(){
-    //     return think.npm('uisu-test');
-    //   }).then(function(data){
-    //     assert.equal(think.isFunction(data.printMsg), true);
-    //     think.log = log;
-    //     done();
-    //   })
+      think.rmdir(think.THINK_PATH + '/node_modules/uisu-test').then(function(){
+        return think.npm('uisu-test');
+      }).then(function(data){
+        assert.equal(think.isFunction(data.printMsg), true);
+        think.log = log;
+        done();
+      })
       
-    // })
-    // it('install package not exist', function(done){
-    //   var log = think.log;
-    //   think.log = function(){}
-    //   think.npm('package-not-exist-welefen').catch(function(err){
-    //     assert.equal(err.stack.indexOf('Not Found: package-not-exist-welefen') > -1, true);
-    //     think.log = log;
-    //     done();
-    //   })
-    // })
+    })
+    it('install package not exist', function(done){
+      var log = think.log;
+      think.log = function(){}
+      think.npm('package-not-exist-welefen').catch(function(err){
+        assert.equal(err.stack.indexOf('Not Found: package-not-exist-welefen') > -1, true);
+        think.log = log;
+        done();
+      })
+    })
   })
 
   describe('think.validate', function(){
@@ -1632,6 +1632,159 @@ describe('core/think.js', function(){
       })
     })
   })
+
+  describe('think.service', function(){
+    it('get sub service', function(){
+      var cls = think.service({});
+      assert.equal(think.isFunction(cls), true)
+    })
+    it('get sub service', function(){
+      var cls = think.service({
+        getName: function(){
+          return 'welefen'
+        }
+      });
+      assert.equal(think.isFunction(cls), true);
+      var instance = new cls();
+      assert.equal(instance.getName(), 'welefen')
+    })
+    it('get service instance', function(){
+      var service = think.service('test', {}, 'common');
+      assert.deepEqual(service, { http: {} });
+    })
+    it('get service object', function(){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/test', {
+        welefen: function(){
+          return 'welefen'
+        }
+      });
+      var service = think.service('home/service/test', {}, 'common');
+      assert.deepEqual(service.welefen(), 'welefen');
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/test', null);
+    })
+  })
+
+  describe('think.model', function(){
+    it('get sub model', function(){
+      var cls = think.model({});
+      assert.equal(think.isFunction(cls), true);;
+    })
+    it('get sub model', function(){
+      var cls = think.model({
+        getName: function(){
+          return 'welefen'
+        }
+      });
+      assert.equal(think.isFunction(cls), true);
+      var instance = new cls();
+      assert.equal(instance.getName(), 'welefen')
+    })
+    it('get sub model', function(){
+      var cls = think.model({
+        getName: function(){
+          return 'welefen'
+        }
+      }, {});
+      assert.equal(think.isFunction(cls), true);
+      var instance = new cls();
+      assert.equal(instance.getName(), 'welefen')
+    })
+    it('get model instance', function(){
+      var instance = think.model('test', {
+        host: '127.0.0.1',
+        type: 'mysql'
+      })
+      assert.equal(instance.tablePrefix, 'think_');
+    })
+    it('get model instance', function(){
+      var instance = think.model('test', {
+        host: '127.0.0.1',
+        type: 'mongo'
+      })
+      assert.equal(instance.tablePrefix, 'think_');
+    })
+  })
+
+  describe('think.controller', function(){
+    it('get sub controller', function(){
+      var instance = think.controller({}, {}, 'common');
+      assert.equal(think.isFunction(instance), true)
+    })
+    it('get sub controller', function(done){
+      var cls = think.controller({
+        getName: function(){
+          return 'welefen'
+        }
+      });
+      getHttp().then(function(http){
+        var instance = new cls(http);
+        assert.equal(instance.getName(), 'welefen');
+        done();
+      })
+    })
+    it('get controller instance', function(done){
+      getHttp().then(function(http){
+        var controller = think.controller('test', http);
+        assert.deepEqual(think.isFunction(controller.view), true);
+        done();
+      })
+      
+    })
+    it('get controller object', function(done){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/controller/test', think.controller({
+        welefen: function(){
+          return 'welefen'
+        }
+      }));
+      getHttp().then(function(http){
+        var controller = think.controller('home/controller/test', http);
+        assert.deepEqual(controller.welefen(), 'welefen');
+        thinkCache(thinkCache.ALIAS_EXPORT, 'home/controller/test', null);
+        done();
+      })
+    })
+  })
+
+  describe('think.logic', function(){
+    it('get sub logic', function(){
+      var instance = think.logic({}, {}, 'common');
+      assert.equal(think.isFunction(instance), true)
+    })
+    it('get sub logic', function(done){
+      var cls = think.logic({
+        getName: function(){
+          return 'welefen'
+        }
+      });
+      getHttp().then(function(http){
+        var instance = new cls(http);
+        assert.equal(instance.getName(), 'welefen');
+        done();
+      })
+    })
+    it('get logic instance', function(done){
+      getHttp().then(function(http){
+        var logic = think.logic('test', http);
+        assert.deepEqual(think.isFunction(logic.view), true);
+        done();
+      })
+      
+    })
+    it('get logic object', function(done){
+      thinkCache(thinkCache.ALIAS_EXPORT, 'home/logic/test', think.logic({
+        welefen: function(){
+          return 'welefen'
+        }
+      }));
+      getHttp().then(function(http){
+        var logic = think.logic('home/logic/test', http);
+        assert.deepEqual(logic.welefen(), 'welefen');
+        thinkCache(thinkCache.ALIAS_EXPORT, 'home/logic/test', null);
+        done();
+      })
+    })
+  })
+
 
 })
 
