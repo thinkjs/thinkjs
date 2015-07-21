@@ -665,7 +665,7 @@ describe('core/think.js', function(){
         var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
-        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl','websocket' ]);
+        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis','resource_on','resource_reg','route_on','session','sub_domain','subdomain','timeout','token','tpl', 'validate', 'websocket' ]);
         assert.equal(think.isObject(configs), true);
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
@@ -1497,6 +1497,15 @@ describe('core/think.js', function(){
       }]
       var msg = think.validate(data);
       assert.deepEqual(msg, { welefen: 'email not valid' })
+    })
+    it('validate array, type not set', function(){
+      var data = [{
+        name: 'welefen',
+        value: 'welefen',
+        msg: 'email not valid'
+      }]
+      var msg = think.validate(data);
+      assert.deepEqual(msg, { })
     })
     it('validate object', function(){
       var data = {
