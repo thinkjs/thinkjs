@@ -54,7 +54,7 @@ module.exports = {
   error: {
     file: think.THINK_PATH + '/tpl/error.html',
     detail: false, //show detail message
-    log: true,
+    log: true, //log error message
     code: 500, //http status code
     key: 'errno', //error number
     msg: 'errmsg', //error message

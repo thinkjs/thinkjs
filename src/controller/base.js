@@ -33,6 +33,13 @@ export default class extends think.base {
     return this.http.view();
   }
   /**
+   * get http method
+   * @return {String} []
+   */
+  method(){
+    return this.http.method.toLowerCase();
+  }
+  /**
    * check http method is get
    * @return {Boolean} []
    */
