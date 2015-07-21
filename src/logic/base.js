@@ -35,6 +35,7 @@ export default class extends think.controller.base {
     let result = [];
     let http = this.http;
     let method = this.method();
+    let config = this.config('validate');
     data.forEach(item => {
       //split to array
       ['name', 'method', 'action'].forEach(nitem => {
@@ -75,6 +76,7 @@ export default class extends think.controller.base {
         }
         let value = this[getValueMethod](nameItem) || itemData.default || '';
         itemData.value = value;
+        itemData.required_msg = itemData.required_msg || config.required_msg;
         result.push(itemData);
       });
     });
@@ -89,8 +91,9 @@ export default class extends think.controller.base {
   _validate(data) {
     data = this._parseValidateData(data || this.validate);
     let ret = think.validate(data);
+    let config = this.config('validate');
     if(!think.isEmpty(ret)){
-      return this.fail(400, '', ret);
+      return this.fail(config.code, config.msg, ret);
     }
     //set default value
     data.forEach(item => {
