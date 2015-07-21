@@ -59,11 +59,11 @@ export default class {
     return Promise.resolve();
   }
   /**
-   * remove session data
+   * delete session data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     delete this.data[name];
     return Promise.resolve();
   }

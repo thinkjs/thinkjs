@@ -380,17 +380,4 @@ export default class extends think.base {
   sendTime(name){
     return this.http.sendTime(name);
   }
-  /**
-   * validate data
-   * @param  {Object} data      []
-   * @param  {String} validType []
-   * @return {}           []
-   */
-  valid(data) {
-    let ret = think.validate(data);
-    if(!think.isEmpty(ret.msg)){
-      return this.fail(ret.msg);
-    }
-    return ret;
-  }
 }

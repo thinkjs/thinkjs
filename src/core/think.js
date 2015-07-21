@@ -1057,9 +1057,9 @@ think.cache = async (name, value, options = {}) => {
   if(value === undefined){
     return instance.get(name);
   } 
-  //remove cache
+  //delete cache
   else if(value === null){
-    return instance.rm(name);
+    return instance.delete(name);
   } 
   //get cache waiting for function
   else if(think.isFunction(value)){

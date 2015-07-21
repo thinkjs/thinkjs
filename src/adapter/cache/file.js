@@ -92,11 +92,11 @@ export default class extends think.adapter.cache {
     return deferred.promise;
   }
   /**
-   * remove data
+   * delete data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     let filepath = this.getFilepath(name);
     if (think.isFile(filepath)) {
       let deferred = think.defer();

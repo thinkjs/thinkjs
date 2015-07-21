@@ -97,7 +97,7 @@ describe('adapter/cache/redis.js', function() {
   });
 
   it('remove cache data', function(done) {
-    instance.rm('thinkjs1').then(function() {
+    instance.delete('thinkjs1').then(function() {
       instance.get('thinkjs1').then(function(data) {
         assert.equal(data, undefined);
         done();
@@ -128,9 +128,6 @@ describe('adapter/cache/redis.js', function() {
   after(function() {
     think.APP_PATH = think.RESOURCE_PATH = testAppPath;
     think.rmdir(testAppPath);
-    // think.cli = false;
-    // think.mode = think.mode_mini;
-    // think.module = [];
   });
 
 });

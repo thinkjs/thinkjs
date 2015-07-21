@@ -65,11 +65,11 @@ export default class extends think.adapter.cache {
     }
   }
   /**
-   * rm data
+   * delete data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     return this.memcache.delete(this.keyPrefix + name);
   }
 }

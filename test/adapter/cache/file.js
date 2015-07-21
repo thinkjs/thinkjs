@@ -88,7 +88,7 @@ describe('adapter/cache/file.js', function() {
   });
 
   it('remove cache data', function(done) {
-    instance.rm('thinkjs1').then(function() {
+    instance.delete('thinkjs1').then(function() {
       instance.get('thinkjs1').then(function(data) {
         assert.equal(data, undefined);
         done();
@@ -142,9 +142,7 @@ describe('adapter/cache/file.js', function() {
   });
 
   after(function() {
-    // think.cli = false;
-    // think.mode = think.mode_mini;
-    // think.module = [];
+
   });
 
 });

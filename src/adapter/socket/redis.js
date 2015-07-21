@@ -20,7 +20,7 @@ export default class extends think.adapter.socket {
    * connect redis
    * @return {Promise} []
    */
-  async connect(){
+  async getConnection(){
     if (this.connection) {
       return this.deferred.promise;
     }
@@ -31,7 +31,7 @@ export default class extends think.adapter.socket {
       connection.auth(this.config.password, () => {});
     }
     connection.on('ready', () => {
-      deferred.resolve();
+      deferred.resolve(connection);
     });
     connection.on('connect', () => {
       deferred.resolve();
@@ -53,8 +53,8 @@ export default class extends think.adapter.socket {
    * @return {}            []
    */
   on(event, callback){
-    this.connect().then(() => {
-      this.connection.on(event, callback);
+    this.getConnection().then(connection => {
+      connection.on(event, callback);
     });
   }
   /**
@@ -64,7 +64,7 @@ export default class extends think.adapter.socket {
    * @return {Promise}         []
    */
   async wrap(name, ...data){
-    await this.connect();
+    await this.getConnection();
     let deferred = think.defer();
     data.push((err, data) => err ? deferred.reject(err) : deferred.resolve(data));
     this.connection[name].apply(this.connection, data);
