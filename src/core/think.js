@@ -1151,6 +1151,10 @@ think.validate = (name, callback) => {
       }
     }
     let type = item.type;
+    //type is not set, only check data is required
+    if(!type){
+      return;
+    }
     if(think.isString(type)){
       type = validate[item.type];
     }else if(think.isRegExp(type)){

@@ -1505,7 +1505,7 @@ describe('core/think.js', function(){
         msg: 'email not valid'
       }]
       var msg = think.validate(data);
-      assert.deepEqual(msg, { })
+      assert.deepEqual(msg, {})
     })
     it('validate object', function(){
       var data = {
