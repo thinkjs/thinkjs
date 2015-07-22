@@ -52,7 +52,7 @@ export default class extends think.adapter.socket {
     }
     connection[name](...args);
     return deferred.promise.catch(err => {
-      err = think.error(err, `${this.config.host}:${this.config.port}`);
+      err = think.error(err, `memcache://${this.config.host}:${this.config.port}`);
       return think.reject(new Error(err.message));
     });
   }
