@@ -1950,7 +1950,29 @@ describe('core/think.js', function(){
       })
     })
   })
-
+  
+  describe('think.error', function(){
+    it('not error', function(){
+      var msg = think.error('welefen');
+      assert.equal(think.isError(msg), true);
+      assert.equal(msg.message, 'welefen')
+    })
+    it('error contain', function(){
+      var msg = think.error(new Error('EACCES'));
+      assert.equal(think.isError(msg), true);
+      assert.equal(msg.message, 'Permission denied. http://www.thinkjs.org/doc/error.html#EACCES')
+    })
+    it('error contain, addon', function(){
+      var msg = think.error(new Error('EACCES'), 'haha');
+      assert.equal(think.isError(msg), true);
+      assert.equal(msg.message, 'Permission denied, haha. http://www.thinkjs.org/doc/error.html#EACCES')
+    })
+    it('error, not contain', function(){
+      var msg = think.error(new Error('suredy'));
+      assert.equal(think.isError(msg), true);
+      assert.equal(msg.message, 'suredy')
+    })
+  })
 
 })
 
