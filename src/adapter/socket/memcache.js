@@ -12,6 +12,7 @@ export default class extends think.adapter.socket {
     this.config = think.extend({
       host: '127.0.0.1',
       port: 11211,
+      username: '',
       password: ''
     }, config);
     this.connection = null;
