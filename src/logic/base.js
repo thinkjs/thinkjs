@@ -44,14 +44,14 @@ export default class extends think.controller.base {
         }
       });
       item.name.forEach(nameItem => {
-        let itemData = think.extend(item, {name: nameItem});
+        let itemData = think.extend({}, item, {name: nameItem});
         //method is not contained
         if(itemData.method && itemData.method.indexOf(method) === -1){
           return;
         }
         //action is not contained
         if(item.action){
-          let actions = item.aciton.map(actionItem => {
+          let actions = item.action.map(actionItem => {
             actionItem = actionItem.split('/');
             let action = actionItem.pop();
             let controller = actionItem.pop() || http.controller;
@@ -89,7 +89,11 @@ export default class extends think.controller.base {
    * @return {}           []
    */
   _validate(data) {
-    data = this._parseValidateData(data || this.validate);
+    data = data || this.validate;
+    if(think.isEmpty(data)){
+      return;
+    }
+    data = this._parseValidateData(data);
     let ret = think.validate(data);
     let config = this.config('validate');
     if(!think.isEmpty(ret)){
