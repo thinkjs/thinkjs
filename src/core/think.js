@@ -67,7 +67,7 @@ think.cli = false;
  * get platform language
  * @type {String}
  */
-think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');;
+think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
 /**
  * app mode
  * 0x0001: mini
@@ -338,7 +338,7 @@ think.log = (msg, type) => {
 
   let fn = d => {
     return ('0' + d).slice(-2);
-  }
+  };
 
   let d = new Date();
   let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
@@ -502,7 +502,7 @@ think.hook = (...args) => {
     }
     http.forEach(item => {
       think.hook(name, item, data);
-    })
+    });
     return;
   }
   //remove hook
@@ -755,22 +755,16 @@ think.route = routes => {
   //route config is funciton
   //may be is dynamic save in db
   if (think.isFunction(config)) {
-    let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
-    if(!awaitInstance){
-      let Await = think.require('await');
-      awaitInstance = new Await();
-      thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
-    }
-    return awaitInstance.run('route', () => {
+    return think.await('route', () => {
       let fn = think.co.wrap(config);
       return fn().then((route = []) => {
         thinkCache(thinkCache.COLLECTION, key, route);
         return route;
       });
-    })
+    });
   }
   thinkCache(thinkCache.COLLECTION, key, config);
-  return config ;
+  return config;
 };
 /**
  * regist gc
@@ -884,7 +878,7 @@ think.session = http => {
   //validate cookie sign
   if (cookie && sign) {
     cookie = Cookie.unsign(cookie, sign);
-    //set unsigned cookie to http._cookie
+    //set cookie to http._cookie
     if (cookie) {
       http._cookie[name] = cookie;
     }
@@ -964,8 +958,8 @@ think.controller = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   // get controller instance
   if (think.isString(superClass) && isConfig) {
-    let cls = think._controller(superClass, 'controller', module);
-    return cls(methods);
+    let Cls = think.lookClass(superClass, 'controller', module);
+    return new Cls(methods);
   }
   let controller = thinkCache(thinkCache.COLLECTION, 'controller');
   if(!controller){
@@ -983,8 +977,8 @@ think.logic = (superClass, methods, module) => {
   let isConfig = think.isHttp(methods) || module;
   //get logic instance
   if (think.isString(superClass) && isConfig) {
-    let cls = think.lookClass(superClass, 'logic', module);
-    return cls(methods);
+    let Cls = think.lookClass(superClass, 'logic', module);
+    return new Cls(methods);
   }
   let logic = thinkCache(thinkCache.COLLECTION, 'logic');
   if(!logic){
@@ -999,17 +993,17 @@ think.logic = (superClass, methods, module) => {
  * @type {Function}
  */
 think.model = (superClass, methods, module) => {
-  let isConfig = methods === true || module;
+  let isConfig = !!module;
   if (!isConfig && methods) {
-    //db configs
-    if ('host' in methods && 'type' in methods && 'port' in methods) {
+    //check is db configs
+    if ('host' in methods && 'type' in methods) {
       isConfig = true;
     }
   }
   //get model instance
   if (think.isString(superClass) && isConfig) {
     methods = think.extend({}, think.config('db'), methods);
-    let base =  methods.type === 'mongo' ? 'model_mongo' : '';
+    let base = methods.type === 'mongo' ? 'model_mongo' : '';
     let cls = think.lookClass(superClass, 'model', module, base);
     return new cls(superClass, methods);
   }
@@ -1032,14 +1026,14 @@ think.model.MANY_TO_MANY = 4;
  * @type {Function}
  */
 think.service = (superClass, methods, module) => {
-  let isConfig = think.isHttp(methods) || methods === true || module;
+  let isConfig = think.isHttp(methods) || module;
   //get service instance
   if (think.isString(superClass) && isConfig) {
-    let cls = think.lookClass(superClass, 'service', module);
-    if (think.isFunction(cls)) {
-      return new cls(methods);
+    let Cls = think.lookClass(superClass, 'service', module);
+    if (think.isFunction(Cls)) {
+      return new Cls(methods);
     }
-    return cls;
+    return Cls;
   }
   let service = thinkCache(thinkCache.COLLECTION, 'service');
   if(!service){
@@ -1063,9 +1057,9 @@ think.cache = async (name, value, options = {}) => {
   if(value === undefined){
     return instance.get(name);
   } 
-  //remove cache
+  //delete cache
   else if(value === null){
-    return instance.rm(name);
+    return instance.delete(name);
   } 
   //get cache waiting for function
   else if(think.isFunction(value)){
@@ -1099,9 +1093,9 @@ think.local = (key, ...data) => {
     value = key;
   }
   data.unshift(value);
-  var msg =  util.format(...data);
+  var msg = util.format(...data);
   return msg;
-}
+};
 /**
  * validate data
  * [{
@@ -1157,12 +1151,16 @@ think.validate = (name, callback) => {
       }
     }
     let type = item.type;
+    //type is not set, only check data is required
+    if(!type){
+      return;
+    }
     if(think.isString(type)){
       type = validate[item.type];
     }else if(think.isRegExp(type)){
       type = function(value){
         return item.type.test(value);
-      }
+      };
     }
     if (!think.isFunction(type)) {
       throw new Error(think.local('CONFIG_NOT_FUNCTION', `${item.name} type`));
@@ -1179,6 +1177,21 @@ think.validate = (name, callback) => {
   });
   return msg;
 };
+/**
+ * await 
+ * @param  {String}   key      []
+ * @param  {Function} callback []
+ * @return {Promise}            []
+ */
+think.await = (key, callback) => {
+  let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
+  if(!awaitInstance){
+    let Await = think.require('await');
+    awaitInstance = new Await();
+    thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
+  }
+  return awaitInstance.run(key, callback);
+};
 
 /**
  * install node package
@@ -1187,7 +1200,7 @@ think.validate = (name, callback) => {
  */
 think.npm = (pkg) => {
   try{
-    return Promise.resolve(require(pkg));
+    return Promise.resolve(think.require(pkg));
   } catch(e){
     let pkgWithVersion = pkg;
     //get package version
@@ -1200,20 +1213,21 @@ think.npm = (pkg) => {
       pkg = pkgWithVersion.split('@')[0];
     }
     let cmd = `npm install ${pkgWithVersion}`;
-    let deferred = think.defer();
-    think.log(`install package ${pkgWithVersion} start`, 'NPM');
-    child_process.exec(cmd, {
-      cwd: think.THINK_PATH
-    }, err => {
-      if(err){
-        let error = new Error(`install package ${pkgWithVersion} error\n` + err.stack);
-        think.log(error, 'NPM');
-        deferred.reject(err);
-      }else{
-        think.log(`install package ${pkgWithVersion} finish`, 'NPM');
-        deferred.resolve(require(pkg));
-      }
+    return think.await(cmd, () => {
+      let deferred = think.defer();
+      think.log(`install package ${pkgWithVersion} start`, 'NPM');
+      child_process.exec(cmd, {
+        cwd: think.THINK_PATH
+      }, err => {
+        if(err){
+          think.log(new Error(`install package ${pkgWithVersion} error`));
+          deferred.reject(err);
+        }else{
+          think.log(`install package ${pkgWithVersion} finish`, 'NPM');
+          deferred.resolve(think.require(pkg));
+        }
+      });
+      return deferred.promise;
     });
-    return deferred.promise;
   }
 };

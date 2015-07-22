@@ -54,11 +54,16 @@ module.exports = {
   error: {
     file: think.THINK_PATH + '/tpl/error.html',
     detail: false, //show detail message
-    log: true,
+    log: true, //log error message
     code: 500, //http status code
     key: 'errno', //error number
     msg: 'errmsg', //error message
     value: 1000 //default errno
+  },
+  validate: {
+    code: 400, //errno
+    msg: '', //common errmsg
+    required_msg: '', //errmsg on required
   },
   cookie: {
     domain: '',
@@ -140,7 +145,10 @@ module.exports = {
   },
   memcache: {
     host: '127.0.0.1',
-    port: 11211
+    port: 11211,
+    username: '',
+    password: '',
+    timeout: 0
   },
   redis: {
     host: '127.0.0.1',
@@ -153,6 +161,7 @@ module.exports = {
     sqlite3: '3.0.8',
     ejs: '2.3.2',
     jade: '1.11.0',
-    mongodb: '2.0.36'
+    mongodb: '2.0.36',
+    memjs: '0.8.5'
   }
 };

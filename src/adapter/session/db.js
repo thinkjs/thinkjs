@@ -80,11 +80,11 @@ export default class extends think.adapter.session {
     });
   }
   /**
-   * rm data
+   * delete data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     return this.getData().then(() => {
       this.isChanged = true;
       if(name){

@@ -443,7 +443,7 @@ export default class {
           if (think.isIP(item)) {
             return item;
           }
-        })
+        });
       }
       ip = this.headers['x-real-ip'];
     }else{

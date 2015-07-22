@@ -24,7 +24,7 @@ export default class extends think.adapter.cache {
 
     let key = think.md5(JSON.stringify(options));
     if (!(key in instances)) {
-      instances[key] = new memcacheSocket(options.host, options.port);
+      instances[key] = new memcacheSocket(options);
     }
     this.memcache = instances[key];
   }
@@ -65,11 +65,11 @@ export default class extends think.adapter.cache {
     }
   }
   /**
-   * rm data
+   * delete data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     return this.memcache.delete(this.keyPrefix + name);
   }
 }

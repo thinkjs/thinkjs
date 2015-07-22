@@ -1,6 +1,6 @@
 'use strict';
 /**
- * auth
+ * Role-Based Access Control
   
 DROP TABLE IF EXISTS `think_auth_role`;
 CREATE TABLE `think_auth_role` (
@@ -33,7 +33,7 @@ CREATE TABLE `think_auth_user_role` (
   UNIQUE KEY `user_role` (`user_id`,`role_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
- * @type {[type]}
+ * @type {Class}
  */
 export default class extends think.base {
   /**

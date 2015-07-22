@@ -73,11 +73,11 @@ export default class {
     return Promise.resolve();
   }
   /**
-   * remove session data
+   * delete session data
    * @param  {String} name []
    * @return {Promise}      []
    */
-  rm(name){
+  delete(name){
     if(this.cookie in this.data){
       if(name){
         delete this.data[this.cookie].data[name];
