@@ -1,6 +1,7 @@
 'use strict';
 /**
  * system error message
+ * http://man7.org/linux/man-pages/man3/errno.3.html
  */
 export default {
   E2BIG           : "Argument list too long",
