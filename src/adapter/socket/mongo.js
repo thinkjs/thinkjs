@@ -58,7 +58,7 @@ export default class extends think.adapter.socket {
         }
       });
       return deferred.promise;
-    })
+    });
   }
   /**
    * close mongo socket connection

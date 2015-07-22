@@ -351,7 +351,7 @@ think.log = (msg, type) => {
       return;
     }
     thinkCache(thinkCache.COLLECTION, 'prev_error', msg);
-    console.error(dateTime + colors.red('[Error] ') + msg.stack);
+    console.error(dateTime + colors.red('[Error] ') + msg.message);
     return;
   }else if(think.isFunction(msg)){
     msg = msg(colors);
@@ -428,7 +428,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   if(think.isDir(rootPath)){
     let filters = ['config', 'debug', 'cli'];
     if(module === true){
-      filters.push('alias', 'hook', 'transform');
+      filters.push('alias', 'hook', 'transform', 'error');
     }
     //load conf
     let loadConf = (path, extraConfig) => {
@@ -1229,5 +1229,31 @@ think.npm = (pkg) => {
       });
       return deferred.promise;
     });
+  }
+};
+/**
+ * get error
+ * @param  {Error} err   []
+ * @param  {String} addon []
+ * @return {Error}       []
+ */
+think.error = (err, addon) => {
+  if(think.isError(err)){
+    let message = err.message;
+    let errors = thinkCache(thinkCache.ERROR);
+    let key, value;
+    for(key in errors){
+      if(message.indexOf(key) > -1){
+        value = errors[key];
+        break;
+      }
+    }
+    if(value){
+      let msg = `${value}, ${addon}. http://www.thinkjs.org/doc/error.html#${key}`;
+      return new Error(msg);
+    }
+    return err;
+  }else{
+    return new Error(err);
   }
 };

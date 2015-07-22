@@ -124,3 +124,8 @@ thinkCache.VALIDATE = 'validate';
  * @type {String}
  */
 thinkCache.COLLECTION = 'collection';
+/**
+ * system error message
+ * @type {String}
+ */
+thinkCache.ERROR = 'error';

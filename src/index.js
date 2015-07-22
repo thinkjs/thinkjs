@@ -299,6 +299,14 @@ export default class {
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**
+   * load system error message
+   * @return {} []
+   */
+  loadError(){
+    let message = require(think.THINK_LIB_PATH + '/config/error.js');
+    thinkCache(thinkCache.ERROR, message);
+  }
+  /**
    * load all config or modules
    * @return {} []
    */
@@ -316,6 +324,7 @@ export default class {
     this.loadCallController();
     this.loadHook();
     this.loadTemplate();
+    this.loadError();
 
     //load alias export at last
     //this.loadAliasExport();
