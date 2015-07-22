@@ -27,7 +27,7 @@ export default class extends think.adapter.socket {
     }
     let redis = await think.npm('redis');
     let config = this.config;
-    let str = `${config.host}:${config.port}`;
+    let str = `redis://${config.host}:${config.port}`;
     return think.await(str, () => {
       let deferred = think.defer();
       let connection = redis.createClient(config.port, config.host, config);
