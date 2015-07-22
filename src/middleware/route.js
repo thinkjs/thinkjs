@@ -47,7 +47,7 @@ export default class extends think.middleware.base {
       }
       rule = item[0];
       //regexp route
-      if (think.isRegexp(rule)) {
+      if (think.isRegExp(rule)) {
         match = pathname.match(rule);
         if (match) {
           this.parseRegExpRule(match, route);
