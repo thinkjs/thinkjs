@@ -18,7 +18,6 @@ export default class extends think.adapter.socket {
     }, config);
 
     this.connection = null;
-    this.deferred = null;
   }
   /**
    * get connection
@@ -26,12 +25,11 @@ export default class extends think.adapter.socket {
    */
   async getConnection(){
     if(this.connection){
-      return this.deferred.promise;
+      return this.connection;
     }
-    let deferred = think.defer();
     let mongo = await think.npm('mongodb');
-    let auth = '';
     let config = this.config;
+    let auth = '';
 
     this.mongo = mongo;
     if(this.config.user){
@@ -44,20 +42,23 @@ export default class extends think.adapter.socket {
       options = '?' + querystring.stringify(config.options);
     }
     let url = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
-    mongo.MongoClient.connect(url, this.config, (err, connection) => {
-      if(err){
-        deferred.reject(err);
-      }else{
-        //set logger level
-        if(config.log_level){
-          mongo.Logger.setLevel(config.log_level);
+    
+    return think.await(url, () => {
+      let deferred = think.defer();
+      mongo.MongoClient.connect(url, this.config, (err, connection) => {
+        if(err){
+          deferred.reject(err);
+        }else{
+          //set logger level
+          if(config.log_level){
+            mongo.Logger.setLevel(config.log_level);
+          }
+          this.connection = connection;
+          deferred.resolve(connection);
         }
-        this.connection = connection;
-        deferred.resolve(this.connection);
-      }
-    });
-    this.deferred = deferred;
-    return deferred.promise;
+      });
+      return deferred.promise;
+    })
   }
   /**
    * close mongo socket connection
