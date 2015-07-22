@@ -368,6 +368,10 @@ think.log = (msg, type) => {
  * @return {mixed} []
  */
 think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
+  //get module config
+  if(think.isString(data)){
+    data = think.getModuleConfig(data);
+  }
   // get all config
   // think.config();
   if (name === undefined) {
