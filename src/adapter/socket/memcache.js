@@ -9,13 +9,14 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config = {}){
+    super.init(config);
+    
     this.config = think.extend({
       host: '127.0.0.1',
       port: 11211,
       username: '',
       password: ''
     }, config);
-    this.connection = null;
   }
   /**
    * get connection
@@ -100,15 +101,5 @@ export default class extends think.adapter.socket {
    */
   decrement(key, amount, timeout = this.config.timeout){
     return this.wrap('decrement', key, amount, timeout);
-  }
-  /**
-   * close socket connection
-   * @return {} []
-   */
-  close(){
-    if(this.connection){
-      this.connection.close();
-      this.connection = null;
-    }
   }
 }

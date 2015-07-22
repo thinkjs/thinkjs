@@ -14,6 +14,16 @@ export default class {
    * @return {} []
    */
   init(){
-
+    this.connection = null;
+  }
+  /**
+   * close socket connection
+   * @return {} []
+   */
+  close(){
+    if(this.connection){
+      this.connection.close();
+      this.connection = null;
+    }
   }
 }

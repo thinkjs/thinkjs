@@ -12,12 +12,12 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config){
+    super.init(config);
+
     this.config = think.extend({}, {
       host: '127.0.0.1',
       port: 27017
     }, config);
-
-    this.connection = null;
   }
   /**
    * get connection
@@ -62,15 +62,5 @@ export default class extends think.adapter.socket {
         return think.reject(new Error(err.message));
       });
     });
-  }
-  /**
-   * close mongo socket connection
-   * @return {} []
-   */
-  close(){
-    if(this.connection){
-      this.connection.close();
-      this.connection = null;
-    }
   }
 }

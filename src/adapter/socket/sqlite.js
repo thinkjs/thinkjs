@@ -9,13 +9,14 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config = {}){
+    super.init(config);
+
     if(config.path === true){
       config.path = ':memory:';
     }else if(!config.path){
       config.path = think.getPath(undefined, `${think.dirname.runtime}/db/${config.name}.sqlite`);
     }
     this.config = config;
-    this.connection = null;
     this.deferred = null;
   }
   /**
@@ -90,15 +91,5 @@ export default class extends think.adapter.socket {
       }
     });
     return deferred.promise;
-  }
-  /**
-   * close connections
-   * @return {} []
-   */
-  close(){
-    if(this.connection){
-      this.connection.close();
-      this.connection = null;
-    }
   }
 }
