@@ -375,12 +375,23 @@ export default class {
     thinkCache(thinkCache.TIMER, 'auto_reload', timer);
   }
   /**
+   * capture error
+   * @return {} []
+   */
+  captureError(){
+    process.on('uncaughtException', function(err){
+      err = think.error(err, 'port:' + think.config('port'));
+      think.log(err);
+    })
+  }
+  /**
    * start
    * @return {} []
    */
   start(){
     this.checkEnv();
     this.load();
+    this.captureError();
     if (think.config('auto_reload')) {
       this.autoReload();
     }
@@ -390,8 +401,8 @@ export default class {
    * @return {} []
    */
   async run(){
+    this.start();
     try{
-      this.start();
       await think.require('app').run();
     }catch(err){
       think.log(err);
