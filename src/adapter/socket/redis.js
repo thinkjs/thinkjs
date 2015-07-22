@@ -26,10 +26,10 @@ export default class extends think.adapter.socket {
       return this.connection;
     }
     let redis = await think.npm('redis');
-    let deferred = think.defer();
     let config = this.config;
     let str = `${config.host}:${config.port}`;
     return think.await(str, () => {
+      let deferred = think.defer();
       let connection = redis.createClient(config.port, config.host, config);
       if (config.password) {
         connection.auth(config.password, () => {});
@@ -41,7 +41,7 @@ export default class extends think.adapter.socket {
       connection.on('error', err => {
         deferred.reject(err);
       });
-      return this.deferred.promise.catch(err => {
+      return deferred.promise.catch(err => {
         err = think.error(err, str);
         return think.reject(new Error(err.message));
       });

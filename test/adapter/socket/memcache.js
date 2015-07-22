@@ -58,6 +58,28 @@ describe('adapter/socket/memcache.js', function(){
       done();
     });
   })
+  it('getConnection config', function(done){
+    var npm = think.npm;
+    think.npm = function(name){
+      return {
+        Client: {
+          create: function(str){
+            assert.equal(str, 'welefen:suredy@www.welefen.com:99999');
+          }
+        }
+      }
+    }
+    var instance = new memcacheSocket({
+      host: 'www.welefen.com',
+      port: 99999,
+      username: 'welefen',
+      password: 'suredy'
+    });
+    instance.getConnection().then(function(){
+      think.npm = npm;
+      done();
+    });
+  })
   it('getConnection config, connection exist', function(done){
     var npm = think.npm;
     think.npm = function(name){
