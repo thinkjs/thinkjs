@@ -13,9 +13,9 @@ export default class extends think.adapter.socket {
 
     this.config = think.extend({}, {
       port: 6379,
-      host: '127.0.0.1'
+      host: '127.0.0.1',
+      password: ''
     }, config);
-    this.deferred = null;
   }
   /**
    * connect redis
@@ -23,29 +23,29 @@ export default class extends think.adapter.socket {
    */
   async getConnection(){
     if (this.connection) {
-      return this.deferred.promise;
+      return this.connection;
     }
-    let deferred = think.defer();
     let redis = await think.npm('redis');
-    let connection = redis.createClient(this.config.port, this.config.host, this.config);
-    if (this.config.password) {
-      connection.auth(this.config.password, () => {});
-    }
-    connection.on('ready', () => {
-      deferred.resolve(connection);
+    let deferred = think.defer();
+    let config = this.config;
+    let str = `${config.host}:${config.port}`;
+    return think.await(str, () => {
+      let connection = redis.createClient(config.port, config.host, config);
+      if (config.password) {
+        connection.auth(config.password, () => {});
+      }
+      connection.on('connect', () => {
+        this.connection = connection;
+        deferred.resolve(connection);
+      });
+      connection.on('error', err => {
+        deferred.reject(err);
+      });
+      return this.deferred.promise.catch(err => {
+        err = think.error(err, str);
+        return think.reject(new Error(err.message));
+      });
     });
-    connection.on('connect', () => {
-      deferred.resolve();
-    });
-    connection.on('error', () => {
-      this.close();
-    });
-    connection.on('end', () => {
-      this.close();
-    });
-    this.connection = connection;
-    this.deferred = deferred;
-    return this.deferred.promise;
   }
   /**
    * add event
@@ -108,5 +108,15 @@ export default class extends think.adapter.socket {
    */
   delete(name){
     return this.wrap('del', name);
+  }
+  /**
+   * close socket connection
+   * @return {} []
+   */
+  close(){
+    if(this.connection){
+      this.connection.end();
+      this.connection = null;
+    }
   }
 }

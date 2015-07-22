@@ -41,11 +41,11 @@ export default class extends think.adapter.socket {
     if(config.options){
       options = '?' + querystring.stringify(config.options);
     }
-    let url = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
+    let str = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
     
-    return think.await(url, () => {
+    return think.await(str, () => {
       let deferred = think.defer();
-      mongo.MongoClient.connect(url, this.config, (err, connection) => {
+      mongo.MongoClient.connect(str, this.config, (err, connection) => {
         if(err){
           deferred.reject(err);
         }else{

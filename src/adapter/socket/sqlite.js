@@ -17,7 +17,6 @@ export default class extends think.adapter.socket {
       config.path = think.getPath(undefined, `${think.dirname.runtime}/db/${config.name}.sqlite`);
     }
     this.config = config;
-    this.deferred = null;
   }
   /**
    * get connection
@@ -25,28 +24,28 @@ export default class extends think.adapter.socket {
    */
   async getConnection(){
     if(this.connection){
-      return this.deferred.promise;
+      return this.connection;
     }
     let sqlite = await think.npm('sqlite3');
     if(think.debug){
       sqlite = sqlite.verbose();
     }
-    let deferred = think.defer();
-    let db = new sqlite.Database(this.config.path, err => {
-      if(err){
-        deferred.reject(err);
-        this.close();
-      }else {
-        deferred.resolve(db);
+    return think.await(this.config.path, () => {
+      let deferred = think.defer();
+      let db = new sqlite.Database(this.config.path, err => {
+        if(err){
+          deferred.reject(err);
+        }else {
+          this.connection = db;
+          deferred.resolve(db);
+        }
+      });
+      //set timeout
+      if(this.config.timeout){
+        db.configure('busyTimeout', this.config.timeout * 1000);
       }
+      return deferred.promise;
     });
-    //set timeout
-    if(this.config.timeout){
-      db.configure('busyTimeout', this.config.timeout * 1000);
-    }
-    this.connection = db;
-    this.deferred = deferred;
-    return deferred.promise;
   }
   /**
    * query sql
@@ -83,13 +82,7 @@ export default class extends think.adapter.socket {
     }
     let connection = await this.getConnection();
     let deferred = think.defer();
-    connection.all(sql, function(err, data){
-      if(err){
-        deferred.reject(err);
-      }else{
-        deferred.resolve(data);
-      }
-    });
+    connection.all(sql, (err, data) => err ? deferred.reject(err) : deferred.resolve(data));
     return deferred.promise;
   }
 }
