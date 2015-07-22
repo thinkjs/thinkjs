@@ -39,6 +39,7 @@ export default class extends think.adapter.socket {
         deferred.resolve(connection);
       });
       connection.on('error', err => {
+        this.close();
         deferred.reject(err);
       });
       return deferred.promise.catch(err => {
