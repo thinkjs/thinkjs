@@ -162,6 +162,7 @@ describe('adapter/socket/memcache.js', function(){
   })
   it('get data error', function(done){
     var npm = think.npm;
+    var reject = think.reject;
     think.npm = function(name){
       return {
         Client: {
@@ -177,6 +178,9 @@ describe('adapter/socket/memcache.js', function(){
         }
       }
     }
+    think.reject = function(err){
+      return Promise.reject(err);
+    }
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
@@ -184,6 +188,7 @@ describe('adapter/socket/memcache.js', function(){
     instance.get('welefen').catch(function(err){
       assert.deepEqual(err.message, 'suredy')
       think.npm = npm;
+      think.reject = reject;
       done();
     })
   })
@@ -248,6 +253,7 @@ describe('adapter/socket/memcache.js', function(){
   })
   it('set data error', function(done){
     var npm = think.npm;
+    var reject = think.reject;
     think.npm = function(name){
       return {
         Client: {
@@ -266,12 +272,16 @@ describe('adapter/socket/memcache.js', function(){
         }
       }
     }
+    think.reject = function(err){
+      return Promise.reject(err);
+    };
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.set('welefen', 'suredy', 1000).catch(function(){
       think.npm = npm;
+      think.reject = reject;
       done();
     })
   })
@@ -304,6 +314,7 @@ describe('adapter/socket/memcache.js', function(){
   })
   it('delete data error', function(done){
     var npm = think.npm;
+    var reject = think.reject
     think.npm = function(name){
       return {
         Client: {
@@ -320,6 +331,9 @@ describe('adapter/socket/memcache.js', function(){
         }
       }
     }
+    think.reject = function(err){
+      return Promise.reject(err)
+    }
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
@@ -327,6 +341,7 @@ describe('adapter/socket/memcache.js', function(){
     instance.delete('welefen').catch(function(err){
       assert.equal(err.message, 'error')
       think.npm = npm;
+      think.reject = reject;
       done();
     })
   })
@@ -389,6 +404,7 @@ describe('adapter/socket/memcache.js', function(){
   })
   it('increment error', function(done){
     var npm = think.npm;
+    var reject = think.reject;
     think.npm = function(name){
       return {
         Client: {
@@ -406,12 +422,16 @@ describe('adapter/socket/memcache.js', function(){
         }
       }
     }
+    think.reject = function(err){
+      return Promise.reject(err);
+    }
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.increment('welefen', 1000).catch(function(){
       think.npm = npm;
+      think.reject = reject;
       done();
     })
   })
@@ -474,6 +494,7 @@ describe('adapter/socket/memcache.js', function(){
   })
   it('decrement error', function(done){
     var npm = think.npm;
+    var reject = think.reject;
     think.npm = function(name){
       return {
         Client: {
@@ -491,12 +512,16 @@ describe('adapter/socket/memcache.js', function(){
         }
       }
     }
+    think.reject = function(err){
+      return Promise.reject(err);
+    }
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.decrement('welefen', 1000).catch(function(){
       think.npm = npm;
+      think.reject = reject;
       done();
     })
   })
