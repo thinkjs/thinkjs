@@ -47,7 +47,8 @@ export default class extends think.adapter.socket {
       if(this.config.timeout){
         db.configure('busyTimeout', this.config.timeout * 1000);
       }
-      return deferred.promise;
+      let err = new Error(`sqlite://${this.config.path}`);
+      return think.error(deferred.promise, err);
     });
   }
   /**
@@ -72,7 +73,7 @@ export default class extends think.adapter.socket {
         });
       }
     });
-    return deferred.promise;
+    return think.error(deferred.promise);
   }
   /**
    * execute sql
@@ -86,6 +87,6 @@ export default class extends think.adapter.socket {
     let connection = await this.getConnection();
     let deferred = think.defer();
     connection.all(sql, (err, data) => err ? deferred.reject(err) : deferred.resolve(data));
-    return deferred.promise;
+    return think.error(deferred.promise);
   }
 }

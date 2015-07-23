@@ -1237,7 +1237,11 @@ think.npm = (pkg) => {
  * @return {Error}       []
  */
 think.error = (err, addon = '') => {
-  if(think.isError(err)){
+  if(think.isPromise(err)){
+    return err.catch(err => {
+      return think.reject(think.error(err, addon));
+    })
+  }else if(think.isError(err)){
     let message = err.message;
     let errors = thinkCache(thinkCache.ERROR);
     let key, value;
@@ -1248,9 +1252,14 @@ think.error = (err, addon = '') => {
       }
     }
     if(value){
-      addon = addon ? `, ${addon}` : '';
-      let msg = `${value}${addon}. http://www.thinkjs.org/doc/error.html#${key}`;
-      return new Error(msg);
+      if(think.isError(addon)){
+        addon.message = `${value}, ${addon.message}. http://www.thinkjs.org/doc/error.html#${key}`;
+        return addon;
+      }else{
+        addon = addon ? `, ${addon}` : '';
+        let msg = `${value}${addon}. http://www.thinkjs.org/doc/error.html#${key}`;
+        return new Error(msg);
+      }
     }
     return err;
   }else{

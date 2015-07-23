@@ -42,10 +42,8 @@ export default class extends think.adapter.socket {
         this.close();
         deferred.reject(err);
       });
-      return deferred.promise.catch(err => {
-        err = think.error(err, str);
-        return think.reject(new Error(err.message));
-      });
+      let err = new Error(str);
+      return think.error(deferred.promise, err);
     });
   }
   /**

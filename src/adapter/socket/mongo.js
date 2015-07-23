@@ -57,10 +57,8 @@ export default class extends think.adapter.socket {
           deferred.resolve(connection);
         }
       });
-      return deferred.promise.catch(err => {
-        err = think.error(err, 'mongodb://${auth}${config.host}:${config.port}');
-        return think.reject(new Error(err.message));
-      });
+      let err = new Error(`mongodb://${auth}${config.host}:${config.port}`);
+      return think.error(deferred.promise, err);
     });
   }
 }

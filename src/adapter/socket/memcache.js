@@ -52,10 +52,8 @@ export default class extends think.adapter.socket {
       args = [args[0], args[1], callback, args[2]];
     }
     connection[name](...args);
-    return deferred.promise.catch(err => {
-      err = think.error(err, `memcache://${this.config.host}:${this.config.port}`);
-      return think.reject(new Error(err.message));
-    });
+    let err = new Error(`memcache://${this.config.host}:${this.config.port}`);
+    return think.error(deferred.promise, err);
   }
   /**
    * get data
