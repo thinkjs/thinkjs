@@ -790,11 +790,6 @@ think.gc = instance => {
   thinkCache(thinkCache.TIMER, type, timer);
 };
 /**
- * local ip
- * @type {String}
- */
-think.localIp = '127.0.0.1';
-/**
  * get http object
  * @param  {Object} req [http request]
  * @param  {Object} res [http response]
@@ -820,10 +815,10 @@ think._http = (data = {}) => {
     method: (data.method || 'GET').toUpperCase(),
     url: url,
     headers: think.extend({
-      host: data.host || think.localIp
+      host: data.host || '127.0.0.1'
     }, data.headers),
     connection: {
-      remoteAddress: data.ip || think.localIp
+      remoteAddress: data.ip || '127.0.0.1'
     }
   };
   let empty = () => {};

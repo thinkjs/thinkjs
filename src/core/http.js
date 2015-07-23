@@ -449,20 +449,20 @@ export default class {
     }else{
       let connection = this.req.connection;
       let socket = this.req.socket;
-      if (connection && connection.remoteAddress !== think.localIp) {
+      if (connection && connection.remoteAddress !== '127.0.0.1') {
         ip = connection.remoteAddress;
-      }else if (socket && socket.remoteAddress !== think.localIp) {
+      }else if (socket && socket.remoteAddress !== '127.0.0.1') {
         ip = socket.remoteAddress;
       }
     }
     if (!ip) {
-      return think.localIp;
+      return '127.0.0.1';
     }
     if (ip.indexOf(':') > -1) {
       ip = ip.split(':').slice(-1)[0];
     }
     if (!think.isIP(ip)) {
-      return think.localIp;
+      return '127.0.0.1';
     }
     return ip;
   }
