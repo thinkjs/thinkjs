@@ -351,7 +351,7 @@ think.log = (msg, type) => {
       return;
     }
     thinkCache(thinkCache.COLLECTION, 'prev_error', msg);
-    console.error(dateTime + colors.red('[Error] ') + msg.stack);
+    console.error(dateTime + colors.red('[Error] ') + msg.message);
     return;
   }else if(think.isFunction(msg)){
     msg = msg(colors);
@@ -368,6 +368,10 @@ think.log = (msg, type) => {
  * @return {mixed} []
  */
 think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
+  //get module config
+  if(think.isString(data)){
+    data = think.getModuleConfig(data);
+  }
   // get all config
   // think.config();
   if (name === undefined) {
@@ -428,7 +432,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   if(think.isDir(rootPath)){
     let filters = ['config', 'debug', 'cli'];
     if(module === true){
-      filters.push('alias', 'hook', 'transform');
+      filters.push('alias', 'hook', 'transform', 'error');
     }
     //load conf
     let loadConf = (path, extraConfig) => {
@@ -786,11 +790,6 @@ think.gc = instance => {
   thinkCache(thinkCache.TIMER, type, timer);
 };
 /**
- * local ip
- * @type {String}
- */
-think.localIp = '127.0.0.1';
-/**
  * get http object
  * @param  {Object} req [http request]
  * @param  {Object} res [http response]
@@ -816,10 +815,10 @@ think._http = (data = {}) => {
     method: (data.method || 'GET').toUpperCase(),
     url: url,
     headers: think.extend({
-      host: data.host || think.localIp
+      host: data.host || '127.0.0.1'
     }, data.headers),
     connection: {
-      remoteAddress: data.ip || think.localIp
+      remoteAddress: data.ip || '127.0.0.1'
     }
   };
   let empty = () => {};
@@ -1229,5 +1228,41 @@ think.npm = (pkg) => {
       });
       return deferred.promise;
     });
+  }
+};
+/**
+ * get error
+ * @param  {Error} err   []
+ * @param  {String} addon []
+ * @return {Error}       []
+ */
+think.error = (err, addon = '') => {
+  if(think.isPromise(err)){
+    return err.catch(err => {
+      return think.reject(think.error(err, addon));
+    })
+  }else if(think.isError(err)){
+    let message = err.message;
+    let errors = thinkCache(thinkCache.ERROR);
+    let key, value;
+    for(key in errors){
+      if(message.indexOf(key) > -1){
+        value = errors[key];
+        break;
+      }
+    }
+    if(value){
+      if(think.isError(addon)){
+        addon.message = `${value}, ${addon.message}. http://www.thinkjs.org/doc/error.html#${key}`;
+        return addon;
+      }else{
+        addon = addon ? `, ${addon}` : '';
+        let msg = `${value}${addon}. http://www.thinkjs.org/doc/error.html#${key}`;
+        return new Error(msg);
+      }
+    }
+    return err;
+  }else{
+    return new Error(err);
   }
 };

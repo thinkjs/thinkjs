@@ -8,13 +8,14 @@ export default class extends think.adapter.socket {
    * @param  {Object} config []
    * @return {}        []
    */
-  init(config){
+  init(config = {}){
+    super.init(config);
+
     this.config = think.extend({}, {
       port: 6379,
-      host: '127.0.0.1'
+      host: '127.0.0.1',
+      password: ''
     }, config);
-    this.connection = null;
-    this.deferred = null;
   }
   /**
    * connect redis
@@ -22,29 +23,28 @@ export default class extends think.adapter.socket {
    */
   async getConnection(){
     if (this.connection) {
-      return this.deferred.promise;
+      return this.connection;
     }
-    let deferred = think.defer();
     let redis = await think.npm('redis');
-    let connection = redis.createClient(this.config.port, this.config.host, this.config);
-    if (this.config.password) {
-      connection.auth(this.config.password, () => {});
-    }
-    connection.on('ready', () => {
-      deferred.resolve(connection);
+    let config = this.config;
+    let str = `redis://${config.host}:${config.port}`;
+    return think.await(str, () => {
+      let deferred = think.defer();
+      let connection = redis.createClient(config.port, config.host, config);
+      if (config.password) {
+        connection.auth(config.password, () => {});
+      }
+      connection.on('connect', () => {
+        this.connection = connection;
+        deferred.resolve(connection);
+      });
+      connection.on('error', err => {
+        this.close();
+        deferred.reject(err);
+      });
+      let err = new Error(str);
+      return think.error(deferred.promise, err);
     });
-    connection.on('connect', () => {
-      deferred.resolve();
-    });
-    connection.on('error', () => {
-      this.close();
-    });
-    connection.on('end', () => {
-      this.close();
-    });
-    this.connection = connection;
-    this.deferred = deferred;
-    return this.deferred.promise;
   }
   /**
    * add event
@@ -53,7 +53,7 @@ export default class extends think.adapter.socket {
    * @return {}            []
    */
   on(event, callback){
-    this.getConnection().then(connection => {
+    return this.getConnection().then(connection => {
       connection.on(event, callback);
     });
   }
@@ -68,7 +68,7 @@ export default class extends think.adapter.socket {
     let deferred = think.defer();
     data.push((err, data) => err ? deferred.reject(err) : deferred.resolve(data));
     this.connection[name].apply(this.connection, data);
-    return deferred.promise;
+    return think.error(deferred.promise);
   }
   /**
    * get data
@@ -109,11 +109,11 @@ export default class extends think.adapter.socket {
     return this.wrap('del', name);
   }
   /**
-   * close
+   * close socket connection
    * @return {} []
    */
   close(){
-    if (this.connection) {
+    if(this.connection){
       this.connection.end();
       this.connection = null;
     }

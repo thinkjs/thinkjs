@@ -12,12 +12,12 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config){
+    super.init(config);
+
     this.config = think.extend({}, {
       host: '127.0.0.1',
       port: 27017
     }, config);
-
-    this.connection = null;
   }
   /**
    * get connection
@@ -41,11 +41,11 @@ export default class extends think.adapter.socket {
     if(config.options){
       options = '?' + querystring.stringify(config.options);
     }
-    let url = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
+    let str = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
     
-    return think.await(url, () => {
+    return think.await(str, () => {
       let deferred = think.defer();
-      mongo.MongoClient.connect(url, this.config, (err, connection) => {
+      mongo.MongoClient.connect(str, this.config, (err, connection) => {
         if(err){
           deferred.reject(err);
         }else{
@@ -57,17 +57,8 @@ export default class extends think.adapter.socket {
           deferred.resolve(connection);
         }
       });
-      return deferred.promise;
-    })
-  }
-  /**
-   * close mongo socket connection
-   * @return {} []
-   */
-  close(){
-    if(this.connection){
-      this.connection.close();
-      this.connection = null;
-    }
+      let err = new Error(`mongodb://${auth}${config.host}:${config.port}`);
+      return think.error(deferred.promise, err);
+    });
   }
 }

@@ -172,7 +172,8 @@ export default class extends think.base {
       //create server
       let server = http.createServer(callback);
       if (think.config('websocket.on')) {
-        (new websocket(server, this)).run();
+        let instance = new websocket(server, this);
+        instance.run();
       }
       server.listen(port, host);
       this.logPid(port);

@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * sqlite socket
  */
@@ -9,14 +10,16 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config = {}){
+    super.init(config);
+
     if(config.path === true){
       config.path = ':memory:';
-    }else if(!config.path){
-      config.path = think.getPath(undefined, `${think.dirname.runtime}/db/${config.name}.sqlite`);
+    }else{
+      config.path = config.path || think.getPath(undefined, think.dirname.runtime) + `/sqlite`;
+      think.mkdir(config.path);
+      config.path += `/${config.name}.sqlite`;
     }
     this.config = config;
-    this.connection = null;
-    this.deferred = null;
   }
   /**
    * get connection
@@ -24,28 +27,29 @@ export default class extends think.adapter.socket {
    */
   async getConnection(){
     if(this.connection){
-      return this.deferred.promise;
+      return this.connection;
     }
     let sqlite = await think.npm('sqlite3');
     if(think.debug){
       sqlite = sqlite.verbose();
     }
-    let deferred = think.defer();
-    let db = new sqlite.Database(this.config.path, err => {
-      if(err){
-        deferred.reject(err);
-        this.close();
-      }else {
-        deferred.resolve(db);
+    return think.await(this.config.path, () => {
+      let deferred = think.defer();
+      let db = new sqlite.Database(this.config.path, err => {
+        if(err){
+          deferred.reject(err);
+        }else {
+          this.connection = db;
+          deferred.resolve(db);
+        }
+      });
+      //set timeout
+      if(this.config.timeout){
+        db.configure('busyTimeout', this.config.timeout * 1000);
       }
+      let err = new Error(`sqlite://${this.config.path}`);
+      return think.error(deferred.promise, err);
     });
-    //set timeout
-    if(this.config.timeout){
-      db.configure('busyTimeout', this.config.timeout * 1000);
-    }
-    this.connection = db;
-    this.deferred = deferred;
-    return deferred.promise;
   }
   /**
    * query sql
@@ -69,7 +73,7 @@ export default class extends think.adapter.socket {
         });
       }
     });
-    return deferred.promise;
+    return think.error(deferred.promise);
   }
   /**
    * execute sql
@@ -82,23 +86,7 @@ export default class extends think.adapter.socket {
     }
     let connection = await this.getConnection();
     let deferred = think.defer();
-    connection.all(sql, function(err, data){
-      if(err){
-        deferred.reject(err);
-      }else{
-        deferred.resolve(data);
-      }
-    });
-    return deferred.promise;
-  }
-  /**
-   * close connections
-   * @return {} []
-   */
-  close(){
-    if(this.connection){
-      this.connection.close();
-      this.connection = null;
-    }
+    connection.all(sql, (err, data) => err ? deferred.reject(err) : deferred.resolve(data));
+    return think.error(deferred.promise);
   }
 }

@@ -299,6 +299,14 @@ export default class {
     thinkCache(thinkCache.TEMPLATE, data);
   }
   /**
+   * load system error message
+   * @return {} []
+   */
+  loadError(){
+    let message = require(think.THINK_LIB_PATH + '/config/error.js');
+    thinkCache(thinkCache.ERROR, message);
+  }
+  /**
    * load all config or modules
    * @return {} []
    */
@@ -316,6 +324,7 @@ export default class {
     this.loadCallController();
     this.loadHook();
     this.loadTemplate();
+    this.loadError();
 
     //load alias export at last
     //this.loadAliasExport();
@@ -366,12 +375,23 @@ export default class {
     thinkCache(thinkCache.TIMER, 'auto_reload', timer);
   }
   /**
+   * capture error
+   * @return {} []
+   */
+  captureError(){
+    process.on('uncaughtException', function(err){
+      err = think.error(err, 'port:' + think.config('port'));
+      think.log(err);
+    })
+  }
+  /**
    * start
    * @return {} []
    */
   start(){
     this.checkEnv();
     this.load();
+    this.captureError();
     if (think.config('auto_reload')) {
       this.autoReload();
     }
@@ -381,8 +401,8 @@ export default class {
    * @return {} []
    */
   async run(){
+    this.start();
     try{
-      this.start();
       await think.require('app').run();
     }catch(err){
       think.log(err);

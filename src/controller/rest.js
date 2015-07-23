@@ -13,7 +13,7 @@ export default class extends think.controller.base {
     super.init(http);
     this.resource = this.get('resource');
     this.id = this.get('id') | 0;
-    this.model = this.model(this.resource);
+    this.modelInstance = this.model(this.resource);
   }
   /**
    * get resource
@@ -22,11 +22,11 @@ export default class extends think.controller.base {
   async getAction(){
     let data;
     if (this.id) {
-      let pk = await this.model.getPk();
-      data = await this.model.where({[pk]: this.id}).find();
+      let pk = await this.modelInstance.getPk();
+      data = await this.modelInstance.where({[pk]: this.id}).find();
       return this.success(data);
     }
-    data = await this.model.select();
+    data = await this.modelInstance.select();
     return this.success(data);
   }
   /**
@@ -34,13 +34,13 @@ export default class extends think.controller.base {
    * @return {Promise} []
    */
   async postAction(){
-    let pk = await this.model.getPk();
+    let pk = await this.modelInstance.getPk();
     let data = this.post();
     delete data[pk];
     if(think.isEmpty(data)){
       return this.fail('data is empty');
     }
-    let insertId = await this.model.add(data);
+    let insertId = await this.modelInstance.add(data);
     return this.success({id: insertId});
   }
   /**
@@ -51,8 +51,8 @@ export default class extends think.controller.base {
     if (!this.id) {
       return this.fail('params error');
     }
-    let pk = await this.model.getPk();
-    let rows = await this.model.where({[pk]: this.id}).delete();
+    let pk = await this.modelInstance.getPk();
+    let rows = await this.modelInstance.where({[pk]: this.id}).delete();
     return this.success({affectedRows: rows});
   }
   /**
@@ -63,13 +63,13 @@ export default class extends think.controller.base {
     if (!this.id) {
       return this.fail('params error');
     }
-    let pk = await this.model.getPk();
+    let pk = await this.modelInstance.getPk();
     let data = this.post();
     delete data[pk];
     if (think.isEmpty(data)) {
       return this.fail('data is empty');
     }
-    let rows = await this.model.where({[pk]: this.id}).update(data);
+    let rows = await this.modelInstance.where({[pk]: this.id}).update(data);
     return this.success({affectedRows: rows});
   }
   /**
