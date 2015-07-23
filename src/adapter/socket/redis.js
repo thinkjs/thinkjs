@@ -68,7 +68,7 @@ export default class extends think.adapter.socket {
     let deferred = think.defer();
     data.push((err, data) => err ? deferred.reject(err) : deferred.resolve(data));
     this.connection[name].apply(this.connection, data);
-    return deferred.promise;
+    return think.error(deferred.promise);
   }
   /**
    * get data
