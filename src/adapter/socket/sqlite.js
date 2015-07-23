@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * sqlite socket
  */
@@ -13,8 +14,10 @@ export default class extends think.adapter.socket {
 
     if(config.path === true){
       config.path = ':memory:';
-    }else if(!config.path){
-      config.path = think.getPath(undefined, `${think.dirname.runtime}/db/${config.name}.sqlite`);
+    }else{
+      config.path = config.path || think.getPath(undefined, think.dirname.runtime) + `/sqlite`;
+      think.mkdir(config.path);
+      config.path += `/${config.name}.sqlite`;
     }
     this.config = config;
   }
