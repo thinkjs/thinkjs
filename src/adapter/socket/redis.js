@@ -55,7 +55,7 @@ export default class extends think.adapter.socket {
    * @return {}            []
    */
   on(event, callback){
-    this.getConnection().then(connection => {
+    return this.getConnection().then(connection => {
       connection.on(event, callback);
     });
   }
