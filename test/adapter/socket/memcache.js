@@ -265,7 +265,7 @@ describe('adapter/socket/memcache.js', function(){
                 assert.equal(key, 'welefen');
                 assert.equal(value, 'suredy');
                 assert.equal(timeout, 1000);
-                callback && callback(new Error('error'))
+                callback && callback(new Error('memcache set data error'))
               }
             }
           }
@@ -324,7 +324,7 @@ describe('adapter/socket/memcache.js', function(){
               connection: 'connection',
               delete: function(key, callback){
                 assert.equal(key, 'welefen');
-                callback && callback(new Error('error'))
+                callback && callback(new Error('memcache delete data error'))
               }
             }
           }
@@ -339,7 +339,7 @@ describe('adapter/socket/memcache.js', function(){
       password: 'suredy'
     });
     instance.delete('welefen').catch(function(err){
-      assert.equal(err.message, 'error')
+      assert.equal(err.message, 'memcache delete data error')
       think.npm = npm;
       think.reject = reject;
       done();
@@ -415,7 +415,7 @@ describe('adapter/socket/memcache.js', function(){
               increment: function(key, amount, callback){
                 assert.equal(key, 'welefen');
                 assert.equal(amount, 1000)
-                callback && callback(new Error(''))
+                callback && callback(new Error('increment error'))
               }
             }
           }
@@ -505,7 +505,7 @@ describe('adapter/socket/memcache.js', function(){
               decrement: function(key, amount, callback){
                 assert.equal(key, 'welefen');
                 assert.equal(amount, 1000)
-                callback && callback(new Error(''))
+                callback && callback(new Error('descrement error'))
               }
             }
           }

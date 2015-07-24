@@ -127,10 +127,15 @@ describe('core/think.js', function(){
     assert.equal(typeof think.reject, 'function')
   })
   it('think.reject methods', function(done){
-    var err = new Error();
+    var err = new Error('reject error');
     var reject = think.reject(err);
+    var timeout = global.setTimeout;
+    global.setTimeout = function(callback, timeout){
+      assert.equal(timeout, 500);
+    }
     reject.catch(function(e){
       assert.equal(err, e);
+      global.setTimeout = timeout;
       done();
     })
   })
@@ -665,7 +670,7 @@ describe('core/think.js', function(){
         var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
-        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis', 'resource_on', 'resource_reg', 'route_on', 'session', 'subdomain', 'timeout', 'token', 'tpl', 'validate', 'websocket' ]);
+        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'log_request', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis', 'resource_on', 'resource_reg', 'route_on', 'session', 'subdomain', 'timeout', 'token', 'tpl', 'validate', 'websocket' ]);
         assert.equal(think.isObject(configs), true);
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
@@ -1360,7 +1365,7 @@ describe('core/think.js', function(){
             Client: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install package-not-exist');
@@ -1390,7 +1395,7 @@ describe('core/think.js', function(){
             RedisClient: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error 1')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install redis@0.12.1');
@@ -1422,7 +1427,7 @@ describe('core/think.js', function(){
             RedisClient: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error 2')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install redis@0.12.1');
@@ -1454,7 +1459,7 @@ describe('core/think.js', function(){
             RedisClient: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error 3')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install package_not_exist');

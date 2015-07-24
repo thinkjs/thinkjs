@@ -131,7 +131,7 @@ describe('adapter/socket/redis', function(){
           return {
             on: function(type, callback){
               if(type === 'error'){
-                callback && callback(new Error('error'));
+                callback && callback(new Error('redis get connection error'));
               }
             },
             auth: function(password, callback){
@@ -155,7 +155,7 @@ describe('adapter/socket/redis', function(){
       password: 'password'
     });
     instance.getConnection().catch(function(err){
-      assert.equal(err.message, 'error');
+      assert.equal(err.message, 'redis get connection error');
       assert.equal(instance.connection, null);
       think.npm = npm;
       think.await = wait;
@@ -267,18 +267,23 @@ describe('adapter/socket/redis', function(){
   })
   it('wrap reject', function(done){
     var instance = new redisSocket();
+    var reject = think.reject;
+    think.reject = function(err){
+      return Promise.reject(err);
+    }
     instance.getConnection = function(){
       var obj = {
         get: function(key, callback){
           assert.equal(key, 'key');
-          callback && callback(new Error('error'));
+          callback && callback(new Error('redis wrap error'));
         }
       }
       instance.connection = obj;
       return Promise.resolve(obj);
     }
     instance.wrap('get', 'key').catch(function(err){
-      assert.equal(err.message, 'error');
+      assert.equal(err.message, 'redis wrap error');
+      think.reject = reject;
       done();
     })
   })
