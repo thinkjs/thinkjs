@@ -571,9 +571,11 @@ export default class {
       errmsg = errmsg || error[errno] || '';
       obj = {
         [error.key]: errno,
-        [error.msg]: errmsg,
-        data: data
+        [error.msg]: errmsg
       };
+      if(data){
+        obj.data = data;
+      }
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
