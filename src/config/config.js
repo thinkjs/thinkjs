@@ -11,7 +11,6 @@ module.exports = {
   proxy_on: false,
   hook_on: true, 
   cluster_on: false,
-  sub_domain: false,
 
   timeout: 10, //10 seconds
 
@@ -19,6 +18,9 @@ module.exports = {
   resource_reg: /^((?:resource|static)\/|[^\/]+\.(?!js)\w+$)/, 
 
   route_on: true,
+
+  log_pid: false,
+  log_request: false,
   
   create_server: undefined,
   output_content: undefined,
@@ -30,7 +32,6 @@ module.exports = {
   action_suffix: 'Action',
   callback_name: 'callback',
   json_content_type: 'application/json',
-  log_pid: true,
   subdomain: {}, //subdomain deploy
   
 

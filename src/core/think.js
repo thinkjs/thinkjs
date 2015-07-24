@@ -334,7 +334,7 @@ think.isPrevent = err => {
  * @TODO
  * @return {} []
  */
-think.log = (msg, type) => {
+think.log = (msg, type, startTime) => {
 
   let fn = d => {
     return ('0' + d).slice(-2);
@@ -355,6 +355,13 @@ think.log = (msg, type) => {
     return;
   }else if(think.isFunction(msg)){
     msg = msg(colors);
+  }
+  if(msg.length > 100){
+    msg = msg.slice(0, 100) + '...';
+  }
+  if(startTime){
+    let time = Date.now() - startTime;
+    msg += ' ' + colors.green(`${time}ms`);
   }
   if(type){
     console.log(dateTime + colors.cyan(`[${type}] `) + msg);

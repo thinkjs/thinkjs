@@ -78,9 +78,6 @@ export default class extends think.adapter.socket {
    * @return {[type]}     []
    */
   async query(sql, nestTables){
-    if (this.config.log_sql) {
-      think.log(sql, 'SQL');
-    }
     let connection = await this.getConnection();
     let deferred = think.defer();
     let data = {
@@ -91,7 +88,11 @@ export default class extends think.adapter.socket {
     if(this.config.timeout){
       data.timeout = this.config.timeout;
     }
+    let startTime = Date.now();
     connection.query(data, (err, rows = []) => {
+      if (this.config.log_sql) {
+        think.log(sql, 'SQL', startTime);
+      }
       if (err) {
         deferred.reject(err);
       }else{

@@ -551,7 +551,7 @@ export default class {
    * @param  {Object} data   [output data]
    * @return {Promise}        [pedding promise]
    */
-  fail(errno, errmsg = 'error', data = ''){
+  fail(errno, errmsg = '', data = ''){
     let obj;
     let error = this.config('error');
     if (think.isObject(errno)) {
@@ -563,11 +563,19 @@ export default class {
         errmsg = errno;
         errno = error.value;
       }
+      if(!think.isString(errmsg)){
+        data = errmsg;
+        errmsg = '';
+      }
+      //read errmsg from config/error.js config file
+      errmsg = errmsg || error[errno] || '';
       obj = {
         [error.key]: errno,
-        [error.msg]: errmsg,
-        data: data
+        [error.msg]: errmsg
       };
+      if(data){
+        obj.data = data;
+      }
     }
     this.type(this.config('json_content_type'));
     this.end(obj);
@@ -648,16 +656,14 @@ export default class {
     this.emit('afterEnd', this);
 
     //show request info
-    if(think.debug){
-      let time = Date.now() - this.startTime;
+    if(this.config('log_request')){
       think.log(colors => {
         let msg = [
           this.method, this.url,
-          colors.cyan(`${this.res.statusCode}`),
-          colors.green(`${time}ms`)
+          colors.cyan(`${this.res.statusCode}`)
         ].join(' ');
         return msg;
-      });
+      }, 'HTTP', this.startTime);
     }
 
     //remove upload tmp files
