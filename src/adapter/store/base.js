@@ -28,7 +28,7 @@ export default class {
    * @return {Promise}     []
    */
   get(key){
-    return Promise.reoslve(this.data[key]);
+    return Promise.resolve(this.data[key]);
   }
   /**
    * set key content
