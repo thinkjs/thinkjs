@@ -30,7 +30,7 @@ export default class extends think.adapter.socket {
       return this.connection;
     }
     let sqlite = await think.npm('sqlite3');
-    if(think.debug){
+    if(this.config.verbose){
       sqlite = sqlite.verbose();
     }
     return think.await(this.config.path, () => {
@@ -57,13 +57,15 @@ export default class extends think.adapter.socket {
    * @return {Promise}     []
    */
   async execute(sql){
-    if (this.config.log_sql) {
-      think.log(sql, 'SQL');
-    }
     let connection = await this.getConnection();
     let deferred = think.defer();
+    let startTime = Date.now();
+    let logSql = this.config.log_sql;
     //can not use arrow functions in here
     connection.run(sql, function(err) {
+      if (logSql) {
+        think.log(sql, 'SQL', startTime);
+      }
       if(err){
         deferred.reject(err);
       }else{
@@ -81,12 +83,15 @@ export default class extends think.adapter.socket {
    * @return {Promise}     []
    */
   async query(sql){
-    if (this.config.log_sql) {
-      think.log(sql, 'SQL');
-    }
     let connection = await this.getConnection();
     let deferred = think.defer();
-    connection.all(sql, (err, data) => err ? deferred.reject(err) : deferred.resolve(data));
+    let startTime = Date.now();
+    connection.all(sql, (err, data) => {
+      if (this.config.log_sql) {
+        think.log(sql, 'SQL', startTime);
+      }
+      return err ? deferred.reject(err) : deferred.resolve(data);
+    });
     return think.error(deferred.promise);
   }
 }

@@ -128,11 +128,11 @@ describe('core/think.js', function(){
   })
   it('think.reject methods', function(done){
     var err = new Error('reject error');
-    var reject = think.reject(err);
     var timeout = global.setTimeout;
     global.setTimeout = function(callback, timeout){
       assert.equal(timeout, 500);
     }
+    var reject = think.reject(err);
     reject.catch(function(e){
       assert.equal(err, e);
       global.setTimeout = timeout;
