@@ -1,5 +1,10 @@
 'use strict';
 /**
+ * base store
+ * @type {Class}
+ */
+let BaseStore = think.adapter('store', 'base');
+/**
  * memory cache
  */
 export default class {
@@ -18,8 +23,11 @@ export default class {
    */
   init(options = {}){
     this.timeout = options.timeout;
-    //all session data
-    this.data = thinkCache(thinkCache.BASE);
+
+    this.store = new BaseStore({
+      type: thinkCache.BASE
+    });
+    
     //set gc type & start gc
     this.gcType = 'cache_base';
     think.gc(this);
@@ -30,17 +38,16 @@ export default class {
    * @return {Promise}      []
    */
   get(name){
-    let data = this.data[name];
-    if (!data) {
-      return Promise.resolve();
-    }
-    //data is expire
-    if(data.expire && Date.now() > data.expire){
-      delete this.data[name];
-      return Promise.resolve();
-    }
-    let value = think.clone(data.data);
-    return Promise.resolve(value);
+    return this.store.get(name).then(data => {
+      if(!data){
+        return;
+      }
+      //data is expire
+      if(data.expire && Date.now() > data.expire){
+        return this.store.delete(name);
+      }
+      return think.clone(data.data);
+    });
   }
   /**
    * set session data
@@ -51,12 +58,12 @@ export default class {
    */
   set(name, value, timeout = this.timeout){
     value = think.clone(value);
-    this.data[name] = {
+    let data = {
       expire: timeout > 0 ? (Date.now() + timeout * 1000) : null,
       timeout,
       data: value
     };
-    return Promise.resolve();
+    return this.store.set(name, data);
   }
   /**
    * delete session data
@@ -64,8 +71,7 @@ export default class {
    * @return {Promise}      []
    */
   delete(name){
-    delete this.data[name];
-    return Promise.resolve();
+    return this.store.delete(name);
   }
   /**
    * gc
@@ -74,11 +80,13 @@ export default class {
    */
   gc(){
     let now = Date.now();
-    for(let key in this.data){
-      let item = this.data[key];
-      if(item && item.expire && now > item.expire){
-        delete this.data[key];
+    return this.store.list().then(list => {
+      for(let key in list){
+        let item = list[key];
+        if(item && item.expire && now > item.expire){
+          delete list[key];
+        }
       }
-    }
+    })
   }
 }

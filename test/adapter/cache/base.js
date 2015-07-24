@@ -20,7 +20,8 @@ describe('adapter/cache/base.js', function() {
   });
 
   it('new base cache instance', function() {
-    assert.deepEqual(instance.data, {});
+    assert.deepEqual(think.isObject(instance.store), true);
+    assert.deepEqual(instance.gcType, 'cache_base');
   });
 
   it('set cache data', function(done) {

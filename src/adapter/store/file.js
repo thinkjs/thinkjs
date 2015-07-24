@@ -3,12 +3,10 @@
 import fs from 'fs';
 import path from 'path';
 
-let BaseStore = think.adapter('store', 'base');
-
 /**
  * file store class
  */
-export default class extends BaseStore {
+export default class extends think.adapter.store {
   /**
    * init
    * @param  {Object} config []
