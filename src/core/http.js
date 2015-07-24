@@ -551,7 +551,7 @@ export default class {
    * @param  {Object} data   [output data]
    * @return {Promise}        [pedding promise]
    */
-  fail(errno, errmsg = 'error', data = ''){
+  fail(errno, errmsg = '', data = ''){
     let obj;
     let error = this.config('error');
     if (think.isObject(errno)) {
@@ -563,6 +563,12 @@ export default class {
         errmsg = errno;
         errno = error.value;
       }
+      if(!think.isString(errmsg)){
+        data = errmsg;
+        errmsg = '';
+      }
+      //read errmsg from config/error.js config file
+      errmsg = errmsg || error[errno] || '';
       obj = {
         [error.key]: errno,
         [error.msg]: errmsg,
