@@ -656,7 +656,7 @@ export default class {
     this.emit('afterEnd', this);
 
     //show request info
-    if(think.debug){
+    if(this.config('log_request')){
       think.log(colors => {
         let msg = [
           this.method, this.url,
