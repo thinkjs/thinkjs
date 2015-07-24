@@ -158,6 +158,38 @@ describe('adapter/socket/mongo', function(){
       done();
     })
   })
+  it('get connection, error 2', function(done){
+    var npm = think.npm;
+    var reject = think.reject;
+    think.npm = function(){
+      return {
+        MongoClient: {
+          connect: function(url, config, callback){
+            assert.equal(url, 'mongodb://welefen:suredy@127.0.0.1:27017/test?slaveOk=true');
+            callback && callback(new Error('EADDRNOTAVAIL'));
+          }
+        }
+      }
+    };
+    think.reject = function(err){
+      return Promise.reject(err);
+    };
+    var instance = new mongoSocket({
+      user: 'welefen',
+      pwd: 'suredy',
+      name: 'test',
+      log_level: 'welefen',
+      options: {
+        slaveOk: true
+      }
+    });
+    instance.getConnection().catch(function(err){
+      assert.equal(err.message, 'Address not available, mongodb://welefen:suredy@127.0.0.1:27017. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL')
+      think.npm = npm;
+      think.reject = reject;
+      done();
+    })
+  })
   it('get connection, exist', function(done){
     var npm = think.npm;
     think.npm = function(){

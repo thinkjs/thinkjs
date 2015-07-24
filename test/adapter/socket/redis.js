@@ -163,6 +163,50 @@ describe('adapter/socket/redis', function(){
       done();
     })
   })
+  it('get connection, error 1', function(done){
+    var npm = think.npm;
+    var wait = think.await;
+    var reject = think.reject;
+    think.npm = function(){
+      return {
+        createClient: function(port, host, config){
+          assert.equal(port, 1234);
+          assert.equal(host, 'www.welefen.com');
+          return {
+            on: function(type, callback){
+              if(type === 'error'){
+                callback && callback(new Error('EADDRNOTAVAIL'));
+              }
+            },
+            auth: function(password, callback){
+              assert.equal(password, 'password');
+              callback && callback();
+            }
+          }
+        }
+      }
+    }
+    think.await = function(str, callback){
+      assert.equal(str, 'redis://www.welefen.com:1234');
+      return callback && callback();
+    }
+    think.reject = function(err){
+      return Promise.reject(err);
+    }
+    var instance = new redisSocket({
+      host: 'www.welefen.com',
+      port: 1234,
+      password: 'password'
+    });
+    instance.getConnection().catch(function(err){
+      assert.equal(err.message, 'Address not available, redis://www.welefen.com:1234. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+      assert.equal(instance.connection, null);
+      think.npm = npm;
+      think.await = wait;
+      think.reject = reject;
+      done();
+    })
+  })
   it('get connection, exist', function(done){
     var instance = new redisSocket({
       host: 'www.welefen.com',

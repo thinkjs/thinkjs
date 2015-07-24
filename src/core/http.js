@@ -649,15 +649,13 @@ export default class {
 
     //show request info
     if(think.debug){
-      let time = Date.now() - this.startTime;
       think.log(colors => {
         let msg = [
           this.method, this.url,
-          colors.cyan(`${this.res.statusCode}`),
-          colors.green(`${time}ms`)
+          colors.cyan(`${this.res.statusCode}`)
         ].join(' ');
         return msg;
-      });
+      }, 'HTTP', this.startTime);
     }
 
     //remove upload tmp files
