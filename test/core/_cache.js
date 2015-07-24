@@ -1,7 +1,11 @@
+var assert = require('assert');
+var path = require('path');
+var fs = require('fs');
+var muk = require('muk');
+
 
 require('../../lib/core/_cache.js');
 
-var assert = require('assert');
 
 describe('core/_cache.js', function(){
   it('thinkCache is function', function(){

@@ -1,8 +1,9 @@
 'use strict';
 
 var assert = require('assert');
-var fs = require('fs');
 var path = require('path');
+var fs = require('fs');
+var muk = require('muk');
 
 var thinkjs = require('../../../lib/index.js');
 
