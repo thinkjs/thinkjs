@@ -14,8 +14,10 @@ export default class extends BaseStore {
    * @param  {Object} config []
    * @return {}        []
    */
-  init(config = {}){
-    this.config = config;
+  init(config){
+    this.config = think.extend({
+      path: ''
+    }, config);
 
     if(!think.isDir(config.path)){
       think.mkdir(config.path);
@@ -27,7 +29,7 @@ export default class extends BaseStore {
    * @return {Promise}     []
    */
   get(key){
-    let filepath = think.config.path + '/' + key;
+    let filepath = this.config.path + '/' + key;
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
@@ -41,7 +43,7 @@ export default class extends BaseStore {
    * @param {String} content []
    */
   set(key, content){
-    let filepath = think.config.path + '/' + key;
+    let filepath = this.config.path + '/' + key;
     think.mkdir(path.dirname(filepath));
     let deferred = think.defer();
     fs.writeFile(filepath, content, err => {
@@ -56,7 +58,7 @@ export default class extends BaseStore {
    * @return {Promise}     []
    */
   delete(key){
-    let filepath = think.config.path + '/' + key;
+    let filepath = this.config.path + '/' + key;
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
