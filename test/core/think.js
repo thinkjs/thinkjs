@@ -1101,8 +1101,8 @@ describe('core/think.js', function(){
       var mode = think.mode;
       var path = think.getPath(undefined, think.dirname.adapter);;
       think.mkdir(path + '/welefentest');
-      require('fs').writeFileSync(path+ '/welefentest/base.js', 'module.exports=think.Class({}, true)')
-      think.loadAdapter(true);
+      require('fs').writeFileSync(path + '/welefentest/base.js', 'module.exports=think.Class({}, true)')
+      think.loadAdapter();
       assert.equal(think.isFunction(think.adapter.welefentest), true);
       delete think.adapter.welefentest;
       think.rmdir(path).then(done);

@@ -154,7 +154,7 @@ export default class {
    * @return {} []
    */
   loadAdapter(){
-    think.loadAdapter(true);
+    think.loadAdapter();
   }
   /**
    * load middleware
