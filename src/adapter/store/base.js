@@ -15,8 +15,11 @@ export default class {
    * init
    * @return {} []
    */
-  init(config = {}){
-    this.config = config;
+  init(config){
+    this.config = think.extend({
+      type: thinkCache.BASE
+    }, config);
+    
     this.data = thinkCache(this.config.type);
   }
   /**
