@@ -1,7 +1,7 @@
 'use strict';
 
 import fs from 'fs';
-import fs from 'path';
+import path from 'path';
 
 let BaseStore = think.adapter('store', 'base');
 
@@ -69,6 +69,6 @@ export default class extends BaseStore {
    * @return {Promise} []
    */
   list(){
-    return think.getFiles(this.config.path);
+    return Promise.resolve(think.getFiles(this.config.path));
   }
 }
