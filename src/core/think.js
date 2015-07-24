@@ -357,7 +357,7 @@ think.log = (msg, type, startTime) => {
     msg = msg(colors);
   }
   if(msg.length > 100){
-    msg = msg.slice(0, 100) + '...';
+    msg = msg.substr(0, 100) + '...';
   }
   if(startTime){
     let time = Date.now() - startTime;
