@@ -2061,6 +2061,7 @@ describe('core/think.js', function(){
       }
       think.error(promise).catch(function(err){
         assert.equal(err.message, 'think.error promise');
+        think.reject = reject;
         done();
       });
     })
@@ -2073,6 +2074,7 @@ describe('core/think.js', function(){
       }
       think.error(promise, new Error('addon error')).catch(function(err){
         assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+        think.reject = reject;
         done();
       });
     })
