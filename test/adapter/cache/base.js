@@ -5,7 +5,7 @@ var assert = require('assert');
 var thinkjs = require('../../../lib/index.js');
 
 var tjs = new thinkjs();
-tjs.loadAlias();
+tjs.load();
 
 var BaseCache = think.adapter('cache', 'base');
 

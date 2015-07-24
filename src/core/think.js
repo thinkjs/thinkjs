@@ -637,8 +637,6 @@ think.middleware = (...args) => {
  */
 think.adapter = (...args) => {
   let [type, name, fn] = args;
-  //load sys adapter
-  think.loadAdapter();
 
   let length = args.length, key = 'adapter_';
   if(length === 3){
