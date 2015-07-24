@@ -2070,14 +2070,13 @@ describe('core/think.js', function(){
     })
     it('error, promise, addon', function(done){
       var promise = Promise.reject(new Error('think.error promise, EADDRNOTAVAIL'));
-      var reject = think.reject;
-      think.reject = function(err){
+      muk(think, 'reject', function(err){
         assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
         return Promise.reject(err);
-      }
+      })
       think.error(promise, new Error('addon error')).catch(function(err){
         assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
-        think.reject = reject;
+        muk.restore();
         done();
       });
     })

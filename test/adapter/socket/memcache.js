@@ -23,8 +23,7 @@ describe('adapter/socket/memcache.js', function(){
     assert.deepEqual(instance.config, { host: '127.0.0.1', port: 11211, username: '', password: '' });
   })
   it('getConnection', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -32,16 +31,15 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket();
     instance.getConnection().then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     });
   })
   it('getConnection config', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -49,19 +47,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.getConnection().then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     });
   })
   it('getConnection config', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -69,7 +66,7 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       host: 'www.welefen.com',
       port: 99999,
@@ -77,13 +74,12 @@ describe('adapter/socket/memcache.js', function(){
       password: 'suredy'
     });
     instance.getConnection().then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     });
   })
   it('getConnection config, connection exist', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -94,13 +90,13 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.getConnection().then(function(){
-      think.npm = npm;
+      muk.restore();
       return instance.getConnection();
     }).then(function(connection){
       assert.deepEqual(connection, {connection: 'connection'})
@@ -108,8 +104,7 @@ describe('adapter/socket/memcache.js', function(){
     })
   })
   it('get data', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -123,20 +118,19 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.get('welefen').then(function(data){
       assert.deepEqual(data, 'suredy')
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('get data', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -150,21 +144,19 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.get('welefen').then(function(data){
       assert.deepEqual(data, 'suredy')
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('get data error', function(done){
-    var npm = think.npm;
-    var reject = think.reject;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -178,24 +170,22 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
-    think.reject = function(err){
+    });
+    muk(think, 'reject', function(err){
       return Promise.reject(err);
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.get('welefen').catch(function(err){
       assert.deepEqual(err.message, 'suredy')
-      think.npm = npm;
-      think.reject = reject;
+      muk.restore();
       done();
     })
   })
   it('set data', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -212,19 +202,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.set('welefen', 'suredy', 1000).then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('set data, timeout', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -241,21 +230,19 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy',
       timeout: 0
     });
     instance.set('welefen', 'suredy').then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('set data error', function(done){
-    var npm = think.npm;
-    var reject = think.reject;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -272,23 +259,21 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
-    think.reject = function(err){
+    });
+    muk(think, 'reject', function(err){
       return Promise.reject(err);
-    };
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.set('welefen', 'suredy', 1000).catch(function(){
-      think.npm = npm;
-      think.reject = reject;
+      muk.restore();
       done();
     })
   })
   it('delete data', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -303,20 +288,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.delete('welefen').then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('delete data error', function(done){
-    var npm = think.npm;
-    var reject = think.reject
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -331,24 +314,22 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
-    think.reject = function(err){
+    });
+    muk(think, 'reject', function(err){
       return Promise.reject(err)
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.delete('welefen').catch(function(err){
       assert.equal(err.message, 'memcache delete data error')
-      think.npm = npm;
-      think.reject = reject;
+      muk.restore();
       done();
     })
   })
   it('increment', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -364,19 +345,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.increment('welefen', 1000).then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('increment timeout', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -393,20 +373,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.increment('welefen', 1000, 2000).then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('increment error', function(done){
-    var npm = think.npm;
-    var reject = think.reject;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -422,23 +400,21 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
-    think.reject = function(err){
+    });
+    muk(think, 'reject', function(err){
       return Promise.reject(err);
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.increment('welefen', 1000).catch(function(){
-      think.npm = npm;
-      think.reject = reject;
+      muk.restore();
       done();
     })
   })
   it('decrement', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -454,19 +430,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.decrement('welefen', 1000).then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('decrement timeout', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -483,20 +458,18 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.decrement('welefen', 1000, 2000).then(function(){
-      think.npm = npm;
+      muk.restore();
       done();
     })
   })
   it('decrement error', function(done){
-    var npm = think.npm;
-    var reject = think.reject;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -512,23 +485,21 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
-    think.reject = function(err){
+    });
+    muk(think, 'reject', function(err){
       return Promise.reject(err);
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.decrement('welefen', 1000).catch(function(){
-      think.npm = npm;
-      think.reject = reject;
+      muk.restore();
       done();
     })
   })
   it('close', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -542,18 +513,17 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.close();
-    think.npm = npm;
+    muk.restore();
     done();
   })
   it('close', function(done){
-    var npm = think.npm;
-    think.npm = function(name){
+    muk(think, 'npm', function(name){
       return {
         Client: {
           create: function(str){
@@ -567,14 +537,14 @@ describe('adapter/socket/memcache.js', function(){
           }
         }
       }
-    }
+    })
     var instance = new memcacheSocket({
       username: 'welefen',
       password: 'suredy'
     });
     instance.getConnection().then(function(){
       instance.close();
-      think.npm = npm;
+      muk.restore();
       done();
     })
     
