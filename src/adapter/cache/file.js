@@ -22,14 +22,14 @@ export default class extends think.adapter.cache {
   init(options = {}){
     this.timeout = options.timeout;
     this.file_ext = options.file_ext;
-    this.path = options.path || path.normalize(os.tmpdir() + '/thinkjs');
+    this.path = options.path;
     this.path_depth = options.path_depth || 1;
 
     this.store = new FileStore({
       path: this.path
     })
 
-    this.gcType = 'cache_file';
+    this.gcType = this.path;
     think.gc(this);
   }
   /**

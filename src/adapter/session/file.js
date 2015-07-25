@@ -5,6 +5,12 @@ import os from 'os';
 import path from 'path';
 
 /**
+ * file store
+ * @type {Class}
+ */
+let FileStore = think.adapter('store', 'file');
+
+/**
  * file session
  */
 export default class extends think.adapter.session {
@@ -16,10 +22,14 @@ export default class extends think.adapter.session {
   init(options = {}){
     this.timeout = options.timeout;
     this.cookie = options.cookie;
-    this.path = options.path || path.normalize(os.tmpdir() + 'thinkjs');
+    this.path = options.path || path.normalize(os.tmpdir() + '/thinkjs');
     this.path_depth = options.path_depth || 1;
 
-    this.gcType = 'session_file';
+    this.store = new FileStore({
+      path: this.path
+    });
+
+    this.gcType = this.path;
     think.gc(this);
   }
   /**
@@ -29,8 +39,7 @@ export default class extends think.adapter.session {
   getFilepath(){
     let name = this.cookie;
     let dir = name.slice(0, this.path_depth).split('').join('/');
-    think.mkdir(`${this.path}/${dir}`);
-    return `${this.path}/${dir}/${name}.json`;
+    return `${dir}/${name}.json`;
   }
   /**
    * get session data
@@ -41,36 +50,20 @@ export default class extends think.adapter.session {
       return Promise.resolve(this.data);
     }
     let filepath = this.getFilepath();
-    if(!think.isFile(filepath)){
+    return this.store.get(filepath).then(data => {
       this.data = {};
-      return Promise.resolve();
-    }
-    let deferred = think.defer();
-    fs.readFile(filepath, {encoding: 'utf8'}, (err, content) => {
-      //has error or no content
-      if(err || !content){
-        this.data = {};
-        return deferred.resolve();
+      if(!data){
+        return;
       }
-      try{
-        let data = JSON.parse(content);
-        if(Date.now() > data.expire){
-          fs.unlink(filepath, () => {
-            this.data = {};
-            deferred.resolve();
-          });
-        }else{
-          this.data = data.data;
-          deferred.resolve(data.data);
-        }
-      }catch(e){
-        fs.unlink(filepath, () => {
-          this.data = {};
-          deferred.resolve();
-        });
+      data = JSON.parse(data);
+      if(Date.now() > data.expire){
+        return this.store.delete(filepath);
+      }else{
+        this.data = data.data;
       }
+    }).catch(() => {
+      this.data = {};
     });
-    return deferred.promise;
   }
   /**
    * get data
@@ -88,10 +81,8 @@ export default class extends think.adapter.session {
    * @param {Mixed} value   []
    * @param {Number} timeout []
    */
-  set(name, value, timeout){
-    if(timeout){
-      this.timeout = timeout;
-    }
+  set(name, value, timeout = this.timeout){
+    this.timeout = timeout;
     return this.getData().then(() => {
       this.data[name] = value;
     });
@@ -121,31 +112,27 @@ export default class extends think.adapter.session {
       expire: Date.now() + this.timeout * 1000,
       timeout: this.timeout
     };
-    let deferred = think.defer();
-    fs.writeFile(filepath, JSON.stringify(data), () => {
-      think.chmod(filepath);
-      deferred.resolve();
-    });
-    return deferred.promise;
+    return this.store.set(filepath, JSON.stringify(data));
   }
   /**
    * gc
    * @return {} []
    */
   gc(){
-    let files = think.getFiles(this.path);
     let now = Date.now();
-    files.forEach(file => {
-      let filepath = `${this.path}/${file}`;
-      let content = fs.readFileSync(filepath, 'utf8');
-      try{
-        let data = JSON.parse(content);
-        if(now > data.expire){
+    return this.store.list().then(files => {
+      files.forEach(file => {
+        let filepath = `${this.path}/${file}`;
+        let content = fs.readFileSync(filepath, 'utf8');
+        try{
+          let data = JSON.parse(content);
+          if(now > data.expire){
+            fs.unlink(filepath, () => {});
+          }
+        }catch(e){
           fs.unlink(filepath, () => {});
         }
-      }catch(e){
-        fs.unlink(filepath, () => {});
-      }
+      });
     });
   }
 }

@@ -26,7 +26,7 @@ describe('adapter/cache/file.js', function() {
   });
 
   it('new file cache instance', function() {
-    assert.equal(instance.gcType, 'cache_file');
+    assert.equal(instance.gcType, instance.path);
     assert.equal(instance.file_ext, '.json');
     assert.equal(instance.path_depth, 2);
   });
