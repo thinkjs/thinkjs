@@ -5,37 +5,24 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-var thinkjs = require('../../../lib/index.js');
 
-var testAppPath = path.resolve(__dirname, '../../testApp');
-if (!fs.existsSync(testAppPath)) {
-  [testAppPath, testAppPath + '/app', testAppPath + '/common', testAppPath + '/www'].forEach(function(v) {
-    if (!fs.existsSync(v)) {
-      fs.mkdirSync(v);
-    }
-  });
+for(var filepath in require.cache){
+  delete require.cache[filepath];
 }
+var Index = require('../../../lib/index.js');
+var instance = new Index();
+instance.load();
+
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
 
 describe('adapter/cache/file.js', function() {
   var instance;
   var FileCache;
 
   before(function() {
-    var tjs = new thinkjs();
-    think.APP_PATH = testAppPath + '/app';
-    think.RESOURCE_PATH = testAppPath + '/www';
-    tjs.loadConfig();
-    tjs.loadAlias();
 
     FileCache = think.adapter('cache', 'file');
     instance = new FileCache(think.config('cache'));
-
-    ['thinkjs', 'thinkjs1', 'thinkjs2', 'thinkjs3'].forEach(function(v) {
-      var filepath = instance.getFilepath(v);
-      if (fs.existsSync(filepath)) {
-        fs.unlinkSync(filepath);
-      }
-    });
   });
 
   it('new file cache instance', function() {
@@ -46,9 +33,9 @@ describe('adapter/cache/file.js', function() {
 
   it('get file path', function() {
     var filepath = instance.getFilepath('maxzhang');
-    assert.equal(filepath, instance.path + '/c/b/cbc21016fc89ec482594a22e03e02834.json');
+    assert.equal(filepath, 'c/b/cbc21016fc89ec482594a22e03e02834.json');
     filepath = instance.getFilepath('Max Zhang');
-    assert.equal(filepath, instance.path + '/5/e/5e98a6842702de206202d9ddd0a6bbc2.json');
+    assert.equal(filepath, '5/e/5e98a6842702de206202d9ddd0a6bbc2.json');
   });
 
   it('get empty data', function(done) {
@@ -60,23 +47,28 @@ describe('adapter/cache/file.js', function() {
 
   it('set cache data', function(done) {
     instance.set('thinkjs', 'maxzhang').then(function() {
-      assert(true);
+      return instance.get('thinkjs');
+    }).then(function(data){
+      assert.equal(data, 'maxzhang');
       done();
-    });
+    })
+  });
+  it('set cache data, object', function(done) {
+    instance.set('thinkjs', {name: 'maxzhang'}).then(function() {
+      return instance.get('thinkjs');
+    }).then(function(data){
+      assert.deepEqual(data, {name: 'maxzhang'});
+      done();
+    })
   });
 
   it('set cache data(object)', function(done) {
-    instance.set({ 'thinkjs': 'maxzhang' }).then(function() {
-      assert(true);
+    instance.set({ 'thinkjs': 'maxzhang1' }).then(function() {
+      return instance.get('thinkjs');
+    }).then(function(data){
+      assert.equal(data, 'maxzhang1');
       done();
-    });
-  });
-
-  it('get cache data', function(done) {
-    instance.get('thinkjs').then(function(data) {
-      assert.equal(data, 'maxzhang');
-      done();
-    });
+    })
   });
 
   it('set object data', function(done) {
@@ -142,8 +134,8 @@ describe('adapter/cache/file.js', function() {
     });
   });
 
-  after(function() {
-
-  });
+  it('delete files', function(done){
+    think.rmdir(instance.path).then(done);
+  })
 
 });
