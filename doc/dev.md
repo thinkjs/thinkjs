@@ -30,3 +30,12 @@ babel --loose all --optional runtime --stage 0 src/ --out-dir lib/ --watch
 * git commit的message也必须是英文
 * 代码必须经过`eslint`检测（通过`npm install -g eslint babel-eslint`安装，然后eslint file.js来检测）
 
+
+### TDO
+* logic的数据校验需要考虑传递的数据为数组的情况
+* 自定义路由可以根据分组来划分，可以提高性能
+* mongodb
+* rest api
+* 
+
+
