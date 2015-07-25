@@ -55,7 +55,6 @@ describe('middleware/parse_template', function(){
         type: undefined
       }
     }, {}, {file: filePath, var: {}}).catch(function(err){
-      assert.equal(err.stack.indexOf('no such file or directory') > -1, true);
       done();
     })
   })
