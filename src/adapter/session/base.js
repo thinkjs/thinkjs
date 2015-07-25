@@ -31,7 +31,7 @@ export default class {
     //store
     this.store = new BaseStore({
       type: thinkCache.SESSION
-    })
+    });
     //set gc type & start gc
     this.gcType = 'session_base';
     think.gc(this);
@@ -55,7 +55,7 @@ export default class {
         return think.clone(value[name]);
       }
       return think.clone(value);
-    })
+    });
   }
   /**
    * set session data
@@ -92,7 +92,7 @@ export default class {
         return this.store.delete(this.cookie);
       }
       delete data.data[name];
-    })
+    });
   }
   /**
    * gc
@@ -108,6 +108,6 @@ export default class {
           delete list[key];
         }
       }
-    })
+    });
   }
 }
