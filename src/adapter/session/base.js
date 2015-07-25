@@ -68,11 +68,13 @@ export default class {
     value = think.clone(value);
     return this.store.get(this.cookie).then(data => {
       data = data || {};
-      data.expire = Date.now() + timeout * 1000;
-      data.timeout = timeout;
-      let val = data.data || {};
-      val[name] = value;
-      data.data = val;
+      data = think.extend({}, data, {
+        expire: Date.now() + timeout * 1000,
+        timeout,
+        data: {
+          [name]: value
+        }
+      });
       return this.store.set(this.cookie, data);
     });
   }
