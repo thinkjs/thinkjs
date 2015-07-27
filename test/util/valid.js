@@ -1,7 +1,8 @@
-var should = require('should');
 var assert = require('assert');
+var path = require('path');
+var fs = require('fs');
 var muk = require('muk');
-var path = require('path')
+
 
 var Validate = require('../../lib/util/validate.js');
 

@@ -7,8 +7,8 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "mocha --reporter spec --timeout 30000 --recursive test/",
-    "test-cov": "istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 30000 --recursive  -R spec test/",
+    "test": "mocha --reporter spec --timeout 5000 --recursive test/",
+    "test-cov": "istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 5000 --recursive  -R spec test/",
     "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
     "watch-compile": "npm run compile -- --watch",
     "prepublish": "npm run compile"
@@ -55,8 +55,9 @@
     "url": "https://github.com/welefen/thinkjs"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
+  "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/welefen/thinkjs/issues"

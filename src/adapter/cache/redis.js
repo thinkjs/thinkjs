@@ -1,11 +1,6 @@
 'use strict';
 
 let redisSocket = think.adapter('socket', 'redis');
-/**
- * store redis socket instances
- * @type {Object}
- */
-let instances = thinkCache(thinkCache.REDIS);
 
 /**
  * redis cache
@@ -22,10 +17,12 @@ export default class extends think.adapter.cache {
     this.keyPrefix = options.prefix;
 
     let key = think.md5(JSON.stringify(options));
-    if (!(key in instances)) {
-      instances[key] = new redisSocket(options);
+    let instance = thinkCache(thinkCache.REDIS, key);
+    if (!instance) {
+      instance = new redisSocket(options);
+      thinkCache(thinkCache.REDIS, key, instance);
     }
-    this.redis = instances[key];
+    this.redis = instance;
   }
   /**
    * get data
@@ -34,15 +31,10 @@ export default class extends think.adapter.cache {
    */
   get(name){
     return this.redis.get(this.keyPrefix + name).then(value => {
-      try {
-        if (value) {
-          value = JSON.parse(value);
-        }
-        return Promise.resolve(value);
-      } catch(e) {
-        return Promise.resolve();
+      if (value) {
+        return JSON.parse(value);
       }
-    });
+    }).catch(err => {});
   }
   /**
    * set data
@@ -52,16 +44,12 @@ export default class extends think.adapter.cache {
    */
   set(name, value, timeout = this.timeout){
     if (think.isObject(name)) {
-      timeout = value;
+      timeout = value || timeout;
       let key = Object.keys(name)[0];
       value = name[key];
       name = key;
     }
-    try {
-      return this.redis.set(this.keyPrefix + name, JSON.stringify(value), timeout);
-    } catch(e) {
-      return Promise.resolve();
-    }
+    return this.redis.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(err => {});
   }
   /**
    * delete data
@@ -69,6 +57,6 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   delete(name){
-    return this.redis.delete(this.keyPrefix + name);
+    return this.redis.delete(this.keyPrefix + name).catch(err => {});
   }
 }

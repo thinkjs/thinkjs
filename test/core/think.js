@@ -1,8 +1,11 @@
 'use strict';
 
 var assert = require('assert');
-var thinkit = require('thinkit');
 var path = require('path');
+var fs = require('fs');
+var muk = require('muk');
+
+var thinkit = require('thinkit');
 
 
 for(var filepath in require.cache){
@@ -127,10 +130,22 @@ describe('core/think.js', function(){
     assert.equal(typeof think.reject, 'function')
   })
   it('think.reject methods', function(done){
-    var err = new Error();
+    var err = new Error('reject error');
+    var timeout = global.setTimeout;
+    var log = think.log;
+
+    think.log = function(error){
+      assert.equal(err, error)
+    }
+    global.setTimeout = function(callback, timeout){
+      callback && callback();
+      assert.equal(timeout, 500);
+    }
     var reject = think.reject(err);
     reject.catch(function(e){
       assert.equal(err, e);
+      global.setTimeout = timeout;
+      think.log = log;
       done();
     })
   })
@@ -535,6 +550,32 @@ describe('core/think.js', function(){
       }, 'TEST');
       console.log = log;
     })
+    it('think.log with function', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.length < 160, true);
+        assert.equal(msg.indexOf('fafasdfasdfasdf') > -1, true);
+      }
+      think.log(function(){
+        var arr = new Array(100);
+        return arr.join('fafasdfasdfasdf');
+      }, 'TEST');
+      console.log = log;
+    })
+    it('think.log with function, has startTime', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(/\d+ms/.test(msg), true);
+        assert.equal(msg.indexOf('fafasdfasdfasdf') > -1, true);
+      }
+      think.log(function(){
+        var arr = new Array(100);
+        return arr.join('fafasdfasdfasdf');
+      }, 'TEST', Date.now());
+      console.log = log;
+    })
+
+
     it('think.log with error', function(){
       var log = console.error;
       console.error = function(msg){
@@ -654,6 +695,10 @@ describe('core/think.js', function(){
       think.config('name1', 'suredy', data);
       assert.deepEqual(data, {name: 'welefen', name1: 'suredy'});
     })
+    it('think.config set value with module config', function(){
+      think.config('name1', 'suredy', 'test');
+      assert.deepEqual(think.config('name1', undefined, 'test'), 'suredy');
+    })
   })
 
 
@@ -665,7 +710,7 @@ describe('core/think.js', function(){
         var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
-        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis', 'resource_on', 'resource_reg', 'route_on', 'session', 'subdomain', 'timeout', 'token', 'tpl', 'validate', 'websocket' ]);
+        assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'log_request', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis', 'resource_on', 'resource_reg', 'route_on', 'session', 'subdomain', 'timeout', 'token', 'tpl', 'validate', 'websocket' ]);
         assert.equal(think.isObject(configs), true);
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
@@ -948,7 +993,7 @@ describe('core/think.js', function(){
         })
       })
     })
-    it('exec middleware, object', function(){
+    it('exec middleware, object', function(done){
       getHttp().then(function(http){
         var data = think.middleware({
           getNwwwwame: function(){
@@ -956,6 +1001,15 @@ describe('core/think.js', function(){
           }
         }, http, '___http');
         assert.equal(think.isFunction(data.prototype.getNwwwwame), true);
+        done();
+      })
+    })
+    it('exec middleware, deny_ip', function(done){
+      getHttp().then(function(http){
+        think.middleware('deny_ip', http, '___http').then(function(data){
+          assert.equal(data, true);
+          done();
+        });
       })
     })
     it('get middleware', function(){
@@ -1081,7 +1135,11 @@ describe('core/think.js', function(){
       assert.equal(think.isFunction(fn), true);
       assert.equal(think.isFunction(fn.prototype.get), true);
     })
-
+    it('create adapter, super', function(){
+      var fn = think.adapter('store', 'base');
+      assert.equal(think.isFunction(fn), true);
+      assert.equal(think.isFunction(fn.prototype.get), true);
+    })
   })
 
   describe('think.loadAdapter', function(){
@@ -1092,15 +1150,29 @@ describe('core/think.js', function(){
       think.loadAdapter(true);
       think.rmdir(path).then(done);
     })
+    it('load, store/base adapter', function(done){
+      var mode = think.mode;
+      var path = think.getPath(undefined, think.dirname.adapter);;
+      think.mkdir(path);
+      think.loadAdapter('store', 'base');
+      think.rmdir(path).then(done);
+    })
     it('extra adapter', function(done){
       var mode = think.mode;
       var path = think.getPath(undefined, think.dirname.adapter);;
       think.mkdir(path + '/welefentest');
-      require('fs').writeFileSync(path+ '/welefentest/base.js', 'module.exports=think.Class({}, true)')
-      think.loadAdapter(true);
+      require('fs').writeFileSync(path + '/welefentest/base.js', 'module.exports=think.Class({}, true)')
+      think.loadAdapter();
       assert.equal(think.isFunction(think.adapter.welefentest), true);
       delete think.adapter.welefentest;
       think.rmdir(path).then(done);
+    })
+  })
+
+  describe('think.alias', function(){
+    it('get alias', function(){
+      var data = think.alias();
+      assert.equal(think.isString(data.validate), true);
     })
   })
 
@@ -1115,6 +1187,12 @@ describe('core/think.js', function(){
       var routes = thinkCache(thinkCache.COLLECTION, 'route');
       think.route(['welefen']);
       assert.deepEqual(thinkCache(thinkCache.COLLECTION, 'route'), ['welefen']);
+      thinkCache(thinkCache.COLLECTION, 'route', routes);
+    })
+    it('get routes, exist', function(){
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      think.route(['welefen']);
+      assert.deepEqual(think.route(), ['welefen']);
       thinkCache(thinkCache.COLLECTION, 'route', routes);
     })
     it('route config exports is function', function(done){
@@ -1360,7 +1438,7 @@ describe('core/think.js', function(){
             Client: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install package-not-exist');
@@ -1390,7 +1468,7 @@ describe('core/think.js', function(){
             RedisClient: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error 1')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install redis@0.12.1');
@@ -1422,7 +1500,7 @@ describe('core/think.js', function(){
             RedisClient: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error 2')
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install redis@0.12.1');
@@ -1454,19 +1532,24 @@ describe('core/think.js', function(){
             RedisClient: function(){}
           };
         }
-        throw new Error('')
+        throw new Error('require error 3')
+      }
+      var wait = think.await;
+      think.await = function(str, callback){
+        return callback && callback();
       }
       require('child_process').exec = function(cmd, options, callback){
         assert.equal(cmd, 'npm install package_not_exist');
         flag = true;
-        callback && callback(new Error('not exist'));
+        callback && callback(new Error('package not exist'));
       }
       return think.npm('package_not_exist').catch(function(err){
         require('child_process').exec = exec;
         think.require = trequire;
         think.log = log;
+        think.await = wait;
 
-        assert.equal(err.message, 'not exist');
+        assert.equal(err.message, 'package not exist');
         done();
       })
       
@@ -1779,7 +1862,7 @@ describe('core/think.js', function(){
       })
       assert.equal(instance.tablePrefix, 'think_');
     })
-    it('get model instance', function(){
+    it('get model instance, mongo', function(){
       var instance = think.model('test', {
         host: '127.0.0.1',
         type: 'mongo'
@@ -1971,6 +2054,31 @@ describe('core/think.js', function(){
       var msg = think.error(new Error('suredy'));
       assert.equal(think.isError(msg), true);
       assert.equal(msg.message, 'suredy')
+    })
+    it('error, promise', function(done){
+      var promise = Promise.reject(new Error('think.error promise'));
+      var reject = think.reject;
+      think.reject = function(err){
+        assert.equal(err.message, 'think.error promise');
+        return Promise.reject(err);
+      }
+      think.error(promise).catch(function(err){
+        assert.equal(err.message, 'think.error promise');
+        think.reject = reject;
+        done();
+      });
+    })
+    it('error, promise, addon', function(done){
+      var promise = Promise.reject(new Error('think.error promise, EADDRNOTAVAIL'));
+      muk(think, 'reject', function(err){
+        assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+        return Promise.reject(err);
+      })
+      think.error(promise, new Error('addon error')).catch(function(err){
+        assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+        muk.restore();
+        done();
+      });
     })
   })
 

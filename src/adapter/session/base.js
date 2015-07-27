@@ -1,4 +1,11 @@
 'use strict';
+
+/**
+ * base store
+ * @type {Class}
+ */
+let BaseStore = think.adapter('store', 'base');
+
 /**
  * memory session
  */
@@ -13,15 +20,18 @@ export default class {
   }
   /**
    * init 
-   * @param  {Object} options []
+   * @param  {Object} config []
    * @return {}         []
    */
-  init(options = {}){
-    this.timeout = options.timeout;
+  init(config = {}){
+
+    this.timeout = config.timeout;
     //key is session cookie value
-    this.cookie = options.cookie;
-    //all session data
-    this.data = thinkCache(thinkCache.SESSION);
+    this.cookie = config.cookie;
+    //store
+    this.store = new BaseStore({
+      type: thinkCache.SESSION
+    });
     //set gc type & start gc
     this.gcType = 'session_base';
     think.gc(this);
@@ -32,20 +42,20 @@ export default class {
    * @return {Promise}      []
    */
   get(name){
-    //cookie is not exist
-    if(!(this.cookie in this.data)){
-      return Promise.resolve();
-    }
-    let data = this.data[this.cookie];
-    //data is expire
-    if(Date.now() > data.expire){
-      delete this.data[this.cookie];
-      return Promise.resolve();
-    }
-    //update data expire
-    this.data[this.cookie].expire = Date.now() + data.timeout * 1000;
-    let value = name ? think.clone(data[name]) : think.clone(data);
-    return Promise.resolve(value);
+    return this.store.get(this.cookie).then(data => {
+      if(!data){
+        return;
+      }
+      if(Date.now() > data.expire){
+        return this.store.delete(this.cookie);
+      }
+      data.expire = Date.now() * this.timeout * 1000;
+      let value = data.data;
+      if(name){
+        return think.clone(value[name]);
+      }
+      return think.clone(value);
+    });
   }
   /**
    * set session data
@@ -56,21 +66,17 @@ export default class {
    */
   set(name, value, timeout = this.timeout){
     value = think.clone(value);
-    let data;
-    if(this.cookie in this.data){
-      data = this.data[this.cookie].data;
-      data[name] = value;
-    }else{
-      data = {
-        [name]: value
-      };
-    }
-    this.data[this.cookie] = {
-      expire: Date.now() + timeout * 1000,
-      timeout,
-      data
-    };
-    return Promise.resolve();
+    return this.store.get(this.cookie).then(data => {
+      data = data || {};
+      data = think.extend({}, data, {
+        expire: Date.now() + timeout * 1000,
+        timeout,
+        data: {
+          [name]: value
+        }
+      });
+      return this.store.set(this.cookie, data);
+    });
   }
   /**
    * delete session data
@@ -78,14 +84,15 @@ export default class {
    * @return {Promise}      []
    */
   delete(name){
-    if(this.cookie in this.data){
-      if(name){
-        delete this.data[this.cookie].data[name];
-      }else{
-        delete this.data[this.cookie];
+    return this.store.get(this.cookie).then(data => {
+      if(!data){
+        return;
       }
-    }
-    return Promise.resolve();
+      if(!name){
+        return this.store.delete(this.cookie);
+      }
+      delete data.data[name];
+    });
   }
   /**
    * gc
@@ -94,11 +101,13 @@ export default class {
    */
   gc(){
     let now = Date.now();
-    for(let key in this.data){
-      let item = this.data[key];
-      if(item && now > item.expire){
-        delete this.data[key];
+    return this.store.list().then(list => {
+      for(let key in list){
+        let item = list[key];
+        if(item && now > item.expire){
+          delete list[key];
+        }
       }
-    }
+    });
   }
 }

@@ -357,7 +357,7 @@ think.log = (msg, type, startTime) => {
     msg = msg(colors);
   }
   if(msg.length > 100){
-    msg = msg.slice(0, 100) + '...';
+    msg = msg.substr(0, 100) + '...';
   }
   if(startTime){
     let time = Date.now() - startTime;
@@ -637,8 +637,6 @@ think.middleware = (...args) => {
  */
 think.adapter = (...args) => {
   let [type, name, fn] = args;
-  //load sys adapter
-  think.loadAdapter();
 
   let length = args.length, key = 'adapter_';
   if(length === 3){
@@ -669,6 +667,12 @@ think.adapter = (...args) => {
       let cls = think.require(key, true);
       if (cls) {
         return cls;
+      }else{
+        think.loadAdapter(type, name);
+        let cls = think.require(key, true);
+        if(cls){
+          return cls;
+        }
       }
       throw new Error(think.local('ADAPTER_NOT_FOUND', key));
     }
@@ -693,12 +697,7 @@ think.adapter = (...args) => {
  * load system & comon module adapter
  * @return {} []
  */
-let adapterLoaded = false;
-think.loadAdapter = force => {
-  if (adapterLoaded && !force) {
-    return;
-  }
-  adapterLoaded = true;
+think.loadAdapter = (type, name = 'base') => {
   let paths = [`${think.THINK_LIB_PATH}/adapter`];
   //common module adapter
   let adapterPath = think.getPath(undefined, think.dirname.adapter);
@@ -706,15 +705,22 @@ think.loadAdapter = force => {
     paths.push(adapterPath);
   }
   paths.forEach(path => {
-    let dirs = fs.readdirSync(path);
-    dirs.forEach(dir => {
-      think.alias(`adapter_${dir}`, `${path}/${dir}`);
-      //adapter type base class
-      let cls = think.require(`adapter_${dir}_base`, true);
-      if(cls){
-        think.adapter[dir] = cls;
+    if(type){
+      let filepath = `${path}/${type}/${name}.js`;
+      if(think.isFile(filepath)){
+        thinkCache(thinkCache.ALIAS, `adapter_${type}_${name}`, filepath);
       }
-    });
+    }else{
+      let dirs = fs.readdirSync(path);
+      dirs.forEach(dir => {
+        think.alias(`adapter_${dir}`, `${path}/${dir}`);
+        //adapter type base class
+        let cls = think.require(`adapter_${dir}_base`, true);
+        if(cls){
+          think.adapter[dir] = cls;
+        }
+      });
+    }
   });
 };
 
@@ -725,6 +731,9 @@ think.loadAdapter = force => {
  * @return {Object}       []
  */
 think.alias = (type, paths, slash) => {
+  if(!type){
+    return thinkCache(thinkCache.ALIAS);
+  }
   //regist alias
   if (!think.isArray(paths)) {
     paths = [paths];

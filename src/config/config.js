@@ -134,10 +134,10 @@ module.exports = {
   },
   html_cache: {
     on: false,
+    type: 'file', //store type
     timeout: 3600, //1 hour
     rules: {},
     callback: undefined,
-    path: '',
     file_ext: '.html'
   },
   token: {

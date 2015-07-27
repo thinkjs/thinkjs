@@ -1,6 +1,7 @@
 var assert = require('assert');
-var muk = require('muk');
 var path = require('path');
+var fs = require('fs');
+var muk = require('muk');
 
 var _http = require('../_http.js');
 

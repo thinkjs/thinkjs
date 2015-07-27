@@ -25,7 +25,7 @@ export default class extends think.adapter.session {
     this.timeout = options.timeout;
 
     this.isChanged = false;
-    this.model = think.model('session', true);
+    this.model = think.model('session', think.config('db'));
 
     this.gcType = 'session_db';
     think.gc(this);
@@ -36,23 +36,20 @@ export default class extends think.adapter.session {
    */
   async getData(){
     if(this.data){
-      return Promise.resolve(this.data);
+      return this.data;
     }
     let data = await this.model.where({cookie: this.cookie}).find();
+    this.data = {};
     if(think.isEmpty(data)){
       await this.model.add({cookie: this.cookie, expire: Date.now() + this.timeout * 1000});
-      this.data = {};
       return;
     }
     if(Date.now() > data.expire){
-      this.data = {};
       return;
     }
     try{
-      this.data = JSON.parse(data.data || '{}');
-    }catch(e){
-      this.data = {};
-    }
+      this.data = JSON.parse(data.data);
+    }catch(e){}
   }
   /**
    * get data
@@ -70,10 +67,8 @@ export default class extends think.adapter.session {
    * @param {Mixed} value   []
    * @param {Number} timeout []
    */
-  set(name, value, timeout){
-    if(timeout){
-      this.timeout = timeout;
-    }
+  set(name, value, timeout = this.timeout){
+    this.timeout = timeout;
     return this.getData().then(() => {
       this.isChanged = true;
       this.data[name] = value;

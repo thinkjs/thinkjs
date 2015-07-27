@@ -1,9 +1,7 @@
-'use strict';
-
 var assert = require('assert');
-var thinkit = require('thinkit');
 var path = require('path');
-
+var fs = require('fs');
+var muk = require('muk');
 
 for(var filepath in require.cache){
   delete require.cache[filepath];

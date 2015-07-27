@@ -3,12 +3,6 @@
 let memcacheSocket = think.adapter('socket', 'memcache');
 
 /**
- * store memcache socket instances
- * @type {Object}
- */
-let instances = thinkCache(thinkCache.MEMCACHE);
-
-/**
  * memcache cache
  */
 export default class extends think.adapter.cache {
@@ -23,10 +17,12 @@ export default class extends think.adapter.cache {
     this.keyPrefix = options.prefix;
 
     let key = think.md5(JSON.stringify(options));
-    if (!(key in instances)) {
-      instances[key] = new memcacheSocket(options);
+    let instance = thinkCache(thinkCache.MEMCACHE, key);
+    if (!instance) {
+      instance = new memcacheSocket(options);
+      thinkCache(thinkCache.MEMCACHE, key, instance);
     }
-    this.memcache = instances[key];
+    this.memcache = instance;
   }
   /**
    * get data
@@ -35,15 +31,10 @@ export default class extends think.adapter.cache {
    */
   get(name){
     return this.memcache.get(this.keyPrefix + name).then(value => {
-      try {
-        if (value) {
-          value = JSON.parse(value);
-        }
-        return Promise.resolve(value);
-      } catch(e) {
-        return Promise.resolve();
+      if (value) {
+        return JSON.parse(value);
       }
-    });
+    }).catch(err => {});
   }
   /**
    * set data
@@ -53,16 +44,12 @@ export default class extends think.adapter.cache {
    */
   set(name, value, timeout = this.timeout){
     if (think.isObject(name)) {
-      timeout = value;
+      timeout = value || timeout;
       let key = Object.keys(name)[0];
       value = name[key];
       name = key;
     }
-    try {
-      return this.memcache.set(this.keyPrefix + name, JSON.stringify(value), timeout);
-    } catch(e) {
-      return Promise.resolve();
-    }
+    return this.memcache.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(err => {});
   }
   /**
    * delete data
@@ -70,6 +57,6 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   delete(name){
-    return this.memcache.delete(this.keyPrefix + name);
+    return this.memcache.delete(this.keyPrefix + name).catch(err => {});
   }
 }

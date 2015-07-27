@@ -1,11 +1,14 @@
 'use strict';
 
 var assert = require('assert');
+var path = require('path');
+var fs = require('fs');
+var muk = require('muk');
 
 var thinkjs = require('../../../lib/index.js');
 
 var tjs = new thinkjs();
-tjs.loadAlias();
+tjs.load();
 
 var BaseCache = think.adapter('cache', 'base');
 
@@ -17,7 +20,8 @@ describe('adapter/cache/base.js', function() {
   });
 
   it('new base cache instance', function() {
-    assert.deepEqual(instance.data, {});
+    assert.deepEqual(think.isObject(instance.store), true);
+    assert.deepEqual(instance.gcType, 'cache_base');
   });
 
   it('set cache data', function(done) {

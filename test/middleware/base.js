@@ -1,7 +1,8 @@
-var should = require('should');
+
 var assert = require('assert');
-var muk = require('muk');
 var path = require('path');
+var fs = require('fs');
+var muk = require('muk');
 
 var Index = require('../../lib/index.js');
 var instance = new Index();
