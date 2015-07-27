@@ -1,9 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var path = require('path');
-var fs = require('fs');
-var muk = require('muk');
 
 var thinkjs = require('../../../lib/index.js');
 
@@ -115,10 +112,6 @@ describe('adapter/cache/base.js', function() {
         });
       }, 15);
     });
-  });
-
-  after(function() {
-
   });
 
 });

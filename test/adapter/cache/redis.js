@@ -2,27 +2,17 @@
 
 var assert = require('assert');
 var path = require('path');
-var fs = require('fs');
 var muk = require('muk');
 
 var thinkjs = require('../../../lib/index.js');
 
-var testAppPath = path.resolve(__dirname, '../../testApp');
-if (!fs.existsSync(testAppPath)) {
-  [testAppPath, testAppPath + '/app', testAppPath + '/common', testAppPath + '/www'].forEach(function(v) {
-    if (!fs.existsSync(v)) {
-      fs.mkdirSync(v);
-    }
-  });
-}
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
 
 describe('adapter/cache/redis.js', function() {
   var instance;
 
   before(function() {
     var tjs = new thinkjs();
-    think.APP_PATH = testAppPath + '/app';
-    think.RESOURCE_PATH = testAppPath + '/www';
     tjs.loadConfig();
     tjs.loadAlias();
 
@@ -123,11 +113,6 @@ describe('adapter/cache/redis.js', function() {
         });
       }, 15);
     });
-  });
-
-  after(function() {
-    think.APP_PATH = think.RESOURCE_PATH = testAppPath;
-    think.rmdir(testAppPath);
   });
 
 });
