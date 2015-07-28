@@ -84,14 +84,14 @@ export default class extends think.adapter.socket {
    */
   async query(sql){
     let connection = await this.getConnection();
-    let deferred = think.defer();
     let startTime = Date.now();
-    connection.all(sql, (err, data) => {
+    let fn = think.promisify(connection.all, connection);
+    let promise = fn(sql).then(data => {
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
-      return err ? deferred.reject(err) : deferred.resolve(data);
+      return data;
     });
-    return think.error(deferred.promise);
+    return think.error(promise);
   }
 }

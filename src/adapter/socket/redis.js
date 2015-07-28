@@ -65,10 +65,8 @@ export default class extends think.adapter.socket {
    */
   async wrap(name, ...data){
     await this.getConnection();
-    let deferred = think.defer();
-    data.push((err, data) => err ? deferred.reject(err) : deferred.resolve(data));
-    this.connection[name].apply(this.connection, data);
-    return think.error(deferred.promise);
+    let fn = think.promisify(this.connection[name], this.connection);
+    return think.error(fn(...data));
   }
   /**
    * get data
