@@ -31,9 +31,7 @@ export default class extends think.adapter.store {
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
-    let deferred = think.defer();
-    fs.readFile(filepath, {encoding: 'utf8'}, (err, content) => err ? deferred.reject(err) : deferred.resolve(content));
-    return deferred.promise;
+    return think.promisify(fs.readFile, fs)(filepath, {encoding: 'utf8'});
   }
   /**
    * set file content
@@ -43,12 +41,10 @@ export default class extends think.adapter.store {
   set(key, content){
     let filepath = this.config.path + '/' + key;
     think.mkdir(path.dirname(filepath));
-    let deferred = think.defer();
-    fs.writeFile(filepath, content, err => {
+    let fn = think.promisify(fs.writeFile, fs);
+    return fn(filepath, content).then(() => {
       think.chmod(filepath);
-      return err ? deferred.reject(err) : deferred.resolve();
     });
-    return deferred.promise;
   }
   /**
    * delete file
@@ -60,9 +56,7 @@ export default class extends think.adapter.store {
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
-    let deferred = think.defer();
-    fs.unlink(filepath, err => err ? deferred.reject(err) : deferred.resolve());
-    return deferred.promise;
+    return think.promisify(fs.unlink, fs)(filepath);
   }
   /**
    * get all files
