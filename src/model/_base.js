@@ -3,8 +3,6 @@
 
 let Validate = think.require('validate');
 
-let dbInstances = thinkCache(thinkCache.DB);
-
 /**
  * base model class
  */
@@ -60,7 +58,11 @@ export default class {
    * @return {} []
    */
   getConfigKey(){
-    return think.md5(JSON.stringify(this.config));
+    if(this.configKey){
+      return this.configKey;
+    }
+    this.configKey = think.md5(JSON.stringify(this.config));
+    return this.configKey;
   }
   /**
    * get db instance
@@ -71,11 +73,12 @@ export default class {
       return this._db;
     }
     let configKey = this.getConfigKey();
-    if (!dbInstances[configKey]) {
+    if (!thinkCache(thinkCache.DB, configKey)) {
       let db = think.adapter('db', this.config.type);
-      dbInstances[configKey] = new db(this.config);
+      let instance = new db(this.config);
+      thinkCache(thinkCache.DB, configKey, instance);
     }
-    this._db = dbInstances[configKey];
+    this._db = thinkCache(thinkCache.DB, configKey);
     return this._db;
   }
   /**
@@ -437,6 +440,7 @@ export default class {
    * @return {} []
    */
   close(){
+    thinkCache(thinkCache.DB, this.getConfigKey(), null);
     delete dbInstances[this.getConfigKey()];
     if (this._db) {
       this._db.close();
