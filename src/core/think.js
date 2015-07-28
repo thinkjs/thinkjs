@@ -125,6 +125,22 @@ think.defer = () => {
   return deferred;
 };
 /**
+ * make callback function to promise
+ * @param  {Function} fn       []
+ * @param  {Object}   receiver []
+ * @return {Promise}            []
+ */
+think.promisify = (fn, receiver) => {
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      fn.apply(receiver, [...args, (err, res) =>  {
+        if (err) return reject(err);
+        resolve(res);
+      }]);
+    });
+  }
+};
+/**
  * [description]
  * @param  {[type]} err [description]
  * @return {[type]}     [description]
