@@ -126,6 +126,27 @@ describe('core/think.js', function(){
     assert.equal(typeof deferred.resolve, 'function')
     assert.equal(typeof deferred.reject, 'function')
   })
+  it('think.promisify is a function', function(){
+    assert.equal(typeof think.promisify, 'function');
+  })
+  it('think.promisify readFile', function(done){
+    var readFile = think.promisify(fs.readFile, fs);
+    readFile(__filename, 'utf-8').then(function(content){
+      assert.equal(content.indexOf('think.promisify readFile') > -1, true);
+      done();
+    })
+  })
+  it('think.promisify readFile error', function(done){
+    muk(fs, 'readFile', function(file, encoding, callback){
+      callback && callback(new Error('think.promisify readFile error'))
+    })
+    var readFile = think.promisify(fs.readFile, fs);
+    readFile(__filename, 'utf-8').catch(function(err){
+      assert.equal(err.message, 'think.promisify readFile error');
+      muk.restore();
+      done();
+    })
+  })
   it('think.reject is function', function(){
     assert.equal(typeof think.reject, 'function')
   })
