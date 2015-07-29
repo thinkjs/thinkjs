@@ -30,6 +30,10 @@ export default class extends think.controller.base {
    * @return {String} []
    */
   getId(){
+    let id = this.get('id');
+    if(id){
+      return id;
+    }
     let last = this.http.pathname.split('/').slice(-1)[0];
     if(last !== this.resource){
       return last;

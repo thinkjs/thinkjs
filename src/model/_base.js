@@ -338,6 +338,7 @@ export default class {
    * @return {} []
    */
   _validData(data){
+    return data;
     let field, value, checkData = [];
     for(field in data){
       if (field in this.fields) {
