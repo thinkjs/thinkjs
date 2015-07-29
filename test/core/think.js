@@ -1269,6 +1269,62 @@ describe('core/think.js', function(){
         think.rmdir(think.APP_PATH).then(done);
       });
     })
+    it('route config exports object', function(done){
+      think.mode = think.mode_mini;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+
+      delete require.cache[filepath];
+
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports={admin: {reg: /^admin/, children: []}}');
+
+      Promise.resolve(think.route()).then(function(data){
+        assert.deepEqual(data, {admin: {reg: /^admin/, children: []}});
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+    it('common route is object, load module route', function(done){
+      think.mode = think.mode_module;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';
+      var adminpath = think.getPath('admin', think.dirname.config) + '/route.js';
+      delete require.cache[filepath];
+      delete require.cache[adminpath];
+
+      think.mkdir(path.dirname(filepath));
+      think.mkdir(path.dirname(adminpath));
+      require('fs').writeFileSync(filepath, 'module.exports={admin: {reg: /^admin/, children: []}}');
+      require('fs').writeFileSync(adminpath, 'module.exports=[[/^admin\\/index/, "admin/index/list"]]');
+
+      Promise.resolve(think.route()).then(function(data){
+        assert.deepEqual(data, {admin: {reg: /^admin/, children: [[/^admin\/index/, "admin/index/list"]]}});
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
+    it('common route is object, load module route, module route not exist', function(done){
+      think.mode = think.mode_module;
+      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      thinkCache(thinkCache.COLLECTION, 'route', null);
+
+      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';
+      delete require.cache[filepath];
+
+      think.mkdir(path.dirname(filepath));
+      require('fs').writeFileSync(filepath, 'module.exports={test: {reg: /^admin/}}');
+
+      Promise.resolve(think.route()).then(function(data){
+        assert.deepEqual(data, {test: {reg: /^admin/, children: []}});
+        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        think.rmdir(think.APP_PATH).then(done);
+      });
+    })
   })
 
   describe('think.gc', function(){

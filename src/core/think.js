@@ -802,7 +802,7 @@ think.route = routes => {
     return routes;
   }
   let file = think.getPath(undefined, think.dirname.config) + '/route.js';
-  let config = think.safeRequire(file);
+  let config = think.safeRequire(file) || [];
 
   //route config is funciton
   //may be is dynamic save in db
@@ -816,16 +816,14 @@ think.route = routes => {
     });
   }
   //get module route config
-  else if(think.isObject(config)){
+  else if(think.isObject(config) && think.mode === think.mode_module){
     for(let module in config){
       let filepath = think.getPath(module, think.dirname.config) + '/route.js';
       let moduleConfig = think.safeRequire(filepath);
-      if(moduleConfig){
-        config[module].children = moduleConfig;
-      }
+      config[module].children = moduleConfig || [];
     }
   }
-  thinkCache(thinkCache.COLLECTION, key, config || []);
+  thinkCache(thinkCache.COLLECTION, key, config);
   return config;
 };
 /**
