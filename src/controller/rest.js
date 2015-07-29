@@ -12,9 +12,32 @@ export default class extends think.controller.base {
   init(http){
     super.init(http);
     this.__isRest = true;
-    this.resource = this.get('resource');
-    this.id = this.get('id') | 0;
+    this.resource = this.getResource();
+    this.id = this.getId();
     this.modelInstance = this.model(this.resource);
+  }
+  /**
+   * get resource
+   * @return {String} [resource name]
+   */
+  getResource(){
+    let resource = this.get('resource').toLowerCase();
+    if(resource){
+      return resource;
+    }
+    let last = __filename.lastIndexOf('/');
+    return __filename.substr(last + 1, __filename.length - last - 3);
+  }
+  /**
+   * get resource id
+   * @return {String} []
+   */
+  getId(){
+    let last = this.http.pathname.split('/').slice(-1)[0];
+    if(last !== this.resource){
+      return last;
+    }
+    return '';
   }
   /**
    * get resource
