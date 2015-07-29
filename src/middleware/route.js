@@ -3,7 +3,7 @@
 import url from 'url';
 
 /**
- * route rules:
+ * route array rules:
  * [
  *   [/^user\/(\d+)/, 'home/user/detail?id=:1'],
  *   [/^usr\/(\d+)/, {
@@ -12,6 +12,16 @@ import url from 'url';
  *   }],
  *   ...
  * ]
+ *
+ * route object rules:
+ * {
+ *   admin: {
+ *     reg: /^admin/,
+ *     children: [
+ *       
+ *     ]
+ *   }
+ * }
  */
 
 export default class extends think.middleware.base {
@@ -23,24 +33,42 @@ export default class extends think.middleware.base {
     if (!this.config('route_on')) {
       return this.parsePathname();
     }
-    let routes = await think.route();
-    return this.parse(routes);
+    let rules = await think.route();
+    return this.parse(rules);
   }
   /**
    * parse routes
    * @param  {Array} routes [routes]
    * @return {}        []
    */
-  parse(routes){
+  parse(rules){
     this.cleanPathname();
-    let length = routes.length;
+    if(think.isArray(rules)){
+      return this.parseRules(rules);
+    }else if(think.isObject(rules)){
+      for(let module in rules){
+        let reg = rules[module].reg;
+        if(!reg || reg.test(this.http.pathname)){
+          this.module = module;
+          return this.parseRules(rules[module].children);
+        }
+      }
+    }
+  }
+  /**
+   * parse array rules
+   * @param  {Array} rules []
+   * @return {}       []
+   */
+  parseRules(rules){
+    let length = rules.length;
     let pathname = this.http.pathname;
     if (length === 0 || !pathname) {
       return this.parsePathname();
     }
     let match, item, route, rule;
     for(let i = 0; i < length; i++){
-      item = routes[i];
+      item = rules[i];
       route = this.getRoute(item[1]);
       if (!route) {
         continue;
@@ -90,7 +118,10 @@ export default class extends think.middleware.base {
     }
     let paths = pathname.split('/');
     let module, controller, action, err;
-    if (!think.mini) {
+
+    if(this.module){
+      module = this.module;
+    }else if (!think.mini) {
       module = paths[0].toLowerCase();
       if (module && module !== think.dirname.common && think.module.indexOf(module) > -1) {
         paths.shift();

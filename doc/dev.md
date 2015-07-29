@@ -39,3 +39,14 @@ babel --loose all --optional runtime --stage 0 src/ --out-dir lib/ --watch
 * 
 
 
+#### 自定义路由格式
+
+```
+module.exports = {
+    admin: {
+        reg: /^admin/,
+        children: []
+    }
+}
+```
+

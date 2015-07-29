@@ -453,7 +453,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   }
   //load extra config by key
   if(think.isDir(rootPath)){
-    let filters = ['config', 'debug', 'cli'];
+    let filters = ['config', 'debug', 'cli', 'route'];
     if(module === true){
       filters.push('alias', 'hook', 'transform', 'error');
     }
@@ -768,6 +768,22 @@ think.alias = (type, paths, slash) => {
 };
 /**
  * load route
+ * route detail config
+ *
+ * module.exports = {
+ *   admin: {
+ *     reg: /^admin/, //module reg
+ *     children: [
+ *       /^admin\/reg/, 'admin/index/reg'
+ *     ]
+ *   },
+ *   home: {
+ *     children: [
+ *       
+ *     ]
+ *   }
+ * }
+ * 
  * @return {} []
  */
 think.route = routes => {
@@ -777,7 +793,7 @@ think.route = routes => {
     return;
   }
   //set route
-  else if (think.isArray(routes)) {
+  else if (think.isArray(routes) || think.isObject(routes)) {
     thinkCache(thinkCache.COLLECTION, key, routes);
     return;
   }
@@ -786,7 +802,7 @@ think.route = routes => {
     return routes;
   }
   let file = think.getPath(undefined, think.dirname.config) + '/route.js';
-  let config = think.safeRequire(file) || [];
+  let config = think.safeRequire(file);
 
   //route config is funciton
   //may be is dynamic save in db
@@ -799,7 +815,17 @@ think.route = routes => {
       });
     });
   }
-  thinkCache(thinkCache.COLLECTION, key, config);
+  //get module route config
+  else if(think.isObject(config)){
+    for(let module in config){
+      let filepath = think.getPath(module, think.dirname.config) + '/route.js';
+      let moduleConfig = think.safeRequire(filepath);
+      if(moduleConfig){
+        config[module].children = moduleConfig;
+      }
+    }
+  }
+  thinkCache(thinkCache.COLLECTION, key, config || []);
   return config;
 };
 /**
