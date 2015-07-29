@@ -45,15 +45,15 @@ export default class extends think.middleware.base {
     this.cleanPathname();
     if(think.isArray(rules)){
       return this.parseRules(rules);
-    }else if(think.isObject(rules)){
-      for(let module in rules){
-        let reg = rules[module].reg;
-        if(!reg || reg.test(this.http.pathname)){
-          this.module = module;
-          return this.parseRules(rules[module].children);
-        }
+    }
+    for(let module in rules){
+      let reg = rules[module].reg;
+      if(!reg || reg.test(this.http.pathname)){
+        this.module = module;
+        return this.parseRules(rules[module].children);
       }
     }
+    this.parsePathname();
   }
   /**
    * parse array rules
@@ -78,14 +78,12 @@ export default class extends think.middleware.base {
       if (think.isRegExp(rule)) {
         match = pathname.match(rule);
         if (match) {
-          this.parseRegExpRule(match, route);
-          break;
+          return this.parseRegExpRule(match, route);
         }
       }
       //is string route
       else if (this.checkUrlMatch(rule)) {
-        this.parseRoute(route);
-        break;
+        return this.parseRoute(route);
       }
     }
     this.parsePathname();
@@ -119,11 +117,15 @@ export default class extends think.middleware.base {
     let paths = pathname.split('/');
     let module, controller, action, err;
 
-    if(this.module){
-      module = this.module;
-    }else if (!think.mini) {
+    if (think.mode !== think.mode_mini) {
       module = paths[0].toLowerCase();
-      if (module && module !== think.dirname.common && think.module.indexOf(module) > -1) {
+      if(this.module){
+        if(this.module === module){
+          paths.shift();
+        }else{
+          module = this.module;
+        }
+      }else if (module && module !== think.dirname.common && think.module.indexOf(module) > -1) {
         paths.shift();
       }else{
         module = '';
@@ -162,9 +164,10 @@ export default class extends think.middleware.base {
       }
       paths = paths.split('/');
     }
-    if (paths.length) {
-      for(let i = 0, length = Math.ceil(paths.length) / 2; i < length; i++){
-        this.http._get[paths[i * 2]] = paths[i * 2 + 1] || '';
+    for(let i = 0, name, length = Math.ceil(paths.length) / 2; i < length; i++){
+      name = paths[i * 2];
+      if(name){
+        this.http._get[name] = paths[i * 2 + 1] || '';
       }
     }
   }
@@ -195,7 +198,7 @@ export default class extends think.middleware.base {
     }
     //append match data to this.http._get
     for(let key in match){
-      this.http._get[key] = Math[key];
+      this.http._get[key] = match[key];
     }
     if (plength > length) {
       this.parseExtPath(pathname.slice(length));
@@ -217,7 +220,7 @@ export default class extends think.middleware.base {
         return route[method];
       }
     }
-    return;
+    return '';
   }
   /**
    * parse route string
@@ -234,11 +237,12 @@ export default class extends think.middleware.base {
         }
       }
       route = urlInfo.pathname;
-      if (route[0] === '/') {
-        route = route.slice(1);
-      }
+    }
+    if (route[0] === '/') {
+      route = route.slice(1);
     }
     this.http.pathname = route;
+    this.parsePathname();
   }
   /**
    * parse regexp rule
