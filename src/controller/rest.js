@@ -21,8 +21,9 @@ export default class extends think.controller.base {
    * @return {String} [resource name]
    */
   getResource(){
-    let last = __filename.lastIndexOf('/');
-    return __filename.substr(last + 1, __filename.length - last - 3);
+    let filename = this.__filename || __filename;
+    let last = filename.lastIndexOf('/');
+    return filename.substr(last + 1, filename.length - last - 4);
   }
   /**
    * get resource id

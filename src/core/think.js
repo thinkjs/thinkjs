@@ -976,7 +976,7 @@ think.getModule = module => {
   return module.toLowerCase();
 };
 
-let nameReg = /^[A-Za-z\_]\w*$/;
+let nameReg = /^\w*$/;
 /**
  * get controller name
  * @param  {String} controller []

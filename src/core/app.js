@@ -90,7 +90,7 @@ export default class extends think.base {
     }
     //if is rest api, rewrite action
     if(controller.__isRest){
-      this.http.action = this.http.method();
+      this.http.action = this.http.method.toLowerCase();
     }
     let action = this.http.action;
     let actionWithSuffix = action + think.config('action_suffix');

@@ -1456,8 +1456,12 @@ describe('core/think.js', function(){
       var controller = think.getController('TEST');
       assert.equal(controller, 'test');
     })
+    it('get controller, number', function(){
+      var controller = think.getController('111test');
+      assert.equal(controller, '111test');
+    })
     it('get invalid controller', function(){
-      var controller = think.getController('011test');
+      var controller = think.getController('$$011test');
       assert.equal(controller, '');
     })
   })
@@ -1471,8 +1475,12 @@ describe('core/think.js', function(){
       var action = think.getAction('TEST');
       assert.equal(action, 'TEST');
     })
+    it('get action', function(){
+      var action = think.getAction('111TEST');
+      assert.equal(action, '111TEST');
+    })
     it('get invalid action', function(){
-      var action = think.getAction('011test');
+      var action = think.getAction('$$011test');
       assert.equal(action, '');
     })
   })
