@@ -11,6 +11,7 @@ export default class extends think.controller.base {
    */
   init(http){
     super.init(http);
+    this.__isRest = true;
     this.resource = this.get('resource');
     this.id = this.get('id') | 0;
     this.modelInstance = this.model(this.resource);
@@ -71,13 +72,6 @@ export default class extends think.controller.base {
     }
     let rows = await this.modelInstance.where({[pk]: this.id}).update(data);
     return this.success({affectedRows: rows});
-  }
-  /**
-   * for check child class is rest class
-   * @return {Boolean} []
-   */
-  __isRest(){
-    return true;
   }
   /**
    * call

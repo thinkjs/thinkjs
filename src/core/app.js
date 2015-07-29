@@ -88,6 +88,10 @@ export default class extends think.base {
     if(isCall){
       return this.action(controller, think.config('call_action'));
     }
+    //if is rest api, rewrite action
+    if(controller.__isRest){
+      this.http.action = this.http.method();
+    }
     let action = this.http.action;
     let actionWithSuffix = action + think.config('action_suffix');
     //action is exist
