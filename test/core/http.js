@@ -11,7 +11,7 @@ var thinkjs = require('../../lib/index.js');
 new thinkjs().load();
 
 
-var Http = require('../../lib/core/Http.js');
+var Http = require('../../lib/core/http.js');
 
 var localIp = '127.0.0.1';
 function noop(data) {
