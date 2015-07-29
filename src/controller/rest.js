@@ -21,10 +21,6 @@ export default class extends think.controller.base {
    * @return {String} [resource name]
    */
   getResource(){
-    let resource = this.get('resource').toLowerCase();
-    if(resource){
-      return resource;
-    }
     let last = __filename.lastIndexOf('/');
     return __filename.substr(last + 1, __filename.length - last - 3);
   }
