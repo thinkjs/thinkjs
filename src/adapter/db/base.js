@@ -28,16 +28,6 @@ export default class extends Parse {
 
   }
   /**
-   * get select sql
-   * @param  {Object} options []
-   * @return {String}         [sql string]
-   */
-  buildSelectSql(options){
-    let sql = this.parseSql(this.selectSql, options);
-    sql += this.parseLock(options.lock);
-    return sql;
-  }
-  /**
    * insert data
    * @param  {Object} data    []
    * @param  {Object} options []
@@ -76,7 +66,7 @@ export default class extends Parse {
       for(let key in item){
         let val = item[key];
         val = this.parseValue(val);
-        if (isScalar(val)) {
+        if (think.isString(val) || think.isBoolean(val) || think.isNumber(val)) {
           value.push(val);
         }
       }

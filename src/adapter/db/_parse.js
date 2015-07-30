@@ -219,7 +219,7 @@ export default class {
         }else{
           whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
         }
-      }else if(val0 === 'EXP'){ // 使用表达式
+      }else if(val0 === 'EXP'){ //
         whereStr += '(' + key + ' ' + val[1] + ')';
       }else if(val0 === 'IN' || val0 === 'NOT IN'){ // IN 运算
         if (val[2] === 'exp') {
@@ -240,7 +240,7 @@ export default class {
             whereStr += key + ' ' + val0 + ' (' + val[1].join(',') + ')';
           }
         }
-      }else if(val0 === 'BETWEEN'){ // BETWEEN运算
+      }else if(val0 === 'BETWEEN'){ // 
         data = think.isString(val[1]) ? val[1].split(',') : val[1];
         if (!think.isArray(data)) {
           data = [val[1], val[2]];
@@ -504,17 +504,33 @@ export default class {
   }
   /**
    * parse sql
-   * @param  {[type]} sql     [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * @param  {String} sql     []
+   * @param  {Object} options []
+   * @return {String}         []
    */
   parseSql(sql, options = {}){
     return sql.replace(/\%([A-Z]+)\%/g, (a, type) => {
       type = type.toLowerCase();
       let ucfirst = type[0].toUpperCase() + type.slice(1);
       return this['parse' + ucfirst](options[type] || '', options);
-    }).replace(/__([A-Z_-]+)__/g, (a, b) => {
-      return '`' + this.config.prefix + b.toLowerCase() + '`';
+    }).replace(/\s__([A-Z_-]+)__\s/g, (a, b) => {
+      return ' `' + this.config.prefix + b.toLowerCase() + '` ';
     });
+  }
+  /**
+   * escape string, override in sub class
+   * @param  {String} str []
+   * @return {String}     []
+   */
+  escapeString(str){
+    return str;
+  }
+  /**
+   * get select sql
+   * @param  {Object} options []
+   * @return {String}         [sql string]
+   */
+  buildSelectSql(options){
+    return this.parseSql(this.selectSql, options) + this.parseLock(options.lock);
   }
 }

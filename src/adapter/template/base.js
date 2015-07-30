@@ -12,15 +12,8 @@ export default class {
    * @return {} []
    */
   getContent(file){
-    let deferred = think.defer();
-    fs.readFile(file, 'utf8', (err, content) => {
-      if (err) {
-        deferred.reject(err);
-      }else{
-        deferred.resolve(content);
-      }
-    });
-    return deferred.promise;
+    let fn = think.promisify(fs.readFile, fs);
+    return fn(file, 'utf8');
   }
   /**
    * run
