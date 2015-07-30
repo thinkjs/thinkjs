@@ -442,7 +442,6 @@ export default class {
    */
   close(){
     thinkCache(thinkCache.DB, this.getConfigKey(), null);
-    delete dbInstances[this.getConfigKey()];
     if (this._db) {
       this._db.close();
       this._db = null;
