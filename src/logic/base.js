@@ -19,7 +19,8 @@ export default class extends think.controller.base {
    *   {
           name: 'name,pwd',
           required: true,
-          type: 'int',
+          type: 'number',
+          validate: 'int',
           msg: '',
           default: 1000,
           args: [],
@@ -74,7 +75,27 @@ export default class extends think.controller.base {
         if(think.isFunction(itemData.default)){
           itemData.default = itemData.default(itemData);
         }
-        let value = this[getValueMethod](nameItem) || itemData.default || '';
+        let value = this[getValueMethod](nameItem);
+        //check item data type, convert item value
+        if(itemData.type){
+          if(itemData.type === 'array' && !think.isArray(value)){
+            value = [value];
+          }else if(itemData.type === 'number' && !think.isNumber(value)){
+            value = parseFloat(value) || 0;
+          }else if(itemData.type === 'boolean' && !think.isBoolean(value)){
+            if(value === 'false' || value === '0'){
+              value = false;
+            }else{
+              value = !!value;
+            }
+          }
+          this[getValueMethod](nameItem, value);
+        }
+        //get value from default
+        if(value === ''){
+          value = itemData.default || '';
+          this[getValueMethod](nameItem, value);
+        }
         itemData.value = value;
         itemData.required_msg = itemData.required_msg || config.required_msg;
         result.push(itemData);
@@ -99,12 +120,6 @@ export default class extends think.controller.base {
     if(!think.isEmpty(ret)){
       return this.fail(config.code, config.msg, ret);
     }
-    //set default value
-    data.forEach(item => {
-      if(item.default && item.get){
-        this[item.get](item.name, item.value);
-      }
-    });
   }
   /**
    * before magic method

@@ -16,12 +16,13 @@ export default {
   PATH_EMPTY: '`%s` path muse be set',
   PATH_NOT_EXIST: '`%s` is not exist',
   TEMPLATE_NOT_EXIST: 'can\'t find template file `%s`',
-  PARAMS_EMPTY: '`%s` value can\'t empty',
-  PARAMS_NOT_VALID: '`{name}` value not valid',
+  PARAMS_EMPTY: 'params `%s` value can\'t empty',
+  PARAMS_NOT_VALID: 'params `{name}` value not valid',
   FIELD_KEY_NOT_VALID: 'field `%s` in where condition is not valid',
   DATA_EMPTY: 'data can not be empty',
   MISS_WHERE_CONDITION: 'miss where condition',
   TABLE_NO_COLUMNS: 'table `%s` has no columns',
   NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction',
   DATA_MUST_BE_ARRAY: 'data is not array list',
+  PARAMS_TYPE_INVALID: 'params `{name}` type invalid'
 };

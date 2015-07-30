@@ -74,11 +74,11 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name', required: true, type: 'int', default: 1000, get: 'get', value: 1000, required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'name', required: true, validate: 'int', default: 1000, get: 'get', value: 1000, required_msg: undefined } ])
       done();
     })
   })
@@ -91,11 +91,11 @@ describe('logic/base', function(){
       var data = [{
         name: 'name,email',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',   required: true,   type: 'int',   default: 1000,   get: 'get',   value: 1000,   required_msg: undefined }, { name: 'email',   required: true,   type: 'int',   default: 1000,   get: 'get',   value: 1000,   required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'name',   required: true,   validate: 'int',   default: 1000,   get: 'get',   value: 1000,   required_msg: undefined }, { name: 'email',   required: true,   validate: 'int',   default: 1000,   get: 'get',   value: 1000,   required_msg: undefined } ])
       done();
     })
   })
@@ -108,7 +108,7 @@ describe('logic/base', function(){
       var data = [{
         name: 'name,email',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         method: 'get'
       }];
@@ -126,18 +126,18 @@ describe('logic/base', function(){
       var data = [{
         name: 'name,email',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         method: 'get'
       }, {
         name: 'pwd',
         required: true,
-        type: 'length',
+        validate: 'length',
         args: [6, 20],
         method: 'post'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'pwd', required: true, type: 'length', args: [ 6, 20 ], method: [ 'post' ], get: 'post', value: '', required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'pwd', required: true, validate: 'length', args: [ 6, 20 ], method: [ 'post' ], get: 'post', value: '', required_msg: undefined } ])
       done();
     })
   })
@@ -153,12 +153,12 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         action: 'test'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',  required: true,  type: 'int',  default: 1000,  action: [ 'test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
       done();
     })
   })
@@ -174,7 +174,7 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         action: 'test11'
       }];
@@ -195,7 +195,7 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         action: 'group1/test'
       }];
@@ -216,12 +216,12 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         action: 'group/test'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',  required: true,  type: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
       done();
     })
   })
@@ -237,13 +237,13 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: 1000,
         action: 'group/test',
         get: 'post'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',  required: true,  type: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
       done();
     })
   })
@@ -259,13 +259,13 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: function(){return 1000},
         action: 'group/test',
         get: 'post'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',  required: true,  type: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
       done();
     })
   })
@@ -281,14 +281,14 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: function(){return 1000},
         action: 'group/test',
         get: 'post',
         required_msg: 'required_msg'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',  required: true,  type: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: 'required_msg' } ])
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: 'required_msg' } ])
       done();
     })
   })
@@ -306,13 +306,172 @@ describe('logic/base', function(){
       var data = [{
         name: 'name',
         required: true,
-        type: 'int',
+        validate: 'int',
         default: function(){return 1000},
         action: 'group/test',
         get: 'post'
       }];
       data = instance._parseValidateData(data);
-      assert.deepEqual(data, [ { name: 'name',  required: true,  type: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: 'default required msg' } ])
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: 'default required msg' } ])
+      done();
+    })
+  })
+  it('_parseValidateData, type number', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home'
+    }).then(function(instance){
+      var data = [{
+        name: 'name',
+        required: true,
+        validate: 'int',
+        type: 'number',
+        action: 'group/test',
+        get: 'post'
+      }];
+      data = instance._parseValidateData(data);
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'number',  action: [ 'group/test' ],  get: 'post',  value: 0,  required_msg: 'default required msg' } ])
+      done();
+    })
+  })
+  it('_parseValidateData, type number', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home',
+      _post: {
+        name: 10000
+      }
+    }).then(function(instance){
+      var data = [{
+        name: 'name',
+        required: true,
+        validate: 'int',
+        type: 'number',
+        action: 'group/test',
+        get: 'post'
+      }];
+      data = instance._parseValidateData(data);
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'number',  action: [ 'group/test' ],  get: 'post',  value: 10000,  required_msg: 'default required msg' } ])
+      done();
+    })
+  })
+  it('_parseValidateData, type array', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home',
+      _post: {
+        name: 10000
+      }
+    }).then(function(instance){
+      var data = [{
+        name: 'name',
+        required: true,
+        validate: 'int',
+        type: 'array',
+        action: 'group/test',
+        get: 'post'
+      }];
+      data = instance._parseValidateData(data);
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'array',  action: [ 'group/test' ],  get: 'post',  value: [ 10000 ],  required_msg: 'default required msg' } ])
+      done();
+    })
+  })
+  it('_parseValidateData, type boolean', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home',
+      _post: {
+        name: 10000
+      }
+    }).then(function(instance){
+      var data = [{
+        name: 'name',
+        required: true,
+        validate: 'int',
+        type: 'boolean',
+        action: 'group/test',
+        get: 'post'
+      }];
+      data = instance._parseValidateData(data);
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: true,  required_msg: 'default required msg' } ])
+      done();
+    })
+  })
+  it('_parseValidateData, type boolean 1', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home',
+      _post: {
+        name: 'false'
+      }
+    }).then(function(instance){
+      var data = [{
+        name: 'name',
+        required: true,
+        validate: 'int',
+        type: 'boolean',
+        action: 'group/test',
+        get: 'post'
+      }];
+      data = instance._parseValidateData(data);
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: false,  required_msg: 'default required msg' } ])
+      done();
+    })
+  })
+  it('_parseValidateData, type boolean 2', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home',
+      _post: {
+        name: '0'
+      }
+    }).then(function(instance){
+      var data = [{
+        name: 'name',
+        required: true,
+        validate: 'int',
+        type: 'boolean',
+        action: 'group/test',
+        get: 'post'
+      }];
+      data = instance._parseValidateData(data);
+      assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: false,  required_msg: 'default required msg' } ])
       done();
     })
   })
@@ -349,7 +508,7 @@ describe('logic/base', function(){
     }).then(function(instance){
       var data = [{
         name: 'name',
-        type: 'length',
+        validate: 'length',
         args: [4, 10],
         required: true
       }];
@@ -374,7 +533,7 @@ describe('logic/base', function(){
     }).then(function(instance){
       var data = [{
         name: 'name',
-        type: 'length',
+        validate: 'length',
         args: [4, 10],
         default: 'suredy'
       }];
@@ -399,7 +558,7 @@ describe('logic/base', function(){
     }).then(function(instance){
       instance.validate = [{
         name: 'name',
-        type: 'length',
+        validate: 'length',
         args: [4, 10],
         default: 'suredy'
       }];
@@ -426,7 +585,7 @@ describe('logic/base', function(){
     }).then(function(instance){
       instance.validate = [{
         name: 'name',
-        type: 'length',
+        validate: 'length',
         args: [4, 10]
       }];
       instance.fail = function(code, msg, ret){
@@ -456,7 +615,7 @@ describe('logic/base', function(){
     }).then(function(instance){
       instance.validate = [{
         name: 'name',
-        type: 'length',
+        validate: 'length',
         args: [4, 10],
         msg: 'length is 4 to 10'
       }];

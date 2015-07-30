@@ -1155,7 +1155,8 @@ think.local = (key, ...data) => {
  * validate data
  * [{
  *   name: 'xxx',
- *   type: 'xxx',
+ *   type: 'string',
+ *   validate: 'email',
  *   value: 'xxx',
  *   required: true,
  *   args: []
@@ -1166,10 +1167,10 @@ think.local = (key, ...data) => {
  * @return {}            []
  */
 think.validate = (name, callback) => {
-  let validate = thinkCache(thinkCache.VALIDATE);
-  if (think.isEmpty(validate)) {
-    validate = think.require('validate');
-    thinkCache(thinkCache.VALIDATE, validate);
+  let Validate = thinkCache(thinkCache.VALIDATE);
+  if (think.isEmpty(Validate)) {
+    Validate = think.require('validate');
+    thinkCache(thinkCache.VALIDATE, Validate);
   }
   if (think.isString(name)) {
     // register valid callback
@@ -1205,26 +1206,53 @@ think.validate = (name, callback) => {
         return;
       }
     }
+    //check data type
     let type = item.type;
-    //type is not set, only check data is required
-    if(!type){
+    if(type){
+      let isValid = true;
+      switch(type){
+        case 'string':
+          isValid = think.isString(item.value);
+          break;
+        case 'array':
+          isValid = think.isArray(item.value);
+          break;
+        case 'object':
+          isValid = think.isObject(item.value);
+          break;
+        case 'number':
+          isValid = think.isNumber(item.value);
+          break;
+        case 'boolean':
+          isValid = think.isBoolean(item.value);
+          break;
+      }
+      if(!isValid){
+        let typeMsg = item.invalid_type || think.local('PARAMS_TYPE_INVALID');
+        msg[item.name] = typeMsg.replace('{name}', item.name);
+        return;
+      }
+    }
+    let validate = item.validate;
+    //validate is not set, only check data is required
+    if(!validate){
       return;
     }
-    if(think.isString(type)){
-      type = validate[item.type];
-    }else if(think.isRegExp(type)){
-      type = function(value){
-        return item.type.test(value);
+    if(think.isString(validate)){
+      validate = Validate[validate];
+    }else if(think.isRegExp(validate)){
+      validate = function(value){
+        return item.validate.test(value);
       };
     }
-    if (!think.isFunction(type)) {
+    if (!think.isFunction(validate)) {
       throw new Error(think.local('CONFIG_NOT_FUNCTION', `${item.name} type`));
     }
     if (!think.isArray(item.args)) {
       item.args = [item.args];
     }
     item.args.unshift(item.value);
-    let result = type(...item.args);
+    let result = validate(...item.args);
     if (!result) {
       let itemMsg = item.msg || think.local('PARAMS_NOT_VALID');
       msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);

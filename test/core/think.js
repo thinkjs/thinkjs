@@ -1680,13 +1680,13 @@ describe('core/think.js', function(){
       var data = [{
         name: 'welefen',
         value: 'welefen',
-        type: 'email',
+        validate: 'email',
         msg: 'email not valid'
       }]
       var msg = think.validate(data);
       assert.deepEqual(msg, { welefen: 'email not valid' })
     })
-    it('validate array, type not set', function(){
+    it('validate array, validate not set', function(){
       var data = [{
         name: 'welefen',
         value: 'welefen',
@@ -1699,7 +1699,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: 'email',
+          validate: 'email',
           required: true,
           msg: 'email not valid'
         }
@@ -1711,7 +1711,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: '',
-          type: 'email',
+          validate: 'email',
           required: true,
           msg: 'email not valid',
           required_msg: 'welefen can not be blank'
@@ -1724,7 +1724,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: '',
-          type: 'email',
+          validate: 'email',
           required: true,
           msg: 'email not valid',
         }
@@ -1736,7 +1736,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: '',
-          type: 'email',
+          validate: 'email',
           msg: 'email not valid',
         }
       }
@@ -1747,7 +1747,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: /welefen/g,
+          validate: /welefen/g,
           msg: 'not valid',
         }
       }
@@ -1758,7 +1758,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: /welefens/g,
+          validate: /welefens/g,
           msg: 'not valid',
         }
       }
@@ -1769,7 +1769,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: function(value){
+          validate: function(value){
             return value === 'welefen';
           },
           msg: 'not valid',
@@ -1778,11 +1778,11 @@ describe('core/think.js', function(){
       var msg = think.validate(data);
       assert.deepEqual(msg, {});
     })
-    it('validate object, type not function', function(){
+    it('validate object, validate not function', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: [],
+          validate: [],
           msg: 'not valid',
         }
       }
@@ -1798,7 +1798,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: function(value, val){
+          validate: function(value, val){
             return val === 'suredy';
           },
           msg: 'not valid',
@@ -1812,7 +1812,7 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: function(value, val){
+          validate: function(value, val){
             return val === 'suredy';
           },
           msg: 'not valid',
@@ -1827,13 +1827,85 @@ describe('core/think.js', function(){
       var data = {
         welefen: {
           value: 'welefen',
-          type: function(value){
+          validate: function(value){
             return value === 'fadfasdf';
           }
         }
       }
       var msg = think.validate(data);
       assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, type invalid, string', function(){
+      var data = {
+        welefen: {
+          value: 1000,
+          type: 'string'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, type invalid, array', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'array'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, type invalid, object', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'object'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, type invalid, number', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'number'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, type invalid, boolean', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'boolean'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen.length > 0, true);
+    })
+    it('validate object, type invalid, boolean, with invalid_type', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'boolean',
+          invalid_type: 'welefen is not valid'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg.welefen, 'welefen is not valid');
+    })
+      it('validate object, type correct', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          type: 'string',
+          invalid_type: 'welefen is not valid'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(msg, {});
     })
   })
 
