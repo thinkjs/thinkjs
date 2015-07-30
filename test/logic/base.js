@@ -391,6 +391,7 @@ describe('logic/base', function(){
       }];
       data = instance._parseValidateData(data);
       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'array',  action: [ 'group/test' ],  get: 'post',  value: [ 10000 ],  required_msg: 'default required msg' } ])
+      assert.deepEqual(instance.http._post, {name: [10000]})
       done();
     })
   })
@@ -418,6 +419,7 @@ describe('logic/base', function(){
       }];
       data = instance._parseValidateData(data);
       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: true,  required_msg: 'default required msg' } ])
+      assert.deepEqual(instance.http._post, {name: true})
       done();
     })
   })
@@ -472,6 +474,7 @@ describe('logic/base', function(){
       }];
       data = instance._parseValidateData(data);
       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: false,  required_msg: 'default required msg' } ])
+      assert.deepEqual(instance.http._post, { name: false });
       done();
     })
   })
