@@ -21,6 +21,7 @@ export default {
   FIELD_KEY_NOT_VALID: 'field `%s` in where condition is not valid',
   DATA_EMPTY: 'data can not be empty',
   MISS_WHERE_CONDITION: 'miss where condition',
+  INVALID_WHERE_CONDITION_KEY: 'where condition key is not valid',
   TABLE_NO_COLUMNS: 'table `%s` has no columns',
   NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction',
   DATA_MUST_BE_ARRAY: 'data is not array list',

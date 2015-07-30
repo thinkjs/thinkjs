@@ -93,7 +93,7 @@ export default class {
    */
   parseField(fields){
     if (think.isString(fields) && fields.indexOf(',') > -1) {
-      fields = fields.split(',');
+      fields = fields.split(/\s*,\s*/);
     }
     if (think.isArray(fields)) {
       return fields.map(item => this.parseKey(item)).join(',');
@@ -115,7 +115,7 @@ export default class {
    */
   parseTable(table){
     if (think.isString(table)) {
-      table = table.split(',');
+      table = table.split(/\s*,\s*/);
     }
     if (think.isArray(table)) {
       return table.map(item => this.parseKey(item)).join(',');
@@ -129,57 +129,73 @@ export default class {
     return '';
   }
   /**
+   * get logic
+   * @param  {String} logic    []
+   * @param  {String} _default []
+   * @return {String}          []
+   */
+  getLogic(logic, _default = 'AND'){
+    let list = ['AND', 'OR', 'XOR'];
+    if(think.isObject(logic)){
+      let _logic = logic._logic;
+      delete logic._logic;
+      logic = _logic;
+    }
+    if(!logic){
+      return _default;
+    }
+    logic = logic.toUpperCase();
+    if(list.indexOf(logic) > -1){
+      return logic;
+    }
+    return _default;
+  }
+  /**
    * parse where
    * @param  {Mixed} where []
    * @return {String}       []
    */
-  parseWhere(where = {}){
-    let whereStr = '';
-    if (think.isString(where)) {
-      whereStr = where;
-    }else{
-      let oList = ['AND', 'OR', 'XOR'];
-      let operate = (where._logic + '').toUpperCase();
-      delete where._logic;
-      operate = oList.indexOf(operate) > -1 ? ' ' + operate + ' ' : ' AND ';
-      //safe key regexp
-      let keySafeRegExp = /^[\w\|\&\-\.\(\)\,]+$/;
-      let multi = where._multi;
-      delete where._multi;
-      let val;
-      let fn = (item, i) => {
-        let v = multi ? val[i] : val;
-        return '(' + this.parseWhereItem(this.parseKey(item), v) + ')';
-      };
-      for(let key in where){
-        key = key.trim();
-        val = where[key];
-        whereStr += '( ';
-        if (key.indexOf('_') === 0) {
-          whereStr += this.parseThinkWhere(key, val);
-        }else{
-          if (!keySafeRegExp.test(key)) {
-            console.log(key + ' is not safe');
-            continue;
-          }
-          let arr;
-          // support name|title|nickname
-          if (key.indexOf('|') > -1) {
-            arr = key.split('|');
-            whereStr += arr.map(fn).join(' OR ');
-          }else if (key.indexOf('&') > -1) {
-            arr = key.split('&');
-            whereStr += arr.map(fn).join(' AND ');
-          }else{
-            whereStr += this.parseWhereItem(this.parseKey(key), val);
-          }
-        }
-        whereStr += ' )' + operate;
-      }
-      whereStr = whereStr.substr(0, whereStr.length - operate.length);
+  parseWhere(where){
+    if(think.isEmpty(where)){
+      return '';
+    }else if (think.isString(where)) {
+      return ` WHERE ${where}`;
     }
-
-    return whereStr ? (' WHERE ' + whereStr) : '';
+    let logic = this.getLogic(where);
+    //safe key regexp
+    let keySafeRegExp = /^[\w\|\&\-\.\(\)\,]+$/;
+    let multi = where._multi;
+    delete where._multi;
+    let fn = (item, i) => {
+      let v = multi ? val[i] : val;
+      return '(' + this.parseWhereItem(this.parseKey(item), v) + ')';
+    };
+    let key, val, result = [], str = '';
+    for(key in where){
+      val = where[key];
+      str = '( ';
+      //_string: ''
+      if (key[0] === '_') {
+        str += this.parseThinkWhere(key, val);
+      }
+      else if (!keySafeRegExp.test(key)) {
+        throw new Error(think.local('INVALID_WHERE_CONDITION_KEY'));
+      }
+      //title|content
+      else if (key.indexOf('|') > -1) {
+        str += key.split('|').map(fn).join(' OR ');
+      }
+      //title&content
+      else if (key.indexOf('&') > -1) {
+        str += key.split('&').map(fn).join(' AND ');
+      }else{
+        str += this.parseWhereItem(this.parseKey(key), val);
+      }
+      str += ' )';
+      result.push(str);
+    }
+    result = result.join(` ${logic} `);
+    return result ? (` WHERE ` + result) : '';
   }
  /**
   * parse where item
@@ -188,9 +204,9 @@ export default class {
   * @return {String}     []
   */
   parseWhereItem(key, val){
-    if (think.isObject(val)) { // {id: {'<': 10, '>': 1}}
-      let logic = (val._logic || 'AND').toUpperCase();
-      delete val._logic;
+    // {id: {'<': 10, '>': 1}}
+    if (think.isObject(val)) { 
+      let logic = this.getLogic(val);
       let result = [];
       for(let opr in val){
         let nop = opr.toUpperCase();
@@ -198,9 +214,11 @@ export default class {
         result.push(key + ' ' + nop + ' ' + this.parseValue(val[opr]));
       } 
       return result.join(' ' + logic + ' ');
-    }else if (!think.isArray(val)) {
+    }
+    else if (!think.isArray(val)) {
       return key + ' = ' + this.parseValue(val);
     }
+
     let whereStr = '';
     let data;
     if (think.isString(val[0])) {
@@ -228,12 +246,10 @@ export default class {
           if (think.isString(val[1])) {
             val[1] = val[1].split(',');
           }
-          //如果不是数组，自动转为数组
           if (!think.isArray(val[1])) {
             val[1] = [val[1]];
           }
           val[1] = this.parseValue(val[1]);
-          //如果只有一个值，那么变成＝或者!=
           if (val[1].length === 1) {
             whereStr += key + (val0 === 'IN' ? ' = ' : ' != ') + val[1];
           }else{
@@ -253,11 +269,11 @@ export default class {
       }
     }else{
       let length = val.length;
-      let rule = 'AND';
+      let logic = 'AND';
       if (think.isString(val[length - 1])) {
         let last = val[length - 1].toUpperCase();
         if (last && ['AND', 'OR', 'XOR'].indexOf(last) > -1) {
-          rule = last;
+          logic = last;
           length--;
         }
       }
@@ -266,10 +282,10 @@ export default class {
         data = isArr ? val[i][1] : val[i];
         let exp = ((isArr ? val[i][0] : '') + '').toUpperCase();
         if (exp === 'EXP') {
-          whereStr += '(' + key + ' ' + data + ') ' + rule + ' ';
+          whereStr += '(' + key + ' ' + data + ') ' + logic + ' ';
         }else{
           let op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
-          whereStr += '(' + key + ' ' + op + ' ' + this.parseValue(data) + ') ' + rule + ' ';
+          whereStr += '(' + key + ' ' + op + ' ' + this.parseValue(data) + ') ' + logic + ' ';
         }
       }
       whereStr = whereStr.substr(0, whereStr.length - 4);
@@ -290,17 +306,13 @@ export default class {
         return this.parseWhere(val).substr(6);
       case '_query':
         let where = think.isString(val) ? querystring.parse(val) : val;
-        let op = ' AND ';
-        if (where._logic) {
-          op = ' ' + where._logic.toUpperCase() + ' ';
-          delete where._logic;
-        }
+        let logic = this.getLogic(where);
         let arr = [];
         for(let name in where){
           val = this.parseKey(name) + ' = ' + this.parseValue(where[name]);
           arr.push(val);
         }
-        return arr.join(op);
+        return arr.join(` ${logic} `);
     }
     return '';
   }
@@ -310,11 +322,11 @@ export default class {
    * @return {}       []
    */
   parseLimit(limit){
-    if (!limit) {
+    if (think.isEmpty(limit)) {
       return '';
     }
     if(think.isString(limit)){
-      limit = limit.split(',');
+      limit = limit.split(/\s*,\s*/);
     }
     let data = [limit[0] | 0];
     if(limit[1]){
@@ -327,8 +339,8 @@ export default class {
    * @param  {String} join []
    * @return {String}      []
    */
-  parseJoin(join, options){
-    if (!join) {
+  parseJoin(join, options = {}){
+    if (think.isEmpty(join)) {
       return '';
     }
     let joinStr = '';
@@ -404,6 +416,9 @@ export default class {
    * @return {String}       []
    */
   parseOrder(order){
+    if(think.isEmpty(order)){
+      return '';
+    }
     if (think.isArray(order)) {
       order = order.map(item => this.parseKey(item)).join(',');
     }else if (think.isObject(order)) {
@@ -415,7 +430,7 @@ export default class {
       }
       order = arr.join(',');
     }
-    return order ? (' ORDER BY ' + order) : '';
+    return ` ORDER BY ${order}`;
   }
   /**
    * parse group
@@ -423,28 +438,20 @@ export default class {
    * @return {String}       []
    */
   parseGroup(group){
-    if (!group) {
+    if (think.isEmpty(group)) {
       return '';
     }
     if (think.isString(group)) {
-      group = group.split(',');
+      group = group.split(/\s*,\s*/);
     }
-    let result = [];
-    group.forEach(item => {
-      item = item.trim();
-      if (!item) {
-        return;
-      }
+    let result = group.map(item => {
       if (item.indexOf('.') === -1) {
-        result.push('`' + item + '`');
+        return '`' + item + '`';
       }else{
         item = item.split('.');
-        result.push(item[0] + '.`' + item[1] + '`'); 
+        return item[0] + '.`' + item[1] + '`'; 
       }
-    })
-    if (!result.length) {
-      return '';
-    }
+    });
     return ' GROUP BY ' + result.join(',');
   }
   /**
@@ -453,7 +460,7 @@ export default class {
    * @return {}        []
    */
   parseHaving(having){
-    return having ? (' HAVING ' + having) : '';
+    return having ? ` HAVING ${having}` : '';
   }
   /**
    * parse comment
@@ -461,7 +468,7 @@ export default class {
    * @return {String}         []
    */
   parseComment(comment){
-    return comment ? (' /* ' + comment + '*/') : '';   
+    return comment ? (` /*${comment}*/ `) : '';   
   }
   /**
    * parse distinct

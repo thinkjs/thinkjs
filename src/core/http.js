@@ -228,7 +228,9 @@ export default class {
     http.headers = this.req.headers;
 
     let urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
-    http.pathname = path.normalize(urlInfo.pathname).slice(1);
+    // in windows, path normalize will replace / to \\
+    // so must be replace \\ to /
+    http.pathname = path.normalize(urlInfo.pathname).replace(/\\/g, '/').slice(1);
     http.query = urlInfo.query;
     http.host = urlInfo.host;
     http.hostname = urlInfo.hostname;
