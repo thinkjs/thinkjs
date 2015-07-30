@@ -1427,6 +1427,27 @@ describe('core/think.js', function(){
         done();
       })
     })
+    it('get unsafe url', function(done){
+      think.http('/../../../../../etc/passwd').then(function(http){
+        assert.equal(http.pathname, 'etc/passwd');
+        assert.equal(http.url, '/../../../../../etc/passwd');
+        done();
+      })
+    })
+    it('get unsafe url 1', function(done){
+      think.http('../../../../../etc/passwd').then(function(http){
+        assert.equal(http.pathname, 'etc/passwd');
+        assert.equal(http.url, '/../../../../../etc/passwd');
+        done();
+      })
+    })
+    it('get unsafe url 2', function(done){
+      think.http('/resource/../../../../../../etc/passwd').then(function(http){
+        assert.equal(http.pathname, 'etc/passwd');
+        assert.equal(http.url, '/resource/../../../../../../etc/passwd');
+        done();
+      })
+    })
   })
 
   describe('think.getModule', function(){
