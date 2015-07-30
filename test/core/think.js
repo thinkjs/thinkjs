@@ -570,18 +570,18 @@ describe('core/think.js', function(){
       }, 'TEST');
       console.log = log;
     })
-    it('think.log with function', function(){
-      var log = console.log;
-      console.log = function(msg){
-        assert.equal(msg.length < 160, true);
-        assert.equal(msg.indexOf('fafasdfasdfasdf') > -1, true);
-      }
-      think.log(function(){
-        var arr = new Array(100);
-        return arr.join('fafasdfasdfasdf');
-      }, 'TEST');
-      console.log = log;
-    })
+    // it('think.log with function', function(){
+    //   var log = console.log;
+    //   console.log = function(msg){
+    //     assert.equal(msg.length < 160, true);
+    //     assert.equal(msg.indexOf('fafasdfasdfasdf') > -1, true);
+    //   }
+    //   think.log(function(){
+    //     var arr = new Array(100);
+    //     return arr.join('fafasdfasdfasdf');
+    //   }, 'TEST');
+    //   console.log = log;
+    // })
     it('think.log with function, has startTime', function(){
       var log = console.log;
       console.log = function(msg){

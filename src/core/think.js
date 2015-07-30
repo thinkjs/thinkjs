@@ -367,14 +367,14 @@ think.log = (msg, type, startTime) => {
       return;
     }
     thinkCache(thinkCache.COLLECTION, 'prev_error', msg);
-    console.error(dateTime + colors.red('[Error] ') + msg.message);
+    console.error(dateTime + colors.red('[Error] ') + msg.stack);
     return;
   }else if(think.isFunction(msg)){
     msg = msg(colors);
   }
-  if(msg.length > 100){
-    msg = msg.substr(0, 100) + '...';
-  }
+  // if(msg.length > 300){
+  //   msg = msg.substr(0, 300) + '...';
+  // }
   if(startTime){
     let time = Date.now() - startTime;
     msg += ' ' + colors.green(`${time}ms`);
