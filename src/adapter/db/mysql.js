@@ -21,12 +21,12 @@ export default class extends think.adapter.db {
    * @param  {Object} config []
    * @return {}        []
    */
-  getSocketInstance(){
-    if(this.socket){
-      return this.socket;
+  socket(){
+    if(this._socket){
+      return this._socket;
     }
-    this.socket = new MysqlSocket(this.config);
-    return this.socket;
+    this._socket = new MysqlSocket(this.config);
+    return this._socket;
   }
   /**
    * get table info

@@ -16,15 +16,13 @@ export default class extends Parse {
     super.init(config);
     this.sql = '';
     this.lastInsertId = 0;
-    this.socket = null;
+    this._socket = null;
   }
   /**
    * get socket instance, override by sub class
    * @return {Object} [socket instance]
    */
-  getSocketInstance(){
-
-  }
+  socket(){}
   /**
    * insert data
    * @param  {Object} data    []
@@ -32,7 +30,7 @@ export default class extends Parse {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  add(data = {}, options = {}, replace){
+  add(data, options, replace){
     let values = [];
     let fields = [];
     for(let key in data){
@@ -84,7 +82,7 @@ export default class extends Parse {
    */
   selectAdd(fields, table, options = {}){
     if (think.isString(fields)) {
-      fields = fields.split(',');
+      fields = fields.split(/\s*,\s*/);
     }
     fields = fields.map(item => this.parseKey(item));
     let sql = 'INSERT INTO ' + this.parseTable(table) + ' (' + fields.join(',') + ') ';
@@ -96,7 +94,7 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  delete(options = {}){
+  delete(options){
     let sql = [
       'DELETE FROM ',
       this.parseTable(options.table),
@@ -114,7 +112,7 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  update(data, options = {}){
+  update(data, options){
     let sql = [
       'UPDATE ',
       this.parseTable(options.table),
@@ -132,11 +130,11 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  select(options = {}, cache){
+  select(options, cache){
     let sql;
     if(think.isObject(options)){
       sql = this.buildSelectSql(options);
-      cache = options.cache;
+      cache = options.cache || cache;
     }else{
       sql = options;
     }
@@ -196,7 +194,7 @@ export default class extends Parse {
   query(sql){
     this.sql = sql;
     return think.await(sql, () => {
-      return this.getSocketInstance().query(sql).then(data => {
+      return this.socket().query(sql).then(data => {
         return this.bufferToString(data);
       });
     })
@@ -226,7 +224,7 @@ export default class extends Parse {
    */
   execute(sql){
     this.sql = sql;
-    return this.getSocketInstance().execute(sql).then(data => {
+    return this.socket().execute(sql).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }
@@ -238,9 +236,9 @@ export default class extends Parse {
    * @return {} []
    */
   close(){
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
+    if (this._socket) {
+      this._socket.close();
+      this._socket = null;
     }
   }
 }
