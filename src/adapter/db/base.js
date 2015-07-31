@@ -38,7 +38,7 @@ export default class extends Parse {
     for(let key in data){
       let val = data[key];
       val = this.parseValue(val);
-      if (think.isString(val)) {
+      if (think.isString(val) || think.isBoolean(val) || think.isNumber(val)) {
         values.push(val);
         fields.push(this.parseKey(key));
       }
