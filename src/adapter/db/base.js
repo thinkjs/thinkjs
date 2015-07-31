@@ -97,7 +97,6 @@ export default class extends Parse {
    * @return {Promise}         []
    */
   delete(options = {}){
-    this.model = options.model;
     let sql = [
       'DELETE FROM ',
       this.parseTable(options.table),
@@ -116,7 +115,6 @@ export default class extends Parse {
    * @return {Promise}         []
    */
   update(data, options = {}){
-    this.model = options.model;
     let sql = [
       'UPDATE ',
       this.parseTable(options.table),
