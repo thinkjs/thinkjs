@@ -146,9 +146,9 @@ export default class extends Base {
   parseType(key, value){
     let fieldType = this.fields[key].type || '';
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
-      return parseInt(value, 10) || 0;
+      return String(parseInt(value, 10) || 0);
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
-      return parseFloat(value) || 0.0;
+      return String(parseFloat(value) || 0.0);
     }else if(fieldType.indexOf('bool') > -1){
       return !!value;
     }
