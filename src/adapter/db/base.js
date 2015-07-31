@@ -12,7 +12,7 @@ export default class extends Parse {
    * init
    * @return {} []
    */
-  init(){
+  init(config){
     super.init(config);
     this.sql = '';
     this.lastInsertId = 0;
@@ -193,9 +193,10 @@ export default class extends Parse {
    * @param  string str
    * @return promise
    */
-  query(str){
-    return think.await(str, () => {
-      return this.getSocketInstance().query(str).then(data => {
+  query(sql){
+    this.sql = sql;
+    return think.await(sql, () => {
+      return this.getSocketInstance().query(sql).then(data => {
         return this.bufferToString(data);
       });
     })
@@ -220,11 +221,12 @@ export default class extends Parse {
   }
   /**
    * execute sql
-   * @param  {String} str []
+   * @param  {String} sql []
    * @return {}     []
    */
-  execute(str){
-    return this.getSocketInstance().execute(str).then(data => {
+  execute(sql){
+    this.sql = sql;
+    return this.getSocketInstance().execute(sql).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }
