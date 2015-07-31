@@ -18,7 +18,8 @@ export default class {
    * init
    * @return {} []
    */
-  init(){
+  init(config = {}){
+    this.config = config;
     //operate
     this.comparison = {
       'EQ': '=',
@@ -33,6 +34,7 @@ export default class {
       'IN': 'IN',
       'NOTIN': 'NOT IN'
     }
+    this.selectSql = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
   }
   /**
    * parse set
@@ -141,7 +143,7 @@ export default class {
       delete logic._logic;
       logic = _logic;
     }
-    if(!logic){
+    if(!logic || !think.isString(logic)){
       return _default;
     }
     logic = logic.toUpperCase();
@@ -218,28 +220,32 @@ export default class {
     else if (!think.isArray(val)) {
       return key + ' = ' + this.parseValue(val);
     }
-
     let whereStr = '';
     let data;
     if (think.isString(val[0])) {
       let val0 = val[0].toUpperCase();
       val0 = this.comparison[val0] || val0;
-      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) { // compare
+      // compare
+      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) { 
         whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
-      }else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) { // like
-        if (think.isArray(val[1])) { //
-          let likeLogic = (val[2] || 'OR').toUpperCase();
-          let likesLogic = ['AND','OR','XOR'];
-          if (likesLogic.indexOf(likeLogic) > -1) {
-            let like = val[1].map(item => key + ' ' + val0 + ' ' + this.parseValue(item)).join(' ' + likeLogic + ' ');
-            whereStr += '(' + like + ')';
-          }
+      }
+      // like or not like
+      else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) { 
+        if (think.isArray(val[1])) {
+          //get like logic, default is OR
+          let likeLogic = this.getLogic(val[2], 'OR');
+          let like = val[1].map(item => key + ' ' + val0 + ' ' + this.parseValue(item)).join(' ' + likeLogic + ' ');
+          whereStr += '(' + like + ')';
         }else{
           whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
         }
-      }else if(val0 === 'EXP'){ //
+      }
+      // exp
+      else if(val0 === 'EXP'){ 
         whereStr += '(' + key + ' ' + val[1] + ')';
-      }else if(val0 === 'IN' || val0 === 'NOT IN'){ // IN 运算
+      }
+      // in or not in
+      else if(val0 === 'IN' || val0 === 'NOT IN'){
         if (val[2] === 'exp') {
           whereStr += key + ' ' + val0 + ' ' + val[1];
         }else{
@@ -256,7 +262,9 @@ export default class {
             whereStr += key + ' ' + val0 + ' (' + val[1].join(',') + ')';
           }
         }
-      }else if(val0 === 'BETWEEN'){ // 
+      }
+      //between
+      else if(val0 === 'BETWEEN'){
         data = think.isString(val[1]) ? val[1].split(',') : val[1];
         if (!think.isArray(data)) {
           data = [val[1], val[2]];
@@ -264,31 +272,29 @@ export default class {
         whereStr += ' (' + key + ' ' + val0 + ' ' + this.parseValue(data[0]);
         whereStr += ' AND ' + this.parseValue(data[1]) + ')';
       }else{
-        console.log('_EXPRESS_ERROR_', key, val);
-        return '';
+        throw new Error(think.local('WHERE_CONDITION_INVALID', key, JSON.stringify(val)));
       }
     }else{
       let length = val.length;
-      let logic = 'AND';
-      if (think.isString(val[length - 1])) {
-        let last = val[length - 1].toUpperCase();
-        if (last && ['AND', 'OR', 'XOR'].indexOf(last) > -1) {
-          logic = last;
-          length--;
-        }
+      let logic = this.getLogic(val[length - 1], '');
+      if(logic){
+        length --;
+      }else{
+        logic = 'AND';
       }
+      let result = [];
       for(let i = 0; i < length; i++){
         let isArr = think.isArray(val[i]);
         data = isArr ? val[i][1] : val[i];
         let exp = ((isArr ? val[i][0] : '') + '').toUpperCase();
         if (exp === 'EXP') {
-          whereStr += '(' + key + ' ' + data + ') ' + logic + ' ';
+          result.push(`(${key} ${data})`);
         }else{
           let op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
-          whereStr += '(' + key + ' ' + op + ' ' + this.parseValue(data) + ') ' + logic + ' ';
+          result.push(`(${key} ${op} ${this.parseValue(data)})`);
         }
       }
-      whereStr = whereStr.substr(0, whereStr.length - 4);
+      whereStr = result.join(` ${logic} `);
     }
     return whereStr;
   }
@@ -474,7 +480,7 @@ export default class {
    * @return {String}         []
    */
   parseComment(comment){
-    return comment ? (` /*${comment}*/ `) : '';   
+    return comment ? (` /*${comment}*/`) : '';   
   }
   /**
    * parse distinct
@@ -482,7 +488,7 @@ export default class {
    * @return {}          []
    */
   parseDistinct(distinct){
-    return distinct ? ' Distinct ' : '';
+    return distinct ? ' Distinct' : '';
   }
   /**
    * parse union
@@ -490,18 +496,18 @@ export default class {
    * @return {}       []
    */
   parseUnion(union){
-    if (!union) {
+    if (think.isEmpty(union)) {
       return '';
     }
     if (think.isArray(union)) {
-      let sql = '';
+      let sql = ' ';
       union.forEach(item => {
         sql += item.all ? 'UNION ALL ' : 'UNION ';
-        sql += '(' + (think.isObject(item.union) ? this.buildSelectSql(item.union).trim() : item.union) + ') ';
+        sql += '(' + (think.isObject(item.union) ? this.buildSelectSql(item.union) : item.union) + ')';
       })
       return sql;
     }else{
-      return 'UNION (' + (think.isObject(union) ? this.buildSelectSql(union).trim() : union) + ') '; 
+      return ' UNION (' + (think.isObject(union) ? this.buildSelectSql(union) : union) + ')'; 
     }
   }
   /**
@@ -521,11 +527,14 @@ export default class {
    * @param  {Object} options []
    * @return {String}         []
    */
-  parseSql(sql, options = {}){
+  parseSql(sql, options){
     return sql.replace(/\%([A-Z]+)\%/g, (a, type) => {
       type = type.toLowerCase();
       let ucfirst = type[0].toUpperCase() + type.slice(1);
-      return this['parse' + ucfirst](options[type] || '', options);
+      if(think.isFunction(this['parse' + ucfirst])){
+        return this['parse' + ucfirst](options[type] || '', options);
+      }
+      return a;
     }).replace(/\s__([A-Z_-]+)__\s/g, (a, b) => {
       return ' `' + this.config.prefix + b.toLowerCase() + '` ';
     });

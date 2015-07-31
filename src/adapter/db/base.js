@@ -12,12 +12,10 @@ export default class extends Parse {
    * init
    * @return {} []
    */
-  init(config = {}){
+  init(){
     super.init(config);
     this.sql = '';
-    this.config = config;
     this.lastInsertId = 0;
-    this.selectSql = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%';
     this.socket = null;
   }
   /**
