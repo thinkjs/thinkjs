@@ -43,9 +43,9 @@ export default class extends Parse {
         fields.push(this.parseKey(key));
       }
     }
-    let sql = (replace ? 'REPLACE' : 'INSERT') + ' INTO ';
-    sql += this.parseTable(options.table) + ' (' + fields.join(',') + ') ';
-    sql += 'VALUES(' + values.join(',') + ')';
+    let sql = replace ? 'REPLACE' : 'INSERT';
+    sql += ' INTO ' + this.parseTable(options.table) + ' (' + fields.join(',') + ')';
+    sql += ' VALUES (' + values.join(',') + ')';
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
     return this.execute(sql);
   }
@@ -57,8 +57,7 @@ export default class extends Parse {
    * @return {Promise}         []
    */
   addMany(data, options, replace){
-    let fields = Object.keys(data[0]);
-    fields = fields.map(item => this.parseKey(item)).join(',');
+    let fields = Object.keys(data[0]).map(item => this.parseKey(item)).join(',');
     let values = data.map(item => {
       let value = [];
       for(let key in item){
@@ -71,7 +70,9 @@ export default class extends Parse {
       return '(' + value.join(',') + ')';
     }).join(',');
     let sql = replace ? 'REPLACE' : 'INSERT';
-    sql += ' INTO ' + this.parseTable(options.table) + '(' + fields + ') VALUES ' + values;
+    sql += ' INTO ' + this.parseTable(options.table) + '(' + fields + ')';
+    sql += ' VALUES ' + values;
+    sql += this.parseLock(options.lock) + this.parseComment(options.comment);
     return this.execute(sql);
   }
   /**
