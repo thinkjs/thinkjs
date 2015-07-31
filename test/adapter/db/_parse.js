@@ -18,7 +18,8 @@ describe('adapter/db/_parse.js', function(){
   it('init', function(){
     var instance = new Parse();
     var keys = Object.keys(instance.comparison).sort();
-    assert.deepEqual(keys, [ '<>','EGT','ELT','EQ','GT','IN','LIKE','LT','NEQ','NOTIN','NOTLIKE' ])
+    assert.deepEqual(keys, [ '<>','EGT','ELT','EQ','GT','IN','LIKE','LT','NEQ','NOTIN','NOTLIKE' ]);
+    assert.equal(instance.selectSql, 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%')
   })
   it('parseSet', function(){
     var instance = new Parse();
@@ -182,7 +183,7 @@ describe('adapter/db/_parse.js', function(){
   it('parseDistinct, true', function(){
     var instance = new Parse();
     var data = instance.parseDistinct(true);
-    assert.equal(data, ' Distinct ');
+    assert.equal(data, ' Distinct');
   })
   it('parseComment, empty', function(){
     var instance = new Parse();
@@ -192,7 +193,7 @@ describe('adapter/db/_parse.js', function(){
   it('parseComment, welefen test', function(){
     var instance = new Parse();
     var data = instance.parseComment('welefen test');
-    assert.equal(data, ' /*welefen test*/ ');
+    assert.equal(data, ' /*welefen test*/');
   })
   it('parseHaving, empty', function(){
     var instance = new Parse();
@@ -252,6 +253,11 @@ describe('adapter/db/_parse.js', function(){
   it('parseLimit, 10', function(){
     var instance = new Parse();
     var data = instance.parseLimit('10');
+    assert.equal(data, ' LIMIT 10');
+  })
+  it('parseLimit, number', function(){
+    var instance = new Parse();
+    var data = instance.parseLimit(10);
     assert.equal(data, ' LIMIT 10');
   })
   it('parseLimit, 10, 20', function(){
@@ -487,5 +493,346 @@ describe('adapter/db/_parse.js', function(){
       table: 'user'
     });
     assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.`team_id`');
+  })
+  it('parseThinkWhere, key is empty, ignore valud', function(){
+    var instance = new Parse();
+    var data = instance.parseThinkWhere('', 'SELECT * FROM user');
+    assert.equal(data, '')
+  })
+  it('parseThinkWhere, _string', function(){
+    var instance = new Parse();
+    var data = instance.parseThinkWhere('_string', 'SELECT * FROM user');
+    assert.equal(data, 'SELECT * FROM user')
+  })
+  it('parseThinkWhere, _query', function(){
+    var instance = new Parse();
+    var data = instance.parseThinkWhere('_query', 'name=welefen&name1=suredy');
+    assert.equal(data, 'name = \'welefen\' AND name1 = \'suredy\'')
+  })
+  it('parseThinkWhere, _query, with logic', function(){
+    var instance = new Parse();
+    var data = instance.parseThinkWhere('_query', 'name=welefen&name1=suredy&_logic=OR');
+    assert.equal(data, 'name = \'welefen\' OR name1 = \'suredy\'')
+  })
+  it('parseThinkWhere, _query, object', function(){
+    var instance = new Parse();
+    var data = instance.parseThinkWhere('_query', {name: 'welefen', name1: 'suredy'});
+    assert.equal(data, 'name = \'welefen\' AND name1 = \'suredy\'')
+  })
+  it('parseWhere, empty', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere();
+    assert.equal(data, '')
+  })
+  it('parseWhere, empty', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({_logic: 'AND'});
+    assert.equal(data, '')
+  })
+  it('parseWhere, key is not valid', function(){
+    var instance = new Parse();
+    try{
+      var data = instance.parseWhere({'&*&*&*': 'title'});
+      assert.equal(1, 2);
+    }catch(e){
+
+    }
+  })
+  it('parseWhere, object', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: 10});
+    assert.equal(data, ' WHERE ( id = 10 )')
+  })
+  it('parseWhere, object 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['!=', 10]});
+    assert.equal(data, ' WHERE ( id != 10 )')
+  })
+  it('parseWhere, string', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere('id = 10 OR id < 2');
+    assert.equal(data, ' WHERE id = 10 OR id < 2')
+  })
+  it('parseWhere, EXP', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({name: ['EXP', "='name'"]});
+    assert.equal(data, ' WHERE ( (name =\'name\') )')
+  })
+  it('parseWhere, EXP 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({view_nums: ['EXP', 'view_nums+1']});
+    assert.equal(data, ' WHERE ( (view_nums view_nums+1) )')
+  })
+  it('parseWhere, LIKE', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: ['NOTLIKE', 'welefen']});
+    assert.equal(data, ' WHERE ( title NOT LIKE \'welefen\' )')
+  })
+  it('parseWhere, LIKE 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: ['like', '%welefen%']});
+    assert.equal(data, ' WHERE ( title LIKE \'%welefen%\' )')
+  })
+  it('parseWhere, LIKE 2', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: ['like', ['welefen', 'suredy']]});
+    assert.equal(data, ' WHERE ( (title LIKE \'welefen\' OR title LIKE \'suredy\') )')
+  })
+  it('parseWhere, LIKE 3', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: ['like', ['welefen', 'suredy'], 'AND']});
+    assert.equal(data, ' WHERE ( (title LIKE \'welefen\' AND title LIKE \'suredy\') )')
+  })
+  it('parseWhere, key has |', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({'title|content': ['like', '%welefen%']});
+    assert.equal(data, ' WHERE ( (title LIKE \'%welefen%\') OR (content LIKE \'%welefen%\') )')
+  })
+  it('parseWhere, key has |, multi', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      'title|content': [
+        ['like', '%title%'], ['=', '%content%']
+      ],
+      _multi: true
+    });
+    assert.equal(data, ' WHERE ( (title LIKE \'%title%\') OR (content = \'%content%\') )')
+  })
+  it('parseWhere, key has |, multi', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      'title|content': [
+        ['like', '%title%'], ['=', '%content%']
+      ],
+      _multi: true
+    });
+    assert.equal(data, ' WHERE ( (title LIKE \'%title%\') OR (content = \'%content%\') )')
+  })
+  it('parseWhere, key has &', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({'title&content': ['like', '%welefen%']});
+    assert.equal(data, ' WHERE ( (title LIKE \'%welefen%\') AND (content LIKE \'%welefen%\') )')
+  })
+  it('parseWhere, key has &, multi', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      'title&content': [
+        ['like', '%welefen%'],
+        ['!=', '%content%'],
+      ],
+      _multi: true
+    });
+    assert.equal(data, ' WHERE ( (title LIKE \'%welefen%\') AND (content != \'%content%\') )')
+  })
+  it('parseWhere, IN', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['IN', '10,20']});
+    assert.equal(data, ' WHERE ( id IN (\'10\',\'20\') )')
+  })
+  it('parseWhere, IN 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['IN', [10, 20]]});
+    assert.equal(data, ' WHERE ( id IN (10,20) )')
+  })
+  it('parseWhere, IN 2', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['NOTIN', [10, 20]]});
+    assert.equal(data, ' WHERE ( id NOT IN (10,20) )')
+  })
+  it('parseWhere, NOT IN, only one', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['NOTIN', 10]});
+    assert.equal(data, ' WHERE ( id != 10 )')
+  })
+  it('parseWhere, IN, only one', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['IN', 10]});
+    assert.equal(data, ' WHERE ( id = 10 )')
+  })
+  it('parseWhere, IN, has exp', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['NOTIN', '(10,20,30)', 'exp']});
+    assert.equal(data, ' WHERE ( id NOT IN (10,20,30) )')
+  })
+
+  it('parseWhere, multi fields', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: 10, title: "www"});
+    assert.equal(data, ' WHERE ( id = 10 ) AND ( title = \'www\' )')
+  })
+  it('parseWhere, multi fields 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: 10, title: "www", _logic: 'OR'});
+    assert.equal(data, ' WHERE ( id = 10 ) OR ( title = \'www\' )')
+  })
+  it('parseWhere, multi fields 2', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: 10, title: "www", _logic: 'XOR'});
+    assert.equal(data, ' WHERE ( id = 10 ) XOR ( title = \'www\' )')
+  })
+  it('parseWhere, BETWEEN', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['BETWEEN', 1, 2]});
+    assert.equal(data, ' WHERE (  (id BETWEEN 1 AND 2) )')
+  })
+  it('parseWhere, BETWEEN', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['between', '1,2']});
+    assert.equal(data, ' WHERE (  (id BETWEEN \'1\' AND \'2\') )')
+  })
+  it('parseWhere, complex', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: {
+      '>': 10,
+      '<': 20
+    }});
+    assert.equal(data, ' WHERE ( id > 10 AND id < 20 )')
+  })
+  it('parseWhere, complex 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: {
+      '>': 10,
+      '<': 20,
+      _logic: 'OR'
+    }});
+    assert.equal(data, ' WHERE ( id > 10 OR id < 20 )')
+  })
+  it('parseWhere, complex 2', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: {
+      '>=': 10,
+      '<=': 20
+    }, 'title': ['like', '%welefen%'], date: ['>', '2014-08-12'], _logic: 'OR'});
+    assert.equal(data, ' WHERE ( id >= 10 AND id <= 20 ) OR ( title LIKE \'%welefen%\' ) OR ( date > \'2014-08-12\' )')
+  })
+  it('parseWhere, complex 3', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      title: 'test',
+      _complex: {
+        id: ['IN', [1, 2, 3]],
+        content: 'www',
+        _logic: 'or'
+      }
+    });
+    assert.equal(data, ' WHERE ( title = \'test\' ) AND (  ( id IN (1,2,3) ) OR ( content = \'www\' ) )')
+  })
+  it('parseWhere, other', function(){
+    var instance = new Parse();
+    try{
+      var data = instance.parseWhere({
+        title: ['OTHER', 'dd']
+      });
+      assert.equal(1, 2)
+    }catch(e){
+    }
+  })
+  it('parseWhere, array', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      title: [
+        ['exp', '= \'welefen\'']
+      ],
+    });
+    assert.equal(data, ' WHERE ( (title = \'welefen\') )')
+  })
+  it('parseWhere, array, multi', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      title: [
+        ['exp', '= \'welefen\''],
+        ['=', 'suredy']
+      ],
+    });
+    assert.equal(data, ' WHERE ( (title = \'welefen\') AND (title = \'suredy\') )')
+  })
+  it('parseWhere, array, multi， or', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      title: [
+        ['exp', '= \'welefen\''],
+        ['=', 'suredy'],
+        'OR'
+      ],
+    });
+    assert.equal(data, ' WHERE ( (title = \'welefen\') OR (title = \'suredy\') )')
+  })
+  it('parseWhere, array, multi， or', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      title: [
+        ['exp', '= \'welefen\''],
+        ['!=', 'suredy'],
+        'OR'
+      ],
+    });
+    assert.equal(data, ' WHERE ( (title = \'welefen\') OR (title != \'suredy\') )')
+  })
+  it('parseWhere, array, multi， or', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      title: [
+        ['exp', '= \'welefen\''],
+        'suredy',
+        'OR'
+      ],
+    });
+    assert.equal(data, ' WHERE ( (title = \'welefen\') OR (title = \'suredy\') )')
+  })
+  it('buildSelectSql', function(){
+    var instance = new Parse();
+    var data = instance.buildSelectSql({
+      table: 'user',
+      where: {
+        id: 11,
+        title: 'welefen'
+      },
+      group: 'name',
+      field: 'name,title',
+      order: 'name DESC',
+      limit: '10, 20',
+      distinct: true
+    });
+    assert.equal(data, "SELECT Distinct name,title FROM user WHERE ( id = 11 ) AND ( title = 'welefen' ) GROUP BY `name` ORDER BY name DESC LIMIT 10,20")
+  })
+  it('parseSql', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseSql('SELECT * FROM __USER__ WHERE name=1');
+    assert.equal(data, 'SELECT * FROM `think_user` WHERE name=1')
+  })
+  it('parseSql 1', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseSql('SELECT * FROM __USER__ WHERE name=\'%TEST%\'');
+    assert.equal(data, 'SELECT * FROM `think_user` WHERE name=\'%TEST%\'')
+  })
+  it('parseUnion, empty', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseUnion();
+    assert.equal(data, '')
+  })
+  it('parseUnion, string', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseUnion('SELECT * FROM meinv_pic2');
+    assert.equal(data, ' UNION (SELECT * FROM meinv_pic2)')
+  })
+  it('parseUnion, object', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseUnion({table: 'meinv_pic2'});
+    assert.equal(data, ' UNION (SELECT * FROM meinv_pic2)')
+  })
+  it('parseUnion, array', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseUnion([{
+      union: {table: 'meinv_pic2'},
+      all: true
+    }]);
+    assert.equal(data, ' UNION ALL (SELECT * FROM meinv_pic2)')
+  })
+  it('parseUnion, array', function(){
+    var instance = new Parse({prefix: 'think_'});
+    var data = instance.parseUnion([{
+      union: 'SELECT * FROM meinv_pic2',
+    }]);
+    assert.equal(data, ' UNION (SELECT * FROM meinv_pic2)')
   })
 })
