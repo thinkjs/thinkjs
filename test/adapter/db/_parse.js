@@ -274,4 +274,218 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseJoin();
     assert.equal(data, '');
   })
+  it('parseJoin, single string', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin('meinv_cate ON meinv_group.cate_id=meinv_cate.id');
+    assert.equal(data, ' LEFT JOIN meinv_cate ON meinv_group.cate_id=meinv_cate.id');
+  })
+  it('parseJoin, multi string', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin(['meinv_cate ON meinv_group.cate_id=meinv_cate.id', 'RIGHT JOIN meinv_tag ON meinv_group.tag_id=meinv_tag.id']);
+    assert.equal(data, ' LEFT JOIN meinv_cate ON meinv_group.cate_id=meinv_cate.id RIGHT JOIN meinv_tag ON meinv_group.tag_id=meinv_tag.id');
+  })
+  it('parseJoin, array', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      table: 'cate', 
+      join: 'inner', 
+      as: 'c',
+      on: ['cate_id', 'id'] 
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' INNER JOIN `cate` AS c ON user.`cate_id`=c.`id`');
+  })
+  it('parseJoin, array, no on', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      table: 'cate', 
+      join: 'inner', 
+      as: 'c'
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' INNER JOIN `cate` AS c');
+  })
+  it('parseJoin, array, ignore not object', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      table: 'cate', 
+      join: 'inner', 
+      as: 'c'
+    }, true], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' INNER JOIN `cate` AS c');
+  })
+  it('parseJoin, array, multi', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      table: 'cate',
+      join: 'left',
+      as: 'c',
+      on: ['cate_id', 'id']
+    }, {
+      table: 'group_tag',
+      join: 'left',
+      as: 'd',
+      on: ['id', 'group_id']
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` AS c ON user.`cate_id`=c.`id` LEFT JOIN `group_tag` AS d ON user.`id`=d.`group_id`');
+  })
+  it('parseJoin, array, multi 1', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      cate: {
+        join: 'left',
+        as: 'c',
+        on: ['id', 'id']
+      },
+      group_tag: {
+        join: 'left',
+        as: 'd',
+        on: ['id', 'group_id']
+      }
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` AS c ON user.`id`=c.`id` LEFT JOIN `group_tag` AS d ON user.`id`=d.`group_id`');
+  })
+  it('parseJoin, array, multi 2', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      cate: {
+        on: ['id', 'id']
+      },
+      group_tag: {
+        on: ['id', 'group_id']
+      }
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id`');
+  })
+  it('parseJoin, array, multi 3', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      cate: {
+        on: 'id, id'
+      },
+      group_tag: {
+        on: ['id', 'group_id']
+      },
+      tag: {
+        on: { 
+          id: 'id',
+          title: 'name'
+        }
+      }
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id` LEFT JOIN `tag` ON (user.`id`=tag.`id` AND user.`title`=tag.`name`)');
+  })
+  it('parseJoin, array, multi 4, on has table name', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      cate: {
+        on: 'id, id'
+      },
+      group_tag: {
+        on: ['id', 'group_id']
+      },
+      tag: {
+        on: { 
+          id: 'id',
+          title: 'tag.name'
+        }
+      }
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id` LEFT JOIN `tag` ON (user.`id`=tag.`id` AND user.`title`=tag.name)');
+  })
+  it('parseJoin, array, multi 4', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      cate: {
+        on: 'id, id'
+      },
+      group_tag: {
+        on: ['id', 'group_id']
+      },
+      tag: {
+        on: { 
+          id: 'id',
+          'u1.title': 'tag.name'
+        }
+      }
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id` LEFT JOIN `tag` ON (user.`id`=tag.`id` AND u1.title=tag.name)');
+  })
+  it('parseJoin, array, table is sql', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+        table: 'SELECT * FROM test WHERE 1=1',
+        join: 'left',
+        as: 'temp',
+        on: ['id', 'temp.team_id']
+      }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.team_id');
+  })
+  it('parseJoin, array, table is sql 1', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+        table: 'SELECT * FROM test WHERE 1=1',
+        join: 'left',
+        as: 'temp',
+        on: ['u.id', 'temp.team_id']
+      }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON u.id=temp.team_id');
+  })
+  it('parseJoin, array, table is sql 2', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+        table: 'SELECT * FROM test WHERE 1=1',
+        join: 'left',
+        as: 'temp',
+        on: ['id', 'team_id']
+      }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.`team_id`');
+  })
+  it('parseJoin, array, table is sql 3', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+        table: '(SELECT * FROM test WHERE 1=1)',
+        join: 'left',
+        as: 'temp',
+        on: ['id', 'team_id']
+      }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.`team_id`');
+  })
 })

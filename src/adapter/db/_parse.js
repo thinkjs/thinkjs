@@ -360,8 +360,13 @@ export default class {
           if (!('on' in val)) {
             for(let key in val){
               let v = val[key];
-              v.table = key;
-              ret.push(v);
+              if(think.isObject(v)){
+                v.table = key;
+                ret.push(v);
+              }else{
+                ret.push(val);
+                break;
+              }
             }
           }else{
             ret.push(val);
@@ -369,7 +374,8 @@ export default class {
           ret.forEach(item => {
             let joinType = joins[item.join] || item.join || defaultJoin;
             let table = item.table.trim();
-            if( /\s+/.test(table) ) {
+            //table is sql
+            if( table.indexOf(' ') > -1 ) {
               if( table.indexOf('(') !== 0 ) {
                 table = '(' + table + ')';
               }
