@@ -331,6 +331,9 @@ export default class {
     if (think.isEmpty(limit)) {
       return '';
     }
+    if(think.isNumber(limit)){
+      return ` LIMIT ${limit}`;
+    }
     if(think.isString(limit)){
       limit = limit.split(/\s*,\s*/);
     }

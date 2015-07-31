@@ -255,6 +255,11 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseLimit('10');
     assert.equal(data, ' LIMIT 10');
   })
+  it('parseLimit, number', function(){
+    var instance = new Parse();
+    var data = instance.parseLimit(10);
+    assert.equal(data, ' LIMIT 10');
+  })
   it('parseLimit, 10, 20', function(){
     var instance = new Parse();
     var data = instance.parseLimit('10, 20');
