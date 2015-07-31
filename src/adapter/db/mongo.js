@@ -76,9 +76,9 @@ export default class {
    * @return {} []
    */
   close(){
-    if(this.socket){
-      this.socket.close();
-      this.socket = null;
+    if(this._socket){
+      this._socket.close();
+      this._socket = null;
     }
   }
 }
