@@ -183,9 +183,7 @@ export default class extends think.base {
       this.logPid(port);
     }
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
-    if (think.debug) {
-      think.log('App debug is open', 'THINK');
-    }
+    think.log('App Env: ' + think.env, 'THINK');
   }
   /**
    * cli mode

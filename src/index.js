@@ -17,11 +17,8 @@ export default class {
     let i = 2;
     let argv = process.argv[i];
     //get app mode from argv
-    if (argv === 'online') {
-      think.debug = false;
-      i++;
-    }else if (argv === 'debug') {
-      think.debug = true;
+    if (argv === 'production' || argv === 'development') {
+      think.env = argv;
       i++;
     }
     argv = process.argv[i];
@@ -313,6 +310,7 @@ export default class {
   load(){
     thinkCache(thinkCache.ALIAS, null);
     thinkCache(thinkCache.ALIAS_EXPORT, null);
+    thinkCache(thinkCache.MODULE_CONFIG, null);
 
     this.loadConfig();
     this.loadBootstrap();

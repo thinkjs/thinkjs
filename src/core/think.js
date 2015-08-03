@@ -43,16 +43,11 @@ think.dirname = {
   local: 'local'
 };
 /**
- * debug
- * @type {Boolean}
- */
-think.debug = false;
-/**
  * env
- * env | test | online
+ * development | testing | production
  * @type {String}
  */
-think.env = 'dev';
+think.env = 'development';
 /**
  * server port
  * @type {Number}
@@ -444,7 +439,7 @@ think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
  */
 think.getModuleConfig = (module = think.dirname.common) => {
   let moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
-  if (!think.debug && module in moduleConfig) {
+  if (module in moduleConfig) {
     return moduleConfig[module];
   }
   let rootPath;
@@ -456,11 +451,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
   }
   //config.js
   let config = think.safeRequire(`${rootPath}/config.js`);
-  let debugConfig = {}, cliConfig = {}, extraConfig = {};
-  //debug.js
-  if (think.debug) {
-    debugConfig = think.safeRequire(`${rootPath}/debug.js`);
-  }
+  let envConfig = {}, extraConfig = {};
   //load extra config by key
   if(think.isDir(rootPath)){
     let filters = ['config', 'debug', 'cli', 'route'];
@@ -486,11 +477,8 @@ think.getModuleConfig = (module = think.dirname.common) => {
     };
     extraConfig = loadConf(rootPath, extraConfig);
   }
-  //cli.js
-  if(think.cli){
-    cliConfig = think.safeRequire(`${rootPath}/cli.js`);
-  }
-  config = think.extend({}, config, debugConfig, extraConfig, cliConfig);
+  envConfig = think.safeRequire(`${rootPath}/env/${think.env}.js`);
+  config = think.extend({}, config, extraConfig, envConfig);
   //merge config
   if (module !== true) {
     config = think.extend({}, thinkCache(thinkCache.CONFIG), config);
@@ -962,9 +950,9 @@ think.session = http => {
   }
   let type = sessionOptions.type || 'base';
   if (type === 'base') {
-    if (think.debug || think.config('cluster_on')) {
+    if (think.config('cluster_on')) {
       type = 'file';
-      think.log('in debug or cluster mode, session can\'t use memory for storage, convert to File');
+      think.log('in cluster mode, session can\'t use memory for storage, convert to File');
     }
   }
   let cls = think.adapter('session', type);

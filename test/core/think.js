@@ -70,9 +70,6 @@ describe('core/think.js', function(){
       local: 'local'
     })
   })
-  it('think.debug is boolean', function(){
-    assert.equal(typeof think.debug, 'boolean');
-  })
   it('think.port is number', function(){
     assert.equal(typeof think.port, 'number');
   })
@@ -753,27 +750,13 @@ describe('core/think.js', function(){
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         think.cli = cli;
       })
-      it('think.getModuleConfig get sys config, with debug', function(){
-        var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
-        thinkCache(thinkCache.MODULE_CONFIG, {})
-        var debug = think.debug;
-        think.debug = true;
-        var configs = think.getModuleConfig(true);
-        assert.equal(think.isObject(configs), true);
-        assert.equal(configs.auto_reload, true);
-        thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
-        think.debug = debug;
-      })
       it('think.getModuleConfig get common config', function(){
         var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
-        var debug = think.debug;
-        think.debug = true;
         var configs = think.getModuleConfig();
         assert.equal(think.isObject(configs), true);
         assert.equal(configs.auto_reload, false);
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
-        think.debug = debug;
       })
 
       it('think.getModuleConfig get common config 2', function(done){
@@ -2180,12 +2163,10 @@ describe('core/think.js', function(){
         })
 
         http._cookie.test = 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ.yeZHK5ympKa2jZIqRyvHCYJGPhPXemEtQF0ZU8V1Yhg';
-        think.debug = true;
         var log = think.log;
         think.log = function(){}
         var session = think.session(http);
         assert.equal(http._cookie.test, 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ');
-        think.debug = false;
         think.log = log;
         done();
       })
