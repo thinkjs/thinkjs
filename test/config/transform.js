@@ -7,7 +7,7 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-var Transform = require('../../lib/config/transform.js');
+var Transform = require('../../lib/config/sys/transform.js');
 
 describe('config/transform', function(){
   it('transform keys', function(){

@@ -109,7 +109,7 @@ export default class {
    * @return {} []
    */
   loadAlias(){
-    let aliasPath = `${think.THINK_LIB_PATH}/config/alias.js`;
+    let aliasPath = `${think.THINK_LIB_PATH}/config/sys/alias.js`;
     thinkCache(thinkCache.ALIAS, require(aliasPath));
   }
   /**
@@ -303,7 +303,7 @@ export default class {
    * @return {} []
    */
   loadError(){
-    let message = require(think.THINK_LIB_PATH + '/config/error.js');
+    let message = require(think.THINK_LIB_PATH + '/config/sys/error.js');
     thinkCache(thinkCache.ERROR, message);
   }
   /**

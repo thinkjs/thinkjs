@@ -496,7 +496,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
     config = think.extend({}, thinkCache(thinkCache.CONFIG), config);
   }
   //transform config
-  let transforms = require(`${think.THINK_LIB_PATH}/config/transform.js`);
+  let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
   config = think.transformConfig(config, transforms);
   thinkCache(thinkCache.MODULE_CONFIG, module, config);
   return config;
