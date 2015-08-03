@@ -17,6 +17,7 @@ export default class extends Parse {
     this.sql = '';
     this.lastInsertId = 0;
     this._socket = null;
+    this.transTimes = 0; //transaction times
   }
   /**
    * get socket instance, override by sub class
@@ -230,6 +231,40 @@ export default class extends Parse {
       }
       return data.affectedRows || 0;
     });
+  }
+  /**
+   * start transaction
+   * @return {Promise} []
+   */
+  startTrans(){
+    if (this.transTimes === 0) {
+      this.transTimes++;
+      return this.execute('START TRANSACTION');
+    }
+    this.transTimes++;
+    return Promise.resolve();
+  }
+  /**
+   * commit
+   * @return {Promise} []
+   */
+  commit(){
+    if (this.transTimes > 0) {
+      this.transTimes = 0;
+      return this.execute('COMMIT');
+    }
+    return Promise.resolve();
+  }
+  /**
+   * rollback
+   * @return {Promise} []
+   */
+  rollback(){
+    if (this.transTimes > 0) {
+      this.transTimes = 0;
+      return this.execute('ROLLBACK');
+    }
+    return Promise.resolve();
   }
   /**
    * close connect

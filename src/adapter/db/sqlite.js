@@ -25,6 +25,7 @@ export default class extends think.adapter.db {
   async getFields(table){
     let data = await this.query(`PRAGMA table_info( ${table} )`);
     let ret = {};
+    console.log(data);
     data.forEach(item => {
       ret[item.name] = {
         name: item.name,
@@ -35,10 +36,10 @@ export default class extends think.adapter.db {
         auto_increment: false
       };
     });
-    if(data.length === 0){
-      let msg = new Error(think.local('TABLE_NO_COLUMNS', table));
-      return think.reject(msg);
-    }
+    // if(data.length === 0){
+    //   let msg = new Error(think.local('TABLE_NO_COLUMNS', table));
+    //   return think.reject(msg);
+    // }
     return ret;
   }
   /**
@@ -55,11 +56,11 @@ export default class extends think.adapter.db {
    * @return {String}       []
    */
   parseLimit(limit){
-    if (!limit) {
+    if (think.isEmpty(limit)) {
       return '';
     }
     if(think.isString(limit)){
-      limit = limit.split(',');
+      limit = limit.split(/\s*,\s*/);
     }
     if(limit[1]){
       return ' LIMIT ' + (limit[1] | 0) + ' OFFSET ' + (limit[0] | 0);

@@ -7,15 +7,6 @@ let MysqlSocket = think.adapter('socket', 'mysql');
  */
 export default class extends think.adapter.db {
   /**
-   * init
-   * @param  {Object} config []
-   * @return {}        []
-   */
-  init(config){
-    super.init(config);
-    this.transTimes = 0; //transaction times
-  }
-  /**
    * get mysql socket instance
    * @param  {Object} config []
    * @return {}        []
@@ -47,40 +38,6 @@ export default class extends think.adapter.db {
       };
     });
     return ret;
-  }
-  /**
-   * start transaction
-   * @return {Promise} []
-   */
-  startTrans(){
-    if (this.transTimes === 0) {
-      this.transTimes++;
-      return this.execute('START TRANSACTION');
-    }
-    this.transTimes++;
-    return Promise.resolve();
-  }
-  /**
-   * commit
-   * @return {Promise} []
-   */
-  commit(){
-    if (this.transTimes > 0) {
-      this.transTimes = 0;
-      return this.execute('COMMIT');
-    }
-    return Promise.resolve();
-  }
-  /**
-   * rollback
-   * @return {Promise} []
-   */
-  rollback(){
-    if (this.transTimes > 0) {
-      this.transTimes = 0;
-      return this.execute('ROLLBACK');
-    }
-    return Promise.resolve();
   }
   /**
    * parse key

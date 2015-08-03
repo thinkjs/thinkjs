@@ -20,6 +20,7 @@ describe('adapter/db/base.js', function(){
     assert.equal(instance.sql, '');
     assert.equal(instance.lastInsertId, 0);
     assert.equal(instance._socket, null);
+    assert.equal(instance.transTimes, 0);
   })
   it('socket is function', function(){
     var instance = new Base();
@@ -393,5 +394,92 @@ describe('adapter/db/base.js', function(){
     var flag = false;
     instance.close();
     assert.equal(flag, false);
+  })
+  it('startTrans', function(done){
+    var instance = new Base();
+    var flag = false;
+    instance.execute = function(sql){
+      assert.equal(sql, 'START TRANSACTION');
+      flag = true;
+      return Promise.resolve();
+    }
+    instance.startTrans().then(function(data){
+      assert.equal(flag, true);
+      instance.transTimes = 1;
+      done();
+    })
+  })
+  it('startTrans, is started', function(done){
+    var instance = new Base();
+    instance.transTimes = 1;
+    var flag = false;
+    instance.execute = function(sql){
+      assert.equal(sql, 'START TRANSACTION');
+      flag = true;
+      return Promise.resolve();
+    }
+    instance.startTrans().then(function(data){
+      assert.equal(flag, false);
+      instance.transTimes = 1;
+      done();
+    })
+  })
+  it('commit, not start', function(done){
+    var instance = new Base();
+    var flag = false;
+    instance.execute = function(sql){
+      assert.equal(sql, 'ROLLBACK');
+      flag = true;
+      return Promise.resolve();
+    }
+    instance.commit().then(function(data){
+      assert.equal(flag, false);
+      instance.transTimes = 0;
+      done();
+    })
+  })
+  it('commit', function(done){
+    var instance = new Base();
+    instance.transTimes = 1;
+    var flag = false;
+    instance.execute = function(sql){
+      assert.equal(sql, 'COMMIT');
+      flag = true;
+      return Promise.resolve();
+    }
+    instance.commit().then(function(data){
+      assert.equal(flag, true);
+      instance.transTimes = 0;
+      done();
+    })
+  })
+  it('rollback, not start', function(done){
+    var instance = new Base();
+    var flag = false;
+    instance.execute = function(sql){
+      assert.equal(sql, 'ROLLBACK');
+      flag = true;
+      return Promise.resolve();
+    }
+    instance.rollback().then(function(data){
+      assert.equal(flag, false);
+      instance.transTimes = 0;
+      done();
+    })
+  })
+  it('rollback', function(done){
+    var instance = new Base();
+    instance.transTimes = 1;
+    var flag = false;
+    instance.execute = function(sql){
+      assert.equal(sql, 'ROLLBACK');
+      flag = true;
+      return Promise.resolve();
+    }
+    instance.rollback().then(function(data){
+      assert.equal(flag, true);
+      instance.transTimes = 0;
+      done();
+    })
   })
 })
