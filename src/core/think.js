@@ -352,6 +352,16 @@ think.isPrevent = err => {
  */
 think.log = (msg, type, startTime) => {
 
+  //when type or startTime is boolean
+  //only show log when value is true
+  if(type === false || startTime === false){
+    return;
+  }else if(type === true){
+    type = '';
+  }else if(startTime === true){
+    startTime = '';
+  }
+
   let fn = d => {
     return ('0' + d).slice(-2);
   };

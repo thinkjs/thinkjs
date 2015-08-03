@@ -441,6 +441,7 @@ export default class {
    * @return {} []
    */
   close(){
+    //remove db instance from cache store
     thinkCache(thinkCache.DB, this.getConfigKey(), null);
     if (this._db) {
       this._db.close();

@@ -50,3 +50,8 @@ module.exports = {
 }
 ```
 
+
+#### migrations
+
+http://www.yiiframework.com/doc-2.0/yii-db-migration.html#createTable()-detail
+
