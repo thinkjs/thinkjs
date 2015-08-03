@@ -102,6 +102,6 @@ export default class extends think.controller.base {
    * @return {Promise} []
    */
   __call(){
-    return this.fail(`action is not allowed`);
+    return this.fail(think.local('ACTION_INVALID', this.http.action, this.http.url));
   }
 }
