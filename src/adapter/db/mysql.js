@@ -89,6 +89,9 @@ export default class extends think.adapter.db {
    */
   parseKey(key = ''){
     key = key.trim();
+    if(think.isEmpty(key)){
+      return '';
+    }
     if (!(/[,\'\"\*\(\)`.\s]/.test(key))) {
       key = '`' + key + '`';
     }
