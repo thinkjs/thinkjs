@@ -478,7 +478,7 @@ describe('logic/base', function(){
       done();
     })
   })
-  it('_validate, data empty', function(done){
+  it('checkValidation, data empty', function(done){
     getInstance({
       validate: {
         required_msg: 'default required msg'
@@ -490,12 +490,12 @@ describe('logic/base', function(){
       module: 'home'
     }).then(function(instance){
       var data = [];
-      data = instance._validate(data);
+      data = instance.checkValidation(data);
       assert.deepEqual(data, undefined)
       done();
     })
   })
-  it('_validate, success', function(done){
+  it('checkValidation, success', function(done){
     getInstance({
       validate: {
         required_msg: 'default required msg'
@@ -515,12 +515,12 @@ describe('logic/base', function(){
         args: [4, 10],
         required: true
       }];
-      data = instance._validate(data);
+      data = instance.checkValidation(data);
       assert.deepEqual(data, undefined)
       done();
     })
   })
-  it('_validate, has default value', function(done){
+  it('checkValidation, has default value', function(done){
     getInstance({
       validate: {
         required_msg: 'default required msg'
@@ -540,12 +540,12 @@ describe('logic/base', function(){
         args: [4, 10],
         default: 'suredy'
       }];
-      data = instance._validate(data);
+      data = instance.checkValidation(data);
       assert.deepEqual(instance.post('name'), 'suredy')
       done();
     })
   })
-  it('_validate, this.validate', function(done){
+  it('checkValidation, this.validate', function(done){
     getInstance({
       validate: {
         required_msg: 'default required msg'
@@ -559,18 +559,45 @@ describe('logic/base', function(){
       controller: 'group',
       module: 'home'
     }).then(function(instance){
-      instance.validate = [{
+      instance.rules = [{
         name: 'name',
         validate: 'length',
         args: [4, 10],
         default: 'suredy'
       }];
-      var data = instance._validate();
+      var data = instance.checkValidation();
       assert.deepEqual(instance.post('name'), 'suredy')
       done();
     })
   })
-  it('_validate, fail', function(done){
+  it('checkValidation, this.validate 1', function(done){
+    getInstance({
+      validate: {
+        required_msg: 'default required msg'
+      }
+    }, {
+      _post: {
+        name: ''
+      },
+      method: 'POST',
+      action: 'test',
+      controller: 'group',
+      module: 'home'
+    }).then(function(instance){
+      instance.rules = function(){
+        return [{
+          name: 'name',
+          validate: 'length',
+          args: [4, 10],
+          default: 'suredy'
+        }]
+      };
+      var data = instance.checkValidation();
+      assert.deepEqual(instance.post('name'), 'suredy')
+      done();
+    })
+  })
+  it('checkValidation, fail', function(done){
     getInstance({
       validate: {
         required_msg: 'default required msg',
@@ -596,11 +623,11 @@ describe('logic/base', function(){
         assert.equal(msg, 'not valid');
         assert.deepEqual(Object.keys(ret), ['name'])
       }
-      var data = instance._validate();
+      var data = instance.checkValidation();
       done();
     })
   })
-  it('_validate, fail, with msg', function(done){
+  it('checkValidation, fail, with msg', function(done){
     getInstance({
       validate: {
         required_msg: 'default required msg',
@@ -627,7 +654,7 @@ describe('logic/base', function(){
         assert.equal(msg, 'not valid');
         assert.deepEqual(ret.name, 'length is 4 to 10')
       }
-      var data = instance._validate();
+      var data = instance.checkValidation();
       done();
     })
   })

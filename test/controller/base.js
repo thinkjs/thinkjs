@@ -413,42 +413,42 @@ describe('controller/base.js', function(){
     })
   })
 
-  it('token', function(done){
-    getInstance({
-    }).then(function(instance){
-      return instance.token()
-    }).then(function(data){
-      assert.equal(data.length, 32);
-      done();
-    })
-  })
-  it('token twice', function(done){
-    var d, ins;
-    getInstance({
-    }).then(function(instance){
-      ins = instance;
-      return instance.token()
-    }).then(function(data){
-      d = data;
-      return ins.token();
-    }).then(function(data){
-      assert.equal(data, d);
-      done();
-    })
-  })
-  it('token twice', function(done){
-    var ins;
-    getInstance({
-    }).then(function(instance){
-      ins = instance;
-      return instance.token()
-    }).then(function(data){
-      return ins.token(data);
-    }).then(function(data){
-      assert.equal(data, true);
-      done();
-    })
-  })
+  // it('token', function(done){
+  //   getInstance({
+  //   }).then(function(instance){
+  //     return instance.token()
+  //   }).then(function(data){
+  //     assert.equal(data.length, 32);
+  //     done();
+  //   })
+  // })
+  // it('token twice', function(done){
+  //   var d, ins;
+  //   getInstance({
+  //   }).then(function(instance){
+  //     ins = instance;
+  //     return instance.token()
+  //   }).then(function(data){
+  //     d = data;
+  //     return ins.token();
+  //   }).then(function(data){
+  //     assert.equal(data, d);
+  //     done();
+  //   })
+  // })
+  // it('token twice', function(done){
+  //   var ins;
+  //   getInstance({
+  //   }).then(function(instance){
+  //     ins = instance;
+  //     return instance.token()
+  //   }).then(function(data){
+  //     return ins.token(data);
+  //   }).then(function(data){
+  //     assert.equal(data, true);
+  //     done();
+  //   })
+  // })
   it('get session', function(){
     getInstance({
     }).then(function(instance){

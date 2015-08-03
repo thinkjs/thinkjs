@@ -140,9 +140,12 @@ module.exports = {
     callback: undefined,
     file_ext: '.html'
   },
-  token: {
-    name: '__TOKEN__', //name in session
-    length: 32 //token length
+  csrf: {
+    on: false,
+    session_name: '__CSRF__', //name in session
+    form_name: '__CSRF__', //name in form
+    errno: 400,
+    errmsg: 'token error'
   },
   memcache: {
     host: '127.0.0.1',

@@ -96,20 +96,20 @@ export default class extends think.base {
    * @param  {String} token []
    * @return {String | Boolean}       []
    */
-  async token(token){
-    let tokenConfig = this.config('token');
-    let tokenValue = await this.session(tokenConfig.name);
-    if (token) {
-      return tokenValue === token;
-    }else{
-      if(tokenValue){
-        return tokenValue;
-      }
-      token = think.uuid(tokenConfig.length);
-      await this.session(tokenConfig.name, token);
-      return token;
-    }
-  }
+  // async token(token){
+  //   let tokenConfig = this.config('token');
+  //   let tokenValue = await this.session(tokenConfig.name);
+  //   if (token) {
+  //     return tokenValue === token;
+  //   }else{
+  //     if(tokenValue){
+  //       return tokenValue;
+  //     }
+  //     token = think.uuid(tokenConfig.length);
+  //     await this.session(tokenConfig.name, token);
+  //     return token;
+  //   }
+  // }
   /**
    * get get params
    * @param  {String} name [query name]
