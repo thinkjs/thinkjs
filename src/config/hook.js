@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
   form_parse: ['parse_json_payload'],
   resource_check: ['resource'],
   resource_output: ['output_resource'],

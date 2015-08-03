@@ -454,15 +454,19 @@ think.getModuleConfig = (module = think.dirname.common) => {
   let envConfig = {}, extraConfig = {};
   //load extra config by key
   if(think.isDir(rootPath)){
-    let filters = ['config', 'debug', 'cli', 'route'];
+    let filters = ['config', 'route'];
     if(module === true){
       filters.push('alias', 'hook', 'transform', 'error');
     }
+    let dirFilters = ['env'];
     //load conf
     let loadConf = (path, extraConfig) => {
       fs.readdirSync(path).forEach(item => {
         if(think.isDir(`${path}/${item}`)){
-          extraConfig[item] = loadConf(`${path}/${item}`, extraConfig[item] || {});
+          if(dirFilters.indexOf(item) === -1){
+            extraConfig[item] = loadConf(`${path}/${item}`, extraConfig[item] || {});
+          }
+          return;
         }
         item = item.slice(0, -3);
         if(item[0] === '_' || filters.indexOf(item) > -1){

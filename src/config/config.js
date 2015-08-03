@@ -2,7 +2,7 @@
 
 let runtimePrefix = think.getPath(undefined, think.dirname.runtime);
 
-module.exports = {
+export default {
   port: 8360, 
   host: '',
   encoding: 'utf-8',
