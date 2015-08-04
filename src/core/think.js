@@ -1072,11 +1072,6 @@ think.model = (superClass, methods, module) => {
   //create model
   return model(superClass, methods);
 };
-//model relation type
-think.model.HAS_ONE = 1;
-think.model.BELONG_TO = 2;
-think.model.HAS_MANY = 3;
-think.model.MANY_TO_MANY = 4;
 
 /**
  * create service sub class
