@@ -3,7 +3,6 @@
 import util from 'util';
 import Base from './_base.js';
 
-let tableFields = thinkCache(thinkCache.TABLE);
 /**
  * model base class
  * @type {Class}
@@ -16,14 +15,10 @@ export default class extends Base {
    */
   async getTableFields(table){
     table = table || this.getTableName();
-    if(this._isFieldGetted){
-      return this.fields;
-    }
-    let fields;
-    if(tableFields[table]){
-      fields = tableFields[table];
-    }else{
-      fields = tableFields[table] = await this.db().getFields(table);
+    let fields = thinkCache(thinkCache.TABLE, table);
+    if(!fields){
+      fields = await this.db().getFields(table);
+      thinkCache(thinkCache.TABLE, table, fields);
     }
     if(table !== this.getTableName()){
       return fields;
@@ -35,9 +30,8 @@ export default class extends Base {
         break;
       }
     }
-    //merge use set fields config
+    //merge user set fields config
     this.fields = think.extend({}, fields, this.fields);
-    this._isFieldGetted = true;
     return this.fields;
   }
   /**
@@ -113,9 +107,10 @@ export default class extends Base {
     }
     //field reverse
     if(options.field && options.fieldReverse){
+      //reset fieldReverse value
       options.fieldReverse = false;
       let optionsField = options.field;
-      options.field = fields.filter(item => {
+      options.field = Object.keys(fields).filter(item => {
         if(optionsField.indexOf(item) === -1){
           return item;
         }
@@ -127,7 +122,7 @@ export default class extends Base {
    * parse where options
    * @return {Object} 
    */
-  parseWhereOptions(options = {}){
+  parseWhereOptions(options){
     if (think.isNumber(options) || think.isString(options)) {
       options += '';
       let where = {
@@ -204,21 +199,15 @@ export default class extends Base {
    * then add
    * @param  {Object} data       []
    * @param  {Object} where      []
-   * @param  {} returnType []
    * @return {}            []
    */
-  async thenAdd(data, where, returnType){
-    if (where === true) {
-      returnType = true;
-      where = undefined;
-    }
+  async thenAdd(data, where){
     let findData = await this.where(where).find();
     if(!think.isEmpty(findData)){
-      let idValue = findData[this.pk];
-      return returnType ? {[idValue]: idValue, type: 'exist'} : idValue;
+      return {[this.pk]: findData[this.pk], type: 'exist'};
     }
     let insertId = await this.add(data);
-    return returnType ? {[this.pk]: insertId, type: 'add'} : insertId;
+    return {[this.pk]: insertId, type: 'add'};
   }
   /**
    * add multi data
@@ -228,23 +217,34 @@ export default class extends Base {
    */
   async addMany(data, options, replace){
     if (!think.isArray(data) || !think.isObject(data[0])) {
-      return think.reject(new Error('_DATA_TYPE_INVALID_'));
+      return think.reject(new Error(think.local('DATA_MUST_BE_ARRAY')));
     }
     if (options === true) {
       replace = true;
       options = {};
     }
-    let promises = data.map(item => {
-      return this._beforeAdd(item);
-    });
-    await Promise.all(promises);
     options = await this.parseOptions(options);
+    let promises = data.map(item => {
+      item = this.parseData(item);
+      return this._beforeAdd(item, options);
+    })
+    data = await Promise.all(promises);
     await this.db().addMany(data, options, replace);
-    return this.db().getLastInsertId();
+    let insertId = this.db().getLastInsertId() - data.length + 1;
+    let insertIds = [];
+    promises = data.map((item, i) => {
+      let id = insertId + i;
+      item[this.pk] = id;
+      insertIds.push(id);
+      return this._afterAdd(item, options);
+    });
+    data = await Promise.all(promises);
+    return insertIds;
   }
   /**
    * delete data
-   * @return {} []
+   * @param  {Object} options []
+   * @return {Promise}         []
    */
   async delete(options){
     options = await this.parseOptions(options);
@@ -254,7 +254,7 @@ export default class extends Base {
   }
   /**
    * update data
-   * @return {[type]} [description]
+   * @return {Promise} []
    */
   async update(data, options){
     data = think.extend({}, this._data, data);
@@ -263,20 +263,15 @@ export default class extends Base {
     if (think.isEmpty(data)) {
       return think.reject(new Error(think.local('DATA_EMPTY')));
     }
+    //get where condition from data
+    let pk = await this.getPk();
+    if(data[pk]){
+      this.where({[pk]: data[pk]});
+      delete data[pk];
+    }
     options = await this.parseOptions(options);
     data = await this._beforeUpdate(data, options);
     data = this.parseData(data);
-    let pk = await this.getPk();
-    if(think.isEmpty(options.where)){
-      if(!think.isEmpty(data[pk])){
-        options.where = {[pk]: data[pk]};
-        delete data[pk];
-      }else{
-        return think.reject(new Error(think.local('MISS_WHERE_CONDITION')));
-      }
-    }else{
-      data[pk] = options.where[pk];
-    }
     let rows = await this.db().update(data, options);
     await this._afterUpdate(data, options);
     return rows;
@@ -286,14 +281,16 @@ export default class extends Base {
    * @param  {[type]} dataList [description]
    * @return {[type]}          [description]
    */
-  updateAll(dataList){
-    if (!think.isArray(dataList) || !think.isObject(dataList[0])) {
-      return think.reject(new Error(think.local('DATA_EMPTY')));
+  updateMany(dataList){
+    if (!think.isArray(dataList)) {
+      return think.reject(new Error(think.local('DATA_MUST_BE_ARRAY')));
     }
     let promises = dataList.map(data => {
       return this.update(data);
     });
-    return think.all(promises);
+    return Promise.all(promises).then(data => {
+      return data.reduce((a, b) => a + b);
+    });
   }
   /**
    * increment field data
@@ -354,38 +351,38 @@ export default class extends Base {
    * @return promise         
    */
   async countSelect(options, pageFlag){
+    let count;
     if (think.isBoolean(options)) {
       pageFlag = options;
       options = {};
+    }else if(think.isNumber(options)){
+      count = options;
+      options = {};
     }
+
     options = await this.parseOptions(options);
-    let pk = await this.getPk();
+    let pk = this.pk;
     let table = options.alias || this.getTableName();
-    //get count
-    let count = await this.options({
-      where: options.where,
-      cache: options.cache,
-      join: options.join,
-      alias: options.alias,
-      table: options.table,
-      group: options.group
-    }).count(`${table}.${pk}`);
+
+    if(!count){
+      //get count
+      count = await this.options(options).count(`${table}.${pk}`);
+    }
+
     //get page options
-    let pageOptions = {page: 1, num: this.config.nums_per_page};
-    if(options.limit){
-      pageOptions.page = parseInt((options.limit[0] / options.limit[1]) + 1);
-    }
-    let totalPage = Math.ceil(count / pageOptions.num);
-    if (think.isBoolean(pageFlag)) {
-      if (pageOptions.page > totalPage) {
-        pageOptions.page = pageFlag === true ? 1 : totalPage;
+    let data = {numsPerPage: this.config.nums_per_page};
+    data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
+    let totalPage = Math.ceil(count / data.numsPerPage);
+    if (think.isBoolean(pageFlag) && data.currentPage > totalPage) {
+      if(pageFlag){
+        data.currentPage = 1;
+        options.limit = [0, this.config.nums_per_page];
+      }else{
+        data.currentPage = totalPage;
+        options.limit = [(totalPage - 1) * this.config.nums_per_page, this.config.nums_per_page];
       }
-      options.page = pageOptions.page + ',' + pageOptions.num;
     }
-    let result = think.extend({count: count, total: totalPage}, pageOptions);
-    if (!options.page) {
-      options.page = pageOptions.page;
-    }
+    let result = think.extend({count: count, totalPages: totalPage}, data);
     result.data = await this.select(options);
     return result;
   }
@@ -433,7 +430,7 @@ export default class extends Base {
    */
   async count(field){
     field = field || await this.getPk();
-    return this.getField('COUNT(' + field + ') AS thinkjs_count', true);
+    return this.getField('COUNT(' + field + ') AS think_count', true);
   }
   /**
    * get sum
@@ -442,7 +439,7 @@ export default class extends Base {
    */
   async sum(field){
     field = field || await this.getPk();
-    return this.getField('SUM(' + field + ') AS thinkjs_sum', true);
+    return this.getField('SUM(' + field + ') AS think_sum', true);
   }
   /**
    * get min value
@@ -451,7 +448,7 @@ export default class extends Base {
    */
   async min(field){
     field = field || await this.getPk();
-    return this.getField('MIN(' + field + ') AS thinkjs_min', true);
+    return this.getField('MIN(' + field + ') AS think_min', true);
   }
   /**
    * get max valud
@@ -460,7 +457,7 @@ export default class extends Base {
    */
   async max(field){
     field = field || await this.getPk();
-    return this.getField('MAX(' + field + ') AS thinkjs_max', true);
+    return this.getField('MAX(' + field + ') AS think_max', true);
   }
   /**
    * get value average
@@ -469,7 +466,7 @@ export default class extends Base {
    */
   async avg(field){
     field = field || await this.getPk();
-    return this.getField('AVG(' + field + ') AS thinkjs_avg', true);
+    return this.getField('AVG(' + field + ') AS think_avg', true);
   }
   /**
    * query
