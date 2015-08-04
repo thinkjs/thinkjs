@@ -68,11 +68,11 @@ export default class {
    * @return {} []
    */
   getConfigKey(){
-    if(this.configKey){
-      return this.configKey;
+    if(this._configKey){
+      return this._configKey;
     }
-    this.configKey = think.md5(JSON.stringify(this.config));
-    return this.configKey;
+    this._configKey = think.md5(JSON.stringify(this.config));
+    return this._configKey;
   }
   /**
    * get db instance

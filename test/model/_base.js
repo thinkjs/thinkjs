@@ -55,7 +55,7 @@ describe('model/_base.js', function(){
   })
   it('getConfigKey, exist', function(){
     var instance = new Base('user', think.config('db'));
-    instance.configKey = 'configKey'
+    instance._configKey = 'configKey'
     var data = instance.getConfigKey();
     assert.deepEqual(data, 'configKey');
   })
