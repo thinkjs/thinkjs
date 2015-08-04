@@ -930,11 +930,11 @@ think.session = http => {
     thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
   }
   let sessionOptions = think.config('session');
-  let {name, sign} = sessionOptions;
+  let {name, secret} = sessionOptions;
   let cookie = http._cookie[name];
   //validate cookie sign
-  if (cookie && sign) {
-    cookie = Cookie.unsign(cookie, sign);
+  if (cookie && secret) {
+    cookie = Cookie.unsign(cookie, secret);
     //set cookie to http._cookie
     if (cookie) {
       http._cookie[name] = cookie;
@@ -946,8 +946,8 @@ think.session = http => {
     cookie = think.uuid(options.length || 32);
     sessionCookie = cookie;
     //sign cookie
-    if (sign) {
-      cookie = Cookie.sign(cookie, sign);
+    if (secret) {
+      cookie = Cookie.sign(cookie, secret);
     }
     http._cookie[name] = sessionCookie;
     http.cookie(name, cookie, options);

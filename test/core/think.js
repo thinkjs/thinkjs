@@ -2127,12 +2127,12 @@ describe('core/think.js', function(){
         done();
       })
     })
-    it('get session, options, sign error', function(done){
+    it('get session, options, secret error', function(done){
       getHttp().then(function(http){
         var options = think.config('session');
         think.config('session', {
           name: 'test',
-          sign: 'welefen'
+          secret: 'welefen'
         })
         http._cookie.test = 'test';
         var session = think.session(http);
@@ -2140,12 +2140,12 @@ describe('core/think.js', function(){
         done();
       })
     })
-    it('get session, options, sign success', function(done){
+    it('get session, options, secret success', function(done){
       getHttp().then(function(http){
         var options = think.config('session');
         think.config('session', {
           name: 'test',
-          sign: 'welefen'
+          secret: 'welefen'
         })
 
         http._cookie.test = 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ.yeZHK5ympKa2jZIqRyvHCYJGPhPXemEtQF0ZU8V1Yhg';
@@ -2159,7 +2159,7 @@ describe('core/think.js', function(){
         var options = think.config('session');
         think.config('session', {
           name: 'test',
-          sign: 'welefen'
+          secret: 'welefen'
         })
 
         http._cookie.test = 'g1kzmNA_xtDQKSBP2Q4M1irhPrECxGiZ.yeZHK5ympKa2jZIqRyvHCYJGPhPXemEtQF0ZU8V1Yhg';
@@ -2176,7 +2176,7 @@ describe('core/think.js', function(){
         var options = think.config('session');
         think.config('session', {
           name: 'test',
-          sign: 'welefen'
+          secret: 'welefen'
         })
         var value = '111';
         var session = think.session(http);
