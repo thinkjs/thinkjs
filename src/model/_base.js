@@ -27,7 +27,6 @@ export default class {
       name: '', //model name
       tablePrefix: '', //table prefix
       tableName: '', //table name, without prefix
-      fullTableName: '', //table name, with prefix
       fields: {}, //table fields
       readonlyFields: []// readonly fields
     };
@@ -102,7 +101,7 @@ export default class {
     }
     let filename = this.__filename || __filename;
     let last = filename.lastIndexOf('/');
-    this.name = filename.substr(last + 1, filename.length - last - 3);
+    this.name = filename.substr(last + 1, filename.length - last - 4);
     return this.name;
   }
   /**
@@ -110,10 +109,10 @@ export default class {
    * @return {String} []
    */
   getTableName(){
-    if (!this.fullTableName) {
-      this.fullTableName = (this.tablePrefix || '') + (this.tableName || this.getModelName());
+    if(!this.tableName){
+      this.tableName = this.getModelName();
     }
-    return this.fullTableName;
+    return this.tablePrefix + this.tableName;
   }
   /**
    * set cache options
@@ -121,7 +120,7 @@ export default class {
    * @param  {Number} timeout []
    * @return {}         []
    */
-  cache(key, timeout){
+  cache(key, timeout = this.config.cache.timeout){
     if (key === undefined) {
       return this;
     }
@@ -186,11 +185,19 @@ export default class {
    */
   field(field, reverse = false){
     if (think.isString(field)) {
-      field = field.split(',');
+      field = field.split(/\s*,\s*/);
     }
     this._options.field = field;
     this._options.fieldReverse = reverse;
     return this;
+  }
+  /**
+   * set field reverse
+   * @param  {String} field [field list]
+   * @return {Object}       []
+   */
+  fieldReverse(field){
+    return this.field(field, true);
   }
   /**
    * set table name
@@ -215,7 +222,7 @@ export default class {
    * @param  {} all   []
    * @return {}       []
    */
-  union(union, all){
+  union(union, all = false){
     if (!union) {
       return this;
     }
