@@ -153,7 +153,7 @@ export default class extends think.controller.base {
    * @return {Promise} []
    */
   __before(){
-    return this.checkValidation().then(() => {
+    return Promise.resolve(this.checkValidation()).then(() => {
       return this.checkCsrf();
     }).then(() => {
       return this.checkAuth();

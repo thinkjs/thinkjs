@@ -508,7 +508,7 @@ export default class extends Base {
    * @return {Promise} []
    */
   startTrans(){
-    return this.db().startTrans(this.getTableName());
+    return this.db().startTrans();
   }
   /**
    * commit transcation

@@ -27,10 +27,11 @@ export default class {
       name: '', //model name
       tablePrefix: '', //table prefix
       tableName: '', //table name, without prefix
-      trueTableName: '', //table name, with prefix
-      fields: {} //table fields
+      fullTableName: '', //table name, with prefix
+      fields: {}, //table fields
+      readonlyFields: []// readonly fields
     };
-    //if is set in user model, can't be override
+    //if is set in subclass, can't be override
     for(let key in options){
       if(this[key] === undefined){
         this[key] = options[key];
@@ -52,6 +53,16 @@ export default class {
     if (this.config.prefix && !this.tablePrefix) {
       this.tablePrefix = this.config.prefix;
     }
+  }
+  /**
+   * get model instance
+   * @param  {String} name    [model name]
+   * @param  {Object} options [options]
+   * @return {Object}         []
+   */
+  model(name, options){
+    options = think.extend({}, this.config, options);
+    return think.model(name, options);
   }
   /**
    * get config key
@@ -99,10 +110,10 @@ export default class {
    * @return {String} []
    */
   getTableName(){
-    if (!this.trueTableName) {
-      this.trueTableName = (this.tablePrefix || '') + (this.tableName || this.getModelName());
+    if (!this.fullTableName) {
+      this.fullTableName = (this.tablePrefix || '') + (this.tableName || this.getModelName());
     }
-    return this.trueTableName;
+    return this.fullTableName;
   }
   /**
    * set cache options

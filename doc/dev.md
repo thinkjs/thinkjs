@@ -1,57 +1,24 @@
-## 2.0开发文档
+## 2.0
 
-### 介绍
+### 参考文档
 
-从`https://github.com/75team/thinkjs`上拉取代码后，选择`es6`的分支。
+* http://laravel.com/docs/master/releases
+* http://www.yiiframework.com/doc-2.0/yii-db-migration.html#createTable()-detail
+* http://sailsjs.org/documentation/concepts/
 
-2.0基于ES6特性进行开发，如果对ES6不够了解，请先熟练了解ES6的特性 http://es6.ruanyifeng.com/#README
-
-由于有些特性目前Node还不支持，所以需要使用`Babel`来编译成Es5的代码运行。http://babeljs.io/
-
-安装Babel：
-
-```
-npm install -g babel
-```
-
-然后对src目录进行编译：
-
-```
-babel --loose all --optional runtime --stage 0 src/ --out-dir lib/ --watch
-```
-
-上面代码表示用监听的方式将src/目录编译到lib/目录下，这样文件有修改后会自动编译。
+### 遗留的问题
+* validator需要改为laravel类似的方式，更加简洁
+* 完善mongodb - 基于mongodb模块
+* 重写websocket
+* 增加migration功能
+* 完善relationModel
+* 单元测试 > 95%
+* 关键功能写DEMO
+* 在线文档
+* 官网改版
+* base基类修改？
+* 服务启动时增加文件名大小写的检测
 
 
-### 规范
 
-* 必须使用2个空格作为缩进
-* 必须写较为完善的注释，注释使用英文
-* git commit的message也必须是英文
-* 代码必须经过`eslint`检测（通过`npm install -g eslint babel-eslint`安装，然后eslint file.js来检测）
-
-
-### TDO
-* logic的数据校验需要考虑传递的数据为数组的情况
-* 自定义路由可以根据分组来划分，可以提高性能
-* mongodb
-* rest api
-* 
-
-
-#### 自定义路由格式
-
-```
-module.exports = {
-    admin: {
-        reg: /^admin/,
-        children: []
-    }
-}
-```
-
-
-#### migrations
-
-http://www.yiiframework.com/doc-2.0/yii-db-migration.html#createTable()-detail
 
