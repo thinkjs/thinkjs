@@ -130,7 +130,7 @@ describe('model/_base.js', function(){
   it('limit, with limit', function(){
     var instance = new Base('user', think.config('db'));
     var data = instance.limit(100);
-    assert.deepEqual(instance._options.limit, [100, 10]);
+    assert.deepEqual(instance._options.limit, [100, undefined]);
   })
   it('limit, with limit, offset', function(){
     var instance = new Base('user', think.config('db'));

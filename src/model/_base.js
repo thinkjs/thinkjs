@@ -143,7 +143,7 @@ export default class {
    * @param  {Number} length []
    * @return {}        []
    */
-  limit(offset, length = this.config.nums_per_page){
+  limit(offset, length){
     if (offset === undefined) {
       return this;
     }

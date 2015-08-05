@@ -138,7 +138,7 @@ describe('model/base.js', function(){
         })
       }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 100 )"){
         return Promise.resolve([{"id":7565,"title":"title1","cate_id":1,"cate_no":0}])
-      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1,10"){
+      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1"){
         return Promise.resolve([{"id":7565,"title":"title1","cate_id":1,"cate_no":0}])
       }else if(sql.trim() === "INSERT INTO `think_user` (`wid`,`title`,`cate_id`,`cate_no`) SELECT * FROM `think_tag` WHERE ( `name` = 'test' )"){
         return Promise.resolve({
@@ -267,7 +267,7 @@ describe('model/base.js', function(){
   })
   it('build sql', function(done){
     instance.where('id=1').field('name,title').group('name').limit(10).buildSql().then(function(sql){
-      assert.equal(sql, '( SELECT `name`,`title` FROM `think_user` WHERE ( id=1 ) GROUP BY `name` LIMIT 10,10 )')
+      assert.equal(sql, '( SELECT `name`,`title` FROM `think_user` WHERE ( id=1 ) GROUP BY `name` LIMIT 10 )')
       done();
     })
   })
@@ -505,7 +505,7 @@ describe('model/base.js', function(){
   })
   it('select', function(done){
     instance.where({id: 100}).limit(1).select().then(function(data){
-      assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1,10");
+      assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1");
       assert.deepEqual(data, [{ id: 7565, title: 'title1', cate_id: 1, cate_no: 0 }])
       done();
     })
