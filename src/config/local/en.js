@@ -26,5 +26,5 @@ export default {
   TABLE_NO_COLUMNS: 'table `%s` has no columns',
   NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction',
   DATA_MUST_BE_ARRAY: 'data is not array list',
-  PARAMS_TYPE_INVALID: 'params `{name}` type invalid'
+  PARAMS_TYPE_INVALID: 'params `{name}` type invalid',
 };

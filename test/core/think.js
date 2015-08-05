@@ -1175,7 +1175,7 @@ describe('core/think.js', function(){
   describe('think.alias', function(){
     it('get alias', function(){
       var data = think.alias();
-      assert.equal(think.isString(data.validate), true);
+      assert.equal(think.isString(data.validator), true);
     })
   })
 

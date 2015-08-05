@@ -1164,20 +1164,20 @@ think.local = (key, ...data) => {
  * @return {}            []
  */
 think.validate = (name, callback) => {
-  let Validate = thinkCache(thinkCache.VALIDATE);
+  let Validate = thinkCache(thinkCache.VALIDATOR);
   if (think.isEmpty(Validate)) {
-    Validate = think.require('validate');
-    thinkCache(thinkCache.VALIDATE, Validate);
+    Validate = think.require('validator');
+    thinkCache(thinkCache.VALIDATOR, Validate);
   }
   if (think.isString(name)) {
     // register valid callback
     // think.valid('test', function(){})
     if (think.isFunction(callback)) {
-      thinkCache(thinkCache.VALIDATE, name, callback);
+      thinkCache(thinkCache.VALIDATOR, name, callback);
       return;
     }
     // get valid callback
-    return thinkCache(thinkCache.VALIDATE, name);
+    return thinkCache(thinkCache.VALIDATOR, name);
   }
   // convert object to array
   if (think.isObject(name)) {

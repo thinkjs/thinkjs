@@ -1,7 +1,7 @@
 'use strict';
 
 
-let Validate = think.require('validate');
+let Validate = think.require('validator');
 
 /**
  * base model class

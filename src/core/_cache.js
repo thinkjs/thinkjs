@@ -118,7 +118,7 @@ thinkCache.HOOK = 'hook';
  * think validate
  * @type {String}
  */
-thinkCache.VALIDATE = 'validate';
+thinkCache.VALIDATOR = 'validator';
 /**
  * think collection class or function
  * @type {String}

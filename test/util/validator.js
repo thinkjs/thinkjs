@@ -4,7 +4,7 @@ var fs = require('fs');
 var muk = require('muk');
 
 
-var Validate = require('../../lib/util/validate.js');
+var Validate = require('../../lib/util/validator.js');
 
 describe('Validate', function(){
   it('is object', function(){
