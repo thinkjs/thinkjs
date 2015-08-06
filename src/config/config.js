@@ -53,7 +53,7 @@ export default {
     message_handle: undefined
   },
   error: {
-    file: think.THINK_PATH + '/tpl/error.html',
+    file: think.THINK_PATH + '/tpl/500.html',
     detail: false, //show detail message
     log: true, //log error message
     code: 500, //http status code
