@@ -573,5 +573,13 @@ Validator.array = value => {
 Validator.boolean = value => {
   return value === true;
 }
+/**
+ * check value is object
+ * @param  {Object} value []
+ * @return {Boolean}       []
+ */
+Validator.object = value => {
+  return think.isObject(value);
+}
 
 export default Validator;

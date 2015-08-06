@@ -81,5 +81,6 @@ export default {
   validate_endWidth: '{name} end with {args}',
   validate_string: '{name} must be a string',
   validate_array: '{name} must be an array',
-  validate_boolean: '{name} must be an boolean'
+  validate_boolean: '{name} must be an boolean',
+  validate_object: '{name} must be an object'
 };

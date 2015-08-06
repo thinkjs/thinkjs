@@ -62,7 +62,7 @@ think.cli = false;
  * get locale
  * @type {String}
  */
-think.locale = (process.env.LANG || '').split('.')[0].replace('_', '-');
+think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
 /**
  * app mode
  * 0x0001: mini
@@ -1133,7 +1133,7 @@ think.cache = async (name, value, options = {}) => {
  */
 think.locale = (key, ...data) => {
   let _default = think.config('locale.default');
-  let lang = think.locale || _default;
+  let lang = think.lang || _default;
   let config = think.config('locale');
   let value;
   if(config[lang] && config[lang][key]){
@@ -1143,8 +1143,7 @@ think.locale = (key, ...data) => {
   }else{
     value = key;
   }
-  data.unshift(value);
-  var msg = util.format(...data);
+  var msg = util.format(value, ...data);
   return msg;
 };
 /**
@@ -1188,6 +1187,7 @@ think.validate = (name, callback) => {
     return thinkCache(thinkCache.VALIDATOR, name);
   }
   let data = name, msg = {}, msgs = callback || {}, item;
+
   //get error message
   let getMsg = (type, name, value, args) => {
     let key = `validate_${type}`;
@@ -1206,6 +1206,30 @@ think.validate = (name, callback) => {
     return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
   };
 
+  //validate item rule
+  let validateRule = (name, type, value, args) => {
+    let fn = Validator[type];
+    if (!think.isFunction(fn)) {
+      throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${type} type`));
+    }
+    if(think.isBoolean(args)){
+      args = [];
+    }else if(!think.isArray(args)){
+      args = [args];
+    }
+    let msgArgs = [...args];
+    let parseArgs = Validator[`_${type}`];
+    //parse args
+    if(think.isFunction(parseArgs)){
+      args = parseArgs(args, data);
+    }
+    let result = fn(value, ...args);
+    if(!result){
+      msg[name] = getMsg(type, name, value, msgArgs);
+    }
+    return result;
+  };
+
   for(let name in data){
     item = data[name];
     if(item.value === '' || item.value === undefined || item.value === null){
@@ -1214,30 +1238,23 @@ think.validate = (name, callback) => {
       }
       continue;
     }
-    let vitem, args, fn, result, msgArgs;
-    for(vitem in item){
+    for(let vitem in item){
       if(vitem === 'value' || vitem === 'required'){
         continue;
       }
-      fn = Validator[vitem];
-      if (!think.isFunction(fn)) {
-        throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${vitem} type`));
-      }
-      args = item[vitem];
-      if(think.isBoolean(args)){
-        args = [];
-      }else if(!think.isArray(args)){
-        args = [args];
-      }
-      msgArgs = [...args];
-      //parse args
-      if(think.isFunction(Validator[`_${vitem}`])){
-        args = Validator[`_${vitem}`](args, data);
-      }
-      result = fn(item.value, ...args);
-      if(!result){
-        msg[name] = getMsg(vitem, name, item.value, msgArgs);
-        break;
+      if('array' in item && vitem !== 'array' && think.isArray(item.value)){
+        let flag = item.value.some(itemValue => {
+          if(!validateRule(name, vitem, itemValue, item[vitem])){
+            return true;
+          }
+        });
+        if(flag){
+          break;
+        }
+      }else{
+        if(!validateRule(name, vitem, item.value, item[vitem])){
+          break;
+        }
       }
     }
   }

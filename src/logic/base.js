@@ -43,7 +43,8 @@ export default class extends think.controller.base {
    * {
    *   name: 'required|int|min:10|max:20',
    *   title: 'length:10,20|default:welefen|get',
-   *   emai: 'required|email:{}'
+   *   emai: 'required|email:{}',
+   *   ids: 'required|array|int'
    * }
    * @param  {Array}  data []
    * @return {Array}      []
@@ -86,12 +87,22 @@ export default class extends think.controller.base {
         value = parseFloat(value);
       }else if(itemData.array){
         if(!think.isArray(value)){
-          value = [value];
+          value = think.isString(value) ? value.split(/\s*,\s*/) : [value];
         }
       }else if(item.boolean){
         if(!think.isBoolean(value)){
           value = ['yea', 'on', '1', 'true'].indexOf(value) > -1;
         }
+      }else if(item.object){
+        if(!think.isObject(value)){
+          try{
+            value = JSON.parse(value);
+          }catch(e){
+            value = '';
+          };
+        }
+      }else{
+        itemData.string = true;
       }
       //set value to request
       this[method](name, value);

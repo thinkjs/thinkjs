@@ -77,6 +77,10 @@ describe('core/think.js', function(){
     assert.equal(typeof think.cli, 'boolean');
   })
 
+  it('think.lang is set', function(){
+    assert.equal(typeof think.lang === 'string', true);
+  })
+
   it('think.mode is 1', function(){
     assert.equal(think.mode, 1);
   })
@@ -1825,6 +1829,39 @@ describe('core/think.js', function(){
         welefen: {
           value: 'welefen',
           welefen11: true
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(Object.keys(msg), ['welefen']);
+    })
+    it('value is array', function(){
+      var data = {
+        welefen: {
+          value: [10, 20],
+          int: true,
+          array: true
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(Object.keys(msg), {});
+    })
+      it('value is array, not valid', function(){
+      var data = {
+        welefen: {
+          value: [10, 'ww'],
+          int: true,
+          array: true
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(Object.keys(msg), ['welefen']);
+    })
+    it('value not a array', function(){
+      var data = {
+        welefen: {
+          value: 10,
+          int: true,
+          array: true
         }
       }
       var msg = think.validate(data);
