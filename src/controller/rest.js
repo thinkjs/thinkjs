@@ -31,7 +31,7 @@ export default class extends think.controller.base {
    */
   getId(){
     let id = this.get('id');
-    if(id){
+    if(id && think.isString(id) || think.isNumber(id)){
       return id;
     }
     let last = this.http.pathname.split('/').slice(-1)[0];
