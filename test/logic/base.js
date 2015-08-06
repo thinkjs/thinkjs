@@ -42,620 +42,496 @@ function getInstance(config, options){
   })
 }
 
-// describe('logic/base', function(){
-//   it('__before is function', function(done){
-//     getInstance().then(function(instance){
-//       assert.equal(think.isFunction(instance.__before), true);
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, empty', function(done){
-//     getInstance().then(function(instance){
-//       var data = [];
-//       data = instance._parseValidateData();
-//       assert.deepEqual(data, [])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, empty 1', function(done){
-//     getInstance().then(function(instance){
-//       var data = [];
-//       data = instance._parseValidateData([]);
-//       assert.deepEqual(data, [])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: 1000
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name', required: true, validate: 'int', default: 1000, get: 'get', value: 1000, required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, multi name', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name,email',
-//         required: true,
-//         validate: 'int',
-//         default: 1000
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',   required: true,   validate: 'int',   default: 1000,   get: 'get',   value: 1000,   required_msg: undefined }, { name: 'email',   required: true,   validate: 'int',   default: 1000,   get: 'get',   value: 1000,   required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, method not matched', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name,email',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         method: 'get'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, method not matched', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name,email',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         method: 'get'
-//       }, {
-//         name: 'pwd',
-//         required: true,
-//         validate: 'length',
-//         args: [6, 20],
-//         method: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'pwd', required: true, validate: 'length', args: [ 6, 20 ], method: [ 'post' ], get: 'post', value: '', required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, action', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         action: 'test'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, action not matched', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         action: 'test11'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, controller not matched', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         action: 'group1/test'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, controller matched', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         action: 'group/test'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, get data method', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: 1000,
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, default is function', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: function(){return 1000},
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: undefined } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, required_msg', function(done){
-//     getInstance({
-//       validate: {}
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: function(){return 1000},
-//         action: 'group/test',
-//         get: 'post',
-//         required_msg: 'required_msg'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: 'required_msg' } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, default required_msg', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         default: function(){return 1000},
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  default: 1000,  action: [ 'group/test' ],  get: 'post',  value: 1000,  required_msg: 'default required msg' } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, type number', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         type: 'number',
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'number',  action: [ 'group/test' ],  get: 'post',  value: 0,  required_msg: 'default required msg' } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, type number', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home',
-//       _post: {
-//         name: 10000
-//       }
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         type: 'number',
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'number',  action: [ 'group/test' ],  get: 'post',  value: 10000,  required_msg: 'default required msg' } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, type array', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home',
-//       _post: {
-//         name: 10000
-//       }
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         type: 'array',
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'array',  action: [ 'group/test' ],  get: 'post',  value: [ 10000 ],  required_msg: 'default required msg' } ])
-//       assert.deepEqual(instance.http._post, {name: [10000]})
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, type boolean', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home',
-//       _post: {
-//         name: 10000
-//       }
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         type: 'boolean',
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: true,  required_msg: 'default required msg' } ])
-//       assert.deepEqual(instance.http._post, {name: true})
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, type boolean 1', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home',
-//       _post: {
-//         name: 'false'
-//       }
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         type: 'boolean',
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: false,  required_msg: 'default required msg' } ])
-//       done();
-//     })
-//   })
-//   it('_parseValidateData, type boolean 2', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home',
-//       _post: {
-//         name: '0'
-//       }
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         required: true,
-//         validate: 'int',
-//         type: 'boolean',
-//         action: 'group/test',
-//         get: 'post'
-//       }];
-//       data = instance._parseValidateData(data);
-//       assert.deepEqual(data, [ { name: 'name',  required: true,  validate: 'int',  type: 'boolean',  action: [ 'group/test' ],  get: 'post',  value: false,  required_msg: 'default required msg' } ])
-//       assert.deepEqual(instance.http._post, { name: false });
-//       done();
-//     })
-//   })
-//   it('checkValidation, data empty', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [];
-//       data = instance.checkValidation(data);
-//       assert.deepEqual(data, undefined)
-//       done();
-//     })
-//   })
-//   it('checkValidation, success', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       _post: {
-//         name: 'welefen'
-//       },
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         validate: 'length',
-//         args: [4, 10],
-//         required: true
-//       }];
-//       data = instance.checkValidation(data);
-//       assert.deepEqual(data, undefined)
-//       done();
-//     })
-//   })
-//   it('checkValidation, has default value', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       _post: {
-//         name: ''
-//       },
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       var data = [{
-//         name: 'name',
-//         validate: 'length',
-//         args: [4, 10],
-//         default: 'suredy'
-//       }];
-//       data = instance.checkValidation(data);
-//       assert.deepEqual(instance.post('name'), 'suredy')
-//       done();
-//     })
-//   })
-//   it('checkValidation, this.validate', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       _post: {
-//         name: ''
-//       },
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       instance.rules = [{
-//         name: 'name',
-//         validate: 'length',
-//         args: [4, 10],
-//         default: 'suredy'
-//       }];
-//       var data = instance.checkValidation();
-//       assert.deepEqual(instance.post('name'), 'suredy')
-//       done();
-//     })
-//   })
-//   it('checkValidation, this.validate 1', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg'
-//       }
-//     }, {
-//       _post: {
-//         name: ''
-//       },
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       instance.rules = function(){
-//         return [{
-//           name: 'name',
-//           validate: 'length',
-//           args: [4, 10],
-//           default: 'suredy'
-//         }]
-//       };
-//       var data = instance.checkValidation();
-//       assert.deepEqual(instance.post('name'), 'suredy')
-//       done();
-//     })
-//   })
-//   it('checkValidation, fail', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg',
-//         code: 400,
-//         msg: 'not valid'
-//       }
-//     }, {
-//       _post: {
-//         name: 'fasdfasdfasdfasdf'
-//       },
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       instance.validate = [{
-//         name: 'name',
-//         validate: 'length',
-//         args: [4, 10]
-//       }];
-//       instance.fail = function(code, msg, ret){
-//         assert.equal(code, 400);
-//         assert.equal(msg, 'not valid');
-//         assert.deepEqual(Object.keys(ret), ['name'])
-//       }
-//       var data = instance.checkValidation();
-//       done();
-//     })
-//   })
-//   it('checkValidation, fail, with msg', function(done){
-//     getInstance({
-//       validate: {
-//         required_msg: 'default required msg',
-//         code: 400,
-//         msg: 'not valid'
-//       }
-//     }, {
-//       _post: {
-//         name: 'fasdfasdfasdfasdf'
-//       },
-//       method: 'POST',
-//       action: 'test',
-//       controller: 'group',
-//       module: 'home'
-//     }).then(function(instance){
-//       instance.validate = [{
-//         name: 'name',
-//         validate: 'length',
-//         args: [4, 10],
-//         msg: 'length is 4 to 10'
-//       }];
-//       instance.fail = function(code, msg, ret){
-//         assert.equal(code, 400);
-//         assert.equal(msg, 'not valid');
-//         assert.deepEqual(ret.name, 'length is 4 to 10')
-//       }
-//       var data = instance.checkValidation();
-//       done();
-//     })
-//   })
-// })
+describe('logic/base', function(){
+  it('__before is function', function(done){
+    getInstance().then(function(instance){
+      assert.equal(think.isFunction(instance.__before), true);
+      done();
+    })
+  })
+  it('validate, empty', function(done){
+    getInstance().then(function(instance){
+      var data = instance.validate();
+      assert.deepEqual(data, true)
+      done();
+    })
+  })
+  it('validate, empty 1', function(done){
+    getInstance().then(function(instance){
+      var data = instance.validate({});
+      assert.deepEqual(data, true)
+      done();
+    })
+  })
+  it('parse rules, empty', function(done){
+    getInstance().then(function(instance){
+      var data = instance._parseValidateData();
+      assert.deepEqual(data, { })
+      done();
+    })
+  })
+  it('parse rules, empty 1', function(done){
+    getInstance().then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: ''
+      });
+      assert.deepEqual(data, { welefen: { string: true, value: '' } })
+      done();
+    })
+  })
+  it('parse rules, required', function(done){
+    getInstance().then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required'
+      });
+      assert.deepEqual(data, { welefen: { string: true, value: '', required: true } })
+      done();
+    })
+  })
+  it('parse rules, int', function(done){
+    getInstance().then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|int'
+      });
+      assert.deepEqual(JSON.stringify(data), '{"welefen":{"required":true,"int":true,"value":null}}')
+      done();
+    })
+  })
+  it('parse rules, int, has value', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      }
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|int'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, value: 10 } })
+      done();
+    })
+  })
+  it('parse rules, min, has value', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      }
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|int|min:5'
+      });
+      assert.deepEqual(data, { welefen: { required: true, min: [ '5' ], int: true, value: 10 } })
+      done();
+    })
+  })
+  it('parse rules, array args', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      }
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|int|min:[1,2,4]'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [[ 1, 2, 4 ]], value: 10 } })
+      done();
+    })
+  })
+  it('parse rules, object args', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      }
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|int|min: {name: "welefen"}'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 10 } })
+      done();
+    })
+  })
+  it('parse rules, value from get', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      }
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|get|int|min: {name: "welefen"}'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 10 } })
+      done();
+    })
+  })
+  it('parse rules, value from get, method is post', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _post: {
+        welefen: '20'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|get|int|min: {name: "welefen"}'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 10 } })
+      done();
+    })
+  })
+  it('parse rules, value from post, method is post', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _post: {
+        welefen: '20'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|int|min: {name: "welefen"}'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 20 } })
+      done();
+    })
+  })
+  it('parse rules, value from file, method is post', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _file: {
+        welefen: '20'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|file|int|min: {name: "welefen"}'
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 20 } })
+      done();
+    })
+  })
+  it('parse rules, default value', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _file: {
+        welefen: '20'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        suredy: 'required|int|min: {name: "welefen"}|default:30'
+      });
+      assert.deepEqual(data, { suredy: { required: true, int: true, min: [ {"name":"welefen"} ], value: 30 } })
+      done();
+    })
+  })
+  it('parse rules, default value is array', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _file: {
+        welefen: '20'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        suredy: 'required|array|default:[30]'
+      });
+      assert.deepEqual(data, {"suredy":{"required":true,"array":true,"value":[[30]]}})
+      done();
+    }).catch(function(err){
+      console.log(err.stack)
+    })
+  })
+  it('parse rules, float', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: '10.3'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|float|default:30'
+      });
+      assert.deepEqual(data, { welefen: { required: true, float: true, value: 10.3 } });
+      var welefen = instance.post('welefen');
+      assert.equal(welefen, 10.3)
+      done();
+    })
+  })
+  it('parse rules, array', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: '10,3,2'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|array'
+      });
+      assert.deepEqual(data, { welefen: { required: true, array: true, value: [ '10', '3', '2' ] } });
+      done();
+    })
+  })
+  it('parse rules, array int', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: '10,3,2'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|array|int'
+      });
+      assert.deepEqual(data, { welefen: { required: true, array: true, int: true, value: [ 10, 3, 2 ] } });
+      assert.deepEqual(instance.post('welefen'), [ 10, 3, 2 ])
+      done();
+    })
+  })
+  it('parse rules, array float', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: '10,3,2.2'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|array|float'
+      });
+      assert.deepEqual(data, { welefen: { required: true, array: true, float: true, value: [ 10, 3, 2.2 ] } });
+      done();
+    })
+  })
+  it('parse rules, array float, item is string', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: ['10]','3','2.2']
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|array|float'
+      });
+      assert.deepEqual(data, { welefen: { required: true, array: true, float: true, value: [ 10, 3, 2.2 ] } });
+      done();
+    })
+  })
+  it('parse rules, array float, item is object', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: {}
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|array'
+      });
+      assert.deepEqual(data, { welefen: { required: true, array: true,  value: [ {}] } });
+      done();
+    })
+  })
+  it('parse rules, boolean, yes', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: 'yes'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|boolean'
+      });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      done();
+    })
+  })
+  it('parse rules, boolean, on', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: 'on'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|boolean'
+      });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      done();
+    })
+  })
+  it('parse rules, boolean, 1', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: '1'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|boolean'
+      });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      done();
+    })
+  })
+  it('parse rules, boolean, true', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: 'true'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|boolean'
+      });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      done();
+    })
+  })
+    it('parse rules, boolean, true', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: 'false'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|boolean'
+      });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: false } });
+      done();
+    })
+  })
+  it('parse rules, boolean, true, boolean', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: true
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|boolean'
+      });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      done();
+    })
+  })
+  it('parse rules, object', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: "{}"
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|object'
+      });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {} } });
+      done();
+    })
+  })
+  it('parse rules, object error', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: "{ww}"
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|object'
+      });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: '' } });
+      done();
+    })
+  })
+  it('parse rules, object', function(done){
+    getInstance({}, {
+      _post: {
+        welefen: {}
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|object'
+      });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {}} });
+      done();
+    })
+  })
+  it('parse rules, object', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: {
+          name: 'welefen'
+        }
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|object'
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
+  it('parse rules, object, fail', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 30
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|int|max:10'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.welefen.length > 0, true);
+      done();
+    })
+  })
+  it('parse rules, different', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 30,
+        suredy: 30
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|int|max:40',
+        suredy: 'required|different:welefen'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.suredy.length > 0, true);
+      done();
+    })
+  })
+  it('parse rules, after', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|before',
+        suredy: 'required|after:welefen'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.suredy.length > 0, true);
+      done();
+    })
+  })
+ })

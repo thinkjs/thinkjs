@@ -55,16 +55,19 @@ export default class extends think.controller.base {
       let rules = data[name].split('|');
       let itemData = {};
       rules.forEach(item => {
+        if(!item){
+          return;
+        }
         let pos = item.indexOf(':');
         if(pos > -1){
           let name = item.substr(0, pos);
           let args = item.substr(pos + 1).trim();
           if(args[0] === '{' || args[0] === '['){
-            args = (new Function('', `return ${args}`))();
+            args = [(new Function('', `return ${args}`))()];
           }else{
             args = args.split(/\s*,\s*/);
           }
-          itemData[item] = args;
+          itemData[name] = args;
         }else{
           itemData[item] = true;
         }
@@ -78,28 +81,39 @@ export default class extends think.controller.base {
         delete itemData.file;
       }
       let value = this[method](name);
+      
       if(!value && itemData.default){
         value = itemData.default;
       }
-      if(itemData.int){
+      delete itemData.default;
+
+      if(itemData.int && !itemData.array){
         value = parseInt(value, 10);
-      }else if(itemData.float){
+      }else if(itemData.float && !itemData.array){
         value = parseFloat(value);
       }else if(itemData.array){
         if(!think.isArray(value)){
           value = think.isString(value) ? value.split(/\s*,\s*/) : [value];
         }
-      }else if(item.boolean){
+        value = value.map(itemValue => {
+          if(itemData.int){
+            return parseInt(itemValue, 10);
+          }else if(itemData.float){
+            return parseFloat(itemValue);
+          }
+          return itemValue;
+        })
+      }else if(itemData.boolean){
         if(!think.isBoolean(value)){
-          value = ['yea', 'on', '1', 'true'].indexOf(value) > -1;
+          value = ['yes', 'on', '1', 'true'].indexOf(value) > -1;
         }
-      }else if(item.object){
+      }else if(itemData.object){
         if(!think.isObject(value)){
           try{
             value = JSON.parse(value);
           }catch(e){
             value = '';
-          };
+          }
         }
       }else{
         itemData.string = true;

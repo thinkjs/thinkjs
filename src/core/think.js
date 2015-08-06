@@ -1242,6 +1242,7 @@ think.validate = (name, callback) => {
       if(vitem === 'value' || vitem === 'required'){
         continue;
       }
+      //if has array rule, then foreach check value for every rule
       if('array' in item && vitem !== 'array' && think.isArray(item.value)){
         let flag = item.value.some(itemValue => {
           if(!validateRule(name, vitem, itemValue, item[vitem])){
