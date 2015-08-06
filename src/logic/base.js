@@ -102,7 +102,7 @@ export default class extends think.controller.base {
             return parseFloat(itemValue);
           }
           return itemValue;
-        })
+        });
       }else if(itemData.boolean){
         if(!think.isBoolean(value)){
           value = ['yes', 'on', '1', 'true'].indexOf(value) > -1;
