@@ -40,123 +40,100 @@ export default class extends think.controller.base {
   }
   /**
    * parse validate data
-   * [
-   *   {
-          name: 'name,pwd',
-          required: true,
-          type: 'number',
-          validate: 'int',
-          msg: '',
-          default: 1000,
-          args: [],
-          method: 'post,get',
-          get: 'post',
-          action: 'home/group/detail'
-        }
-   * ]
+   * {
+   *   name: 'required|int|min:10|max:20',
+   *   title: 'length:10,20|default:welefen|get',
+   *   emai: 'required|email:{}'
+   * }
    * @param  {Array}  data []
    * @return {Array}      []
    */
-  _parseValidateData(data = []){
-    let result = [];
-    let http = this.http;
-    let method = this.method();
-    let config = this.config('validate');
-    data.forEach(item => {
-      //split to array
-      ['name', 'method', 'action'].forEach(nitem => {
-        if(item[nitem] && think.isString(item[nitem])){
-          item[nitem] = item[nitem].split(/\s*,\s*/);
+  _parseValidateData(data = {}){
+    let result = {};
+    for(let name in data){
+      let rules = data[name].split('|');
+      let itemData = {};
+      rules.forEach(item => {
+        let pos = item.indexOf(':');
+        if(pos > -1){
+          let name = item.substr(0, pos);
+          let args = item.substr(pos + 1).trim();
+          if(args[0] === '{' || args[0] === '['){
+            args = (new Function('', `return ${args}`))();
+          }else{
+            args = args.split(/\s*,\s*/);
+          }
+          itemData[item] = args;
+        }else{
+          itemData[item] = true;
         }
       });
-      item.name.forEach(nameItem => {
-        let itemData = think.extend({}, item, {name: nameItem});
-        //method is not contained
-        if(itemData.method && itemData.method.indexOf(method) === -1){
-          return;
+      let method = this.http.method.toLowerCase();
+      if(itemData.get){
+        method = 'get';
+        delete itemData.get;
+      }else if(itemData.file){
+        method = 'file';
+        delete itemData.file;
+      }
+      let value = this[method](name);
+      if(!value && itemData.default){
+        value = itemData.default;
+      }
+      if(itemData.int){
+        value = parseInt(value, 10);
+      }else if(itemData.float){
+        value = parseFloat(value);
+      }else if(itemData.array){
+        if(!think.isArray(value)){
+          value = [value];
         }
-        //action is not contained
-        if(item.action){
-          let actions = item.action.map(actionItem => {
-            actionItem = actionItem.split('/');
-            let action = actionItem.pop();
-            let controller = actionItem.pop() || http.controller;
-            let module = actionItem.pop() || http.module;
-            return `${module}/${controller}/${action}`;
-          });
-          let action = `${http.module}/${http.controller}/${http.action}`;
-          if(actions.indexOf(action) === -1){
-            return;
-          }
+      }else if(item.boolean){
+        if(!think.isBoolean(value)){
+          value = ['yea', 'on', '1', 'true'].indexOf(value) > -1;
         }
-        //get how to fetch data
-        let getValueMethod = itemData.get;
-        if(!getValueMethod){
-          let methods = ['post', 'put', 'patch'];
-          getValueMethod = methods.indexOf(method) > -1 ? 'post' : 'get';
-        }
-        //add method for set default value
-        itemData.get = getValueMethod === 'get' ? 'get' : 'post';
-        if(think.isFunction(itemData.default)){
-          itemData.default = itemData.default(itemData);
-        }
-        let value = this[getValueMethod](nameItem);
-        //check item data type, convert item value
-        if(itemData.type){
-          if(itemData.type === 'array' && !think.isArray(value)){
-            value = [value];
-          }else if(itemData.type === 'number' && !think.isNumber(value)){
-            value = parseFloat(value) || 0;
-          }else if(itemData.type === 'boolean' && !think.isBoolean(value)){
-            if(value === 'false' || value === '0'){
-              value = false;
-            }else{
-              value = !!value;
-            }
-          }
-          this[getValueMethod](nameItem, value);
-        }
-        //get value from default
-        if(value === ''){
-          value = itemData.default || '';
-          this[getValueMethod](nameItem, value);
-        }
-        itemData.value = value;
-        itemData.required_msg = itemData.required_msg || config.required_msg;
-        result.push(itemData);
-      });
-    });
+      }
+      //set value to request
+      this[method](name, value);
+      itemData.value = value;
+      result[name] = itemData;
+    }
     return result;
   }
   /**
    * validate data
+   * this.validate({
+   *   welefen: 'required|length:4,20|alpha',
+   *   email: 'required|email',
+   *   title: 'required|maxLength:10000'
+   * })
    * @param  {Object} data      []
-   * @param  {String} validType []
    * @return {}           []
    */
-  checkValidation(data) {
-    if(!data){
-      data = think.isFunction(this.rules) ? this.rules() : this.rules;
-    }
+  validate(data) {
     if(think.isEmpty(data)){
-      return;
+      return true;
     }
     data = this._parseValidateData(data);
-    let ret = think.validate(data);
-    let config = this.config('validate');
+    let ret = think.validate(data, this.locale());
     if(!think.isEmpty(ret)){
-      return this.fail(config.code, config.msg, ret);
+      this.assign('errors', ret);
+      return false; 
     }
+    return true;
+  }
+  /**
+   * get validate errors
+   * @return {Object} []
+   */
+  errors() {
+    return this.assign('errors');
   }
   /**
    * before magic method
    * @return {Promise} []
    */
   __before(){
-    return Promise.resolve(this.checkValidation()).then(() => {
-      return this.checkCsrf();
-    }).then(() => {
-      return this.checkAuth();
-    })
+    
   }
 }

@@ -72,6 +72,19 @@ Validator.after = (value, date) => {
   return validator.isAfter(value, date);
 };
 /**
+ * parse after args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._after = (args, data) => {
+  let arg = args[0];
+  if(arg in data){
+    return [data[arg].value];
+  }
+  return args;
+}
+/**
  * check if the string contains only letters (a-zA-Z).
  * @param  {String} value []
  * @return {Boolean}       []
@@ -128,6 +141,15 @@ Validator.base64 = value => {
 Validator.before = (value, date) => {
   return validator.isBefore(value, date);
 };
+/**
+ * parse before args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._before= (args, data) => {
+  return Validator._after(args, data);
+}
 /**
  * check if the string's length (in bytes) falls in a range.
  * @param  {String} value []

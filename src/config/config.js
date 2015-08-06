@@ -61,11 +61,6 @@ export default {
     msg: 'errmsg', //error message
     value: 1000 //default errno
   },
-  validate: {
-    code: 400, //errno
-    msg: '', //common errmsg
-    required_msg: '', //errmsg on required
-  },
   cookie: {
     domain: '',
     path: '/',

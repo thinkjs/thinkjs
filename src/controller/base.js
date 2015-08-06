@@ -226,7 +226,11 @@ export default class extends think.base {
     let lang = this.lang(true);
     let locales = this.config(think.dirname.locale);
     let values = locales[lang] || {};
-    return values[key] || locales[this.config('locale.default')][key] || key;
+    let defaultLocales = locales[this.config('locale.default')];
+    if(!key){
+      return think.isEmpty(values) ? defaultLocales : values;
+    }
+    return values[key] || defaultLocales[key] || key;
   }
   /**
    * redirect

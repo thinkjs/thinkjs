@@ -59,10 +59,10 @@ think.port = 0;
  */
 think.cli = false;
 /**
- * get platform language
+ * get locale
  * @type {String}
  */
-think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
+think.locale = (process.env.LANG || '').split('.')[0].replace('_', '-');
 /**
  * app mode
  * 0x0001: mini
@@ -1133,7 +1133,7 @@ think.cache = async (name, value, options = {}) => {
  */
 think.locale = (key, ...data) => {
   let _default = think.config('locale.default');
-  let lang = think.lang || _default;
+  let lang = think.locale || _default;
   let config = think.config('locale');
   let value;
   if(config[lang] && config[lang][key]){
