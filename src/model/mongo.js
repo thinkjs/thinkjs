@@ -52,7 +52,7 @@ export default class extends Base {
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      let msg = new Error(think.local('DATA_EMPTY'));
+      let msg = new Error(think.locale('DATA_EMPTY'));
       return think.reject(msg);
     }
     options = await this.parseOptions(options);
@@ -80,7 +80,7 @@ export default class extends Base {
    */
   async addMany(data, options){
     if (!think.isArray(data) || !think.isObject(data[0])) {
-      let err = new Error(think.local('DATA_MUST_BE_ARRAY'));
+      let err = new Error(think.locale('DATA_MUST_BE_ARRAY'));
       return think.reject(err);
     }
     options = await this.parseOptions(options);

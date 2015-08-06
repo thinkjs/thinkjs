@@ -141,11 +141,11 @@ export default class extends think.middleware.base {
     this.http.action = think.getAction(action);
 
     if (!this.http.controller) {
-      err = new Error(think.local('CONTROLLER_INVALID', controller, this.http.url));
+      err = new Error(think.locale('CONTROLLER_INVALID', controller, this.http.url));
       return think.reject(err);
     }
     if (!this.http.action) {
-      err = new Error(think.local('ACTION_INVALID', action, this.http.url));
+      err = new Error(think.locale('ACTION_INVALID', action, this.http.url));
       return think.reject(err);
     }
   }

@@ -67,7 +67,7 @@ describe('core/think.js', function(){
       runtime: 'runtime',
       common: 'common',
       bootstrap: 'bootstrap',
-      local: 'local'
+      locale: 'locale'
     })
   })
   it('think.port is number', function(){
@@ -727,7 +727,7 @@ describe('core/think.js', function(){
         var _moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
         var configs = think.getModuleConfig(true);
-        //assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'csrf', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'local', 'log_pid', 'log_request', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis', 'resource_on', 'resource_reg', 'route_on', 'session', 'subdomain', 'timeout', 'tpl', 'validate', 'websocket' ]);
+        //assert.deepEqual(Object.keys(configs).sort(), [ 'action_suffix', 'cache', 'call_controller', 'callback_name', 'cluster_on', 'cookie', 'create_server', 'csrf', 'db', 'default_action', 'default_controller', 'default_module', 'deny_module_list', 'encoding', 'error', 'gc', 'hook_on', 'host', 'html_cache', 'json_content_type', 'locale', 'log_pid', 'log_request', 'memcache', 'output_content', 'package', 'pathname_prefix', 'pathname_suffix', 'port', 'post', 'proxy_on', 'redis', 'resource_on', 'resource_reg', 'route_on', 'session', 'subdomain', 'timeout', 'tpl', 'validate', 'websocket' ]);
         assert.equal(think.isObject(configs), true);
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
       })
@@ -806,14 +806,14 @@ describe('core/think.js', function(){
         var _config = thinkCache(thinkCache.CONFIG);
         thinkCache(thinkCache.MODULE_CONFIG, {})
         thinkCache(thinkCache.CONFIG, {})
-        var appPath = think.APP_PATH + '/config/local';
+        var appPath = think.APP_PATH + '/config/locale';
         think.mkdir(appPath);
 
         var fs = require('fs');
         fs.writeFileSync(appPath + '/en.js', 'module.exports = {welefen: "suredy"}');
         think.mode = think.mode_mini;
         var configs = think.getModuleConfig();
-        assert.deepEqual(configs.local, { en: { welefen: 'suredy' } });
+        assert.deepEqual(configs.locale, { en: { welefen: 'suredy' } });
         thinkCache(thinkCache.MODULE_CONFIG, _moduleConfig)
         thinkCache(thinkCache.CONFIG, _config);
         think.rmdir(think.APP_PATH).then(done);
@@ -1489,19 +1489,19 @@ describe('core/think.js', function(){
     })
   })
 
-  describe('think.local', function(){
+  describe('think.locale', function(){
     it('base', function(){
-      var msg = think.local('CONTROLLER_NOT_FOUND', 'welefen');
+      var msg = think.locale('CONTROLLER_NOT_FOUND', 'welefen');
       assert.equal(msg.indexOf('`welefen`') > -1, true)
     })
     it('key not found', function(){
-      var msg = think.local('KEY_NOT_FOUND');
+      var msg = think.locale('KEY_NOT_FOUND');
       assert.equal(msg, 'KEY_NOT_FOUND')
     })
     it('lang is empty', function(){
       var lang = think.lang;
       think.lang = '';
-      var msg = think.local('CONTROLLER_NOT_FOUND', 'welefen');
+      var msg = think.locale('CONTROLLER_NOT_FOUND', 'welefen');
       assert.equal(msg.indexOf('`welefen`') > -1, true);
       think.lang = lang;
     })

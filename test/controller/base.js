@@ -294,7 +294,7 @@ describe('controller/base.js', function(){
   it('lang use cookie', function(done){
     getInstance({
       _cookie: {
-        think_lang: 'en'
+        think_locale: 'en'
       }
     }).then(function(instance){
       var data = instance.lang(true);
@@ -302,30 +302,30 @@ describe('controller/base.js', function(){
       done();
     })
   })
-  it('local, not exist', function(done){
+  it('locale, not exist', function(done){
     getInstance().then(function(instance){
-      var data = instance.local('welefen');
+      var data = instance.locale('welefen');
       assert.deepEqual(data, 'welefen')
       done();
     })
   })
-  it('local', function(done){
+  it('locale', function(done){
     getInstance({
       _config: think.config()
     }).then(function(instance){
-      var data = instance.local('CONTROLLER_NOT_FOUND');
+      var data = instance.locale('CONTROLLER_NOT_FOUND');
       assert.deepEqual(data, 'controller `%s` not found. url is `%s`.')
       done();
     })
   })
-  it('local', function(done){
+  it('locale', function(done){
     getInstance({
       _cookie: {
-        think_lang: 'dddd'
+        think_locale: 'dddd'
       },
       _config: think.config()
     }).then(function(instance){
-      var data = instance.local('CONTROLLER_NOT_FOUND');
+      var data = instance.locale('CONTROLLER_NOT_FOUND');
       assert.deepEqual(data, 'controller `%s` not found. url is `%s`.')
       done();
     })

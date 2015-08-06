@@ -40,7 +40,7 @@ think.dirname = {
   runtime: 'runtime',
   common: 'common',
   bootstrap: 'bootstrap',
-  local: 'local'
+  locale: 'locale'
 };
 /**
  * env
@@ -618,7 +618,7 @@ think.middleware = (...args) => {
           let instance = new Cls(http);
           return think.co.wrap(instance.run).bind(instance)(data);
         }
-        let err = new Error(think.local('MIDDLEWARE_NOT_FOUND', name));
+        let err = new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
         return Promise.reject(err);
       }
     }
@@ -636,7 +636,7 @@ think.middleware = (...args) => {
     if (cls) {
       return cls;
     }
-    throw new Error(think.local('MIDDLEWARE_NOT_FOUND', superClass));
+    throw new Error(think.locale('MIDDLEWARE_NOT_FOUND', superClass));
   }
   let middleware = thinkCache(thinkCache.COLLECTION, 'middleware');
   if (!middleware) {
@@ -691,7 +691,7 @@ think.adapter = (...args) => {
           return cls;
         }
       }
-      throw new Error(think.local('ADAPTER_NOT_FOUND', key));
+      throw new Error(think.locale('ADAPTER_NOT_FOUND', key));
     }
   }
   
@@ -1126,15 +1126,15 @@ think.cache = async (name, value, options = {}) => {
   return instance.set(name, value);
 };
 /**
- * get local message
+ * get locale message
  * @param  {String} key  []
  * @param  {String} lang []
  * @return {String}      []
  */
-think.local = (key, ...data) => {
-  let _default = think.config('local.default');
+think.locale = (key, ...data) => {
+  let _default = think.config('locale.default');
   let lang = think.lang || _default;
-  let config = think.config('local');
+  let config = think.config('locale');
   let value;
   if(config[lang] && config[lang][key]){
     value = config[lang][key];
@@ -1193,15 +1193,15 @@ think.validate = (name, callback) => {
     let key = `validate_${type}`;
     let keyWithName = `${key}_${name}`;
     let msg = msgs[keyWithName];
-    if(!msg && think.local(keyWithName) !== keyWithName){
-      msg = think.local(keyWithName);
+    if(!msg && think.locale(keyWithName) !== keyWithName){
+      msg = think.locale(keyWithName);
     }
     msg = msg || msgs[key];
-    if(!msg && think.local(key) !== key){
-      msg = think.local(key);
+    if(!msg && think.locale(key) !== key){
+      msg = think.locale(key);
     }
     if(!msg){
-      msg = think.local('PARAMS_NOT_VALID');
+      msg = think.locale('PARAMS_NOT_VALID');
     }
     return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
   };
@@ -1221,7 +1221,7 @@ think.validate = (name, callback) => {
       }
       fn = Validator[vitem];
       if (!think.isFunction(fn)) {
-        throw new Error(think.local('CONFIG_NOT_FUNCTION', `${vitem} type`));
+        throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${vitem} type`));
       }
       args = item[vitem];
       if(think.isBoolean(args)){

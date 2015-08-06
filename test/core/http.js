@@ -13,7 +13,7 @@ new thinkjs().load();
 
 var Http = require('../../lib/core/http.js');
 
-var localIp = '127.0.0.1';
+var localeIp = '127.0.0.1';
 function noop(data) {
   return data;
 }
@@ -39,10 +39,10 @@ function getDefaultHttp(data) {
     method: (data.method || 'GET').toUpperCase(),
     url: url,
     headers: think.extend({
-      host: data.host || localIp
+      host: data.host || localeIp
     }, data.headers),
     connection: {
-      remoteAddress: data.ip || localIp
+      remoteAddress: data.ip || localeIp
     }
   };
   var res = {
@@ -51,7 +51,7 @@ function getDefaultHttp(data) {
     setHeader: noop,
     setTimeout: noop,
     connection: {
-      remoteAddress: data.ip || localIp
+      remoteAddress: data.ip || localeIp
     }
   };
   if (data.params) {

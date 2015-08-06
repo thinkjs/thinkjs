@@ -16,7 +16,7 @@ export default class extends think.base {
     this.assign('controller', this);
     this.assign('http', this.http);
     this.assign('config', this.http._config);
-    this.assign('_', this.local.bind(this));
+    this.assign('_', this.locale.bind(this));
   }
   /**
    * get client ip
@@ -208,7 +208,7 @@ export default class extends think.base {
    */
   lang(useCookie){
     if(useCookie){
-      let key = this.config('local').name;
+      let key = this.config('locale').name;
       let value = this.cookie(key);
       if(value){
         return value;
@@ -218,15 +218,15 @@ export default class extends think.base {
     return lang.split(',')[0];
   }
   /**
-   * get local value
+   * get locale value
    * @param  {String} key []
    * @return {String}     []
    */
-  local(key){
+  locale(key){
     let lang = this.lang(true);
-    let locals = this.config(think.dirname.local);
-    let values = locals[lang] || {};
-    return values[key] || locals[this.config('local.default')][key] || key;
+    let locales = this.config(think.dirname.locale);
+    let values = locales[lang] || {};
+    return values[key] || locales[this.config('locale.default')][key] || key;
   }
   /**
    * redirect

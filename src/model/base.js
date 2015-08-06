@@ -100,7 +100,7 @@ export default class extends Base {
       let keyReg = /^[\w\.\|\&]+$/;
       for(let key in options.where){
         if(!keyReg.test(key)){
-          let msg = new Error(think.local('FIELD_KEY_NOT_VALID', key));
+          let msg = new Error(think.locale('FIELD_KEY_NOT_VALID', key));
           return think.reject(msg);
         }
       }
@@ -184,7 +184,7 @@ export default class extends Base {
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      let msg = new Error(think.local('DATA_EMPTY'));
+      let msg = new Error(think.locale('DATA_EMPTY'));
       return think.reject(msg);
     }
     options = await this.parseOptions(options);
@@ -217,7 +217,7 @@ export default class extends Base {
    */
   async addMany(data, options, replace){
     if (!think.isArray(data) || !think.isObject(data[0])) {
-      return think.reject(new Error(think.local('DATA_MUST_BE_ARRAY')));
+      return think.reject(new Error(think.locale('DATA_MUST_BE_ARRAY')));
     }
     if (options === true) {
       replace = true;
@@ -261,7 +261,7 @@ export default class extends Base {
     //clear data
     this._data = {};
     if (think.isEmpty(data)) {
-      return think.reject(new Error(think.local('DATA_EMPTY')));
+      return think.reject(new Error(think.locale('DATA_EMPTY')));
     }
     //get where condition from data
     let pk = await this.getPk();
@@ -283,7 +283,7 @@ export default class extends Base {
    */
   updateMany(dataList){
     if (!think.isArray(dataList)) {
-      return think.reject(new Error(think.local('DATA_MUST_BE_ARRAY')));
+      return think.reject(new Error(think.locale('DATA_MUST_BE_ARRAY')));
     }
     let promises = dataList.map(data => {
       return this.update(data);

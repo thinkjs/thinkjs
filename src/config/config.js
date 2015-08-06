@@ -84,8 +84,8 @@ export default {
       length: 32
     }
   },
-  local: { //i18n
-    name: 'think_lang',
+  locale: { //i18n
+    name: 'think_locale',
     default: 'en'
   }, 
   db: {

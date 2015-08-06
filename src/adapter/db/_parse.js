@@ -181,7 +181,7 @@ export default class {
         str += this.parseThinkWhere(key, val);
       }
       else if (!keySafeRegExp.test(key)) {
-        throw new Error(think.local('INVALID_WHERE_CONDITION_KEY'));
+        throw new Error(think.locale('INVALID_WHERE_CONDITION_KEY'));
       }
       //title|content
       else if (key.indexOf('|') > -1) {
@@ -272,7 +272,7 @@ export default class {
         whereStr += ' (' + key + ' ' + val0 + ' ' + this.parseValue(data[0]);
         whereStr += ' AND ' + this.parseValue(data[1]) + ')';
       }else{
-        throw new Error(think.local('WHERE_CONDITION_INVALID', key, JSON.stringify(val)));
+        throw new Error(think.locale('WHERE_CONDITION_INVALID', key, JSON.stringify(val)));
       }
     }else{
       let length = val.length;

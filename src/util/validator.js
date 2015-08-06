@@ -182,11 +182,11 @@ Validator.divisibleBy = (value, number) => {
  * check if the string is an email. 
  * options is an object which defaults to { 
  *   allow_display_name: false, 
- *   allow_utf8_local_part: true, 
+ *   allow_utf8_locale_part: true, 
  *   require_tld: true 
  *  }. 
  *  If allow_display_name is set to true, the validator will also match Display Name <email-address>. 
- *  If allow_utf8_local_part is set to false, the validator will not allow any non-English UTF8 character in email address' local part. 
+ *  If allow_utf8_locale_part is set to false, the validator will not allow any non-English UTF8 character in email address' locale part. 
  *  If require_tld is set to false, e-mail addresses without having TLD in their domain will also be matched.
  * @param  {String} value   []
  * @param  {Object} options []

@@ -37,7 +37,7 @@ export default class extends think.adapter.db {
       };
     });
     // if(data.length === 0){
-    //   let msg = new Error(think.local('TABLE_NO_COLUMNS', table));
+    //   let msg = new Error(think.locale('TABLE_NO_COLUMNS', table));
     //   return think.reject(msg);
     // }
     return ret;
