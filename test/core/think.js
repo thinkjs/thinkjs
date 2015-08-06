@@ -1659,236 +1659,176 @@ describe('core/think.js', function(){
       var welefen = think.validate('welefen');
       assert.equal(welefen('welefen'), true);
     })
-    it('validate array', function(){
-      var data = [{
-        name: 'welefen',
-        value: 'welefen',
-        validate: 'email',
-        msg: 'email not valid'
-      }]
+    it('validate', function(){
+      var data = {
+        welefen: {
+          value: 'welefen',
+          email: true
+        }
+      }
       var msg = think.validate(data);
-      assert.deepEqual(msg, { welefen: 'email not valid' })
+      assert.deepEqual(Object.keys(msg), ['welefen'])
     })
     it('validate array, validate not set', function(){
-      var data = [{
-        name: 'welefen',
-        value: 'welefen',
-        msg: 'email not valid'
-      }]
+      var data = {
+        welefen: {
+          value: 'welefen'
+        }
+      }
       var msg = think.validate(data);
       assert.deepEqual(msg, {})
     })
     it('validate object', function(){
       var data = {
         welefen: {
-          value: 'welefen',
-          validate: 'email',
+          value: 'welefen@gmail.com',
           required: true,
-          msg: 'email not valid'
+          email: true
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, { welefen: 'email not valid' })
+      assert.deepEqual(msg, {})
     })
     it('validate object, required', function(){
       var data = {
         welefen: {
           value: '',
-          validate: 'email',
           required: true,
-          msg: 'email not valid',
-          required_msg: 'welefen can not be blank'
+          email: true
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, { welefen: 'welefen can not be blank' })
-    })
-    it('validate object, required', function(){
-      var data = {
-        welefen: {
-          value: '',
-          validate: 'email',
-          required: true,
-          msg: 'email not valid',
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
+      assert.deepEqual(Object.keys(msg), ['welefen'])
     })
     it('validate object, not required', function(){
       var data = {
         welefen: {
           value: '',
-          validate: 'email',
-          msg: 'email not valid',
+          email: true
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, {});
+      assert.deepEqual(msg, {})
     })
-    it('validate object, regexp, valid', function(){
+    it('with args, int', function(){
       var data = {
         welefen: {
-          value: 'welefen',
-          validate: /welefen/g,
-          msg: 'not valid',
+          value: 10,
+          int: true,
+          min: 10, 
+          max: 100
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, {});
+      assert.deepEqual(msg, {})
     })
-    it('validate object, regexp, not valid', function(){
+    it('with args, int', function(){
       var data = {
         welefen: {
-          value: 'welefen',
-          validate: /welefens/g,
-          msg: 'not valid',
+          value: 10,
+          int: true,
+          min: 30, 
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, {welefen: 'not valid'});
+      assert.deepEqual(Object.keys(msg), ['welefen'])
     })
-    it('validate object, function', function(){
+    it('with args, equal, fail', function(){
       var data = {
         welefen: {
-          value: 'welefen',
-          validate: function(value){
-            return value === 'welefen';
-          },
-          msg: 'not valid',
+          value: 10
+        },
+        suredy: {
+          value: 5,
+          equals: 'welefen'
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, {});
+      assert.deepEqual(Object.keys(msg), ['suredy'])
     })
-    it('validate object, validate not function', function(){
+    it('with args, equal', function(){
       var data = {
         welefen: {
-          value: 'welefen',
-          validate: [],
-          msg: 'not valid',
+          value: 'pwd'
+        },
+        suredy: {
+          value: 'pwd',
+          equals: 'welefen'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(Object.keys(msg), [])
+    })
+    it('int, 10, 100', function(){
+      var data = {
+        welefen: {
+          value: 40,
+          int: [10, 100]
+        },
+        suredy: {
+          value: 'pwd',
+          equals: 'welefen'
+        }
+      }
+      var msg = think.validate(data);
+      assert.deepEqual(Object.keys(msg), ['suredy'])
+    })
+    it('int, 10, 100, with msg', function(){
+      var data = {
+        welefen: {
+          value: 400,
+          int: [10, 100]
+        },
+      }
+      var msg = think.validate(data, {
+        validate_int_welefen: 'not valid'
+      });
+      assert.deepEqual(msg, {welefen: 'not valid'})
+    })
+    it('int, 10, 100, with msg 2', function(){
+      var data = {
+        welefen: {
+          value: 400,
+          int: [10, 100]
+        },
+        suredy: {
+          value: 900,
+          int: [10, 100]
+        }
+      }
+      var msg = think.validate(data, {
+        validate_int_welefen: 'not valid',
+        validate_int: 'int fail'
+      });
+      assert.deepEqual(msg, {welefen: 'not valid', suredy: 'int fail'})
+    })
+    it('not function', function(){
+      var data = {
+        welefen: {
+          value: 'fasdf',
+          required: true,
+          not_exist111: true
         }
       }
       try{
         var msg = think.validate(data);
-        assert.equal(1, 2)
-      }catch(e){
-        
-      }
-      
+        assert.equal(1, 2);
+      }catch(err){
+        assert.equal(err.message !== '1 == 2', true)
+      } 
     })
-    it('validate object, function, args', function(){
+    it('register function, validate', function(){
+      think.validate('welefen11', function(){
+        return false;
+      })
       var data = {
         welefen: {
           value: 'welefen',
-          validate: function(value, val){
-            return val === 'suredy';
-          },
-          msg: 'not valid',
-          args: 'suredy'
+          welefen11: true
         }
       }
       var msg = think.validate(data);
-      assert.deepEqual(msg, {});
-    })
-    it('validate object, function, args', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          validate: function(value, val){
-            return val === 'suredy';
-          },
-          msg: 'not valid',
-          args: ['suredy']
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg, {});
-    })
-
-    it('validate object, no msg', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          validate: function(value){
-            return value === 'fadfasdf';
-          }
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
-    })
-    it('validate object, type invalid, string', function(){
-      var data = {
-        welefen: {
-          value: 1000,
-          type: 'string'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
-    })
-    it('validate object, type invalid, array', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          type: 'array'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
-    })
-    it('validate object, type invalid, object', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          type: 'object'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
-    })
-    it('validate object, type invalid, number', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          type: 'number'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
-    })
-    it('validate object, type invalid, boolean', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          type: 'boolean'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen.length > 0, true);
-    })
-    it('validate object, type invalid, boolean, with invalid_type', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          type: 'boolean',
-          invalid_type: 'welefen is not valid'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg.welefen, 'welefen is not valid');
-    })
-      it('validate object, type correct', function(){
-      var data = {
-        welefen: {
-          value: 'welefen',
-          type: 'string',
-          invalid_type: 'welefen is not valid'
-        }
-      }
-      var msg = think.validate(data);
-      assert.deepEqual(msg, {});
+      assert.deepEqual(Object.keys(msg), ['welefen']);
     })
   })
 

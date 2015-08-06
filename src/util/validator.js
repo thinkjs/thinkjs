@@ -2,224 +2,554 @@
 
 import net from 'net';
 
-let Valid = {
-  /**
-   * check value length
-   * @param  {String} value []
-   * @param  {Number} min   []
-   * @param  {Number} max   []
-   * @return {Boolean}       []
-   */
-  length: (value = '', min = 0, max) => {
-    let length = value.length;
-    if (length < min) {
-      return false;
-    }
-    if (max && length > max) {
-      return false;
-    }
-    return true;
-  },
-  /**
-   * required
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  required: (value = '') => {
-    return value.length > 0;
-  },
-  /**
-   * regexp test
-   * @param  {String} value []
-   * @param  {RegExp} reg   []
-   * @return {Boolean}       []
-   */
-  regexp: (value, reg) => {
-    return reg.test(value);
-  },
-  /**
-   * value is email
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  email: value => {
-    let reg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * unix time
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  time: value => {
-    let reg = /^[1-5]\d{12}$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * chinese name
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  cname: value => {
-    let reg = /^[\u4e00-\u9fa5\u3002\u2022]{2,32}$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * chinese id number
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  idnumber: value => {
-    if (/^\d{15}$/.test(value)) {
-      return true;
-    }
-    if ((/^\d{17}[0-9xX]$/).test(value)) {
-      let vs = '1,0,x,9,8,7,6,5,4,3,2'.split(','),
-        ps = '7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2'.split(','),
-        ss = value.toLowerCase().split(''),
-        r = 0;
-      for (let i = 0; i < 17; i++) {
-        r += ps[i] * ss[i];
-      }
-      let isOk = (vs[r % 11] === ss[17]);
-      return isOk;
-    }
-    return false;
-  },
-  /**
-   * mobile
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  mobile: value => {
-    let reg = /^(13|15|18|14|17)\d{9}$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * zip code
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  zipcode: value => {
-    let reg = /^\d{6}$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * value is equal
-   * @param  {String} value  []
-   * @param  {String} cvalue []
-   * @return {Boolean}        []
-   */
-  confirm: (value, cvalue) => {
-    return value === cvalue;
-  },
-  /**
-   * url
-   * @return {Boolean} []
-   */
-  url: value => {
-    let reg = /^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * int
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  int: value => {
-    return Valid.regexp(value, /^\d+$/);
-  },
-  /**
-   * float
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  float: value => {
-    return think.isNumberString(value);
-  },
-  /**
-   * 整数范围
-   * @param  {Number} min []
-   * @param  {Number} max []
-   * @return {Boolean}     []
-   */
-  range: (value, min, max) => {
-    if (!Valid.int(value)) {
-      return false;
-    }
-    min = min | 0;
-    if (value < min) {
-      return false;
-    }
-    if (max && value > max) {
-      return false;
-    }
-    return true;
-  },
-  /**
-   * ip4
-   * @param  {String} value []
-   * @return {}       []
-   */
-  ip4: value => {
-    return net.isIPv4(value);
-  },
-  /**
-   * ip6
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  ip6: value => {
-    return net.isIPv6(value);
-  },
-  /**
-   * ip
-   * @param  {String} value []
-   * @return {}       []
-   */
-  ip: value => {
-    return !!net.isIP(value);
-  },
-  /**
-   * date
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  date: value => {
-    let reg = /^\d{4}-\d{1,2}-\d{1,2}$/;
-    return Valid.regexp(value, reg);
-  },
-  /**
-   * in
-   * @param  {String} value []
-   * @param  {Array} arr   []
-   * @return {Boolean}     []
-   */
-  in: (value, arr) => {
-    return arr.indexOf(value) > -1;
-  },
-  /**
-   * sql order
-   * @param  {String} value []
-   * @return {Boolean}       []
-   */
-  order: value => {
-    return value.split(',').every(item => {
-      item = item.trim();
-      return Valid.regexp(item, /^\w+\s+(?:ASC|DESC)$/i);
-    });
-  },
-  /**
-   * sql field
-   * @param  {String} value []
-   * @return {}       []
-   */
-  field: value => {
-    return value.split(',').every(item => {
-      item = item.trim();
-      return item === '*' || Valid.regexp(item, /^\w+$/);
-    });
-  }
-};
+//https://github.com/chriso/validator.js
+import validator from 'validator';
 
-export default Valid;
+
+/**
+ * Validator
+ * @type {Object}
+ */
+let Validator = {};
+/**
+ * check value is set
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.required = value => {
+  return !think.isEmpty(value);
+};
+/**
+ * check if the string contains the seed.
+ * @param  {String} value []
+ * @param  {String} str   []
+ * @return {Boolean}       []
+ */
+Validator.contains = (value, str) => {
+  return validator.contains(value, str);
+};
+/**
+ *  check if the string matches the comparison.
+ * @param  {String} value      []
+ * @param  {String} comparison []
+ * @return {Boolean}            []
+ */
+Validator.equals = (value, comparison) => {
+  return validator.equals(value, comparison);
+};
+/**
+ * parse equal args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._equals = (args, data) => {
+  return [data[args[0]].value];
+}
+/**
+ * check if the string not matches the comparison.
+ * @type {Boolean}
+ */
+Validator.different = (value, comparison) => {
+  return value !== comparison;
+};
+/**
+ * parse different args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._different = (args, data) => {
+  return [data[args[0]].value];
+}
+/**
+ * check if the string is a date that's after the specified date (defaults to now).
+ * @param  {String} value []
+ * @param  {String} date  []
+ * @return {Boolean}       []
+ */
+Validator.after = (value, date) => {
+  return validator.isAfter(value, date);
+};
+/**
+ * check if the string contains only letters (a-zA-Z).
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.alpha = value => {
+  return validator.isAlpha(value);
+};
+/**
+ * check if the string contains only letters and dashes(a-zA-Z_).
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.alphaDash = value => {
+  return /^[A-Z_]+$/i.test(value);
+};
+/**
+ * check if the string contains only letters and numbers.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.alphaNumeric = value => {
+  return validator.isAlphanumeric(value);
+};
+/**
+ * check if the string contains only letters or numbers or dash.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.alphaNumericDash = value => {
+  return /^\w+$/i.test(value);
+};
+/**
+ * check if the string contains ASCII chars only.
+ * @param  {String} value []
+ * @return {Boolean}      []
+ */
+Validator.ascii = value => {
+  return validator.isAscii(value);
+};
+/**
+ * check if a string is base64 encoded.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.base64 = value => {
+  return validator.isBase64(value);
+};
+/**
+ * check if the string is a date that's before the specified date.
+ * @param  {String} value []
+ * @param  {String} date  []
+ * @return {Boolean}       []
+ */
+Validator.before = (value, date) => {
+  return validator.isBefore(value, date);
+};
+/**
+ * check if the string's length (in bytes) falls in a range.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.byteLength = (value, min, max) => {
+  return validator.isByteLength(value, min, max);
+};
+/**
+ *  check if the string is a credit card.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.creditcard = value => {
+  return validator.isCreditCard(value);
+};
+/**
+ * check if the string is a valid currency amount. options is an object which defaults to
+ * @param  {String} value   []
+ * @param  {Object} options []
+ * @return {Boolean}         []
+ */
+Validator.currency = (value, options) => {
+  return validator.isCurrency(value, options);
+};
+/**
+ * check if the string is a date.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.date = value => {
+  return validator.isDate(value);
+};
+/**
+ * check if the string represents a decimal number, such as 0.1, .3, 1.1, 1.00003, 4.0, etc.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.decimal = value => {
+  return validator.isDecimal(value);
+};
+/**
+ * check if the string is a number that's divisible by another.
+ * @param  {Number} value  []
+ * @param  {Number} number []
+ * @return {Boolean}        []
+ */
+Validator.divisibleBy = (value, number) => {
+  return validator.isDivisibleBy(value, number);
+};
+/**
+ * check if the string is an email. 
+ * options is an object which defaults to { 
+ *   allow_display_name: false, 
+ *   allow_utf8_local_part: true, 
+ *   require_tld: true 
+ *  }. 
+ *  If allow_display_name is set to true, the validator will also match Display Name <email-address>. 
+ *  If allow_utf8_local_part is set to false, the validator will not allow any non-English UTF8 character in email address' local part. 
+ *  If require_tld is set to false, e-mail addresses without having TLD in their domain will also be matched.
+ * @param  {String} value   []
+ * @param  {Object} options []
+ * @return {Boolean}         []
+ */
+Validator.email = (value, options) => {
+  return validator.isEmail(value, options);
+};
+/**
+ * check if the string is a fully qualified domain name (e.g. domain.com). 
+ * options is an object which defaults to { 
+ *   require_tld: true, 
+ *   allow_underscores: false, 
+ *   allow_trailing_dot: false 
+ * }.
+ * @param  {String} value   []
+ * @param  {Object} options []
+ * @return {Boolean}         []
+ */
+Validator.fqdn = (value, options) => {
+  return validator.isFQDN(value, options);
+};
+/**
+ *  check if the string is a float. 
+ *  options is an object which can contain the keys min and/or max to validate the float is within boundaries 
+ *  (e.g. { min: 7.22, max: 9.55 }).
+ * @param  {String} value   []
+ * @param  {Object} options []
+ * @return {Boolean}         []
+ */
+Validator.float = (value, min, max) => {
+  let options = {};
+  if(min){
+    options.min = min;
+  }
+  if(max){
+    options.max = max;
+  }
+  return validator.isFloat(value, options);
+};
+/**
+ * check if the string contains any full-width chars.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.fullWidth = value => {
+  return validator.isFullWidth(value);
+};
+/**
+ * check if the string contains any half-width chars.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.halfWidth = value => {
+  return validator.isHalfWidth(value);
+};
+/**
+ * check if the string is a hexadecimal color.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.hexColor = value => {
+  return validator.isHexColor(value);
+};
+/**
+ * check if the string is a hexadecimal number.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.hex = value => {
+  return validator.isHexadecimal(value);
+};
+/**
+ * check if the string is an IP (version 4 or 6).
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.ip = value => {
+  return !!net.isIP(value);
+};
+/**
+ * check if the string is an IP v4
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.ip4 = value => {
+  return net.isIPv4(value);
+};
+/**
+ * check if the string is an IP v6
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.ip6 = value => {
+  return net.isIPv6(value);
+};
+/**
+ * check if the string is an ISBN (version 10 or 13).
+ * @param  {String} value   []
+ * @param  {Number} version []
+ * @return {Boolean}         []
+ */
+Validator.isbn = (value, version) => {
+  return validator.isISBN(value, version);
+};
+/**
+ * check if the string is an ISIN (stock/security identifier).
+ * https://en.wikipedia.org/wiki/International_Securities_Identification_Number
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.isin = value => {
+  return validator.isISIN(value);
+};
+/**
+ * check if the string is a valid ISO 8601 date.
+ * https://en.wikipedia.org/wiki/ISO_8601
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.iso8601 = value => {
+  return validator.isISO8601(value);
+};
+/**
+ * check if the string is in a array of allowed values.
+ * @type {Boolean}
+ */
+Validator.in = (value, ...values) => {
+  return validator.isIn(value, values);
+};
+/**
+ * check if the string is not in a array of allowed values.
+ * @type {Boolean}
+ */
+Validator.notIn = (value, ...values) => {
+  return !validator.isIn(value, values);
+};
+/**
+ * check if the string is an integer. 
+ * options is an object which can contain the keys min and/or max to check the integer is within boundaries (e.g. { min: 10, max: 99 }).
+ * @type {Boolean}
+ */
+Validator.int = (value, min, max) => {
+  let options = {};
+  if(min){
+    options.min = min | 0;
+  }
+  if(max){
+    options.max = max | 0;
+  }
+  return validator.isInt(value, options);
+};
+/**
+ * check if the string greater than min value
+ * @param  {String} value []
+ * @param  {Number} min   []
+ * @return {Boolean}       []
+ */
+Validator.min = (value, min) => {
+  return validator.isInt(value, {
+    min: min | 0
+  });
+};
+/**
+ * check if the string less than max value
+ * @param  {String} value []
+ * @param  {Number} max   []
+ * @return {Boolean}       []
+ */
+Validator.max = (value, max) => {
+  return validator.isInt(value, {
+    min: 0,
+    max: max | 0
+  });
+};
+/**
+ * check if the string's length falls in a range. Note: this function takes into account surrogate pairs.
+ * @param  {String} value []
+ * @param  {Number} min   []
+ * @param  {Number} max   []
+ * @return {Boolean}       []
+ */
+Validator.length = (value, min, max) => {
+  if(min){
+    min = min | 0;
+  }else{
+    min = 1;
+  }
+  if(max){
+    max = max | 0;
+  }
+  return validator.isLength(value, min, max);
+};
+/**
+ * check if the string's length is max than min
+ * @param  {String} value []
+ * @param  {Number} min   []
+ * @return {Boolean}       []
+ */
+Validator.minLength = (value, min) => {
+  return validator.isLength(value, min | 0);
+};
+/**
+ * check is the string's length is min than max
+ * @param  {String} value []
+ * @param  {Number} max   []
+ * @return {Boolean}       []
+ */
+Validator.maxLength = (value, max) => {
+  return validator.isLength(value, 0, max | 0);
+};
+/**
+ * check if the string is lowercase.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.lowercase = value => {
+  return validator.isLowercase(value);
+};
+/**
+ * check if the string is a mobile phone number, 
+ * (locale is one of ['zh-CN', 'en-ZA', 'en-AU', 'en-HK', 'pt-PT', 'fr-FR', 'el-GR', 'en-GB', 'en-US', 'en-ZM', 'ru-RU']).
+ * @param  {String} value []
+ * @param  {[type]} locale []
+ * @return {Boolean}       []
+ */
+Validator.mobile = (value, locale = 'zh-CN') => {
+  return validator.isMobilePhone(value, locale);
+};
+/**
+ *  check if the string is a valid hex-encoded representation of a MongoDB ObjectId.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.mongoId = value => {
+  return validator.isMongoId(value);
+};
+/**
+ * check if the string contains one or more multibyte chars.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.multibyte = value => {
+  return validator.isMultibyte(value);
+};
+/**
+ * check if the string contains only numbers.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+// Validator.number = value => {
+//   return validator.isNumeric(value);
+// };
+/**
+ * check if the string is an URL. 
+ * options is an object which defaults to { 
+ *   protocols: ['http','https','ftp'], 
+ *   require_tld: true, 
+ *   require_protocol: false, 
+ *   require_valid_protocol: true, 
+ *   allow_underscores: false, 
+ *   host_whitelist: false, 
+ *   host_blacklist: false, 
+ *   allow_trailing_dot: false, 
+ *   allow_protocol_relative_urls: false 
+ * }.
+ * @type {Boolean}
+ */
+Validator.url = (value, options) => {
+  options = think.extend({
+    require_protocol: true,
+    protocols: ['http', 'https']
+  }, options);
+  return validator.isURL(value, options);
+};
+/**
+ * check if the string is uppercase.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.uppercase = value => {
+  return validator.isUppercase(value);
+};
+/**
+ * check if the string contains a mixture of full and half-width chars.
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.variableWidth = value => {
+  return validator.isVariableWidth(value);
+};
+/**
+ * check is sql order string
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.order = value => {
+  return value.split(/\s*,\s*/).every(item => {
+    return /^\w+\s+(?:ASC|DESC)$/i.test(item);
+  });
+};
+/**
+ * check is sql field string
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.field = value => {
+  return value.split(/\s*,\s*/).every(item => {
+    return item === '*' || /^\w+$/.test(item);
+  });
+};
+/**
+ * check is image file
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.image = value => {
+  if(think.isObject(value)){
+    value = value.originalFilename;
+  }
+  return /\.(?:jpeg|jpg|png|bmp|gif|svg)$/i.test(value);
+};
+/**
+ * check is string start with str
+ * @param  {String} value []
+ * @param  {String} str   []
+ * @return {Boolean}       []
+ */
+Validator.startWith = (value, str) => {
+  return value.indexOf(str) === 0;
+}
+/**
+ * check is string end with str
+ * @param  {String} value []
+ * @param  {String} str   []
+ * @return {Boolean}       []
+ */
+Validator.endWith = (value, str) => {
+  return value.lastIndexOf(str) === (value.length - str.length);
+}
+/**
+ * check value is string value
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.string = value => {
+  return think.isString(value);
+}
+/**
+ * check value is array value
+ * @param  {Array} value []
+ * @return {Boolean}       []
+ */
+Validator.array = value => {
+  return think.isArray(value);
+}
+/**
+ * check value is true
+ * @param  {Boolean} value []
+ * @return {Boolean}       []
+ */
+Validator.boolean = value => {
+  return value === true;
+}
+
+export default Validator;

@@ -128,12 +128,11 @@ think.defer = () => {
 think.promisify = (fn, receiver) => {
   return (...args) => {
     return new Promise((resolve, reject) => {
-      fn.apply(receiver, [...args, (err, res) =>  {
-        if (err) return reject(err);
-        resolve(res);
+      fn.apply(receiver, [...args, (err, res) => {
+        return err ? reject(err) : resolve(res);
       }]);
     });
-  }
+  };
 };
 /**
  * [description]
@@ -1150,111 +1149,98 @@ think.local = (key, ...data) => {
 };
 /**
  * validate data
- * [{
- *   name: 'xxx',
- *   type: 'string',
- *   validate: 'email',
- *   value: 'xxx',
- *   required: true,
- *   args: []
- *   msg: ''
- * }, ...]
+ * {
+ *   name: {
+ *     value: 'test',
+ *     required: true,
+ *     length: [4, 20],
+ *     email: true
+ *   },
+ *   pwd: {
+ *     value: '12345678',
+ *     required: true,
+ *     length: [6, 20]
+ *   }
+ *   confirm_pwd: {
+ *     value: '12345678',
+ *     required: true,
+ *     equals: 'pwd'
+ *   }
+ * }
  * @param  {String | Object}   name     []
  * @param  {Function} callback []
  * @return {}            []
  */
 think.validate = (name, callback) => {
-  let Validate = thinkCache(thinkCache.VALIDATOR);
-  if (think.isEmpty(Validate)) {
-    Validate = think.require('validator');
-    thinkCache(thinkCache.VALIDATOR, Validate);
+  let Validator = thinkCache(thinkCache.VALIDATOR);
+  if (think.isEmpty(Validator)) {
+    Validator = think.require('validator');
+    thinkCache(thinkCache.VALIDATOR, Validator);
   }
+  // register validate callback
   if (think.isString(name)) {
-    // register valid callback
-    // think.valid('test', function(){})
+    // think.validate('test', function(){})
     if (think.isFunction(callback)) {
       thinkCache(thinkCache.VALIDATOR, name, callback);
       return;
     }
-    // get valid callback
+    // get validator callback
     return thinkCache(thinkCache.VALIDATOR, name);
   }
-  // convert object to array
-  if (think.isObject(name)) {
-    let d = [];
-    for(let key in name){
-      let value = name[key];
-      value.name = key;
-      d.push(value);
+  let data = name, msg = {}, msgs = callback || {}, item;
+  //get error message
+  let getMsg = (type, name, value, args) => {
+    let key = `validate_${type}`;
+    let keyWithName = `${key}_${name}`;
+    let msg = msgs[keyWithName];
+    if(!msg && think.local(keyWithName) !== keyWithName){
+      msg = think.local(keyWithName);
     }
-    name = d;
-  }
+    msg = msg || msgs[key];
+    if(!msg && think.local(key) !== key){
+      msg = think.local(key);
+    }
+    if(!msg){
+      msg = think.local('PARAMS_NOT_VALID');
+    }
+    return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
+  };
 
-  let msg = {};
-  name.forEach(item => {
-    // value required
-    if (item.required) {
-      if (!item.value) {
-        msg[item.name] = item.required_msg || think.local('PARAMS_EMPTY', item.name);
-        return;
+  for(let name in data){
+    item = data[name];
+    if(item.value === '' || item.value === undefined || item.value === null){
+      if(item.required){
+        msg[name] = getMsg('required', name, item.value, []);
       }
-    }else{
-      if (!item.value) {
-        return;
-      }
+      continue;
     }
-    //check data type
-    let type = item.type;
-    if(type){
-      let isValid = true;
-      switch(type){
-        case 'string':
-          isValid = think.isString(item.value);
-          break;
-        case 'array':
-          isValid = think.isArray(item.value);
-          break;
-        case 'object':
-          isValid = think.isObject(item.value);
-          break;
-        case 'number':
-          isValid = think.isNumber(item.value);
-          break;
-        case 'boolean':
-          isValid = think.isBoolean(item.value);
-          break;
+    let vitem, args, fn, result, msgArgs;
+    for(vitem in item){
+      if(vitem === 'value' || vitem === 'required'){
+        continue;
       }
-      if(!isValid){
-        let typeMsg = item.invalid_type || think.local('PARAMS_TYPE_INVALID');
-        msg[item.name] = typeMsg.replace('{name}', item.name);
-        return;
+      fn = Validator[vitem];
+      if (!think.isFunction(fn)) {
+        throw new Error(think.local('CONFIG_NOT_FUNCTION', `${vitem} type`));
+      }
+      args = item[vitem];
+      if(think.isBoolean(args)){
+        args = [];
+      }else if(!think.isArray(args)){
+        args = [args];
+      }
+      msgArgs = [...args];
+      //parse args
+      if(think.isFunction(Validator[`_${vitem}`])){
+        args = Validator[`_${vitem}`](args, data);
+      }
+      result = fn(item.value, ...args);
+      if(!result){
+        msg[name] = getMsg(vitem, name, item.value, msgArgs);
+        break;
       }
     }
-    let validate = item.validate;
-    //validate is not set, only check data is required
-    if(!validate){
-      return;
-    }
-    if(think.isString(validate)){
-      validate = Validate[validate];
-    }else if(think.isRegExp(validate)){
-      validate = function(value){
-        return item.validate.test(value);
-      };
-    }
-    if (!think.isFunction(validate)) {
-      throw new Error(think.local('CONFIG_NOT_FUNCTION', `${item.name} type`));
-    }
-    if (!think.isArray(item.args)) {
-      item.args = [item.args];
-    }
-    item.args.unshift(item.value);
-    let result = validate(...item.args);
-    if (!result) {
-      let itemMsg = item.msg || think.local('PARAMS_NOT_VALID');
-      msg[item.name] = itemMsg.replace('{name}', item.name).replace('{valud}', item.value);
-    }
-  });
+  }
   return msg;
 };
 /**
@@ -1321,7 +1307,7 @@ think.error = (err, addon = '') => {
   if(think.isPromise(err)){
     return err.catch(err => {
       return think.reject(think.error(err, addon));
-    })
+    });
   }else if(think.isError(err)){
     let message = err.message;
     let errors = thinkCache(thinkCache.ERROR);
