@@ -66,11 +66,16 @@ export default class {
   }
   /**
    * check node env
-   * @TODO
    * @return {Boolean} []
    */
   checkEnv(){
-    //
+    let packageFile = `${think.THINK_PATH}/package.json`;
+    let {engines} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
+    let needVersion = engines.node.substr(2);
+    let nodeVersion = process.version.substr(1);
+    if(needVersion > nodeVersion){
+      throw new Error(`ThinkJS need node version ${needVersion}, current version is ${nodeVersion}, please upgrade it.`);
+    }
   }
   /**
    * get app module list
@@ -366,8 +371,8 @@ export default class {
    * @return {} []
    */
   async run(){
-    this.start();
     try{
+      this.start();
       await think.require('app').run();
     }catch(err){
       think.log(err);
