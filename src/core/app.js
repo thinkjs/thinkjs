@@ -103,7 +103,7 @@ export default class extends think.base {
     let http = this.http;
     http.header('X-Powered-By', `thinkjs-${think.version}`);
     //service off
-    if(!http.config('service_on')){
+    if(!think.config('service_on')){
       http.error = new Error(think.locale('SERVICE_UNAVAILABLE'));
       return think.statusAction(502, http);
     }
