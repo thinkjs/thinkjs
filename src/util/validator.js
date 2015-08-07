@@ -20,6 +20,150 @@ Validator.required = value => {
   return !think.isEmpty(value);
 };
 /**
+ * The field under validation must be present if the anotherfield field is equal to any value.
+ * @param  {String}    value        []
+ * @param  {Stromg}    anotherfield []
+ * @param  {Array} values       []
+ * @return {Boolean}                 []
+ */
+Validator.requiredIf = (value, anotherField, ...values) => {
+  if(values.indexOf(anotherField) > -1){
+    return Validator.required(value);
+  }
+  return true;
+};
+/**
+ * parse requiredIf args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._requiredIf = (args, data) => {
+  let arg0 = args[0];
+  args[0] = data[arg0].value;
+  return args;
+};
+/**
+ * The field under validation must be present not if the anotherfield field is equal to any value.
+ * @param  {String}    value        []
+ * @param  {Stromg}    anotherfield []
+ * @param  {Array} values       []
+ * @return {Boolean}                 []
+ */
+Validator.requiredNotIf = (value, anotherField, ...values) => {
+  if(values.indexOf(anotherField) === -1){
+    return Validator.required(value);
+  }
+  return true;
+};
+/**
+ * parse requiredNotIf args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._requiredNotIf = (args, data) => {
+  return Validator._requiredIf(args, data);
+};
+/**
+ * The field under validation must be present only if any of the other specified fields are present.
+ * @param  {String}    value         []
+ * @param  {Array} anotherFields []
+ * @return {Boolean}                  []
+ */
+Validator.requiredWith = (value, ...anotherFields) => {
+  let flag = anotherFields.some(item => {
+    return Validator.required(item);
+  });
+  if(flag){
+    return Validator.required(value);
+  }
+  return true;
+};
+/**
+ * parse required with args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._requiredWith = (args, data) => {
+  return args.map(item => {
+    return data[item].value;
+  });
+};
+/**
+ * The field under validation must be present only if all of the other specified fields are present.
+ * @param  {String}    value         []
+ * @param  {Array} anotherFields []
+ * @return {Boolean}                  []
+ */
+Validator.requiredWithAll = (value, ...anotherFields) => {
+  let flag = anotherFields.every(item => {
+    return Validator.required(item);
+  });
+  if(flag){
+    return Validator.required(value);
+  }
+  return true;
+};
+/**
+ * parse required with all args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._requiredWithAll = (args, data) => {
+  return Validator._requiredWith(args, data);
+};
+/**
+ * The field under validation must be present only when any of the other specified fields are not present.
+ * @param  {String}    value         []
+ * @param  {Array} anotherFields []
+ * @return {Boolean}                  []
+ */
+Validator.requiredWithout = (value, ...anotherFields) => {
+  let flag = anotherFields.some(item => {
+    return !Validator.required(item);
+  });
+  if(flag){
+    return Validator.required(value);
+  }
+  return true;
+};
+/**
+ * parse required without args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._requiredWithout = (args, data) => {
+  return Validator._requiredWith(args, data);
+};
+/**
+ * The field under validation must be present only when all of the other specified fields are not present.
+ * @param  {String}    value         []
+ * @param  {Array} anotherFields []
+ * @return {Boolean}                  []
+ */
+Validator.requiredWithoutAll = (value, ...anotherFields) => {
+  let flag = anotherFields.every(item => {
+    return !Validator.required(item);
+  });
+  if(flag){
+    return Validator.required(value);
+  }
+  return true;
+};
+/**
+ * parse required without all args
+ * @param  {Array} args []
+ * @param  {Object} data []
+ * @return {Array}      []
+ */
+Validator._requiredWithoutAll = (args, data) => {
+  return Validator._requiredWith(args, data);
+};
+/**
  * check if the string contains the seed.
  * @param  {String} value []
  * @param  {String} str   []
@@ -45,7 +189,7 @@ Validator.equals = (value, comparison) => {
  */
 Validator._equals = (args, data) => {
   return [data[args[0]].value];
-}
+};
 /**
  * check if the string not matches the comparison.
  * @type {Boolean}
@@ -60,8 +204,8 @@ Validator.different = (value, comparison) => {
  * @return {Array}      []
  */
 Validator._different = (args, data) => {
-  return [data[args[0]].value];
-}
+  return Validator._equals(args, data);
+};
 /**
  * check if the string is a date that's after the specified date (defaults to now).
  * @param  {String} value []
@@ -83,7 +227,7 @@ Validator._after = (args, data) => {
     return [data[arg].value];
   }
   return args;
-}
+};
 /**
  * check if the string contains only letters (a-zA-Z).
  * @param  {String} value []
@@ -147,9 +291,9 @@ Validator.before = (value, date) => {
  * @param  {Object} data []
  * @return {Array}      []
  */
-Validator._before= (args, data) => {
+Validator._before = (args, data) => {
   return Validator._after(args, data);
-}
+};
 /**
  * check if the string's length (in bytes) falls in a range.
  * @param  {String} value []
@@ -539,7 +683,7 @@ Validator.image = value => {
  */
 Validator.startWith = (value, str) => {
   return value.indexOf(str) === 0;
-}
+};
 /**
  * check is string end with str
  * @param  {String} value []
@@ -548,7 +692,7 @@ Validator.startWith = (value, str) => {
  */
 Validator.endWith = (value, str) => {
   return value.lastIndexOf(str) === (value.length - str.length);
-}
+};
 /**
  * check value is string value
  * @param  {String} value []
@@ -556,7 +700,7 @@ Validator.endWith = (value, str) => {
  */
 Validator.string = value => {
   return think.isString(value);
-}
+};
 /**
  * check value is array value
  * @param  {Array} value []
@@ -564,7 +708,7 @@ Validator.string = value => {
  */
 Validator.array = value => {
   return think.isArray(value);
-}
+};
 /**
  * check value is true
  * @param  {Boolean} value []
@@ -572,7 +716,7 @@ Validator.array = value => {
  */
 Validator.boolean = value => {
   return value === true;
-}
+};
 /**
  * check value is object
  * @param  {Object} value []
@@ -580,6 +724,6 @@ Validator.boolean = value => {
  */
 Validator.object = value => {
   return think.isObject(value);
-}
+};
 
 export default Validator;

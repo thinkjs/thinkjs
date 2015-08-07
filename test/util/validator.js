@@ -345,4 +345,158 @@ describe('Validator', function(){
   it('boolean fail', function(){
     assert.equal(Validator.boolean(false), false);
   })
+  it('required if', function(){
+    var data = Validator.requiredIf('welefen', 'test');
+    assert.equal(data, true);
+  })
+  it('required if, 1', function(){
+    var data = Validator.requiredIf('', 'test', 'test', 'test2');
+    assert.equal(data, false);
+  })
+  it('required if, 2', function(){
+    var data = Validator.requiredIf('welefen', 'test', 'test', 'test2');
+    assert.equal(data, true);
+  })
+  it('parse required if args', function(){
+    var data = Validator._requiredIf(['test', 'value1', 'value2'], {test: {value: 'test1'}});
+    assert.deepEqual(data, ['test1', 'value1', 'value2']);
+  })
+  it('required not if', function(){
+    var data = Validator.requiredNotIf('', 'test', 'test', 'test2');
+    assert.equal(data, true);
+  })
+  it('required not if 1', function(){
+    var data = Validator.requiredNotIf('', 'test', 'test1', 'test2');
+    assert.equal(data, false);
+  })
+  it('required not if 1, has value', function(){
+    var data = Validator.requiredNotIf('value', 'test', 'test1', 'test2');
+    assert.equal(data, true);
+  })
+  it('parse required not if args', function(){
+    var data = Validator._requiredNotIf(['test', 'value1', 'value2'], {test: {value: 'test1'}});
+    assert.deepEqual(data, ['test1', 'value1', 'value2']);
+  })
+  it('required with', function(){
+    var data = Validator.requiredWith('', '', '', '');
+    assert.equal(data, true);
+  })
+  it('required with 1', function(){
+    var data = Validator.requiredWith('', 'test', '', '');
+    assert.equal(data, false);
+  })
+  it('required with 2', function(){
+    var data = Validator.requiredWith('value', 'test', '', '');
+    assert.equal(data, true);
+  })
+  it('parse _requiredWith args', function(){
+    var data = Validator._requiredWith(['test', 'test1', 'test2'], {
+      test: {value: 'value'},
+      test1: {value: 'value1'},
+      test2: {value: 'value2'}
+    });
+    assert.deepEqual(data, ['value', 'value1', 'value2']);
+  })
+  it('required with all', function(){
+    var data = Validator.requiredWithAll('', '', '', '');
+    assert.equal(data, true);
+  })
+  it('required with all 1', function(){
+    var data = Validator.requiredWithAll('', 'test', '', '');
+    assert.equal(data, true);
+  })
+  it('required with all 2', function(){
+    var data = Validator.requiredWithAll('', 'test', 'test1', 'test2');
+    assert.equal(data, false);
+  })
+  it('required with all 3', function(){
+    var data = Validator.requiredWithAll('value', 'test', 'test1', 'test2');
+    assert.equal(data, true);
+  })
+  it('parse _requiredWithAll args', function(){
+    var data = Validator._requiredWithAll(['test', 'test1', 'test2'], {
+      test: {value: 'value'},
+      test1: {value: 'value1'},
+      test2: {value: 'value2'}
+    });
+    assert.deepEqual(data, ['value', 'value1', 'value2']);
+  })
+  it('required without', function(){
+    var data = Validator.requiredWithout('', '', '', '');
+    assert.equal(data, false);
+  })
+  it('required without 1', function(){
+    var data = Validator.requiredWithout('', '', 'test', '');
+    assert.equal(data, false);
+  })
+  it('required without 2', function(){
+    var data = Validator.requiredWithout('', 'test1', 'test', 'test3');
+    assert.equal(data, true);
+  })
+  it('required without 3', function(){
+    var data = Validator.requiredWithout('test', '', 'test', '');
+    assert.equal(data, true);
+  })
+  it('parse _requiredWithout args', function(){
+    var data = Validator._requiredWithout(['test', 'test1', 'test2'], {
+      test: {value: 'value'},
+      test1: {value: 'value1'},
+      test2: {value: 'value2'}
+    });
+    assert.deepEqual(data, ['value', 'value1', 'value2']);
+  })
+  it('required without all', function(){
+    var data = Validator.requiredWithoutAll('', '', '', '');
+    assert.equal(data, false);
+  })
+  it('required without all 1', function(){
+    var data = Validator.requiredWithoutAll('', '', 'test', '');
+    assert.equal(data, true);
+  })
+  it('required without all 2', function(){
+    var data = Validator.requiredWithoutAll('test', '', '', '');
+    assert.equal(data, true);
+  })
+  it('parse _requiredWithoutAll args', function(){
+    var data = Validator._requiredWithoutAll(['test', 'test1', 'test2'], {
+      test: {value: 'value'},
+      test1: {value: 'value1'},
+      test2: {value: 'value2'}
+    });
+    assert.deepEqual(data, ['value', 'value1', 'value2']);
+  })
+  it('parse _equals args', function(){
+    var data = Validator._equals(['test'], {
+      test: {value: 'value'}
+    });
+    assert.deepEqual(data, ['value']);
+  })
+  it('parse _different args', function(){
+    var data = Validator._different(['test'], {
+      test: {value: 'value'}
+    });
+    assert.deepEqual(data, ['value']);
+  })
+  it('parse _after args', function(){
+    var data = Validator._after(['test'], {
+      test: {value: '2015-11-01'}
+    });
+    assert.deepEqual(data, ['2015-11-01']);
+  })
+  it('parse _after args 1', function(){
+    var data = Validator._after(['2015-11-01'], {
+      test: {value: '2015-11-02'}
+    });
+    assert.deepEqual(data, ['2015-11-01']);
+  })
+  it('parse _before args', function(){
+    var data = Validator._before(['test'], {
+      test: {value: '2015-11-01'}
+    });
+    assert.deepEqual(data, ['2015-11-01']);
+  })
+  it('object', function(){
+    var data = Validator.object({});
+    assert.equal(data, true)
+  })
 })
