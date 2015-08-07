@@ -1,8 +1,4 @@
 'use strict';
-
-
-let Validate = think.require('validator');
-
 /**
  * base model class
  */
@@ -352,35 +348,12 @@ export default class {
     return data;
   }
   /**
-   * check data before insert to db
-   * @return {} []
-   */
-  _validData(data){
-    return data;
-    let field, value, checkData = [];
-    for(field in data){
-      if (field in this.fields) {
-        value = think.extend({}, this.fields[field], {name: field, value: data[field]});
-        checkData.push(value);
-      }
-    }
-    if (think.isEmpty(checkData)) {
-      return data;
-    }
-    let result = Validate(checkData);
-    if (think.isEmpty(result.msg)) {
-      return data;
-    }
-    let err = new Error(JSON.stringify(result.msg));
-    return think.reject(err);
-  }
-  /**
    * before add
    * @param  {Object} data []
    * @return {}      []
    */
   _beforeAdd(data){
-    return this._validData(data);
+    return data;
   }
   /**
    * after add
@@ -404,7 +377,7 @@ export default class {
    * @return {}      []
    */
   _beforeUpdate(data){
-    return this._validData(data);
+    return data;
   }
   /**
    * after update
