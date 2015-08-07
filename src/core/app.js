@@ -160,7 +160,9 @@ export default class extends think.base {
     }
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
     think.log('ThinkJS Version: ' + think.version, 'THINK');
-    think.log('App Env: ' + think.env, 'THINK');
+    think.log(colors => {
+      return 'App Env: ' + colors.magenta(think.env);
+    }, 'THINK');
   }
   /**
    * cli mode
