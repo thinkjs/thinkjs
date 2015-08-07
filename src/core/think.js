@@ -1358,7 +1358,10 @@ think.error = (err, addon = '') => {
  * @return {}        []
  */
 think.statusAction = (status = 500, http) => {
-  //
+  if(think.isPrevent(http.error)){
+    return;
+  }
+  //set error flag, avoid infinite loop
   if(http._error){
     think.log(http.error);
     return http.status(status).end();
