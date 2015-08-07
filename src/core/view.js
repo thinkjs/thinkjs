@@ -44,10 +44,17 @@ export default class extends think.base {
    * @param  {String} contentType  [content type]
    * @return {Promise}              []
    */
-  async display(templateFile, charset, contentType){
+  async display(templateFile, charset, contentType, config){
+    if(think.isObject(charset)){
+      config = charset;
+      charset = '';
+    }else if(think.isObject(contentType)){
+      config = contentType;
+      contentType = '';
+    }
     try{
       await this.hook('view_init');
-      let content = await this.fetch(templateFile);
+      let content = await this.fetch(templateFile, config);
       await this.render(content, charset, contentType);
       await this.hook('view_end', content);
     }catch(err){
@@ -90,7 +97,7 @@ export default class extends think.base {
    * @param  {String} templateFile [template file]
    * @return {Promise}             []
    */
-  async fetch(templateFile){
+  async fetch(templateFile, config){
     let tVar = this.tVar, flag = false;
     if (!templateFile || !path.isAbsolute(templateFile)) {
       templateFile = await this.hook('view_template', templateFile);
@@ -111,7 +118,8 @@ export default class extends think.base {
     await Promise.all(promises);
     let content = await this.hook('view_parse', {
       'var': tVar,
-      'file': templateFile
+      'file': templateFile,
+      'config': config
     });
     return this.hook('view_filter', content);
   }

@@ -11,12 +11,12 @@ export default class extends think.adapter.tempalte {
    * @param  {Object} tVar         []
    * @return {Promise}              []
    */
-  async run(templateFile, tVar){
+  async run(templateFile, tVar, config){
     let jade = await think.npm('jade');
     let content = await this.getContent(templateFile);
     let options = think.extend({
       filename: templateFile
-    }, think.config('tpl.options'));
+    }, think.config('tpl.options'), config && config.options);
     return jade.compile(content, options)(tVar);
   }
 }

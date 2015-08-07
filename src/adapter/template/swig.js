@@ -13,8 +13,8 @@ export default class extends think.adapter.template {
    * @param  {Object} tVar         [data]
    * @return {String}              []
    */
-  async run(templateFile, tVar){
-    swig.setDefaults(think.config('tpl.options'));
+  async run(templateFile, tVar, config){
+    swig.setDefaults(think.extend({}, think.config('tpl.options'), config && config.options));
     let tpl = swig.compileFile(templateFile, {autoescape: false});
     return tpl(tVar);
   }
