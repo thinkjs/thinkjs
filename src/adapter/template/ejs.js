@@ -1,5 +1,8 @@
 'use strict';
-
+/**
+ * ejs template
+ * @type {Class}
+ */
 export default class extends think.adapter.template {
   /**
    * run

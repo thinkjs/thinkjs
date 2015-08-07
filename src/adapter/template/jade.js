@@ -4,7 +4,7 @@
  * jade template
  * @type {Class}
  */
-export default class extends think.adapter.tempalte {
+export default class extends think.adapter.template {
   /**
    * run
    * @param  {String} templateFile []
