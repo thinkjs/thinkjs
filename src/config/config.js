@@ -28,8 +28,6 @@ export default {
   default_module: 'home',
   default_controller: 'index', 
   default_action: 'index',
-  call_controller: 'home/index/_404',
-  action_suffix: 'Action',
   callback_name: 'callback',
   json_content_type: 'application/json',
   subdomain: {}, //subdomain deploy

@@ -217,38 +217,6 @@ export default class {
     }
   }
   /**
-   * load call controller
-   * @return {} []
-   */
-  loadCallController(){
-    let callController = think.config('call_controller');
-    if (!callController) {
-      return;
-    }
-    let call = callController.split('/');
-    let name = `${call[0]}/${think.dirname.controller}/${call[1]}`;
-    let action = call[2];
-    if (think.mode === think.mode_mini) {
-      let length = call.length;
-      name = `${think.config('default_module')}/${think.dirname.controller}/${call[length - 2]}`;
-      action = call[length - 1];
-    }
-    let filepath = thinkCache(thinkCache.ALIAS, name);
-    if (!filepath) {
-      return;
-    }
-    let cls = think.require(name);
-    let method = cls.prototype[action + think.config('action_suffix')];
-    let callMethod = cls.prototype.__call;
-    if (think.isFunction(method)) {
-      thinkCache(thinkCache.ALIAS, 'call_controller', filepath);
-      think.config('call_action', action);
-    }else if (think.isFunction(callMethod)) {
-      thinkCache(thinkCache.ALIAS, 'call_controller', filepath);
-      think.config('call_action', '__call');
-    }
-  }
-  /**
    * load bootstrap
    * @return {} []
    */
@@ -319,7 +287,6 @@ export default class {
     this.loadAdapter();
     this.loadMiddleware();
     this.loadMVC();
-    this.loadCallController();
     this.loadHook();
     this.loadTemplate();
     this.loadError();

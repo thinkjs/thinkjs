@@ -1351,3 +1351,28 @@ think.error = (err, addon = '') => {
     return new Error(err);
   }
 };
+/**
+ * exec status action
+ * @param  {Number} status []
+ * @param  {Object} http   []
+ * @return {}        []
+ */
+think.statusAction = async (status = 500, http) => {
+  if(http._error){
+    think.log(http.error);
+    return http.status(status).end();
+  }
+  http._error = true;
+  let name = `${http.module}/${think.dirname.controller}/error`;
+  if(think.mode === think.mode_module){
+    name = `${think.dirname.common}/${think.dirname.controller}/error`;
+  }
+  let cls = think.require(name, true);
+  if(!cls){
+    http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', name, http.url));
+    return think.statusAction(status, http);
+  }
+  let instance = new cls(http);
+  let action = `_${status}Action`;
+  await think.co.wrap(instance[action]).bind(instance)(instance);
+};

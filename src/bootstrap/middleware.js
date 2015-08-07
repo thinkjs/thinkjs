@@ -74,39 +74,3 @@ think.middleware('subdomain_deploy', http => {
   }
   http.pathname = value + '/' + http.pathname;
 });
-/**
- * send error message
- * @param  {Object}  http
- * @return {}          
- */
-think.middleware('send_error', (http, err) => {
-  if(think.isPrevent(err)){
-    return;
-  }
-  let error = http.config('error');
-  if (error.log) {
-    think.log(err);
-  }
-  if (think.cli) {
-    return;
-  }
-  let code = error.code || 500;
-  let msg = err;
-  if (think.isError(err)) {
-    msg = error.detail ? err.stack : err.message;
-  }
-  if (http.isAjax()) {
-    return http.fail(code, msg);
-  }else if (http.isJsonp()) {
-    return http.jsonp({
-      [error.key]: code,
-      [error.msg]: msg
-    });
-  }
-  http.res.statusCode = code;
-  http.type('text/html; charset=' + http.config('encoding'));
-  if (error.detail) {
-    return http.end(`<pre style="font-size:14px;line-height:20px;">${msg}</pre>`);
-  }
-  return think.hook('resource_output', http, error.file);
-});

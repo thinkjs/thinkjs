@@ -51,7 +51,8 @@ export default class extends think.base {
       await this.render(content, charset, contentType);
       await this.hook('view_end', content);
     }catch(err){
-      await this.hook('app_error', err);
+      this.http.error = err;
+      await think.statusAction(500, this.http);
     }
     return think.prevent();
   }

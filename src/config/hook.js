@@ -11,6 +11,5 @@ export default {
   view_parse: ['parse_template'],
   view_filter: [],
   view_end: ['write_html_cache'],
-  app_end: [],
-  app_error: ['send_error']
+  app_end: []
 };

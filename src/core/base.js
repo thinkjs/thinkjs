@@ -59,7 +59,7 @@ export default class {
       controller = this.controller(controller);
     }
     if (action !== '__call') {
-      action += think.config('action_suffix');
+      action += 'Action';
     }
     return controller.invoke(action, [controller]);
   }

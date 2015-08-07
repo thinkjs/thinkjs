@@ -10,14 +10,6 @@ let websocket = think.require('websocket');
 
 export default class extends think.base {
   /**
-   * send error
-   * @param  {Error} err []
-   * @return {}     []
-   */
-  error(err){
-    return think.hook('app_error', this.http, err);
-  }
-  /**
    * dispath route
    * @return {} []
    */
@@ -37,7 +29,7 @@ export default class extends think.base {
     }
     let instance = new cls(this.http);
     let action = this.http.action;
-    if (think.isFunction(instance[action + think.config('action_suffix')])) {
+    if (think.isFunction(instance[`${action}Action`])) {
       return this.action(instance, action);
     }
     //call action
@@ -60,23 +52,8 @@ export default class extends think.base {
     if (cls) {
       return this.execAction(new cls(http));
     }
-    return this.execCallController();
-  }
-  /**
-   * exec call controller
-   * @return {Promise} []
-   */
-  execCallController(flag){
-    let http = this.http;
-    let cls = think.require('call_controller', true);
-    if (cls) {
-      return this.execAction(new cls(http), true);
-    }
-    if(flag){
-      return false;
-    }
-    let err = new Error(think.locale('CONTROLLER_NOT_FOUND', http.controller, http.url));
-    return think.reject(err);
+    http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', http.controller, http.url));
+    return think.statusAction(404, http);
   }
   /**
    * exec action
@@ -88,12 +65,13 @@ export default class extends think.base {
     if(isCall){
       return this.action(controller, think.config('call_action'));
     }
+    let http = this.http;
     //if is rest api, rewrite action
     if(controller.__isRest){
-      this.http.action = this.http.method.toLowerCase();
+      http.action = http.method.toLowerCase();
     }
-    let action = this.http.action;
-    let actionWithSuffix = action + think.config('action_suffix');
+    let action = http.action;
+    let actionWithSuffix = `${action}Action`;
     //action is exist
     if(think.isFunction(controller[actionWithSuffix])){
       return this.action(controller, action);
@@ -102,15 +80,8 @@ export default class extends think.base {
     if(think.isFunction(controller.__call)){
       return this.action(controller, '__call');
     }
-    //try to exec call controller
-    if(!isCall){
-      let ret = this.execCallController(true);
-      if(ret){
-        return ret;
-      }
-    }
-    let err = new Error(think.locale('ACTION_NOT_FOUND', action, this.http.url));
-    return think.reject(err);
+    http.error = new Error(think.locale('ACTION_NOT_FOUND', action, http.url));
+    return this.statusAction(404, http);
   }
   /**
    * exec 
@@ -133,12 +104,12 @@ export default class extends think.base {
     http.header('X-Powered-By', `thinkjs-${think.version}`);
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.websocket) {
-      http.res.statusCode = 403;
-      http.end('proxy on, cannot visit with port');
+      http.error = new Error(think.locale('DISLLOW_PORT'));
+      think.statusAction(403, http);
       return;
     }
     let instance = domain.create();
-    instance.on('error', err => this.error(err));
+    instance.on('error', err => think.statusAction(500, http));
     instance.run(async () => {
       try{
         await this.dispatcher();
@@ -148,7 +119,8 @@ export default class extends think.base {
         await this.exec();
         await this.hook('app_end');
       }catch(err){
-        this.error(err);
+        http.error = err;
+        think.statusAction(500, http);
       }
     });
   }
