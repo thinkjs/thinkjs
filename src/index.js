@@ -78,6 +78,32 @@ export default class {
     }
   }
   /**
+   * check application filename is lower
+   * @return {} []
+   */
+  checkFileName(){
+    let files = think.getFiles(think.APP_PATH);
+    let reg = /\.(js|html|tpl)$/;
+    let fileReg = /^[\\\/_\.a-z0-9]+$/
+    let filter = item => {
+      if(!reg.test(item)){
+        return;
+      }
+      //ignore files in config/locale
+      if(item.indexOf(think.dirname.locale) > -1){
+        return;
+      }
+      return true;
+    }
+    files.forEach(item => {
+      if(filter(item) && !fileReg.test(item)){
+        think.log(colors => {
+          return colors.yellow(`[WARNING]`) + ` filepath \`${item}\` has uppercase chars.`
+        });
+      }
+    });
+  }
+  /**
    * get app module list
    * @return {} []
    */
@@ -360,6 +386,7 @@ export default class {
    */
   start(){
     this.checkEnv();
+    this.checkFileName();
     this.load();
     this.captureError();
     if (think.config('auto_reload')) {

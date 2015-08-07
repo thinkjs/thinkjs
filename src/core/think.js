@@ -363,7 +363,7 @@ think.log = (msg, type, startTime) => {
   let d = new Date();
   let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
   let time = `${fn(d.getHours())}:${fn(d.getMinutes())}:${fn(d.getSeconds())}`;
-  let dateTime = colors.green(`[${date} ${time}] `);
+  let dateTime = colors.gray(`[${date} ${time}] `);
 
   let preError = thinkCache(thinkCache.COLLECTION, 'prev_error');
   if (think.isError(msg)) {
