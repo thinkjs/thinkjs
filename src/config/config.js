@@ -12,6 +12,8 @@ export default {
   hook_on: true, 
   cluster_on: false,
 
+  service_on: true, //Service available
+
   timeout: 10, //10 seconds
 
   resource_on: true,

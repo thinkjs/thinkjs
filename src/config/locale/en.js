@@ -28,6 +28,7 @@ export default {
   DATA_MUST_BE_ARRAY: 'data is not array list',
   PARAMS_TYPE_INVALID: 'params `{name}` type invalid',
   DISLLOW_PORT: 'proxy on, cannot visit with port',
+  SERVICE_UNAVAILABLE: 'Service Unavailable',
 
   validate_required: '{name} need is set',
   validate_contains: '{name} need contains the {args}',

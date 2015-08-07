@@ -102,11 +102,15 @@ export default class extends think.base {
   run(){
     let http = this.http;
     http.header('X-Powered-By', `thinkjs-${think.version}`);
+    //service off
+    if(!http.config('service_on')){
+      http.error = new Error(think.locale('SERVICE_UNAVAILABLE'));
+      return think.statusAction(502, http);
+    }
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.websocket) {
       http.error = new Error(think.locale('DISLLOW_PORT'));
-      think.statusAction(403, http);
-      return;
+      return think.statusAction(403, http);
     }
     let instance = domain.create();
     instance.on('error', err => think.statusAction(500, http));
