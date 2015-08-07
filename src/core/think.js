@@ -1357,7 +1357,8 @@ think.error = (err, addon = '') => {
  * @param  {Object} http   []
  * @return {}        []
  */
-think.statusAction = async (status = 500, http) => {
+think.statusAction = (status = 500, http) => {
+  //
   if(http._error){
     think.log(http.error);
     return http.status(status).end();
@@ -1373,6 +1374,5 @@ think.statusAction = async (status = 500, http) => {
     return think.statusAction(status, http);
   }
   let instance = new cls(http);
-  let action = `_${status}Action`;
-  await think.co.wrap(instance[action]).bind(instance)(instance);
+  return instance.invoke(`_${status}Action`, instance);
 };

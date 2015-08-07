@@ -28,7 +28,7 @@ export default class {
    * @param  {mixed} data []
    * @return {Promise}     []
    */
-  async invoke(method, data = []){
+  async invoke(method, ...data){
     if (think.isFunction(this.__before)) {
       await think.co.wrap(this.__before).bind(this)(this);
     }
