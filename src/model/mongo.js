@@ -38,6 +38,11 @@ export default class extends Base {
     }
     return this._optionsFilter(options);
   }
+  /**
+   * parse data
+   * @param  {Object} data []
+   * @return {Object}      []
+   */
   parseData(data){
     return data;
   }
@@ -98,17 +103,24 @@ export default class extends Base {
   }
   /**
    * update data
-   * @return {[type]} [description]
+   * @return {Promise} []
    */
   update(data, options){
 
   }
   /**
-   * update all data
-   * @param  {[type]} dataList [description]
-   * @return {[type]}          [description]
+   * update many data
+   * @param  {Promise} dataList []
+   * @return {Promise}          []
    */
-  updateAll(dataList){
+  updateMany(dataList){
+    
+  }
+  /**
+   * select data
+   * @return {Promise} []
+   */
+  select(options){
     
   }
 }
