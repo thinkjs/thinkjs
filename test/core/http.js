@@ -48,7 +48,10 @@ function getDefaultHttp(data) {
   var res = {
     end: data.end || data.close || noop,
     write: data.write || data.send || noop,
-    setHeader: noop,
+    headers: {},
+    setHeader: function(name, value) {
+      this.headers[name] = value;
+    },
     setTimeout: noop,
     connection: {
       remoteAddress: data.ip || localeIp
@@ -76,10 +79,42 @@ describe('core/http.js', function() {
     });
   });
 
-  it('get, query', function(done) {
+  it('response timeout', function(done) {
+    var timeoutHttp = getDefaultHttp('/index/index?k=timeout');
+    think.config('timeout', 0.01);
+    timeoutHttp.res.setTimeout = function(delay, fn) {
+      setTimeout(fn, delay);
+    };
+    var instance = new Http(timeoutHttp.req, timeoutHttp.res);
+    instance.run();
+    instance.http.on('timeout', function() {
+      timeoutHttp.res.setTimeout = noop;
+      done();
+    });
+    think.config('timeout', 10);
+  });
+
+  it('GET, query', function(done) {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.deepEqual(http.get(), { name: 'maxzhang' });
+      done();
+    });
+  });
+
+  it('GET, set', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http.get({ name: 'thinkjs' });
+      assert.equal(http.get('name'), 'thinkjs');
+      done();
+    });
+  });
+
+  it('param', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.equal(http.param('name'), 'maxzhang');
       done();
     });
   });
@@ -95,7 +130,53 @@ describe('core/http.js', function() {
   it('get special header', function(done) {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      assert.deepEqual(http.header('user-agent'), '');
+      assert.equal(http.header('user-agent'), '');
+      done();
+    });
+  });
+
+  it('get type', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'content-type': 'application/json'
+    };
+    instance.run().then(function(http) {
+      assert.equal(http.type(), 'application/json');
+      done();
+    });
+  });
+
+  it('set type', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'content-type': 'text/html'
+    };
+    instance.run().then(function(http) {
+      http.type('application/json');
+      assert.equal(http.res.headers['Content-Type'].indexOf('application/json') !== -1, true);
+      done();
+    });
+  });
+
+  it('set type, lookup mimetype', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'content-type': 'text/html'
+    };
+    instance.run().then(function(http) {
+      http.type('json');
+      assert.equal(http.res.headers['Content-Type'].indexOf('application/json') !== -1, true);
+      done();
+    });
+  });
+
+  it('get referrer', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'referrer': 'http://www.thinkjs.org/index?name=maxzhang'
+    };
+    instance.run().then(function(http) {
+      assert.equal(http.referrer('www.thinkjs.org'), 'www.thinkjs.org');
       done();
     });
   });
@@ -104,7 +185,7 @@ describe('core/http.js', function() {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.host = '127.0.0.1:8360';
     instance.run().then(function(http) {
-      assert.deepEqual(http.ip(), '127.0.0.1');
+      assert.equal(http.ip(), '127.0.0.1');
       done();
     });
   });
@@ -116,7 +197,7 @@ describe('core/http.js', function() {
       http.req.socket = {
         remoteAddress: '10.0.0.1'
       };
-      assert.deepEqual(http.ip(), '10.0.0.1');
+      assert.equal(http.ip(), '10.0.0.1');
       done();
     });
   });
@@ -128,7 +209,7 @@ describe('core/http.js', function() {
       http.req.connection = {
         remoteAddress: '10.0.0.1'
       };
-      assert.deepEqual(http.ip(), '10.0.0.1');
+      assert.equal(http.ip(), '10.0.0.1');
       done();
     });
   });
@@ -140,7 +221,33 @@ describe('core/http.js', function() {
       http.req.connection = {
         remoteAddress: '::ff:10.0.0.1'
       };
-      assert.deepEqual(http.ip(), '10.0.0.1');
+      assert.equal(http.ip(), '10.0.0.1');
+      done();
+    });
+  });
+
+  it('ip with x-real-ip', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    think.config('proxy_on', true);
+    instance.req.headers = {
+      'x-real-ip': '10.0.0.1'
+    };
+    instance.run().then(function(http) {
+      assert.equal(http.ip(), '10.0.0.1');
+      think.config('proxy_on', false);
+      done();
+    });
+  });
+
+  it('ip with x-forwarded-for', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    think.config('proxy_on', true);
+    instance.req.headers = {
+      'x-forwarded-for': '10.0.0.1'
+    };
+    instance.run().then(function(http) {
+      assert.equal(http.ip(true), '10.0.0.1');
+      think.config('proxy_on', false);
       done();
     });
   });
@@ -488,9 +595,11 @@ describe('core/http.js', function() {
 
     it('hasPostData true', function(done) {
       var instance = new Http(defaultHttp.req, defaultHttp.res);
-      instance.http.req.headers['transfer-encoding'] = 'GZIP';
-      assert.equal(instance.hasPostData(), true);
-      done();
+      instance.http.req.headers['transfer-encoding'] = 'gzip';
+      instance.run().then(function(http) {
+        assert.equal(instance.hasPostData(), true);
+        done();
+      });
     });
 
     it('hasPostData true', function(done) {
@@ -507,6 +616,20 @@ describe('core/http.js', function() {
       instance.req.url = defaultHttp.req.url;
       instance.req.method = 'POST';
       instance.run().then(function(http) {
+        done();
+      });
+    });
+
+    it('common post, set POST data', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.method = 'POST';
+      instance.run().then(function(http) {
+        http.post({ name: 'maxzhang' });
+        assert.deepEqual(http.post(), {
+          name: 'maxzhang'
+        });
         done();
       });
     });
@@ -550,6 +673,72 @@ describe('core/http.js', function() {
         });
         done();
       });
+    });
+
+    it('common post with json data', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip',
+        'content-type': 'application/json'
+      };
+      instance.req.method = 'POST';
+      process.nextTick(function() {
+        instance.req.emit('data', new Buffer('{"name":"maxzhang"}'));
+        instance.req.emit('end');
+      });
+      instance.run().then(function(http) {
+        assert.deepEqual(http.post(), {
+          name: 'maxzhang'
+        });
+        done();
+      });
+    });
+
+    it('common post, parse querystring error', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip'
+      };
+      instance.req.method = 'POST';
+      process.nextTick(function() {
+        instance.req.emit('data', new Buffer('name=maxzhang'));
+        instance.req.emit('end');
+      });
+      var fn = querystring.parse;
+      querystring.parse = function() {
+        throw new Error('test');
+      };
+      instance.res.end = function() {
+        assert.equal(instance.res.statusCode, 413);
+        querystring.parse = fn;
+        done();
+      };
+      instance.run();
+    });
+
+    it('common post error', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip'
+      };
+      instance.req.method = 'POST';
+      instance.res.statusCode = 200;
+      process.nextTick(function() {
+        instance.req.emit('error', new Error('test'));
+      });
+      think.config('post.max_fields', 150);
+      think.config('post.max_fields_size', 1000);
+      instance.run();
+      instance.res.end = function() {
+        assert.equal(instance.res.statusCode, 413);
+        done();
+      };
     });
 
     it('common post.max_fields', function(done) {
@@ -630,7 +819,31 @@ describe('core/http.js', function() {
       });
     });
 
-    it('file upload, filed', function(done) {
+    it('file upload, same name files', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip',
+        'content-type': 'multipart/form-data; boundary=maxzhang'
+      };
+      instance.req.method = 'POST';
+      process.nextTick(function() {
+        instance.form.emit('file', 'image', 'maxzhang1');
+        instance.form.emit('file', 'image', 'maxzhang2');
+        instance.form.emit('close');
+      });
+      think.config('post.max_fields', 150);
+      think.config('post.max_fields_size', 1000);
+      instance.run().then(function(http) {
+        assert.deepEqual(http.file(), {
+          image: ['maxzhang1', 'maxzhang2']
+        });
+        done();
+      });
+    });
+
+    it('file upload, field', function(done) {
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -674,6 +887,55 @@ describe('core/http.js', function() {
         done();
       };
     });
+
+
+    it('ajax file upload', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip',
+        'x-filename': '1.js'
+      };
+      instance.req.method = 'POST';
+      process.nextTick(function() {
+        instance.req.emit('data', new Buffer('maxzhang'));
+        instance.req.emit('end');
+      });
+      think.config('post.max_fields', 150);
+      think.config('post.max_fields_size', 1000);
+      instance.run().then(function(http) {
+        var file = http.file().file;
+        assert.equal(file.originalFilename, '1.js');
+        assert.equal(file.size, 8);
+        assert.equal(file.path.indexOf('.js') > -1, true);
+        done();
+      });
+    });
+
+    /*
+    it('ajax file upload error', function(done) {
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip',
+        'x-filename': '1.js'
+      };
+      instance.req.method = 'POST';
+      process.nextTick(function() {
+        instance.req.emit('error', new Error('test'));
+      });
+      think.config('post.max_fields', 150);
+      think.config('post.max_fields_size', 1000);
+      instance.run();
+      instance.res.end = function() {
+        assert.equal(instance.res.statusCode, 413);
+        done();
+      };
+    });
+    */
+
 
   });
 

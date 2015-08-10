@@ -42,7 +42,7 @@ export default class {
     this.http.res = res;
     //set http start time
     this.http.startTime = Date.now();
-    
+
     //set request timeout
     let timeout = think.config('timeout');
     if(timeout){
@@ -81,7 +81,7 @@ export default class {
    */
   getFormFilePost(){
     let deferred = think.defer();
-    let uploadDir = think.config('post.file_upload_path');
+    let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
     if (uploadDir) {
       think.mkdir(uploadDir);
     }
@@ -176,10 +176,12 @@ export default class {
   getAjaxFilePost(){
     let filename = this.req.headers[think.config('post.ajax_filename_header')];
     let deferred = think.defer();
-    let filepath = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
-    think.mkdir(filepath);
+    let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
+    if (uploadDir) {
+      think.mkdir(uploadDir);
+    }
     let name = think.uuid(20);
-    filepath += '/' + name + path.extname(filename).slice(0, 5);
+    let filepath = uploadDir + '/' + name + path.extname(filename).slice(0, 5);
     let stream = fs.createWriteStream(filepath);
     this.req.pipe(stream);
     stream.on('error', () => {
@@ -436,7 +438,7 @@ export default class {
    * @return {String} [ip4 or ip6]
    */
   ip(forward){
-    let proxy = think.config('proxy') || this.host === this.hostname;
+    let proxy = think.config('proxy_on') || this.host === this.hostname;
     let ip;
     if (proxy) {
       if (forward) {
@@ -594,7 +596,7 @@ export default class {
     callback = callback.replace(/[^\w\.]/g, '');
     if (callback) {
       data = callback + '(' + (data !== undefined ? JSON.stringify(data) : '') + ')';
-    } 
+    }
     this.end(data);
   }
   /**
@@ -690,7 +692,7 @@ export default class {
     if (!this._outputContentPromise) {
       return this._end();
     }
-    
+
     return Promise.all(this._outputContentPromise).then(() => {
       this._outputContentPromise = undefined;
       this._end();
