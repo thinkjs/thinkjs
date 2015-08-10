@@ -12,7 +12,7 @@ think.middleware('parse_json_payload', http => {
     return;
   }
   let types = http.config('post.json_content_type');
-  if (types.indexOf(http.contentType) > -1) {
+  if (types.indexOf(http._type) > -1) {
     try{
       http._post = JSON.parse(http.payload);
     }catch(e){}
@@ -59,7 +59,7 @@ think.middleware('rewrite_pathname', http => {
 });
 /**
  * sub domain deploy
- * @param  {Object} http){} 
+ * @param  {Object} http){}
  * @return {}
  */
 think.middleware('subdomain_deploy', http => {

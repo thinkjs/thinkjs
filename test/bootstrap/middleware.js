@@ -25,7 +25,7 @@ function getHttp(config, options){
 function execMiddleware(middleware, config, options, data){
   return getHttp(config, options).then(function(http){
     return think.middleware(middleware, http, data);
-  }) 
+  })
 }
 
 
@@ -48,7 +48,7 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: 'welefen',
-      contentType: ''
+      _type: ''
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -64,8 +64,8 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: 'welefen',
-      
-      contentType: 'application/json'
+
+      _type: 'application/json'
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -81,8 +81,8 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
-      
-      contentType: 'application/json'
+
+      _type: 'application/json'
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -98,8 +98,8 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
-      
-      contentType: 'application/json'
+
+      _type: 'application/json'
     }).then(function(http){
       think.middleware('output_resource', http, __filename).then(function(data){
         assert.equal(data, __filename);
@@ -114,8 +114,8 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
-      
-      contentType: 'application/json'
+
+      _type: 'application/json'
     }).then(function(http){
       think.middleware('output_resource', http, __filename + '_____').catch(function(err){
         assert.equal(think.isError(err), true);
