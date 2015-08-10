@@ -13,12 +13,13 @@
     "watch-compile": "npm run compile -- --watch",
     "prepublish": "npm run compile"
   },
-  "contributors": [
-    {
-      "name": "welefen",
-      "email": "welefen@gmail.com"
-    }
-  ],
+  "bin": {
+    "thinkjs": "./bin/index.js"
+  },
+  "contributors": [{
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  }],
   "main": "lib/index.js",
   "dependencies": {
     "swig": "1.4.2",
@@ -36,7 +37,8 @@
     "mocha": "1.20.1",
     "muk": "0.3.1",
     "istanbul": "*",
-    "babel": "*"
+    "babel": "*",
+    "commander": ""
   },
   "keywords": [
     "thinkjs",
