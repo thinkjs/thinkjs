@@ -42,7 +42,14 @@ export default class extends think.adapter.socket {
       options = '?' + querystring.stringify(config.options);
     }
     let str = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
-    
+
+    //log mongodb connection infomation
+    if(this.config.log_connect){
+      think.log(colors => {
+        return `Connect mongodb with ` + colors.magenta(str);
+      }, 'SOCKET');
+    }
+
     return think.await(str, () => {
       let fn = think.promisify(mongo.MongoClient.connect, mongo.MongoClient);
       let promise = fn(str, this.config).then(connection => {
