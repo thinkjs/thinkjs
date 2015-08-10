@@ -120,7 +120,17 @@ export default class extends Base {
    * select data
    * @return {Promise} []
    */
-  select(options){
-    
+  async select(options){
+    options = await this.parseOptions(options);
+    let data = await this.db().select(options);
+    return this._afterSelect(data, options);
+  }
+  /**
+   * select one row data
+   * @param  {Object} options []
+   * @return {Promise}         []
+   */
+  find(options){
+
   }
 }

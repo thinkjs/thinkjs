@@ -60,7 +60,7 @@ export default class extends think.adapter.socket {
         this.connection = connection;
         return connection;
       })
-      let err = new Error(`mongodb://${auth}${config.host}:${config.port}`);
+      let err = new Error(str);
       return think.error(promise, err);
     });
   }
