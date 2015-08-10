@@ -72,6 +72,15 @@ export default class {
     return result;
   }
   /**
+   * select data
+   * @param  {Object} options []
+   * @return {Promise}         []
+   */
+  async select(options){
+    let collection = await this.collection(options.table);
+    return collection.find({name: "welefen"}, {name: false}).limit(2).toArray();
+  }
+  /**
    * close socket
    * @return {} []
    */

@@ -187,7 +187,7 @@ describe('adapter/socket/mongo', function(){
       }
     });
     instance.getConnection().catch(function(err){
-      assert.equal(err.message, 'Address not available, mongodb://welefen:suredy@127.0.0.1:27017. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL')
+      assert.equal(err.message, 'Address not available, mongodb://welefen:suredy@127.0.0.1:27017/test?slaveOk=true. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL')
       think.npm = npm;
       think.reject = reject;
       done();
