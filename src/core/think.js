@@ -375,6 +375,8 @@ think.log = (msg, type, startTime) => {
     return;
   }else if(think.isFunction(msg)){
     msg = msg(colors);
+  }else if(think.isObject(msg) || think.isArray(msg)){
+    msg = JSON.stringify(msg);
   }
   // if(msg.length > 300){
   //   msg = msg.substr(0, 300) + '...';
