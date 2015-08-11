@@ -47,6 +47,14 @@ export default class extends Base {
     return data;
   }
   /**
+   * get table connection
+   * @return {Promise} []
+   */
+  collection(table){
+    table = table || this.getTableName();
+    return this.db().collection(table);
+  }
+  /**
    * add data
    * @param {Object} data    []
    * @param {Object} options []
@@ -98,23 +106,42 @@ export default class extends Base {
    * delete data
    * @return {} []
    */
-  delete(options){
-
+  async delete(options){
+    options = await this.parseOptions(options);
+    let data = await this.db().delete(options);
+    await this._afterDelete(options);
+    return data.result.n || 0;
   }
   /**
    * update data
    * @return {Promise} []
    */
-  update(data, options){
-
+  async update(data, options){
+    options = await this.parseOptions(options);
+    let pk = await this.getPk();
+    if(data[pk]){
+      this.where({[pk]: data[pk]});
+      delete data[pk];
+    }
+    let result = await this.db().update(data, options);
+    await this._afterUpdate(data, options);
+    return result.result.nModified || 0;
   }
   /**
    * update many data
    * @param  {Promise} dataList []
    * @return {Promise}          []
    */
-  updateMany(dataList){
-    
+  async updateMany(dataList, options){
+    if (!think.isArray(dataList)) {
+      return think.reject(new Error(think.locale('DATA_MUST_BE_ARRAY')));
+    }
+    let promises = dataList.map(data => {
+      return this.update(data, options);
+    });
+    return Promise.all(promises).then(data => {
+      return data.reduce((a, b) => a + b);
+    });
   }
   /**
    * select data
@@ -130,7 +157,74 @@ export default class extends Base {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  find(options){
-
+  async find(options){
+    options = await this.parseOptions(options, {limit: 1});
+    let data = await this.db().select(options);
+    return this._afterFind(data[0] || {}, options);
+  }
+  /**
+   * increment field data
+   * @param  {String} field []
+   * @param  {Number} step  []
+   * @return {Promise}       []
+   */
+  async increment(field, step = 1){
+    let options = await this.parseOptions(options);
+    return this.db().update({
+      $inc: {
+        [field]: step
+      }
+    }, options);
+  }
+  /**
+   * decrement field data
+   * @param  {String} field []
+   * @param  {Number} step  []
+   * @return {Promise}       []
+   */
+  async decrement(field, step = 1){
+    let options = await this.parseOptions(options);
+    return this.db().update({
+      $inc: {
+        [field]: 0 - step
+      }
+    }, options);
+  }
+  /**
+   * get count 
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  async count(field){
+    this.field(field);
+    let options = await this.parseOptions();
+    return this.db().count(options);
+  }
+  /**
+   * get sum
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  async sum(field){
+    this.field(field);
+    let options = await this.parseOptions();
+    return this.db().sum(options);
+  }
+  /**
+   * aggregate
+   * http://docs.mongodb.org/manual/reference/sql-aggregation-comparison/
+   * @param  {} options []
+   * @return {}         []
+   */
+  aggregate(options){
+    return this.db().aggregate(this.getTableName(), options);
+  }
+  /**
+   * create indexes
+   * @param  {Object} indexes []
+   * @return {Promise}         []
+   */
+  createIndex(indexes){
+    return this.db().createIndex(this.getTableName(), indexes);
   }
 }

@@ -15,9 +15,9 @@ export default class extends think.adapter.socket {
     super.init(config);
 
     this.config = think.extend({}, {
-      host: '127.0.0.1',
-      port: 27017
+      host: '127.0.0.1'
     }, config);
+    this.config.port = this.config.port || 27017;
   }
   /**
    * get connection
