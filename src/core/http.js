@@ -559,7 +559,6 @@ export default class {
     let obj;
     let error = this.config('error');
     if (think.isObject(errno)) {
-      data = errmsg;
       obj = think.extend({}, errno);
     }else{
       if (!think.isNumber(errno)) {

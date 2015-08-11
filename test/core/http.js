@@ -146,6 +146,19 @@ describe('core/http.js', function() {
     });
   });
 
+  it('get type, _contentTypeIsSend', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'content-type': 'text/html'
+    };
+    instance.run().then(function(http) {
+      http._contentTypeIsSend = true;
+      http.type('application/json');
+      assert.equal(http.type(), 'text/html');
+      done();
+    });
+  });
+
   it('set type', function(done) {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
@@ -177,6 +190,30 @@ describe('core/http.js', function() {
     };
     instance.run().then(function(http) {
       assert.equal(http.referrer('www.thinkjs.org'), 'www.thinkjs.org');
+      done();
+    });
+  });
+
+  it('isAjax 1', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'x-requested-with': 'XMLHttpRequest'
+    };
+    instance.req.method = 'POST';
+    instance.run().then(function(http) {
+      assert.equal(http.isAjax(), true);
+      done();
+    });
+  });
+
+  it('isAjax 2', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'x-requested-with': 'XMLHttpRequest'
+    };
+    instance.req.method = 'POST';
+    instance.run().then(function(http) {
+      assert.equal(http.isAjax('GET'), false);
       done();
     });
   });
@@ -252,6 +289,21 @@ describe('core/http.js', function() {
     });
   });
 
+  it('ip, is not ip', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var fn = think.isIP;
+    think.isIP = function() { return false; };
+    instance.run().then(function(http) {
+      http.host = '127.0.0.1:8360';
+      http.req.connection = {
+        remoteAddress: '10.0.0.1'
+      };
+      assert.equal(http.ip(), '127.0.0.1');
+      think.isIP = fn;
+      done();
+    });
+  });
+
   it('set header', function(done) {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -272,6 +324,20 @@ describe('core/http.js', function() {
     instance.run().then(function(http) {
       http.res.headersSent = true;
       http.header('name', 'maxzhang');
+      done();
+    });
+  });
+
+  it('set header, _contentTypeIsSend', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.req.headers = {
+      'content-type': 'text/html'
+    };
+    instance.run().then(function(http) {
+      http.res.headersSent = false;
+      http.header('Content-Type', 'application/json');
+      http.header('Content-Type', 'text/html');
+      assert.equal(http.res.headers['Content-Type'].indexOf('application/json') !== -1, true);
       done();
     });
   });
@@ -472,7 +538,7 @@ describe('core/http.js', function() {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
-      http.res.setHeader = function(name, value) {
+      http.res.setHeader = function(name) {
         assert.equal(name, 'X-EXEC-TIME');
         http.res.setHeader = fn;
         done();
@@ -485,7 +551,7 @@ describe('core/http.js', function() {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
-      http.res.setHeader = function(name, value) {
+      http.res.setHeader = function(name) {
         assert.equal(name, 'X-TEST');
         http.res.setHeader = fn;
         done();
@@ -574,12 +640,97 @@ describe('core/http.js', function() {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
-      http.res.write = function(content, encoding) {
+      http.res.write = function(content) {
         assert.equal(content, 'true');
         http.res.write = fn;
         done();
       };
       http.echo(true);
+    });
+  });
+
+  it('success', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      var fn = http.res.write;
+      http.res.write = function(content) {
+        assert.equal(content, '{"errno":0,"errmsg":"success","data":{"name":"thinkjs"}}');
+        http.res.write = fn;
+        done();
+      };
+      http.success({ 'name': 'thinkjs' }, 'success');
+    });
+  });
+
+  it('fail', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      var fn = http.res.write;
+      http.res.write = function(content) {
+        assert.equal(content, '{"errno":500,"errmsg":"error","data":{"name":"thinkjs"}}');
+        http.res.write = fn;
+        done();
+      };
+      http.fail(500, 'error', { 'name': 'thinkjs' });
+    });
+  });
+
+  it('fail with object', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      var fn = http.res.write;
+      http.res.write = function(content) {
+        assert.equal(content, '{"errno":500,"errmsg":"error","data":{"name":"thinkjs"}}');
+        http.res.write = fn;
+        done();
+      };
+      http.fail({
+        errno: 500,
+        errmsg: 'error',
+        data: { 'name': 'thinkjs' }
+      });
+    });
+  });
+
+  it('jsonp', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      var fn = http.res.write;
+      http.get('callback', 'callback1');
+      http.res.write = function(content) {
+        console.log(content);
+        assert.equal(content, 'callback1({"name":"thinkjs"})');
+        http.res.write = fn;
+        done();
+      };
+      http.jsonp({ 'name': 'thinkjs' });
+    });
+  });
+
+  it('jsonp without callback', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      var fn = http.res.write;
+      http.res.write = function(content) {
+        assert.equal(content, '{"name":"thinkjs"}');
+        http.res.write = fn;
+        done();
+      };
+      http.jsonp({ 'name': 'thinkjs' });
+    });
+  });
+
+  it('jsonp, empty data', function(done) {
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      var fn = http.res.write;
+      http.get('callback', 'callback1');
+      http.res.write = function(content) {
+        assert.equal(content, 'callback1()');
+        http.res.write = fn;
+        done();
+      };
+      http.jsonp();
     });
   });
 
@@ -596,7 +747,7 @@ describe('core/http.js', function() {
     it('hasPostData true', function(done) {
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.http.req.headers['transfer-encoding'] = 'gzip';
-      instance.run().then(function(http) {
+      instance.run().then(function() {
         assert.equal(instance.hasPostData(), true);
         done();
       });
@@ -615,7 +766,7 @@ describe('core/http.js', function() {
       instance.req = new IncomingMessage();
       instance.req.url = defaultHttp.req.url;
       instance.req.method = 'POST';
-      instance.run().then(function(http) {
+      instance.run().then(function() {
         done();
       });
     });
