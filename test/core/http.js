@@ -2,6 +2,7 @@
 
 var assert = require('assert');
 var path = require('path');
+var fs = require('fs');
 var querystring = require('querystring');
 var EventEmitter = require('events').EventEmitter;
 var Socket = require('net').Socket;
@@ -1141,6 +1142,36 @@ describe('core/http.js', function() {
         assert.equal(instance.res.statusCode, 413);
         done();
       };
+    });
+
+    it('file upload, clear tmp file', function(done) {
+      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var instance = new Http(defaultHttp.req, defaultHttp.res);
+      instance.req = new IncomingMessage(new Socket());
+      instance.req.url = defaultHttp.req.url;
+      instance.req.headers = {
+        'transfer-encoding': 'gzip',
+        'content-type': 'multipart/form-data; boundary=maxzhang'
+      };
+      instance.req.method = 'POST';
+      process.nextTick(function() {
+        instance.form.emit('file', 'image', 'maxzhang');
+        instance.form.emit('close');
+      });
+      think.config('post.max_fields', 150);
+      think.config('post.max_fields_size', 1000);
+      var fn = fs.unlink;
+      var fn1 = think.isFile;
+      think.isFile = function() { return true; };
+      fs.unlink = function(filepath) {
+        console.log(filepath);
+        fs.unlink = fn;
+        think.isFile = fn1;
+        done();
+      };
+      instance.run().then(function(http) {
+        http._end();
+      });
     });
 
 
