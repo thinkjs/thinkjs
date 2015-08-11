@@ -591,6 +591,13 @@ describe('model/base.js', function(){
       done();
     })
   })
+  it('expain', function(done){
+    instance.where({name: 'welefen'}).explain(true).getField('title,cate_no', 3).then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "EXPLAIN SELECT `title`,`cate_no` FROM `think_user` WHERE ( `name` = 'welefen' ) LIMIT 3");
+      done();
+    })
+  })
   it('count', function(done){
     instance.count().then(function(data){
       assert.equal(data, 40000);
