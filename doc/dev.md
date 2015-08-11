@@ -27,6 +27,7 @@
 * thinkjs创建项目的命令
 * thinkjs T-shirt
 * grunt,gulp支持？
+* 添加csrf检测，cors头信息设置的middleware
 
 
 
