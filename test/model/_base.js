@@ -51,7 +51,7 @@ describe('model/_base.js', function(){
   it('getConfigKey', function(){
     var instance = new Base('user', think.config('db'));
     var data = instance.getConfigKey();
-    assert.deepEqual(data, '1f01fb79db550b0419d54a95c188da7a');
+    assert.deepEqual(data, 'c9c2617d14387ce79c8cee78ce578972');
   })
   it('getConfigKey, exist', function(){
     var instance = new Base('user', think.config('db'));

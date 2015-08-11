@@ -94,6 +94,7 @@ export default {
     encoding: 'utf8',
     nums_per_page: 10,
     log_sql: true,
+    log_connect: true,
     cache: {
       on: true,
       type: '',
