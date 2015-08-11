@@ -333,6 +333,12 @@ describe('model/_base.js', function(){
     assert.deepEqual(instance._options.distinct, 'name');
     assert.deepEqual(instance._options.field, 'name')
   })
+  it('explain', function(){
+    var instance = new Base('user', think.config('db'));
+    var data = instance.explain('name');
+    assert.equal(data, instance);
+    assert.deepEqual(instance._options.explain, 'name');
+  })
   it('_optionsFilter', function(){
     var instance = new Base('user', think.config('db'));
     var data = instance._optionsFilter('data');

@@ -180,6 +180,9 @@ export default class {
    * @return {}         []
    */
   field(field, reverse = false){
+    if(!field){
+      return this;
+    }
     if (think.isString(field)) {
       field = field.split(/\s*,\s*/);
     }
@@ -329,6 +332,15 @@ export default class {
     if (think.isString(data)) {
       this._options.field = data;
     }
+    return this;
+  }
+  /**
+   * set explain
+   * @param  {Boolean} explain []
+   * @return {}         []
+   */
+  explain(explain){
+    this._options.explain = explain;
     return this;
   }
   /**

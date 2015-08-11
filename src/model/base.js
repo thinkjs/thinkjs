@@ -278,15 +278,15 @@ export default class extends Base {
   }
   /**
    * update all data
-   * @param  {[type]} dataList [description]
-   * @return {[type]}          [description]
+   * @param  {Array} dataList []
+   * @return {Promise}          []
    */
-  updateMany(dataList){
+  updateMany(dataList, options){
     if (!think.isArray(dataList)) {
       return think.reject(new Error(think.locale('DATA_MUST_BE_ARRAY')));
     }
     let promises = dataList.map(data => {
-      return this.update(data);
+      return this.update(data, options);
     });
     return Promise.all(promises).then(data => {
       return data.reduce((a, b) => a + b);
@@ -294,7 +294,7 @@ export default class extends Base {
   }
   /**
    * increment field data
-   * @return {[type]} [description]
+   * @return {Promise} []
    */
   increment(field, step = 1){
     let data = {

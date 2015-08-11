@@ -34,7 +34,18 @@ export default class {
       'IN': 'IN',
       'NOTIN': 'NOT IN'
     }
-    this.selectSql = 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
+    this.selectSql = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
+  }
+  /**
+   * parse explain
+   * @param  {Boolean} explain []
+   * @return {String}         []
+   */
+  parseExplain(explain) {
+    if(!explain){
+      return '';
+    }
+    return 'EXPLAIN ';
   }
   /**
    * parse set

@@ -19,7 +19,17 @@ describe('adapter/db/_parse.js', function(){
     var instance = new Parse();
     var keys = Object.keys(instance.comparison).sort();
     assert.deepEqual(keys, [ '<>','EGT','ELT','EQ','GT','IN','LIKE','LT','NEQ','NOTIN','NOTLIKE' ]);
-    assert.equal(instance.selectSql, 'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%')
+    assert.equal(instance.selectSql, '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%')
+  })
+  it('parseExplain', function(){
+    var instance = new Parse();
+    var data = instance.parseExplain()
+    assert.equal(data, "");
+  })
+  it('parseExplain true', function(){
+    var instance = new Parse();
+    var data = instance.parseExplain(true)
+    assert.equal(data, "EXPLAIN ");
   })
   it('parseSet', function(){
     var instance = new Parse();
