@@ -259,9 +259,22 @@ export default class extends Parse {
    * @param  {Object} indexes []
    * @return {Promise}         []
    */
-  createIndex(table, indexes){
+  ensureIndex(table, indexes, options = {}){
+    if(options === true){
+      options = {unique: true};
+    }
+    if(think.isString(indexes)){
+      indexes = indexes.split(/\s*,\s*/);
+    }
+    if(think.isArray(indexes)){
+      let result = {};
+      indexes.forEach(item => {
+        result[item] = 1;
+      });
+      indexes = result;
+    }
     return this.collection(table).then(collection => {
-      return collection.createIndex(indexes);
+      return collection.ensureIndex(indexes, options);
     })
   }
   /**

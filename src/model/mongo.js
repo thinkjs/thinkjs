@@ -263,11 +263,33 @@ export default class extends Base {
     return this.db().aggregate(this.getTableName(), options);
   }
   /**
+   * map reduce
+   * Examples: http://docs.mongodb.org/manual/tutorial/map-reduce-examples/
+   * @param  {Function} map    []
+   * @param  {Function} reduce []
+   * @param  {Object} out    []
+   * @return {Promise}        []
+   */
+  mapReduce(map, reduce, out){
+    return this.collection().then(collection => {
+      return collection.mapReduce(map, reduce, out);
+    })
+  }
+  /**
    * create indexes
    * @param  {Object} indexes []
    * @return {Promise}         []
    */
-  createIndex(indexes){
-    return this.db().createIndex(this.getTableName(), indexes);
+  createIndex(indexes, options){
+    return this.db().ensureIndex(this.getTableName(), indexes, options);
+  }
+  /**
+   * get collection indexes
+   * @return {Promise} []
+   */
+  indexes(){
+    return this.collection().then(collection => {
+      return collection.indexes();
+    })
   }
 }

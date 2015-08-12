@@ -61,7 +61,7 @@ export default class {
     if (action !== '__call') {
       action += 'Action';
     }
-    return controller.invoke(action, [controller]);
+    return controller.invoke(action, controller);
   }
   /**
    * get or set cache
