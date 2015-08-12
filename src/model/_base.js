@@ -18,10 +18,11 @@ export default class {
    * @return {}        []
    */
   init(name = '', config = {}){
+
     let options = {
       pk: 'id', //primary key
       name: '', //model name
-      tablePrefix: '', //table prefix
+      tablePrefix: undefined, //table prefix
       tableName: '', //table name, without prefix
       fields: {}, //table fields
       readonlyFields: []// readonly fields
@@ -32,20 +33,23 @@ export default class {
         this[key] = options[key];
       }
     }
+
     if(think.isObject(name)){
       config = name;
       name = '';
     }
+
     this.config = config;
     this._db = null;
     this._data = {};
     this._options = {};
+
     //model name
     if(name){
       this.name = name;
     }
-    //table prefix
-    if (this.config.prefix && !this.tablePrefix) {
+    // get table prefix from config
+    if (this.config.prefix && this.tablePrefix === undefined) {
       this.tablePrefix = this.config.prefix;
     }
   }
@@ -108,7 +112,8 @@ export default class {
     if(!this.tableName){
       this.tableName = this.getModelName();
     }
-    return this.tablePrefix + this.tableName;
+    let tablePrefix = this.tablePrefix || '';
+    return tablePrefix + this.tableName;
   }
   /**
    * set cache options
