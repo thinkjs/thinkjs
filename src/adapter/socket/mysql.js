@@ -1,7 +1,5 @@
 'use strict';
 
-import mysql from 'mysql';
-
 /**
  * mysql socket class
  * @return {} []
@@ -14,8 +12,14 @@ export default class extends think.adapter.socket {
    */
   init(config = {}){
     //alias password config
-    config.password = config.pwd;
-    config.database = config.name;
+    if (config.pwd) {
+      config.password = config.pwd;
+      delete config.pwd;
+    }
+    if (config.name) {
+      config.database = config.name;
+      delete config.name;
+    }
     //merge config
     this.config = think.extend({
       host: '127.0.0.1',
@@ -32,45 +36,58 @@ export default class extends think.adapter.socket {
    * get connection
    * @return {Promise} [conneciton handle]
    */
-  getConnection(){
-    let deferred = think.defer();
-    if(this.pool){
-      this.pool.getConnection((err, connection) => {
-        if(err){
-          deferred.reject(err);
-          this.close();
-        }else{
-          deferred.resolve(connection);
-        }
-      });
-      return deferred.promise;
+  async getConnection(){
+    if (this.connection) {
+      return this.connection;
     }
-    if(this.config.connectionLimit){
-      this.pool = mysql.createPool(this.config);
+
+    let config = this.config;
+    let str = `mysql://${config.host}:${config.port}`;
+
+    if (this.pool) {
+      return think.await(str, () => {
+        let deferred = think.defer();
+        this.pool.getConnection((err, connection) => {
+          if (err) {
+            deferred.reject(err);
+            this.close();
+          } else {
+            deferred.resolve(connection);
+          }
+        });
+        let err = new Error(str);
+        return think.error(deferred.promise, err);
+      });
+    }
+
+    let mysql = await think.npm('mysql');
+
+    if (config.connectionLimit) {
+      this.pool = mysql.createPool(config);
       return this.getConnection();
     }
 
-    if(this.connection){
-      return this.deferred.promise;
-    }
-    this.connection = mysql.createConnection(this.config);
-    this.connection.connect(err => {
-      if (err) {
-        deferred.reject(err);
+    return think.await(str, () => {
+      let deferred = think.defer();
+      this.connection = mysql.createConnection(config);
+      this.connection.connect(err => {
+        if (err) {
+          deferred.reject(err);
+          this.close();
+        } else {
+          deferred.resolve(this.connection);
+        }
+      });
+      this.connection.on('error', () => {
         this.close();
-      }else{
-        deferred.resolve(this.connection);
-      }
+      });
+      //PROTOCOL_CONNECTION_LOST
+      this.connection.on('end', () => {
+        this.connection = null;
+      });
+      let err = new Error(str);
+      return think.error(deferred.promise, err);
     });
-    this.connection.on('error', () => {
-      this.close();
-    });
-    //PROTOCOL_CONNECTION_LOST
-    this.connection.on('end', () => {
-      this.close();
-    });
-    this.deferred = deferred;
-    return deferred.promise;
   }
   /**
    * query sql
@@ -79,31 +96,27 @@ export default class extends think.adapter.socket {
    */
   async query(sql, nestTables){
     let connection = await this.getConnection();
-    let deferred = think.defer();
     let data = {
       sql: sql,
       nestTables: nestTables
     };
     //query timeout
-    if(this.config.timeout){
+    if (this.config.timeout) {
       data.timeout = this.config.timeout;
     }
     let startTime = Date.now();
-    connection.query(data, (err, rows = []) => {
+    let fn = think.promisify(connection.query, connection);
+    let promise = fn(data).then((rows = []) => {
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
-      if (err) {
-        deferred.reject(err);
-      }else{
-        deferred.resolve(rows);
-      }
       //auto close connection in cli mode
-      if(think.cli){
+      if (think.cli) {
         this.close();
       }
+      return rows;
     });
-    return deferred.promise;
+    return think.error(promise);
   }
   /**
    * execute
@@ -118,9 +131,9 @@ export default class extends think.adapter.socket {
    * @return {} []
    */
   close(){
-    if(this.pool){
+    if (this.pool) {
       this.pool.end(() => this.pool = null);
-    }else if (this.connection) {
+    } else if (this.connection) {
       this.connection.end(() => this.connection = null);
     }
   }
