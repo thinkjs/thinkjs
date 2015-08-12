@@ -148,13 +148,15 @@ export default {
     port: 11211,
     username: '',
     password: '',
-    timeout: 0
+    timeout: 0,
+    log_connect: true
   },
   redis: {
     host: '127.0.0.1',
     port: 6379,
     password: '',
-    timeout: 0
+    timeout: 0,
+    log_connect: true
   },
   package: { //extra package version
     redis: '0.12.1',

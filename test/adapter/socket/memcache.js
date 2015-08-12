@@ -27,7 +27,7 @@ describe('adapter/socket/memcache.js', function(){
       return {
         Client: {
           create: function(str){
-            assert.equal(str, ':@127.0.0.1:11211');
+            assert.equal(str, '127.0.0.1:11211');
           }
         }
       }

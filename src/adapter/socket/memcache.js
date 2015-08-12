@@ -19,6 +19,28 @@ export default class extends think.adapter.socket {
     }, config);
   }
   /**
+   * get socket connect str
+   * @return {String} []
+   */
+  getSocketStr(protocal){
+    let str = '';
+    let config = this.config;
+    if(config.username){
+      str += config.username;
+    }
+    if(config.password){
+      str += ':' + config.password;
+    }
+    if(str){
+      str += '@';
+    }
+    str += config.host + ':' + config.port;
+    if(protocal){
+      return 'memcache://' + str;
+    }
+    return str;
+  }
+  /**
    * get connection
    * @return {Promise} []
    */
@@ -28,12 +50,19 @@ export default class extends think.adapter.socket {
     }
     let memjs = await think.npm('memjs');
     let config = this.config;
-    let str = `${config.username}:${config.password}@${config.host}:${config.port}`;
-    this.connection = memjs.Client.create(str, {
+    this.connection = memjs.Client.create(this.getSocketStr(), {
       logger: {
         log: () => {}
       }
     });
+    
+    //log memcache connection info
+    if(this.config.log_connect){
+      think.log(colors => {
+        return `Connect memcache with ` + colors.magenta(this.getSocketStr(true));
+      }, 'SOCKET');
+    }
+
     return this.connection;
   }
   /**
@@ -52,7 +81,7 @@ export default class extends think.adapter.socket {
       args = [args[0], args[1], callback, args[2]];
     }
     connection[name](...args);
-    let err = new Error(`memcache://${this.config.host}:${this.config.port}`);
+    let err = new Error(this.getSocketStr(true));
     return think.error(deferred.promise, err);
   }
   /**
