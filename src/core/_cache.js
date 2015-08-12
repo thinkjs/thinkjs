@@ -60,7 +60,7 @@ thinkCache.VIEW = 'view';
  */
 thinkCache.DB = 'db';
 /**
- * store table fields
+ * store table info
  * @type {String}
  */
 thinkCache.TABLE = 'table';

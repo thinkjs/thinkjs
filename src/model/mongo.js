@@ -17,6 +17,43 @@ export default class extends Base {
     return Promise.resolve(this.pk);
   }
   /**
+   * create index from this.indexes
+   * @return {Promise} []
+   */
+  async _createIndexes(){
+    let storeKey = `mongo_${this.getTableName()}_indexes`;
+    let isSet = thinkCache(thinkCache.TABLE, storeKey);
+    if(isSet){
+      return;
+    }
+    let indexes = this.indexes;
+    if(this.isEmpty(indexes)){
+      return;
+    }
+
+    return think.await(storeKey, () => {
+      let promies = [];
+      for(let key in indexes){
+        let value = indexes[key];
+        if(think.isObject(value)){
+          let unique = value.unique;
+          delete value.unique;
+          if(think.isEmpty(value)){
+            value[key] = 1;
+          }
+          promises.push(this.createIndex(value, {unique: unique}));
+        }else{
+          value = {[key]: value};
+          promises.push(this.createIndex(value));
+        }
+      }
+      return Promise.all(promises).then(() => {
+        thinkCache(thinkCache.TABLE, storeKey, 1);
+      });
+
+    });
+  }
+  /**
    * parse options
    * @param  {Object} options []
    * @return {Promise}         []
@@ -37,6 +74,9 @@ export default class extends Base {
     if(!think.isObject(oriOpts)){
       options = think.extend(options, oriOpts, extraOptions);
     }
+    
+    await _createIndexes();
+
     return this._optionsFilter(options);
   }
   /**

@@ -15,10 +15,11 @@ export default class extends Base {
    */
   async getTableFields(table){
     table = table || this.getTableName();
-    let fields = thinkCache(thinkCache.TABLE, table);
+    let storeKey = `${this.config.type}_${table}_fields`;
+    let fields = thinkCache(thinkCache.TABLE, storeKey);
     if(!fields){
       fields = await this.db().getFields(table);
-      thinkCache(thinkCache.TABLE, table, fields);
+      thinkCache(thinkCache.TABLE, storeKey, fields);
     }
     if(table !== this.getTableName()){
       return fields;

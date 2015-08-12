@@ -24,7 +24,29 @@ export default class {
       name: '', //model name
       tablePrefix: undefined, //table prefix
       tableName: '', //table name, without prefix
+      /**
+       * fields list
+       * {
+       *   name: {
+       *     type: 'string',
+       *     required: true,
+       *     default: '',
+       *     unique: true,
+       *     primary: true,
+       *     auto_increment: true
+       *   }
+       * }
+       */
       fields: {}, //table fields
+      /**
+       * table indexes
+       * {
+       *   name: {name: 1, $unique: true}, //single indexes
+       *   test1: {name1: 1, title1: 1, $unique: 1}, //compound indexes
+       * }
+       * @type {Object}
+       */
+      indexes: {},
       readonlyFields: []// readonly fields
     };
     //if is set in subclass, can't be override
