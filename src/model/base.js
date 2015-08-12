@@ -260,15 +260,23 @@ export default class extends Base {
     data = think.extend({}, this._data, data);
     //clear data
     this._data = {};
-    if (think.isEmpty(data)) {
-      return think.reject(new Error(think.locale('DATA_EMPTY')));
-    }
+
     //get where condition from data
     let pk = await this.getPk();
     if(data[pk]){
       this.where({[pk]: data[pk]});
       delete data[pk];
     }
+
+    //remove readonly field data
+    this.readonlyFields.forEach(item => {
+      delete data[item];
+    })
+
+    if (think.isEmpty(data)) {
+      return think.reject(new Error(think.locale('DATA_EMPTY')));
+    }
+    
     options = await this.parseOptions(options);
     data = await this._beforeUpdate(data, options);
     data = this.parseData(data);
