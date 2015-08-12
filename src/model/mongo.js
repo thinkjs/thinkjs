@@ -27,12 +27,12 @@ export default class extends Base {
       return;
     }
     let indexes = this.indexes;
-    if(this.isEmpty(indexes)){
+    if(think.isEmpty(indexes)){
       return;
     }
 
     return think.await(storeKey, () => {
-      let promies = [];
+      let promises = [];
       for(let key in indexes){
         let value = indexes[key];
         if(think.isObject(value)){
@@ -75,7 +75,7 @@ export default class extends Base {
       options = think.extend(options, oriOpts, extraOptions);
     }
     
-    await _createIndexes();
+    await this._createIndexes();
 
     return this._optionsFilter(options);
   }
@@ -327,7 +327,7 @@ export default class extends Base {
    * get collection indexes
    * @return {Promise} []
    */
-  indexes(){
+  getIndexes(){
     return this.collection().then(collection => {
       return collection.indexes();
     })
