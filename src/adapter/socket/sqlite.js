@@ -34,6 +34,14 @@ export default class extends think.adapter.socket {
       sqlite = sqlite.verbose();
     }
     return think.await(this.config.path, () => {
+
+      //log sqlite connection information
+      if(this.config.log_connect){
+        think.log(colors => {
+          return `Connect sqlite with ` + colors.magenta(`sqlite://${this.config.path}`);
+        }, 'SOCKET');
+      }
+
       let deferred = think.defer();
       let db = new sqlite.Database(this.config.path, err => {
         if(err){

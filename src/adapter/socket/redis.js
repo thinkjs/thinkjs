@@ -29,6 +29,14 @@ export default class extends think.adapter.socket {
     let config = this.config;
     let str = `redis://${config.host}:${config.port}`;
     return think.await(str, () => {
+      
+      //log redis connection information
+      if(this.config.log_connect){
+        think.log(colors => {
+          return `Connect redis with ` + colors.magenta(str);
+        }, 'SOCKET');
+      }
+
       let deferred = think.defer();
       let connection = redis.createClient(config.port, config.host, config);
       if (config.password) {
