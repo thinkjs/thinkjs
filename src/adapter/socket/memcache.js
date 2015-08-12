@@ -55,13 +55,8 @@ export default class extends think.adapter.socket {
         log: () => {}
       }
     });
-    
-    //log memcache connection info
-    if(this.config.log_connect){
-      think.log(colors => {
-        return `Connect memcache with ` + colors.magenta(this.getSocketStr(true));
-      }, 'SOCKET');
-    }
+
+    this.logConnect(this.getSocketStr(true), 'memcache');
 
     return this.connection;
   }

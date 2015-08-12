@@ -17,6 +17,18 @@ export default class {
     this.connection = null;
   }
   /**
+   * log connection
+   * @return {} []
+   */
+  logConnect(str, type){
+    //log mongodb connection infomation
+    if(this.config.log_connect){
+      think.log(colors => {
+        return `Connect ${type} with ` + colors.magenta(str);
+      }, 'SOCKET');
+    }
+  }
+  /**
    * close socket connection
    * @return {} []
    */

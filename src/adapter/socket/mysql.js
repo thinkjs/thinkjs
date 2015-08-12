@@ -57,14 +57,9 @@ export default class extends think.adapter.socket {
 
     let mysql = await think.npm('mysql');
 
-    //log mysql connection infomation
-    if(this.config.log_connect){
-      think.log(colors => {
-        return `Connect mysql with ` + colors.magenta(str);
-      }, 'SOCKET');
-    }
-
     if (config.connectionLimit) {
+      this.logConnect(str, 'mysql');
+      
       this.pool = mysql.createPool(config);
       return this.getConnection();
     }
@@ -73,6 +68,9 @@ export default class extends think.adapter.socket {
       let deferred = think.defer();
       this.connection = mysql.createConnection(config);
       this.connection.connect(err => {
+        
+        this.logConnect(str, 'mysql');
+
         if (err) {
           deferred.reject(err);
           this.close();
