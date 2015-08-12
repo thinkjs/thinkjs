@@ -105,21 +105,21 @@ export default class extends Parse {
       return result;
     }
   }
-  /**
-   * field to where
-   * @return {Object} []
-   */
-  fieldToWhere(fields){
-    let result = {};
-    for(let field in fields){
-      if(fields[field]){
-        result[field] = {$exists: true};
-      }else{
-        result[field] = {$exists: false};
-      }
-    }
-    return result;
-  }
+  // /**
+  //  * field to where
+  //  * @return {Object} []
+  //  */
+  // fieldToWhere(fields){
+  //   let result = {};
+  //   for(let field in fields){
+  //     if(fields[field]){
+  //       result[field] = {$exists: true};
+  //     }else{
+  //       result[field] = {$exists: false};
+  //     }
+  //   }
+  //   return result;
+  // }
   /**
    * select data
    * @param  {Object} options []

@@ -13,12 +13,13 @@ export default class extends Base {
    * @return {Promise} []
    */
   getPk(){
-    return '_id';
+    this.pk = '_id';
+    return Promise.resolve(this.pk);
   }
   /**
    * parse options
    * @param  {Object} options []
-   * @return promise         []
+   * @return {Promise}         []
    */
   async parseOptions(oriOpts, extraOptions){
     let options = think.extend({}, this._options);
@@ -151,6 +152,48 @@ export default class extends Base {
     options = await this.parseOptions(options);
     let data = await this.db().select(options);
     return this._afterSelect(data, options);
+  }
+  /**
+   * count select
+   * @param  {Object} options  []
+   * @param  {Boolean} pageFlag []
+   * @return {Promise}          []
+   */
+  async countSelect(options, pageFlag){
+    let count;
+    if (think.isBoolean(options)) {
+      pageFlag = options;
+      options = {};
+    }else if(think.isNumber(options)){
+      count = options;
+      options = {};
+    }
+
+    options = await this.parseOptions(options);
+    let pk = this.pk;
+    let table = options.alias || this.getTableName();
+
+    if(!count){
+      //get count
+      count = await this.options(options).count();
+    }
+
+    //get page options
+    let data = {numsPerPage: this.config.nums_per_page};
+    data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
+    let totalPage = Math.ceil(count / data.numsPerPage);
+    if (think.isBoolean(pageFlag) && data.currentPage > totalPage) {
+      if(pageFlag){
+        data.currentPage = 1;
+        options.limit = [0, this.config.nums_per_page];
+      }else{
+        data.currentPage = totalPage;
+        options.limit = [(totalPage - 1) * this.config.nums_per_page, this.config.nums_per_page];
+      }
+    }
+    let result = think.extend({count: count, totalPages: totalPage}, data);
+    result.data = await this.select(options);
+    return result;
   }
   /**
    * select one row data
