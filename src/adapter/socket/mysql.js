@@ -23,14 +23,13 @@ export default class extends think.adapter.socket {
     //merge config
     this.config = think.extend({
       host: '127.0.0.1',
-      port: 3306,
       user: 'root',
       password: ''
     }, config);
+    this.config.port = this.config.port || 3306;
 
     this.pool = null;
     this.connection = null;
-    this.deferred = null;
   }
   /**
    * get connection
@@ -42,25 +41,28 @@ export default class extends think.adapter.socket {
     }
 
     let config = this.config;
-    let str = `mysql://${config.host}:${config.port}`;
+    let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}`;
 
     if (this.pool) {
       return think.await(str, () => {
-        let deferred = think.defer();
-        this.pool.getConnection((err, connection) => {
-          if (err) {
-            deferred.reject(err);
-            this.close();
-          } else {
-            deferred.resolve(connection);
-          }
+        let fn = think.promisify(this.pool.getConnection, this.pool);
+        let promise = fn().catch(err => {
+          this.close();
+          return Promise.reject(err);
         });
         let err = new Error(str);
-        return think.error(deferred.promise, err);
+        return think.error(promise, err);
       });
     }
 
     let mysql = await think.npm('mysql');
+
+    //log mysql connection infomation
+    if(this.config.log_connect){
+      think.log(colors => {
+        return `Connect mysql with ` + colors.magenta(str);
+      }, 'SOCKET');
+    }
 
     if (config.connectionLimit) {
       this.pool = mysql.createPool(config);
