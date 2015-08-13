@@ -50,7 +50,7 @@ export default class extends think.model.base {
     }
     //enable relation
     if (think.isString(name)) {
-      name = name.split(',');
+      name = name.split(/\s*,\s*/);
     }
     this._relationName = name || [];
     return this;
@@ -66,7 +66,7 @@ export default class extends think.model.base {
   /**
    * after select
    * @param  {Object} data []
-   * @return {[type]}      []
+   * @return {}      []
    */
   _afterSelect(data, options){
     return this.getRelation(data, options);
@@ -91,12 +91,19 @@ export default class extends think.model.base {
       if (!think.isObject(item)) {
         item = {type: item};
       }
-      let modelName = item.model || key;
-      let model = this.model(modelName).cache(options.cache).where(item.where).field(item.field).order(item.order).limit(item.limit);
+      //get relation model instance
+      let model = this.model(item.model || key).options({
+        cache: options.cache,
+        where: item.where,
+        field: item.field,
+        order: item.order,
+        limit: item.limit
+      });
+      //get relation model options
       let opts = think.extend({
         name: key,
         model: model,
-        type: 1,
+        type: think.model.HAS_ONE,
         key: pk,
         fKey: this.name + '_id'
       }, item);
@@ -197,7 +204,7 @@ export default class extends think.model.base {
    */
   getRelationModel(model){
     let name = (this.tableName || this.name) + model.getModelName();
-    return this.model(name, this.config);
+    return this.model(name);
   }
   /**
    * parese relation where
@@ -223,10 +230,10 @@ export default class extends think.model.base {
   /**
    * parse relation data
    * @param  {Object}  data     []
-   * @param  {[type]}  mapData  []
-   * @param  {[type]}  mapOpts  []
+   * @param  {}  mapData  []
+   * @param  {}  mapOpts  []
    * @param  {Boolean} isArrMap []
-   * @return {[type]}           []
+   * @return {}           []
    */
   parseRelationData(data, mapData, mapOpts, isArrMap){
     if (think.isArray(data)) {
@@ -252,37 +259,37 @@ export default class extends think.model.base {
   }
   /**
    * after add
-   * @param  {[type]} data          [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * @param  {} data          []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   _afterAdd(data, options){
     return this.postRelation('ADD', data, options);
   }
   /**
    * after delete
-   * @param  {[type]} data          [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * @param  {} data          []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   _afterDelete(data, options){
     return this.postRelation('DELETE', data, options);
   }
   /**
    * after update
-   * @param  {[type]} data          [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * @param  {} data          []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   _afterUpdate(data, options){
     return this.postRelation('UPDATE', data, options);
   }
   /**
-   * 提交类关联操作
-   * @param  {[type]} postType      [description]
-   * @param  {[type]} data          [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * post relation
+   * @param  {} postType      []
+   * @param  {} data          []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   async postRelation(postType, data/*, parsedOptions*/){
     if (think.isEmpty(data) || think.isEmpty(this.relation) || think.isEmpty(this._relationName)) {
@@ -325,12 +332,12 @@ export default class extends think.model.base {
     return data;
   }
   /**
-   * 一对一提交
-   * @param  {[type]} data          [description]
-   * @param  {[type]} value         [description]
-   * @param  {[type]} mapOptions    [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * has one post
+   * @param  {} data          []
+   * @param  {} value         []
+   * @param  {} mapOptions    []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   _postHasOneRelation(data, mapOpts){
     let where;
@@ -339,28 +346,28 @@ export default class extends think.model.base {
         mapOpts.data[mapOpts.fKey] = data[mapOpts.key];
         return mapOpts.model.add(mapOpts.data);
       case 'DELETE':
-        where = getObject(mapOpts.fKey, data[mapOpts.key]);
+        where = {[mapOpts.fKey]: data[mapOpts.key]};
         return mapOpts.model.where(where).delete();
       case 'UPDATE':
-        where = getObject(mapOpts.fKey, data[mapOpts.key]);
+        where = {[mapOpts.fKey]: data[mapOpts.key]};
         return mapOpts.model.where(where).update(mapOpts.data);
     }
   }
   /**
    * belongs to
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
+   * @param  {} data []
+   * @return {}      []
    */
   _postBelongsToRelation(data){
     return data;
   }
   /**
-   * 一对多提交
-   * @param  {[type]} data          [description]
-   * @param  {[type]} value         [description]
-   * @param  {[type]} mapOptions    [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * has many
+   * @param  {} data          []
+   * @param  {} value         []
+   * @param  {} mapOptions    []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   _postHasManyRelation(data, mapOpts){
     let mapData = mapOpts.data;
@@ -370,37 +377,37 @@ export default class extends think.model.base {
     }
     switch(mapOpts.postType){
       case 'ADD':
-        mapData = mapData.map(function(item){
+        mapData = mapData.map(item => {
           item[mapOpts.fKey] = data[mapOpts.key];
           return item;
         });
         return model.addAll(mapData);
       case 'UPDATE':
-        return model.getTableFields().then(function(){
+        return model.getTableFields().then(() => {
           let pk = model.getPk();
-          let promises = mapData.map(function(item){
+          let promises = mapData.map(item => {
             if (item[pk]) {
               return model.update(item);
             }else{
               item[mapOpts.fKey] = data[mapOpts.key];
-              //添加不成功则自动忽略，不报错
-              return model.add(item).catch(function(){});
+              //ignore error when add data
+              return model.add(item).catch(() => {});
             }
           });
           return Promise.all(promises);
         });
       case 'DELETE':
-        let where = getObject(mapOpts.fKey, data[mapOpts.key]);
+        let where = {[mapOpts.fKey]: data[mapOpts.key]}
         return model.where(where).delete();
     }
   }
   /**
-   * 多对多提交
-   * @param  Object data          [description]
-   * @param  object value         [description]
-   * @param  {[type]} mapOptions    [description]
-   * @param  {[type]} parsedOptions [description]
-   * @return {[type]}               [description]
+   * many to many post
+   * @param  Object data          []
+   * @param  object value         []
+   * @param  {} mapOptions    []
+   * @param  {} parsedOptions []
+   * @return {}               []
    */
   _postManyToManyRelation(data, mapOpts){
     let self = this;
@@ -411,36 +418,36 @@ export default class extends think.model.base {
     let mapData = mapOpts.data;
     let relationModel = this.getRelationModel(model);
     if (type === 'DELETE' || type === 'UPDATE') {
-      promise = promise.then(function(){
-        let where = getObject(mapOpts.fKey, data[mapOpts.key]);
+      promise = promise.then(() => {
+        let where = {[mapOpts.fKey]: data[mapOpts.key]}
         return relationModel.where(where).delete(); 
       });
     }
     if (type === 'ADD' || type === 'UPDATE') {
-      promise = promise.then(function(){
+      promise = promise.then(() => {
         if (!isArray(mapData)) {
           mapData = isString(mapData) ? mapData.split(',') : [mapData];
         }
         let firstItem = mapData[0];
-        //关系数据
-        if (isNumberString(firstItem) || (isObject(firstItem) && (rfKey in firstItem))) {
-          //生成要更新的数据
-          let postData = mapData.map(function(item){
+        
+        if (think.isNumberString(firstItem) || (think.isObject(firstItem) && (rfKey in firstItem))) {
+          
+          let postData = mapData.map(item => {
             let key = [mapOpts.fKey, rfKey];
             let val = [data[mapOpts.key], item[rfKey] || item];
-            return getObject(key, val);
+            return {[key]: val};
           });
           return relationModel.addAll(postData);
-        }else{ //实体数据
+        }else{ 
           let unqiueField = model.getUniqueField();
           if (!unqiueField) {
             return getPromise(new Error('table `' + model.getTableName() + '` has no unqiue field'), true);
           }
           return this._getRalationAddIds(mapData, model, unqiueField).then(function(ids){
-            let postData = ids.map(function(id){
+            let postData = ids.map(id => {
               let key = [mapOpts.fKey, rfKey];
               let val = [data[mapOpts.key], id];
-              return getObject(key, val);
+              return {[key]: val};
             });
             return relationModel.addAll(postData);
           });
