@@ -7,6 +7,7 @@ var querystring = require('querystring');
 var EventEmitter = require('events').EventEmitter;
 var Socket = require('net').Socket;
 var IncomingMessage = require('http').IncomingMessage;
+var muk = require('muk');
 
 var thinkjs = require('../../lib/index.js');
 new thinkjs().load();
@@ -71,7 +72,7 @@ think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
 
 describe('core/http.js', function() {
   it('is EventEmitter instance', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&48');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http instanceof EventEmitter, true);
@@ -82,6 +83,7 @@ describe('core/http.js', function() {
   it('response timeout', function(done) {
     var timeoutHttp = getDefaultHttp('/index/index?k=timeout');
     think.config('timeout', 0.01);
+    muk(think, 'log', function(){})
     timeoutHttp.res.setTimeout = function(delay, fn) {
       setTimeout(fn, delay);
     };
@@ -89,22 +91,25 @@ describe('core/http.js', function() {
     instance.run();
     instance.http.on('timeout', function() {
       timeoutHttp.res.setTimeout = noop;
-      done();
+      setTimeout(function(){
+        muk.restore();
+        done();
+      }, 20)
     });
     think.config('timeout', 10);
   });
 
   it('GET, query', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&1');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      assert.deepEqual(http.get(), { name: 'maxzhang' });
+      assert.deepEqual(http.get(), { name: 'maxzhang', '1': '' });
       done();
     });
   });
 
   it('GET, set', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&2');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.get({ name: 'thinkjs' });
@@ -114,7 +119,7 @@ describe('core/http.js', function() {
   });
 
   it('param', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&3');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.param('name'), 'maxzhang');
@@ -123,7 +128,7 @@ describe('core/http.js', function() {
   });
 
   it('get headers', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&4');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.deepEqual(http.header(), { host: '127.0.0.1' });
@@ -132,7 +137,7 @@ describe('core/http.js', function() {
   });
 
   it('get special header', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&5');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.header('user-agent'), '');
@@ -141,7 +146,7 @@ describe('core/http.js', function() {
   });
 
   it('get type', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&6');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'content-type': 'application/json'
@@ -153,7 +158,7 @@ describe('core/http.js', function() {
   });
 
   it('get type, _contentTypeIsSend', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&7');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'content-type': 'text/html'
@@ -167,7 +172,7 @@ describe('core/http.js', function() {
   });
 
   it('set type', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&8');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'content-type': 'text/html'
@@ -180,7 +185,7 @@ describe('core/http.js', function() {
   });
 
   it('set type, lookup mimetype', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&9');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'content-type': 'text/html'
@@ -193,7 +198,7 @@ describe('core/http.js', function() {
   });
 
   it('get referrer', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&10');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'referrer': 'http://www.thinkjs.org/index?name=maxzhang'
@@ -205,7 +210,7 @@ describe('core/http.js', function() {
   });
 
   it('isAjax 1', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&11');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'x-requested-with': 'XMLHttpRequest'
@@ -218,7 +223,7 @@ describe('core/http.js', function() {
   });
 
   it('isAjax 2', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&12');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'x-requested-with': 'XMLHttpRequest'
@@ -231,7 +236,7 @@ describe('core/http.js', function() {
   });
 
   it('ip', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&13');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.host = '127.0.0.1:8360';
     instance.run().then(function(http) {
@@ -241,7 +246,7 @@ describe('core/http.js', function() {
   });
 
   it('ip with socket', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&14');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.host = '127.0.0.1:8360';
@@ -254,7 +259,7 @@ describe('core/http.js', function() {
   });
 
   it('ip with connection', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&15');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.host = '127.0.0.1:8360';
@@ -267,7 +272,7 @@ describe('core/http.js', function() {
   });
 
   it('ip with ::', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&16');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.host = '127.0.0.1:8360';
@@ -280,7 +285,7 @@ describe('core/http.js', function() {
   });
 
   it('ip with x-real-ip', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&17');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     think.config('proxy_on', true);
     instance.req.headers = {
@@ -294,7 +299,7 @@ describe('core/http.js', function() {
   });
 
   it('ip with x-forwarded-for', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&18');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     think.config('proxy_on', true);
     instance.req.headers = {
@@ -308,7 +313,7 @@ describe('core/http.js', function() {
   });
 
   it('ip, is not ip', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&19');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     var fn = think.isIP;
     think.isIP = function() { return false; };
@@ -324,7 +329,7 @@ describe('core/http.js', function() {
   });
 
   it('set header', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&20');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
@@ -340,7 +345,7 @@ describe('core/http.js', function() {
   });
 
   it('set header, headersSent', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&21');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.res.headersSent = true;
@@ -350,7 +355,7 @@ describe('core/http.js', function() {
   });
 
   it('set header, _contentTypeIsSend', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&22');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.req.headers = {
       'content-type': 'text/html'
@@ -365,7 +370,7 @@ describe('core/http.js', function() {
   });
 
   it('set status', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&23');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.res.headersSent = false;
@@ -376,7 +381,7 @@ describe('core/http.js', function() {
   });
 
   it('set status default', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&24');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.res.headersSent = false;
@@ -399,7 +404,7 @@ describe('core/http.js', function() {
   });
 
   it('get empty user agent', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&25');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       console.log(http.userAgent());
@@ -409,7 +414,7 @@ describe('core/http.js', function() {
   });
 
   it('set cookie', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&26');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('name', 'maxzhang');
@@ -429,7 +434,7 @@ describe('core/http.js', function() {
   });
 
   it('set cookie with timeout', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&27');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('name', 'maxzhang', 10000);
@@ -440,7 +445,7 @@ describe('core/http.js', function() {
   });
 
   it('set cookie with timeout 1', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&28');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var opts = {
@@ -456,7 +461,7 @@ describe('core/http.js', function() {
   });
 
   it('set cookie, remove cookie', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&29');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('name', null);
@@ -467,7 +472,7 @@ describe('core/http.js', function() {
   });
 
   it('set cookie, with options', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&30');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('name', 'maxzhang', {
@@ -490,7 +495,7 @@ describe('core/http.js', function() {
   });
 
   it('send cookie', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&31');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('name', 'maxzhang', {
@@ -521,7 +526,7 @@ describe('core/http.js', function() {
   });
 
   it('send cookie empty', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&32');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie(true);
@@ -530,7 +535,7 @@ describe('core/http.js', function() {
   });
 
   it('send cookie multi', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&33');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('name', 'maxzhang', {
@@ -571,10 +576,11 @@ describe('core/http.js', function() {
   });
 
   it('redirect empty', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&34');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
+      muk(think, 'log', function(){})
       http.res.setHeader = function(name, value) {
         assert.equal(name, 'Location');
         assert.equal(value, '/');
@@ -583,7 +589,10 @@ describe('core/http.js', function() {
       var fn1 = http.res.end;
       http.res.end = function() {
         http.res.end = fn1;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.redirect();
       assert.equal(http.res.statusCode, 302);
@@ -591,7 +600,7 @@ describe('core/http.js', function() {
   });
 
   it('redirect url', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&35');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
@@ -601,9 +610,13 @@ describe('core/http.js', function() {
         http.res.setHeader = fn;
       };
       var fn1 = http.res.end;
+      muk(think, 'log', function(){})
       http.res.end = function() {
         http.res.end = fn1;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.redirect('http://www.thinkjs.org', 301);
       assert.equal(http.res.statusCode, 301);
@@ -611,7 +624,7 @@ describe('core/http.js', function() {
   });
 
   it('sendTime empty', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&36');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
@@ -625,7 +638,7 @@ describe('core/http.js', function() {
   });
 
   it('sendTime name', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.setHeader;
@@ -639,7 +652,7 @@ describe('core/http.js', function() {
   });
 
   it('echo empty', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&38');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.echo(), undefined);
@@ -648,7 +661,7 @@ describe('core/http.js', function() {
   });
 
   it('echo array', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&39');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
@@ -662,7 +675,7 @@ describe('core/http.js', function() {
   });
 
   it('echo obj', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&40');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
@@ -678,7 +691,7 @@ describe('core/http.js', function() {
   });
 
   it('echo str', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&41');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
@@ -692,7 +705,7 @@ describe('core/http.js', function() {
   });
 
   it('echo str', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&42');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
@@ -707,7 +720,7 @@ describe('core/http.js', function() {
   });
 
   it('echo true', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&43');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
@@ -735,42 +748,55 @@ describe('core/http.js', function() {
   });
 
   it('success', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&44');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
       http.res.write = function(content) {
         assert.equal(content, '{"errno":0,"errmsg":"success","data":{"name":"thinkjs"}}');
         http.res.write = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
+
       };
       http.success({ 'name': 'thinkjs' }, 'success');
     });
   });
 
   it('fail', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index&method=post');
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index&method=post&2');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
       http.res.write = function(content) {
         assert.equal(content, '{"errno":500,"errmsg":"error","data":{"name":"thinkjs"}}');
         http.res.write = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.fail(500, 'error', { 'name': 'thinkjs' });
     });
   });
 
   it('fail with object', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&45');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
       http.res.write = function(content) {
         assert.equal(content, '{"errno":500,"errmsg":"error","data":{"name":"thinkjs"}}');
         http.res.write = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.fail({
         errno: 500,
@@ -781,37 +807,45 @@ describe('core/http.js', function() {
   });
 
   it('jsonp', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index&method=post');
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index&method=post&3');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
       http.get('callback', 'callback1');
       http.res.write = function(content) {
-        console.log(content);
         assert.equal(content, 'callback1({"name":"thinkjs"})');
         http.res.write = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.jsonp({ 'name': 'thinkjs' });
     });
   });
 
   it('jsonp without callback', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&46');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
       http.res.write = function(content) {
         assert.equal(content, '{"name":"thinkjs"}');
         http.res.write = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.jsonp({ 'name': 'thinkjs' });
     });
   });
 
   it('jsonp, empty data', function(done) {
-    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&47');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       var fn = http.res.write;
@@ -819,7 +853,10 @@ describe('core/http.js', function() {
       http.res.write = function(content) {
         assert.equal(content, 'callback1()');
         http.res.write = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       http.jsonp();
     });
@@ -828,14 +865,14 @@ describe('core/http.js', function() {
 
   describe('HTTP POST', function() {
     it('hasPostData false', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&4');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       assert.equal(instance.hasPostData(), false);
       done();
     });
 
     it('hasPostData true', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&5');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.http.req.headers['transfer-encoding'] = 'gzip';
       instance.run().then(function() {
@@ -845,7 +882,7 @@ describe('core/http.js', function() {
     });
 
     it('hasPostData true', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&6');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       delete instance.http.req.headers['transfer-encoding'];
       instance.http.req.headers['content-length'] = 100;
@@ -854,7 +891,7 @@ describe('core/http.js', function() {
     });
 
     it('common post, no data', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&7');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage();
       instance.req.url = defaultHttp.req.url;
@@ -865,7 +902,7 @@ describe('core/http.js', function() {
     });
 
     it('common post, set POST data', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&8');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -880,7 +917,7 @@ describe('core/http.js', function() {
     });
 
     it('common post with data', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&9');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -901,7 +938,7 @@ describe('core/http.js', function() {
     });
 
     it('common post with data1', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&10');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -923,7 +960,7 @@ describe('core/http.js', function() {
     });
 
     it('common post with json data', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&11');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -945,7 +982,8 @@ describe('core/http.js', function() {
     });
 
     it('common post, parse querystring error', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      muk(think, 'log', function(){})
+      var defaultHttp = getDefaultHttp('/index/index&method=post&12');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -964,13 +1002,17 @@ describe('core/http.js', function() {
       instance.res.end = function() {
         assert.equal(instance.res.statusCode, 413);
         querystring.parse = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       instance.run();
     });
 
     it('common post error', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      muk(think, 'log', function(){})
+      var defaultHttp = getDefaultHttp('/index/index&method=post&13');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -987,12 +1029,16 @@ describe('core/http.js', function() {
       instance.run();
       instance.res.end = function() {
         assert.equal(instance.res.statusCode, 413);
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
     });
 
     it('common post.max_fields', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      muk(think, 'log', function(){})
+      var defaultHttp = getDefaultHttp('/index/index&method=post&14');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -1014,13 +1060,17 @@ describe('core/http.js', function() {
       instance.res.end = function() {
         assert.equal(instance.res.statusCode, 413);
         instance.res.end = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       instance.run();
     });
 
     it('common post.max_fields_size', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      muk(think, 'log', function(){})
+      var defaultHttp = getDefaultHttp('/index/index&method=post&15');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -1043,14 +1093,19 @@ describe('core/http.js', function() {
       instance.res.end = function() {
         assert.equal(instance.res.statusCode, 413);
         instance.res.end = fn;
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 20)
       };
       instance.run();
     });
 
     it('file upload', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&16');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
+      var log = think.log;
+      think.log = function(){};
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
       instance.req.headers = {
@@ -1068,12 +1123,13 @@ describe('core/http.js', function() {
         assert.deepEqual(http.file(), {
           image: 'maxzhang'
         });
+        think.log = log;
         done();
       });
     });
 
     it('file upload, same name files', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&17');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -1098,7 +1154,7 @@ describe('core/http.js', function() {
     });
 
     it('file upload, field', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&18');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -1122,7 +1178,8 @@ describe('core/http.js', function() {
     });
 
     it('file upload, error', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      muk(think, 'log', function(){})
+      var defaultHttp = getDefaultHttp('/index/index&method=post&19');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
@@ -1132,6 +1189,7 @@ describe('core/http.js', function() {
       };
       instance.req.method = 'POST';
       instance.res.statusCode = 200;
+      
       process.nextTick(function() {
         instance.form.emit('error', new Error('test'));
       });
@@ -1140,15 +1198,20 @@ describe('core/http.js', function() {
       instance.run();
       instance.res.end = function() {
         assert.equal(instance.res.statusCode, 413);
-        done();
+        setTimeout(function(){
+          muk.restore();
+          done();
+        }, 30)
       };
     });
 
     it('file upload, clear tmp file', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&20');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;
+      var log = think.log;
+      think.log = function(){};
       instance.req.headers = {
         'transfer-encoding': 'gzip',
         'content-type': 'multipart/form-data; boundary=maxzhang'
@@ -1164,9 +1227,9 @@ describe('core/http.js', function() {
       var fn1 = think.isFile;
       think.isFile = function() { return true; };
       fs.unlink = function(filepath) {
-        console.log(filepath);
         fs.unlink = fn;
         think.isFile = fn1;
+        think.log = log;
         done();
       };
       instance.run().then(function(http) {
@@ -1176,7 +1239,7 @@ describe('core/http.js', function() {
 
 
     it('ajax file upload', function(done) {
-      var defaultHttp = getDefaultHttp('/index/index&method=post');
+      var defaultHttp = getDefaultHttp('/index/index&method=post&21');
       var instance = new Http(defaultHttp.req, defaultHttp.res);
       instance.req = new IncomingMessage(new Socket());
       instance.req.url = defaultHttp.req.url;

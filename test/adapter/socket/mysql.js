@@ -150,10 +150,15 @@ describe('adapter/socket/mysql', function(){
     });
 
     it('get connetion from pool, error', function(done){
+      var reject = think.reject;
+      think.reject = function(err){
+        return Promise.reject(err);
+      }
       var socket = new MysqlSocket({
         connectionLimit: 100
       });
       socket.getConnection().catch(function() {
+        think.reject = reject;
         done();
       });
     });
@@ -225,14 +230,23 @@ describe('adapter/socket/mysql', function(){
   describe('connetion error', function(){
     it('connetion error 1', function(done){
       var socket = new MysqlSocket();
+      var reject = think.reject;
+      think.reject = function(err){
+        return Promise.reject(err);
+      }
       socket.getConnection().then(function() {
         socket.connection.error();
         assert.equal(socket.connection, null);
+        think.reject = reject;
         done();
       });
     });
     it('connetion error 2', function(done){
       var fn = Connection.prototype.connect;
+      var reject = think.reject;
+      think.reject = function(err){
+        return Promise.reject(err);
+      }
       Connection.prototype.connect = function(cb) {
         setTimeout(function() {
           cb(new Error('connection error'));
@@ -240,8 +254,9 @@ describe('adapter/socket/mysql', function(){
       };
       var socket = new MysqlSocket();
       socket.getConnection().catch(function(err) {
-        assert.ok(err);
+        assert.equal(think.isError(err), true);
         Connection.prototype.connect = fn;
+        think.reject = reject;
         done();
       });
     });
