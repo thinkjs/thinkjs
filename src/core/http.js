@@ -230,9 +230,7 @@ export default class {
     http.headers = this.req.headers;
 
     let urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
-    // in windows, path normalize will replace / to \\
-    // so must be replace \\ to /
-    http.pathname = path.normalize(urlInfo.pathname).replace(/\\/g, '/').slice(1);
+    http.pathname = this.normalizePathname(urlInfo.pathname);
     http.query = urlInfo.query;
     http.host = urlInfo.host;
     http.hostname = urlInfo.hostname;
@@ -268,6 +266,30 @@ export default class {
     http.jsonp = this.jsonp;
     http.json = this.json;
     http.view = this.view;
+  }
+  /**
+   * normalize pathname, remove hack chars
+   * @param  {String} pathname []
+   * @return {String}          []
+   */
+  normalizePathname(pathname){
+    let length = pathname.length;
+    let i = 0, chr, result = [], value = '';
+    while(i < length){
+      chr = pathname[i++];
+      if(chr === '/' || chr === '\\'){
+        if(value && value[0] !== '.'){
+          result.push(value);
+        }
+        value = '';
+      }else{
+        value += chr;
+      }
+    }
+    if(value && value[0] !== '.'){
+      result.push(value);
+    }
+    return result.join('/');
   }
   /*
    * get or set config

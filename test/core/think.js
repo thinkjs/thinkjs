@@ -1430,7 +1430,7 @@ describe('core/think.js', function(){
     })
     it('get unsafe url 2', function(done){
       think.http('/resource/../../../../../../etc/passwd').then(function(http){
-        assert.equal(http.pathname, 'etc/passwd');
+        assert.equal(http.pathname, 'resource/etc/passwd');
         assert.equal(http.url, '/resource/../../../../../../etc/passwd');
         done();
       })
