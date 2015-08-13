@@ -125,15 +125,19 @@ export default class extends Base {
     await this._afterAdd(data, options);
     return this.db().getLastInsertId();
   }
-  /**
-   * if data not exist, then add. 
+   /**
+   * then add
    * @param  {Object} data       []
    * @param  {Object} where      []
-   * @param  {} returnType []
    * @return {}            []
    */
-  thenAdd(data, where, returnType){
-
+  async thenAdd(data, where){
+    let findData = await this.where(where).find();
+    if(!think.isEmpty(findData)){
+      return {[this.pk]: findData[this.pk], type: 'exist'};
+    }
+    let insertId = await this.add(data);
+    return {[this.pk]: insertId, type: 'add'};
   }
   /**
    * add multi data
@@ -266,7 +270,9 @@ export default class extends Base {
       $inc: {
         [field]: step
       }
-    }, options);
+    }, options).then(data => {
+      return data.result.n;
+    });
   }
   /**
    * decrement field data
@@ -280,7 +286,9 @@ export default class extends Base {
       $inc: {
         [field]: 0 - step
       }
-    }, options);
+    }, options).then(data => {
+      return data.result.n;
+    });
   }
   /**
    * get count 
