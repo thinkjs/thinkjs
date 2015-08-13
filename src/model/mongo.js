@@ -36,12 +36,21 @@ export default class extends Base {
       for(let key in indexes){
         let value = indexes[key];
         if(think.isObject(value)){
-          let unique = value.unique;
-          delete value.unique;
-          if(think.isEmpty(value)){
-            value[key] = 1;
+          let options = {};
+          let val = {};
+          for(let k in value){
+            //key start with $ is options
+            if(k[0] === '$'){
+              options[k.slice(1)] = value[k];
+            }else{
+              val[k] = value[k];
+            }
           }
-          promises.push(this.createIndex(value, {unique: unique}));
+          //if value is empty, auto add key itself
+          if(think.isEmpty(val)){
+            val[key] = 1;
+          }
+          promises.push(this.createIndex(val, options));
         }else{
           value = {[key]: value};
           promises.push(this.createIndex(value));
