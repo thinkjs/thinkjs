@@ -84,7 +84,7 @@ export default class {
   checkFileName(){
     let files = think.getFiles(think.APP_PATH);
     let reg = /\.(js|html|tpl)$/;
-    let fileReg = /^[\\\/_\.a-z0-9]+$/
+    let fileReg = /^[\\\/_\.a-z0-9]+$/;
     let filter = item => {
       if(!reg.test(item)){
         return;
@@ -94,11 +94,11 @@ export default class {
         return;
       }
       return true;
-    }
+    };
     files.forEach(item => {
       if(filter(item) && !fileReg.test(item)){
         think.log(colors => {
-          return colors.yellow(`[WARNING]`) + ` filepath \`${item}\` has uppercase chars.`
+          return colors.yellow(`[WARNING]`) + ` filepath \`${item}\` has uppercase chars.`;
         });
       }
     });
@@ -378,7 +378,7 @@ export default class {
     process.on('uncaughtException', function(err){
       err = think.error(err, 'port:' + think.config('port'));
       think.log(err);
-    })
+    });
   }
   /**
    * start

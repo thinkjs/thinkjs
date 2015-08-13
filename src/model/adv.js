@@ -1,3 +1,3 @@
-module.exports = think.model('relation', {
-  
-})
+export default class extends think.model.base {
+
+}

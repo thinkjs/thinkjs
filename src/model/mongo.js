@@ -2,8 +2,6 @@
 
 import Base from './_base.js';
 
-let MongoDb = think.adapter('db', 'mongo');
-
 /**
  * mongodb model
  */
@@ -224,9 +222,6 @@ export default class extends Base {
     }
 
     options = await this.parseOptions(options);
-    let pk = this.pk;
-    let table = options.alias || this.getTableName();
-
     if(!count){
       //get count
       count = await this.options(options).count();
@@ -331,7 +326,7 @@ export default class extends Base {
   mapReduce(map, reduce, out){
     return this.collection().then(collection => {
       return collection.mapReduce(map, reduce, out);
-    })
+    });
   }
   /**
    * create indexes
@@ -348,6 +343,6 @@ export default class extends Base {
   getIndexes(){
     return this.collection().then(collection => {
       return collection.indexes();
-    })
+    });
   }
 }

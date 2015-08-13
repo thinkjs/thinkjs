@@ -1,6 +1,5 @@
 'use strict';
 
-import fs from 'fs';
 import path from 'path';
 /**
  * base controller class
@@ -349,7 +348,6 @@ export default class extends think.base {
       contentType = require('mime').lookup(contentType || filepath);
     }
     let http = this.http;
-    let fileStream = fs.createReadStream(filepath);
     this.type(contentType);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
     return this.hook('file_output', filepath);

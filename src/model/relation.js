@@ -217,15 +217,15 @@ export default class extends think.model.base {
       let keys = {};
       data.forEach(item => {
         keys[item[mapOpts.key]] = 1;
-      })
+      });
       let value = Object.keys(keys);
       return {
         [mapOpts.fKey]: {'IN': value}
-      }
+      };
     }
     return {
       [mapOpts.fKey]: data[mapOpts.key]
-    }
+    };
   }
   /**
    * parse relation data
@@ -372,7 +372,7 @@ export default class extends think.model.base {
   _postHasManyRelation(data, mapOpts){
     let mapData = mapOpts.data;
     let model = mapOpts.model;
-    if (!isArray(mapData)) {
+    if (!think.isArray(mapData)) {
       mapData = [mapData];
     }
     switch(mapOpts.postType){
@@ -397,7 +397,7 @@ export default class extends think.model.base {
           return Promise.all(promises);
         });
       case 'DELETE':
-        let where = {[mapOpts.fKey]: data[mapOpts.key]}
+        let where = {[mapOpts.fKey]: data[mapOpts.key]};
         return model.where(where).delete();
     }
   }
@@ -410,7 +410,6 @@ export default class extends think.model.base {
    * @return {}               []
    */
   _postManyToManyRelation(data, mapOpts){
-    let self = this;
     let model = mapOpts.model;
     let promise = model.getTableFields();
     let rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
@@ -419,14 +418,14 @@ export default class extends think.model.base {
     let relationModel = this.getRelationModel(model);
     if (type === 'DELETE' || type === 'UPDATE') {
       promise = promise.then(() => {
-        let where = {[mapOpts.fKey]: data[mapOpts.key]}
+        let where = {[mapOpts.fKey]: data[mapOpts.key]};
         return relationModel.where(where).delete(); 
       });
     }
     if (type === 'ADD' || type === 'UPDATE') {
       promise = promise.then(() => {
-        if (!isArray(mapData)) {
-          mapData = isString(mapData) ? mapData.split(',') : [mapData];
+        if (!think.isArray(mapData)) {
+          mapData = think.isString(mapData) ? mapData.split(',') : [mapData];
         }
         let firstItem = mapData[0];
         
@@ -441,7 +440,7 @@ export default class extends think.model.base {
         }else{ 
           let unqiueField = model.getUniqueField();
           if (!unqiueField) {
-            return getPromise(new Error('table `' + model.getTableName() + '` has no unqiue field'), true);
+            return think.reject(new Error('table `' + model.getTableName() + '` has no unqiue field'));
           }
           return this._getRalationAddIds(mapData, model, unqiueField).then(function(ids){
             let postData = ids.map(id => {

@@ -19,7 +19,7 @@ if(think.cli){
     auto_reload: false,
     log_pid: false,
     process_timeout: 0
-  })
+  });
 }
 
 export default configs;

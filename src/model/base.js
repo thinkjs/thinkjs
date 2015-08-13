@@ -228,7 +228,7 @@ export default class extends Base {
     let promises = data.map(item => {
       item = this.parseData(item);
       return this._beforeAdd(item, options);
-    })
+    });
     data = await Promise.all(promises);
     await this.db().addMany(data, options, replace);
     let insertId = this.db().getLastInsertId() - data.length + 1;
@@ -272,7 +272,7 @@ export default class extends Base {
     //remove readonly field data
     this.readonlyFields.forEach(item => {
       delete data[item];
-    })
+    });
 
     if (think.isEmpty(data)) {
       return think.reject(new Error(think.locale('DATA_EMPTY')));
@@ -308,7 +308,7 @@ export default class extends Base {
   increment(field, step = 1){
     let data = {
       [field]: ['exp', `${field}+${step}`]
-    }
+    };
     return this.update(data);
   }
   /**
@@ -318,7 +318,7 @@ export default class extends Base {
   decrement(field, step = 1){
     let data = {
       [field]: ['exp', `${field}-${step}`]
-    }
+    };
     return this.update(data);
   }
   /**

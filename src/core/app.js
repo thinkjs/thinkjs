@@ -113,7 +113,10 @@ export default class extends think.base {
       return think.statusAction(403, http);
     }
     let instance = domain.create();
-    instance.on('error', err => think.statusAction(500, http));
+    instance.on('error', err => {
+      http.error = err;
+      think.statusAction(500, http);
+    });
     instance.run(async () => {
       try{
         await this.dispatcher();

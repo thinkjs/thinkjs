@@ -35,7 +35,7 @@ export default {
   validate_equals: '{name} need matches the {args}',
   validate_different: '{name} can not matches the {args}',
   validate_after: '{name} is a date that\'s after the {args} (defaults to now)',
-  validate_alpha:　'{name} contains only letters (a-zA-Z)',
+  validate_alpha: '{name} contains only letters (a-zA-Z)',
   validate_alphaDash: '{name} contains only letters and dashes(a-zA-Z_)',
   validate_alphaNumeric: '{name} contains only letters and numeric(a-zA-Z0-9)',
   validate_alphaNumericDash: '{name} contains only letters, numeric and dash(a-zA-Z0-9_)',
