@@ -33,7 +33,7 @@ export default class {
       'LIKE': 'LIKE',
       'IN': 'IN',
       'NOTIN': 'NOT IN'
-    }
+    };
     this.selectSql = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
   }
   /**
@@ -179,11 +179,14 @@ export default class {
     let keySafeRegExp = /^[\w\|\&\-\.\(\)\,]+$/;
     let multi = where._multi;
     delete where._multi;
+
+    let key, val, result = [], str = '';
+
     let fn = (item, i) => {
       let v = multi ? val[i] : val;
       return '(' + this.parseWhereItem(this.parseKey(item), v) + ')';
     };
-    let key, val, result = [], str = '';
+    
     for(key in where){
       val = where[key];
       str = '( ';
@@ -289,7 +292,7 @@ export default class {
       let length = val.length;
       let logic = this.getLogic(val[length - 1], '');
       if(logic){
-        length --;
+        length--;
       }else{
         logic = 'AND';
       }
@@ -428,7 +431,7 @@ export default class {
                 joinStr += '=' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.`' + item.on[1] + '`'));
               }
             }
-          })
+          });
         }
       });
     }else{
@@ -518,7 +521,7 @@ export default class {
       union.forEach(item => {
         sql += item.all ? 'UNION ALL ' : 'UNION ';
         sql += '(' + (think.isObject(item.union) ? this.buildSelectSql(item.union) : item.union) + ')';
-      })
+      });
       return sql;
     }else{
       return ' UNION (' + (think.isObject(union) ? this.buildSelectSql(union) : union) + ')'; 

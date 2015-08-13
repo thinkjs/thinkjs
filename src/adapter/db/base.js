@@ -1,6 +1,5 @@
 'use strict';
 
-import querystring from 'querystring';
 import Parse from './_parse.js';
 
 /**
@@ -154,7 +153,7 @@ export default class extends Parse {
     if (!str) {
       return '';
     }
-    return str.replace(/[\0\n\r\b\t\\\'\"\x1a]/g, s =>  {
+    return str.replace(/[\0\n\r\b\t\\\'\"\x1a]/g, s => {
       switch(s) {
         case '\0': 
           return '\\0';
@@ -169,7 +168,7 @@ export default class extends Parse {
         case '\x1a': 
           return '\\Z';
         default:   
-          return '\\'+s;
+          return '\\' + s;
       }
     });
   }
@@ -198,7 +197,7 @@ export default class extends Parse {
       return this.socket().query(sql).then(data => {
         return this.bufferToString(data);
       });
-    })
+    });
   }
   /**
    * buffer to string

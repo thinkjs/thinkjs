@@ -49,7 +49,6 @@ export default class extends think.adapter.socket {
       return this.connection;
     }
     let memjs = await think.npm('memjs');
-    let config = this.config;
     this.connection = memjs.Client.create(this.getSocketStr(), {
       logger: {
         log: () => {}

@@ -34,7 +34,7 @@ export default class extends think.adapter.cache {
       if (value) {
         return JSON.parse(value);
       }
-    }).catch(err => {});
+    }).catch(() => {});
   }
   /**
    * set data
@@ -49,7 +49,7 @@ export default class extends think.adapter.cache {
       value = name[key];
       name = key;
     }
-    return this.redis.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(err => {});
+    return this.redis.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(() => {});
   }
   /**
    * delete data
@@ -57,6 +57,6 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   delete(name){
-    return this.redis.delete(this.keyPrefix + name).catch(err => {});
+    return this.redis.delete(this.keyPrefix + name).catch(() => {});
   }
 }

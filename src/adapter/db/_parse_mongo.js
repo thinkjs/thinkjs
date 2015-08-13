@@ -30,7 +30,7 @@ export default class {
       '<=': '$lte',
       'IN': '$in',
       'NOTIN': '$nin'
-    }
+    };
   }
   /**
    * parse field
@@ -50,7 +50,7 @@ export default class {
       field.forEach(item => {
         result[item] = reverse ? 0 : 1;
       });
-      return result
+      return result;
     }
     if(reverse){
       for(let key in field){

@@ -18,6 +18,7 @@ export default class extends Base {
   }
   /**
    * create index from this.indexes
+   * http://docs.mongodb.org/manual/core/indexes-introduction/
    * @return {Promise} []
    */
   async _createIndexes(){

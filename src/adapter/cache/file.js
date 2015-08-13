@@ -1,8 +1,6 @@
 'use strict';
 
 import fs from 'fs';
-import os from 'os';
-import path from 'path';
 
 /**
  * file store
@@ -27,7 +25,7 @@ export default class extends think.adapter.cache {
 
     this.store = new FileStore({
       path: this.path
-    })
+    });
 
     this.gcType = this.path;
     think.gc(this);
@@ -62,7 +60,7 @@ export default class extends think.adapter.cache {
       }catch(e){
         return this.store.delete(filepath);
       }
-    }).catch(err => {})
+    }).catch(() => {});
   }
   /**
    * set data
@@ -83,7 +81,7 @@ export default class extends think.adapter.cache {
       expire: Date.now() + timeout * 1000,
       timeout: timeout
     };
-    return this.store.set(filepath, JSON.stringify(data)).catch(err => {});
+    return this.store.set(filepath, JSON.stringify(data)).catch(() => {});
   }
   /**
    * delete data
@@ -92,7 +90,7 @@ export default class extends think.adapter.cache {
    */
   delete(name){
     let filepath = this.getFilepath(name);
-    return this.store.delete(filepath).catch(err => {});
+    return this.store.delete(filepath).catch(() => {});
   }
   /**
    * gc

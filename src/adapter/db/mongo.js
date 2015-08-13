@@ -101,7 +101,7 @@ export default class extends Parse {
       let result = {};
       group.forEach(item => {
         result[item] = `$${item}`;
-      })
+      });
       return result;
     }
   }
@@ -275,7 +275,7 @@ export default class extends Parse {
     }
     return this.collection(table).then(collection => {
       return collection.ensureIndex(indexes, options);
-    })
+    });
   }
   /**
    * aggregate
@@ -286,7 +286,7 @@ export default class extends Parse {
   aggregate(table, options){
     return this.collection(table).then(collection => {
       return collection.aggregate(options);
-    })
+    });
   }
   /**
    * close socket

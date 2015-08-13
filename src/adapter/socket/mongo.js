@@ -56,7 +56,7 @@ export default class extends think.adapter.socket {
       }).catch(err => {
         this.logConnect(str, 'mongodb');
         return Promise.reject(err);
-      })
+      });
       let err = new Error(str);
       return think.error(promise, err);
     });
