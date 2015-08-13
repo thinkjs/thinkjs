@@ -45,7 +45,7 @@ function getInstance(config, options){
 describe('logic/base', function(){
   it('__before is function', function(done){
     getInstance().then(function(instance){
-      assert.equal(think.isFunction(instance.__before), true);
+      assert.equal(think.isFunction(instance.validate), true);
       done();
     })
   })

@@ -12,7 +12,7 @@
 ### 遗留的问题
 * validator需要改为laravel类似的方式，更加简洁 -- 已经完成 2015.08.07
 * 服务启动时增加文件名大小写的检测 -- 已经完成 2015.08.08
-* 完善mongodb - 基于mongodb模块
+* 完善mongodb - 基于mongodb模块 -- 基本完成 2015.08.13
 * 重写websocket
 * 增加migration功能？
 * 完善relationModel

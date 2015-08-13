@@ -15,29 +15,30 @@ export default class extends think.controller.base {
   }
   /**
    * check csrf
+   * @todo  move to csrf middleware
    * @todo write value for ajax request
    * @return {Promise} []
    */
-  async checkCsrf(){
-    let csrf = this.config('csrf');
-    if(!csrf.on){
-      return;
-    }
-    if(this.isGet()){
-      let value = await this.session(csrf.session_name);
-      if(!value){
-        value = think.uuid(32);
-        await this.session(csrf.session_name, value);
-      }
-      this.assign(csrf.form_name, value);
-    }else if(this.isPost()){
-      let value = await this.session(csrf.session_name);
-      let formValue = this.post(csrf.form_name);
-      if(!value || formValue !== value){
-        return this.fail(csrf.errno, csrf.errmsg);
-      }
-    }
-  }
+  // async checkCsrf(){
+  //   let csrf = this.config('csrf');
+  //   if(!csrf.on){
+  //     return;
+  //   }
+  //   if(this.isGet()){
+  //     let value = await this.session(csrf.session_name);
+  //     if(!value){
+  //       value = think.uuid(32);
+  //       await this.session(csrf.session_name, value);
+  //     }
+  //     this.assign(csrf.form_name, value);
+  //   }else if(this.isPost()){
+  //     let value = await this.session(csrf.session_name);
+  //     let formValue = this.post(csrf.form_name);
+  //     if(!value || formValue !== value){
+  //       return this.fail(csrf.errno, csrf.errmsg);
+  //     }
+  //   }
+  // }
   /**
    * parse validate data
    * {
@@ -153,12 +154,5 @@ export default class extends think.controller.base {
    */
   errors() {
     return this.assign('errors');
-  }
-  /**
-   * before magic method
-   * @return {Promise} []
-   */
-  __before(){
-    
   }
 }
