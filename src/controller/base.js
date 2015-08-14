@@ -73,7 +73,7 @@ export default class extends think.base {
    * @return {Boolean} []
    */
   isWebSocket(){
-    return !!this.http.websocket;
+    return !!this.http.socket;
   }
   /**
    * check is command line invoke

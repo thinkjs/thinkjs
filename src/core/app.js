@@ -6,8 +6,6 @@ import domain from 'domain';
 import os from 'os';
 import http from 'http';
 
-let websocket = think.require('websocket');
-
 export default class extends think.base {
   /**
    * dispath route
@@ -108,7 +106,7 @@ export default class extends think.base {
       return think.statusAction(502, http);
     }
     //deny access by ip + port
-    if (think.config('proxy_on') && http.host !== http.hostname && !http.websocket) {
+    if (think.config('proxy_on') && http.host !== http.hostname && !http.socket) {
       http.error = new Error(think.locale('DISLLOW_PORT'));
       return think.statusAction(403, http);
     }
@@ -148,24 +146,30 @@ export default class extends think.base {
         think.log(e);
       }
     };
+    let server;
     //define createServer in application
     if (handle) {
-      handle(callback, port, host, this);
+      server = handle(callback, port, host, this);
     }else{
       //create server
-      let server = http.createServer(callback);
-      if (think.config('websocket.on')) {
-        let instance = new websocket(server, this);
-        instance.run();
-      }
+      server = http.createServer(callback);
       server.listen(port, host);
-      this.logPid(port);
     }
+    this.logPid(port);
+
+    //start websocket
+    let websocket = think.config('websocket'), status = 'closed';
+    if(websocket.on){
+      status = 'opened';
+      let Cls = think.adapter('websocket', websocket.type);
+      let instance = new Cls(server, websocket, this);
+      instance.run();
+    }
+
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
-    think.log('ThinkJS Version: ' + think.version, 'THINK');
-    think.log(colors => {
-      return 'App Env: ' + colors.magenta(think.env);
-    }, 'THINK');
+    think.log(colors => `WebSocket Status: ${colors.magenta(status)}`, 'THINK');
+    think.log(colors => `ThinkJS Version: ${think.version}`, 'THINK');
+    think.log(colors => `App Enviroment: ${colors.magenta(think.env)}`, 'THINK');
   }
   /**
    * cli mode

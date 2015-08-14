@@ -12,5 +12,4 @@ export default {
   cookie: `${root}/util/cookie.js`,
   validator: `${root}/util/validator.js`,
   await: `${root}/util/await.js`
-  //websocket: root + '/util/websocket.js'
 };

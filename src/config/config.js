@@ -47,11 +47,15 @@ export default {
   
   websocket: {
     on: false,
-    type: '',
+    type: 'think',
     allow_origin: '',
     sub_protocal: '',
-    message_handle: undefined
+    adapter: undefined,
+    messages: {
+      // open: 'home/websocket/open',
+    }
   },
+
   error: {
     file: think.THINK_PATH + '/tpl/500.html',
     detail: false, //show detail message
@@ -164,6 +168,7 @@ export default {
     ejs: '2.3.2',
     jade: '1.11.0',
     mongodb: '2.0.36',
-    memjs: '0.8.5'
+    memjs: '0.8.5',
+    'socket.io': '1.3.6'
   }
 };
