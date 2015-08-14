@@ -325,6 +325,15 @@ export default class extends think.base {
     return think.defer().promise;
   }
   /**
+   * send content
+   * @param  {Mixed} obj      []
+   * @param  {String} encoding []
+   * @return {Promise}          []
+   */
+  send(obj, encoding){
+    return this.end(obj, encoding);
+  }
+  /**
    * get or set content type
    * @param  {String} ext [content type]
    * @return {}     []
