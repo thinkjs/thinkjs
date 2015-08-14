@@ -51,6 +51,7 @@ export default {
     allow_origin: '',
     sub_protocal: '',
     adapter: undefined,
+    path: '', //url path for websocket
     messages: {
       // open: 'home/websocket/open',
     }
@@ -169,6 +170,7 @@ export default {
     jade: '1.11.0',
     mongodb: '2.0.36',
     memjs: '0.8.5',
-    'socket.io': '1.3.6'
+    sockjs: '0.3.15',
+    'socket.io': '1.3.6',
   }
 };

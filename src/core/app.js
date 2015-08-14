@@ -79,7 +79,7 @@ export default class extends think.base {
       return this.action(controller, '__call');
     }
     http.error = new Error(think.locale('ACTION_NOT_FOUND', action, http.url));
-    return this.statusAction(404, http);
+    return think.statusAction(404, http);
   }
   /**
    * exec 

@@ -19,6 +19,11 @@ export default class extends think.adapter.websocket {
       io.adapter(this.config.adapter());
     }
 
+    //Sets the path v under which engine.io and the static files will be served. Defaults to /socket.io.
+    if(this.config.path){
+      io.path(this.config.path);
+    }
+
     //Sets the allowed origins v. Defaults to any origins being allowed.
     let allow_origin = this.config.allow_origin;
     if(allow_origin){
