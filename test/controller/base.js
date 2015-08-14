@@ -243,10 +243,10 @@ describe('controller/base.js', function(){
       done();
     })
   })
-  it('echo', function(done){
+  it('write', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.echo();
+      var data = instance.write();
       muk.restore();
       done();
     })

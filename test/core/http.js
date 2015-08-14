@@ -651,16 +651,16 @@ describe('core/http.js', function() {
     });
   });
 
-  it('echo empty', function(done) {
+  it('write empty', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&38');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      assert.equal(http.echo(), undefined);
+      assert.equal(http.write(), undefined);
       done();
     });
   });
 
-  it('echo array', function(done) {
+  it('write array', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&39');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -670,11 +670,11 @@ describe('core/http.js', function() {
         http.res.write = fn;
         done();
       };
-      http.echo([1, 2, 3]);
+      http.write([1, 2, 3]);
     });
   });
 
-  it('echo obj', function(done) {
+  it('write obj', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&40');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -684,13 +684,13 @@ describe('core/http.js', function() {
         http.res.write = fn;
         done();
       };
-      http.echo({
+      http.write({
         name: 'maxzhang'
       });
     });
   });
 
-  it('echo str', function(done) {
+  it('write str', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&41');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -700,11 +700,11 @@ describe('core/http.js', function() {
         http.res.write = fn;
         done();
       };
-      http.echo('maxzhang');
+      http.write('maxzhang');
     });
   });
 
-  it('echo str', function(done) {
+  it('write str', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&42');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -715,11 +715,11 @@ describe('core/http.js', function() {
         http.res.write = fn;
         done();
       };
-      http.echo(buffer);
+      http.write(buffer);
     });
   });
 
-  it('echo true', function(done) {
+  it('write true', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&43');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -729,11 +729,11 @@ describe('core/http.js', function() {
         http.res.write = fn;
         done();
       };
-      http.echo(true);
+      http.write(true);
     });
   });
 
-  it('echo no encoding', function(done) {
+  it('write no encoding', function(done) {
     var defaultHttp = getDefaultHttp('/index/index&method=post');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
@@ -743,7 +743,7 @@ describe('core/http.js', function() {
         http.res.write = fn;
         done();
       };
-      http.echo(true);
+      http.write(true);
     });
   });
 

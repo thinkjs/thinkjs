@@ -256,7 +256,7 @@ export default class {
     http.ip = this.ip;
     http.cookie = this.cookie;
     http.redirect = this.redirect;
-    http.echo = this.echo;
+    http.write = this.write;
     http.end = this.end;
     http._end = this._end;
     http.sendTime = this.sendTime;
@@ -641,12 +641,12 @@ export default class {
     return this._view;
   }
   /**
-   * echo content
+   * write content
    * @param  {mixed} obj      []
    * @param  {String} encoding []
    * @return {Promise}          []
    */
-  echo(obj, encoding = this.config('encoding')){
+  write(obj, encoding = this.config('encoding')){
     if(!this.res.connection){
       return;
     }
@@ -707,7 +707,7 @@ export default class {
    * @return {} []
    */
   end(obj, encoding){
-    this.echo(obj, encoding);
+    this.write(obj, encoding);
     //set http end flag
     this._isEnd = true;
     if (!this._outputContentPromise) {

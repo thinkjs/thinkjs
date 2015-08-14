@@ -306,13 +306,13 @@ export default class extends think.base {
     return think.defer().promise;
   }
   /**
-   * echo content
+   * write content
    * @param  {mixed} obj      []
    * @param  {String} encoding [content encoding]
    * @return {}          []
    */
-  echo(obj, encoding) {
-    return this.http.echo(obj, encoding);
+  write(obj, encoding) {
+    return this.http.write(obj, encoding);
   }
   /**
    * end output
