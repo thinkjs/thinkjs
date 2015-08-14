@@ -68,7 +68,7 @@ export default class extends think.adapter.websocket {
     }
     request.url = url;
 
-    let http = await think.http(request, request.res);
+    let http = await think.http(request, think.extend({}, request.res));
     http.data = data;
     http.socket = socket;
     http.io = this.io;
