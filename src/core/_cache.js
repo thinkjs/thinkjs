@@ -129,3 +129,8 @@ thinkCache.COLLECTION = 'collection';
  * @type {String}
  */
 thinkCache.ERROR = 'error';
+/**
+ * app use
+ * @type {String}
+ */
+thinkCache.APP = 'app';
