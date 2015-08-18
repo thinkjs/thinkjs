@@ -1369,6 +1369,8 @@ think.statusAction = (status = 500, http) => {
     return http.status(status).end();
   }
   http._error = true;
+  think.log(http.error);
+
   let name = `${http.module}/${think.dirname.controller}/error`;
   if(think.mode === think.mode_module){
     name = `${think.dirname.common}/${think.dirname.controller}/error`;
