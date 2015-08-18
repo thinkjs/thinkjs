@@ -312,7 +312,6 @@ export default class {
     thinkCache(thinkCache.MODULE_CONFIG, null);
 
     this.loadConfig();
-    this.loadBootstrap();
     this.loadRoute();
     this.loadAlias();
     this.loadAdapter();
@@ -321,6 +320,8 @@ export default class {
     this.loadHook();
     this.loadTemplate();
     this.loadError();
+
+    this.loadBootstrap();
 
     //load alias export at last
     //this.loadAliasExport();
