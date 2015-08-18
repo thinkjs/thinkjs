@@ -12,13 +12,19 @@ export default class extends think.middleware.base {
    * @param  {String} templateFile [template filepath]
    * @return {}              []
    */
-  run(templateFile){
+  run(config){
+    if(!think.isObject(config)){
+      config = think.extend({
+        templateFile: config
+      }, this.config('tpl'));
+    }
+    let templateFile = config.templateFile;
     //is absolute file path
     if(templateFile && path.isAbsolute(templateFile)){
       return templateFile;
     }
     let http = this.http;
-    let {file_depr, file_ext, root_path, theme} = this.config('tpl');
+    let {file_depr, file_ext, root_path, theme} = config;
     let pathPrefix;
     //view root path is defined
     if(root_path){
@@ -47,9 +53,18 @@ export default class extends think.middleware.base {
     let action = paths.pop();
     let controller = paths.pop() || http.controller;
     let module = paths.pop() || http.module;
+
     if (module !== http.module) {
-      pathPrefix = think.getPath(module, think.dirname.view);
+      if(root_path){
+        pathPrefix = path.normalize(root_path);
+        if(think.mode !== think.mode_mini){
+          pathPrefix += '/' + module;
+        }
+      }else{
+        pathPrefix = think.getPath(module, think.dirname.view);
+      }
     }
+
     templateFile = pathPrefix + '/' + controller + file_depr + action;
     if (action.indexOf('.') === -1) {
       templateFile += file_ext;

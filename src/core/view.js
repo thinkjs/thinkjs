@@ -99,8 +99,11 @@ export default class extends think.base {
    */
   async fetch(templateFile, config){
     let tVar = this.tVar, flag = false;
+    config = think.extend({
+      templateFile: templateFile
+    }, think.config('tpl'), config);
     if (!templateFile || !path.isAbsolute(templateFile)) {
-      templateFile = await this.hook('view_template', templateFile);
+      templateFile = await this.hook('view_template', config);
       flag = true;
     }
     if(!this.checkTemplateExist(templateFile, flag)){
