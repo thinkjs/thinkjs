@@ -206,6 +206,9 @@ export default class extends think.base {
    * @return {String}           []
    */
   lang(useCookie){
+    if(this.http._lang){
+      return this.http._lang;
+    }
     if(useCookie){
       let key = this.config('locale').name;
       let value = this.cookie(key);
