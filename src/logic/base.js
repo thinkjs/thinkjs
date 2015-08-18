@@ -65,7 +65,7 @@ export default class extends think.controller.base {
           let args = item.substr(pos + 1).trim();
           if(args[0] === '{' || args[0] === '['){
             args = [(new Function('', `return ${args}`))()];
-          }else{
+          }else if(name !== 'default'){
             args = args.split(/\s*,\s*/);
           }
           itemData[name] = args;

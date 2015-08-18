@@ -534,4 +534,21 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, string, default', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        doc: "string|default:index",
+        version: "string|default:2.0"
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
  })
