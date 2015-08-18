@@ -13,13 +13,13 @@ export default class extends think.middleware.base {
    */
   getPathPrefix(module){
     let pathPrefix, http = this.http, prefix = '';
-    let {root_path, theme, locale} = this.options;
+    let {root_path, theme, lang} = this.options;
     
     module = module || http.module;
     
     //support locale
-    if(locale){
-      prefix += `/${locale}`;
+    if(lang){
+      prefix += `/${lang}`;
     }
     //support theme
     if(theme){
