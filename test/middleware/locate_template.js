@@ -122,7 +122,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/color/group_detail.html');
+      assert.equal(data, think.APP_PATH + '/color/home/view/group_detail.html');
       done();
     })
   })
@@ -139,7 +139,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/home/color/group_detail.html');
+      assert.equal(data, think.APP_PATH + '/color/view/home/group_detail.html');
       done();
     })
   })
@@ -156,7 +156,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/color/group_detail.html');
+      assert.equal(data, think.APP_PATH + '/color/view/group_detail.html');
       done();
     })
   })

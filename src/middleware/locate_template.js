@@ -8,37 +8,58 @@ import path from 'path';
  */
 export default class extends think.middleware.base {
   /**
+   * get path prefix
+   * @return {String} []
+   */
+  getPathPrefix(module){
+    let pathPrefix, http = this.http, prefix = '';
+    let {root_path, theme, locale} = this.options;
+    
+    module = module || http.module;
+    
+    //support locale
+    if(locale){
+      prefix += `/${locale}`;
+    }
+    //support theme
+    if(theme){
+      prefix += `/${theme}`;
+    }
+
+    //view root path is defined
+    if(root_path){
+      pathPrefix = path.normalize(root_path);
+      if(think.mode !== think.mode_mini){
+        pathPrefix += prefix + '/' + module;
+      }
+    }else{
+      pathPrefix = think.getPath(module, think.dirname.view, prefix);
+    }
+
+    return pathPrefix;
+  }
+  /**
    * run
    * @param  {String} templateFile [template filepath]
    * @return {}              []
    */
-  run(config){
-    if(!think.isObject(config)){
-      config = think.extend({
-        templateFile: config
+  run(options){
+    if(!think.isObject(options)){
+      options = think.extend({
+        templateFile: options
       }, this.config('tpl'));
     }
-    let templateFile = config.templateFile;
+    this.options = options;
+
+    let templateFile = options.templateFile;
     //is absolute file path
     if(templateFile && path.isAbsolute(templateFile)){
       return templateFile;
     }
     let http = this.http;
-    let {file_depr, file_ext, root_path, theme} = config;
-    let pathPrefix;
-    //view root path is defined
-    if(root_path){
-      pathPrefix = path.normalize(root_path);
-      if(think.mode !== think.mode_mini){
-        pathPrefix += '/' + http.module;
-      }
-    }else{
-      pathPrefix = think.getPath(http.module, think.dirname.view);
-    }
-    //support theme
-    if(theme){
-      pathPrefix += `/${theme}`;
-    }
+    let {file_depr, file_ext} = options;
+    let pathPrefix = this.getPathPrefix();
+    
     // this.display()
     if (!templateFile) {
       return pathPrefix + '/' + http.controller + file_depr + http.action + file_ext;
@@ -55,14 +76,7 @@ export default class extends think.middleware.base {
     let module = paths.pop() || http.module;
 
     if (module !== http.module) {
-      if(root_path){
-        pathPrefix = path.normalize(root_path);
-        if(think.mode !== think.mode_mini){
-          pathPrefix += '/' + module;
-        }
-      }else{
-        pathPrefix = think.getPath(module, think.dirname.view);
-      }
+      pathPrefix = this.getPathPrefix(module);
     }
 
     templateFile = pathPrefix + '/' + controller + file_depr + action;

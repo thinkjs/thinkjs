@@ -101,7 +101,7 @@ export default class extends think.base {
     let tVar = this.tVar, flag = false;
     config = think.extend({
       templateFile: templateFile
-    }, think.config('tpl'), config);
+    }, this.config('tpl'), config);
     if (!templateFile || !path.isAbsolute(templateFile)) {
       templateFile = await this.hook('view_template', config);
       flag = true;
