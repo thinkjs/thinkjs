@@ -65,6 +65,9 @@ describe('model/base.js', function(){
         ];
         return Promise.resolve(data);
       }else if(sql.indexOf('SHOW COLUMNS ') > -1){
+        if(sql.indexOf(' AS ') > -1){
+          return Promise.reject(new ERROR('columns has can not as'));
+        }
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
@@ -195,7 +198,6 @@ describe('model/base.js', function(){
           think_avg: 1000
         }])
       }
-      //console.log(sql)
       var data = [
         {"id":7565,"title":"title1","cate_id":1,"cate_no":0},
         {"id":7564,"title":"title2","cate_id":2,"cate_no":977},
@@ -309,6 +311,12 @@ describe('model/base.js', function(){
     instance.alias('a').where({
       'fasdf$www': 'welefen'
     }).parseOptions(1000).catch(function(err){
+      done();
+    })
+  })
+  it('alias can not in show columns', function(done){
+    var instance = new Base('user222', think.extend({}, think.config('db'), {test: 111}));
+    instance.alias('a').select().then(function(data){
       done();
     })
   })

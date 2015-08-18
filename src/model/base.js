@@ -88,11 +88,15 @@ export default class extends Base {
 
     options.tablePrefix = this.tablePrefix;
     options.model = this.getModelName();
+    
+    //get table fields can not use table alias
+    let fields = await this.getTableFields(options.table);
+
     //table alias
     if (options.alias) {
       options.table += ' AS ' + options.alias;
     }
-    let fields = await this.getTableFields(options.table);
+
     if(!think.isObject(oriOpts)){
       options = think.extend(options, this.parseWhereOptions(oriOpts, extraOptions));
     }
