@@ -396,11 +396,41 @@ think.log = (msg, type, startTime) => {
  * get or set config
  * @return {mixed} []
  */
-think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
+think.config = (name, value, data) => {
+
+  let flag = false;
   //get module config
   if(think.isString(data)){
     data = think.getModuleConfig(data);
+  }else if(!data){
+    flag = true;
+    data = thinkCache(thinkCache.CONFIG);
   }
+
+  //if set common config, must sync to module config
+  let setConfig = (name, value) => {
+    let configs = [];
+    if(flag){
+      configs = think.module.map(item => think.getModuleConfig(item));
+    }
+    [data, ...configs].forEach(itemData => {
+      if(think.isObject(name)){
+        think.extend(itemData, name);
+      }
+      else if(think.isString(name)){
+        name = name.toLowerCase();
+        if (name.indexOf('.') === -1) {
+          itemData[name] = value;
+        }else{
+          name = name.split('.');
+          itemData[name[0]] = itemData[name[0]] || {};
+          itemData[name[0]][name[1]] = value;
+        }
+      }
+
+    });
+  };
+
   // get all config
   // think.config();
   if (name === undefined) {
@@ -408,29 +438,19 @@ think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
   }
   // merge config
   // think.config({name: 'welefen'})
-  else if (think.isObject(name)) {
-    think.extend(data, name);
+  else if (think.isObject(name) || value !== undefined) {
+    setConfig(name, value);
   }
   // set or get config
   else if(think.isString(name)){
     name = name.toLowerCase();
     //one grade config
     if (name.indexOf('.') === -1) {
-      if (value === undefined) {
-        return data[name];
-      }
-      data[name] = value;
-      return;
+      return data[name];
     }
     name = name.split('.');
-    if (value === undefined) {
-      value = data[name[0]] || {};
-      return value[name[1]];
-    }
-    if (!(name[0] in data)) {
-      data[name[0]] = {};
-    }
-    data[name[0]][name[1]] = value;
+    value = data[name[0]] || {};
+    return value[name[1]];
   }
 };
 /**
@@ -439,10 +459,13 @@ think.config = (name, value, data = thinkCache(thinkCache.CONFIG)) => {
  * @return {Object}        []
  */
 think.getModuleConfig = (module = think.dirname.common) => {
+
+  //get module config from cache
   let moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
   if (module in moduleConfig) {
     return moduleConfig[module];
   }
+
   let rootPath;
   //get sys config
   if (module === true) {
@@ -450,48 +473,57 @@ think.getModuleConfig = (module = think.dirname.common) => {
   }else{
     rootPath = think.getPath(module, think.dirname.config);
   }
+
+  let fileFilters = ['config', 'route'];
+  let dirFilters = ['env', 'sys'];
+  //load conf
+  let getConfig = configPath => {
+    let config = {};
+    if(!think.isDir(configPath)){
+      return config;
+    }
+    fs.readdirSync(configPath).forEach(item => {
+      if(think.isDir(`${configPath}/${item}`)){
+        if(dirFilters.indexOf(item) === -1){
+          config = think.extend(config, {
+            [item]: getConfig(`${configPath}/${item}`)
+          });
+        }
+        return;
+      }
+      item = item.slice(0, -3);
+      if(item[0] === '_' || fileFilters.indexOf(item) > -1){
+        return;
+      }
+      let conf = think.safeRequire(`${configPath}/${item}.js`);
+      if(conf){
+        config = think.extend(config, {[item]: conf});
+      }
+    });
+    return config;
+  };
+
   //config.js
   let config = think.safeRequire(`${rootPath}/config.js`);
-  let envConfig = {}, extraConfig = {};
-  //load extra config by key
-  if(think.isDir(rootPath)){
-    let filters = ['config', 'route'];
-    if(module === true){
-      filters.push('alias', 'hook', 'transform', 'error');
-    }
-    let dirFilters = ['env'];
-    //load conf
-    let loadConf = (path, extraConfig) => {
-      fs.readdirSync(path).forEach(item => {
-        if(think.isDir(`${path}/${item}`)){
-          if(dirFilters.indexOf(item) === -1){
-            extraConfig[item] = loadConf(`${path}/${item}`, extraConfig[item] || {});
-          }
-          return;
-        }
-        item = item.slice(0, -3);
-        if(item[0] === '_' || filters.indexOf(item) > -1){
-          return;
-        }
-        let conf = think.safeRequire(`${path}/${item}.js`);
-        if(conf){
-          extraConfig = think.extend(extraConfig, {[item]: conf});
-        }
-      });
-      return extraConfig;
-    };
-    extraConfig = loadConf(rootPath, extraConfig);
-  }
+  let envConfig = {}, extraConfig = getConfig(rootPath);
+
   envConfig = think.safeRequire(`${rootPath}/env/${think.env}.js`);
+  envConfig = think.extend(envConfig, getConfig(`${rootPath}/env/${think.env}`));
+
+  //merge all configs
   config = think.extend({}, config, extraConfig, envConfig);
-  //merge config
-  if (module !== true) {
+  //merge common configs to module
+  if(module !== true){
     config = think.extend({}, thinkCache(thinkCache.CONFIG), config);
   }
+
   //transform config
   let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
   config = think.transformConfig(config, transforms);
+
+  //set config to module cache
   thinkCache(thinkCache.MODULE_CONFIG, module, config);
+
   return config;
 };
 /**
