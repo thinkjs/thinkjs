@@ -422,9 +422,9 @@ think.config = (name, value, data) => {
         if (name.indexOf('.') === -1) {
           itemData[name] = value;
         }else{
-          name = name.split('.');
-          itemData[name[0]] = itemData[name[0]] || {};
-          itemData[name[0]][name[1]] = value;
+          let names = name.split('.');
+          itemData[names[0]] = itemData[names[0]] || {};
+          itemData[names[0]][names[1]] = value;
         }
       }
 
