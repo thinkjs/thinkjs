@@ -107,7 +107,7 @@ export default class extends think.base {
     }
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.socket) {
-      http.error = new Error(think.locale('DISLLOW_PORT'));
+      http.error = new Error(think.locale('DISALLOW_PORT'));
       return think.statusAction(403, http);
     }
     let instance = domain.create();

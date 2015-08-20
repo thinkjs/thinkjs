@@ -27,7 +27,7 @@ export default {
   NOT_SUPPORT_TRANSACTION: 'table engine is not support transaction',
   DATA_MUST_BE_ARRAY: 'data is not array list',
   PARAMS_TYPE_INVALID: 'params `{name}` type invalid',
-  DISLLOW_PORT: 'proxy on, cannot visit with port',
+  DISALLOW_PORT: 'proxy on, cannot visit with port',
   SERVICE_UNAVAILABLE: 'Service Unavailable',
 
   validate_required: '{name} need is set',
