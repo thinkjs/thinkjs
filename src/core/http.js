@@ -254,6 +254,7 @@ export default class {
     http.header = this.header;
     http.status = this.status;
     http.ip = this.ip;
+    http.lang = this.lang;
     http.cookie = this.cookie;
     http.redirect = this.redirect;
     http.write = this.write;
@@ -491,6 +492,26 @@ export default class {
       return '127.0.0.1';
     }
     return ip;
+  }
+  /**
+   * get language
+   * @param  {Boolean} useCookie [get from cookie set]
+   * @return {String}           []
+   */
+  lang(useCookie){
+    //if is set language by some middlewares, then return
+    if(this._lang){
+      return this._lang;
+    }
+    if(useCookie){
+      let key = this.config('locale').name;
+      let value = this.cookie(key);
+      if(value){
+        return value;
+      }
+    }
+    let lang = this.header('accept-language');
+    return lang.split(',')[0];
   }
   /**
    * get or set cookie
