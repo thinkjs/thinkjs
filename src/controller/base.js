@@ -206,7 +206,6 @@ export default class extends think.base {
    * @return {String}           []
    */
   lang(useCookie){
-    console.log(typeof this.http.lang)
     return this.http.lang(useCookie);
   }
   /**
