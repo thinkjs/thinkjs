@@ -10,24 +10,28 @@
 * http://mongodb.github.io/node-mongodb-native/2.0/api/Collection.html#count
 
 ### 遗留的问题
+
 * validator需要改为laravel类似的方式，更加简洁 -- 已经完成 2015.08.07
 * 服务启动时增加文件名大小写的检测 -- 已经完成 2015.08.08
-* 完善mongodb - 基于mongodb模块 -- 基本完成 2015.08.13
-* 重写websocket
-* 增加migration功能？
+* 完善mongodb -- 基于mongodb模块 -- 基本完成 2015.08.13
+* 重写websocket -- 基本完成 2015.08.21
+* 官网改版 -- 基本完成 2015.08.21
+* 错误页面美化 -- 基本完成 2015.08.21
+
+* ThinkJS创建项目的命令
 * 完善relationModel
-* 单元测试 > 95%
+* 单元测试，代码覆盖率 >95%
 * 关键功能写DEMO
 * 在线文档
-* 官网改版
+* 添加csrf检测，cors头信息设置的middleware
+* ThinkJS T-shirt
+
 * base基类修改？
-* 错误页面美化
+* 增加migration功能？
 * 打包个Vagrant环境?
 * 添加think.crontab接口？
-* thinkjs创建项目的命令
-* thinkjs T-shirt
 * grunt,gulp支持？
-* 添加csrf检测，cors头信息设置的middleware
+
 
 
 
