@@ -103,7 +103,7 @@ export default class extends think.base {
     //service off
     if(!think.config('service_on')){
       http.error = new Error(think.locale('SERVICE_UNAVAILABLE'));
-      return think.statusAction(502, http, true);
+      return think.statusAction(503, http, true);
     }
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.socket) {
