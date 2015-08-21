@@ -1391,7 +1391,7 @@ think.error = (err, addon = '') => {
  * @param  {Object} http   []
  * @return {}        []
  */
-think.statusAction = (status = 500, http) => {
+think.statusAction = (status = 500, http, log) => {
   if(think.isPrevent(http.error)){
     return;
   }
@@ -1401,7 +1401,10 @@ think.statusAction = (status = 500, http) => {
     return http.status(status).end();
   }
   http._error = true;
-  think.log(http.error);
+
+  if(log){
+    think.log(http.error);
+  }
 
   let name = `${http.module}/${think.dirname.controller}/error`;
   if(think.mode === think.mode_module){
@@ -1410,7 +1413,7 @@ think.statusAction = (status = 500, http) => {
   let cls = think.require(name, true);
   if(!cls){
     http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', name, http.url));
-    return think.statusAction(status, http);
+    return think.statusAction(status, http, log);
   }
   let instance = new cls(http);
   return instance.invoke(`_${status}Action`, instance);

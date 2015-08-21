@@ -103,7 +103,7 @@ export default class extends think.base {
     //service off
     if(!think.config('service_on')){
       http.error = new Error(think.locale('SERVICE_UNAVAILABLE'));
-      return think.statusAction(502, http);
+      return think.statusAction(502, http, true);
     }
     //deny access by ip + port
     if (think.config('proxy_on') && http.host !== http.hostname && !http.socket) {
@@ -113,7 +113,7 @@ export default class extends think.base {
     let instance = domain.create();
     instance.on('error', err => {
       http.error = err;
-      think.statusAction(500, http);
+      think.statusAction(500, http, true);
     });
     instance.run(async () => {
       try{
@@ -125,7 +125,7 @@ export default class extends think.base {
         await this.hook('app_end');
       }catch(err){
         http.error = err;
-        think.statusAction(500, http);
+        think.statusAction(500, http, true);
       }
     });
   }
