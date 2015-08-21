@@ -4,42 +4,46 @@
  */
 module.exports = think.controller({
   /**
-   * [_400Action description]
-   * @param  {Object} self []
-   * @return {Promise}      []
+   * display error page
+   * @param  {Number} status []
+   * @return {Promise}        []
    */
-  _400Action: function(self){
-    self.display('400.html');
+  displayErrorPage: function(status){
+    var file = `common/error/${status}.html`;
+    var options = this.config('tpl');
+    options = think.extend({}, options, {type: 'ejs'});
+    return this.display(file, options);
   },
   /**
-   * forbidden action
+   * Forbidden 
+   * @param  {Object} self []
    * @return {Promise} []
    */
   _403Action: function(self){
-    self.display('403.html');
+    return self.displayErrorPage(403);
   },
   /**
-   * not found action
+   * Not Found 
    * @param  {Object} self []
    * @return {Promise}      []
    */
   _404Action: function(self){
-    self.display('404.html');
+    return self.displayErrorPage(404);
   },
   /**
-   * system error action
+   * Internal Server Error
    * @param  {Object} self []
    * @return {Promise}      []
    */
   _500Action: function(self){
-    self.display('500.html');
+    return self.displayErrorPage(500);
   },
   /**
-   * [_503Action description]
+   * Service Unavailable
    * @param  {Object} self []
    * @return {Promise}      []
    */
   _503Action: function(self){
-    self.display('503.html');
+    return self.displayErrorPage(503);
   }
 });
