@@ -110,7 +110,7 @@ export default class {
       deferred.resolve(this.http);
     });
     form.on('error', () => {
-      this.res.statusCode = 413;
+      this.res.statusCode = 400;
       this.http.end();
     });
     form.parse(this.req);
@@ -133,7 +133,7 @@ export default class {
       });
     });
     this.req.on('error', () => {
-      this.res.statusCode = 413;
+      this.res.statusCode = 400;
       this.http.end();
     });
     return deferred.promise;
@@ -148,7 +148,7 @@ export default class {
       try{
         this.http._post = querystring.parse(this.http.payload);
       }catch(e){
-        this.res.statusCode = 413;
+        this.res.statusCode = 400;
         this.http.end();
         return think.prevent();
       }
@@ -156,14 +156,14 @@ export default class {
     let post = this.http._post;
     let length = Object.keys(post).length;
     if (length > think.config('post.max_fields')) {
-      this.res.statusCode = 413;
+      this.res.statusCode = 400;
       this.http.end();
       return think.prevent();
     }
     let maxFilesSize = think.config('post.max_fields_size');
     for(let name in post){
       if (post[name].length > maxFilesSize) {
-        this.res.statusCode = 413;
+        this.res.statusCode = 400;
         this.http.end();
         return think.prevent();
       }
@@ -185,7 +185,7 @@ export default class {
     let stream = fs.createWriteStream(filepath);
     this.req.pipe(stream);
     stream.on('error', () => {
-      this.res.statusCode = 413;
+      this.res.statusCode = 400;
       this.http.end();
     });
     stream.on('close', () => {
