@@ -9,9 +9,14 @@ export default class extends think.adapter.websocket {
    */
   async run(){
     let sockjs = await think.npm('sockjs');
-    let sockjsServer = sockjs.createServer({
+
+    let options = {
       log: () => {}
-    });
+    };
+    if(this.config.sockjs_url){
+      options.sockjs_url = this.config.sockjs_url;
+    }
+    let sockjsServer = sockjs.createServer(options);
 
     //get message type
     let messages = think.extend({}, this.config.messages);
@@ -21,7 +26,7 @@ export default class extends think.adapter.websocket {
     delete messages.close;
 
     sockjsServer.on('connection', socket => {
-      
+          
       //open connection
       if(open){
         this.message(open, undefined, socket);
@@ -33,16 +38,12 @@ export default class extends think.adapter.websocket {
         })
       }
 
-      // msg type is
-      // {
-      //    type: 'chat',
-      //    data: 'message'
-      // }
+      //msg is {event: event, data: data}
       socket.on('data', msg => {
         try{
           msg = JSON.parse(msg);
-          if(msg.type && messages[msg.type]){
-            this.message(messages[msg.type], msg.data, socket);
+          if(msg.event && messages[msg.event]){
+            this.message(messages[msg.event], msg.data, socket);
           }
         }catch(e){}
       });
@@ -63,9 +64,13 @@ export default class extends think.adapter.websocket {
     if(url[0] !== '/'){
       url = `/${url}`;
     }
-    request.url = url;
 
-    let http = await think.http(request, think.extend({}, request.res));
+    let http = await think.http({
+      url: url,
+      headers: socket.headers,
+      ip: socket.remoteAddress
+    });
+    
     http.data = data;
     http.socket = socket;
 
