@@ -6,7 +6,7 @@ module.exports = think.controller({
    * @return {Promise} []
    */
   indexAction: function(self){
-    //auto render template
+    //auto render template file home/index_index.html
     self.display();
   }
 });

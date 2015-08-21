@@ -1,7 +1,7 @@
 'use strict';
 /**
  * rest controller
- * @type {[type]}
+ * @type {Class}
  */
 module.exports = think.controller('rest', {
   /**
