@@ -10,4 +10,4 @@ module.exports = {
   theme: '',
   type: 'ejs',
   options: {}
-}
+};

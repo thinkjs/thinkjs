@@ -12,4 +12,4 @@ module.exports = think.logic({
   indexAction: function(){
 
   }
-})
+});

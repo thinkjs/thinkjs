@@ -11,4 +11,4 @@ module.exports = think.controller('rest', {
   __before: function(){
     
   }
-})
+});

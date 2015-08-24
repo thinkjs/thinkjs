@@ -20,4 +20,4 @@ export default {
     type: '',
     timeout: 3600
   }
-}
+};

@@ -4,4 +4,4 @@
  */
 export default {
   //key: value
-}
+};

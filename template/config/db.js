@@ -20,4 +20,4 @@ module.exports = {
     type: '',
     timeout: 3600
   }
-}
+};
