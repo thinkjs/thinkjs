@@ -2,11 +2,6 @@
 
 module.exports = think.controller({
   /**
-   * index action
-   * @return {Promise} []
+   * some base method in here
    */
-  indexAction: function(self){
-    //auto render template file home/index_index.html
-    self.display();
-  }
 });

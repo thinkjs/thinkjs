@@ -1,12 +1,7 @@
 'use strict';
 
-export default class think.controller.base {
+export default class extends think.controller.base {
   /**
-   * index action
-   * @return {Promise} []
+   * some base method in here
    */
-  indexAction(){
-    //auto render template file home/index_index.html
-    this.display();
-  }
 }

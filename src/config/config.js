@@ -17,7 +17,7 @@ export default {
   timeout: 10, //10 seconds
 
   resource_on: true,
-  resource_reg: /^((?:static|resource)\/|[^\/]+\.(?!js|html)\w+$)/, 
+  resource_reg: /^(static\/|[^\/]+\.(?!js|html)\w+$)/, 
 
   route_on: true,
 
