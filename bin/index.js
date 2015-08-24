@@ -4,6 +4,9 @@ var fs = require('fs');
 var path = require('path');
 var program = require('commander');
 
+
+var templatePath = path.dirname(__dirname) + '/template';
+
 require('../lib/core/think.js');
 
 var modeType = 'module';
@@ -19,19 +22,57 @@ var getVersion = function(){
   return version;
 };
 /**
+ * copy file
+ * @param  {String} source []
+ * @param  {String} target []
+ * @return {}        []
+ */
+var copyFile = function(source, target){
+  mkdir(path.dirname(target));
+
+  var content = fs.readFileSync(templatePath + '/' + source);
+  fs.writeFileSync(target, content);
+  think.log(function(colors){
+    return colors.green('create') + ' : ' + target;
+  });
+}
+/**
+ * mkdir
+ * @param  {String} dir []
+ * @return {}     []
+ */
+var mkdir = function(dir){
+  if(think.isDir(dir)){
+    return;
+  }
+  think.mkdir(dir);
+  think.log(function(colors){
+    return colors.green('create') + ' : ' + dir;
+  });
+}
+/**
  * create project
  * @param  {String} projectPath []
  * @return {}             []
  */
 var createProject = function(projectPath){
+  //check path
   if(think.isDir(projectPath)){
     var filepath = projectPath + '/.thinkjsrc';
     if(think.isFile(filepath)){
-      console.log('path `' + projectPath + '` is already thinkjs project.');
+      console.log();
+      think.log(function(colors){
+        return colors.red('path `' + projectPath + '` is already a thinkjs project.\n');
+      });
       return;
     }
   }
-  
+  console.log();
+
+  mkdir(projectPath);
+
+
+  console.log();
 };
 
 
