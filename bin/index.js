@@ -20,7 +20,7 @@ require('../lib/core/think.js');
  * @return {} []
  */
 var getDateTime = function(){
-  let fn = d => {
+  let fn = function(d) {
     return ('0' + d).slice(-2);
   };
   var d = new Date();
@@ -107,6 +107,12 @@ var createProject = function(projectPath){
   switch(modeType){
     case 'module': 
       createModuleApp(projectPath);
+      break;
+    case 'normal':
+      createNormalApp(projectPath);
+      break;
+    case 'mini':
+      createMiniApp(projectPath);
       break;
   }
 
@@ -215,13 +221,22 @@ var createModuleApp = function(projectPath){
   copyFile('view/index_index.html', commonViewPath + '/index_index.html');
   
 }
+/**
+ * create mini app
+ * @param  {} projectPath []
+ * @return {}             []
+ */
+var createMiniApp = function(projectPath){
+  
+}
 
 
 
 program.version(getVersion()).usage('[command] <options ...>');
-program.option('-e, --es6', 'use es6 for project, in `new` command');
-program.option('-r, --rest', 'create rest controller, in `controller` command');
-program.option('-m, --mode <mode>', 'project mode type, in `new` command', function(mode){
+program.option('-e, --es6', 'use es6 for project, used in `new` command');
+program.option('-r, --rest', 'create rest controller, used in `controller` command');
+program.option('-M, --mongo', 'create rest model, used in `model` command');
+program.option('-m, --mode <mode>', 'project mode type, used in `new` command', function(mode){
   if(modeTypeList.indexOf(mode) === -1){
     throw new Error('mode value must one of mini,normal,module');
   }
