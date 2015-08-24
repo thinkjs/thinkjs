@@ -1000,7 +1000,7 @@ describe('core/http.js', function() {
         throw new Error('test');
       };
       instance.res.end = function() {
-        assert.equal(instance.res.statusCode, 413);
+        assert.equal(instance.res.statusCode, 400);
         querystring.parse = fn;
         setTimeout(function(){
           muk.restore();
@@ -1028,7 +1028,7 @@ describe('core/http.js', function() {
       think.config('post.max_fields_size', 1000);
       instance.run();
       instance.res.end = function() {
-        assert.equal(instance.res.statusCode, 413);
+        assert.equal(instance.res.statusCode, 400);
         setTimeout(function(){
           muk.restore();
           done();
@@ -1058,7 +1058,7 @@ describe('core/http.js', function() {
       var fn = instance.res.end;
       instance.res.statusCode = 200;
       instance.res.end = function() {
-        assert.equal(instance.res.statusCode, 413);
+        assert.equal(instance.res.statusCode, 400);
         instance.res.end = fn;
         setTimeout(function(){
           muk.restore();
@@ -1091,7 +1091,7 @@ describe('core/http.js', function() {
       var fn = instance.res.end;
       instance.res.statusCode = 200;
       instance.res.end = function() {
-        assert.equal(instance.res.statusCode, 413);
+        assert.equal(instance.res.statusCode, 400);
         instance.res.end = fn;
         setTimeout(function(){
           muk.restore();
@@ -1197,7 +1197,7 @@ describe('core/http.js', function() {
       think.config('post.max_fields_size', 1000);
       instance.run();
       instance.res.end = function() {
-        assert.equal(instance.res.statusCode, 413);
+        assert.equal(instance.res.statusCode, 400);
         setTimeout(function(){
           muk.restore();
           done();
@@ -1281,7 +1281,7 @@ describe('core/http.js', function() {
       think.config('post.max_fields_size', 1000);
       instance.run();
       instance.res.end = function() {
-        assert.equal(instance.res.statusCode, 413);
+        assert.equal(instance.res.statusCode, 400);
         done();
       };
     });
