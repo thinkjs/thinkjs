@@ -220,7 +220,7 @@ export default class extends think.base {
       }
       cluster.on('exit', worker => {
         let err = new Error(think.locale('WORKER_DIED', worker.process.pid));
-        think.log(err, 'worker');
+        think.log(err, 'THINK');
         process.nextTick(() => cluster.fork());
       });
     }else {
