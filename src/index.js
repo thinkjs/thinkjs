@@ -280,7 +280,7 @@ export default class {
       }
       let files = think.getFiles(filepath);
       files.forEach(file => {
-        let key = `${filepath}/${file}`;
+        let key = path.normalize(`${filepath}/${file}`);
         data[key] = true;
       });
     };

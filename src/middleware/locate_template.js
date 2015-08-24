@@ -62,7 +62,7 @@ export default class extends think.middleware.base {
     
     // this.display()
     if (!templateFile) {
-      return pathPrefix + '/' + http.controller + file_depr + http.action + file_ext;
+      return path.normalize(pathPrefix + '/' + http.controller + file_depr + http.action + file_ext);
     }
     //replace : to /
     templateFile = templateFile.replace(/\:/g, '/');
@@ -83,6 +83,6 @@ export default class extends think.middleware.base {
     if (action.indexOf('.') === -1) {
       templateFile += file_ext;
     }
-    return templateFile;
+    return path.normalize(templateFile);
   }
 }
