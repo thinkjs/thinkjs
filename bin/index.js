@@ -20,7 +20,7 @@ require('../lib/core/think.js');
  * @return {} []
  */
 var getDateTime = function(){
-  let fn = function(d) {
+  var fn = function(d) {
     return ('0' + d).slice(-2);
   };
   var d = new Date();
