@@ -81,16 +81,17 @@ export default class extends think.base {
    * @param  {Boolean} inView       []
    * @return {Promise}              []
    */
-  checkTemplateExist(templateFile, inView){
+  checkTemplateExist(templateFile){
     let cacheData = thinkCache(thinkCache.TEMPLATE);
     if (templateFile in cacheData) {
       return true;
     }
-    if (!inView && think.isFile(templateFile)) {
+    if (think.isFile(templateFile)) {
       //add template file to cache
       cacheData[templateFile] = true;
       return true;
     }
+    return false;
   }
   /**
    * fetch template file content
@@ -98,18 +99,20 @@ export default class extends think.base {
    * @return {Promise}             []
    */
   async fetch(templateFile, config){
-    let tVar = this.tVar, flag = false;
+    let tVar = this.tVar;
     config = think.extend({
       templateFile: templateFile
     }, this.config('tpl'), config);
+
     if (!templateFile || !path.isAbsolute(templateFile)) {
       templateFile = await this.hook('view_template', config);
-      flag = true;
     }
-    if(!this.checkTemplateExist(templateFile, flag)){
+
+    if(!this.checkTemplateExist(templateFile)){
       let err = new Error(think.locale('TEMPLATE_NOT_EXIST', templateFile));
       return think.reject(err);
     }
+    
     let promises = Object.keys(tVar).map((key) => {
       if (!think.isPromise(tVar[key])) {
         return;
