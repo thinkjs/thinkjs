@@ -74,7 +74,7 @@ export default class {
     let needVersion = engines.node.substr(2);
     let nodeVersion = process.version.substr(1);
     if(needVersion > nodeVersion){
-      throw new Error(`ThinkJS need node version ${needVersion}, current version is ${nodeVersion}, please upgrade it.`);
+      throw new Error(`ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`);
     }
   }
   /**
