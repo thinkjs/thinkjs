@@ -343,16 +343,16 @@ think.isPrevent = err => {
  * @TODO
  * @return {} []
  */
-think.log = (msg, type, startTime) => {
+think.log = (msg, type, showTime) => {
 
-  //when type or startTime is boolean
+  //when type or showTime is boolean
   //only show log when value is true
-  if(type === false || startTime === false){
+  if(type === false || showTime === false){
     return;
   }else if(type === true){
     type = '';
-  }else if(startTime === true){
-    startTime = '';
+  }else if(showTime === true){
+    showTime = '';
   }
 
   let fn = d => {
@@ -362,7 +362,11 @@ think.log = (msg, type, startTime) => {
   let d = new Date();
   let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
   let time = `${fn(d.getHours())}:${fn(d.getMinutes())}:${fn(d.getSeconds())}`;
+
   let dateTime = colors.gray(`[${date} ${time}] `);
+  if(showTime === null){
+    dateTime = '';
+  }
 
   let preError = thinkCache(thinkCache.COLLECTION, 'prev_error');
   if (think.isError(msg)) {
@@ -380,8 +384,8 @@ think.log = (msg, type, startTime) => {
   // if(msg.length > 300){
   //   msg = msg.substr(0, 300) + '...';
   // }
-  if(startTime){
-    let time = Date.now() - startTime;
+  if(think.isNumber(showTime)){
+    let time = Date.now() - showTime;
     msg += ' ' + colors.green(`${time}ms`);
   }
   if(type){

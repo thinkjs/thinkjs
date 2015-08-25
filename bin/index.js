@@ -28,6 +28,12 @@ var getDateTime = function(){
   return date + ' ' + time;
 }
 
+var log = function(fn){
+  think.log(function(colors){
+    return '  ' + fn(colors);
+  }, '', null); 
+}
+
 /**
  * get version
  * @return {String} []
@@ -57,7 +63,7 @@ var copyFile = function(source, target, replace, showWarning){
   //if target file is exist, ignore it
   if(think.isFile(target)){
     if(showWarning){
-      think.log(function(colors){
+      log(function(colors){
         return colors.yellow('exist') + ' : ' + path.normalize(target);
       });
     }
@@ -84,8 +90,8 @@ var copyFile = function(source, target, replace, showWarning){
   }
 
   fs.writeFileSync(target, content);
-  think.log(function(colors){
-    return colors.green('create') + ' : ' + path.normalize(target);
+  log(function(colors){
+    return colors.cyan('create') + ' : ' + path.normalize(target);
   });
 }
 /**
@@ -98,8 +104,8 @@ var mkdir = function(dir){
     return;
   }
   think.mkdir(dir);
-  think.log(function(colors){
-    return colors.green('create') + ' : ' + path.normalize(dir);
+  log(function(colors){
+    return colors.cyan('create') + ' : ' + path.normalize(dir);
   });
 }
 /**
@@ -180,7 +186,7 @@ var getProjectViewPath = function(module){
 var _checkEnv = function(){
   if(!isThinkApp('./')){
     console.log();
-    think.log(function(colors){
+    log(function(colors){
       return colors.red('current path is not thinkjs project.\n');
     });
     process.exit();
@@ -287,7 +293,7 @@ var _copyCommonBootstrapFiles = function(){
  */
 var _createModule = function(module){
   if(isModuleExist(module)){
-    think.log(function(colors){
+    log(function(colors){
       return colors.red('module `' + module + '` is exist.\n');
     });
     process.exit();
@@ -421,14 +427,34 @@ var _createProject = function(){
 var createProject = function(){
   if(isThinkApp(projectRootPath)){
     console.log();
-    think.log(function(colors){
+    log(function(colors){
       return colors.red('path `' + projectRootPath + '` is already a thinkjs project.\n');
     });
     return;
   }
   console.log();
+
   think.APP_PATH = getProjectAppPath();
   _createProject();
+
+  console.log();
+  console.log('  enter path:');
+  console.log('  $ cd ' + projectRootPath);
+  console.log();
+
+  console.log('  install dependencies:');
+  console.log('  $ npm install');
+  console.log();
+
+  if(program.es6){
+    console.log('  watch compile:');
+    console.log('  $ npm run watch-compile');
+    console.log();
+  }
+
+  console.log('  run the app:');
+  console.log('  $ npm start');
+
   console.log();
 };
 
