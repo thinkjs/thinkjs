@@ -274,6 +274,14 @@ var _copyCommonConfigFiles = function(){
   copyFile('config/config.js', rootPath + '/config.js', false);
   copyFile('config/tpl.js', rootPath + '/tpl.js');
   copyFile('config/db.js', rootPath + '/db.js');
+
+  mkdir(rootPath + '/env');
+  copyFile('config/env/development.js', rootPath + '/env/development.js');
+  copyFile('config/env/testing.js', rootPath + '/env/testing.js');
+  copyFile('config/env/production.js', rootPath + '/env/production.js');
+
+  mkdir(rootPath + '/locale');
+  copyFile('config/locale/en.js', rootPath + '/locale/en.js');
 };
 /**
  * copy bootstrap files
