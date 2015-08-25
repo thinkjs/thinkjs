@@ -373,14 +373,14 @@ describe('core/think.js', function(){
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
-    it('mode normal with model', function(){
+    it('mode normal with controller', function(){
       var mode = think.mode;
       think.mode = think.mode_normal;
       var APP_PATH = think.APP_PATH;
       think.APP_PATH = '/path/to/project/app';
       think.config('default_module', 'home')
-      var path = think.getPath(undefined, think.dirname.model);
-      assert.equal(path, '/path/to/project/app/model/home');
+      var path = think.getPath(undefined, think.dirname.controller);
+      assert.equal(path, '/path/to/project/app/controller/home');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
