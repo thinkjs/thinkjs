@@ -9,7 +9,11 @@ module.exports = think.controller({
    * @return {Promise}        []
    */
   displayErrorPage: function(status){
-    var file = `common/error/${status}.html`;
+    var module = 'common';
+    if(think.mode !== think.mode_module){
+      module = this.config('default_module');
+    }
+    var file = module + '/error/' + status + '.html';
     var options = this.config('tpl');
     options = think.extend({}, options, {type: 'ejs'});
     return this.display(file, options);

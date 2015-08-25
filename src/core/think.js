@@ -253,7 +253,6 @@ think.getPath = (module, type = think.dirname.controller, prefix = '') => {
       let filepath = `${think.APP_PATH}${prefix}/${type}`;
       switch(type){
         case think.dirname.controller:
-        case think.dirname.model:
         case think.dirname.logic:
         case think.dirname.service:
         case think.dirname.view:
@@ -1412,7 +1411,7 @@ think.statusAction = (status = 500, http, log) => {
     think.log(http.error);
   }
 
-  let name = `${http.module}/${think.dirname.controller}/error`;
+  let name = `${think.config('default_module')}/${think.dirname.controller}/error`;
   if(think.mode === think.mode_module){
     name = `${think.dirname.common}/${think.dirname.controller}/error`;
   }
