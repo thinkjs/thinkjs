@@ -7,12 +7,12 @@ var muk = require('muk');
 var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
-    
+
 var Base = require('../../lib/middleware/base.js');
 
 describe('middleware/base', function(){
   before(function(){
-    console.log('before')
+    // console.log('before')
 
   })
   it('base is function', function(){

@@ -245,6 +245,8 @@ export default class {
     http.config = this.config;
     http.referrer = this.referrer;
     http.userAgent = this.userAgent;
+    http.isGet = this.isGet;
+    http.isPost = this.isPost;
     http.isAjax = this.isAjax;
     http.isJsonp = this.isJsonp;
     http.get = this.get;
@@ -340,6 +342,20 @@ export default class {
     }
     let info = url.parse(referrer);
     return info.hostname;
+  }
+  /**
+   * check http method is get
+   * @return {Boolean} []
+   */
+  isGet(){
+    return this.method === 'GET';
+  }
+  /**
+   * check http method is post
+   * @return {Boolean} []
+   */
+  isPost(){
+    return this.method === 'POST';
   }
   /**
    * is ajax request
