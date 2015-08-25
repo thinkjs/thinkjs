@@ -163,7 +163,7 @@ var copyCommonFiles = function(projectPath){
   copyFile('entrance/index.js', projectPath + 'www/index.js');
   copyFile('entrance/production.js', projectPath + 'www/production.js');
   copyFile('entrance/testing.js', projectPath + 'www/testing.js');
-  copyFile('entrance/readme.md', projectPath + 'www/readme.md');
+  copyFile('entrance/README.md', projectPath + 'www/README.md');
 
   mkdir(projectPath + 'www/static/');
   mkdir(projectPath + 'www/static/js');
