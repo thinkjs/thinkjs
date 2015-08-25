@@ -39,26 +39,26 @@ export default class extends think.base {
     return this.http.method.toLowerCase();
   }
   /**
-   * check http method is get
-   * @return {Boolean} []
-   */
-  isGet(){
-    return this.http.method === 'GET';
-  }
-  /**
-   * check http method is post
-   * @return {Boolean} []
-   */
-  isPost(){
-    return this.http.method === 'POST';
-  }
-  /**
    * check http method
    * @param  {String}  method [http method]
    * @return {Boolean}        []
    */
   isMethod(method){
     return this.http.method === method.toUpperCase();
+  }
+  /**
+   * check http method is get
+   * @return {Boolean} []
+   */
+  isGet(){
+    return this.http.isGet();
+  }
+  /**
+   * check http method is post
+   * @return {Boolean} []
+   */
+  isPost(){
+    return this.http.isPost();
   }
   /**
    * check is ajax request
@@ -251,7 +251,7 @@ export default class extends think.base {
     return this.view().fetch(templateFile);
   }
   /**
-   * display template 
+   * display template
    * @param  {String} templateFile [template filepath]
    * @param  {String} charset      [content encoding]
    * @param  {String} contentType  [content type]
