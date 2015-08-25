@@ -17,13 +17,13 @@ node www/testing.js
 *production*
 
 ```js
-node www/producition.js 
+node www/production.js 
 ```
 
 or use pm2 to manage node:
 
 ```
-pm2 start www/produciton.js
+pm2 start www/production.js
 ```
 
 ### compile es6 code

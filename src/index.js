@@ -335,7 +335,7 @@ export default class {
       let time = Date.now();
       //auto clear interval when running more than 2 days
       if (time - think.startTime > 2 * 24 * 3600 * 1000) {
-        think.log('file auto reload is stoped');
+        think.log('file auto reload is stoped', 'THINK');
         clearInterval(timer);
         return;
       }
