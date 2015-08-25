@@ -10,9 +10,6 @@ var templatePath = path.dirname(__dirname) + '/template';
 var modeType = 'module';
 var modeTypeList = ['mini', 'normal', 'module'];
 
-
-
-
 require('../lib/core/think.js');
 
 /**
@@ -158,6 +155,7 @@ var copyCommonFiles = function(projectPath){
   copyFile('nginx.conf', projectPath + 'nginx.conf', {
     ROOT_PATH: cwd + '/' + projectPath + 'www'
   });
+  copyFile('.gitignore', projectPath + '.gitignore');
 
   mkdir(projectPath + 'www/');
   copyFile('entrance/index.js', projectPath + 'www/index.js');
