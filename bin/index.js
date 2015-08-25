@@ -26,23 +26,49 @@ var getDateTime = function(){
   var date = d.getFullYear() + '-' + fn(d.getMonth() + 1) + '-' + fn(d.getDate());
   var time = fn(d.getHours()) + ':' + fn(d.getMinutes()) + ':' + fn(d.getSeconds());
   return date + ' ' + time;
-}
+};
 
 var log = function(fn){
   think.log(function(colors){
     return '  ' + fn(colors);
   }, '', null); 
-}
+};
+
+/**
+ * mkdir
+ * @param  {String} dir []
+ * @return {}     []
+ */
+var mkdir = function(dir){
+  if(think.isDir(dir)){
+    return;
+  }
+  think.mkdir(dir);
+  log(function(colors){
+    return colors.cyan('create') + ' : ' + path.normalize(dir);
+  });
+};
 
 /**
  * get version
  * @return {String} []
  */
 var getVersion = function(){
-  var filepath = path.normalize(__dirname + '/../package.json');
+  var filepath = path.resolve(__dirname, '../package.json');
   var version = JSON.parse(fs.readFileSync(filepath)).version;
   return version;
 };
+
+/**
+ * get app root path
+ * @return {} []
+ */
+var getProjectAppPath = function(){
+  var path = projectRootPath;
+  path += program.es6 ? 'src' : 'app';
+  return path;
+};
+
 /**
  * copy file
  * @param  {String} source []
@@ -93,21 +119,8 @@ var copyFile = function(source, target, replace, showWarning){
   log(function(colors){
     return colors.cyan('create') + ' : ' + path.normalize(target);
   });
-}
-/**
- * mkdir
- * @param  {String} dir []
- * @return {}     []
- */
-var mkdir = function(dir){
-  if(think.isDir(dir)){
-    return;
-  }
-  think.mkdir(dir);
-  log(function(colors){
-    return colors.cyan('create') + ' : ' + path.normalize(dir);
-  });
-}
+};
+
 /**
  * check is thinkjs app
  * @param  {String}  projectRootPath []
@@ -121,7 +134,7 @@ var isThinkApp = function(projectRootPath){
     }
   }
   return false;
-}
+};
 /**
  * is module exist
  * @param  {String}  module []
@@ -133,7 +146,7 @@ var isModuleExist = function(module){
     modelPath = think.getPath(module, 'controller');
   }
   return think.isDir(modelPath);
-}
+};
 /**
  * parse app config
  * @param  {} projectRootPath []
@@ -148,16 +161,8 @@ var parseAppConfig = function(){
   think.mode = think['mode_' + data.mode];
 
   think.APP_PATH = getProjectAppPath();
-}
-/**
- * get app root path
- * @return {} []
- */
-var getProjectAppPath = function(){
-  var path = projectRootPath;
-  path += program.es6 ? 'src' : 'app';
-  return path;
-}
+};
+
 /**
  * get view root path;
  * @return {String}             []
@@ -177,7 +182,7 @@ var getProjectViewPath = function(module){
   }else{
     return think.getPath(module, 'view');
   }
-}
+};
 
 /**
  * check env
@@ -193,7 +198,7 @@ var _checkEnv = function(){
   }
   parseAppConfig();
   console.log();
-}
+};
 
 /**
  * copy common files
@@ -212,8 +217,8 @@ var _copyWwwFiles = function(){
     mode = 'module';
   }
   copyFile('.thinkjsrc', projectRootPath + '.thinkjsrc', {
-    "<createAt>": getDateTime(),
-    "<mode>": mode,
+    '<createAt>': getDateTime(),
+    '<mode>': mode,
     '"<es6>"': !!program.es6
   });
 
@@ -233,7 +238,7 @@ var _copyWwwFiles = function(){
   mkdir(projectRootPath + 'www/static/js');
   mkdir(projectRootPath + 'www/static/css');
   mkdir(projectRootPath + 'www/static/img');
-}
+};
 /**
  * copy error template files
  * @param  {String} projectRootPath []
@@ -257,23 +262,21 @@ var _copyErrorTemplateFiles = function(){
   copyFile('view/error_404.html', commonViewPath + '/error_404.html');
   copyFile('view/error_500.html', commonViewPath + '/error_500.html');
   copyFile('view/error_503.html', commonViewPath + '/error_503.html');
-}
+};
 /**
  * copy common config files
- * @param  {} projectRootPath []
  * @return {}             []
  */
-var _copyCommonConfigFiles = function(projectRootPath){
+var _copyCommonConfigFiles = function(){
   var rootPath = think.getPath('common', 'config');
   mkdir(rootPath);
 
   copyFile('config/config.js', rootPath + '/config.js', false);
   copyFile('config/tpl.js', rootPath + '/tpl.js');
   copyFile('config/db.js', rootPath + '/db.js');
-}
+};
 /**
  * copy bootstrap files
- * @param  {String} projectRootPath []
  * @return {}             []
  */
 var _copyCommonBootstrapFiles = function(){
@@ -282,12 +285,11 @@ var _copyCommonBootstrapFiles = function(){
 
   copyFile('bootstrap/hook.js', rootPath + '/hook.js');
   copyFile('bootstrap/start.js', rootPath + '/start.js');
-}
+};
 
 
 /**
  * create module
- * @param  {String} projectRootPath []
  * @param  {String} module      []
  * @return {}             []
  */
@@ -324,7 +326,7 @@ var _createModule = function(module){
   var viewPath = getProjectViewPath(module);
   mkdir(viewPath);
   copyFile('view/index_index.html', viewPath + '/index_index.html');
-}
+};
 
 /**
  * create module
@@ -334,7 +336,7 @@ var _createModule = function(module){
 var createModule = function(module){
   _checkEnv();
   _createModule(module);
-}
+};
 /**
  * create controller
  * @param  {} controller []
@@ -367,7 +369,7 @@ var createController = function(controller){
   copyFile('logic/index.js', logicPath + '/' + controller + '.js');
 
   console.log();
-}
+};
 /**
  * create model file
  * @param  {String} model []
@@ -393,13 +395,13 @@ var createModel = function(model){
   if(program.relation){
     file = 'relation.js';
   }else if(program.mongo){
-    file = 'mongo.js'
+    file = 'mongo.js';
   }
   var controllerPath = think.getPath(module, 'model');
   copyFile('model/' + file, controllerPath + '/' + model + '.js');
 
   console.log();
-}
+};
 
 /**
  * module app
@@ -418,7 +420,7 @@ var _createProject = function(){
   _copyErrorTemplateFiles();
 
   _createModule('home');
-}
+};
 /**
  * create project
  * @param  {String} projectRootPath []
