@@ -1363,11 +1363,16 @@ think.error = (err, addon = '') => {
   }else if(think.isError(err)){
     let message = err.message;
     let errors = thinkCache(thinkCache.ERROR);
-    let key, value;
+    let key, value, reg = /^[A-Z\_]$/;
     for(key in errors){
-      if(message.indexOf(key) > -1){
-        value = errors[key];
-        break;
+      let pos = message.indexOf(key);
+      if(pos > -1){
+        let prev = pos === 0 ? '' : message[pos - 1];
+        let next = message[pos + key.length];
+        if(!reg.test(prev) && !reg.test(next)){
+          value = errors[key];
+          break;
+        }
       }
     }
     if(value){
@@ -1377,7 +1382,8 @@ think.error = (err, addon = '') => {
       }else{
         addon = addon ? `, ${addon}` : '';
         let msg = `${value}${addon}. http://www.thinkjs.org/doc/error.html#${key}`;
-        return new Error(msg);
+        err.message = msg;
+        return err;
       }
     }
     return err;
