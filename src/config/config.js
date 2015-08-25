@@ -14,7 +14,7 @@ export default {
 
   service_on: true, //Service available
 
-  timeout: 10, //10 seconds
+  timeout: 30, //30 seconds
 
   resource_on: true,
   resource_reg: /^(static\/|[^\/]+\.(?!js|html)\w+$)/, 
