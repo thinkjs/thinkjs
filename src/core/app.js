@@ -167,9 +167,11 @@ export default class extends think.base {
     }
 
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
-    think.log(colors => `ThinkJS Version: ${think.version}`, 'THINK');
+    think.log(() => `ThinkJS Version: ${think.version}`, 'THINK');
     think.log(colors => `WebSocket Status: ${colors.magenta(status)}`, 'THINK');
-    think.log(colors => `App Enviroment: ${colors.magenta(think.env)}`, 'THINK');
+    think.log(colors => `File Auto Reload: ${colors.magenta(think.config('auto_reload'))}`, 'THINK');
+    think.log(colors => `App Enviroment: ${colors.magenta(think.env)}\n`, 'THINK');
+
   }
   /**
    * cli mode
