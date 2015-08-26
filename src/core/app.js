@@ -158,20 +158,30 @@ export default class extends think.base {
     this.logPid(port);
 
     //start websocket
-    let websocket = think.config('websocket'), status = 'closed';
+    let websocket = think.config('websocket');
     if(websocket.on){
-      status = 'opened';
       let Cls = think.adapter('websocket', websocket.type);
       let instance = new Cls(server, websocket, this);
       instance.run();
     }
+  }
+  /**
+   * log
+   * @return {} []
+   */
+  static log(){
+    let host = think.config('host');
+    let port = think.port || think.config('port'); 
+    let websocketStatus = think.config('websocket.on') ? 'open' : 'closed';
+    let clusterStatus = think.config('cluster_on') ? 'open' : 'closed';
 
+    console.log();
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
     think.log(() => `ThinkJS Version: ${think.version}`, 'THINK');
-    think.log(colors => `WebSocket Status: ${colors.magenta(status)}`, 'THINK');
+    think.log(colors => `Cluster Status: ${colors.magenta(clusterStatus)}`, 'THINK');
+    think.log(colors => `WebSocket Status: ${colors.magenta(websocketStatus)}`, 'THINK');
     think.log(colors => `File Auto Reload: ${colors.magenta(think.config('auto_reload'))}`, 'THINK');
     think.log(colors => `App Enviroment: ${colors.magenta(think.env)}\n`, 'THINK');
-
   }
   /**
    * cli mode
@@ -210,21 +220,21 @@ export default class extends think.base {
   static http(){
     let nums = think.config('cluster_on');
     if (!nums) {
-      return this.createServer();
+      this.createServer();
+      return this.log();
     }
     if (nums === true) {
       nums = os.cpus().length;
     }
     if (cluster.isMaster) {
-      think.log('use cluster, fork nums ' + nums, 'THINK');
       for (let i = 0; i < nums; i++) {
         cluster.fork();
       }
       cluster.on('exit', worker => {
-        let err = new Error(think.locale('WORKER_DIED', worker.process.pid));
-        think.log(err, 'THINK');
+        think.log(new Error(think.locale('WORKER_DIED', worker.process.pid)), 'THINK');
         process.nextTick(() => cluster.fork());
       });
+      this.log();
     }else {
       this.createServer();
     }
