@@ -16,6 +16,8 @@ export default {
 
   timeout: 30, //30 seconds
 
+  auto_reload: false, //file auto reload
+
   resource_on: true,
   resource_reg: /^(static\/|[^\/]+\.(?!js|html)\w+$)/, 
 
