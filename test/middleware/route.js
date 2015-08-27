@@ -86,10 +86,13 @@ describe('middleware/route', function(){
     muk(think, 'reject', function(err){
       return Promise.reject(err);
     })
+    muk(think, 'statusAction', function(status, http){
+      assert.equal(status, 400);
+      assert.equal(http.error.message.indexOf('`test-ww`') > -1, true);
+    })
     execMiddleware('route', {}, {
       pathname: 'test-ww/welefen'
     }).catch(function(err){
-      assert.equal(err.message.indexOf('`test-ww`') > -1, true);
       muk.restore();
       done();
     })
@@ -98,10 +101,13 @@ describe('middleware/route', function(){
     muk(think, 'reject', function(err){
       return Promise.reject(err);
     })
+    muk(think, 'statusAction', function(status, http){
+      assert.equal(status, 400);
+      assert.equal(http.error.message.indexOf('`welefen-test`') > -1, true);
+    })
     execMiddleware('route', {}, {
       pathname: 'welefen/welefen-test'
     }).catch(function(err){
-      assert.equal(err.message.indexOf('`welefen-test`') > -1, true);
       muk.restore();
       done();
     })

@@ -19,6 +19,14 @@ module.exports = think.controller({
     return this.display(file, options);
   },
   /**
+   * Bad Request 
+   * @param  {Object} self []
+   * @return {Promise} []
+   */
+  _400Action: function(self){
+    return self.displayErrorPage(400);
+  },
+  /**
    * Forbidden 
    * @param  {Object} self []
    * @return {Promise} []
