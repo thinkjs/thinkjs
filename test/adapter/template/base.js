@@ -21,16 +21,14 @@ describe('adapter/template/base.js', function(){
   })
   it('get content success', function(done){
     var instance = new baseTemplate();
-    instance.getContent(__filename).then(function(data){
-      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
-      done();
-    })
+    var data = instance.getContent(__filename);
+    assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+    done();
   })
   it('run', function(done){
     var instance = new baseTemplate();
-    instance.run(__filename).then(function(data){
-      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
-      done();
-    })
+    var data = instance.run(__filename);
+    assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+    done();
   })
 })
