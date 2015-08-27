@@ -118,6 +118,8 @@ describe('MemcacheSocket', function(){
       assert.deepEqual(res, ['1', 23]);
       res = socket.handleGet('VALUE var 1 10\r\n1234567890\r\nEND\r\n');
       assert.deepEqual(res, ['1234567890', 33]);
+      res = socket.handleGet('VALUE var 1 10\r\n1234END890\r\nEND\r\n');
+      assert.deepEqual(res, ['1234END890', 33]);
     })
     it('irregular value', function() {
       var socket = MemcacheSocket(8989, '127.0.0.1');
