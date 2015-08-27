@@ -12,8 +12,9 @@ export default class {
    * @return {} []
    */
   getContent(file){
-    let fn = think.promisify(fs.readFile, fs);
-    return fn(file, 'utf8');
+    return fs.readFileSync(file, 'utf8');
+    // let fn = think.promisify(fs.readFile, fs);
+    // return fn(file, 'utf8');
   }
   /**
    * run
