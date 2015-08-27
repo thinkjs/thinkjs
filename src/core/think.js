@@ -1400,7 +1400,7 @@ think.error = (err, addon = '') => {
  * @param  {Object} http   []
  * @return {}        []
  */
-think.statusAction = (status = 500, http, log) => {
+think.statusAction = async (status = 500, http, log) => {
   if(think.isPrevent(http.error)){
     return;
   }
@@ -1425,5 +1425,7 @@ think.statusAction = (status = 500, http, log) => {
     return think.statusAction(status, http, log);
   }
   let instance = new cls(http);
-  return instance.invoke(`_${status}Action`, instance);
+  await instance.invoke(`_${status}Action`, instance);
+  
+  return think.prevent();
 };

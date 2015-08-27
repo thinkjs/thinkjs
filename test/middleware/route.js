@@ -89,6 +89,7 @@ describe('middleware/route', function(){
     muk(think, 'statusAction', function(status, http){
       assert.equal(status, 400);
       assert.equal(http.error.message.indexOf('`test-ww`') > -1, true);
+      return think.prevent();
     })
     execMiddleware('route', {}, {
       pathname: 'test-ww/welefen'
@@ -104,6 +105,7 @@ describe('middleware/route', function(){
     muk(think, 'statusAction', function(status, http){
       assert.equal(status, 400);
       assert.equal(http.error.message.indexOf('`welefen-test`') > -1, true);
+      return think.prevent();
     })
     execMiddleware('route', {}, {
       pathname: 'welefen/welefen-test'

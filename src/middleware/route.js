@@ -106,7 +106,7 @@ export default class extends think.middleware.base {
    * parse pathname
    * @return {} []
    */
-  parsePathname(){
+  async parsePathname(){
     let pathname = this.http.pathname, http = this.http;
     if (!pathname) {
       this.http.module = think.getModule();
@@ -142,13 +142,11 @@ export default class extends think.middleware.base {
 
     if (!this.http.controller) {
       this.http.error = new Error(think.locale('CONTROLLER_INVALID', controller, this.http.url));
-      think.statusAction(400, http);
-      return think.prevent();
+      return think.statusAction(400, http);
     }
     if (!this.http.action) {
       this.http.error = new Error(think.locale('ACTION_INVALID', action, this.http.url));
-      think.statusAction(400, http);
-      return think.prevent();
+      return think.statusAction(400, http);
     }
   }
   /**
