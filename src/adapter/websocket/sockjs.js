@@ -35,7 +35,7 @@ export default class extends think.adapter.websocket {
       if(close){
         socket.on('close', () => {
           this.message(close, undefined, socket);
-        })
+        });
       }
 
       //msg is {event: event, data: data}
@@ -60,7 +60,6 @@ export default class extends think.adapter.websocket {
    * @return {}      []
    */
   async message(url, data, socket){
-    let request = socket.request;
     if(url[0] !== '/'){
       url = `/${url}`;
     }
