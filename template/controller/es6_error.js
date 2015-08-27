@@ -19,6 +19,13 @@ export default class extends think.controller.base {
     return this.display(file, options);
   }
   /**
+   * Bad Request 
+   * @return {Promise} []
+   */
+  _400Action(){
+    return this.displayErrorPage(400);
+  }
+  /**
    * Forbidden 
    * @return {Promise} []
    */
