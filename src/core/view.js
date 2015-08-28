@@ -72,7 +72,6 @@ export default class extends think.base {
    */
   render(content = '', charset = this.http.config('encoding'), contentType = this.http.config('tpl.content_type')){
     this.http.type(contentType, charset);
-    this.http.sendTime();
     return this.http.end(content, charset);
   }
   /**
