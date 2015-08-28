@@ -258,6 +258,7 @@ var _copyErrorTemplateFiles = function(){
   var commonViewPath = getProjectViewPath(module);
 
   mkdir(commonViewPath);
+  copyFile('view/error_400.html', commonViewPath + '/error_400.html');
   copyFile('view/error_403.html', commonViewPath + '/error_403.html');
   copyFile('view/error_404.html', commonViewPath + '/error_404.html');
   copyFile('view/error_500.html', commonViewPath + '/error_500.html');
