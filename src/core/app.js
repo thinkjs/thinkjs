@@ -135,11 +135,7 @@ export default class extends think.base {
     //createServer callback
     let callback = async (req, res) => {
       let http = await think.http(req, res);
-      try{
-        return new this(http).run();
-      }catch(e){
-        think.log(e);
-      }
+      return new this(http).run();
     };
     let server;
     //define createServer in application

@@ -398,12 +398,8 @@ export default class {
    * run
    * @return {} []
    */
-  async run(){
-    try{
-      this.start();
-      await think.require('app').run();
-    }catch(err){
-      think.log(err);
-    }
+  run(){
+    this.start();
+    return think.require('app').run();
   }
 }
