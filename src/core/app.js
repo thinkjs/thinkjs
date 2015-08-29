@@ -117,8 +117,11 @@ export default class extends think.base {
     });
     instance.run(async () => {
       await this.dispatcher();
+
       //set module config
-      this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
+      //this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
+      this.http._config = think.getModuleConfig(this.http.module);
+
       await this.hook('app_begin');
       await this.exec();
       await this.hook('app_end');
@@ -166,7 +169,6 @@ export default class extends think.base {
     let websocketStatus = think.config('websocket.on') ? 'open' : 'closed';
     let clusterStatus = think.config('cluster_on') ? 'open' : 'closed';
 
-    console.log();
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
     think.log(() => `ThinkJS Version: ${think.version}`, 'THINK');
     think.log(colors => `Cluster Status: ${colors.magenta(clusterStatus)}`, 'THINK');
