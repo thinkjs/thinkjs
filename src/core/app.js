@@ -11,9 +11,10 @@ export default class extends think.base {
    * dispath route
    * @return {} []
    */
-  async dispatcher(){
-    await this.hook('resource_check');
-    await this.hook('route_parse');
+  dispatcher(){
+    return this.hook('resource_check').then(() => {
+      return this.hook('route_parse');
+    });
   }
   /**
    * exec logic
@@ -118,8 +119,7 @@ export default class extends think.base {
     instance.run(async () => {
       await this.dispatcher();
 
-      //set module config
-      //this.http._config = think.extend({}, think.getModuleConfig(this.http.module));
+      //set module config, can not set config in request
       this.http._config = think.getModuleConfig(this.http.module);
 
       await this.hook('app_begin');

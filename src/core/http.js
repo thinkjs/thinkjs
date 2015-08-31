@@ -257,6 +257,8 @@ export default class {
     http.status = this.status;
     http.ip = this.ip;
     http.lang = this.lang;
+    http.theme = this.theme;
+    http.getLang = this.getLang;
     http.cookie = this.cookie;
     http.redirect = this.redirect;
     http.write = this.write;
@@ -514,11 +516,19 @@ export default class {
    * @param  {Boolean} useCookie [get from cookie set]
    * @return {String}           []
    */
-  lang(useCookie){
-    //if is set language by some middlewares, then return
-    if(this._lang){
-      return this._lang;
+  lang(lang){
+    if(lang){
+      this._lang = lang;
+      return;
     }
+    return this._lang;
+  }
+  /**
+   * get lang from header or cookie
+   * @param  {Boolean} userCookie []
+   * @return {String}            []
+   */
+  getLang(useCookie){
     if(useCookie){
       let key = this.config('locale').name;
       let value = this.cookie(key);
@@ -530,11 +540,23 @@ export default class {
     return lang.split(',')[0];
   }
   /**
+   * get or set theme
+   * @param  {String} theme []
+   * @return {String}       []
+   */
+  theme(theme){
+    if(theme){
+      this._theme = theme;
+      return;
+    }
+    return this._theme;
+  }
+  /**
    * get or set cookie
-   * @param  {} name    [description]
-   * @param  {[type]} value   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * @param  {} name    []
+   * @param  {} value   []
+   * @param  {} options []
+   * @return {}         []
    */
   cookie(name, value, options){
     //send cookies

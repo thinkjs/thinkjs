@@ -205,8 +205,8 @@ export default class extends think.base {
    * @param  {Boolean} useCookie [get from cookie set]
    * @return {String}           []
    */
-  lang(useCookie){
-    return this.http.lang(useCookie);
+  getLang(useCookie){
+    return this.http.getLang(useCookie);
   }
   /**
    * get locale value
@@ -214,7 +214,7 @@ export default class extends think.base {
    * @return {String}     []
    */
   locale(key){
-    let lang = this.lang(true);
+    let lang = this.getLang(true);
     let locales = this.config(think.dirname.locale);
     let values = locales[lang] || {};
     let defaultLocales = locales[this.config('locale.default')];

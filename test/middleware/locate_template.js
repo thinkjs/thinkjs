@@ -43,6 +43,8 @@ describe('middleware/locate_template', function(){
     }).then(function(data){
       assert.equal(data, think.APP_PATH + '/view/group/detail.html');
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('mode_mini, file_ext: .txt', function(done){
@@ -115,12 +117,12 @@ describe('middleware/locate_template', function(){
       tpl: {
         file_depr: '_',
         file_ext: '.html',
-        theme: 'color'
       }
     }, {
       module: 'home',
       controller: 'group',
-      action: 'detail'
+      action: 'detail',
+      _theme: 'color'
     }).then(function(data){
       assert.equal(data, think.APP_PATH + '/color/home/view/group_detail.html');
       done();
@@ -132,12 +134,12 @@ describe('middleware/locate_template', function(){
       tpl: {
         file_depr: '_',
         file_ext: '.html',
-        theme: 'color'
       }
     }, {
       module: 'home',
       controller: 'group',
-      action: 'detail'
+      action: 'detail',
+      _theme: 'color'
     }).then(function(data){
       assert.equal(data, think.APP_PATH + '/color/view/home/group_detail.html');
       done();
@@ -149,12 +151,12 @@ describe('middleware/locate_template', function(){
       tpl: {
         file_depr: '_',
         file_ext: '.html',
-        theme: 'color'
       }
     }, {
       module: 'home',
       controller: 'group',
-      action: 'detail'
+      action: 'detail',
+      _theme: 'color'
     }).then(function(data){
       assert.equal(data, think.APP_PATH + '/color/view/group_detail.html');
       done();

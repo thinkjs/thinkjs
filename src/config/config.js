@@ -113,7 +113,6 @@ export default {
     file_ext: '.html',
     file_depr: '_',
     root_path: '',
-    theme: '',
     type: 'ejs',
     options: {}
   },
