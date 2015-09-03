@@ -117,14 +117,19 @@ export default class extends think.base {
       think.statusAction(500, http, true);
     });
     instance.run(async () => {
-      await this.dispatcher();
+      try{
+        await this.dispatcher();
+        
+        //set module config, can not set config in request
+        this.http._config = think.getModuleConfig(this.http.module);
 
-      //set module config, can not set config in request
-      this.http._config = think.getModuleConfig(this.http.module);
-
-      await this.hook('app_begin');
-      await this.exec();
-      await this.hook('app_end');
+        await this.hook('app_begin');
+        await this.exec();
+        await this.hook('app_end');
+      }catch(err){
+        http.error = err;
+        think.statusAction(500, http, true);
+      }
     });
   }
   /**
