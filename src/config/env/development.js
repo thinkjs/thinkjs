@@ -4,7 +4,6 @@
  */
 let configs = {
   auto_reload: true,
-  auto_reload_except: ['/node_modules/', '/lib/core/think.js'],
   log_request: true,
   gc: {
     on: false

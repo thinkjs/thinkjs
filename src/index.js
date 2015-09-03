@@ -331,45 +331,40 @@ export default class {
    * @return {} []
    */
   autoReload(){
-    let timer = setInterval(() => {
-      let time = Date.now();
-      //auto clear interval when running more than 2 days
-      if (time - think.startTime > 2 * 24 * 3600 * 1000) {
-        think.log('file auto reload is stoped', 'THINK');
-        clearInterval(timer);
-        return;
+    let autoReload = thinkCache(thinkCache.AUTO_RELOAD);
+    //clear file cache
+    let clearFileCache = file => {
+      let mod = require.cache[file];
+      //remove from parent module
+      if(mod && mod.parent){
+        mod.parent.children.splice(mod.parent.children.indexOf(mod), 1);
       }
-      let retainFiles = think.config('auto_reload_except');
-      let fn = (item, file) => {
-        if (think.isString(item)) {
-          if (file.indexOf(item) > -1) {
-            return true;
-          }
-        }else if (think.isRegExp(item)) {
-          return item.test(file);
-        }else if (think.isFunction(item)) {
-          return item(file);
-        }
-      };
+      //remove children
+      if(mod && mod.children){
+        mod.children.length = 0;
+      }
+      //remove require cache
+      require.cache[file] = null;
+    };
+    let fn = () => {
+      let hasChange = false;
       for(let file in require.cache){
-        if(retainFiles.some(item => fn(item, file))){
+        let mTime = fs.statSync(file).mtime.getTime();
+        if(!autoReload[file]){
+          autoReload[file] = mTime;
           continue;
         }
-        let mod = require.cache[file];
-        //remove from parent module
-        if(mod && mod.parent){
-          mod.parent.children.splice(mod.parent.children.indexOf(mod), 1);
+        if(mTime > autoReload[file]){
+          clearFileCache(file);
+          autoReload[file] = mTime;
+          hasChange = true;
         }
-        //remove children
-        if(mod && mod.children){
-          mod.children.length = 0;
-        }
-        //remove require cache
-        require.cache[file] = null;
       }
-      this.load();
-    }, 1000);
-    thinkCache(thinkCache.TIMER, 'auto_reload', timer);
+      if(hasChange){
+        this.load();
+      }
+    };
+    setInterval(fn.bind(this), 1000);
   }
   /**
    * capture error

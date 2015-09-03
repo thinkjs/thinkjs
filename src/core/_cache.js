@@ -110,6 +110,11 @@ thinkCache.MIDDLEWARE = 'middleware';
  */
 thinkCache.TIMER = 'timer';
 /**
+ * file auto reload
+ * @type {String}
+ */
+thinkCache.AUTO_RELOAD = 'auto_reload';
+/**
  * think hook
  * @type {String}
  */
