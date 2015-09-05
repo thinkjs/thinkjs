@@ -16,7 +16,7 @@ export default class extends think.middleware.base {
     let file = data.file;
     this.http.tpl_file = file;
     let config = data.config || {};
-    let engine = config.type || this.config('tpl.type') || 'base';
+    let engine = config.type || this.config('view.type') || 'base';
     let Cls = think.adapter('template', engine);
     let instance = new Cls();
     return instance.run(file, data.var, config);

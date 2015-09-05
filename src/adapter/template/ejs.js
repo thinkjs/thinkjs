@@ -15,7 +15,7 @@ export default class extends think.adapter.template {
     let conf = think.extend({
       filename: templateFile,
       cache: true
-    }, think.config('tpl.options'), config && config.options);
+    }, think.config('view.options'), config && config.options);
     let content = await this.getContent(templateFile);
     return ejs.compile(content, conf)(tVar);
   }

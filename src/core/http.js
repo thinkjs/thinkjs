@@ -709,7 +709,7 @@ export default class {
     if(!this.res.connection){
       return;
     }
-    this.type(this.config('tpl.content_type'));
+    this.type(this.config('view.content_type'));
     this.cookie(true);
     if (obj === undefined) {
       return;

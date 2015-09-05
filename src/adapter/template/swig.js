@@ -14,7 +14,7 @@ export default class extends think.adapter.template {
    * @return {String}              []
    */
   async run(templateFile, tVar, config){
-    swig.setDefaults(think.extend({}, think.config('tpl.options'), config && config.options));
+    swig.setDefaults(think.extend({}, think.config('view.options'), config && config.options));
     let tpl = swig.compileFile(templateFile, {autoescape: false});
     return tpl(tVar);
   }

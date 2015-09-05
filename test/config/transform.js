@@ -12,7 +12,7 @@ var Transform = require('../../lib/config/sys/transform.js');
 describe('config/transform', function(){
   it('transform keys', function(){
     var keys = Object.keys(Transform).sort();
-    assert.deepEqual(keys, [ 'auto_reload_except', 'cache', 'create_server', 'deny_module_list', 'error', 'html_cache', 'output_content', 'post', 'session', 'subdomain' ])
+    assert.deepEqual(keys, [ 'auto_reload_except', 'cache', 'create_server', 'deny_module_list', 'html_cache', 'output_content', 'post', 'session', 'subdomain' ])
   })
   it('post/json_content_type is function', function(){
     assert.equal(think.isFunction(Transform.post.json_content_type), true)
@@ -97,10 +97,10 @@ describe('config/transform', function(){
     var data = Transform.output_content();
     assert.deepEqual(data, undefined)
   })
-  it('error.callback', function(){
-    var data = Transform.error.callback();
-    assert.deepEqual(data, undefined)
-  })
+  // it('error.callback', function(){
+  //   var data = Transform.error.callback();
+  //   assert.deepEqual(data, undefined)
+  // })
   it('deny_module_list string', function(){
     var data = Transform.deny_module_list('welefen');
     assert.deepEqual(data, ['welefen'])

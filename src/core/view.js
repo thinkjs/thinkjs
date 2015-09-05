@@ -70,7 +70,7 @@ export default class extends think.base {
    * @param  {String} contentType [contentType]
    * @return {}             []
    */
-  render(content = '', charset = this.http.config('encoding'), contentType = this.http.config('tpl.content_type')){
+  render(content = '', charset = this.http.config('encoding'), contentType = this.http.config('view.content_type')){
     this.http.type(contentType, charset);
     return this.http.end(content, charset);
   }
@@ -101,7 +101,7 @@ export default class extends think.base {
     let tVar = this.tVar;
     config = think.extend({
       templateFile: templateFile
-    }, this.config('tpl'), config);
+    }, this.config('view'), config);
 
     if (!templateFile || !path.isAbsolute(templateFile)) {
       templateFile = await this.hook('view_template', config);

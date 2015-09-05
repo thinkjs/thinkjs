@@ -16,7 +16,7 @@ export default class extends think.adapter.template {
     let content = await this.getContent(templateFile);
     let options = think.extend({
       filename: templateFile
-    }, think.config('tpl.options'), config && config.options);
+    }, think.config('view.options'), config && config.options);
     return jade.compile(content, options)(tVar);
   }
 }

@@ -273,7 +273,7 @@ var _copyCommonConfigFiles = function(){
   mkdir(rootPath);
 
   copyFile('config/config.js', rootPath + '/config.js', false);
-  copyFile('config/tpl.js', rootPath + '/tpl.js');
+  copyFile('config/view.js', rootPath + '/view.js');
   copyFile('config/db.js', rootPath + '/db.js');
 
   mkdir(rootPath + '/env');

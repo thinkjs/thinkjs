@@ -541,7 +541,7 @@ think.transformConfig = (config, transforms) => {
     }
     let value = transforms[key];
     if (think.isFunction(value)) {
-      config[key] = value(config[key]);
+      config[key] = value(config[key], config);
     }else {
       config[key] = think.transformConfig(config[key], value);
     }

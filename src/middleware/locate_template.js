@@ -49,7 +49,7 @@ export default class extends think.middleware.base {
     if(!think.isObject(options)){
       options = think.extend({
         templateFile: options
-      }, this.config('tpl'));
+      }, this.config('view'));
     }
     this.options = options;
 

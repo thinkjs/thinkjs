@@ -284,7 +284,7 @@ export default class {
         data[key] = true;
       });
     };
-    let {root_path} = think.config('tpl');
+    let {root_path} = think.config('view');
     if(root_path){
       add(root_path);
     }else{

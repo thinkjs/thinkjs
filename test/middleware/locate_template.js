@@ -32,7 +32,7 @@ describe('middleware/locate_template', function(){
   it('mode_mini, file_depr: /', function(done){
     think.mode = think.mode_mini;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '/',
         file_ext: '.html'
       }
@@ -50,7 +50,7 @@ describe('middleware/locate_template', function(){
   it('mode_mini, file_ext: .txt', function(done){
     think.mode = think.mode_mini;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '/',
         file_ext: '.txt'
       }
@@ -66,7 +66,7 @@ describe('middleware/locate_template', function(){
   it('mode_mini', function(done){
     think.mode = think.mode_mini;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.html'
       }
@@ -82,7 +82,7 @@ describe('middleware/locate_template', function(){
   it('mode_normal', function(done){
     think.mode = think.mode_normal;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.html'
       }
@@ -98,7 +98,7 @@ describe('middleware/locate_template', function(){
   it('mode_module', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.html'
       }
@@ -114,7 +114,7 @@ describe('middleware/locate_template', function(){
   it('mode_module, with theme', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.html',
       }
@@ -131,7 +131,7 @@ describe('middleware/locate_template', function(){
   it('mode normal, with theme', function(done){
     think.mode = think.mode_normal;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.html',
       }
@@ -148,7 +148,7 @@ describe('middleware/locate_template', function(){
   it('mode mini, with theme', function(done){
     think.mode = think.mode_mini;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.html',
       }
@@ -166,7 +166,7 @@ describe('middleware/locate_template', function(){
     think.mode = think.mode_mini;
     var rootPath = __dirname + '/rootPath';
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
         root_path: rootPath
@@ -184,7 +184,7 @@ describe('middleware/locate_template', function(){
     think.mode = think.mode_normal;
     var rootPath = __dirname + '/rootPath';
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
         root_path: rootPath
@@ -202,7 +202,7 @@ describe('middleware/locate_template', function(){
     think.mode = think.mode_module;
     var rootPath = __dirname + '/rootPath';
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
         root_path: rootPath
@@ -219,7 +219,7 @@ describe('middleware/locate_template', function(){
   it('mode module, xxx', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
       }
@@ -235,7 +235,7 @@ describe('middleware/locate_template', function(){
   it('mode module, xxx/yyy', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
       }
@@ -251,7 +251,7 @@ describe('middleware/locate_template', function(){
   it('mode module, xxx/yyy/zzz', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
       }
@@ -267,7 +267,7 @@ describe('middleware/locate_template', function(){
   it('mode module, xxx/yyy/zzz.hhh', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
       }
@@ -283,7 +283,7 @@ describe('middleware/locate_template', function(){
   it('mode module, xxx:yyy:zzz.hhh', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
       }
@@ -299,7 +299,7 @@ describe('middleware/locate_template', function(){
   it('mode module, absolute file path', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
-      tpl: {
+      view: {
         file_depr: '_',
         file_ext: '.txt',
       }

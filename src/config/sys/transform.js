@@ -77,13 +77,6 @@ export default {
     return value;
   },
   /**
-   * error callback
-   * @type {Object}
-   */
-  error: {
-    callback: value => getFn(value, 'error.callback')
-  },
-  /**
    * output content
    * @param  {String} value []
    * @return {Function}       []
