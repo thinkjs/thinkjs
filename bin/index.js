@@ -68,6 +68,15 @@ var getProjectAppPath = function(){
   path += program.es6 ? 'src' : 'app';
   return path;
 };
+/**
+ * get app name
+ * @return {} []
+ */
+var getAppName = function(){
+  var filepath = path.normalize(cwd + '/' + projectRootPath).replace(/\\/g, '');
+  var matched = filepath.match(/([^\/]+)\/?$/);
+  return matched[1];
+}
 
 /**
  * copy file
@@ -222,10 +231,17 @@ var _copyWwwFiles = function(){
     '"<es6>"': !!program.es6
   });
 
+  var ROOT_PATH = cwd + '/' + projectRootPath + 'www';
   copyFile('nginx.conf', projectRootPath + 'nginx.conf', {
-    ROOT_PATH: cwd + '/' + projectRootPath + 'www'
+    ROOT_PATH: ROOT_PATH
   });
+  copyFile('pm2.json', projectRootPath + 'pm2.json', {
+    ROOT_PATH: ROOT_PATH,
+    APP_NAME: getAppName()
+  });
+
   copyFile('.gitignore', projectRootPath + '.gitignore');
+  copyFile('README.md', projectRootPath + 'README.md');
 
 
   mkdir(projectRootPath + 'www/');
