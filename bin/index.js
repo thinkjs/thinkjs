@@ -76,7 +76,7 @@ var getAppName = function(){
   var filepath = path.normalize(cwd + '/' + projectRootPath).replace(/\\/g, '');
   var matched = filepath.match(/([^\/]+)\/?$/);
   return matched[1];
-}
+};
 
 /**
  * copy file
