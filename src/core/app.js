@@ -8,15 +8,6 @@ import http from 'http';
 
 export default class extends think.base {
   /**
-   * dispath route
-   * @return {} []
-   */
-  dispatcher(){
-    return this.hook('resource_check').then(() => {
-      return this.hook('route_parse');
-    });
-  }
-  /**
    * exec logic
    * @return {Promise} []
    */
@@ -111,6 +102,7 @@ export default class extends think.base {
       http.error = new Error(think.locale('DISALLOW_PORT'));
       return think.statusAction(403, http);
     }
+    
     let instance = domain.create();
     instance.on('error', err => {
       http.error = err;
@@ -118,11 +110,10 @@ export default class extends think.base {
     });
     instance.run(async () => {
       try{
-        await this.dispatcher();
-        
+        await this.hook('resource_check');
+        await this.hook('route_parse');
         //set module config, can not set config in request
         this.http._config = think.getModuleConfig(this.http.module);
-
         await this.hook('app_begin');
         await this.exec();
         await this.hook('app_end');
