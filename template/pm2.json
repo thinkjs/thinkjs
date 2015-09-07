@@ -3,6 +3,12 @@
     "name": "APP_NAME",
     "script": "production.js",
     "cwd": "ROOT_PATH",
-    "max_memory_restart": "1G"
+    "max_memory_restart": "1G",
+    "autorestart": true,
+    "node_args": [],
+    "args": [],
+    "env": {
+      
+    }
   }]
 }
