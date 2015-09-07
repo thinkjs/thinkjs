@@ -233,11 +233,11 @@ var _copyWwwFiles = function(){
 
   var ROOT_PATH = cwd + '/' + projectRootPath + 'www';
   copyFile('nginx.conf', projectRootPath + 'nginx.conf', {
-    ROOT_PATH: ROOT_PATH
+    '<ROOT_PATH>': ROOT_PATH
   });
   copyFile('pm2.json', projectRootPath + 'pm2.json', {
-    ROOT_PATH: ROOT_PATH,
-    APP_NAME: getAppName()
+    '<ROOT_PATH>': ROOT_PATH,
+    '<APP_NAME>': getAppName()
   });
 
   copyFile('.gitignore', projectRootPath + '.gitignore');
