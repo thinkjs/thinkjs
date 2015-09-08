@@ -83,7 +83,7 @@ export default class {
    */
   model(name, options){
     options = think.extend({}, this.config, options);
-    return think.model(name, options);
+    return think.model(name, options, this._module);
   }
   /**
    * get config key
