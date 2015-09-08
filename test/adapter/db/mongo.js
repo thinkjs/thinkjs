@@ -13,3 +13,7 @@ instance.load();
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
 var Mongo = require('../../../lib/adapter/db/mongo.js');
+
+describe('adapter/db/mongo', function(){
+  
+})

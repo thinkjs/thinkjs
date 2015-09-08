@@ -51,10 +51,7 @@ export default class extends think.base {
    * @param  {Boolean} call       [is call controller]
    * @return {Promise}            []
    */
-  execAction(controller, isCall){
-    if(isCall){
-      return this.action(controller, think.config('call_action'));
-    }
+  execAction(controller){
     let http = this.http;
     //if is rest api, rewrite action
     if(controller.__isRest){
