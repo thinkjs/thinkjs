@@ -1,4 +1,7 @@
 'use strict';
+
+import path from 'path';
+
 /**
  * base model class
  */
@@ -81,9 +84,18 @@ export default class {
    * @param  {Object} options [options]
    * @return {Object}         []
    */
-  model(name, options){
+  model(name, options, module){
+    if(think.isString(options)){
+      module = options;
+      options = {};
+    }
+    if(!module){
+      let filename = this.__filename || __filename;
+      let seps = filename.split(path.sep).reverse();
+      module = seps[2];
+    }
     options = think.extend({}, this.config, options);
-    return think.model(name, options, this._module);
+    return think.model(name, options, module);
   }
   /**
    * get config key

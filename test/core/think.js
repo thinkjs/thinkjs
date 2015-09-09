@@ -1999,14 +1999,6 @@ describe('core/think.js', function(){
       })
       assert.equal(instance.tablePrefix, 'think_');
     })
-    it('get model instance, _module', function(){
-      var instance = think.model('test', {
-        host: '127.0.0.1',
-        type: 'mysql'
-      }, 'home')
-      assert.equal(instance.tablePrefix, 'think_');
-      assert.equal(instance._module, 'home');
-    })
     it('get model instance, mongo', function(){
       var instance = think.model('test', {
         host: '127.0.0.1',
