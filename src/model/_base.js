@@ -91,7 +91,7 @@ export default class {
     }
     if(!module){
       let filename = this.__filename || __filename;
-      let seps = filename.split(path.sep).reverse();
+      let seps = filename.split('/').reverse();
       module = seps[2];
     }
     options = think.extend({}, this.config, options);
