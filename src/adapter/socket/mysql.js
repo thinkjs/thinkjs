@@ -111,9 +111,9 @@ export default class extends think.adapter.socket {
         think.log(sql, 'SQL', startTime);
       }
       //auto close connection in cli mode
-      if (think.cli) {
-        this.close();
-      }
+      // if (think.cli) {
+      //   this.close();
+      // }
       return rows;
     });
     return think.error(promise);
