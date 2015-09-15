@@ -48,7 +48,7 @@ export default class extends think.adapter.session {
       return;
     }
     try{
-      this.data = JSON.parse(data.data);
+      this.data = JSON.parse(data.data) || {};
     }catch(e){}
   }
   /**
