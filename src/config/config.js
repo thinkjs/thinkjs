@@ -15,7 +15,7 @@ let config = {
 
   service_on: true, //Service available
 
-  timeout: 30, //30 seconds
+  timeout: 120, //120 seconds
 
   auto_reload: false, //file auto reload
 
