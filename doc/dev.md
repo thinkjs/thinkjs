@@ -25,6 +25,7 @@
 * 在线文档
 * 添加csrf检测，cors头信息设置的middleware
 * ThinkJS T-shirt
+* cli模式下自动关闭socket的问题
 
 * base基类修改？
 * 增加migration功能？

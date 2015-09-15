@@ -11,6 +11,7 @@ export default class extends think.adapter.socket {
    * @return {}        []
    */
   init(config = {}){
+    super.init(config);
     //alias password config
     if (config.pwd) {
       config.password = config.pwd;
@@ -29,7 +30,6 @@ export default class extends think.adapter.socket {
     this.config.port = this.config.port || 3306;
 
     this.pool = null;
-    this.connection = null;
   }
   /**
    * get connection
@@ -110,12 +110,9 @@ export default class extends think.adapter.socket {
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
-      //auto close connection in cli mode
-      // if (think.cli) {
-      //   this.close();
-      // }
       return rows;
     });
+    promise = this.autoClose(promise);
     return think.error(promise);
   }
   /**

@@ -1,6 +1,9 @@
 'use strict';
-
-export default {
+/**
+ * default config
+ * @type {Object}
+ */
+let config = {
   port: 8360, 
   host: '',
   encoding: 'utf-8',
@@ -34,3 +37,16 @@ export default {
   json_content_type: 'application/json',
   subdomain: {} //subdomain deploy
 };
+/**
+ * extra config on cli mode
+ * @type {Object}
+ */
+let cliConfig = {
+  auto_close_socket: true
+}
+
+if(think.cli){
+  config = think.extend(config, cliConfig);
+}
+
+export default config;
