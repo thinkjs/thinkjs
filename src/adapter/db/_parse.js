@@ -56,7 +56,7 @@ export default class {
     let set = [];
     for(let key in data){
       let value = this.parseValue(data[key]);
-      if (think.isString(value)) {
+      if (think.isString(value) || think.isNumber(value)) {
         set.push(this.parseKey(key) + '=' + value);
       }
     }

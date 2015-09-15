@@ -99,6 +99,10 @@ export default class extends think.adapter.session {
       timeout: this.timeout
     };
     return this.getData().then(() => {
+      //if session is empty and not changed, not flush
+      if(!this.isChanged && think.isEmpty(this.data)){
+        return;
+      }
       //update data when data is changed
       if(this.isChanged){
         data.data = JSON.stringify(this.data);
