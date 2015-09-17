@@ -1252,7 +1252,7 @@ describe('Model', function(){
       return model.order('id DESC').buildSql().then(function(sql){
         model.page(2).table(sql, true).alias('tmp').countSelect(false).then(function(data){
           var sql = model.getLastSql().trim();
-          assert.equal(sql, 'SELECT * FROM ( SELECT * FROM `think_tag` ORDER BY id DESC ) AS tmp AS tmp LIMIT 20,20');
+          assert.equal(sql, 'SELECT * FROM ( SELECT * FROM `think_tag` ORDER BY id DESC ) AS tmp LIMIT 20,20');
           done();
         })
       })
