@@ -379,6 +379,7 @@ export default class extends Base {
 
     if(!count){
       //get count
+      delete options.alias;
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
