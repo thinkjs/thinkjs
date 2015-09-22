@@ -81,7 +81,7 @@ think.mode_module = 0x0004;
  * thinkjs module lib path
  * @type {String}
  */
-think.THINK_LIB_PATH = path.normalize(`${__dirname}/../`);
+think.THINK_LIB_PATH = path.normalize(`${__dirname}/..`);
 /**
  * thinkjs module root path
  * @type {String}

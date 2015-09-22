@@ -307,6 +307,7 @@ export default class {
    * @return {} []
    */
   load(){
+    //clear all cache for reload
     thinkCache(thinkCache.ALIAS, null);
     thinkCache(thinkCache.ALIAS_EXPORT, null);
     thinkCache(thinkCache.MODULE_CONFIG, null);

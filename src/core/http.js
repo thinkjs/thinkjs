@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * wrap for request & response
- * @type {Object}
- */
 import querystring from 'querystring';
 import url from 'url';
 import {EventEmitter} from 'events';
@@ -15,6 +11,10 @@ import mime from 'mime';
 
 let cookie = think.require('cookie');
 
+/**
+ * wrap for request & response
+ * @type {Object}
+ */
 export default class {
   /**
    * constructor
