@@ -512,8 +512,7 @@ export default class {
     return ip;
   }
   /**
-   * get language
-   * @param  {Boolean} useCookie [get from cookie set]
+   * get or set language
    * @return {String}           []
    */
   lang(lang){
