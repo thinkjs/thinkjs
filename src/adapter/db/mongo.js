@@ -1,7 +1,9 @@
 'use strict';
 
+import Parse from './_parse_mongo.js';
+
 let MongoSocket = think.adapter('socket', 'mongo');
-let Parse = require('./_parse_mongo.js');
+
 /**
  * mongo db class
  */
@@ -105,21 +107,6 @@ export default class extends Parse {
       return result;
     }
   }
-  // /**
-  //  * field to where
-  //  * @return {Object} []
-  //  */
-  // fieldToWhere(fields){
-  //   let result = {};
-  //   for(let field in fields){
-  //     if(fields[field]){
-  //       result[field] = {$exists: true};
-  //     }else{
-  //       result[field] = {$exists: false};
-  //     }
-  //   }
-  //   return result;
-  // }
   /**
    * select data
    * @param  {Object} options []
@@ -153,7 +140,7 @@ export default class extends Parse {
     let limit = this.parseLimit(options.limit);
     // updates multiple documents that meet the query criteria. 
     // default only updates one document
-    if(limit[0] !== 1){
+    if(limit[1] !== 1){
       options.multi = true;
     }
 
@@ -191,7 +178,7 @@ export default class extends Parse {
 
     //delete one row
     let removeOpt = {};
-    if(limit[0] === 1){
+    if(limit[1] === 1){
       removeOpt.justOne = true;
     }
     
