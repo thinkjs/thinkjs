@@ -320,7 +320,7 @@ export default class {
     if (contentType.indexOf('/') === -1) {
       contentType = mime.lookup(contentType);
     }
-    if (contentType.toLowerCase().indexOf('charset=') === -1) {
+    if (encoding !== false && contentType.toLowerCase().indexOf('charset=') === -1) {
       contentType += '; charset=' + (encoding || this.config('encoding'));
     }
     this.header('Content-Type', contentType);
