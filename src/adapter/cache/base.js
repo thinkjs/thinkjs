@@ -7,15 +7,7 @@ let BaseStore = think.adapter('store', 'base');
 /**
  * memory cache
  */
-export default class {
-  /**
-   * constructor
-   * @param  {Object} args []
-   * @return {}         []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
+export default class extends think.base {
   /**
    * init
    * @param  {Object} options []

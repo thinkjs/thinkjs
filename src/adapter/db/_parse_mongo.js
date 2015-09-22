@@ -1,14 +1,6 @@
 'use strict';
 
-export default class {
-  /**
-   * constructor
-   * @param  {Array} args []
-   * @return {}         []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
+export default class extends think.base {
   /**
    * init
    * @return {} []

@@ -6,7 +6,7 @@ import path from 'path';
  * view class
  * @return {} []
  */
-export default class extends think.base {
+export default class extends think.http.base {
   /**
    * init method
    * @param  {Object} http []

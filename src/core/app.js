@@ -6,7 +6,7 @@ import domain from 'domain';
 import os from 'os';
 import http from 'http';
 
-export default class extends think.base {
+export default class extends think.http.base {
   /**
    * exec logic
    * @return {Promise} []

@@ -1,14 +1,8 @@
 'use strict';
-
-export default class {
-  /**
-   * constructor
-   * @param  {} args []
-   * @return {}         []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
+/**
+ * socket base class
+ */
+export default class extends think.base {
   /**
    * init
    * @return {} []

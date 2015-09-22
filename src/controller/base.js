@@ -5,7 +5,7 @@ import path from 'path';
  * base controller class
  * all controllers will inherits this class
  */
-export default class extends think.base {
+export default class extends think.http.base {
   /**
    * init
    * @return {void} []

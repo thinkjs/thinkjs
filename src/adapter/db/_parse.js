@@ -5,15 +5,7 @@ import querystring from 'querystring';
 /**
  * sql parse class
  */
-export default class {
-  /**
-   * constructor
-   * @param  {} args []
-   * @return {}      []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
+export default class extends think.base {
   /**
    * init
    * @return {} []

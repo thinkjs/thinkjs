@@ -3,7 +3,7 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-var Base = require('../../lib/core/base.js');
+var Base = require('../../lib/core/http_base.js');
 
 
 var list = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];

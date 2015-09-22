@@ -15,15 +15,7 @@ let cookie = think.require('cookie');
  * wrap for request & response
  * @type {Object}
  */
-export default class {
-  /**
-   * constructor
-   * @param  {} args []
-   * @return {}         []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
+export default class extends think.base {
   /**
    * init method
    * @param  {Object} req [request]

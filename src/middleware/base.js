@@ -3,7 +3,7 @@
  * behavior abstract class
  * @return {} []
  */
-export default class extends think.base {
+export default class extends think.http.base {
   /**
    * run
    * @return {} []

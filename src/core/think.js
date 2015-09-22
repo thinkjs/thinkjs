@@ -12,6 +12,7 @@ import co from 'co';
 import colors from 'colors/safe';
 
 import base from './base.js';
+import httpBase from './http_base.js';
 import {} from './_cache.js';
 
 /**
@@ -883,13 +884,13 @@ think.gc = instance => {
   }, gc.interval * 1000);
   thinkCache(thinkCache.TIMER, type, timer);
 };
+
 /**
  * get http object
  * @param  {Object} req [http request]
  * @param  {Object} res [http response]
  * @return {Object}     [http object]
  */
-
 think._http = (data = {}) => {
   if (think.isString(data)) {
     if (data[0] === '{') {
@@ -927,7 +928,12 @@ think._http = (data = {}) => {
     res: res
   };
 };
-
+/**
+ * get http object
+ * @param  {Object} req []
+ * @param  {Object} res []
+ * @return {Promise}     []
+ */
 think.http = (req, res) => {
   let Http = thinkCache(thinkCache.COLLECTION, 'http');
   if (!Http) {
@@ -941,6 +947,12 @@ think.http = (req, res) => {
   let instance = new Http(req, res);
   return instance.run();
 };
+/**
+ * base class for has http property
+ * @type {Class}
+ */
+think.http.base = httpBase;
+
 /**
  * get uuid
  * @param  {Number} length [uid length]

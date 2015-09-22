@@ -6,7 +6,7 @@ import fs from 'fs';
  * template base class
  * @type {Class}
  */
-export default class {
+export default class extends think.base {
   /**
    * get template file content
    * @return {} []

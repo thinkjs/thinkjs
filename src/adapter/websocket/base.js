@@ -2,15 +2,7 @@
 
 import url from 'url';
 
-export default class {
-  /**
-   * constructor
-   * @param  {} args []
-   * @return {}         []
-   */
-  constructor(...args){
-    this.init(...args);
-  }
+export default class extends think.base {
   /**
    * init
    * @param  {Object} server []

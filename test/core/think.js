@@ -190,8 +190,8 @@ describe('core/think.js', function(){
       var cls = think.Class({});
       var instance = new cls();
       assert.equal('__initReturn' in instance, true);
-      assert.equal(typeof instance.config, 'function');
-      assert.equal(typeof instance.controller, 'function');
+      // assert.equal(typeof instance.config, 'function');
+      // assert.equal(typeof instance.controller, 'function');
     })
     it('think.Class({}, true)', function(){
       var cls = think.Class({}, true);
