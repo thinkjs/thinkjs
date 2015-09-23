@@ -25,6 +25,20 @@ export default class {
     this.http = http;
   }
   /**
+   * before magic method
+   * @return {} []
+   */
+  __before(){
+
+  }
+  /**
+   * after magic method
+   * @return {} []
+   */
+  __after(){
+
+  }
+  /**
    * invoke method, support __before & __after magic methods
    * @param  {String} method []
    * @param  {mixed} data []

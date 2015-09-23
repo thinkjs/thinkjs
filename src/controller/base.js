@@ -330,8 +330,8 @@ export default class extends think.http.base {
    * @param  {String} ext [content type]
    * @return {}     []
    */
-  type(ext){
-    return this.http.type(ext);
+  type(ext, encoding){
+    return this.http.type(ext, encoding);
   }
   /**
    * download file

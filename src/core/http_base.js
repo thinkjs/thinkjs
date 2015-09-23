@@ -66,14 +66,9 @@ export default class extends Base {
    * @param  {Object} options [model options]
    * @return {Object}         [model instance]
    */
-  model(name = 'base', options = {}, module){
-    if(think.isString(options)){
-      module = options;
-      options = {};
-    }
-    module = module || this.http.module;
+  model(name = 'base', options = {}){
     options = think.extend({}, this.config('db'), options);
-    return think.model(name, options, module);
+    return think.model(name, options, this.http.module);
   }
   /**
    * get controller
