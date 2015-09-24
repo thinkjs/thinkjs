@@ -1437,6 +1437,7 @@ describe('core/think.js', function(){
     })
   })
 
+/*
   describe('think.getModule', function(){
     it('get default module', function(){
       var module = think.getModule();
@@ -1492,7 +1493,7 @@ describe('core/think.js', function(){
       assert.equal(action, '');
     })
   })
-
+*/
   describe('think.locale', function(){
     it('base', function(){
       var msg = think.locale('CONTROLLER_NOT_FOUND', 'welefen');

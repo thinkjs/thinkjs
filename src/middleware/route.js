@@ -109,9 +109,9 @@ export default class extends think.middleware.base {
   async parsePathname(){
     let pathname = this.http.pathname, http = this.http;
     if (!pathname) {
-      this.http.module = think.getModule();
-      this.http.controller = think.getController();
-      this.http.action = think.getAction();
+      this.http.module = this.getModule();
+      this.http.controller = this.getController();
+      this.http.action = this.getAction();
       return;
     }
     let paths = pathname.split('/');
@@ -136,9 +136,9 @@ export default class extends think.middleware.base {
 
     this.parseExtPath(paths);
 
-    this.http.module = think.getModule(module);
-    this.http.controller = think.getController(controller);
-    this.http.action = think.getAction(action);
+    this.http.module = this.getModule(module);
+    this.http.controller = this.getController(controller);
+    this.http.action = this.getAction(action);
 
     if (!this.http.controller) {
       this.http.error = new Error(think.locale('CONTROLLER_INVALID', controller, this.http.url));
@@ -257,5 +257,44 @@ export default class extends think.middleware.base {
     let pathname = this.http.pathname.slice(matches[0].length);
     this.parseExtPath(pathname);
     this.parseRoute(route);
+  }
+  /**
+   * get module name
+   * @param  {String} module []
+   * @return {String}        []
+   */
+   getModule(module){
+    if (!module || think.mode === think.mode_mini) {
+      return think.config('default_module');
+    }
+    return module.toLowerCase();
+  }
+  /**
+   * get controller name
+   * @param  {String} controller []
+   * @return {String}            []
+   */
+  getController(controller){
+    if (!controller) {
+      return think.config('default_controller');
+    }
+    if (/^\w*$/.test(controller)) {
+      return controller.toLowerCase();
+    }
+    return '';
+  }
+  /**
+   * get action
+   * @param  {String} action [action name]
+   * @return {String}        []
+   */
+  getAction(action){
+    if (!action) {
+      return think.config('default_action');
+    }
+    if (/^\w*$/.test(action)) {
+      return action;
+    }
+    return '';
   }
 }

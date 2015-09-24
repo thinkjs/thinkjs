@@ -1014,47 +1014,7 @@ think.session = http => {
   http.on('afterEnd', () => session.flush && session.flush());
   return session;
 };
-/**
- * get module name
- * @param  {String} module []
- * @return {String}        []
- */
-think.getModule = module => {
-  if (!module || think.mode === think.mode_mini) {
-    return think.config('default_module');
-  }
-  return module.toLowerCase();
-};
 
-let nameReg = /^\w*$/;
-/**
- * get controller name
- * @param  {String} controller []
- * @return {String}            []
- */
-think.getController = controller => {
-  if (!controller) {
-    return think.config('default_controller');
-  }
-  if (nameReg.test(controller)) {
-    return controller.toLowerCase();
-  }
-  return '';
-};
-/**
- * get action
- * @param  {String} action [action name]
- * @return {String}        []
- */
-think.getAction = action => {
-  if (!action) {
-    return think.config('default_action');
-  }
-  if (nameReg.test(action)) {
-    return action;
-  }
-  return '';
-};
 /**
  * create controller sub class
  * @type {Function}
@@ -1151,6 +1111,7 @@ think.service = (superClass, methods, module) => {
  * @return {}       []
  */
 think.cache = async (name, value, options = {}) => {
+  options = think.extend({}, think.config('cache'));
   let Cls = think.adapter('cache', options.type || 'base');
   let instance = new Cls(options);
   // get cache
