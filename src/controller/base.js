@@ -349,7 +349,7 @@ export default class extends think.http.base {
       contentType = require('mime').lookup(contentType || filepath);
     }
     let http = this.http;
-    this.type(contentType);
+    this.type(contentType, false);
     http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
     return this.hook('file_output', filepath);
   }

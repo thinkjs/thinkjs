@@ -11,7 +11,7 @@ export default class extends think.controller.base {
    */
   init(http){
     super.init(http);
-    this.__isRest = true;
+    this._isRest = true;
     this.resource = this.getResource();
     this.id = this.getId();
     this.modelInstance = this.model(this.resource);

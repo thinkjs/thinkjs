@@ -384,7 +384,7 @@ describe('controller/base.js', function(){
     getInstance({
       header: function(type, value){
         if(type === 'Content-Type'){
-          assert.equal(value, 'application/javascript; charset=utf-8')
+          assert.equal(value, 'application/javascript')
         }else{
           assert.equal(value, 'attachment; filename="base.js"')
         }
@@ -400,7 +400,7 @@ describe('controller/base.js', function(){
     getInstance({
       header: function(type, value){
         if(type === 'Content-Type'){
-          assert.equal(value, 'text/html; charset=utf-8')
+          assert.equal(value, 'text/html')
         }else{
           assert.equal(value, 'attachment; filename="base.js"')
         }
@@ -416,7 +416,7 @@ describe('controller/base.js', function(){
     getInstance({
       header: function(type, value){
         if(type === 'Content-Type'){
-          assert.equal(value, 'text/html; charset=utf-8')
+          assert.equal(value, 'text/html')
         }else{
           assert.equal(value, 'attachment; filename="a.html"')
         }
@@ -432,7 +432,7 @@ describe('controller/base.js', function(){
     getInstance({
       header: function(type, value){
         if(type === 'Content-Type'){
-          assert.equal(value, 'application/javascript; charset=utf-8')
+          assert.equal(value, 'application/javascript')
         }else{
           assert.equal(value, 'attachment; filename="a.html"')
         }

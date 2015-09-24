@@ -49,7 +49,7 @@ function getInstance(options){
 describe('controller/rest.js', function(){
   it('get instance', function(done){
     getInstance().then(function(instance){
-      assert.equal(instance.__isRest, true);
+      assert.equal(instance._isRest, true);
       assert.equal(instance.resource, 'rest');
       assert.equal(instance.id, 'welefen')
       done();
@@ -61,7 +61,7 @@ describe('controller/rest.js', function(){
         id: 'test'
       }
     }).then(function(instance){
-      assert.equal(instance.__isRest, true);
+      assert.equal(instance._isRest, true);
       assert.equal(instance.resource, 'rest');
       assert.equal(instance.id, 'test')
       done();
@@ -71,7 +71,7 @@ describe('controller/rest.js', function(){
     getInstance({
       pathname: 'rest'
     }).then(function(instance){
-      assert.equal(instance.__isRest, true);
+      assert.equal(instance._isRest, true);
       assert.equal(instance.resource, 'rest');
       assert.equal(instance.id, '')
       done();

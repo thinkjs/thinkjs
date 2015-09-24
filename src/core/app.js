@@ -54,7 +54,7 @@ export default class extends think.http.base {
   execAction(controller){
     let http = this.http;
     //if is rest api, rewrite action
-    if(controller.__isRest){
+    if(controller._isRest){
       http.action = http.method.toLowerCase();
     }
     let action = http.action;
