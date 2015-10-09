@@ -1,12 +1,7 @@
 {
   "name": "thinkjs",
-<<<<<<< HEAD
-  "description": "A Node.js MVC Web Framework Based On Promise",
-  "version": "1.2.10",
-=======
   "description": "A Node.js MVC & Restful Framework Support Promise & Generator Function",
   "version": "2.0.0",
->>>>>>> origin/es6
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -27,15 +22,6 @@
   }],
   "main": "lib/index.js",
   "dependencies": {
-<<<<<<< HEAD
-    "ejs": "2.2.4",
-    "multiparty": "4.1.1",
-    "es6-promise": "2.0.1",
-    "mime": "1.2.11",
-    "mysql": "2.5.4",
-    "websocket-driver": "0.5.3",
-    "thinkjs-util": ">=1.0.0"
-=======
     "ejs": "2.3.3",
     "multiparty": "4.0.0",
     "mime": "1.3.4",
@@ -47,7 +33,6 @@
     "colors": "1.1.0",
     "validator": "4.0.2",
     "commander": "2.8.1"
->>>>>>> origin/es6
   },
   "devDependencies": {
     "mocha": "1.20.1",
