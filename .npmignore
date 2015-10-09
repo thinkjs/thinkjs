@@ -2,3 +2,5 @@ node_modules/
 .gitignore
 nginx.conf
 .travis.yml
+src/
+coverage/

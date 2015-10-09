@@ -1,0 +1,28 @@
+'use strict';
+
+import fs from 'fs';
+
+/**
+ * template base class
+ * @type {Class}
+ */
+export default class extends think.base {
+  /**
+   * get template file content
+   * @return {} []
+   */
+  getContent(file){
+    return fs.readFileSync(file, 'utf8');
+    // let fn = think.promisify(fs.readFile, fs);
+    // return fn(file, 'utf8');
+  }
+  /**
+   * run
+   * @param  {String} templateFile []
+   * @param  {Object} tVar         []
+   * @return {promise}             []
+   */
+  run(templateFile){
+    return this.getContent(templateFile);
+  }
+}
