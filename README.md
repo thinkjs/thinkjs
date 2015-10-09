@@ -1,33 +1,36 @@
-[![NPM version](https://badge.fury.io/js/thinkjs.svg)](http://badge.fury.io/js/thinkjs)
-[![travis-ci](https://travis-ci.org/75team/thinkjs.svg?branch=master)](https://travis-ci.org/75team/thinkjs)
-[![Coverage Status](https://coveralls.io/repos/75team/thinkjs/badge.png?branch=master)](https://coveralls.io/r/75team/thinkjs?branch=master)
+[![NPM version](https://img.shields.io/npm/v/thinkjs.svg?style=flat-square)](http://badge.fury.io/js/thinkjs)
+[![travis-ci](https://img.shields.io/travis/75team/thinkjs.svg?style=flat-square)](https://img.shields.io/travis/75team/thinkjs.svg?style=flat-square)
+[![Coverage Status](https://img.shields.io/coveralls/75team/thinkjs.svg?style=flat-square)](https://img.shields.io/coveralls/75team/thinkjs.svg?style=flat-square)
 
 
 ## Features
 
+* 使用ES6/7特性来开发项目
+* 支持丰富的数据库
+* 代码自动更新
+* 自动创建Rest接口
+* 支持多种websocket库
+* 丰富的测试用例
+* 支持命令行调用执行定时任务
+* Hook和Middleware
+* 详细的错误日志
+* 支持国际化和多主题
 
 
 ## Installation
 
 ```
-npm install -g thinkjs-cmd@2.0
+git clone git@github.com:75team/thinkjs.git
 ```
 
 ## 创建项目
 
-```
-mkdir new_dir_name; 
-thinkjs new_dir_name
-```
-
-```
-hello, thinkjs!
-```
+http://new.thinkjs.org/zh-CN/doc/2.0/create_project.html
 
 
 ## Documentation
 
-http://thinkjs.org/doc/start.html
+https://thinkjs.org/
 
 ## License
 
