@@ -23,7 +23,7 @@
 git clone git@github.com:75team/thinkjs.git
 ```
 
-## 创建项目
+## Create Project
 
 http://new.thinkjs.org/zh-CN/doc/2.0/create_project.html
 
