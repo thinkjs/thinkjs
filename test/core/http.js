@@ -380,6 +380,17 @@ describe('core/http.js', function() {
     });
   });
 
+  it('set status return', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&23');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http.res.headersSent = false;
+      var data = http.status(302);
+      assert.equal(http.res.statusCode, 302);
+      assert.equal(data, http);
+      done();
+    });
+  });
   it('set status default', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&24');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
