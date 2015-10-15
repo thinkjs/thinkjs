@@ -3,7 +3,7 @@
 import nunjucks from 'nunjucks';
 
 /**
- * swig template
+ * nunjucks template
  * @type {Class}
  */
 export default class extends think.adapter.template {
