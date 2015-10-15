@@ -14,7 +14,7 @@ export default class extends think.adapter.template {
    * @return {String}              []
    */
   async run(templateFile, tVar, config){
-    nunjucks.configure(think.extend({}, think.config('view.options'), config && config.options));
+    nunjucks.configure(think.extend({ autoescape: false }, think.config('view.options'), config && config.options));
     return nunjucks.render(templateFile, tVar);
   }
 }
