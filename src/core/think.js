@@ -1353,11 +1353,11 @@ think.error = (err, addon = '') => {
     }
     if(value){
       if(think.isError(addon)){
-        addon.message = `${value}, ${addon.message}. http://www.thinkjs.org/doc/error.html#${key}`;
+        addon.message = `${value}, ${addon.message}. http://www.thinkjs.org/doc/2.0/error_message.html#${key}`;
         return addon;
       }else{
         addon = addon ? `, ${addon}` : '';
-        let msg = `${value}${addon}. http://www.thinkjs.org/doc/error.html#${key}`;
+        let msg = `${value}${addon}. http://www.thinkjs.org/doc/2.0/error_message.html#${key}`;
         err.message = msg;
         return err;
       }
