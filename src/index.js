@@ -211,15 +211,15 @@ export default class {
       value = data[key];
       if (!(key in hook)) {
         hook[key] = data[key];
-      }else if (think.isBoolean(data[0])) {
+      }else if (value[0] === 'append' || value[0] === 'prepend') {
         let flag = value.shift();
-        if (flag) {
-          hook[key] = value;
+        if (flag === 'append') {
+          hook[key] = hook[key].concat(value);
         }else{
           hook[key] = value.concat(hook[key]);
         }
       }else{
-        hook[key] = hook[key].concat(value);
+        hook[key] = value;
       }
     }
     thinkCache(thinkCache.HOOK, hook);
