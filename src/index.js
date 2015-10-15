@@ -203,9 +203,9 @@ export default class {
    */
   loadHook(){
     let hookPath = `${think.THINK_LIB_PATH}/config/hook.js`;
-    let hook = require(hookPath);
+    let hook = think.extend({}, require(hookPath));
     let file = `${think.getPath(undefined, think.dirname.config)}/hook.js`;
-    let data = think.safeRequire(file) || {};
+    let data = think.extend({}, think.safeRequire(file));
     let key, value;
     for(key in data){
       value = data[key];
