@@ -135,7 +135,7 @@ export default class extends think.base {
    * @return {Promise} []
    */
   async parseFormData(){
-    await think.hook('form_parse', this.http);
+    await think.hook('payload_parse', this.http);
     if (think.isEmpty(this.http._post) && this.http.payload) {
       try{
         this.http._post = querystring.parse(this.http.payload);

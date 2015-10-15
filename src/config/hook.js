@@ -1,7 +1,7 @@
 'use strict';
 
 export default {
-  form_parse: ['parse_json_payload'],
+  payload_parse: ['parse_json_payload'],
   resource_check: ['resource'],
   resource_output: ['output_resource'],
   route_parse: ['rewrite_pathname', 'subdomain_deploy', 'route'],
