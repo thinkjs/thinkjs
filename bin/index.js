@@ -429,6 +429,28 @@ var createModel = function(model){
 };
 
 /**
+ * create middleware
+ * @param  {String} middleware []
+ * @return {[type]}            []
+ */
+var createMiddleware = function(middleware){
+  _checkEnv();
+  var midlewarePath = think.getPath('common', 'middleware');
+  var filepath = midlewarePath + '/' + middleware + '.js';
+  if(think.isFile(filepath)){
+    log(function(colors){
+      return colors.red('middleware `' + middleware + '` is exist.\n');
+    });
+    process.exit();
+    return;
+  }
+  mkdir(midlewarePath);
+  copyFile('middleware/base.js', filepath);
+
+  console.log();
+}
+
+/**
  * module app
  * @param  {} projectRootPath []
  * @return {}             []
@@ -518,6 +540,11 @@ program.command('controller <controllerName>').description('add controller').act
 //create model
 program.command('model <modelName>').description('add model').action(function(model){
   createModel(model.toLowerCase());
+});
+
+//create middleware
+program.command('middleware <middlewareName>').description('add middleware').action(function(middleware){
+  createMiddleware(middleware.toLowerCase());
 });
 
 program.parse(process.argv);  
