@@ -402,6 +402,33 @@ var createController = function(controller){
 
   console.log();
 };
+
+/**
+ * create service
+ * @param  {} controller []
+ * @return {}            []
+ */
+var createService = function(service){
+  _checkEnv();
+
+  service = service.split('/');
+  var module = 'common';
+  if(service.length === 2){
+    module = service[0];
+    service = service[1];
+  }else{
+    service = service[0];
+  }
+
+  if(!isModuleExist(module)){
+    _createModule(module);
+  }
+
+  var servicePath = think.getPath(module, 'service');
+  copyFile('service/index.js', servicePath + '/' + service + '.js');
+
+  console.log();
+};
 /**
  * create model file
  * @param  {String} model []
@@ -578,6 +605,11 @@ program.command('module <moduleName>').description('add module').action(function
 //create controlelr
 program.command('controller <controllerName>').description('add controller').action(function(controller){
   createController(controller.toLowerCase());
+});
+
+//create service
+program.command('service <serviceName>').description('add service').action(function(service){
+  createService(service.toLowerCase());
 });
 
 //create model
