@@ -86,7 +86,7 @@ export default class extends Base {
     //get table name
     options.table = options.table || this.getTableName();
 
-    options.tablePrefix = this.tablePrefix;
+    options.tablePrefix = this.getTablePrefix();
     options.model = this.getModelName();
     
     //get table fields can not use table alias
@@ -511,7 +511,7 @@ export default class extends Base {
       if(b === 'TABLE'){
         return ' `' + this.getTableName() + '` ';
       }
-      return ' `' + this.tablePrefix + b.toLowerCase() + '` ';
+      return ' `' + this.getTablePrefix() + b.toLowerCase() + '` ';
     });
   }
   /**

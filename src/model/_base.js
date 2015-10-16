@@ -88,6 +88,13 @@ export default class extends think.base {
     return think.model(name, options, module);
   }
   /**
+   * get table prefix
+   * @return {String} []
+   */
+  getTablePrefix(){
+    return this.tablePrefix || '';
+  }
+  /**
    * get config key
    * @return {} []
    */
@@ -136,8 +143,7 @@ export default class extends think.base {
     if(!this.tableName){
       this.tableName = this.getModelName();
     }
-    let tablePrefix = this.tablePrefix || '';
-    return tablePrefix + this.tableName;
+    return this.getTablePrefix() + this.tableName;
   }
   /**
    * set cache options
@@ -241,7 +247,7 @@ export default class extends think.base {
     if (table.indexOf(' ') > -1) {
       hasPrefix = true;
     }
-    this._options.table = hasPrefix ? table : this.tablePrefix + table;
+    this._options.table = hasPrefix ? table : this.getTablePrefix() + table;
     return this;
   }
   /**
