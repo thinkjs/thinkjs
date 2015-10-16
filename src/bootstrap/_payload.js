@@ -98,7 +98,7 @@ think.middleware('parse_single_file_payload', http => {
  */
 think.middleware('parse_json_payload', http => {
   let types = http.config('post.json_content_type');
-  if (types.indexOf(http._type) === -1) {
+  if (types.indexOf(http.type()) === -1) {
     return;
   }
   return http.getPayload().then(payload => {
