@@ -20,7 +20,7 @@ export default class extends think.adapter.template {
       throwOnUndefined: false
     }, think.config('view.options'), config && config.options);
 
-    nunjucks.configure('viewpath', conf);
+    nunjucks.configure(conf);
     return nunjucks.render(templateFile, tVar);
   }
 }
