@@ -120,7 +120,14 @@ var copyFile = function(source, target, replace, showWarning){
   //replace content 
   if(replace){
     for(var key in replace){
-      content = content.replace(key, replace[key]);
+      while(true){
+        var content1 = content.replace(key, replace[key]);
+        if(content1 === content){
+          content = content1;
+          break;
+        }
+        content = content1;
+      }
     }
   }
 
@@ -371,7 +378,7 @@ var createController = function(controller){
   _checkEnv();
 
   controller = controller.split('/');
-  var module = 'home';
+  var module = 'common';
   if(controller.length === 2){
     module = controller[0];
     controller = controller[1];
@@ -404,7 +411,7 @@ var createModel = function(model){
   _checkEnv();
 
   model = model.split('/');
-  var module = 'home';
+  var module = 'common';
   if(model.length === 2){
     module = model[0];
     model = model[1];
@@ -437,15 +444,42 @@ var createMiddleware = function(middleware){
   _checkEnv();
   var midlewarePath = think.getPath('common', 'middleware');
   var filepath = midlewarePath + '/' + middleware + '.js';
-  if(think.isFile(filepath)){
-    log(function(colors){
-      return colors.red('middleware `' + middleware + '` is exist.\n');
-    });
-    process.exit();
-    return;
-  }
   mkdir(midlewarePath);
   copyFile('middleware/base.js', filepath);
+
+  console.log();
+}
+
+/**
+ * create adapter
+ * @param  {String} adatper []
+ * @return {}         []
+ */
+var createAdapter = function(adapter){
+  _checkEnv();
+
+  adapter = adapter.split('/');
+
+  var type = adapter[0];
+  var name = adapter[1] || 'base';
+
+  var adapterPath = think.getPath('common', 'adapter');
+  var baseFilePath = adapterPath + '/' + type + '/base.js';
+
+  //mkdir(adapterPath + '/' + type);
+
+  if(name !== 'base'){
+
+    if(!think.isFile(baseFilePath)){
+      copyFile('adapter/base.js', baseFilePath);
+    }
+
+    copyFile('adapter/index.js', adapterPath + '/' + type + '/' + name + '.js', {
+      '[ADAPTER_TYPE]': type
+    });
+  }else{
+    copyFile('adapter/base.js', baseFilePath);
+  }
 
   console.log();
 }
@@ -514,7 +548,7 @@ program.option('-e, --es6', 'use es6 for project, used in `new` command');
 program.option('-r, --rest', 'create rest controller, used in `controller` command');
 program.option('-M, --mongo', 'create mongo model, used in `model` command');
 program.option('-R, --relation', 'create relation model, used in `model` command');
-program.option('-m, --mode <mode>', 'project mode type, used in `new` command', function(mode){
+program.option('-m, --mode <mode>', 'project mode type(mini, normal, module), default is module, used in `new` command', function(mode){
   if(modeList.indexOf(mode) === -1){
     throw new Error('mode value must one of ' + modeList.join(', '));
   }
@@ -545,6 +579,11 @@ program.command('model <modelName>').description('add model').action(function(mo
 //create middleware
 program.command('middleware <middlewareName>').description('add middleware').action(function(middleware){
   createMiddleware(middleware.toLowerCase());
+});
+
+//create adapter
+program.command('adapter <adapterName>').description('add adapter').action(function(adapter){
+  createAdapter(adapter.toLowerCase());
 });
 
 program.parse(process.argv);  
