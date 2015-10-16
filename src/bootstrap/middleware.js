@@ -1,23 +1,8 @@
 'use strict';
 
 import fs from 'fs';
+import './_payload.js';
 
-/**
- * parse payload
- * @param  {Object} http
- * @return {}         []
- */
-think.middleware('parse_json_payload', http => {
-  if (!http.payload) {
-    return;
-  }
-  let types = http.config('post.json_content_type');
-  if (types.indexOf(http._type) > -1) {
-    try{
-      http._post = JSON.parse(http.payload);
-    }catch(e){}
-  }
-});
 /**
  * output file
  * @param  {Object} http    []
@@ -37,6 +22,8 @@ think.middleware('output_resource', (http, file) => {
   });
   return deferred.promise;
 });
+
+
 /**
  * rewrite pathname, remove prefix & suffix
  * @param  {Object} http
@@ -57,6 +44,8 @@ think.middleware('rewrite_pathname', http => {
   }
   http.pathname = pathname;
 });
+
+
 /**
  * sub domain deploy
  * @param  {Object} http){}

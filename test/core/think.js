@@ -827,7 +827,7 @@ describe('core/think.js', function(){
   describe('think.hook', function(){
     it('get all hook', function(){
       var data = Object.keys(thinkCache(thinkCache.HOOK)).sort();
-      assert.deepEqual(data, ["app_begin","app_end","form_parse","resource_check","resource_output","route_parse","view_end","view_filter","view_init","view_parse","view_template"])
+      assert.deepEqual(data, ["app_begin","app_end","payload_parse","payload_validate", "resource_check","resource_output","route_parse","view_end","view_filter","view_init","view_parse","view_template"])
     })
     it('get item hook', function(){
       var data = think.hook('route_parse');
@@ -2179,12 +2179,12 @@ describe('core/think.js', function(){
     it('error contain', function(){
       var msg = think.error(new Error('EACCES'));
       assert.equal(think.isError(msg), true);
-      assert.equal(msg.message, 'Permission denied. http://www.thinkjs.org/doc/error.html#EACCES')
+      assert.equal(msg.message, 'Permission denied. http://www.thinkjs.org/doc/error_message.html#eacces')
     })
     it('error contain, addon', function(){
       var msg = think.error(new Error('EACCES'), 'haha');
       assert.equal(think.isError(msg), true);
-      assert.equal(msg.message, 'Permission denied, haha. http://www.thinkjs.org/doc/error.html#EACCES')
+      assert.equal(msg.message, 'Permission denied, haha. http://www.thinkjs.org/doc/error_message.html#eacces')
     })
     it('error, not contain', function(){
       var msg = think.error(new Error('suredy'));
@@ -2207,11 +2207,11 @@ describe('core/think.js', function(){
     it('error, promise, addon', function(done){
       var promise = Promise.reject(new Error('think.error promise, EADDRNOTAVAIL'));
       muk(think, 'reject', function(err){
-        assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+        assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error_message.html#eaddrnotavail');
         return Promise.reject(err);
       })
       think.error(promise, new Error('addon error')).catch(function(err){
-        assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+        assert.equal(err.message, 'Address not available, addon error. http://www.thinkjs.org/doc/error_message.html#eaddrnotavail');
         muk.restore();
         done();
       });

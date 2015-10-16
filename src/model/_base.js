@@ -1,7 +1,5 @@
 'use strict';
 
-import path from 'path';
-
 /**
  * base model class
  */

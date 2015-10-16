@@ -1,12 +1,8 @@
 'use strict';
 
-import querystring from 'querystring';
 import url from 'url';
 import {EventEmitter} from 'events';
-import os from 'os';
-import path from 'path';
 import fs from 'fs';
-import multiparty from 'multiparty';
 import mime from 'mime';
 
 let cookie = think.require('cookie');
@@ -53,7 +49,7 @@ export default class extends think.base {
     //array indexOf is faster than string
     let methods = ['POST', 'PUT', 'PATCH'];
     if (methods.indexOf(this.req.method) > -1) {
-      return this.getPostData();
+      return this.parsePayload();
     }
     return Promise.resolve(this.http);
   }
@@ -61,154 +57,45 @@ export default class extends think.base {
    * check request has post data
    * @return {Boolean} []
    */
-  hasPostData(){
+  hasPayload(){
     if ('transfer-encoding' in this.req.headers) {
       return true;
     }
     return (this.req.headers['content-length'] | 0) > 0;
   }
   /**
-   * get form file post
+   * get payload data
    * @return {Promise} []
    */
-  getFormFilePost(){
-    let deferred = think.defer();
-    let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
-    if (uploadDir) {
-      think.mkdir(uploadDir);
+  getPayload(){
+    if(think.isString(this.payload)){
+      return Promise.resolve(this.payload);
     }
-    let form = this.form = new multiparty.Form({
-      maxFieldsSize: think.config('post.max_fields_size'),
-      maxFields: think.config('post.max_fields'),
-      maxFilesSize: think.config('post.max_file_size'),
-      uploadDir: uploadDir
-    });
-    //support for file with multiple="multiple"
-    let files = this.http._file;
-    form.on('file', (name, value) => {
-      if (name in files) {
-        if (!think.isArray(files[name])) {
-          files[name] = [files[name]];
-        }
-        files[name].push(value);
-      }else{
-        files[name] = value;
-      }
-    });
-    form.on('field', (name, value) => {
-      this.http._post[name] = value;
-    });
-    form.on('close', () => {
-      deferred.resolve(this.http);
-    });
-    form.on('error', () => {
-      this.res.statusCode = 400;
-      this.http.end();
-    });
-    form.parse(this.req);
-    return deferred.promise;
-  }
-  /**
-   * common filed post
-   * @return {Promise} []
-   */
-  getCommonPost(){
     let buffers = [];
     let deferred = think.defer();
     this.req.on('data', chunk => {
       buffers.push(chunk);
     });
     this.req.on('end', () => {
-      this.http.payload = Buffer.concat(buffers).toString();
-      this.parseFormData().then(() => {
-        deferred.resolve(this.http);
-      });
+      this.payload = Buffer.concat(buffers).toString();
+      deferred.resolve(this.payload);
     });
     this.req.on('error', () => {
       this.res.statusCode = 400;
-      this.http.end();
+      this.end();
     });
     return deferred.promise;
   }
   /**
-   * parse form data
+   * parse payload from request
    * @return {Promise} []
    */
-  async parseFormData(){
-    await think.hook('payload_parse', this.http);
-    if (think.isEmpty(this.http._post) && this.http.payload) {
-      try{
-        this.http._post = querystring.parse(this.http.payload);
-      }catch(e){
-        this.res.statusCode = 400;
-        this.http.end();
-        return think.prevent();
-      }
+  async parsePayload(){
+    if(this.hasPayload()){
+      await think.hook('payload_parse', this.http);
+      await think.hook('payload_validate', this.http);
     }
-    let post = this.http._post;
-    let length = Object.keys(post).length;
-    if (length > think.config('post.max_fields')) {
-      this.res.statusCode = 400;
-      this.http.end();
-      return think.prevent();
-    }
-    let maxFilesSize = think.config('post.max_fields_size');
-    for(let name in post){
-      if (post[name].length > maxFilesSize) {
-        this.res.statusCode = 400;
-        this.http.end();
-        return think.prevent();
-      }
-    }
-  }
-  /**
-   * upload file by ajax
-   * @return {Promise} []
-   */
-  getAjaxFilePost(){
-    let filename = this.req.headers[think.config('post.ajax_filename_header')];
-    let deferred = think.defer();
-    let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
-    if (uploadDir) {
-      think.mkdir(uploadDir);
-    }
-    let name = think.uuid(20);
-    let filepath = uploadDir + '/' + name + path.extname(filename).slice(0, 5);
-    let stream = fs.createWriteStream(filepath);
-    this.req.pipe(stream);
-    stream.on('error', () => {
-      this.res.statusCode = 400;
-      this.http.end();
-    });
-    stream.on('close', () => {
-      this.http._file.file = {
-        fieldName: 'file',
-        originalFilename: filename,
-        path: filepath,
-        size: fs.statSync(filepath).size
-      };
-      deferred.resolve(this.http);
-    });
-    return deferred.promise;
-  }
-  /**
-   * get post data from request
-   * @return {Promise} []
-   */
-  getPostData(){
-    if (!this.hasPostData()) {
-      return Promise.resolve(this.http);
-    }
-    let multiReg = /^multipart\/(form-data|related);\s*boundary=(?:"([^"]+)"|([^;]+))$/i;
-    //file upload by form or FormData
-    if (multiReg.test(this.req.headers['content-type'])) {
-      return this.getFormFilePost();
-    }
-    //file upload by ajax
-    else if(this.req.headers[think.config('post.ajax_filename_header')]){
-      return this.getAjaxFilePost();
-    }
-    return this.getCommonPost();
+    return this.http;
   }
   /**
    * bind props & methods to http
@@ -234,6 +121,7 @@ export default class extends think.base {
     http._get = think.extend({}, urlInfo.query);
     http._type = (http.headers['content-type'] || '').split(';')[0].trim();
 
+    http.getPayload = this.getPayload;
     http.config = this.config;
     http.referrer = this.referrer;
     http.userAgent = this.userAgent;

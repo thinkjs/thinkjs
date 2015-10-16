@@ -5,6 +5,11 @@ var muk = require('muk');
 
 var _http = require('../_http.js');
 
+var thinkjs = require('../../lib/index.js');
+
+var tjs = new thinkjs();
+tjs.load();
+
 function getHttp(config, options){
   think.APP_PATH = path.dirname(__dirname) + '/testApp';
   var req = think.extend({}, _http.req);
@@ -31,14 +36,18 @@ function execMiddleware(middleware, config, options, data){
 
 describe('bootstrap/middleware.js', function(){
   it('parse_json_payload empty', function(done){
-    getHttp({}, {
+    getHttp('', {
       payload: ''
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
         assert.deepEqual(http._post, {});
         done();
+      }).catch(function(err){
+        console.log(err.stack)
       })
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('parse_json_payload, empty content-type', function(done){
@@ -71,7 +80,11 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(data, undefined);
         assert.deepEqual(http._post, {});
         done();
+      }).catch(function(err){
+        console.log(err.stack)
       })
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('parse_json_payload, has payload', function(done){

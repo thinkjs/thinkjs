@@ -1,6 +1,6 @@
 'use strict';
 
-
+/*
 var url = require('url');
 var querystring = require('querystring');
 
@@ -12,11 +12,7 @@ var WebSocket = module.exports = think.Class({
     this.httpServer = httpServer;
     this.app = app;
   },
-  /**
-   * 检测origin是否合法
-   * @param  {[type]} origin [description]
-   * @return {[type]}        [description]
-   */
+
   originIsAllowed: function(origin){
     var allowOrigins = think.config('websocket.allow_origin');
     if (!allowOrigins) {
@@ -33,24 +29,16 @@ var WebSocket = module.exports = think.Class({
     }
     return false;
   },
-  /**
-   * 选择子协议
-   * @param  {[type]} protocolFullCaseMap [description]
-   * @return {[type]}                     [description]
-   */
+
   getSubProtocal: function(request){
     var selectedProtocal = think.config('websocket.sub_protocal');
     if (think.isFunction(selectedProtocal)) {
-      var protocals = (request.headers['sec-websocket-protocol'] || '').split(/,\s*/);
+      //var protocals = (request.headers['sec-websocket-protocol'] || '').split(/,\s* /);
       selectedProtocal = selectedProtocal(protocals);
     }
     return selectedProtocal;
   },
-  /**
-   * 建立连接处理
-   * @param  {[type]} request [description]
-   * @return {[type]}         [description]
-   */
+
   openHandle: function(request, protocal){
     if (request.url === '/') {
       return Promise.resolve({});
@@ -81,10 +69,7 @@ var WebSocket = module.exports = think.Class({
     });
     return deferred.promise;
   },
-  /**
-   * 消息处理
-   * @return {[type]} [description]
-   */
+
   messageHandle: function(message, connection, app){
     //解析数据
     try{
@@ -131,12 +116,7 @@ var WebSocket = module.exports = think.Class({
     httpInstance.http.websocket = connection.socket;
     httpInstance.run().then(app.listener);
   },
-  /**
-   * 获取rpc数据对象
-   * @param  {[type]} data   [description]
-   * @param  {[type]} errMsg [description]
-   * @return {[type]}        [description]
-   */
+
   getRPCData: function(data, errMsg){
     var pars = {jsonrpc: '2.0'};
     if (errMsg) {
@@ -146,11 +126,7 @@ var WebSocket = module.exports = think.Class({
     }
     return pars;
   },
-  /**
-   * 建立连接
-   * @param  {[type]} request [description]
-   * @return {[type]}         [description]
-   */
+
   open: function(request){
     var self = this;
     var protocal = this.getSubProtocal(request);
@@ -194,10 +170,7 @@ var WebSocket = module.exports = think.Class({
       return driver;
     })
   },
-  /**
-   * 执行
-   * @return {[type]} [description]
-   */
+
   run: function(){
     var self = this;
     this.httpServer.on('upgrade', function(request, socket) {
@@ -214,13 +187,11 @@ var WebSocket = module.exports = think.Class({
     });
   }
 }, true);
-/**
- * 错误信息
- * @type {Object}
- */
+
 WebSocket.ERROR_MESSAGE = {
   TYPE_ERROR: -100001, //数据类型错误
   INVALID_JSON: -100002, //不是合法的json
   INVALID_JSONRPC: -100003, //不是jsonrpc数据格式
   INVALID_METHOD: -100004 //请求方法不合法
 }
+*/

@@ -42,7 +42,7 @@ export default class extends think.base {
           this.close();
         }, 3000);
       }
-    }
+    };
 
     clearTimeout(this.closeTimer);
 

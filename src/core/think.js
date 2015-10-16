@@ -404,7 +404,7 @@ think.config = (name, value, data) => {
 
   let flag = false;
   //get module config
-  if(think.isString(data)){
+  if(data && think.isString(data)){
     data = think.getModuleConfig(data);
   }else if(!data){
     flag = true;
@@ -1352,12 +1352,13 @@ think.error = (err, addon = '') => {
       }
     }
     if(value){
+      let siteMessage = `http://www.thinkjs.org/doc/error_message.html#${key.toLowerCase()}`;
       if(think.isError(addon)){
-        addon.message = `${value}, ${addon.message}. http://www.thinkjs.org/doc/2.0/error_message.html#${key}`;
+        addon.message = `${value}, ${addon.message}. ${siteMessage}`;
         return addon;
       }else{
         addon = addon ? `, ${addon}` : '';
-        let msg = `${value}${addon}. http://www.thinkjs.org/doc/2.0/error_message.html#${key}`;
+        let msg = `${value}${addon}. ${siteMessage}`;
         err.message = msg;
         return err;
       }

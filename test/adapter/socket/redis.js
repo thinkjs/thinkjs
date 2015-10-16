@@ -200,7 +200,7 @@ describe('adapter/socket/redis', function(){
       password: 'password'
     });
     instance.getConnection().catch(function(err){
-      assert.equal(err.message, 'Address not available, redis://www.welefen.com:1234. http://www.thinkjs.org/doc/error.html#EADDRNOTAVAIL');
+      assert.equal(err.message, 'Address not available, redis://www.welefen.com:1234. http://www.thinkjs.org/doc/error_message.html#eaddrnotavail');
       assert.equal(instance.connection, null);
       think.npm = npm;
       think.await = wait;

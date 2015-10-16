@@ -873,7 +873,7 @@ describe('core/http.js', function() {
     });
   });
 
-
+/*
   describe('HTTP POST', function() {
     it('hasPostData false', function(done) {
       var defaultHttp = getDefaultHttp('/index/index&method=post&4');
@@ -1299,6 +1299,6 @@ describe('core/http.js', function() {
     */
 
 
-  });
+  //});
 
 });

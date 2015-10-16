@@ -43,7 +43,7 @@ let config = {
  */
 let cliConfig = {
   auto_close_socket: true
-}
+};
 
 if(think.cli){
   config = think.extend(config, cliConfig);
