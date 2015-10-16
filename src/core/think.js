@@ -744,7 +744,7 @@ think.adapter = (...args) => {
   }
   //create clean Class
   if (!superClass) {
-    return think.Class(type, true);
+    return think.Class(type);
   }
   return think.Class(superClass, name);
 };

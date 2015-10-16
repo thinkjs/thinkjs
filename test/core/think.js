@@ -1126,6 +1126,8 @@ describe('core/think.js', function(){
     it('create adapter', function(){
       var fn = think.adapter({});
       assert.equal(think.isFunction(fn), true);
+      var instance = new fn();
+      assert.equal(think.isFunction(instance.invoke), true);
     })
     it('create adapter, super', function(){
       var cls = think.Class({
