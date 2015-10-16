@@ -1954,10 +1954,10 @@ describe('core/think.js', function(){
       var instance = new cls();
       assert.equal(instance.getName(), 'welefen')
     })
-    it('get service instance', function(){
-      var service = think.service('test', {}, 'common');
-      assert.deepEqual(service, { http: {} });
-    })
+    // it('get service instance', function(){
+    //   var service = think.service('test', {}, 'common');
+    //   assert.deepEqual(service, { http: {} });
+    // })
     it('get service object', function(){
       thinkCache(thinkCache.ALIAS_EXPORT, 'home/service/test', {
         welefen: function(){

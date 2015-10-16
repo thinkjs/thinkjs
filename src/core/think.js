@@ -1086,14 +1086,9 @@ think.model = (superClass, methods, module) => {
  * @type {Function}
  */
 think.service = (superClass, methods, module) => {
-  let isConfig = think.isHttp(methods) || module;
   //get service instance
-  if (think.isString(superClass) && isConfig) {
-    let Cls = think.lookClass(superClass, 'service', module);
-    if (think.isFunction(Cls)) {
-      return new Cls(methods);
-    }
-    return Cls;
+  if (think.isString(superClass)) {
+    return think.lookClass(superClass, 'service', module || methods);
   }
   let service = thinkCache(thinkCache.COLLECTION, 'service');
   if(!service){
