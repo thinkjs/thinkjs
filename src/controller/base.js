@@ -300,6 +300,15 @@ export default class extends think.http.base {
     return think.defer().promise;
   }
   /**
+   * set cache-control and expires header
+   * @param  {Number} time []
+   * @return {}      []
+   */
+  expires(time){
+    this.http.expires(time);
+    return this;
+  }
+  /**
    * write content
    * @param  {mixed} obj      []
    * @param  {String} encoding [content encoding]

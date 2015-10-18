@@ -151,6 +151,7 @@ export default class extends think.base {
     http.jsonp = this.jsonp;
     http.json = this.json;
     http.view = this.view;
+    http.expires = this.expires;
   }
   /**
    * normalize pathname, remove hack chars
@@ -577,6 +578,16 @@ export default class extends think.base {
       this._view = new cls(this);
     }
     return this._view;
+  }
+  /**
+   * set cache-control and expires header
+   * @return {} []
+   */
+  expires(time){
+    time = time * 1000;
+    let date = new Date(Date.now() + time);
+    this.header('Cache-Control', `max-age=${time}`);
+    this.header('Expires', date.toUTCString());
   }
   /**
    * write content
