@@ -1,7 +1,6 @@
 'use strict';
 
 import path from 'path';
-import util from 'util';
 /**
  * base controller class
  * all controllers will inherits this class
@@ -215,15 +214,7 @@ export default class extends think.http.base {
    * @return {String}     []
    */
   locale(key, ...data){
-    let lang = this.getLang(true);
-    let locales = this.config(think.dirname.locale);
-    let values = locales[lang] || {};
-    let defaultLocales = locales[this.config('locale.default')];
-    if(!key){
-      return think.isEmpty(values) ? defaultLocales : values;
-    }
-    let value = values[key] || defaultLocales[key] || key;
-    return util.format(value, ...data);
+    return this.http.locale(key, ...data);
   }
   /**
    * redirect

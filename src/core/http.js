@@ -4,6 +4,7 @@ import url from 'url';
 import {EventEmitter} from 'events';
 import fs from 'fs';
 import mime from 'mime';
+import util from 'util';
 
 let cookie = think.require('cookie');
 
@@ -152,6 +153,7 @@ export default class extends think.base {
     http.json = this.json;
     http.view = this.view;
     http.expires = this.expires;
+    http.locale = this.locale;
   }
   /**
    * normalize pathname, remove hack chars
@@ -531,8 +533,10 @@ export default class extends think.base {
         data = errmsg;
         errmsg = '';
       }
-      //read errmsg from config/error.js config file
-      errmsg = errmsg || error[errno] || '';
+      //read errmsg from config/locale/[lang].js
+      if(!errmsg){
+        errmsg = this.locale(errno) || '';
+      }
       obj = {
         [error.key]: errno,
         [error.msg]: errmsg
@@ -588,6 +592,22 @@ export default class extends think.base {
     let date = new Date(Date.now() + time);
     this.header('Cache-Control', `max-age=${time}`);
     this.header('Expires', date.toUTCString());
+  }
+  /**
+   * get locale value
+   * @param  {String} key []
+   * @return {String}     []
+   */
+  locale(key, ...data){
+    let lang = this.getLang(true);
+    let locales = this.config(think.dirname.locale);
+    let values = locales[lang] || {};
+    let defaultLocales = locales[this.config('locale.default')];
+    if(!key){
+      return think.isEmpty(values) ? defaultLocales : values;
+    }
+    let value = values[key] || defaultLocales[key] || key;
+    return util.format(value, ...data);
   }
   /**
    * write content
