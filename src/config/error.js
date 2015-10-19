@@ -6,5 +6,6 @@
 export default {
   key: 'errno', //error number
   msg: 'errmsg', //error message
-  value: 1000 //default errno
+  default_errno: 1000, //default errno
+  validate_errno: 1001
 };

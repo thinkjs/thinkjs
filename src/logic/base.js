@@ -129,4 +129,22 @@ export default class extends think.controller.base {
   errors() {
     return this.assign('errors');
   }
+  /**
+   * auto validate
+   * @return {} []
+   */
+  __after(){
+    if(think.isEmpty(this.rules)){
+      return;
+    }
+    let flag = this.validate(this.rules);
+    if(!flag){
+      let error = this.config('error');
+      let errors = this.errors();
+      let msg = Object.keys(errors).map(item => {
+        return errors[item];
+      }).join(';');
+      return this.fail(error.validate_errno, msg);
+    }
+  }
 }

@@ -525,7 +525,7 @@ export default class extends think.base {
       if (!think.isNumber(errno)) {
         data = errmsg;
         errmsg = errno;
-        errno = error.value;
+        errno = error.default_errno;
       }
       if(!think.isString(errmsg)){
         data = errmsg;
