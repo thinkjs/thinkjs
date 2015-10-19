@@ -7,5 +7,3 @@ test/App/Runtime/Cache/
 coverage
 lib/
 demo/
-
-www/static/module/thinkjs/*.md
