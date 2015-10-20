@@ -312,8 +312,12 @@ think.require = (name, flag) => {
  */
 think.safeRequire = file => {
   // absolute file path is not exist
-  if (path.isAbsolute(file) && !think.isFile(file)) {
-    return null;
+  if (path.isAbsolute(file)) {
+    if(!think.isFile(file)){
+      return null;
+    }
+    //when file is exist, require direct
+    return require(file);
   }
   try{
     return require(file);
