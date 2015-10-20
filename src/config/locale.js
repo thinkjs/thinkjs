@@ -4,6 +4,6 @@
  * locale configs
  */
 export default {
-  name: 'think_locale',
+  cookie_name: 'think_locale',
   default: 'en'
 };
