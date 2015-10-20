@@ -1,7 +1,11 @@
 'use strict';
 
-var Base = require('./base.js');
-
-module.exports = think.adapter(Base, {
-  
+module.exports = think.adapter('[ADAPTER_TYPE]', 'base', {
+  /**
+   * init
+   * @return {} []
+   */
+  init: function(){
+    this.super('init', arguments);
+  }
 });
