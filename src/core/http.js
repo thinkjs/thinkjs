@@ -139,7 +139,6 @@ export default class extends think.base {
     http.ip = this.ip;
     http.lang = this.lang;
     http.theme = this.theme;
-    http.getLang = this.getLang;
     http.cookie = this.cookie;
     http.redirect = this.redirect;
     http.write = this.write;
@@ -398,28 +397,27 @@ export default class extends think.base {
    * get or set language
    * @return {String}           []
    */
-  lang(lang){
+  lang(lang, asViewPath){
     if(lang){
       this._lang = lang;
+      this._langAsViewPath = asViewPath;
       return;
     }
-    return this._lang;
-  }
-  /**
-   * get lang from header or cookie
-   * @param  {Boolean} userCookie []
-   * @return {String}            []
-   */
-  getLang(useCookie){
-    if(useCookie){
-      let key = this.config('locale').cookie_name;
-      let value = this.cookie(key);
-      if(value){
-        return value;
-      }
+    //get from property
+    if(this._lang){
+      return this._lang;
     }
-    let lang = this.header('accept-language');
-    return lang.split(',')[0];
+    //get from cookie
+    let key = this.config('locale').cookie_name;
+    let value = this.cookie(key);
+    if(value){
+      this._lang = value;
+      return value;
+    }
+    //get from header
+    lang = this.header('accept-language');
+    this._lang = lang.split(',')[0];
+    return this._lang;
   }
   /**
    * get or set theme
@@ -599,7 +597,7 @@ export default class extends think.base {
    * @return {String}     []
    */
   locale(key, ...data){
-    let lang = this.getLang(true);
+    let lang = this.lang();
     let locales = this.config(think.dirname.locale);
     let values = locales[lang] || {};
     let defaultLocales = locales[this.config('locale.default')];

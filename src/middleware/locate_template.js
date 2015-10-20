@@ -15,7 +15,7 @@ export default class extends think.middleware.base {
     let pathPrefix, http = this.http, prefix = '';
     let {root_path} = this.options;
     let theme = http.theme();
-    let lang = http.lang();
+    let lang = http._langAsViewPath && http.lang();
     
     module = module || http.module;
     

@@ -205,8 +205,8 @@ export default class extends think.http.base {
    * @param  {Boolean} useCookie [get from cookie set]
    * @return {String}           []
    */
-  getLang(useCookie){
-    return this.http.getLang(useCookie);
+  lang(lang, asViewPath){
+    return this.http.lang(lang, asViewPath);
   }
   /**
    * get locale value

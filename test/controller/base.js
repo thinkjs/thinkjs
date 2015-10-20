@@ -303,18 +303,9 @@ describe('controller/base.js', function(){
       done();
     })
   })
-  it('lang', function(done){
-    getInstance().then(function(instance){
-      var data = instance.getLang();
-      assert.deepEqual(data, 'zh-CN')
-      done();
-    }).catch(function(err){
-      console.log(err.stack)
-    })
-  })
   it('lang use cookie', function(done){
     getInstance().then(function(instance){
-      var data = instance.getLang(true);
+      var data = instance.lang();
       assert.deepEqual(data, 'zh-CN')
       done();
     }).catch(function(err){
@@ -327,7 +318,7 @@ describe('controller/base.js', function(){
         think_locale: 'en'
       }
     }).then(function(instance){
-      var data = instance.getLang(true);
+      var data = instance.lang();
       assert.deepEqual(data, 'en')
       done();
     })
