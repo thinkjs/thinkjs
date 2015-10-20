@@ -190,15 +190,7 @@ export default class extends think.http.base {
    * @return {Promise}       []
    */
   session(name, value) {
-    think.session(this.http);
-    let instance = this.http.session;
-    if (name === undefined) {
-      return instance.delete();
-    }
-    if (value !== undefined) {
-      return instance.set(name, value);
-    }
-    return instance.get(name);
+    return this.http.session(name, value);
   }
   /**
    * get language

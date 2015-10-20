@@ -43,7 +43,7 @@ describe('middleware/check_csrf', function() {
     think.config('csrf.on', true);
     execMiddleware('check_csrf', function(http) {
       think.session(http);
-      http.session.get = function() {
+      http._session.get = function() {
         return '12345678901234567890123456789000';
       };
       http.post(think.config('csrf.form_name'), '12345678901234567890123456789000');
@@ -55,7 +55,7 @@ describe('middleware/check_csrf', function() {
     think.config('csrf.on', true);
     execMiddleware('check_csrf', function(http) {
       think.session(http);
-      http.session.get = function() {
+      http._session.get = function() {
         return '12345678901234567890123456789000';
       };
       http.isGet = function() {
@@ -76,7 +76,7 @@ describe('middleware/check_csrf', function() {
     think.config('csrf.on', true);
     execMiddleware('check_csrf', function(http) {
       think.session(http);
-      http.session.get = function() {
+      http._session.get = function() {
         return '12345678901234567890123456789000';
       };
       http.isGet = function() {
@@ -99,7 +99,7 @@ describe('middleware/check_csrf', function() {
     think.config('csrf.errmsg', 'token error');
     execMiddleware('check_csrf', function(http) {
       think.session(http);
-      http.session.get = function() {
+      http._session.get = function() {
         return '12345678901234567890123456789000';
       };
       http.isGet = function() {

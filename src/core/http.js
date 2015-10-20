@@ -153,6 +153,7 @@ export default class extends think.base {
     http.view = this.view;
     http.expires = this.expires;
     http.locale = this.locale;
+    http.session = this.session;
   }
   /**
    * normalize pathname, remove hack chars
@@ -606,6 +607,23 @@ export default class extends think.base {
     }
     let value = values[key] || defaultLocales[key] || key;
     return util.format(value, ...data);
+  }
+   /**
+   * get or set session
+   * @param  {String} name  [session name]
+   * @param  {mixed} value [session value]
+   * @return {Promise}       []
+   */
+  session(name, value) {
+    think.session(this);
+    let instance = this.http._session;
+    if (name === undefined) {
+      return instance.delete();
+    }
+    if (value !== undefined) {
+      return instance.set(name, value);
+    }
+    return instance.get(name);
   }
   /**
    * write content

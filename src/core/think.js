@@ -973,8 +973,8 @@ think.uuid = (length = 32) => {
  * @return {}      []
  */
 think.session = http => {
-  if (http.session) {
-    return http.session;
+  if (http._session) {
+    return http._session;
   }
   let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
   if (!Cookie) {
@@ -1014,7 +1014,7 @@ think.session = http => {
   let cls = think.adapter('session', type);
   let conf = think.extend({}, sessionOptions, {cookie: sessionCookie});
   let session = new cls(conf);
-  http.session = session;
+  http._session = session;
   http.on('afterEnd', () => session.flush && session.flush());
   return session;
 };

@@ -2094,7 +2094,7 @@ describe('core/think.js', function(){
   describe('think.session', function(){
     it('get session, exist', function(done){
       getHttp().then(function(http){
-        http.session = 'welefen';
+        http._session = 'welefen';
         var session = think.session(http);
         assert.equal(session, 'welefen')
         done();

@@ -15,7 +15,7 @@ export default class extends think.middleware.base {
     }
 
     think.session(this.http);
-    let session = this.http.session;
+    let session = this.http._session;
     let isGet = this.http.isGet();
     let isPost = this.http.isPost();
     let isAjax = this.http.isAjax();
