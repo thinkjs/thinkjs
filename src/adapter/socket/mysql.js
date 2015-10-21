@@ -111,6 +111,11 @@ export default class extends think.adapter.socket {
         think.log(sql, 'SQL', startTime);
       }
       return rows;
+    }).catch(err => {
+      if (this.config.log_sql) {
+        think.log(sql, 'SQL', startTime);
+      }
+      return Promise.reject(err);
     });
     promise = this.autoClose(promise);
     return think.error(promise);
