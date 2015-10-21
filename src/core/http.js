@@ -616,7 +616,7 @@ export default class extends think.base {
    */
   session(name, value) {
     think.session(this);
-    let instance = this.http._session;
+    let instance = this._session;
     if (name === undefined) {
       return instance.delete();
     }
