@@ -6,7 +6,7 @@
 
 export default {
   on: false,
-  type: 'think',
+  type: 'socket.io',
   allow_origin: '',
   sub_protocal: '',
   adapter: undefined,
