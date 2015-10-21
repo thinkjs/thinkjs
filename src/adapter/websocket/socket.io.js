@@ -32,12 +32,13 @@ export default class extends think.adapter.websocket {
 
     //get message type
     let messages = think.extend({}, this.config.messages);
+    let msgKeys = Object.keys(messages);
     let open = messages.open;
     delete messages.open;
     let close = messages.close;
     delete messages.close;
 
-    let msgKeys = Object.keys(messages);
+    thinkCache(thinkCache.WEBSOCKET, io.sockets.sockets);
 
     io.on('connection', socket => {
 
@@ -61,6 +62,29 @@ export default class extends think.adapter.websocket {
     });
   }
   /**
+   * emit socket data
+   * @param  {String} event []
+   * @param  {Mixed} data  []
+   * @return {}       []
+   */
+  emit(event, data){
+    return this.socket.emit(event, data);
+  }
+  /**
+   * broadcast socket data
+   * @param  {String} event       []
+   * @param  {Mixed} data        []
+   * @param  {Boolean} containSelf []
+   * @return {}             []
+   */
+  broadcast(event, data, containSelf){
+    if(containSelf){
+      this.io.sockets.emit(event, data);
+    }else{
+      this.broadcast.emit(event, data);
+    }
+  }
+  /**
    * deal message
    * @param  {String} url  []
    * @param  {Mixed} data []
@@ -77,6 +101,9 @@ export default class extends think.adapter.websocket {
     http.data = data;
     http.socket = socket;
     http.io = this.io;
+
+    http.socketEmit = this.emit;
+    http.socketBroadcast = this.broadcast;
 
     let instance = new this.app(http);
     return instance.run();

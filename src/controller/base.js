@@ -384,4 +384,29 @@ export default class extends think.http.base {
   sendTime(name){
     return this.http.sendTime(name);
   }
+  /**
+   * emit socket data
+   * @param  {String} event []
+   * @param  {Miex} data  []
+   * @return {}       []
+   */
+  emit(event, data){
+    if(!this.http.socket){
+      throw new Error('emit method can only used in websocket request');
+    }
+    return this.http.socketEmit(event, data);
+  }
+  /**
+   * broadcast socket data
+   * @param  {String} event       []
+   * @param  {Mixed} data        []
+   * @param  {Boolean} containSelf []
+   * @return {}             []
+   */
+  broadcast(event, data, containSelf){
+    if(!this.http.socket){
+      throw new Error('broadcast method can only used in websocket request');
+    }
+    return this.http.socketBroadcast(event, data, containSelf);
+  }
 }

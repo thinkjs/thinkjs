@@ -135,6 +135,11 @@ thinkCache.COLLECTION = 'collection';
  */
 thinkCache.ERROR = 'error';
 /**
+ * store websockets
+ * @type {String}
+ */
+thinkCache.WEBSOCKET = 'websocket';
+/**
  * app use
  * @type {String}
  */
