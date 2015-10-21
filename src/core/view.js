@@ -59,7 +59,7 @@ export default class extends think.http.base {
       await this.hook('view_end', content);
     }catch(err){
       this.http.error = err;
-      await think.statusAction(500, this.http);
+      await think.statusAction(500, this.http, true);
     }
     return think.prevent();
   }
