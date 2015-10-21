@@ -69,12 +69,40 @@ export default class {
    * @return {Boolean} []
    */
   checkEnv(){
+    this.checkNodeVersion();
+    this.checkAppPath();
+  }
+  /**
+   * check node version
+   * @return {} []
+   */
+  checkNodeVersion(){
     let packageFile = `${think.THINK_PATH}/package.json`;
     let {engines} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
     let needVersion = engines.node.substr(2);
     let nodeVersion = process.version.substr(1);
     if(needVersion > nodeVersion){
-      throw new Error(`ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`);
+      think.log(colors => {
+        return `${colors.red('[ERROR]')} ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`;
+      });
+      console.log();
+      process.exit();
+    }
+  }
+  /**
+   * check app path
+   * @return {} []
+   */
+  checkAppPath(){
+    if(think.isDir(think.APP_PATH)){
+      return;
+    }
+    if(think.isDir(`${think.ROOT_PATH}/src`)){
+      think.log(colors => {
+        return `${colors.red('[ERROR]')} please open another terminal to run \`${colors.cyan('npm run watch-compile')}\` command before start server.`;
+      }, '', null);
+      console.log();
+      process.exit();
     }
   }
   /**
