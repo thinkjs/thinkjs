@@ -49,7 +49,8 @@ Connection.prototype = {
       cb(null, ['DONE']);
     }
   },
-  destroy: function() {}
+  destroy: function() {},
+  release: function(){}
 };
 
 
