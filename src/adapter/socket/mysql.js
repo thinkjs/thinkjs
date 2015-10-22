@@ -107,6 +107,11 @@ export default class extends think.adapter.socket {
     let startTime = Date.now();
     let fn = think.promisify(connection.query, connection);
     let promise = fn(data).then((rows = []) => {
+      // just call connection.release() and the connection will return to the pool, 
+      // ready to be used again by someone else.
+      // https://github.com/felixge/node-mysql#pooling-connections
+      connection.release();
+
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
