@@ -29,6 +29,7 @@ export default {
   PARAMS_TYPE_INVALID: 'params `{name}` type invalid',
   DISALLOW_PORT: 'proxy on, cannot visit with port',
   SERVICE_UNAVAILABLE: 'Service Unavailable',
+  URL_HAS_UPPERCASE: 'url has uppercases(%s), auto convert to lowercase.',
 
   validate_required: '{name} can not be blank',
   validate_contains: '{name} need contains {args}',

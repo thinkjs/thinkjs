@@ -259,6 +259,19 @@ export default class extends think.middleware.base {
     this.parseRoute(route);
   }
   /**
+   * check value is lowerCase
+   * @param  {String} value []
+   * @return {}       []
+   */
+  checkLowerCase(value){
+    let lower = value.toLowerCase();
+    if(value !== lower){
+      think.log(colors => {
+        return colors.yellow('[WARNING]') + ` ` + think.locale('URL_HAS_UPPERCASE', value);
+      });
+    }
+  }
+  /**
    * get module name
    * @param  {String} module []
    * @return {String}        []
@@ -267,6 +280,7 @@ export default class extends think.middleware.base {
     if (!module || think.mode === think.mode_mini) {
       return think.config('default_module');
     }
+    this.checkLowerCase(module);
     return module.toLowerCase();
   }
   /**
@@ -279,6 +293,7 @@ export default class extends think.middleware.base {
       return think.config('default_controller');
     }
     if (/^\w*$/.test(controller)) {
+      this.checkLowerCase(controller);
       return controller.toLowerCase();
     }
     return '';
@@ -293,7 +308,8 @@ export default class extends think.middleware.base {
       return think.config('default_action');
     }
     if (/^\w*$/.test(action)) {
-      return action;
+      this.checkLowerCase(action);
+      return action.toLowerCase();
     }
     return '';
   }

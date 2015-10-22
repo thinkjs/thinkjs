@@ -66,6 +66,11 @@ export default class extends think.http.base {
       http.action = method;
     }
     let action = http.action;
+    if(action.indexOf('_') > -1){
+      action = action.replace(/_(\w)/g, (a, b) => {
+        return b.toUpperCase();
+      });
+    }
     let actionWithSuffix = `${action}Action`;
     //action is exist
     if(think.isFunction(controller[actionWithSuffix])){
@@ -75,7 +80,7 @@ export default class extends think.http.base {
     if(think.isFunction(controller.__call)){
       return this.action(controller, '__call');
     }
-    http.error = new Error(think.locale('ACTION_NOT_FOUND', action, http.url));
+    http.error = new Error(think.locale('ACTION_NOT_FOUND', actionWithSuffix, http.url));
     return think.statusAction(404, http);
   }
   /**
