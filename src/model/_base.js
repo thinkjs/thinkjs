@@ -191,6 +191,7 @@ export default class extends think.base {
     if (page === undefined) {
       return this;
     }
+    page = parseInt(page) || 1;
     this._options.limit = [listRows * (page - 1), listRows];
     return this;
   }
