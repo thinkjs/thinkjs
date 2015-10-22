@@ -77,7 +77,7 @@ export default class extends think.adapter.websocket {
     let sockets = thinkCache(thinkCache.WEBSOCKET);
     sockets.some((item, index) => {
       if(item.id === socket.id){
-        socket.splice(index, 1);
+        sockets.splice(index, 1);
         return true;
       }
     });
