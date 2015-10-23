@@ -117,7 +117,8 @@ export default class extends think.adapter.socket {
       }
       return rows;
     }).catch(err => {
-      connection.release();
+      //no connection.release method when has error
+      //connection.release();
       
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
