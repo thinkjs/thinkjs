@@ -258,7 +258,7 @@ export default class {
    */
   loadMVC(){
     let types = {
-      model: ['base', 'relation'],
+      model: ['base', 'relation', 'mongo', 'adv'],
       controller: ['base', 'rest'],
       logic: ['base'],
       service: ['base']
