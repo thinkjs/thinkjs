@@ -227,17 +227,20 @@ export default class extends Base {
       count = await this.options(options).count();
     }
 
+    options.limit = options.limit || [1, this.config.nums_per_page];
+
+    let numsPerPage = options.limit[1];
     //get page options
-    let data = {numsPerPage: this.config.nums_per_page};
+    let data = {numsPerPage: numsPerPage};
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
     let totalPage = Math.ceil(count / data.numsPerPage);
     if (think.isBoolean(pageFlag) && data.currentPage > totalPage) {
       if(pageFlag){
         data.currentPage = 1;
-        options.limit = [0, this.config.nums_per_page];
+        options.limit = [0, numsPerPage];
       }else{
         data.currentPage = totalPage;
-        options.limit = [(totalPage - 1) * this.config.nums_per_page, this.config.nums_per_page];
+        options.limit = [(totalPage - 1) * numsPerPage, numsPerPage];
       }
     }
     let result = think.extend({count: count, totalPages: totalPage}, data);
