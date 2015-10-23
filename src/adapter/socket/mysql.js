@@ -110,15 +110,18 @@ export default class extends think.adapter.socket {
       // just call connection.release() and the connection will return to the pool, 
       // ready to be used again by someone else.
       // https://github.com/felixge/node-mysql#pooling-connections
-      connection.release();
+      if(this.pool && connection.release){
+        connection.release();
+      }
 
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
       return rows;
     }).catch(err => {
-      //no connection.release method when has error
-      //connection.release();
+      if(this.pool && connection.release){
+        connection.release();
+      }
       
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
