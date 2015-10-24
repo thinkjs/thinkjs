@@ -497,7 +497,7 @@ export default class extends think.base {
    * @return {}          []
    */
   parseDistinct(distinct){
-    return distinct ? ' Distinct' : '';
+    return distinct ? ' DISTINCT' : '';
   }
   /**
    * parse union
