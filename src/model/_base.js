@@ -468,11 +468,15 @@ export default class extends think.base {
    * @param  {Mixed} options []
    * @return {}         []
    */
-  options(options){
+  options(options = {}){
     if (options === true) {
       return this._options;
     }
     this._options = options;
+    //page to limit
+    if(options.page){
+      this.page(options.page);
+    }
     return this;
   }
   /**
