@@ -191,6 +191,10 @@ export default class extends think.base {
     if (page === undefined) {
       return this;
     }
+    if(think.isArray(page)){
+      listRows = page[1] || listRows;
+      page = page[0];
+    }
     page = parseInt(page) || 1;
     this._options.limit = [listRows * (page - 1), listRows];
     return this;
