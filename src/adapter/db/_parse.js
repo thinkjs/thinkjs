@@ -219,8 +219,14 @@ export default class extends think.base {
       for(let opr in val){
         let nop = opr.toUpperCase();
         nop = this.comparison[nop] || nop;
-        result.push(key + ' ' + nop + ' ' + this.parseValue(val[opr]));
-      } 
+        let parsedValue = this.parseValue(val[opr]);
+        //{id: {IN: [1, 2, 3]}}
+        if(think.isArray(parsedValue)){
+          result.push(`${key} ${nop} (${parsedValue.join(', ')})`);
+        }else{
+          result.push(key + ' ' + nop + ' ' + parsedValue);
+        }
+      }
       return result.join(' ' + logic + ' ');
     }
     else if (!think.isArray(val)) {

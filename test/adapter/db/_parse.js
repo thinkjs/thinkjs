@@ -659,6 +659,11 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseWhere({id: ['IN', 10]});
     assert.equal(data, ' WHERE ( id = 10 )')
   })
+  it('parseWhere, IN, object', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: {IN: [1, 2, 3]}});
+    assert.equal(data, ' WHERE ( id IN (1, 2, 3) )')
+  })
   it('parseWhere, IN, has exp', function(){
     var instance = new Parse();
     var data = instance.parseWhere({id: ['NOTIN', '(10,20,30)', 'exp']});
