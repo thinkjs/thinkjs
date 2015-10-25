@@ -281,6 +281,17 @@ export default class extends think.base {
         throw new Error(think.locale('WHERE_CONDITION_INVALID', key, JSON.stringify(val)));
       }
     }else{
+      // where({id: [1, 2, 3]})
+      let flag = think.isNumber(val[0]) || think.isNumberString(val[0]);
+      if(flag){
+        flag = val.every(item => {
+          return think.isNumber(item) || think.isNumberString(item);
+        });
+        if(flag){
+          return `${key} IN ( ${val.join(', ')} )`;
+        }
+      }
+
       let length = val.length;
       let logic = this.getLogic(val[length - 1], '');
       if(logic){
