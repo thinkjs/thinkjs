@@ -72,7 +72,7 @@ export default class extends think.model.base {
       });
       name = filterRelations;
     }
-    
+
     this._relationName = name;
     return this;
   }
@@ -128,14 +128,18 @@ export default class extends think.model.base {
         return;
       }
 
-      //get relation model instance
-      let model = this.model(item.model || key).options({
-        cache: options.cache,
-        where: item.where,
-        field: item.field,
-        order: item.order,
-        limit: item.limit
+      let modelOpts = {
+        cache: options.cache
+      };
+      ['where', 'field', 'order', 'limit', 'page'].forEach(optItem => {
+        if(think.isFunction(item[optItem])){
+          modelOpts[optItem] = item[optItem].call(this);
+        }else{
+          modelOpts[optItem] = item[optItem];
+        }
       });
+      //get relation model instance
+      let model = this.model(item.model || key).options(modelOpts);
 
       //set relation to relate model
       if(model.setRelation){
@@ -211,9 +215,16 @@ export default class extends think.model.base {
     let sql = 'SELECT %s, a.%s FROM %s as a, %s as b %s AND a.%s=b.%s %s';
     let field = this.db().parseField(mapOpts.field).split(',').map(item => `b.${item}`).join(',');
     let pk = await mapOpts.model.getPk();
-    let table = mapOpts.rTable || this.getRelationTableName(mapOpts.model);
+    let table = mapOpts.rModel;
+    if(table){
+      if(this.tablePrefix && table.indexOf(this.tablePrefix) !== 0){
+        table = this.tablePrefix + table;
+      }
+    }else{
+     table = this.getRelationTableName(mapOpts.model);
+    }
     let table1 = mapOpts.model.getTableName();
-    let where1 = this.db.parseWhere(where);
+    let where1 = this.db().parseWhere(where);
     let rkey = mapOpts.rfKey || (mapOpts.model.getModelName() + '_id');
     let where2 = mapOpts.where ? (' AND ' + this.db.parseWhere(mapOpts.where).trim().slice(6)) : '';
     sql = this.parseSql(sql, field, mapOpts.fKey, table, table1, where1, rkey, pk, where2);
