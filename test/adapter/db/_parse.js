@@ -193,7 +193,7 @@ describe('adapter/db/_parse.js', function(){
   it('parseDistinct, true', function(){
     var instance = new Parse();
     var data = instance.parseDistinct(true);
-    assert.equal(data, ' Distinct');
+    assert.equal(data, ' DISTINCT');
   })
   it('parseComment, empty', function(){
     var instance = new Parse();
@@ -803,7 +803,7 @@ describe('adapter/db/_parse.js', function(){
       limit: '10, 20',
       distinct: true
     });
-    assert.equal(data, "SELECT Distinct name,title FROM user WHERE ( id = 11 ) AND ( title = 'welefen' ) GROUP BY `name` ORDER BY name DESC LIMIT 10,20")
+    assert.equal(data, "SELECT DISTINCT name,title FROM user WHERE ( id = 11 ) AND ( title = 'welefen' ) GROUP BY `name` ORDER BY name DESC LIMIT 10,20")
   })
   it('parseSql', function(){
     var instance = new Parse({prefix: 'think_'});
