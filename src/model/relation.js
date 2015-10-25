@@ -42,17 +42,38 @@ export default class extends think.model.base {
    * @param {String} name []
    */
   setRelation(name, value){
+    //ignore undefined name
+    if(name === undefined){
+      return this;
+    }
+
     //config relation data
     if (think.isObject(name) || !think.isEmpty(value)) {
       let obj = think.isObject(name) ? name : {[name]: value};
       think.extend(this.relation, obj);
       return this;
     }
+
+    if(think.isBoolean(name)){
+      this._relationName = name;
+      return this;
+    }
+
     //enable relation
     if (think.isString(name)) {
       name = name.split(/\s*,\s*/);
     }
-    this._relationName = name || [];
+
+    name = name || [];
+    //filter relation name
+    if(value === false){
+      let filterRelations = Object.keys(this.relation).filter(item => {
+        return name.indexOf(item) === -1;
+      });
+      name = filterRelations;
+    }
+    
+    this._relationName = name;
     return this;
   }
   /**
@@ -91,6 +112,22 @@ export default class extends think.model.base {
       if (!think.isObject(item)) {
         item = {type: item};
       }
+      //get relation model options
+      let opts = think.extend({
+        name: key,
+        type: think.model.HAS_ONE,
+        key: pk,
+        fKey: this.name + '_id',
+        relation: true
+      }, item);
+
+      //relation data is exist
+      let itemData = think.isArray(data) ? data[0] : data;
+      let relData = itemData[opts.name];
+      if(think.isArray(relData) || think.isObject(relData)){
+        return;
+      }
+
       //get relation model instance
       let model = this.model(item.model || key).options({
         cache: options.cache,
@@ -99,14 +136,14 @@ export default class extends think.model.base {
         order: item.order,
         limit: item.limit
       });
-      //get relation model options
-      let opts = think.extend({
-        name: key,
-        model: model,
-        type: think.model.HAS_ONE,
-        key: pk,
-        fKey: this.name + '_id'
-      }, item);
+
+      //set relation to relate model
+      if(model.setRelation){
+        model.setRelation(opts.relation, false);
+      }
+
+      opts.model = model;
+      
       switch(item.type){
         case think.model.BELONG_TO:
           return this._getBelongsToRelation(data, opts, options);
