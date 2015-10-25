@@ -367,6 +367,11 @@ var _createModule = function(module){
  */
 var createModule = function(module){
   _checkEnv();
+
+  if(module === 'common'){
+    return;
+  }
+  
   _createModule(module);
 };
 /**
@@ -387,7 +392,7 @@ var createController = function(controller){
   }
 
   if(!isModuleExist(module)){
-    _createModule(module);
+    createModule(module);
   }
 
   var controllerPath = think.getPath(module, 'controller');
@@ -421,7 +426,7 @@ var createService = function(service){
   }
 
   if(!isModuleExist(module)){
-    _createModule(module);
+    createModule(module);
   }
 
   var servicePath = think.getPath(module, 'service');
@@ -447,7 +452,7 @@ var createModel = function(model){
   }
 
   if(!isModuleExist(module)){
-    _createModule(module);
+    createModule(module);
   }
 
   var file = 'index.js';
