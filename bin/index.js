@@ -184,7 +184,7 @@ var parseAppConfig = function(){
  * @return {String}             []
  */
 var getProjectViewPath = function(module){
-  if(program.es6){
+  //if(program.es6){
     var APP_PATH = think.APP_PATH;
     think.APP_PATH = projectRootPath + 'view';
     var viewPath = think.getPath(module, '');
@@ -195,9 +195,9 @@ var getProjectViewPath = function(module){
     
     think.APP_PATH = APP_PATH;
     return path.normalize(viewPath).slice(0, -1);
-  }else{
-    return think.getPath(module, 'view');
-  }
+  // }else{
+  //   return think.getPath(module, 'view');
+  // }
 };
 
 /**
