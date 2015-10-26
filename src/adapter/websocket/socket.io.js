@@ -81,7 +81,7 @@ export default class extends think.adapter.websocket {
     if(containSelf){
       this.io.sockets.emit(event, data);
     }else{
-      this.broadcast.emit(event, data);
+      this.socket.broadcast.emit(event, data);
     }
   }
   /**

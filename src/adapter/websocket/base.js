@@ -26,10 +26,10 @@ export default class extends think.base {
     }
     let info = url.parse(origin);
     let hostname = info.hostname;
-    if (think.isString(allowOrigins) && allowOrigins === hostname) {
-      return true;
-    }else if (think.isArray(allowOrigins) && allowOrigins.indexOf(hostname) > -1) {
-      return true;
+    if (think.isString(allowOrigins)) {
+      return allowOrigins === hostname;
+    }else if (think.isArray(allowOrigins)) {
+      return allowOrigins.indexOf(hostname) > -1;
     }else if (think.isFunction(allowOrigins)) {
       return allowOrigins(hostname, info);
     }
