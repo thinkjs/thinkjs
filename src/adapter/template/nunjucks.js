@@ -14,7 +14,7 @@ export default class extends think.adapter.template {
     let nunjucks = await think.npm('nunjucks');
     
     let conf = think.extend({
-      autoescape: true,
+      autoescape: false,
       watch: false,
       noCache: false,
       throwOnUndefined: false

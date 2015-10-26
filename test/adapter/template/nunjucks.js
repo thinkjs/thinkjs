@@ -12,9 +12,9 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
-var Template = think.adapter('template', 'swig');
+var Template = think.adapter('template', 'nunjucks');
 
-describe('adapter/template/swig.js', function(){
+describe('adapter/template/nunjucks.js', function(){
   it('get instance', function(){
     var instance = new Template();
     assert.equal(think.isFunction(instance.run), true);
@@ -23,19 +23,17 @@ describe('adapter/template/swig.js', function(){
     var instance = new Template();
     muk(think, 'npm', function(){
       return {
-        setDefaults: function(){},
-        compileFile: function(filepath, conf){
+        configure: function(){},
+        render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
-          assert.equal(content.indexOf("describe('adapter/template/swig.js'") > -1, true);
-          assert.deepEqual(conf,{ autoescape: false })
-          return function(data){
-            return content;
-          }
+          assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
+          assert.deepEqual(conf, undefined)
+          return content;
         }
       }
     })
     instance.run(__filename).then(function(data){
-      assert.equal(data.indexOf("describe('adapter/template/swig.js'") > -1, true);
+      assert.equal(data.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
       muk.restore();
       done();
     }).catch(function(err){
@@ -46,15 +44,12 @@ describe('adapter/template/swig.js', function(){
     var instance = new Template();
     muk(think, 'npm', function(){
       return {
-        setDefaults: function(){},
-        compileFile: function(filepath, conf){
+        configure: function(){},
+        render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
-          assert.equal(content.indexOf("describe('adapter/template/swig.js'") > -1, true);
-          assert.deepEqual(conf, { autoescape: false })
-          return function(data){
-            assert.deepEqual(data, {name: 'welefen'})
-            return content;
-          }
+          assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
+          assert.deepEqual(conf,{ name: 'welefen' })
+          return content;
         }
       }
     })
