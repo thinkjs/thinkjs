@@ -53,7 +53,7 @@ export default class extends think.middleware.base {
         return this.parseRules(rules[module].children);
       }
     }
-    this.parsePathname();
+    return this.parsePathname();
   }
   /**
    * parse array rules
@@ -86,7 +86,7 @@ export default class extends think.middleware.base {
         return this.parseRoute(route);
       }
     }
-    this.parsePathname();
+    return this.parsePathname();
   }
   /**
    * remove / start | end of pathname
@@ -242,7 +242,7 @@ export default class extends think.middleware.base {
       route = route.slice(1);
     }
     this.http.pathname = route;
-    this.parsePathname();
+    return this.parsePathname();
   }
   /**
    * parse regexp rule
