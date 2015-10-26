@@ -18,9 +18,8 @@ think.middleware('parse_form_payload', http => {
 
   let deferred = think.defer();
   let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
-  if (uploadDir) {
-    think.mkdir(uploadDir);
-  }
+  think.mkdir(uploadDir);
+  
   let postConfig = think.config('post');
   let form = new multiparty.Form({
     maxFieldsSize: postConfig.max_fields_size,
@@ -65,11 +64,11 @@ think.middleware('parse_single_file_payload', http => {
   if(!filename){
     return;
   }
+  
   let deferred = think.defer();
   let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + '/thinkjs_upload');
-  if (uploadDir) {
-    think.mkdir(uploadDir);
-  }
+  think.mkdir(uploadDir);
+
   let name = think.uuid(20);
   let filepath = uploadDir + '/' + name + path.extname(filename).slice(0, 5);
   let stream = fs.createWriteStream(filepath);
