@@ -111,6 +111,7 @@ export default class extends think.controller.base {
    * @return {}           []
    */
   validate(data) {
+    this._validateInvoked = true;
     if(think.isEmpty(data)){
       return true;
     }
@@ -134,7 +135,7 @@ export default class extends think.controller.base {
    * @return {} []
    */
   __after(){
-    if(think.isEmpty(this.rules)){
+    if(think.isEmpty(this.rules) || this._validateInvoked){
       return;
     }
     let flag = this.validate(this.rules);
