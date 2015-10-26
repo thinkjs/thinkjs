@@ -551,4 +551,67 @@ describe('logic/base', function(){
       done();
     })
   })
- })
+  it('__after, rules empty', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.__after();
+      assert.deepEqual(data, undefined);
+      done();
+    })
+  })
+  it('__after, _validateInvoked', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      instance.rules = {name: 'required'};
+      instance._validateInvoked = true;
+      var data = instance.__after();
+      assert.deepEqual(data, undefined);
+      done();
+    })
+  })
+  it('__after, has rules', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      instance.rules = {name: 'required'};
+      var data = instance.__after();
+      assert.deepEqual(data, undefined);
+      assert.equal(instance._validateInvoked, true)
+      done();
+    })
+  })
+  it('__after, has errors', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      instance.rules = {name: 'required'};
+      instance.fail = function(errno, errmsg){
+        assert.equal(errno, 1001);
+      }
+      instance.__after()
+      done();
+    })
+  })
+})

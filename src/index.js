@@ -17,7 +17,7 @@ export default class {
     let i = 2;
     let argv = process.argv[i];
     //get app mode from argv
-    if (argv === 'production' || argv === 'development') {
+    if (argv === 'production' || argv === 'development' || argv === 'testing') {
       think.env = argv;
       i++;
     }
@@ -42,11 +42,11 @@ export default class {
     if (think.isDir(filepath)) {
       let files = fs.readdirSync(filepath);
       let flag = files.some(file => {
-        if (think.isFile(`${filepath}/${file}`)) {
+        if (think.isDir(`${filepath}/${file}`)) {
           return true;
         }
       });
-      return flag ? think.mode_mini : think.mode_normal;
+      return flag ? think.mode_normal : think.mode_mini;
     }
     return think.mode_module;
   }
@@ -80,7 +80,12 @@ export default class {
     let packageFile = `${think.THINK_PATH}/package.json`;
     let {engines} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
     let needVersion = engines.node.substr(2);
-    let nodeVersion = process.version.substr(1);
+
+    let nodeVersion = process.version;
+    if(nodeVersion[0] === 'v'){
+      nodeVersion = nodeVersion.slice(1);
+    }
+
     if(needVersion > nodeVersion){
       think.log(colors => {
         return `${colors.red('[ERROR]')} ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`;
@@ -118,7 +123,7 @@ export default class {
         return;
       }
       //ignore files in config/locale
-      if(item.indexOf(think.dirname.locale) > -1){
+      if(item.indexOf(`/${think.dirname.locale}/`) > -1){
         return;
       }
       return true;
@@ -378,6 +383,10 @@ export default class {
     let fn = () => {
       let hasChange = false;
       for(let file in require.cache){
+        if(!think.isFile(file)){
+          clearFileCache(file);
+          continue;
+        }
         let mTime = fs.statSync(file).mtime.getTime();
         if(!autoReload[file]){
           autoReload[file] = mTime;
