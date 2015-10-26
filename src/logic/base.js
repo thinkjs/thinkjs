@@ -10,9 +10,9 @@ export default class extends think.controller.base {
    * check auth
    * @return {Promise} []
    */
-  checkAuth(){
+  // checkAuth(){
 
-  }
+  // }
   /**
    * parse validate data
    * {
