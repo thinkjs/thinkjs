@@ -88,6 +88,7 @@ describe('adapter/websocket/socket.io.js', function(){
     var instance = new WebSocket(server, config, app);
 
     instance.run().catch(function(err){
+      muk.restore();
       console.log(err.stack)
     });
   })
