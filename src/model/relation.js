@@ -215,6 +215,7 @@ export default class extends think.model.base {
     let sql = 'SELECT %s, a.%s FROM %s as a, %s as b %s AND a.%s=b.%s %s';
     let field = this.db().parseField(mapOpts.field).split(',').map(item => `b.${item}`).join(',');
     let pk = await mapOpts.model.getPk();
+
     let table = mapOpts.rModel;
     if(table){
       if(this.tablePrefix && table.indexOf(this.tablePrefix) !== 0){
@@ -223,10 +224,11 @@ export default class extends think.model.base {
     }else{
      table = this.getRelationTableName(mapOpts.model);
     }
+
     let table1 = mapOpts.model.getTableName();
     let where1 = this.db().parseWhere(where);
     let rkey = mapOpts.rfKey || (mapOpts.model.getModelName() + '_id');
-    let where2 = mapOpts.where ? (' AND ' + this.db.parseWhere(mapOpts.where).trim().slice(6)) : '';
+    let where2 = mapOpts.where ? (' AND ' + this.db().parseWhere(mapOpts.where).trim().slice(6)) : '';
     sql = this.parseSql(sql, field, mapOpts.fKey, table, table1, where1, rkey, pk, where2);
     let mapData = await this.db().select(sql, options.cache);
     return this.parseRelationData(data, mapData, mapOpts, true);
@@ -251,7 +253,7 @@ export default class extends think.model.base {
    * @return {}       []
    */
   getRelationModel(model){
-    let name = (this.tableName || this.name) + model.getModelName();
+    let name = (this.tableName || this.name) + '_' + model.getModelName();
     return this.model(name);
   }
   /**
@@ -268,7 +270,7 @@ export default class extends think.model.base {
       });
       let value = Object.keys(keys);
       return {
-        [mapOpts.fKey]: {'IN': value}
+        [mapOpts.fKey]: ['IN', value]
       };
     }
     return {
