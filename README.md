@@ -36,6 +36,8 @@ export default class extends think.controller.base {
 ```
 
 
+项目中可以大胆使用 ES6/7 里的所有特性，借助 Babel 编译，可以稳定运行在 `>=0.12.0` 的 Node.js 环境中。
+
 ## Features
 
 * 使用 ES6/7 全部特性来开发项目
