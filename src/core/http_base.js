@@ -36,13 +36,15 @@ export default class extends Base {
     if (think.isString(controller)) {
       controller = this.controller(controller);
     }
-    // replace user_add to userAdd
-    if(action.indexOf('_') > -1){
-      action = action.replace(/_(\w)/g, (a, b) => {
-        return b.toUpperCase();
-      });
-    }
     if (action !== '__call') {
+      
+      // replace user_add to userAdd
+      if(action.indexOf('_') > -1){
+        action = action.replace(/_(\w)/g, (a, b) => {
+          return b.toUpperCase();
+        });
+      }
+
       action += 'Action';
     }
     return controller.invoke(action, controller);
