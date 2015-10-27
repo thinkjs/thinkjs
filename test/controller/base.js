@@ -3,9 +3,9 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-for(var filepath in require.cache){
-  delete require.cache[filepath];
-}
+// for(var filepath in require.cache){
+//   delete require.cache[filepath];
+// }
 var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
@@ -243,6 +243,27 @@ describe('controller/base.js', function(){
       done();
     })
   })
+  it('send', function(done){
+    muk(think, 'log', function(){})
+    getInstance().then(function(instance){
+      var data = instance.send();
+      muk.restore();
+      done();
+    })
+  })
+  it('expires', function(done){
+    muk(think, 'log', function(){})
+    getInstance().then(function(instance){
+      var flag = false;
+      instance.http.expires = function(){
+        flag = true;
+      }
+      var data = instance.expires();
+      muk.restore();
+      assert.equal(flag, true)
+      done();
+    })
+  })
   it('write', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
@@ -336,6 +357,15 @@ describe('controller/base.js', function(){
     }).then(function(instance){
       var data = instance.locale('CONTROLLER_NOT_FOUND');
       assert.deepEqual(data, 'controller `%s` not found. url is `%s`.')
+      done();
+    })
+  })
+  it('locale with data', function(done){
+    getInstance({
+      _config: think.config()
+    }).then(function(instance){
+      var data = instance.locale('CONTROLLER_NOT_FOUND', 'test');
+      assert.deepEqual(data, 'controller `test` not found. url is `%s`.')
       done();
     })
   })
@@ -472,7 +502,7 @@ describe('controller/base.js', function(){
   //     done();
   //   })
   // })
-  it('get session', function(){
+  it('get session', function(done){
     getInstance({
     }).then(function(instance){
       return instance.session('welefen')
@@ -481,7 +511,7 @@ describe('controller/base.js', function(){
       done();
     })
   })
-  it('set session', function(){
+  it('set session', function(done){
     var ins;
     getInstance({
     }).then(function(instance){
@@ -494,7 +524,7 @@ describe('controller/base.js', function(){
       done();
     })
   })
-  it('delete session', function(){
+  it('delete session', function(done){
     var ins;
     getInstance({
     }).then(function(instance){
@@ -506,6 +536,68 @@ describe('controller/base.js', function(){
       return ins.session('welefen');
     }).then(function(data){
       assert.equal(data, undefined)
+      done();
+    })
+  })
+  it('emit error', function(done){
+    var ins;
+    getInstance({
+    }).then(function(instance){
+      try{
+        instance.emit('event', 'data');
+        assert.equal(1, 2)
+      }catch(e){}
+      done();
+    })
+  })
+  it('emit correct', function(done){
+    var ins;
+    getInstance({
+    }).then(function(instance){
+      var flag = false;
+      instance.http.socketEmit = function(event, data){
+        assert.equal(event, 'event');
+        assert.equal(data, 'data');
+        flag = true;
+      }
+      instance.http.socket = {}
+      try{
+        instance.emit('event', 'data');
+      }catch(e){ 
+        assert.equal(1, 2)
+      }
+      assert.equal(flag, true);
+      done();
+    })
+  })
+  it('broadcast error', function(done){
+    var ins;
+    getInstance({
+    }).then(function(instance){
+      try{
+        instance.broadcast('event', 'data');
+        assert.equal(1, 2)
+      }catch(e){}
+      done();
+    })
+  })
+  it('broadcast correct', function(done){
+    var ins;
+    getInstance({
+    }).then(function(instance){
+      var flag = false;
+      instance.http.socketBroadcast = function(event, data){
+        assert.equal(event, 'event');
+        assert.equal(data, 'data');
+        flag = true;
+      }
+      instance.http.socket = {}
+      try{
+        instance.broadcast('event', 'data');
+      }catch(e){ 
+        assert.equal(1, 2)
+      }
+      assert.equal(flag, true);
       done();
     })
   })

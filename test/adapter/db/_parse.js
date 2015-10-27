@@ -553,6 +553,32 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseWhere({id: 10});
     assert.equal(data, ' WHERE ( id = 10 )')
   })
+  it('parseWhere, object IN number', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: {IN: [1,2,3]}});
+    assert.equal(data, ' WHERE ( id IN (1, 2, 3) )')
+  })
+  it('parseWhere, IN number string', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: [1,2,3]});
+    assert.equal(data, ' WHERE ( id IN ( 1, 2, 3 ) )')
+  })
+  it('parseWhere, object 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: [1, 10, 'string']});
+    assert.equal(data, ' WHERE ( (id = 1) AND (id = 10) AND (id = \'string\') )')
+  })
+
+  it('parseWhere, IN number string', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: ['1','2','3']});
+    assert.equal(data, ' WHERE ( id IN ( 1, 2, 3 ) )')
+  })
+  it('parseWhere, object IN number string', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({id: {IN: ['1','2','3']}});
+    assert.equal(data, ' WHERE ( id IN (\'1\', \'2\', \'3\') )')
+  })
   it('parseWhere, object 1', function(){
     var instance = new Parse();
     var data = instance.parseWhere({id: ['!=', 10]});
