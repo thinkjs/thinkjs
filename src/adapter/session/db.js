@@ -42,14 +42,15 @@ export default class extends think.adapter.session {
     this.data = {};
     if(think.isEmpty(data)){
       await this.model.add({cookie: this.cookie, expire: Date.now() + this.timeout * 1000});
-      return;
+      return this.data;
     }
     if(Date.now() > data.expire){
-      return;
+      return this.data;
     }
     try{
       this.data = JSON.parse(data.data) || {};
     }catch(e){}
+    return this.data;
   }
   /**
    * get data

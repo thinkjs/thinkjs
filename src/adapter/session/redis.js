@@ -22,10 +22,14 @@ export default class extends think.adapter.session {
    */
   getData(){
     if(this.data){
-      return Promise.resolve();
+      return Promise.resolve(this.data);
     }
     return this.redis.get(this.cookie).then(data => {
-      this.data = JSON.parse(data) || {};
+      this.data = {};
+      try{
+        this.data = JSON.parse(data) || {};
+      }catch(e){}
+      return this.data;
     });
   }
   /**
@@ -35,7 +39,7 @@ export default class extends think.adapter.session {
    */
   get(name){
     return this.getData().then(() => {
-      return name ? this.data : this.data[name];
+      return !name ? this.data : this.data[name];
     });
   }
   /**
@@ -71,6 +75,8 @@ export default class extends think.adapter.session {
    * @return {Promise} []
    */
   flush(){
-    return this.redis.set(this.cookie, JSON.stringify(this.data), this.timeout);
+    return this.getData().then(() => {
+      return this.redis.set(this.cookie, JSON.stringify(this.data), this.timeout);
+    });
   }
 }

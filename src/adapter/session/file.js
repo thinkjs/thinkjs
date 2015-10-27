@@ -63,6 +63,8 @@ export default class extends think.adapter.session {
       }
     }).catch(() => {
       this.data = {};
+    }).then(() => {
+      return this.data;
     });
   }
   /**
