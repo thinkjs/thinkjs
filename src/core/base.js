@@ -21,8 +21,8 @@ export default class {
    * @param  {Object} http []
    * @return {}      []
    */
-  init(http = {}){
-    this.http = http;
+  init(){
+    
   }
   /**
    * before magic method

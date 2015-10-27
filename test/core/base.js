@@ -47,6 +47,15 @@ var Cls3 = think.Class(Base, {
   }
 })
 
+var Cls4 = think.Class(Base, {
+  getName: function(name){
+    this.name = name;
+    return this.name;
+  },
+  __before: undefined,
+  __after: undefined
+})
+
 
 describe('core/base.js', function(){
   it('Base is function', function(){
@@ -91,5 +100,17 @@ describe('core/base.js', function(){
       assert.equal(afterName, undefined);
       done();
     })
+  })
+  it('no __before & __after', function(done){
+    var instance = new Cls4();
+    instance.invoke('filename', 'getName').then(function(data){
+      assert.equal(data, 'base');
+      done();
+    });
+  })
+  it('filename', function(){
+    var instance = new Base();
+    var filename = instance.filename();
+    assert.equal(filename, 'base')
   })
 })
