@@ -193,6 +193,89 @@ describe('adapter/socket/mysql', function(){
         done();
       });
     });
+    it('query, pool release', function(done){
+      var instance = new MysqlSocket();
+      instance.pool = {};
+      var flag = false;
+      instance.getConnection = function(){
+        return {
+          query: function(query, fn){
+            fn && fn(null, 'data')
+          },
+          release: function(){
+            flag = true;
+          }
+        }
+      }
+      instance.query('SELECT * FROM `empty`').then(function(){
+        assert.equal(flag, true)
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
+    });
+    it('query error, pool release', function(done){
+      var instance = new MysqlSocket();
+      instance.pool = {};
+      var flag = false;
+      instance.getConnection = function(){
+        return {
+          query: function(query, fn){
+            fn && fn(new Error('xxx'), 'data')
+          },
+          release: function(){
+            flag = true;
+          }
+        }
+      }
+      instance.query('SELECT * FROM `empty`').catch(function(){
+        assert.equal(flag, true)
+        done();
+      })
+    });
+    it('query, pool release, empty data', function(done){
+      var instance = new MysqlSocket();
+      instance.pool = {};
+      var flag = false;
+      instance.getConnection = function(){
+        return {
+          query: function(query, fn){
+            fn && fn(null)
+          },
+          release: function(){
+            flag = true;
+          }
+        }
+      }
+      instance.query('SELECT * FROM `empty`').then(function(){
+        assert.equal(flag, true)
+        done();
+      })
+    });
+    it('query error, pool release, log error', function(done){
+      var instance = new MysqlSocket({});
+      instance.pool = {};
+      var flag = false;
+      instance.getConnection = function(){
+        return {
+          query: function(query, fn){
+            fn && fn(new Error('xxx'), 'data')
+          },
+          release: function(){
+            flag = true;
+          }
+        }
+      }
+      muk(think, 'log', function(str, type){
+        assert.equal(type, 'SQL')
+      })
+      instance.config.log_sql = true;
+      instance.query('SELECT * FROM `empty`').catch(function(){
+        assert.equal(flag, true);
+        muk.restore();
+        done();
+      })
+    });
     it('query, log sql', function(done){
       var log = think.log;
       think.log = function(sql, type, startTime){
@@ -208,6 +291,16 @@ describe('adapter/socket/mysql', function(){
       });
     });
   });
+
+  describe('execute', function(){
+    it('execute', function(){
+      var instance = new MysqlSocket();
+      instance.query = function(){
+        assert.deepEqual([].slice.call(arguments), [1,2,3]);
+      }
+      instance.execute(1,2,3)
+    })
+  })
 
   describe('close connetion', function(){
     it('close connetion 1', function(done){
@@ -262,6 +355,35 @@ describe('adapter/socket/mysql', function(){
       });
     });
   });
+
+  describe('close', function(){
+    it('pool close', function(){
+      var instance = new MysqlSocket();
+      instance.pool = {
+        end: function(fn){
+          fn && fn();
+        }
+      }
+      instance.close();
+      assert.equal(instance.pool, null)
+    })
+    it('connection close', function(){
+      var instance = new MysqlSocket();
+      instance.connection = {
+        end: function(fn){
+          fn && fn();
+        }
+      }
+      instance.close();
+      assert.equal(instance.connection, null)
+    })
+    it('empty close', function(){
+      var instance = new MysqlSocket();
+      instance.connection = null;
+      instance.close();
+      assert.equal(instance.connection, null)
+    })
+  })
 
 
   after(function(){

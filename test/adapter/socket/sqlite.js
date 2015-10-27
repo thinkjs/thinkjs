@@ -288,6 +288,35 @@ describe('adapter/socket/sqlite', function(){
       done();
     })
   })
+   it('query error, log sql', function(done){
+    var instance = new sqliteSocket({
+      name: 'test',
+      path: think.APP_PATH + '/fsafasf',
+      log_sql: true
+    })
+    var log = think.log;
+    var flag = false;
+    think.log = function(sql, type, startTime){
+      assert.equal(sql, 'SELECT * FROM think_user');
+      assert.equal(type, 'SQL');
+      assert.equal(think.isNumber(startTime), true);
+      flag = true;
+    }
+    instance.getConnection = function(){
+      return {
+        all: function(sql, callback){
+          assert.equal(sql, 'SELECT * FROM think_user');
+          callback && callback(new Error('xxx'), []);
+        }
+      }
+    }
+    instance.query('SELECT * FROM think_user').catch(function(err){
+      //assert.deepEqual(data, []);
+      think.log = log;
+      assert.equal(flag, true)
+      done();
+    })
+  })
   it('query, error', function(done){
     var instance = new sqliteSocket({
       name: 'test',
