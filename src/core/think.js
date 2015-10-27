@@ -1380,7 +1380,8 @@ think.statusAction = async (status = 500, http, log) => {
   //set error flag, avoid infinite loop
   if(http._error){
     think.log(http.error);
-    return http.status(status).end();
+    await http.status(status).end();
+    return think.prevent();
   }
   http._error = true;
 
@@ -1392,11 +1393,15 @@ think.statusAction = async (status = 500, http, log) => {
   if(think.mode === think.mode_module){
     name = `${think.dirname.common}/${think.dirname.controller}/error`;
   }
+
   let cls = think.require(name, true);
+  
+  //error controller not found
   if(!cls){
     http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', name, http.url));
     return think.statusAction(status, http, log);
   }
+
   let instance = new cls(http);
   await instance.invoke(`_${status}Action`, instance);
   

@@ -2219,6 +2219,56 @@ describe('core/think.js', function(){
       });
     })
   })
+  describe('think.statusAction', function(){
+    it('is prevent', function(done){
+      think.prevent().catch(function(err){
+        return think.statusAction(500, {error: err});
+      }).then(function(data){
+        assert.equal(data, undefined);
+        done();
+      })
+    })
+    it('has _error', function(done){
+      var err = new Error('wwww');
+      var flag = false;
+      var http = {error: err, _error: true, status: function(status){
+        assert.equal(status, 404);
+        return {
+          end: function(){
+            flag = true;
+          }
+        }
+      }}
+      muk(think, 'log', function(){})
+      think.statusAction(404, http).catch(function(data){
+        assert.equal(flag, true);
+        muk.restore();
+        done();
+      })
+    })
+    it('error controller not found', function(done){
+      var error = new Error('xxx');
+      var http = {error: error, status: function(){
+        return {end: function(){}}
+      }, pathname: 'index/ddd', url: 'index/ddd'};
+      muk(think, 'log', function(){})
+      think.statusAction(400, http).catch(function(err){
+        assert.equal(think.isPrevent(err), true)
+        done();
+      })
+    })
+    it('error controller not found, log error', function(done){
+      var error = new Error('xxx');
+      var http = {error: error, status: function(){
+        return {end: function(){}}
+      }, pathname: 'index/ddd', url: 'index/ddd'};
+      muk(think, 'log', function(){})
+      think.statusAction(400, http, true).catch(function(err){
+        assert.equal(think.isPrevent(err), true)
+        done();
+      })
+    })
+  })
 
 })
 
