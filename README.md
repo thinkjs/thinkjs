@@ -42,14 +42,14 @@ export default class extends think.controller.base {
 
 * 使用 ES6/7 全部特性来开发项目
 * 支持多种项目结构和多种项目环境
-* 支持 `Mysql`，`MongoDB`，`SQLite` 等多种数据库
+* 支持 Mysql，MongoDB，SQLite 等多种数据库
 * 代码自动更新，无需重启 Node 服务
-* 支持 `socket.io`，`sockjs` 等多种 WebSocket 库
-* 支持 `Memory`，`File`，`Db`，`Redis` 等多种 Session
-* 支持 `Memory`，`File`，`Redis`，`Memcache` 等多种 Cache
-* 支持 `ejs`，`jade`，`swig`，`numjucks` 等多种模版引擎
-* 支持切面编程，支持 `__before`，`__after` 等多种魔术方法
-* 支持自定义 `400`，`404`，`500`，`503` 等多种错误页面
+* 支持 socket.io，SockJS 等多种 WebSocket 库
+* 支持 Memory，File，Db，Redis 等多种 Session
+* 支持 Memory，File，Redis，Memcache 等多种 Cache
+* 支持 ejs，jade，swig，numjucks 等多种模版引擎
+* 支持切面编程，支持 __before，__after 等多种魔术方法
+* 支持自定义 400，404，500，503 等多种错误页面
 * 支持命令行调用和执行定时任务
 * 丰富的 Hook 和 Middleware
 * 详细的日志，如：请求日志、错误日志、性能日志
