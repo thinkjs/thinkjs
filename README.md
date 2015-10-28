@@ -53,7 +53,7 @@ export default class extends think.controller.base {
 * 支持命令行调用和执行定时任务
 * 丰富的 Hook 和 Middleware
 * 详细的日志，如：请求日志、错误日志、性能日志
-* 自动创建 REST API
+* 支持命令自动创建 REST API
 * 支持国际化和多主题
 * 丰富的测试用例，1500+ 测试用里，代码覆盖率 > 95%
 
