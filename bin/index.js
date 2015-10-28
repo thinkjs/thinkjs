@@ -243,7 +243,7 @@ var _copyWwwFiles = function(){
     '<ROOT_PATH>': ROOT_PATH
   });
   copyFile('pm2.json', projectRootPath + 'pm2.json', {
-    '<ROOT_PATH>': ROOT_PATH,
+    '<ROOT_PATH>': path.dirname(ROOT_PATH),
     '<APP_NAME>': getAppName()
   });
 
@@ -591,7 +591,8 @@ program.option('-M, --mongo', 'create mongo model, used in `model` command');
 program.option('-R, --relation', 'create relation model, used in `model` command');
 program.option('-m, --mode <mode>', 'project mode type(mini, normal, module), default is module, used in `new` command', function(mode){
   if(modeList.indexOf(mode) === -1){
-    throw new Error('mode value must one of ' + modeList.join(', '));
+    console.log('mode value must one of ' + modeList.join(', '));
+    process.exit();
   }
   think.mode = think['mode_' + mode];
 });
