@@ -294,25 +294,26 @@ describe('adapter/socket/sqlite', function(){
       path: think.APP_PATH + '/fsafasf',
       log_sql: true
     })
-    var log = think.log;
     var flag = false;
-    think.log = function(sql, type, startTime){
+    muk(think, 'log', function(sql, type, startTime){
       assert.equal(sql, 'SELECT * FROM think_user');
       assert.equal(type, 'SQL');
       assert.equal(think.isNumber(startTime), true);
       flag = true;
-    }
+    })
+    muk(think, 'error', function(promise){
+      return promise;
+    })
     instance.getConnection = function(){
       return {
         all: function(sql, callback){
           assert.equal(sql, 'SELECT * FROM think_user');
-          callback && callback(new Error('xxx'), []);
+          callback && callback(new Error('xxxwww'), []);
         }
       }
     }
     instance.query('SELECT * FROM think_user').catch(function(err){
-      //assert.deepEqual(data, []);
-      think.log = log;
+      muk.restore();
       assert.equal(flag, true)
       done();
     })

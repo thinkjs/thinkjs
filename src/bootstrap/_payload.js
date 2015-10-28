@@ -119,7 +119,7 @@ think.middleware('parse_json_payload', http => {
   }
   return http.getPayload().then(payload => {
     try{
-      http._post = JSON.parse(payload);
+      http._post = think.extend(http._post, JSON.parse(payload));
     }catch(e){}
     http._payloadParsed = true;
   });
@@ -139,7 +139,7 @@ think.middleware('parse_querystring_payload', http => {
   
   return http.getPayload().then(payload => {
     try{
-      http._post = querystring.parse(payload);
+      http._post = think.extend(http._post, querystring.parse(payload));
       http._payloadParsed = true;
     }catch(e){}
   });
