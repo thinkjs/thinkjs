@@ -28,18 +28,18 @@ function execMiddleware(middleware, config, options, data){
   }) 
 }
 
-describe('middleware/resource', function(){
+describe('middleware/check_resource', function(){
   it('base, RESOURCE_PATH not set', function(done){
     var RESOURCE_PATH = think.RESOURCE_PATH;
     think.RESOURCE_PATH = '';
-    execMiddleware('resource', {}, {}).then(function(data){
+    execMiddleware('check_resource', {}, {}).then(function(data){
       assert.equal(data, false);
       think.RESOURCE_PATH = RESOURCE_PATH;
       done();
     })
   })
   it('base, resource_on off', function(done){
-    execMiddleware('resource', {
+    execMiddleware('check_resource', {
       resource_on: false
     }, {}).then(function(data){
       assert.equal(data, false);
@@ -47,7 +47,7 @@ describe('middleware/resource', function(){
     })
   })
   it('base, pathname empty', function(done){
-    execMiddleware('resource', {
+    execMiddleware('check_resource', {
       resource_on: true
     }, {
       pathname: ''
@@ -57,7 +57,7 @@ describe('middleware/resource', function(){
     })
   })
   it('base, reg not match', function(done){
-    execMiddleware('resource', {
+    execMiddleware('check_resource', {
       resource_on: true,
       resource_reg: /^\d+$/
     }, {
@@ -68,26 +68,26 @@ describe('middleware/resource', function(){
     })
   })
   it('base, file not found', function(done){
-    execMiddleware('resource', {
+    execMiddleware('check_resource', {
       resource_on: true,
       resource_reg: /^\d+$/
     }, {
       pathname: '01111'
-    }).catch(function(err){
-      assert.equal(think.isPrevent(err), true);
+    }).then(function(data){
+      assert.equal(data, true);
       done();
     })
   })
   it('base, file is dir', function(done){
     var RESOURCE_PATH = think.RESOURCE_PATH;
     think.RESOURCE_PATH = path.dirname(__dirname);
-    execMiddleware('resource', {
+    execMiddleware('check_resource', {
       resource_on: true,
       resource_reg: /^\w+$/
     }, {
       pathname: 'middleware'
-    }).catch(function(err){
-      assert.equal(think.isPrevent(err), true);
+    }).then(function(data){
+      assert.equal(data, true);
       think.RESOURCE_PATH = RESOURCE_PATH;
       done();
     })
@@ -95,36 +95,15 @@ describe('middleware/resource', function(){
   it('base, file exist', function(done){
     var RESOURCE_PATH = think.RESOURCE_PATH;
     think.RESOURCE_PATH = __dirname;
-    execMiddleware('resource', {
+    execMiddleware('check_resource', {
       resource_on: true,
-      resource_reg: /^resource\.js/
+      resource_reg: /^check_resource\.js/
     }, {
-      pathname: 'resource.js'
-    }).catch(function(err){
-      assert.equal(think.isPrevent(err), true);
+      pathname: 'check_resource.js'
+    }).then(function(file){
+      assert.equal(file.indexOf('check_resource.js') > -1, true);
       think.RESOURCE_PATH = RESOURCE_PATH;
       done();
-    })
-  })
-  it('base, file exist with http', function(done){
-    var RESOURCE_PATH = think.RESOURCE_PATH;
-    think.RESOURCE_PATH = __dirname;
-    getHttp({
-      resource_on: true,
-      resource_reg: /^resource\.js/,
-      encoding: 'utf-8'
-    }, {
-      pathname: 'resource.js'
-    }).then(function(http){
-      http.res.setHeader = function(name, value){
-        assert.equal(name, 'Content-Type');
-        assert.equal(value, 'application/javascript; charset=utf-8');
-      }
-      think.middleware('resource', http).catch(function(err){
-        assert.equal(think.isPrevent(err), true);
-        think.RESOURCE_PATH = RESOURCE_PATH;
-        done();
-      });
     })
   })
 })

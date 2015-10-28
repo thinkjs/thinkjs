@@ -88,12 +88,17 @@ export default class extends think.http.base {
    * @return {Promise} []
    */
   async exec(){
+    await this.hook('logic_before');
     await this.execLogic();
+    await this.hook('logic_after');
     //http is end
     if (this.http._isEnd) {
       return think.prevent();
     }
-    return this.execController();
+    await this.hook('controller_before');
+    await this.execController();
+    await this.hook('controller_after');
+    await this.hook('response_end');
   }
   /**
    * run
@@ -120,13 +125,11 @@ export default class extends think.http.base {
     });
     instance.run(async () => {
       try{
-        await this.hook('resource_check');
+        await this.hook('resource');
         await this.hook('route_parse');
         //set module config, can not set config in request
         this.http._config = think.getModuleConfig(this.http.module);
-        await this.hook('app_begin');
         await this.exec();
-        await this.hook('app_end');
       }catch(err){
         http.error = err;
         think.statusAction(500, http, true);

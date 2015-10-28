@@ -104,6 +104,38 @@ describe('bootstrap/middleware.js', function(){
       })
     })
   })
+  it('output_resource, false', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: JSON.stringify({name: 'welefen', test: 'haha'}),
+
+      _type: 'application/json'
+    }).then(function(http){
+      think.middleware('output_resource', http, false).then(function(data){
+        assert.equal(data, undefined)
+        done();
+      })
+    })
+  })
+  it('output_resource, true', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: JSON.stringify({name: 'welefen', test: 'haha'}),
+
+      _type: 'application/json'
+    }).then(function(http){
+      think.middleware('output_resource', http, true).catch(function(err){
+        assert.equal(think.isPrevent(err), true)
+        done();
+      })
+    })
+  })
   it('output_resource', function(done){
     getHttp({
       post: {
@@ -114,8 +146,8 @@ describe('bootstrap/middleware.js', function(){
 
       _type: 'application/json'
     }).then(function(http){
-      think.middleware('output_resource', http, __filename).then(function(data){
-        assert.equal(data, __filename);
+      think.middleware('output_resource', http, __filename).catch(function(err){
+        assert.equal(think.isPrevent(err), true);
         done();
       })
     })

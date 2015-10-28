@@ -38,6 +38,18 @@ function execMiddleware(middleware, config, options, data){
 }
 
 describe('bootstrap/middleware.js', function(){
+  it('parse_form_payload,_payloadParsed', function(done){
+    getHttp('', {
+      payload: '',
+      _payloadParsed: true
+    }).then(function(http){
+      think.middleware('parse_form_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {});
+        done();
+      })
+    })
+  })
   it('parse_form_payload content-type not match', function(done){
     getHttp('', {
       payload: ''
@@ -373,6 +385,18 @@ describe('bootstrap/middleware.js', function(){
       console.log(err.stack)
     })
   })
+it('parse_querystring_payload,_payloadParsed', function(done){
+    getHttp('', {
+      payload: '',
+      _payloadParsed: true
+    }).then(function(http){
+      think.middleware('parse_querystring_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {});
+        done();
+      })
+    })
+  })
   it('parse_querystring_payload, has _post data', function(done){
     getHttp('', {
       payload: '',
@@ -402,6 +426,18 @@ describe('bootstrap/middleware.js', function(){
         done();
       }).catch(function(err){
         console.log(err.stack)
+      })
+    })
+  })
+  it('parse_single_file_payload,_payloadParsed', function(done){
+    getHttp('', {
+      payload: '',
+      _payloadParsed: true
+    }).then(function(http){
+      think.middleware('parse_single_file_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {});
+        done();
       })
     })
   })
@@ -511,6 +547,18 @@ describe('bootstrap/middleware.js', function(){
         done();
       }).catch(function(err){
         console.log(err.stack)
+      })
+    })
+  })
+  it('parse_json_payload,_payloadParsed', function(done){
+    getHttp('', {
+      payload: '',
+      _payloadParsed: true
+    }).then(function(http){
+      think.middleware('parse_json_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {});
+        done();
       })
     })
   })

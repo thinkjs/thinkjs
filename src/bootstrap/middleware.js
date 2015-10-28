@@ -1,7 +1,10 @@
 'use strict';
 
 import fs from 'fs';
+import mime from 'mime';
+
 import './_payload.js';
+
 
 /**
  * output file
@@ -10,17 +13,29 @@ import './_payload.js';
  * @return {}         []
  */
 think.middleware('output_resource', (http, file) => {
-  let deferred = think.defer();
+  //not resource
+  if(file === false){
+    return;
+  }
+  //is resource but not exist
+  if(file === true){
+    http.status(404);
+    http.end();
+    return think.prevent();
+  }
+
+  let contentType = mime.lookup(file);
+  http.header('Content-Type', `${contentType}; charset=${http.config('encoding')}`);
+
   let stream = fs.createReadStream(file);
   stream.pipe(http.res);
   stream.on('end', () => {
     http.end();
-    deferred.resolve(file);
   });
   stream.on('error', err => {
-    deferred.reject(err);
+    http.end();
   });
-  return deferred.promise;
+  return think.prevent();
 });
 
 

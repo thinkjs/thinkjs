@@ -53,10 +53,10 @@ export default class extends think.http.base {
       contentType = '';
     }
     try{
-      await this.hook('view_init');
+      await this.hook('view_before');
       let content = await this.fetch(templateFile, config);
       await this.render(content, charset, contentType);
-      await this.hook('view_end', content);
+      await this.hook('view_after', content);
     }catch(err){
       this.http.error = err;
       await think.statusAction(500, this.http, true);

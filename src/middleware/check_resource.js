@@ -1,7 +1,4 @@
 'use strict';
-
-import mime from 'mime';
-
 /**
  * resource check
  * @param  {}            
@@ -24,13 +21,9 @@ export default class extends think.middleware.base {
     let file = `${think.RESOURCE_PATH}/${pathname}`;
     //resource exist
     if (think.isFile(file)) {
-      let contentType = mime.lookup(file);
-      this.http.header('Content-Type', `${contentType}; charset=${this.config('encoding')}`);
-      await this.hook('resource_output', file);
+      return file;
     }else{
-      this.http.status(404);
-      this.http.end();
+      return true;
     }
-    return think.prevent();
   }
 }

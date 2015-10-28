@@ -45,14 +45,16 @@ export default class extends think.base {
    * exec
    * @return Promise            []
    */
-  run(){
+  async run(){
     this.bind();
+    
+    await think.hook('request_begin', this.http);
     //array indexOf is faster than string
     let methods = ['POST', 'PUT', 'PATCH'];
     if (methods.indexOf(this.req.method) > -1) {
-      return this.parsePayload();
+      await this.parsePayload();
     }
-    return Promise.resolve(this.http);
+    return this.http;
   }
   /**
    * check request has post data
@@ -96,7 +98,6 @@ export default class extends think.base {
       await think.hook('payload_parse', this.http);
       await think.hook('payload_validate', this.http);
     }
-    return this.http;
   }
   /**
    * bind props & methods to http
