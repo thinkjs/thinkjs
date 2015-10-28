@@ -10,6 +10,11 @@ import multiparty from 'multiparty';
  * @return {}      []
  */
 think.middleware('parse_form_payload', http => {
+
+  if(http._payloadParsed){
+    return;
+  }
+
   let multiReg = /^multipart\/(form-data|related);\s*boundary=(?:"([^"]+)"|([^;]+))$/i;
   //file upload by form or FormData
   if (!multiReg.test(http.req.headers['content-type'])) {
@@ -61,9 +66,11 @@ think.middleware('parse_form_payload', http => {
  * @return {}      []
  */
 think.middleware('parse_single_file_payload', http => {
+
   if(http._payloadParsed){
     return;
   }
+
   let filename = http.req.headers[think.config('post.single_file_header')];
   if(!filename){
     return;
@@ -101,9 +108,11 @@ think.middleware('parse_single_file_payload', http => {
  * @return {}         []
  */
 think.middleware('parse_json_payload', http => {
+
   if(http._payloadParsed){
     return;
   }
+
   let types = http.config('post.json_content_type');
   if (types.indexOf(http.type()) === -1) {
     return;
@@ -123,9 +132,11 @@ think.middleware('parse_json_payload', http => {
  * @return {[type]}      []
  */
 think.middleware('parse_querystring_payload', http => {
+
   if (http._payloadParsed) {
     return;
   }
+  
   return http.getPayload().then(payload => {
     try{
       http._post = querystring.parse(payload);
