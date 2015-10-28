@@ -43,6 +43,7 @@ think.middleware('parse_form_payload', http => {
     http._post[name] = value;
   });
   form.on('close', () => {
+    http._payloadParsed = true;
     deferred.resolve(http);
   });
   form.on('error', () => {
@@ -60,6 +61,9 @@ think.middleware('parse_form_payload', http => {
  * @return {}      []
  */
 think.middleware('parse_single_file_payload', http => {
+  if(http._payloadParsed){
+    return;
+  }
   let filename = http.req.headers[think.config('post.single_file_header')];
   if(!filename){
     return;
@@ -84,6 +88,7 @@ think.middleware('parse_single_file_payload', http => {
       path: filepath,
       size: fs.statSync(filepath).size
     };
+    http._payloadParsed = true;
     deferred.resolve();
   });
   return deferred.promise;
@@ -96,6 +101,9 @@ think.middleware('parse_single_file_payload', http => {
  * @return {}         []
  */
 think.middleware('parse_json_payload', http => {
+  if(http._payloadParsed){
+    return;
+  }
   let types = http.config('post.json_content_type');
   if (types.indexOf(http.type()) === -1) {
     return;
@@ -104,6 +112,7 @@ think.middleware('parse_json_payload', http => {
     try{
       http._post = JSON.parse(payload);
     }catch(e){}
+    http._payloadParsed = true;
   });
 });
 
@@ -114,12 +123,13 @@ think.middleware('parse_json_payload', http => {
  * @return {[type]}      []
  */
 think.middleware('parse_querystring_payload', http => {
-  if (!think.isEmpty(http._post)) {
+  if (http._payloadParsed) {
     return;
   }
   return http.getPayload().then(payload => {
     try{
       http._post = querystring.parse(payload);
+      http._payloadParsed = true;
     }catch(e){}
   });
 });
