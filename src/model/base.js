@@ -121,7 +121,7 @@ export default class extends Base {
         }
       });
     }
-    return this._optionsFilter(options, fields);
+    return this.optionsFilter(options, fields);
   }
   /**
    * parse where options
@@ -171,7 +171,7 @@ export default class extends Base {
         data[key] = this.parseType(key, val);
       }
     }
-    return this._dataFilter(data);
+    return this.dataFilter(data);
   }
   /**
    * add data
@@ -193,11 +193,11 @@ export default class extends Base {
       return think.reject(msg);
     }
     options = await this.parseOptions(options);
-    data = await this._beforeAdd(data, options);
+    data = await this.beforeAdd(data, options);
     data = this.parseData(data);
     await this.db().add(data, options, replace);
     let insertId = data[this.pk] = this.db().getLastInsertId();
-    await this._afterAdd(data, options);
+    await this.afterAdd(data, options);
     return insertId;
   }
   /**
@@ -231,7 +231,7 @@ export default class extends Base {
     options = await this.parseOptions(options);
     let promises = data.map(item => {
       item = this.parseData(item);
-      return this._beforeAdd(item, options);
+      return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
     await this.db().addMany(data, options, replace);
@@ -241,7 +241,7 @@ export default class extends Base {
       let id = insertId + i;
       item[this.pk] = id;
       insertIds.push(id);
-      return this._afterAdd(item, options);
+      return this.afterAdd(item, options);
     });
     data = await Promise.all(promises);
     return insertIds;
@@ -254,7 +254,7 @@ export default class extends Base {
   async delete(options){
     options = await this.parseOptions(options);
     let rows = await this.db().delete(options);
-    await this._afterDelete(options);
+    await this.afterDelete(options);
     return rows;
   }
   /**
@@ -283,10 +283,10 @@ export default class extends Base {
     }
     
     options = await this.parseOptions(options);
-    data = await this._beforeUpdate(data, options);
+    data = await this.beforeUpdate(data, options);
     data = this.parseData(data);
     let rows = await this.db().update(data, options);
-    await this._afterUpdate(data, options);
+    await this.afterUpdate(data, options);
     return rows;
   }
   /**
@@ -332,7 +332,7 @@ export default class extends Base {
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
     let data = await this.db().select(options);
-    return this._afterFind(data[0] || {}, options);
+    return this.afterFind(data[0] || {}, options);
   }
   /**
    * select
@@ -341,7 +341,7 @@ export default class extends Base {
   async select(options){
     options = await this.parseOptions(options);
     let data = await this.db().select(options);
-    return this._afterSelect(data, options);
+    return this.afterSelect(data, options);
   }
   /**
    * select add

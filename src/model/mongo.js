@@ -85,7 +85,7 @@ export default class extends Base {
     
     await this._createIndexes();
 
-    return this._optionsFilter(options);
+    return this.optionsFilter(options);
   }
   /**
    * parse data
@@ -118,10 +118,10 @@ export default class extends Base {
       return think.reject(msg);
     }
     options = await this.parseOptions(options);
-    data = await this._beforeAdd(data, options);
+    data = await this.beforeAdd(data, options);
     data = this.parseData(data);
     await this.db().add(data, options);
-    await this._afterAdd(data, options);
+    await this.afterAdd(data, options);
     return this.db().getLastInsertId();
   }
    /**
@@ -150,9 +150,9 @@ export default class extends Base {
       return think.reject(err);
     }
     options = await this.parseOptions(options);
-    data = await this._beforeAdd(data, options);
+    data = await this.beforeAdd(data, options);
     await this.db().addMany(data, options);
-    await this._afterAdd(data, options);
+    await this.afterAdd(data, options);
     return this.db().getLastInsertId();
   }
   /**
@@ -162,7 +162,7 @@ export default class extends Base {
   async delete(options){
     options = await this.parseOptions(options);
     let data = await this.db().delete(options);
-    await this._afterDelete(options);
+    await this.afterDelete(options);
     return data.result.n || 0;
   }
   /**
@@ -177,7 +177,7 @@ export default class extends Base {
       delete data[pk];
     }
     let result = await this.db().update(data, options);
-    await this._afterUpdate(data, options);
+    await this.afterUpdate(data, options);
     return result.result.nModified || 0;
   }
   /**
@@ -203,7 +203,7 @@ export default class extends Base {
   async select(options){
     options = await this.parseOptions(options);
     let data = await this.db().select(options);
-    return this._afterSelect(data, options);
+    return this.afterSelect(data, options);
   }
   /**
    * count select
@@ -255,7 +255,7 @@ export default class extends Base {
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
     let data = await this.db().select(options);
-    return this._afterFind(data[0] || {}, options);
+    return this.afterFind(data[0] || {}, options);
   }
   /**
    * increment field data

@@ -67,22 +67,22 @@ describe('model/relation.js', function(){
     assert.equal(value, instance);
     assert.deepEqual(instance._relationName, [])
   })
-  it('_afterFind', function(done){
+  it('afterFind', function(done){
     var instance = new Relation('user', think.config('db'));
     instance.getRelation = function(data, options){
       return Promise.resolve([{name: 1}]);
     }
-    instance._afterFind([], {}).then(function(data){
+    instance.afterFind([], {}).then(function(data){
       assert.deepEqual(data, [{name: 1}])
       done();
     });
   })
-  it('_afterSelect', function(done){
+  it('afterSelect', function(done){
     var instance = new Relation('user', think.config('db'));
     instance.getRelation = function(data, options){
       return Promise.resolve([{name: 1}]);
     }
-    instance._afterSelect([], {}).then(function(data){
+    instance.afterSelect([], {}).then(function(data){
       assert.deepEqual(data, [{name: 1}])
       done();
     });
@@ -346,26 +346,26 @@ describe('model/relation.js', function(){
     }], {fKey: 'user_id', key: 'id', name: 'cate'});
     assert.deepEqual(data, [{"id":10,"name":"thinkjs","cate":{"user_id":10,"title":"title"}}])
   })
-  it('_afterAdd', function(){
+  it('afterAdd', function(){
     var instance = new Relation('user', think.config('db'));
     instance.postRelation = function(type){
       assert.equal(type, 'ADD')
     }
-    instance._afterAdd();
+    instance.afterAdd();
   })
-  it('_afterDelete', function(){
+  it('afterDelete', function(){
     var instance = new Relation('user', think.config('db'));
     instance.postRelation = function(type){
       assert.equal(type, 'DELETE')
     }
-    instance._afterDelete();
+    instance.afterDelete();
   })
-  it('_afterUpdate', function(){
+  it('afterUpdate', function(){
     var instance = new Relation('user', think.config('db'));
     instance.postRelation = function(type){
       assert.equal(type, 'UPDATE')
     }
-    instance._afterUpdate();
+    instance.afterUpdate();
   })
   it('getRelationTableName', function(){
     var instance = new Relation('post', think.config('db'));

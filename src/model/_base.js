@@ -388,7 +388,7 @@ export default class extends think.base {
    * @param  {Object} options []
    * @return {}         []
    */
-  _optionsFilter(options){
+  optionsFilter(options){
     return options;
   }
   /**
@@ -396,7 +396,7 @@ export default class extends think.base {
    * @param  {Object} data []
    * @return {}      []
    */
-  _dataFilter(data){
+  dataFilter(data){
     return data;
   }
   /**
@@ -404,7 +404,7 @@ export default class extends think.base {
    * @param  {Object} data []
    * @return {}      []
    */
-  _beforeAdd(data){
+  beforeAdd(data){
     return data;
   }
   /**
@@ -412,7 +412,7 @@ export default class extends think.base {
    * @param  {} data []
    * @return {}      []
    */
-  _afterAdd(data){
+  afterAdd(data){
     return data;
   }
   /**
@@ -420,7 +420,7 @@ export default class extends think.base {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  _afterDelete(data){
+  afterDelete(data){
     return data;
   }
   /**
@@ -428,7 +428,7 @@ export default class extends think.base {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  _beforeUpdate(data){
+  beforeUpdate(data){
     return data;
   }
   /**
@@ -437,14 +437,14 @@ export default class extends think.base {
    * @param  {} options []
    * @return {}         []
    */
-  _afterUpdate(data){
+  afterUpdate(data){
     return data;
   }
   /**
    * after find
    * @return {} []
    */
-  _afterFind(data){
+  afterFind(data){
     return data;
   }
   /**
@@ -452,7 +452,7 @@ export default class extends think.base {
    * @param  {Mixed} result []
    * @return {}        []
    */
-  _afterSelect(data){
+  afterSelect(data){
     return data;
   }
   /**

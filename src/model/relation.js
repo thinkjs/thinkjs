@@ -81,7 +81,7 @@ export default class extends think.model.base {
    * @param  {Object} data []
    * @return {Promise}      []
    */
-  _afterFind(data, options){
+  afterFind(data, options){
     return this.getRelation(data, options);
   }
   /**
@@ -89,7 +89,7 @@ export default class extends think.model.base {
    * @param  {Object} data []
    * @return {}      []
    */
-  _afterSelect(data, options){
+  afterSelect(data, options){
     return this.getRelation(data, options);
   }
   /**
@@ -313,7 +313,7 @@ export default class extends think.model.base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  _afterAdd(data, options){
+  afterAdd(data, options){
     return this.postRelation('ADD', data, options);
   }
   /**
@@ -322,7 +322,7 @@ export default class extends think.model.base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  _afterDelete(data, options){
+  afterDelete(data, options){
     return this.postRelation('DELETE', data, options);
   }
   /**
@@ -331,7 +331,7 @@ export default class extends think.model.base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  _afterUpdate(data, options){
+  afterUpdate(data, options){
     return this.postRelation('UPDATE', data, options);
   }
   /**

@@ -339,39 +339,39 @@ describe('model/_base.js', function(){
     assert.equal(data, instance);
     assert.deepEqual(instance._options.explain, 'name');
   })
-  it('_optionsFilter', function(){
+  it('optionsFilter', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._optionsFilter('data');
+    var data = instance.optionsFilter('data');
     assert.equal(data, 'data');
   })
-  it('_dataFilter', function(){
+  it('dataFilter', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._dataFilter('data');
+    var data = instance.dataFilter('data');
     assert.equal(data, 'data');
   })
-  it('_afterAdd', function(){
+  it('afterAdd', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._afterAdd('data');
+    var data = instance.afterAdd('data');
     assert.equal(data, 'data');
   })
-  it('_afterDelete', function(){
+  it('afterDelete', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._afterDelete('data');
+    var data = instance.afterDelete('data');
     assert.equal(data, 'data');
   })
-  it('_afterUpdate', function(){
+  it('afterUpdate', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._afterUpdate('data');
+    var data = instance.afterUpdate('data');
     assert.equal(data, 'data');
   })
-  it('_afterFind', function(){
+  it('afterFind', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._afterFind('data');
+    var data = instance.afterFind('data');
     assert.equal(data, 'data');
   })
-  it('_afterSelect', function(){
+  it('afterSelect', function(){
     var instance = new Base('user', think.config('db'));
-    var data = instance._afterSelect('data');
+    var data = instance.afterSelect('data');
     assert.equal(data, 'data');
   })
   it('data, get', function(){
