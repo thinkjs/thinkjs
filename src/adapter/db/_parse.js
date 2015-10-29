@@ -212,8 +212,12 @@ export default class extends think.base {
   * @return {String}     []
   */
   parseWhereItem(key, val){
+    // {id: null}
+    if(val === null){
+      return `${key} IS NULL`;
+    }
     // {id: {'<': 10, '>': 1}}
-    if (think.isObject(val)) { 
+    else if (think.isObject(val)) { 
       let logic = this.getLogic(val);
       let result = [];
       for(let opr in val){
@@ -223,7 +227,11 @@ export default class extends think.base {
         //{id: {IN: [1, 2, 3]}}
         if(think.isArray(parsedValue)){
           result.push(`${key} ${nop} (${parsedValue.join(', ')})`);
-        }else{
+        }
+        else if(parsedValue === 'null'){
+          result.push(key + ' ' + (nop === '!=' ? 'IS NOT NULL' : 'IS NULL'));
+        }
+        else{
           result.push(key + ' ' + nop + ' ' + parsedValue);
         }
       }
@@ -251,8 +259,12 @@ export default class extends think.base {
       let val0 = val[0].toUpperCase();
       val0 = this.comparison[val0] || val0;
       // compare
-      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) { 
-        whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
+      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) {
+        if(val[1] === null){
+          whereStr += key + ' ' + (val[0] === '!=' ? 'IS NOT NULL' : 'IS NULL');
+        }else{
+          whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
+        }
       }
       // like or not like
       else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) { 

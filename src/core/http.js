@@ -524,6 +524,13 @@ export default class extends think.base {
     if (think.isObject(errno)) {
       obj = think.extend({}, errno);
     }else{
+      if(/^[A-Z\_]+$/.test(errno)){
+        let msg = this.locale(errno);
+        if(think.isArray(msg)){
+          errno = msg[0];
+          errmsg = msg[1];
+        }
+      }
       if (!think.isNumber(errno)) {
         data = errmsg;
         errmsg = errno;
@@ -607,6 +614,9 @@ export default class extends think.base {
       return think.isEmpty(values) ? defaultLocales : values;
     }
     let value = values[key] || defaultLocales[key] || key;
+    if(!think.isString(value)){
+      return value;
+    }
     return util.format(value, ...data);
   }
    /**

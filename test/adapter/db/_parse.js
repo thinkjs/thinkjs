@@ -548,6 +548,31 @@ describe('adapter/db/_parse.js', function(){
 
     }
   })
+  it('parseWhere, null', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: null});
+    assert.equal(data, ' WHERE ( title IS NULL )')
+  })
+  it('parseWhere, null 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: {'=': null}});
+    assert.equal(data, ' WHERE ( title IS NULL )')
+  })
+  it('parseWhere, null 2', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: ['=', null]});
+    assert.equal(data, ' WHERE ( title IS NULL )')
+  })
+  it('parseWhere, not null', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: {'!=': null}});
+    assert.equal(data, ' WHERE ( title IS NOT NULL )')
+  })
+  it('parseWhere, not null 1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: ['!=', null]});
+    assert.equal(data, ' WHERE ( title IS NOT NULL )')
+  })
   it('parseWhere, object', function(){
     var instance = new Parse();
     var data = instance.parseWhere({id: 10});

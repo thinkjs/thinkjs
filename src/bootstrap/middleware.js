@@ -32,7 +32,7 @@ think.middleware('output_resource', (http, file) => {
   stream.on('end', () => {
     http.end();
   });
-  stream.on('error', err => {
+  stream.on('error', () => {
     http.end();
   });
   return think.prevent();
