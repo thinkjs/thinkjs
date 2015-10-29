@@ -97,8 +97,14 @@ export default class extends think.base {
    * @return {String} []
    */
   parseField(fields){
-    if (think.isString(fields) && fields.indexOf(',') > -1) {
-      fields = fields.split(/\s*,\s*/);
+    if (think.isString(fields)) {
+      //fields('id, instr('30,35,31,',id+',') as d')
+      if(fields.indexOf('(') > -1 && fields.indexOf(')') > -1){
+        return fields;
+      }
+      if(fields.indexOf(',') > -1){
+        fields = fields.split(/\s*,\s*/);
+      }
     }
     if (think.isArray(fields)) {
       return fields.map(item => this.parseKey(item)).join(',');

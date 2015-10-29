@@ -224,7 +224,9 @@ export default class extends think.base {
       return this;
     }
     if (think.isString(field)) {
-      field = field.split(/\s*,\s*/);
+      if(field.indexOf(')') === -1){
+        field = field.split(/\s*,\s*/);
+      }
     }
     this._options.field = field;
     this._options.fieldReverse = reverse;

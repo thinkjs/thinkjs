@@ -536,8 +536,7 @@ describe('model/base.js', function(){
   })
   it('select, field has keyword', function(done){
     instance.field("id, instr('30,35,31,',id+',') as d").where({id: 100}).limit(1).order('count(id)').select().then(function(data){
-      //console.log(instance.getLastSql())
-      assert.equal(instance.getLastSql(), "SELECT `id`,instr('30,`35`,`31`,',id+',') as d FROM `think_user` WHERE ( `id` = 100 ) ORDER BY count(id) LIMIT 1");
+      assert.equal(instance.getLastSql(), "SELECT id, instr('30,35,31,',id+',') as d FROM `think_user` WHERE ( `id` = 100 ) ORDER BY count(id) LIMIT 1");
       //assert.deepEqual(data, [{ id: 7565, title: 'title1', cate_id: 1, cate_no: 0 }])
       done();
     })
