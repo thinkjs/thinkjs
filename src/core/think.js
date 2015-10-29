@@ -1401,6 +1401,9 @@ think.statusAction = async (status = 500, http, log) => {
     http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', name, http.url));
     return think.statusAction(status, http, log);
   }
+  
+  //set http status
+  http.status(status);
 
   let instance = new cls(http);
   await instance.invoke(`_${status}Action`, instance);
