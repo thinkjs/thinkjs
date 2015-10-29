@@ -216,7 +216,7 @@ export default class extends think.http.base {
    */
   redirect(url, code) {
     this.http.redirect(url, code);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * assign value to template
@@ -252,7 +252,7 @@ export default class extends think.http.base {
    */
   jsonp(data) {
     this.http.jsonp(data);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * output with json
@@ -261,7 +261,7 @@ export default class extends think.http.base {
    */
   json(data){
     this.http.json(data);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * set http status code
@@ -280,7 +280,7 @@ export default class extends think.http.base {
   deny(status = 403){
     this.status(status);
     this.end();
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * set cache-control and expires header
@@ -308,7 +308,7 @@ export default class extends think.http.base {
    */
   end(obj, encoding) {
     this.http.end(obj, encoding);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * send content
@@ -342,10 +342,10 @@ export default class extends think.http.base {
     if (!contentType || contentType.indexOf('/') === -1) {
       contentType = require('mime').lookup(contentType || filepath);
     }
-    let http = this.http;
     this.type(contentType, false);
-    http.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
-    return this.hook('file_output', filepath);
+
+    this.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
+    return think.middleware('output_resource', this.http, filepath);
   }
   /**
    * output with success errno & errmsg
@@ -355,7 +355,7 @@ export default class extends think.http.base {
    */
   success(data, message){
     this.http.success(data, message);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * output with fail errno & errmsg
@@ -366,7 +366,7 @@ export default class extends think.http.base {
    */
   fail(errno, errmsg, data){
     this.http.fail(errno, errmsg, data);
-    return think.defer().promise;
+    return think.prevent();
   }
   /**
    * alias for fail

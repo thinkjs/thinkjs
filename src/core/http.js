@@ -122,6 +122,7 @@ export default class extends think.base {
     http._sendCookie = {};
     http._get = think.extend({}, urlInfo.query);
     http._type = (http.headers['content-type'] || '').split(';')[0].trim();
+    http._contentTypeIsSend = false;
 
     http.getPayload = this.getPayload;
     http.config = this.config;
@@ -334,15 +335,15 @@ export default class extends think.base {
     }else if (value === undefined) {
       return this.headers[name] || '';
     }
+    //check content type is send
+    if (name.toLowerCase() === 'content-type') {
+      if (this._contentTypeIsSend) {
+        return;
+      }
+      this._contentTypeIsSend = true;
+    }
     //set header
     if (!this.res.headersSent) {
-      //check content type is send
-      if (name === 'Content-Type') {
-        if (this._contentTypeIsSend) {
-          return;
-        }
-        this._contentTypeIsSend = true;
-      }
       this.res.setHeader(name, value);
     }
   }

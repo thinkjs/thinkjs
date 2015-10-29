@@ -25,7 +25,7 @@ think.middleware('output_resource', (http, file) => {
   }
 
   let contentType = mime.lookup(file);
-  http.header('Content-Type', `${contentType}; charset=${http.config('encoding')}`);
+  http.type(contentType, false);
 
   let stream = fs.createReadStream(file);
   stream.pipe(http.res);

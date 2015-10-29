@@ -409,27 +409,31 @@ describe('controller/base.js', function(){
         }else{
           assert.equal(value, 'attachment; filename="base.js"')
         }
-      }
+      },
+      end: function(){}
     }).then(function(instance){
       return instance.download(__filename)
-    }).then(function(content){
-      assert.equal(content, __filename);
+    }).catch(function(err){
+      assert.equal(think.isPrevent(err), true);
       done();
     })
   })
   it('download, with content-type', function(done){
     getInstance({
       header: function(type, value){
+        //console.log(type, value)
         if(type === 'Content-Type'){
           assert.equal(value, 'text/html')
         }else{
           assert.equal(value, 'attachment; filename="base.js"')
         }
-      }
+        this._contentTypeIsSend = true;
+      },
+      end: function(){}
     }).then(function(instance){
       return instance.download(__filename, 'text/html')
-    }).then(function(content){
-      assert.equal(content, __filename);
+    }).catch(function(err){
+      assert.equal(think.isPrevent(err), true);
       done();
     })
   })
@@ -441,11 +445,13 @@ describe('controller/base.js', function(){
         }else{
           assert.equal(value, 'attachment; filename="a.html"')
         }
-      }
+        this._contentTypeIsSend = true;
+      },
+      end: function(){}
     }).then(function(instance){
       return instance.download(__filename, 'text/html', 'a.html')
-    }).then(function(content){
-      assert.equal(content, __filename);
+    }).catch(function(err){
+      assert.equal(think.isPrevent(err), true);
       done();
     })
   })
@@ -457,11 +463,13 @@ describe('controller/base.js', function(){
         }else{
           assert.equal(value, 'attachment; filename="a.html"')
         }
-      }
+        this._contentTypeIsSend = true;
+      },
+      end: function(){}
     }).then(function(instance){
       return instance.download(__filename, 'a.html')
-    }).then(function(content){
-      assert.equal(content, __filename);
+    }).catch(function(err){
+      assert.equal(think.isPrevent(err), true);
       done();
     })
   })
