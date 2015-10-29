@@ -15,7 +15,7 @@ module.exports = think.controller({
     }
     var file = module + '/error/' + status + '.html';
     var options = this.config('tpl');
-    options = think.extend({}, options, {type: 'ejs'});
+    options = think.extend({}, options, {type: 'ejs', file_depr: '_'});
     return this.display(file, options);
   },
   /**
