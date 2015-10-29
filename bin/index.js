@@ -158,9 +158,9 @@ var isThinkApp = function(projectRootPath){
  */
 var isModuleExist = function(module){
   var modelPath = think.getPath(module, 'model');
-  if(think.mode === think.mode_normal){
-    modelPath = think.getPath(module, 'controller');
-  }
+  // if(think.mode === think.mode_normal){
+  //   modelPath = think.getPath(module, 'controller');
+  // }
   return think.isDir(modelPath);
 };
 /**
