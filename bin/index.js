@@ -298,6 +298,7 @@ var _copyCommonConfigFiles = function(){
   copyFile('config/config.js', rootPath + '/config.js', false);
   copyFile('config/view.js', rootPath + '/view.js');
   copyFile('config/db.js', rootPath + '/db.js');
+  copyFile('config/hook.js', rootPath + '/hook.js');
 
   mkdir(rootPath + '/env');
   copyFile('config/env/development.js', rootPath + '/env/development.js');
@@ -315,8 +316,8 @@ var _copyCommonBootstrapFiles = function(){
   var rootPath = think.getPath('common', 'bootstrap');
   mkdir(rootPath);
 
-  copyFile('bootstrap/hook.js', rootPath + '/hook.js');
-  copyFile('bootstrap/start.js', rootPath + '/start.js');
+  copyFile('bootstrap/middleware.js', rootPath + '/middleware.js');
+  copyFile('bootstrap/global.js', rootPath + '/global.js');
 };
 
 
