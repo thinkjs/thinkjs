@@ -1,6 +1,6 @@
 {
   "name": "thinkjs",
-  "description": "A Node.js MVC & Restful Framework Support Promise & Generator Function",
+  "description": "ThinkJS - use full ES6/7 features to develop web applications",
   "version": "2.0.0",
   "author": {
     "name": "welefen",
