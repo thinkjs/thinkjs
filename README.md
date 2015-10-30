@@ -86,7 +86,6 @@ cd project_path;
 npm start
 ```
 
-
 ## Documentation
 
 <https://thinkjs.org/>
