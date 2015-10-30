@@ -30,6 +30,7 @@ export default class extends think.controller.base {
       let rules = data[name].split('|');
       let itemData = {};
       rules.forEach(item => {
+        item = item.trim();
         if(!item){
           return;
         }
@@ -141,11 +142,7 @@ export default class extends think.controller.base {
     let flag = this.validate(this.rules);
     if(!flag){
       let error = this.config('error');
-      let errors = this.errors();
-      let msg = Object.keys(errors).map(item => {
-        return errors[item];
-      }).join(';');
-      return this.fail(error.validate_errno, msg);
+      return this.fail(error.validate_errno, this.errors());
     }
   }
 }

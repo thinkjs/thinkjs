@@ -614,4 +614,22 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('__after, has errors, message', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      instance.rules = {name: 'required', value: 'required'};
+      instance.http.end = function(data){
+        assert.equal(data.errno, 1001);
+        assert.deepEqual(Object.keys(data.errmsg), ['name', 'value'])
+      }
+      instance.__after()
+      done();
+    })
+  })
 })

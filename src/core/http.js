@@ -537,12 +537,12 @@ export default class extends think.base {
         errmsg = errno;
         errno = error.default_errno;
       }
-      if(!think.isString(errmsg)){
-        data = errmsg;
-        errmsg = '';
-      }
+      // if(!think.isString(errmsg)){
+      //   data = errmsg;
+      //   errmsg = '';
+      // }
       //read errmsg from config/locale/[lang].js
-      if(!errmsg){
+      if(errmsg === undefined){
         errmsg = this.locale(errno) || '';
       }
       obj = {
