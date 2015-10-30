@@ -37,8 +37,8 @@
   "devDependencies": {
     "mocha": "1.20.1",
     "muk": "0.3.1",
-    "istanbul": "*",
-    "babel": "*"
+    "istanbul": "0.4.0",
+    "babel": "5.8.23"
   },
   "keywords": [
     "thinkjs",
