@@ -245,7 +245,7 @@ var _copyWwwFiles = function(){
     '<APP_NAME>': getAppName()
   });
 
-  copyFile('.gitignore', projectRootPath + '.gitignore');
+  //copyFile('.gitignore', projectRootPath + '.gitignore');
   copyFile('README.md', projectRootPath + 'README.md');
 
 
