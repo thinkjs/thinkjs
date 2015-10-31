@@ -143,7 +143,7 @@ export default class extends think.base {
         if(key === '_id'){
           let validator = think.require('validator');
           if(validator.mongoId(value)){
-            let {ObjectID} = require('mongodb');
+            let {ObjectID} = think.require('mongodb');
             result[key] = ObjectID(value);
             continue;
           }
