@@ -20,6 +20,7 @@ export default class extends think.base {
       '<': '$lt',
       'ELT': '$lte',
       '<=': '$lte',
+      'OR': '$or',
       'IN': '$in',
       'NOTIN': '$nin'
     };
@@ -128,6 +129,33 @@ export default class extends think.base {
    * @return {Object}       []
    */
   parseWhere(where){
+
+    if(think.isArray(where)){
+      return where.map(item => {
+        return this.parseWhere(item);
+      });
+    }
+    
+    if(think.isObject(where)){
+      let result = {};
+      for(let key in where){
+        let value = where[key];
+        if(key === '_id'){
+          let validator = think.require('validator');
+          if(validator.mongoId(value)){
+            let {ObjectID} = require('mongodb');
+            result[key] = ObjectID(value);
+            continue;
+          }
+        }
+        key = this.comparison[key] || key;
+        if(think.isObject(value) || think.isArray(value)){
+          value = this.parseWhere(value);
+        }
+        result[key] = value;
+      }
+      return result;
+    }
     return where || {};
   }
   /**

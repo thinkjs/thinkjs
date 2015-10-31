@@ -18,7 +18,7 @@ describe('adapter/db/_parse_mongo', function(){
   it('init', function(){
     var instance = new Parse();
     var keys = Object.keys(instance.comparison).sort();
-    assert.deepEqual(keys, ["!=","<","<=","<>","=",">",">=","EGT","ELT","EQ","GT","IN","LT","NEQ","NOTIN"]);
+    assert.deepEqual(keys, ["!=","<","<=","<>","=",">",">=","EGT","ELT","EQ","GT","IN","LT","NEQ","NOTIN", "OR"]);
   })
   it('parseField, empty', function(){
     var instance = new Parse();
@@ -131,6 +131,41 @@ describe('adapter/db/_parse_mongo', function(){
     var data = instance.parseWhere();
     assert.deepEqual(data, {})
   })
+  it('parseWhere, with _id, mongoid', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      _id: '563473fae61a1b3709e43ae2'
+    });
+    assert.equal(typeof data._id, 'object');
+    assert.equal(JSON.stringify(data), '{"_id":"563473fae61a1b3709e43ae2"}')
+  })
+  it('parseWhere, with _id, number', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({
+      _id: 123456
+    });
+    assert.deepEqual(data, {_id: 123456})
+  })
+
+  it('parseWhere, has <', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({qty: { '>': 20 }});
+    assert.deepEqual(data, {qty: { $gt: 20 }})
+  })
+
+  it('parseWhere, has &gt', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({qty: { '$gt': 20 }});
+    assert.deepEqual(data, {qty: { $gt: 20 }})
+  })
+
+  it('parseWhere, has &or', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({ 'OR': [ { quantity: { '<': 20 } }, { price: 10 } ] });
+    assert.deepEqual(data, { $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] })
+  })
+
+
   it('parseDistinct, empty', function(){
     var instance = new Parse();
     var data = instance.parseDistinct();
