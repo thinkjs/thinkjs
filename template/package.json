@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node www/index.js",
-    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir app/",
+    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir app/ --retain-lines",
     "watch-compile": "npm run compile -- --watch"
   },
   "dependencies": {
