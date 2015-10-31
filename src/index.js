@@ -2,7 +2,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import {} from './core/think.js';
+
+import './core/think.js';
 
 export default class {
   /**
@@ -380,7 +381,11 @@ export default class {
       //remove require cache
       require.cache[file] = null;
     };
-    let fn = () => {
+    /**
+     * check change form cache
+     * @return {} []
+     */
+    let checkCacheChange = () => {
       let hasChange = false;
       for(let file in require.cache){
         if(!think.isFile(file)){
@@ -398,11 +403,29 @@ export default class {
           hasChange = true;
         }
       }
+      return hasChange;
+    };
+    /**
+     * check change from file
+     * @return {} []
+     */
+    let prevFilesLength = 0;
+    let checkFileChange = () => {
+      let nowFilesLength = think.getFiles(think.APP_PATH).filter(file => {
+        let extname = path.extname(file);
+        return extname === '.js';
+      }).length;
+      let flag = prevFilesLength === nowFilesLength;
+      prevFilesLength = nowFilesLength;
+      return flag;
+    };
+
+    setInterval(() => {
+      let hasChange = checkCacheChange() || checkFileChange();
       if(hasChange){
         this.load();
       }
-    };
-    setInterval(fn.bind(this), 1000);
+    }, 1000);
   }
   /**
    * capture error
