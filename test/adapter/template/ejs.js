@@ -65,4 +65,37 @@ describe('adapter/template/ejs.js', function(){
       done();
     })
   })
+  it('run, config, with prerender', function(done){
+    var instance = new Template();
+    muk(think, 'npm', function(){
+      return {
+        compile: function(content, conf){
+          assert.equal(content.indexOf("describe('adapter/template/ejs.js'") > -1, true);
+          assert.deepEqual(conf, { filename: __filename, cache: true , test: 'haha'})
+          return function(data){
+            assert.deepEqual(data, {name: 'welefen'})
+            return content;
+          }
+        }
+      }
+    })
+    var flag = false;
+    instance.run(__filename, {
+      name: 'welefen'
+    }, {
+      prerender: function(ejs){
+        assert.equal(think.isObject(ejs), true);
+        flag = true;
+      },
+      type: 'ejs', 
+      options: {
+        test: 'haha'
+      }
+    }).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      muk.restore();
+      assert.equal(flag, true)
+      done();
+    })
+  })
 })

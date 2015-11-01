@@ -68,4 +68,42 @@ describe('adapter/template/nunjucks.js', function(){
       console.log(err.stack)
     })
   })
+  it('run, config, with prerender', function(done){
+    var instance = new Template();
+    muk(think, 'npm', function(){
+      return {
+        configure: function(){
+          return {addFilter: function(){}};
+        },
+        render: function(filepath, conf){
+          var content = fs.readFileSync(filepath, 'utf8')
+          assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
+          assert.deepEqual(conf,{ name: 'welefen' })
+          return content;
+        }
+      }
+    })
+    var flag = false;
+    instance.run(__filename, {
+      name: 'welefen'
+    }, {
+      prerender: function(obj, obj2){
+        //console.log('prerender')
+        assert.equal(think.isObject(obj), true);
+        assert.equal(think.isFunction(obj2.addFilter), true);
+        flag = true;
+      },
+      type: 'nunjucks', 
+      options: {
+        test: 'haha'
+      }
+    }).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      muk.restore();
+      assert.equal(flag, true);
+      done();
+    }).catch(function(err){
+      console.log(err.stack)
+    })
+  })
 })

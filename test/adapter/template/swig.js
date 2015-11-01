@@ -27,7 +27,7 @@ describe('adapter/template/swig.js', function(){
         compileFile: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/swig.js'") > -1, true);
-          assert.deepEqual(conf,{ autoescape: false })
+          assert.deepEqual(conf, undefined)
           return function(data){
             return content;
           }
@@ -50,7 +50,7 @@ describe('adapter/template/swig.js', function(){
         compileFile: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/swig.js'") > -1, true);
-          assert.deepEqual(conf, { autoescape: false })
+          assert.deepEqual(conf, undefined)
           return function(data){
             assert.deepEqual(data, {name: 'welefen'})
             return content;
@@ -68,6 +68,43 @@ describe('adapter/template/swig.js', function(){
     }).then(function(data){
       assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
       muk.restore();
+      done();
+    }).catch(function(err){
+      console.log(err.stack)
+    })
+  })
+  it('run, config, with prerender', function(done){
+    var instance = new Template();
+    muk(think, 'npm', function(){
+      return {
+        setDefaults: function(){},
+        compileFile: function(filepath, conf){
+          var content = fs.readFileSync(filepath, 'utf8')
+          assert.equal(content.indexOf("describe('adapter/template/swig.js'") > -1, true);
+          assert.deepEqual(conf, undefined)
+          return function(data){
+            assert.deepEqual(data, {name: 'welefen'})
+            return content;
+          }
+        }
+      }
+    });
+    var flag = false;
+    instance.run(__filename, {
+      name: 'welefen'
+    }, {
+      prerender: function(swig){
+        assert.equal(think.isObject(swig), true);
+        flag = true;
+      },
+      type: 'swig', 
+      options: {
+        test: 'haha'
+      }
+    }).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      muk.restore();
+      assert.equal(flag, true);
       done();
     }).catch(function(err){
       console.log(err.stack)
