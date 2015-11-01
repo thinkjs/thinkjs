@@ -1,6 +1,6 @@
 # think-ip-filter
 
-ip-filter middleware for ThinkJS 2.0 support blackList & whiteList.
+ip filter middleware for ThinkJS 2.0, support whiteList & blackList.
 
 ## Install
 
@@ -37,7 +37,7 @@ add `ip_filter` config in file `src/common/config/config.js`.
 
 ```js
 export default {
-  ip_filter: ['111.222.333.444', '120.*']
+  ip_filter: ['111.222.333.444', '121.233.120.11']
 }
 ```
 
@@ -46,7 +46,27 @@ export default {
 ```js
 export default {
   ip_filter: {
-    whiteList: ['123.222.122.*']
+    whiteList: ['123.222.122.11', '22.33.11.22']
+  }
+}
+```
+
+**\* rule**
+
+```js
+export default {
+  ip_filter: {
+    whiteList: ['123.*.122.11', '*.33.11.22']
+  }
+}
+```
+
+**RegExp rule**
+
+```js
+export default {
+  ip_filter: {
+    whiteList: [/^10\./]
   }
 }
 ```

@@ -1,7 +1,7 @@
 {
   "name": "think-ip-filter",
-  "description": "ip filter middleware for ThinkJS 2.0, support whitelist & blacklist",
-  "version": "1.0.0",
+  "description": "ip filter middleware for ThinkJS 2.0, support whiteList & blackList",
+  "version": "1.0.1",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
