@@ -116,6 +116,11 @@ var copyFile = function(source, target, replace, showWarning){
     }
   }
 
+  //if source file is not exist
+  if(!think.isFile(templatePath + '/' + source)){
+    return;
+  }
+
   var content = fs.readFileSync(templatePath + '/' + source, 'utf8');
   //replace content 
   if(replace){
@@ -247,7 +252,7 @@ var _copyWwwFiles = function(){
     '<APP_NAME>': getAppName()
   });
 
-  //copyFile('.gitignore', projectRootPath + '.gitignore');
+  copyFile('.gitignore', projectRootPath + '.gitignore');
   copyFile('README.md', projectRootPath + 'README.md');
 
 
@@ -583,6 +588,59 @@ var createProject = function(){
   console.log();
 };
 
+/**
+ * create plugin
+ * @return {} []
+ */
+var createPlugin = function(){
+  console.log();
+  
+  mkdir(projectRootPath);
+
+  var pluginName = path.basename(projectRootPath).toLowerCase();
+  pluginName = pluginName.replace(/\_/g, '-');
+  if(pluginName[0] === '-'){
+    pluginName = pluginName.slice(1);
+  }
+  if(pluginName.indexOf('think-') !== 0){
+    pluginName = 'think-' + pluginName;
+  }
+
+  copyFile('plugin/src/index.js', projectRootPath + 'src/index.js');
+  copyFile('plugin/test/index.js', projectRootPath + 'test/index.js', {
+    '<PLUGIN_NAME>': pluginName
+  });
+  copyFile('plugin/.eslintrc', projectRootPath + '.eslintrc');
+  copyFile('plugin/.gitignore', projectRootPath + '.gitignore');
+  copyFile('plugin/.npmignore', projectRootPath + '.npmignore');
+  copyFile('plugin/.travis.yml', projectRootPath + '.travis.yml');
+  copyFile('plugin/package.json', projectRootPath + 'package.json', {
+    '<PLUGIN_NAME>': pluginName
+  });
+  copyFile('plugin/README.md', projectRootPath + 'README.md', {
+    '<PLUGIN_NAME>': pluginName
+  });
+
+  console.log();
+  console.log('  enter path:');
+  console.log('  $ cd ' + projectRootPath);
+  console.log();
+
+  console.log('  install dependencies:');
+  console.log('  $ npm install');
+  console.log();
+
+  console.log('  watch compile:');
+  console.log('  $ npm run watch-compile');
+  console.log();
+
+  console.log('  run test:');
+  console.log('  $ npm run test-cov');
+
+  console.log();
+
+}
+
 
 
 program.version(getVersion()).usage('[command] <options ...>');
@@ -632,6 +690,13 @@ program.command('middleware <middlewareName>').description('add middleware').act
 //create adapter
 program.command('adapter <adapterName>').description('add adapter').action(function(adapter){
   createAdapter(adapter.toLowerCase());
+});
+
+//create plugin
+program.command('plugin <pluginPath>').description('create ThinkJS plugin').action(function(pluginPath){
+  projectRootPath = path.normalize(pluginPath + '/');
+  
+  createPlugin();
 });
 
 program.parse(process.argv);  
