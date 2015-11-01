@@ -458,4 +458,12 @@ export default class {
     this.start();
     return think.require('app').run();
   }
+  /**
+   * load
+   * @return {} []
+   */
+  static load(){
+    let instance = new this();
+    instance.load();
+  }
 }
