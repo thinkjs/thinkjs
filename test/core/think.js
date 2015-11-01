@@ -1011,14 +1011,14 @@ describe('core/think.js', function(){
         done();
       })
     })
-    it('exec middleware, deny_ip', function(done){
-      getHttp().then(function(http){
-        think.middleware('deny_ip', http, '___http').then(function(data){
-          assert.equal(data, true);
-          done();
-        });
-      })
-    })
+    // it('exec middleware, deny_ip', function(done){
+    //   getHttp().then(function(http){
+    //     think.middleware('deny_ip', http, '___http').then(function(data){
+    //       assert.equal(data, true);
+    //       done();
+    //     });
+    //   })
+    // })
     it('get middleware', function(){
       var fn = function(){};
       think.middleware('fasdfasf', fn);
@@ -1027,7 +1027,7 @@ describe('core/think.js', function(){
       thinkCache(thinkCache.MIDDLEWARE, 'fasdfasf')
     })
     it('get sys middleware', function(){
-      var fn1 = think.middleware("deny_ip");
+      var fn1 = think.middleware("route");
       assert.equal(think.isFunction(fn1), true);
     })
     it('get sys middleware, not found', function(){
