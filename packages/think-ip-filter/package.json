@@ -19,7 +19,9 @@
     "email": "welefen@gmail.com"
   }],
   "main": "lib/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "babel-runtime": "5.8.25"
+  },
   "devDependencies": {
     "mocha": "1.20.1",
     "istanbul": "0.4.0",
