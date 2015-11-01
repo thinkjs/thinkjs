@@ -534,10 +534,15 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseWhere();
     assert.equal(data, '')
   })
-  it('parseWhere, empty', function(){
+  it('parseWhere, empty 1', function(){
     var instance = new Parse();
     var data = instance.parseWhere({_logic: 'AND'});
     assert.equal(data, '')
+  })
+  it('parseWhere, 1=1', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({1: 1});
+    assert.equal(data, ' WHERE ( 1 = 1 )')
   })
   it('parseWhere, key is not valid', function(){
     var instance = new Parse();

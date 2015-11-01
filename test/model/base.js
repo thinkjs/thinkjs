@@ -115,27 +115,35 @@ describe('model/base.js', function(){
         return Promise.resolve({
           affectedRows: 3
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 100 )"){
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 101 )"){
         return Promise.resolve({
           affectedRows: 1
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title2' WHERE ( `id` = 101 )"){
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 105 )"){
+        return Promise.resolve({
+          affectedRows: 1
+        })
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 102 )"){
         return Promise.resolve({
           affectedRows: 3
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title+10"){
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title2' WHERE ( `id` = 106 )"){
+        return Promise.resolve({
+          affectedRows: 4
+        })
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title+10 WHERE ( 1 = 1 )"){
         return Promise.resolve({
           affectedRows: 1
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title+1"){
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title+1 WHERE ( 1 = 1 )"){
         return Promise.resolve({
           affectedRows: 1
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title-10"){
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title-10 WHERE ( 1 = 1 )"){
         return Promise.resolve({
           affectedRows: 1
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title-1"){
+      }else if(sql.trim() === "UPDATE `think_user` SET `title`=title-1 WHERE ( 1 = 1 )"){
         return Promise.resolve({
           affectedRows: 1
         })
@@ -266,6 +274,46 @@ describe('model/base.js', function(){
       assert.equal(data, 'title');
       done();
     })
+  })
+  it('getUniqueField, with data, not match', function(done){
+    var instance = new Base('tag', think.config('db'))
+    return instance.getUniqueField({
+      title111: 'welefen'
+    }).then(function(data){
+      assert.equal(data, undefined);
+      done();
+    })
+  })
+  it('parseType', function(done){
+    var instance = new Base('tag', think.config('db'));
+    instance.fields = {
+      id: {type: 'int'},
+      bid: {type: 'bigint'},
+      cid: {type: 'double'},
+      did: {type: 'float'},
+      bool: {type: 'bool'},
+      name: {type: 'string'},
+      name1: {}
+    }
+    var data1 = instance.parseType('id', 10);
+    assert.equal(data1, 10);
+    var data1 = instance.parseType('id');
+    assert.equal(data1, 0);
+    var data1 = instance.parseType('bid', 10);
+    assert.equal(data1, 10);
+    var data1 = instance.parseType('cid', 10.5);
+    assert.equal(data1, 10.5);
+    var data1 = instance.parseType('cid');
+    assert.equal(data1, 0.0);
+    var data1 = instance.parseType('did', 10);
+    assert.equal(data1, 10);
+    var data1 = instance.parseType('bool', 10);
+    assert.equal(data1, true);
+    var data1 = instance.parseType('name', 'www');
+    assert.equal(data1, 'www');
+    var data1 = instance.parseType('name1', 'www');
+    assert.equal(data1, 'www');
+    done();
   })
   it('build sql', function(done){
     instance.where('id=1').field('name,title').group('name').limit(10).buildSql().then(function(sql){
@@ -413,93 +461,115 @@ describe('model/base.js', function(){
   })
   it('update, empty', function(done){
     instance.where({id: 100}).update().catch(function(err){
+      assert.deepEqual(instance._options, {});
+      assert.deepEqual(instance._data, {})
       done();
     })
   })
   it('update', function(done){
-    instance.where({id: 100}).update({
+    instance.where({id: 101}).update({
       name: 'name1',
       title: 'title1'
     }).then(function(rows){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 100 )")
+      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 101 )")
       assert.equal(rows, 1);
+      done();
+    })
+  })
+  it('update, readonlyFields', function(done){
+    instance.readonlyFields = ['cate_id'];
+    instance.where({id: 401}).update({
+      cate_id: '1111',
+      title: 'title1'
+    }).then(function(rows){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 401 )")
+      instance.readonlyFields = [];
+      done();
+    })
+  })
+  it('update, missing where condition', function(done){
+    instance.update({title: 'www'}).catch(function(err){
+      assert.deepEqual(instance._options, {});
+      assert.deepEqual(instance._data, {})
       done();
     })
   })
   it('update, where condition from data', function(done){
     instance.update({
-      id: 100,
+      id: 102,
       name: 'name1',
       title: 'title1'
     }).then(function(rows){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 100 )")
-      assert.equal(rows, 1);
+      //console.log(sql, rows)
+      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 102 )")
+      assert.equal(rows, 3);
       done();
     })
   })
   it('update many, empty', function(done){
-    instance.where({id: 100}).updateMany().catch(function(err){
+    instance.where({id: 104}).updateMany().catch(function(err){
       done();
     })
   })
   it('update many', function(done){
     instance.updateMany([{
-      id: 100,
+      id: 105,
       name: 'name1',
       title: 'title1'
     }]).then(function(rows){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 100 )")
+      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 105 )")
       assert.equal(rows, 1);
       done();
     })
   })
-  it('update many', function(done){
+  it('update many 2', function(done){
     instance.updateMany([{
       id: 100,
       name: 'name1',
       title: 'title1'
     },{
-      id: 101,
+      id: 106,
       name: 'name2',
       title: 'title2'
     }]).then(function(rows){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title2' WHERE ( `id` = 101 )")
+      assert.equal(sql, "UPDATE `think_user` SET `title`='title2' WHERE ( `id` = 106 )")
       assert.equal(rows, 4);
       done();
     })
   })
   it('increment', function(done){
-    instance.increment('title', 10).then(function(data){
+    instance.where({1: 1}).increment('title', 10).then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`=title+10");
+      assert.equal(sql, "UPDATE `think_user` SET `title`=title+10 WHERE ( 1 = 1 )");
       assert.equal(data, 1)
       done();
     })
   })
   it('increment, default step', function(done){
-    instance.increment('title').then(function(data){
+    instance.where({1: 1}).increment('title', 1, true).then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`=title+1");
+      assert.equal(sql, "UPDATE `think_user` SET `title`=title+1 WHERE ( 1 = 1 )");
       assert.equal(data, 1)
       done();
     })
   })
   it('decrement', function(done){
-    instance.decrement('title', 10).then(function(data){
+    instance.where({1: 1}).decrement('title', 10).then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`=title-10");
+      assert.equal(sql, "UPDATE `think_user` SET `title`=title-10 WHERE ( 1 = 1 )");
       assert.equal(data, 1)
       done();
     })
   })
   it('decrement, default step', function(done){
-    instance.decrement('title').then(function(data){
+    instance.where({1: 1}).decrement('title').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`=title-1");
+      assert.equal(sql, "UPDATE `think_user` SET `title`=title-1 WHERE ( 1 = 1 )");
       assert.equal(data, 1)
       done();
     })
@@ -563,6 +633,15 @@ describe('model/base.js', function(){
   it('count select', function(done){
     instance.where({name: 'test'}).page(3).countSelect().then(function(data){
       assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]})
+      done();
+    })
+  })
+  it('count select, no page', function(done){
+    instance.where({name: 'test'}).countSelect().then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT * FROM `think_user` WHERE ( `name` = 'test' ) LIMIT 1,10")
+      //console.log(sql)
+      //assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]})
       done();
     })
   })

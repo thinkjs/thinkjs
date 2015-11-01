@@ -146,9 +146,9 @@ export default class extends Base {
   parseType(key, value){
     let fieldType = this.fields[key].type || '';
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
-      return String(parseInt(value, 10) || 0);
+      return parseInt(value, 10) || 0;
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
-      return String(parseFloat(value) || 0.0);
+      return parseFloat(value) || 0.0;
     }else if(fieldType.indexOf('bool') > -1){
       return !!value;
     }
@@ -193,8 +193,9 @@ export default class extends Base {
       return think.reject(msg);
     }
     options = await this.parseOptions(options);
-    data = await this.beforeAdd(data, options);
+
     data = this.parseData(data);
+    data = await this.beforeAdd(data, options);
     await this.db().add(data, options, replace);
     let insertId = data[this.pk] = this.db().getLastInsertId();
     await this.afterAdd(data, options);
@@ -259,32 +260,42 @@ export default class extends Base {
   }
   /**
    * update data
-   * @return {Promise} []
+   * @param  {Object} data      []
+   * @param  {Object} options   []
+   * @param  {Boolean} ignoreWhere []
+   * @return {Promise}          []
    */
   async update(data, options){
+
     data = think.extend({}, this._data, data);
     //clear data
     this._data = {};
 
-    //get where condition from data
-    let pk = await this.getPk();
-    if(data[pk]){
-      this.where({[pk]: data[pk]});
-      delete data[pk];
+    options = await this.parseOptions(options);
+
+    //check where condition
+    if(think.isEmpty(options.where)){
+      //get where condition from data
+      let pk = await this.getPk();
+      if(data[pk]){
+        options.where = {[pk]: data[pk]};
+        delete data[pk];
+      }else {
+        return think.reject(new Error(think.locale('MISS_WHERE_CONDITION')));
+      }
     }
 
     //remove readonly field data
     this.readonlyFields.forEach(item => {
       delete data[item];
     });
-
+    //check data is empty
     if (think.isEmpty(data)) {
       return think.reject(new Error(think.locale('DATA_EMPTY')));
     }
-    
-    options = await this.parseOptions(options);
-    data = await this.beforeUpdate(data, options);
+
     data = this.parseData(data);
+    data = await this.beforeUpdate(data, options);
     let rows = await this.db().update(data, options);
     await this.afterUpdate(data, options);
     return rows;
@@ -296,6 +307,10 @@ export default class extends Base {
    */
   updateMany(dataList, options){
     if (!think.isArray(dataList)) {
+      //empty data and options
+      this._options = {};
+      this._data = {};
+
       return think.reject(new Error(think.locale('DATA_MUST_BE_ARRAY')));
     }
     let promises = dataList.map(data => {

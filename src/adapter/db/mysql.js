@@ -49,6 +49,9 @@ export default class extends think.adapter.db {
     if(think.isEmpty(key)){
       return '';
     }
+    if(think.isNumberString(key)){
+      return key;
+    }
     if (!(/[,\'\"\*\(\)`.\s]/.test(key))) {
       key = '`' + key + '`';
     }
