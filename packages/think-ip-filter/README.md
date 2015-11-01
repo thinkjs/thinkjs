@@ -1,6 +1,6 @@
 # think-ip-filter
 
-ip filter middleware for ThinkJS 2.0, support whiteList & blackList.
+IP filter middleware for ThinkJS 2.0, support whiteList & blackList.
 
 ## Install
 
