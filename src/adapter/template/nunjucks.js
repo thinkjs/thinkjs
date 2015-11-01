@@ -20,7 +20,15 @@ export default class extends think.adapter.template {
       throwOnUndefined: false
     }, think.config('view.options'), config && config.options);
 
-    nunjucks.configure(think.ROOT_PATH, conf);
+    let env = nunjucks.configure(think.ROOT_PATH, conf);
+
+    //pre render
+    let prerender = config && config.prerender;
+    prerender = prerender || think.config('view.prerender');
+    if(think.isFunction(prerender)){
+      prerender(nunjucks, env);
+    }
+
     return nunjucks.render(templateFile, tVar);
   }
 }
