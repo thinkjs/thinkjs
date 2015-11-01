@@ -1923,9 +1923,29 @@ describe('core/think.js', function(){
         })
       })
     })
-    it('waiting for function, exist', function(done){
+    it('waiting for function, exist 1', function(done){
       think.config('gc.on', false);
       think.cache('welefen++++', 'welefen', {}).then(function(){
+        return think.cache('welefen++++', function(){
+          assert.equal(1, 2)
+          return 'suredy';
+        }).then(function(data){
+          assert.equal(data, 'welefen');
+          return think.cache('welefen++++', null)
+        }).then(function(){
+          done();
+        })
+      })
+    })
+    it('waiting for function, change cache type', function(done){
+      think.config('gc.on', false);
+      var adapter = think.adapter;
+      muk(think, 'adapter', function(atype, type){
+        assert.equal(type, 'redis');
+        muk.restore();
+        return adapter(atype, 'file');
+      })
+      think.cache('welefen++++', 'welefen', {type: 'redis'}).then(function(){
         return think.cache('welefen++++', function(){
           assert.equal(1, 2)
           return 'suredy';
