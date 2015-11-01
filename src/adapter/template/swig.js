@@ -12,9 +12,22 @@ export default class extends think.adapter.template {
    * @return {String}              []
    */
   async run(templateFile, tVar, config){
+    
     let swig = await think.npm('swig');
-    swig.setDefaults(think.extend({}, think.config('view.options'), config && config.options));
-    let tpl = swig.compileFile(templateFile, {autoescape: false});
+
+    let conf = think.extend({
+      autoescape: true
+    }, think.config('view.options'), config && config.options);
+    swig.setDefaults(conf);
+
+    //pre render
+    let prerender = config && config.prerender;
+    prerender = prerender || think.config('view.prerender');
+    if(think.isFunction(prerender)){
+      prerender(swig);
+    }
+
+    let tpl = swig.compileFile(templateFile);
     return tpl(tVar);
   }
 }

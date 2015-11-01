@@ -11,11 +11,21 @@ export default class extends think.adapter.template {
    * @return {Promise}             []
    */
   async run(templateFile, tVar, config){
+
     let ejs = await think.npm('ejs');
+
     let conf = think.extend({
       filename: templateFile,
       cache: true
     }, think.config('view.options'), config && config.options);
+
+    //pre render
+    let prerender = config && config.prerender;
+    prerender = prerender || think.config('view.prerender');
+    if(think.isFunction(prerender)){
+      prerender(ejs);
+    }
+
     let content = await this.getContent(templateFile);
     return ejs.compile(content, conf)(tVar);
   }

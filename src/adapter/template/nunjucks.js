@@ -11,6 +11,7 @@ export default class extends think.adapter.template {
    * @return {Promise}             []
    */
   async run(templateFile, tVar, config){
+    
     let nunjucks = await think.npm('nunjucks');
     
     let conf = think.extend({
