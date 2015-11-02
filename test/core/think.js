@@ -827,7 +827,7 @@ describe('core/think.js', function(){
   describe('think.hook', function(){
     it('get all hook', function(){
       var data = Object.keys(thinkCache(thinkCache.HOOK)).sort();
-      assert.deepEqual(data, ["controller_after","controller_before","logic_after","logic_before","payload_parse","payload_validate","request_begin","resource","response_end","route_parse","view_after","view_before","view_parse","view_template"])
+      assert.deepEqual(data, ["controller_after","controller_before","logic_after","logic_before","payload_parse","payload_validate","request_begin","resource","response_end","route_parse","view_after","view_before","view_filter", "view_parse","view_template"])
     })
     it('get item hook', function(){
       var data = think.hook('route_parse');
