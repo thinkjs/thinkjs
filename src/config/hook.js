@@ -13,6 +13,7 @@ export default {
   view_before: [],
   view_template: ['locate_template'],
   view_parse: ['parse_template'],
+  view_filter: [],
   view_after: [],
   response_end: []
 };
