@@ -98,17 +98,25 @@ describe('middleware/route', function(){
       done();
     })
   })
+  it('route_on not on, has pathname, action has -', function(done){
+    execMiddleware('route', {}, {
+      pathname: 'welefen/welefen-test'
+    }).then(function(data){
+      muk.restore();
+      done();
+    })
+  })
   it('route_on not on, has pathname, action not valid', function(done){
     muk(think, 'reject', function(err){
       return Promise.reject(err);
     })
     muk(think, 'statusAction', function(status, http){
       assert.equal(status, 400);
-      assert.equal(http.error.message.indexOf('`welefen-test`') > -1, true);
+      assert.equal(http.error.message.indexOf('`wele$fen-test`') > -1, true);
       return think.prevent();
     })
     execMiddleware('route', {}, {
-      pathname: 'welefen/welefen-test'
+      pathname: 'welefen/wele$fen-test'
     }).catch(function(err){
       muk.restore();
       done();

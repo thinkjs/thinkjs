@@ -292,7 +292,7 @@ export default class extends think.middleware.base {
     if (!controller) {
       return think.config('default_controller');
     }
-    if (/^\w*$/.test(controller)) {
+    if (/^\w+$/.test(controller)) {
       this.checkLowerCase(controller);
       return controller.toLowerCase();
     }
@@ -307,7 +307,9 @@ export default class extends think.middleware.base {
     if (!action) {
       return think.config('default_action');
     }
-    if (/^\w*$/.test(action)) {
+    // action name support `-` char, for REST API
+    // /api/system/3b6c279c-bd61-f093-c543-56f9ab4300b7
+    if (/^[\w\-]+$/.test(action)) {
       this.checkLowerCase(action);
       return action.toLowerCase();
     }
