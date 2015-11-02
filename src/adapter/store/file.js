@@ -17,6 +17,10 @@ export default class extends think.adapter.store {
       path: ''
     }, config);
 
+    if(!config.path){
+      throw new Error('path must be defined.');
+    }
+
     if(!think.isDir(config.path)){
       think.mkdir(config.path);
     }
