@@ -1015,7 +1015,7 @@ think.session = http => {
   let conf = think.extend({}, sessionOptions, {cookie: sessionCookie});
   let session = new cls(conf);
   http._session = session;
-  http.on('afterEnd', () => session.flush && session.flush());
+  http.once('afterEnd', () => session.flush && session.flush());
   return session;
 };
 

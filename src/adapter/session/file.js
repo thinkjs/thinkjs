@@ -109,12 +109,14 @@ export default class extends think.adapter.session {
    */
   flush(){
     let filepath = this.getFilepath();
-    let data = {
-      data: this.data,
-      expire: Date.now() + this.timeout * 1000,
-      timeout: this.timeout
-    };
-    return this.store.set(filepath, JSON.stringify(data));
+    return this.getData().then(() => {
+      let data = {
+        data: this.data,
+        expire: Date.now() + this.timeout * 1000,
+        timeout: this.timeout
+      };
+      return this.store.set(filepath, JSON.stringify(data));
+    });
   }
   /**
    * gc
