@@ -21,5 +21,9 @@
     "no-empty": 0,
     "yoda": 0,
     "no-new-func": 0
+  },
+  "globals": {
+    "think": true,
+    "thinkCache": true
   }
 }
