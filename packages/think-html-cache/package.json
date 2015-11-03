@@ -1,8 +1,11 @@
 {
   "name": "think-html-cache",
-  "description": "",
+  "description": "html-cache middleware for ThinkJS 2.0",
   "version": "1.0.0",
-  "author": {},
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
   "scripts": {
     "test": "mocha --reporter spec --timeout 5000 --recursive test/",
     "test-cov": "istanbul cover --report html ./node_modules/mocha/bin/_mocha -- -t 5000 --recursive  -R spec test/",
@@ -25,11 +28,11 @@
     "babel-eslint": "4.1.3"
   },
   "keywords": [
-    "thinkjs"
+    "thinkjs", "html-cache"
   ],
   "repository": {
     "type": "git",
-    "url": "<Github URL>"
+    "url": "https://github.com/welefen/think-html-cache"
   },
   "engines": {
     "node": ">=0.12.0"
@@ -37,6 +40,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "<Github URL>/issues"
+    "url": "https://github.com/welefen/think-html-cache/issues"
   }
 }
