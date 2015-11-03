@@ -59,7 +59,7 @@ export default class extends think.adapter.session {
       if(Date.now() > data.expire){
         return this.store.delete(filepath);
       }else{
-        this.data = data.data;
+        this.data = data.data || {};
       }
     }).catch(() => {
       this.data = {};
