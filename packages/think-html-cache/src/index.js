@@ -10,7 +10,7 @@ export default class extends think.middleware.base {
    * run
    * @return {} []
    */
-  run(content){
+  async run(content){
 
     if(!this.http.isGet()){
       return;
@@ -21,27 +21,26 @@ export default class extends think.middleware.base {
       return content;
     }
 
-    config = think.extend({
-      type: 'file'
+    this.config = this.mergeConfig({
+      type: 'file',
+      adapter: {
+        file: {
+          path: think.getPath('common', 'runtime') + '/html_cache'
+        }
+      }
     }, config);
-    if(config.adapter){
-      config = think.extend(config, config.adapter[config.type]);
-    }
-    if(config.type === 'file' && !config.path){
-      config.path = think.getPath('common', 'runtime') + '/html_cache';
-    }
-    this.config = config;
 
     //get store instance
-    let Store = think.adapter('store', config.type);
-    this.store = new Store(config);
+    let Store = think.adapter('store', this.config.type);
+    this.store = new Store(this.config);
 
     if(!content){
       return this.readHtmlCache();
     }
     if(this.http.html_cache_key){
-      return this.writeHtmlCache(content);
+      await this.writeHtmlCache(content);
     }
+    return content;
   }
   /**
    * write html cache
@@ -60,7 +59,7 @@ export default class extends think.middleware.base {
    * read html cache
    * @return {} []
    */
-  async readHtmlCache(){
+  readHtmlCache(){
     let rule = this.getMatchRule();
     if(!rule){
       return;
@@ -68,7 +67,7 @@ export default class extends think.middleware.base {
     let http = this.http;
     let cacheKey = this.getCacheKey(rule);
     let cacheTime = rule[1] || this.config.timeout;
-    http.html_cache_time = cacheTime;
+    http.html_cache_time = parseInt(cacheTime) || 0;
     let content = this.getCacheContent(cacheKey, cacheTime);
     if(content){
       http.header('Content-Type', 'text/html');
@@ -162,20 +161,41 @@ export default class extends think.middleware.base {
    * @return {} []
    */
   async getCacheContent(cacheKey, cacheTime){
+
     let content = await this.store.get(cacheKey);
     if(!content){
       return;
     }
-    try{
-      let expire = parseInt(content.slice(0, 20), 10);
-      content = content.slice(20);
-      let viewFile = this.viewFile();
-      let viewFileExpireTime = fs.statSync(viewFile).mtime.getTime() + cacheTime * 1000;
-      //template file is update after cache content
-      if(expire < viewFileExpireTime){
-        return;
-      }
-      return content;
-    }catch(e){}
+
+    //expire time is error
+    let expire = parseInt(content.slice(0, 20), 10) || 0;
+    if(!expire){
+      return;
+    }
+
+    //content is empty
+    content = content.slice(20);
+    if(!content){
+      return;
+    }
+
+    //view file is not exist
+    let viewFile = this.viewFile();
+    if(!viewFile || !think.isFile(viewFile)){
+      return;
+    }
+
+    //if cache is expired
+    if(cacheTime && expire < (Date.now() + cacheTime * 1000)){
+      return;
+    }
+
+    let mtime = fs.statSync(viewFile).mtime.getTime();
+    //template file is update after cache content
+    if(expire < (mtime + cacheTime * 1000)){
+      return;
+    }
+
+    return content;
   }
 }
