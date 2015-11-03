@@ -38,10 +38,10 @@ function execMiddleware(middleware, config, options, data){
 }
 
 describe('bootstrap/middleware.js', function(){
-  it('parse_form_payload,_payloadParsed', function(done){
+  it('parse_form_payload,readable false', function(done){
     getHttp('', {
       payload: '',
-      _payloadParsed: true
+      req: {readable: false}
     }).then(function(http){
       think.middleware('parse_form_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -385,10 +385,10 @@ describe('bootstrap/middleware.js', function(){
       console.log(err.stack)
     })
   })
-it('parse_querystring_payload,_payloadParsed', function(done){
+it('parse_querystring_payload,readable', function(done){
     getHttp('', {
       payload: '',
-      _payloadParsed: true
+      req: {readable: false}
     }).then(function(http){
       think.middleware('parse_querystring_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -429,10 +429,10 @@ it('parse_querystring_payload,_payloadParsed', function(done){
       })
     })
   })
-  it('parse_single_file_payload,_payloadParsed', function(done){
+  it('parse_single_file_payload, readable false', function(done){
     getHttp('', {
       payload: '',
-      _payloadParsed: true
+      req: {readable: false}
     }).then(function(http){
       think.middleware('parse_single_file_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -550,10 +550,10 @@ it('parse_querystring_payload,_payloadParsed', function(done){
       })
     })
   })
-  it('parse_json_payload,_payloadParsed', function(done){
+  it('parse_json_payload, readable false', function(done){
     getHttp('', {
       payload: '',
-      _payloadParsed: true
+      req: {readable: false}
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);

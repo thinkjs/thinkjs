@@ -71,9 +71,16 @@ export default class extends think.base {
    * @return {Promise} []
    */
   getPayload(){
+
     if(think.isString(this.payload)){
       return Promise.resolve(this.payload);
     }
+
+    //payload data has readed by third middleware
+    if(!this.req.readable){
+      return Promise.resolve('');
+    }
+
     let buffers = [];
     let deferred = think.defer();
     this.req.on('data', chunk => {
