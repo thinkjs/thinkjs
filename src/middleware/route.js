@@ -264,6 +264,10 @@ export default class extends think.middleware.base {
    * @return {}       []
    */
   checkLowerCase(value){
+    // if value has - chars, not check, for REST API
+    if(value.indexOf('-') > -1){
+      return;
+    }
     let lower = value.toLowerCase();
     if(value !== lower){
       think.log(colors => {
