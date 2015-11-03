@@ -59,7 +59,7 @@ export default class extends think.middleware.base {
    * read html cache
    * @return {} []
    */
-  readHtmlCache(){
+  async readHtmlCache(){
     let rule = this.getMatchRule();
     if(!rule){
       return;
@@ -68,7 +68,7 @@ export default class extends think.middleware.base {
     let cacheKey = this.getCacheKey(rule);
     let cacheTime = rule[1] || this.config.timeout;
     http.html_cache_time = parseInt(cacheTime) || 0;
-    let content = this.getCacheContent(cacheKey, cacheTime);
+    let content = await this.getCacheContent(cacheKey, cacheTime);
     if(content){
       http.header('Content-Type', 'text/html');
       http.header('X-Cache', `HIT (${cacheKey})`);

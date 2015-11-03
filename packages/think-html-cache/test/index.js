@@ -539,8 +539,10 @@ describe('think-html-cache', function(){
       instance.readHtmlCache = readHtmlCache;
       instance.getMatchRule = function(){}
       var data = instance.readHtmlCache();
-      assert.equal(data, undefined);
-      done();
+      data.then(function(data){
+        assert.equal(data, undefined);
+        done();
+      })
     })
   })
    it('html_cache has rules, readHtmlCache, content empty', function(done){
@@ -560,9 +562,11 @@ describe('think-html-cache', function(){
       instance.getMatchRule = function(){return ['index', 100]};
       instance.getCacheContent = function(){return}
       var data = instance.readHtmlCache();
-      assert.equal(data, undefined);
-      assert.equal(instance.http.html_cache_time, 100)
-      done();
+      data.then(function(data){
+        assert.equal(data, undefined);
+        assert.equal(instance.http.html_cache_time, 100)
+        done();
+      })
     })
   })
    it('html_cache has rules, readHtmlCache, content empty 1', function(done){
@@ -582,8 +586,10 @@ describe('think-html-cache', function(){
       instance.getMatchRule = function(){return ['index']};
       instance.getCacheContent = function(){return}
       var data = instance.readHtmlCache();
-      assert.equal(data, undefined);
-      assert.equal(instance.http.html_cache_time, 0)
+      data.then(function(data){
+        assert.equal(data, undefined);
+        assert.equal(instance.http.html_cache_time, 0)
+      })
       done();
     })
   })
