@@ -23,6 +23,17 @@ describe('adapter/store/base', function(){
     });
     assert.deepEqual(instance.config, { path: think.APP_PATH + '/fileStore' });
   })
+  it('get instance path empty', function(){
+    var flag = false;
+    try{
+      var instance = new fileStore({
+        path: ''
+      });
+    }catch(e){
+      flag = true;
+    }
+    assert.equal(flag, true)
+  })
   it('get data, undefined', function(done){
     var instance = new fileStore({
       path: think.APP_PATH + '/fileStore'
