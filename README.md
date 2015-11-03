@@ -4,7 +4,7 @@
 
 ## Introduction 
 
-As a Node.js MVC framework, ThinkJS 2.0 had completelly been rewritten with brand-new ECMAScript 6/7 features. By using ES7's `async/await` or ES6's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, has designed by absorb the concepts and ideas from many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
+As a Node.js MVC framework, ThinkJS 2.0 had completelly been rewritten with brand-new ECMAScript 6/7 features. By using ES7's `async/await` or ES6's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, ThinkJS 2.0 has designed by absorb the concepts and ideas from many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
 
 It's the trend that using ES6/7 features to develop projects thanks to the high development efficiency. The new version of Node.js has improved to support many ES6 featrues, though some features have not been supported until now, and for those features we can use [Babel](http://babeljs.io/) to compile the code.
 
