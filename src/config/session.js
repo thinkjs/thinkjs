@@ -13,7 +13,7 @@ export default {
   },
   adapter: {
     file: {
-      path: think.getPath(undefined, think.dirname.runtime) + '/session',
+      path: think.getPath(undefined, think.dirname.runtime) + '/session'
     }
   }
 };

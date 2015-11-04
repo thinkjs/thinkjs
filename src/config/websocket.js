@@ -14,7 +14,7 @@ export default {
   },
   adapter: {
     'socket.io': {
-      adapter: undefined,
+      adapter: undefined
     }
   }
 };
