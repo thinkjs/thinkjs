@@ -1438,3 +1438,35 @@ think.statusAction = async (status = 500, http, log) => {
   
   return think.prevent();
 };
+/**
+ * parallel limit exec
+ * @param  {String}   key      []
+ * @param  {Mixed}   data     []
+ * @param  {Function} callback []
+ * @return {}            []
+ */
+think.limit = (key, data, options = {}) => {
+
+  if(think.isFunction(options)){
+    options = {callback: options};
+  }else if(think.isNumber(options)){
+    options = {limit: options};
+  }
+
+  let Limit = thinkCache(thinkCache.COLLECTION, 'limit');
+  if (!Limit) {
+    Limit = think.require('limit');
+    thinkCache(thinkCache.COLLECTION, 'limit', Limit);
+  }
+
+  let instance = thinkCache(thinkCache.LIMIT, key);
+  if(!instance){
+    instance = new Limit(options.limit, options.callback);
+    thinkCache(thinkCache.LIMIT, key, instance);
+  }
+
+  if(!think.isArray(data) || options.array){
+    return instance.add(data);
+  }
+  return instance.addAll(data, options.ignoreError);
+};

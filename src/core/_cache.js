@@ -140,6 +140,11 @@ thinkCache.ERROR = 'error';
  */
 thinkCache.WEBSOCKET = 'websocket';
 /**
+ * store limit instance
+ * @type {String}
+ */
+thinkCache.LIMIT = 'limit';
+/**
  * app use
  * @type {String}
  */
