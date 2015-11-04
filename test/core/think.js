@@ -2001,11 +2001,11 @@ describe('core/think.js', function(){
       think.config('gc.on', false);
       var adapter = think.adapter;
       muk(think, 'adapter', function(atype, type){
-        assert.equal(type, 'redis');
+        assert.equal(type, 'file');
         muk.restore();
         return adapter(atype, 'file');
       })
-      think.cache('welefen++++', 'welefen', {type: 'redis'}).then(function(){
+      think.cache('welefen++++', 'welefen', {type: 'file'}).then(function(){
         return think.cache('welefen++++', function(){
           assert.equal(1, 2)
           return 'suredy';
@@ -2014,6 +2014,8 @@ describe('core/think.js', function(){
           return think.cache('welefen++++', null)
         }).then(function(){
           done();
+        }).catch(function(err){
+          console.log(err.stack)
         })
       })
     })

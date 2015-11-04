@@ -17,7 +17,9 @@ export default class extends think.adapter.cache {
    * @param  {Object} options []
    * @return {}         []
    */
-  init(options = {}){
+  init(options){
+    options = think.mergeConfig(options);
+    
     this.timeout = options.timeout;
     this.file_ext = options.file_ext;
     this.path = options.path;
