@@ -12,7 +12,9 @@ export default class extends think.adapter.cache {
    * @return {}         []
    */
   init(options = {}){
-    options = think.extend({}, think.config('memcache'), options);
+
+    options = think.mergeConfig(think.config('memcache'), options);
+    
     this.timeout = options.timeout;
     this.keyPrefix = options.prefix;
 

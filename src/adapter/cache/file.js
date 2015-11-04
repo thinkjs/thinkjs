@@ -18,6 +18,7 @@ export default class extends think.adapter.cache {
    * @return {}         []
    */
   init(options){
+    
     options = think.mergeConfig(options);
     
     this.timeout = options.timeout;

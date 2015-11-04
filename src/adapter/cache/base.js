@@ -13,7 +13,10 @@ export default class extends think.base {
    * @param  {Object} options []
    * @return {}         []
    */
-  init(options = {}){
+  init(options){
+
+    options = think.mergeConfig(options);
+
     this.timeout = options.timeout;
 
     this.store = new BaseStore({
