@@ -68,12 +68,6 @@ export default class {
    * @return {}            []
    */
   mergeConfig(...configs){
-    let config = think.extend({}, ...configs);
-    if(config.type && config.adapter){
-      let adapterConfig = config.adapter[config.type];
-      config = think.extend(config, adapterConfig);
-      delete config.adapter;
-    }
-    return config;
+    return think.mergeConfig(...configs);
   }
 }

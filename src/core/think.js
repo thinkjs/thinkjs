@@ -326,6 +326,22 @@ think.safeRequire = file => {
   }
   return null;
 };
+
+/**
+ * merge config, support adapter config
+ * @param  {} configs []
+ * @return {}            []
+ */
+think.mergeConfig = (...configs) => {
+  let config = think.extend({}, ...configs);
+  if(config.type && config.adapter){
+    let adapterConfig = config.adapter[config.type];
+    config = think.extend(config, adapterConfig);
+    delete config.adapter;
+  }
+  return config;
+};
+
 /**
  * prevent next process
  * @return {Promise} []
@@ -973,14 +989,17 @@ think.uuid = (length = 32) => {
  * @return {}      []
  */
 think.session = http => {
+  //if session is init, return
   if (http._session) {
     return http._session;
   }
+
   let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
   if (!Cookie) {
     Cookie = think.require('cookie');
     thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
   }
+
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
   let cookie = http._cookie[name];
@@ -1004,6 +1023,7 @@ think.session = http => {
     http._cookie[name] = sessionCookie;
     http.cookie(name, cookie, options);
   }
+
   let type = sessionOptions.type || 'base';
   if (type === 'base') {
     if (think.config('cluster_on')) {
@@ -1011,8 +1031,9 @@ think.session = http => {
       think.log('in cluster mode, session can\'t use memory for storage, convert to File');
     }
   }
+  
   let cls = think.adapter('session', type);
-  let conf = think.extend({}, sessionOptions, {cookie: sessionCookie});
+  let conf = think.mergeConfig(sessionOptions, {cookie: sessionCookie});
   let session = new cls(conf);
   http._session = session;
   http.once('afterEnd', () => session.flush && session.flush());
