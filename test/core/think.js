@@ -340,6 +340,18 @@ describe('core/think.js', function(){
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
+    it('mode mini, has prefix', function(){
+      var mode = think.mode;
+      think.mode = think.mode_mini;
+      var APP_PATH = think.APP_PATH;
+      think.APP_PATH = '/path/to/project/app';
+
+      var path = think.getPath(undefined, undefined, '/prefix');
+      //console.log(path)
+      assert.equal(path, '/path/to/project/app/prefix/controller');
+      think.mode = mode;
+      think.APP_PATH = APP_PATH;
+    })
     it('mode mini with model', function(){
       var mode = think.mode;
       think.mode = think.mode_mini;
@@ -549,6 +561,54 @@ describe('core/think.js', function(){
         assert.equal(msg.indexOf('test') > -1, true)
       }
       think.log('test');
+      console.log = log;
+    })
+    it('think.log, type is false', function(){
+      var data = think.log('www', false);
+      assert.equal(data, undefined)
+    })
+    it('think.log, type is true', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true)
+      }
+      think.log('test', true);
+      console.log = log;
+    })
+    it('think.log, showTime is false', function(){
+      var data = think.log('www', 'LOG', false);
+      assert.equal(data, undefined)
+    })
+    it('think.log, showTime is true', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true)
+      }
+      think.log('test', 'www', true);
+      console.log = log;
+    })
+     it('think.log, msg is object', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('welefen') > -1, true)
+      }
+      think.log({name: "welefen"}, 'www');
+      console.log = log;
+    })
+     it('think.log, msg is array', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('welefen') > -1, true)
+      }
+      think.log(['welefen'], 'www');
+      console.log = log;
+    })
+    it('think.log, showTime is null', function(){
+      var log = console.log;
+      console.log = function(msg){
+        assert.equal(msg.indexOf('test') > -1, true)
+      }
+      think.log('test', 'www', null);
       console.log = log;
     })
     it('think.log with type', function(){
@@ -2189,6 +2249,24 @@ describe('core/think.js', function(){
           done();
         }, 10)
       })
+    })
+  })
+
+  describe('think.mergeConfig', function(){
+    it('merge empty', function(){
+      var config = think.mergeConfig();
+      assert.deepEqual(config, {})
+    })
+    it('merge, has adapter & type', function(){
+      var config = think.mergeConfig({
+        type: 'file',
+        adapter: {
+          file: {
+            name: '111'
+          }
+        }
+      });
+      assert.deepEqual(config, {'type': 'file', 'name': '111'})
     })
   })
   
