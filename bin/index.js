@@ -292,6 +292,15 @@ var _copyErrorTemplateFiles = function(){
   copyFile('view/error_500.html', commonViewPath + '/error_500.html');
   copyFile('view/error_503.html', commonViewPath + '/error_503.html');
 };
+
+var getSecret = function(length){
+  length = length || 8;
+  var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()`1234567890';
+  var arr = str.split('').sort(function(){
+    return Math.random() >= 0.5 ? 1 : -1;
+  }).slice(0, length);
+  return arr.join('');
+}
 /**
  * copy common config files
  * @return {}             []
@@ -304,6 +313,9 @@ var _copyCommonConfigFiles = function(){
   copyFile('config/view.js', rootPath + '/view.js');
   copyFile('config/db.js', rootPath + '/db.js');
   copyFile('config/hook.js', rootPath + '/hook.js');
+  copyFile('config/session.js', rootPath + '/session.js', {
+    '<SECRET>': getSecret()
+  });
 
   mkdir(rootPath + '/env');
   copyFile('config/env/development.js', rootPath + '/env/development.js');
