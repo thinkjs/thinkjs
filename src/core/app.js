@@ -161,7 +161,7 @@ export default class extends think.http.base {
     this.logPid(port);
 
     //start websocket
-    let websocket = think.config('websocket');
+    let websocket = think.mergeConfig(think.config('websocket'));
     if(websocket.on){
       let Cls = think.adapter('websocket', websocket.type);
       let instance = new Cls(server, websocket, this);
