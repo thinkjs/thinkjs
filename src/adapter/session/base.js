@@ -15,11 +15,13 @@ export default class extends think.base {
    * @param  {Object} config []
    * @return {}         []
    */
-  init(config = {}){
+  init(options){
 
-    this.timeout = config.timeout;
+    options = think.mergeConfig(options);
+
+    this.timeout = options.timeout;
     //key is session cookie value
-    this.cookie = config.cookie;
+    this.cookie = options.cookie;
     //store
     this.store = new BaseStore({
       type: thinkCache.SESSION

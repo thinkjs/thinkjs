@@ -20,7 +20,10 @@ export default class extends think.adapter.session {
    * @param  {Object} options []
    * @return {}         []
    */
-  init(options = {}){
+  init(options){
+    
+    options = think.mergeConfig(options);
+
     this.cookie = options.cookie;
     this.timeout = options.timeout;
 

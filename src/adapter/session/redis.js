@@ -11,7 +11,10 @@ export default class extends think.adapter.session {
    * @param  {Object} options []
    * @return {}         []
    */
-  init(options = {}){
+  init(options){
+    
+    options = think.mergeConfig(options);
+
     this.timeout = options.timeout;
     this.cookie = options.cookie;
     this.redis = new redisSocket(options);
