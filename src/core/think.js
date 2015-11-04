@@ -1003,6 +1003,7 @@ think.session = http => {
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
   let cookie = http._cookie[name];
+  
   //validate cookie sign
   if (cookie && secret) {
     cookie = Cookie.unsign(cookie, secret);
@@ -1011,7 +1012,9 @@ think.session = http => {
       http._cookie[name] = cookie;
     }
   }
+
   let sessionCookie = cookie;
+  //generate session cookie when cookie is not set
   if (!cookie) {
     let options = sessionOptions.cookie || {};
     cookie = think.uuid(options.length || 32);
@@ -1032,10 +1035,14 @@ think.session = http => {
     }
   }
   
+  let conf = think.mergeConfig(sessionOptions, {
+    cookie: sessionCookie
+  });
   let cls = think.adapter('session', type);
-  let conf = think.mergeConfig(sessionOptions, {cookie: sessionCookie});
   let session = new cls(conf);
   http._session = session;
+
+  //save session data after request end
   http.once('afterEnd', () => session.flush && session.flush());
   return session;
 };
