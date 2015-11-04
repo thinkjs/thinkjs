@@ -1138,7 +1138,7 @@ think.service = (superClass, methods, module) => {
  * @return {}       []
  */
 think.cache = async (name, value, options = {}) => {
-  options = think.extend({}, think.config('cache'), options);
+  options = think.mergeConfig(think.config('cache'), options);
   let Cls = think.adapter('cache', options.type || 'base');
   let instance = new Cls(options);
   // get cache
