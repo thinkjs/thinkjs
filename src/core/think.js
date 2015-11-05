@@ -1452,7 +1452,7 @@ think.parallelLimit = (key, data, callback, options = {}) => {
     options = callback || {};
     callback = data;
     data = key;
-    key = 'parallelLimit';
+    key = '';
   }
   if(!think.isFunction(callback)){
     options = callback || {};
@@ -1461,9 +1461,10 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   if(think.isNumber(options)){
     options = {limit: options};
   }
+  
   let flag = !think.isArray(data) || options.array;
   if(!flag){
-    key = Math.random() + '';
+    key = '';
   }
 
   //get parallel limit class
@@ -1473,11 +1474,15 @@ think.parallelLimit = (key, data, callback, options = {}) => {
     thinkCache(thinkCache.COLLECTION, 'limit', Limit);
   }
 
-  //get instance
-  let instance = thinkCache(thinkCache.LIMIT, key);
-  if(!instance){
+  let instance;
+  if(key){
+    instance = thinkCache(thinkCache.LIMIT, key);
+    if(!instance){
+      instance = new Limit(options.limit, callback);
+      thinkCache(thinkCache.LIMIT, key, instance);
+    }
+  }else{
     instance = new Limit(options.limit, callback);
-    thinkCache(thinkCache.LIMIT, key, instance);
   }
 
   if(flag){
