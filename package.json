@@ -30,6 +30,7 @@
     "mysql": "2.9.0",
     "thinkit": "3.1.0",
     "babel-runtime": "5.8.25",
+    "babel-core": "5.8.33",
     "co": "4.6.0",
     "colors": "1.1.2",
     "validator": "4.2.0",

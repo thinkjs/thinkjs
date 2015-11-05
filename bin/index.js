@@ -588,12 +588,6 @@ var createProject = function(){
   console.log('  $ npm install');
   console.log();
 
-  if(program.es6){
-    console.log('  watch compile:');
-    console.log('  $ npm run watch-compile');
-    console.log();
-  }
-
   console.log('  run the app:');
   console.log('  $ npm start');
 

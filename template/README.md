@@ -7,14 +7,6 @@ application created by [ThinkJS](http://www.thinkjs.org)
 npm install
 ```
 
-## watch-compile
-
-if create application with `--es6` paramter, must be compile code before start server.
-
-```
-npm run watch-compile
-```
-
 ## start server
 
 ```

@@ -2,8 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
-
 import './core/think.js';
+
+//babel not export default property
+//so can not use `import babel from 'babel-core'`
+let babel = require('babel-core');
 
 export default class {
   /**
@@ -71,7 +74,6 @@ export default class {
    */
   checkEnv(){
     this.checkNodeVersion();
-    this.checkAppPath();
   }
   /**
    * check node version
@@ -91,22 +93,6 @@ export default class {
       think.log(colors => {
         return `${colors.red('[ERROR]')} ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`;
       });
-      console.log();
-      process.exit();
-    }
-  }
-  /**
-   * check app path
-   * @return {} []
-   */
-  checkAppPath(){
-    if(think.isDir(think.APP_PATH)){
-      return;
-    }
-    if(think.isDir(`${think.ROOT_PATH}/src`)){
-      think.log(colors => {
-        return `${colors.red('[ERROR]')} please open another terminal to run \`${colors.cyan('npm run watch-compile')}\` command before start server.`;
-      }, '', null);
       console.log();
       process.exit();
     }
@@ -425,7 +411,7 @@ export default class {
       if(hasChange){
         this.load();
       }
-    }, 1000);
+    }, 200);
   }
   /**
    * capture error
@@ -459,7 +445,78 @@ export default class {
     return think.require('app').run();
   }
   /**
-   * load
+   * use babel compile code
+   * @return {} []
+   */
+  compile(srcPath, outPath, stopWatch){
+    srcPath = srcPath || `${think.ROOT_PATH}/src`;
+    outPath = outPath || `${think.ROOT_PATH}/app`;
+
+    if(!think.isDir(srcPath)){
+      return;
+    }
+    
+    think.autoCompile = true;
+
+    //store compiled files last mtime
+    let compiledMtime = {};
+
+    //compile single file
+    let compileFile = (file, onlyCopy) => {
+      let filePath = `${srcPath}/${file}`;
+      let content = fs.readFileSync(filePath, 'utf8');
+      if(!content){
+        return;
+      }
+      if(onlyCopy){
+        fs.writeFileSync(`${outPath}/${file}`, content);
+        return;
+      }
+      let startTime = Date.now();
+      try{
+        let data = babel.transform(content, {
+          retainLines: true,
+          stage: 0,
+          modules: 'common',
+          loose: true,
+          optional: 'runtime'
+        });
+        think.log(`compile file ${file}`, 'BABEL', startTime);
+        think.mkdir(path.dirname(`${outPath}/${file}`));
+        fs.writeFileSync(`${outPath}/${file}`, data.code);
+      }catch(e){
+        think.log(colors => {
+          return colors.red(`compile file ${file} error`);
+        }, 'BABEL');
+        think.log(e);
+      }
+    };
+    
+    let fn = () => {
+      let files = think.getFiles(srcPath);
+      files.forEach(function(file){
+        var extname = path.extname(file);
+        if(extname !== '.js'){
+          compileFile(file, true);
+          return;
+        }
+        var mTime = fs.statSync(`${srcPath}/${file}`).mtime.getTime();
+        if(!compiledMtime[file] || mTime > compiledMtime[file]){
+          compileFile(file);
+          compiledMtime[file] = mTime;
+          return;
+        }
+      });
+    };
+
+    if(stopWatch){
+      fn();
+    }else{
+      setInterval(fn, 100);
+    }
+  }
+  /**
+   * load, convenient for plugins
    * @return {} []
    */
   static load(){

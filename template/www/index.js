@@ -9,5 +9,7 @@ var instance = new thinkjs({
   RESOURCE_PATH: __dirname,
   env: 'development'
 });
+//watch compile code
+instance.compile();
 
 instance.run();

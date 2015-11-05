@@ -172,41 +172,41 @@ describe('index.js', function(){
     })
     instance.autoReload();
   })
-  it('checkAppPath, empty', function(){
-    var instance = new thinkjs({
-      ROOT_PATH: __dirname,
-      APP_PATH: __dirname + '/testApp',
-    });
-    instance.checkAppPath();
-  })
-  it('checkAppPath, empty', function(done){
-    var instance = new thinkjs({
-      ROOT_PATH: __dirname,
-      APP_PATH: __dirname + '/testApp',
-    });
-    think.mkdir(think.APP_PATH)
-    instance.checkAppPath();
-    think.rmdir(think.APP_PATH).then(done)
-  })
-  it('checkAppPath, has src', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mkdir(think.ROOT_PATH + '/src');
-    var flag = 0;
-    muk(think, 'log', function(fn){
-      fn({red: function(){}, cyan: function(){}});
-      flag++;
-    })
-    muk(process, 'exit', function(){
-      flag++;
-    })
-    instance.checkAppPath();
-    assert.equal(flag, 2);
-    muk.restore();
-    think.rmdir(think.ROOT_PATH + '/src').then(done);
-  })
+  // it('checkAppPath, empty', function(){
+  //   var instance = new thinkjs({
+  //     ROOT_PATH: __dirname,
+  //     APP_PATH: __dirname + '/testApp',
+  //   });
+  //   instance.checkAppPath();
+  // })
+  // it('checkAppPath, empty', function(done){
+  //   var instance = new thinkjs({
+  //     ROOT_PATH: __dirname,
+  //     APP_PATH: __dirname + '/testApp',
+  //   });
+  //   think.mkdir(think.APP_PATH)
+  //   instance.checkAppPath();
+  //   think.rmdir(think.APP_PATH).then(done)
+  // })
+  // it('checkAppPath, has src', function(done){
+  //   var instance = new thinkjs({
+  //     APP_PATH: __dirname + '/testApp',
+  //     ROOT_PATH: __dirname
+  //   });
+  //   think.mkdir(think.ROOT_PATH + '/src');
+  //   var flag = 0;
+  //   muk(think, 'log', function(fn){
+  //     fn({red: function(){}, cyan: function(){}});
+  //     flag++;
+  //   })
+  //   muk(process, 'exit', function(){
+  //     flag++;
+  //   })
+  //   instance.checkAppPath();
+  //   assert.equal(flag, 2);
+  //   muk.restore();
+  //   think.rmdir(think.ROOT_PATH + '/src').then(done);
+  // })
   it('checkFileName, path not exist', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',

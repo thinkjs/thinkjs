@@ -72,13 +72,6 @@ thinkjs new project_path --es6
 
 http://www.thinkjs.org/doc/create_project.html
 
-## Watch Compile
-
-```sh
-cd project_path;
-npm run watch-compile
-```
-
 ## Start Application
 
 ```sh

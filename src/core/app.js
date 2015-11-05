@@ -182,6 +182,7 @@ export default class extends think.http.base {
     think.log(() => `ThinkJS Version: ${think.version}`, 'THINK');
     think.log(colors => `Cluster Status: ${colors.magenta(clusterStatus)}`, 'THINK');
     think.log(colors => `WebSocket Status: ${colors.magenta(websocketStatus)}`, 'THINK');
+    think.log(colors => `File Auto Compile: ${colors.magenta(!!think.autoCompile)}`, 'THINK');
     think.log(colors => `File Auto Reload: ${colors.magenta(think.config('auto_reload'))}`, 'THINK');
     think.log(colors => `App Enviroment: ${colors.magenta(think.env)}\n`, 'THINK');
   }
