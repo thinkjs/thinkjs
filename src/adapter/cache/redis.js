@@ -45,7 +45,7 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   get(name){
-    let instance = this.getRedisInstance(name);
+    let instance = this.getRedisInstance('get');
     return instance.get(this.keyPrefix + name).then(value => {
       if (value) {
         return JSON.parse(value);
@@ -65,7 +65,7 @@ export default class extends think.adapter.cache {
       value = name[key];
       name = key;
     }
-    let instance = this.getRedisInstance(name);
+    let instance = this.getRedisInstance('set');
     return instance.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(() => {});
   }
   /**
@@ -74,7 +74,17 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   delete(name){
-    let instance = this.getRedisInstance(name);
+    let instance = this.getRedisInstance('delete');
     return instance.delete(this.keyPrefix + name).catch(() => {});
+  }
+  /**
+   * wrap
+   * @param  {[type]}    name []
+   * @param  {...[type]} data []
+   * @return {[type]}         []
+   */
+  wrap(command, name, ...data){
+    let instance = this.getRedisInstance('delete');
+    return instance.wrap(command, this.keyPrefix + name, ...data);
   }
 }
