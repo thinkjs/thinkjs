@@ -368,6 +368,18 @@ export default class {
       require.cache[file] = null;
     };
     /**
+     * log reload file
+     * @param  {String} file []
+     * @return {}      []
+     */
+    let log = file => {
+      if(!think.config('log_auto_reload')){
+        return;
+      }
+      file = file.slice(think.APP_PATH.length);
+      think.log(`reload file ${file}`, 'RELOAD');
+    }
+    /**
      * check change form cache
      * @return {} []
      */
@@ -387,6 +399,7 @@ export default class {
           clearFileCache(file);
           autoReload[file] = mTime;
           hasChange = true;
+          log(file);
         }
       }
       return hasChange;
