@@ -3,7 +3,7 @@
  * dependency package versions
  */
 export default {
-  redis: '0.12.1',
+  redis: '2.3.0',
   sqlite3: '3.0.8',
   ejs: '2.3.2',
   jade: '1.11.0',
