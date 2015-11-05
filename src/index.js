@@ -378,7 +378,8 @@ export default class {
       }
       file = file.slice(think.APP_PATH.length);
       think.log(`reload file ${file}`, 'RELOAD');
-    }
+    };
+    
     /**
      * check change form cache
      * @return {} []
@@ -432,8 +433,12 @@ export default class {
    */
   captureError(){
     process.on('uncaughtException', function(err){
+      let msg = err.message;
       err = think.error(err, 'port:' + think.config('port'));
       think.log(err);
+      if(msg.indexOf(' EADDRINUSE ') > -1){
+        process.exit();
+      }
     });
   }
   /**
