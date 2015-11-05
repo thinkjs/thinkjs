@@ -513,7 +513,11 @@ export default class {
    * use babel compile code
    * @return {} []
    */
-  compile(srcPath, outPath, disableWatch){
+  compile(srcPath, outPath, log){
+    if(srcPath === true){
+      log = true;
+      srcPath = '';
+    }
     srcPath = srcPath || `${think.ROOT_PATH}/src`;
     outPath = outPath || `${think.ROOT_PATH}/app`;
 
@@ -546,7 +550,9 @@ export default class {
           loose: true,
           optional: 'runtime'
         });
-        think.log(`compile file ${file}`, 'BABEL', startTime);
+        if(log){
+          think.log(`compile file ${file}`, 'BABEL', startTime);
+        }
         think.mkdir(path.dirname(`${outPath}/${file}`));
         fs.writeFileSync(`${outPath}/${file}`, data.code);
       }catch(e){
@@ -574,11 +580,7 @@ export default class {
       });
     };
 
-    if(disableWatch){
-      fn();
-    }else{
-      setInterval(fn, 100);
-    }
+    setInterval(fn, 100);
   }
   /**
    * load, convenient for plugins
