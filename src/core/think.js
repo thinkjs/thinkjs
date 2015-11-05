@@ -1438,6 +1438,7 @@ think.statusAction = async (status = 500, http, log) => {
   
   return think.prevent();
 };
+
 /**
  * parallel limit exec
  * @param  {String}   key      []
@@ -1445,28 +1446,42 @@ think.statusAction = async (status = 500, http, log) => {
  * @param  {Function} callback []
  * @return {}            []
  */
-think.limit = (key, data, options = {}) => {
+think.parallelLimit = (key, data, callback, options = {}) => {
 
-  if(think.isFunction(options)){
-    options = {callback: options};
-  }else if(think.isNumber(options)){
+  if(!think.isString(key) || think.isFunction(data)){
+    options = callback || {};
+    callback = data;
+    data = key;
+    key = 'parallelLimit';
+  }
+  if(!think.isFunction(callback)){
+    options = callback || {};
+    callback = undefined;
+  }
+  if(think.isNumber(options)){
     options = {limit: options};
   }
+  let flag = !think.isArray(data) || options.array;
+  if(!flag){
+    key = Math.random() + '';
+  }
 
+  //get parallel limit class
   let Limit = thinkCache(thinkCache.COLLECTION, 'limit');
   if (!Limit) {
     Limit = think.require('limit');
     thinkCache(thinkCache.COLLECTION, 'limit', Limit);
   }
 
+  //get instance
   let instance = thinkCache(thinkCache.LIMIT, key);
   if(!instance){
-    instance = new Limit(options.limit, options.callback);
+    instance = new Limit(options.limit, callback);
     thinkCache(thinkCache.LIMIT, key, instance);
   }
 
-  if(!think.isArray(data) || options.array){
+  if(flag){
     return instance.add(data);
   }
-  return instance.addAll(data, options.ignoreError);
+  return instance.addMany(data, options.ignoreError);
 };

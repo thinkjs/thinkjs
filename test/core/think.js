@@ -2369,7 +2369,138 @@ describe('core/think.js', function(){
       })
     })
   })
+  describe('think.parallelLimit', function(done){
+    it('normal', function(){
+      think.parallelLimit('key', 'name', function(name){
+        return name;
+      }).then(function(data){
+        assert.equal(data, 'name');
+        done();
+      })
+    })
 
+    it('normal, is not function', function(done){
+      try{
+        think.parallelLimit('keywwww', 'name', {limit: 10});
+        assert.equal(1, 2);
+      }catch(e){
+        done();
+      };
+    })
+
+    it('normal, with options', function(){
+      think.parallelLimit('key', 'name', function(name){
+        return name;
+      }, {limit: 10}).then(function(data){
+        assert.equal(data, 'name');
+        done();
+      })
+    })
+    it('key is not set', function(){
+      think.parallelLimit('data', function(name){
+        return name;
+      }).then(function(data){
+        assert.equal(data, 'data');
+        done();
+      })
+    })
+    it('key is not string', function(){
+      think.parallelLimit({name: 'thinkjs'}, function(name){
+        return name;
+      }).then(function(data){
+        assert.deepEqual(data, {name: 'thinkjs'});
+        done();
+      })
+    })
+    it('key is array', function(){
+      think.parallelLimit(['thinkjs', 'test'], function(name){
+        return name;
+      }, {array: true}).then(function(data){
+        assert.deepEqual(data, ['thinkjs', 'test']);
+        done();
+      })
+    })
+    it('key is array, reject', function(){
+      think.parallelLimit(['thinkjs', 'test'], function(name){
+        return Promise.reject(new Error('error'));
+      }, {array: true}).catch(function(err){
+        assert.deepEqual(err.message, 'error');
+        done();
+      })
+    })
+    it('key is array, add many, empty', function(){
+      think.parallelLimit([], function(name){
+        return name + 'www';
+      }).then(function(data){
+        assert.deepEqual(data, []);
+        done();
+      })
+    })
+    it('key is array, add many', function(){
+      think.parallelLimit(['thinkjs', 'test'], function(name){
+        return name + 'www';
+      }).then(function(data){
+        assert.deepEqual(data, ['thinkjswww', 'testwww']);
+        done();
+      })
+    })
+    it('key is array, add many, reject', function(){
+      think.parallelLimit(['thinkjs', 'test'], function(name){
+        return Promise.reject(new Error(name))
+      }).catch(function(err){
+        assert.deepEqual(err.message, 'thinkjs');
+        done();
+      })
+    })
+    it('key is array, add many, reject, ignore error', function(){
+      think.parallelLimit(['thinkjs', 'test'], function(name){
+        return Promise.reject(new Error(name))
+      }, {ignoreError: true}).then(function(data){
+        assert.deepEqual(data, [null,null]);
+        done();
+      })
+    })
+    it('key is array, add many, reject, ignore error 1', function(){
+      think.parallelLimit('dddd', ['thinkjs', 'test'], function(name){
+        return Promise.reject(new Error(name))
+      }, {ignoreError: true}).then(function(data){
+        assert.deepEqual(data, [null,null]);
+        done();
+      })
+    })
+    it('key is array, add many, with limit 1', function(){
+      think.parallelLimit(['thinkjs', 'test'], function(name){
+        return name + 'www';
+      }, {limit: 1}).then(function(data){
+        assert.deepEqual(data, ['thinkjswww', 'testwww']);
+        done();
+      })
+    })
+    it('key is function', function(){
+      think.parallelLimit(function(name){
+        return 'thinkjs';
+      }).then(function(data){
+        assert.deepEqual(data, 'thinkjs');
+        done();
+      })
+    })
+    it('key is function, with limit', function(){
+      think.parallelLimit(function(name){
+        return 'thinkjs';
+      }, 20).then(function(data){
+        assert.deepEqual(data, 'thinkjs');
+        done();
+      })
+    })
+    it('key is function, with limit 2', function(){
+      think.parallelLimit(function(name){
+        return 'thinkjs';
+      }, {limit: 20}).then(function(data){
+        assert.deepEqual(data, 'thinkjs');
+        done();
+      })
+    })
+  })
 })
 
 

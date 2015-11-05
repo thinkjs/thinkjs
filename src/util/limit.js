@@ -33,10 +33,10 @@ export default class extends think.base {
     return deferred.promise;
   }
   /**
-   * add all data once
+   * add many data once
    * @param {Array} dataList [data array]
    */
-  addAll(dataList, ignoreError){
+  addMany(dataList, ignoreError){
     if (!dataList || dataList.length === 0) {
       return Promise.resolve();
     }
@@ -64,7 +64,7 @@ export default class extends think.base {
     }
     this.doing++;
     let item = this.deferreds[this.index++];
-    let callback = this.isFunction(item.data) ? item.data : this.callback;
+    let callback = think.isFunction(item.data) ? item.data : this.callback;
     if (!think.isFunction(callback)) {
       throw new Error('data item or callback must be a function');
     }
