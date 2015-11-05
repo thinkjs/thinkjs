@@ -18,6 +18,7 @@ let config = {
   timeout: 120, //120 seconds
 
   auto_reload: false, //file auto reload
+  log_auto_reload: false, //log file auto reload
 
   resource_on: true,
   resource_reg: /^(static\/|[^\/]+\.(?!js|html)\w+$)/, 
