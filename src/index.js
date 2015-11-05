@@ -185,9 +185,51 @@ export default class {
     let configs = think.extend(config, commonConfig);
     thinkCache(thinkCache.CONFIG, configs);
     let modules = this.getModule();
+
     //load modules config
     modules.forEach(module => {
       think.getModuleConfig(module);
+    });
+  }
+  /**
+   * check module config
+   * @return {} []
+   */
+  checkModuleConfig(){
+    // check module config
+    // some config must be set in common module
+    let keys = [], errorKey = 'error_config_key';
+    let errorConfigKeys = thinkCache(thinkCache.COLLECTION, errorKey);
+    if(think.isEmpty(errorConfigKeys)){
+      thinkCache(thinkCache.COLLECTION, errorKey, []);
+      errorConfigKeys = thinkCache(thinkCache.COLLECTION, errorKey);
+    }
+
+    let checkModuleConfig = module => {
+      if(keys.length === 0){
+        keys = Object.keys(require(`${think.THINK_LIB_PATH}/config/config.js`));
+      }
+      let configFilePath = think.getPath(module, think.dirname.config) + '/config.js';
+      if(!think.isFile(configFilePath)){
+        return;
+      }
+      let config = require(configFilePath);
+      keys.forEach(key => {
+        if(config[key] && errorConfigKeys.indexOf(key) === -1){
+          errorConfigKeys.push(key);
+          think.log(colors => {
+            return colors.red(`config key \`${key}\` can not be set in \`${module}\` module, must be set in \`common\` module`);
+          }, 'CONFIG');
+        }
+      });
+    };
+
+    let modules = this.getModule();
+    //load modules config
+    modules.forEach(module => {
+      if(think.mode === think.mode_module && module !== 'common'){
+        checkModuleConfig(module);
+      }
     });
   }
   /**
@@ -344,6 +386,8 @@ export default class {
 
     this.loadBootstrap();
 
+    this.checkModuleConfig();
+
     //load alias export at last
     //this.loadAliasExport();
   }
@@ -373,13 +417,16 @@ export default class {
      * @return {}      []
      */
     let log = file => {
-      if(!think.config('log_auto_reload')){
+      if(!think.config('log_auto_reload') || !file){
         return;
       }
-      file = file.slice(think.APP_PATH.length);
-      think.log(`reload file ${file}`, 'RELOAD');
+      //only log app files changed
+      if(file.indexOf(think.APP_PATH) === 0){
+        file = file.slice(think.APP_PATH.length);
+        think.log(`reload file ${file}`, 'RELOAD');
+      }
     };
-    
+
     /**
      * check change form cache
      * @return {} []
@@ -466,7 +513,7 @@ export default class {
    * use babel compile code
    * @return {} []
    */
-  compile(srcPath, outPath, stopWatch){
+  compile(srcPath, outPath, disableWatch){
     srcPath = srcPath || `${think.ROOT_PATH}/src`;
     outPath = outPath || `${think.ROOT_PATH}/app`;
 
@@ -527,7 +574,7 @@ export default class {
       });
     };
 
-    if(stopWatch){
+    if(disableWatch){
       fn();
     }else{
       setInterval(fn, 100);
