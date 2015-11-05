@@ -1,6 +1,6 @@
 'use strict';
 
-let redisSocket = think.adapter('socket', 'redis');
+let RedisSocket = think.adapter('socket', 'redis');
 
 /**
  * redis cache
@@ -14,17 +14,30 @@ export default class extends think.adapter.cache {
   init(options = {}){
 
     options = think.mergeConfig(think.config('redis'), options);
+    this.options = options;
     
     this.timeout = options.timeout;
     this.keyPrefix = options.prefix;
-
-    let key = think.md5(JSON.stringify(options));
+  }
+  /**
+   * get redis instance
+   * @return {Object} []
+   */
+  getRedisInstance(name){
+    let parser = this.options.callback;
+    let options;
+    if(think.isFunction(parser)){
+      options = parser(think.extend(this.options, {command: name}));
+    }else{
+      options = this.options;
+    }
+    let key = [options.host, options.port, options.password, options.timeout].join('|');
     let instance = thinkCache(thinkCache.REDIS, key);
-    if (!instance) {
-      instance = new redisSocket(options);
+    if(!instance){
+      instance = new RedisSocket(options);
       thinkCache(thinkCache.REDIS, key, instance);
     }
-    this.redis = instance;
+    return instance;
   }
   /**
    * get data
@@ -32,7 +45,8 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   get(name){
-    return this.redis.get(this.keyPrefix + name).then(value => {
+    let instance = this.getRedisInstance(name);
+    return instance.get(this.keyPrefix + name).then(value => {
       if (value) {
         return JSON.parse(value);
       }
@@ -51,7 +65,8 @@ export default class extends think.adapter.cache {
       value = name[key];
       name = key;
     }
-    return this.redis.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(() => {});
+    let instance = this.getRedisInstance(name);
+    return instance.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(() => {});
   }
   /**
    * delete data
@@ -59,6 +74,7 @@ export default class extends think.adapter.cache {
    * @return {Promise}      []
    */
   delete(name){
-    return this.redis.delete(this.keyPrefix + name).catch(() => {});
+    let instance = this.getRedisInstance(name);
+    return instance.delete(this.keyPrefix + name).catch(() => {});
   }
 }
