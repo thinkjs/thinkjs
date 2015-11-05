@@ -48,9 +48,12 @@
     "rest",
     "restful",
     "router",
-    "app",
     "api",
     "es6",
+    "es7",
+    "async",
+    "await",
+    "yield",
     "websocket",
     "generator-function"
   ],
