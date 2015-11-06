@@ -4,9 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import './core/think.js';
 
-//babel not export default property
-//so can not use `import babel from 'babel-core'`
-let babel = require('babel-core');
+
 
 export default class {
   /**
@@ -514,73 +512,10 @@ export default class {
    * @return {} []
    */
   compile(srcPath, outPath, log){
-    if(srcPath === true){
-      log = true;
-      srcPath = '';
-    }
-    srcPath = srcPath || `${think.ROOT_PATH}/src`;
-    outPath = outPath || `${think.ROOT_PATH}/app`;
-
-    if(!think.isDir(srcPath)){
-      return;
-    }
-    
-    think.autoCompile = true;
-
-    //store compiled files last mtime
-    let compiledMtime = {};
-
-    //compile single file
-    let compileFile = (file, onlyCopy) => {
-      let filePath = `${srcPath}/${file}`;
-      let content = fs.readFileSync(filePath, 'utf8');
-      if(!content){
-        return;
-      }
-      if(onlyCopy){
-        fs.writeFileSync(`${outPath}/${file}`, content);
-        return;
-      }
-      let startTime = Date.now();
-      try{
-        let data = babel.transform(content, {
-          retainLines: true,
-          stage: 0,
-          modules: 'common',
-          loose: true,
-          optional: 'runtime'
-        });
-        if(log){
-          think.log(`compile file ${file}`, 'BABEL', startTime);
-        }
-        think.mkdir(path.dirname(`${outPath}/${file}`));
-        fs.writeFileSync(`${outPath}/${file}`, data.code);
-      }catch(e){
-        think.log(colors => {
-          return colors.red(`compile file ${file} error`);
-        }, 'BABEL');
-        think.log(e);
-      }
-    };
-    
-    let fn = () => {
-      let files = think.getFiles(srcPath);
-      files.forEach(function(file){
-        var extname = path.extname(file);
-        if(extname !== '.js'){
-          compileFile(file, true);
-          return;
-        }
-        var mTime = fs.statSync(`${srcPath}/${file}`).mtime.getTime();
-        if(!compiledMtime[file] || mTime > compiledMtime[file]){
-          compileFile(file);
-          compiledMtime[file] = mTime;
-          return;
-        }
-      });
-    };
-
-    setInterval(fn, 100);
+    let WatchCompile = require('./util/watch_compile.js');
+    let instance = new WatchCompile(srcPath, outPath, log);
+    let flag = instance.run();
+    think.autoCompile = flag;
   }
   /**
    * load, convenient for plugins
