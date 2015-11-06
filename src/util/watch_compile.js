@@ -109,6 +109,7 @@ export default class extends think.base {
     if(!think.isDir(this.srcPath)){
       return;
     }
+    this.compile();
     this.timer = setInterval(this.compile.bind(this), 100);
     return true;
   }
