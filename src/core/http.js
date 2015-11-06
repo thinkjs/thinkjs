@@ -118,7 +118,8 @@ export default class extends think.base {
     http.headers = this.req.headers;
 
     let urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
-    http.pathname = this.normalizePathname(urlInfo.pathname);
+    let pathname = decodeURIComponent(urlInfo.pathname);
+    http.pathname = this.normalizePathname(pathname);
     http.query = urlInfo.query;
     http.host = urlInfo.host;
     http.hostname = urlInfo.hostname;
