@@ -194,6 +194,9 @@ export default class {
    * @return {} []
    */
   checkModuleConfig(){
+    if(think.mode !== think.mode_module){
+      return;
+    }
     // check module config
     // some config must be set in common module
     let keys = [], errorKey = 'error_config_key';
@@ -225,7 +228,7 @@ export default class {
     let modules = this.getModule();
     //load modules config
     modules.forEach(module => {
-      if(think.mode === think.mode_module && module !== 'common'){
+      if(module !== 'common'){
         checkModuleConfig(module);
       }
     });
@@ -394,83 +397,11 @@ export default class {
    * @return {} []
    */
   autoReload(){
-    let autoReload = thinkCache(thinkCache.AUTO_RELOAD);
-    //clear file cache
-    let clearFileCache = file => {
-      let mod = require.cache[file];
-      //remove from parent module
-      if(mod && mod.parent){
-        mod.parent.children.splice(mod.parent.children.indexOf(mod), 1);
-      }
-      //remove children
-      if(mod && mod.children){
-        mod.children.length = 0;
-      }
-      //remove require cache
-      require.cache[file] = null;
-    };
-    /**
-     * log reload file
-     * @param  {String} file []
-     * @return {}      []
-     */
-    let log = file => {
-      if(!think.config('log_auto_reload') || !file){
-        return;
-      }
-      //only log app files changed
-      if(file.indexOf(think.APP_PATH) === 0){
-        file = file.slice(think.APP_PATH.length);
-        think.log(`reload file ${file}`, 'RELOAD');
-      }
-    };
-
-    /**
-     * check change form cache
-     * @return {} []
-     */
-    let checkCacheChange = () => {
-      let hasChange = false;
-      for(let file in require.cache){
-        if(!think.isFile(file)){
-          clearFileCache(file);
-          continue;
-        }
-        let mTime = fs.statSync(file).mtime.getTime();
-        if(!autoReload[file]){
-          autoReload[file] = mTime;
-          continue;
-        }
-        if(mTime > autoReload[file]){
-          clearFileCache(file);
-          autoReload[file] = mTime;
-          hasChange = true;
-          log(file);
-        }
-      }
-      return hasChange;
-    };
-    /**
-     * check change from file
-     * @return {} []
-     */
-    let prevFilesLength = 0;
-    let checkFileChange = () => {
-      let nowFilesLength = think.getFiles(think.APP_PATH).filter(file => {
-        let extname = path.extname(file);
-        return extname === '.js';
-      }).length;
-      let flag = prevFilesLength === nowFilesLength;
-      prevFilesLength = nowFilesLength;
-      return flag;
-    };
-
-    setInterval(() => {
-      let hasChange = checkCacheChange() || checkFileChange();
-      if(hasChange){
-        this.load();
-      }
-    }, 200);
+    let AutoReload = require('./util/auto_reload.js');
+    let instance = new AutoReload(think.APP_PATH, () => {
+      this.load();
+    }, think.config('log_auto_reload'));
+    instance.run();
   }
   /**
    * capture error

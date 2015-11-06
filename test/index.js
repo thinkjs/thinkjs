@@ -162,16 +162,16 @@ describe('index.js', function(){
     muk.restore();
     assert.equal(flag, true);
   })
-  it('autoReload', function(){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    muk(global, 'setInterval', function(fn, time){
-      fn();
-    })
-    instance.autoReload();
-  })
+  // it('autoReload', function(){
+  //   var instance = new thinkjs({
+  //     APP_PATH: __dirname + '/testApp',
+  //     ROOT_PATH: __dirname
+  //   });
+  //   muk(global, 'setInterval', function(fn, time){
+  //     fn();
+  //   })
+  //   instance.autoReload();
+  // })
   // it('checkAppPath, empty', function(){
   //   var instance = new thinkjs({
   //     ROOT_PATH: __dirname,
