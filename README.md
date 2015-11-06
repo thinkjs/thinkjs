@@ -61,7 +61,7 @@ With the help of Babel compiling, we can use the ES6/7 features bodly, and then 
 
 ## Installation
 
-```
+```sh
 npm install -g thinkjs
 ```
 
