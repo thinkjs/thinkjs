@@ -27,7 +27,7 @@ export default class extends think.adapter.cache {
     let parser = this.options.callback;
     let options;
     if(think.isFunction(parser)){
-      options = parser(think.extend(this.options, {command: name}));
+      options = parser(think.extend(this.options, {command: name}), 'cache');
     }else{
       options = this.options;
     }
