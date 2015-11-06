@@ -12,5 +12,5 @@ export default {
   cookie: `${root}/util/cookie.js`,
   validator: `${root}/util/validator.js`,
   await: `${root}/util/await.js`,
-  limit: `${root}/util/limit.js`
+  parallel_limit: `${root}/util/parallel_limit.js`
 };

@@ -1470,7 +1470,7 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   //get parallel limit class
   let Limit = thinkCache(thinkCache.COLLECTION, 'limit');
   if (!Limit) {
-    Limit = think.require('limit');
+    Limit = think.require('parallel_limit');
     thinkCache(thinkCache.COLLECTION, 'limit', Limit);
   }
 
