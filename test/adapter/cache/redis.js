@@ -20,29 +20,36 @@ describe('adapter/cache/redis.js', function() {
     instance = new RedisCache(think.config('cache'));
 
     var data = {};
-    muk(instance.redis, 'set', function(name, value, timeout) {
-      data[name] = {
-        name: name,
-        value: value,
-        timeout: timeout ? Date.now() + timeout * 1e3 : null
-      };
-      return Promise.resolve();
-    });
-    muk(instance.redis, 'get', function(name) {
-      if (data[name]) {
-        if (data[name].timeout && Date.now() > data[name].timeout) {
+    
+    instance.getRedisInstance = function(){
+      return {
+        set: function(name, value, timeout) {
+          data[name] = {
+            name: name,
+            value: value,
+            timeout: timeout ? Date.now() + timeout * 1e3 : null
+          };
+          return Promise.resolve();
+        },
+        get: function(name) {
+          if (data[name]) {
+            if (data[name].timeout && Date.now() > data[name].timeout) {
+              delete data[name];
+              return Promise.resolve();
+            } else {
+              return Promise.resolve(data[name].value);
+            }
+          }
+          return Promise.resolve();
+        },
+        delete: function(name) {
           delete data[name];
           return Promise.resolve();
-        } else {
-          return Promise.resolve(data[name].value);
         }
       }
-      return Promise.resolve();
-    });
-    muk(instance.redis, 'delete', function(name) {
-      delete data[name];
-      return Promise.resolve();
-    });
+    }
+
+    
   });
 
   it('new file cache instance', function() {

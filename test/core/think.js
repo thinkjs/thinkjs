@@ -1611,7 +1611,7 @@ describe('core/think.js', function(){
       })
       
     })
-    it('install package redis@0.12.1', function(done){
+    it('install package redis@2.3.0', function(done){
       var log = think.log;
       think.log = function(){};
       var exec = require('child_process').exec;
@@ -1626,13 +1626,13 @@ describe('core/think.js', function(){
         throw new Error('require error 1')
       }
       require('child_process').exec = function(cmd, options, callback){
-        assert.equal(cmd, 'npm install redis@0.12.1');
+        assert.equal(cmd, 'npm install redis@2.3.0');
         flag = true;
         callback && callback();
       }
 
       think.rmdir(think.THINK_PATH + '/node_modules/redis').then(function(){
-        return think.npm('redis@0.12.1');
+        return think.npm('redis@2.3.0');
       }).then(function(data){
         require('child_process').exec = exec;
         think.require = trequire;
@@ -1658,7 +1658,8 @@ describe('core/think.js', function(){
         throw new Error('require error 2')
       }
       require('child_process').exec = function(cmd, options, callback){
-        assert.equal(cmd, 'npm install redis@0.12.1');
+        console.log(cmd)
+        assert.equal(cmd, 'npm install redis@2.3.0');
         flag = true;
         callback && callback();
       }
