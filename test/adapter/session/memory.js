@@ -15,9 +15,9 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
-var BaseSession = think.adapter('session', 'base');
+var BaseSession = think.adapter('session', 'memory');
 
-describe('adapter/session/base', function(){
+describe('adapter/session/memory.js', function(){
   it('get instance', function(){
     var instance = new BaseSession({
       cookie: 'welefen',

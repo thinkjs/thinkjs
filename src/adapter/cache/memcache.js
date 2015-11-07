@@ -5,7 +5,7 @@ let memcacheSocket = think.adapter('socket', 'memcache');
 /**
  * memcache cache
  */
-export default class extends think.adapter.cache {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} options []

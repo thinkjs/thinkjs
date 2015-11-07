@@ -1150,18 +1150,18 @@ describe('core/think.js', function(){
       thinkCache(thinkCache.ALIAS_EXPORT, key, null);
     })
     it('create adapter', function(){
-      var fn = think.adapter('session', 'base', {
+      var fn = think.adapter('session', 'memory', {
         getTest1: function(){
           return '___getTest';
         }
-      })
+      });
       assert.equal(think.isFunction(fn.prototype.getTest1), true);
       var instance = new fn();
       var data = instance.getTest1();
       assert.equal(data, '___getTest');
     })
     it('get adapter', function(){
-      var fn = think.adapter('session', 'base');
+      var fn = think.adapter('session', 'memory');
       assert.equal(think.isFunction(fn), true);
       assert.equal(think.isFunction(fn.prototype.get), true);
     })
@@ -1172,16 +1172,16 @@ describe('core/think.js', function(){
         assert.equal(err.stack.indexOf('`adapter_session_welefen111`') > -1, true);
       }
     })
-    it('create adapter', function(){
-      var fn = think.adapter('session', {
-        getTest1: function(){
-          return '___getTest';
-        }
-      })
-      assert.equal(think.isFunction(fn.prototype.getTest1), true);
-      var instance = new fn();
-      var data = instance.getTest1();
-      assert.equal(data, '___getTest');
+    it('create adapter 2, parent is not exist', function(done){
+      try{
+        var fn = think.adapter('session', {
+          getTest1: function(){
+            return '___getTest';
+          }
+        })
+      }catch(e){
+        done();
+      }
     })
     it('create adapter', function(){
       var fn = think.adapter({});
@@ -1199,13 +1199,13 @@ describe('core/think.js', function(){
       assert.equal(think.isFunction(fn), true);
       assert.equal(think.isFunction(fn.prototype.getName), true);
     })
-    it('create adapter, super', function(){
-      var fn = think.adapter('adapter_session_base', {});
+    it('create adapter, super 2', function(){
+      var fn = think.adapter('adapter_session_memory', {});
       assert.equal(think.isFunction(fn), true);
       assert.equal(think.isFunction(fn.prototype.get), true);
     })
-    it('create adapter, super', function(){
-      var fn = think.adapter('store', 'base');
+    it('create adapter, super 3', function(){
+      var fn = think.adapter('store', 'memory');
       assert.equal(think.isFunction(fn), true);
       assert.equal(think.isFunction(fn.prototype.get), true);
     })
@@ -1223,7 +1223,7 @@ describe('core/think.js', function(){
       var mode = think.mode;
       var path = think.getPath(undefined, think.dirname.adapter);;
       think.mkdir(path);
-      think.loadAdapter('store', 'base');
+      think.loadAdapter('store', 'memory');
       think.rmdir(path).then(done);
     })
     it('extra adapter', function(done){
@@ -1232,7 +1232,7 @@ describe('core/think.js', function(){
       think.mkdir(path + '/welefentest');
       require('fs').writeFileSync(path + '/welefentest/base.js', 'module.exports=think.Class({}, true)')
       think.loadAdapter();
-      assert.equal(think.isFunction(think.adapter.welefentest), true);
+      assert.equal(think.isFunction(think.adapter.welefentest), false);
       delete think.adapter.welefentest;
       think.rmdir(path).then(done);
     })

@@ -7,9 +7,9 @@ var thinkjs = require('../../../lib/index.js');
 var tjs = new thinkjs();
 tjs.load();
 
-var BaseCache = think.adapter('cache', 'base');
+var BaseCache = think.adapter('cache', 'memory');
 
-describe('adapter/cache/base.js', function() {
+describe('adapter/cache/memory.js', function() {
   var instance;
 
   before(function() {
@@ -18,7 +18,7 @@ describe('adapter/cache/base.js', function() {
 
   it('new base cache instance', function() {
     assert.deepEqual(think.isObject(instance.store), true);
-    assert.deepEqual(instance.gcType, 'cache_base');
+    assert.deepEqual(instance.gcType, 'cache_memory');
   });
 
   it('set cache data', function(done) {

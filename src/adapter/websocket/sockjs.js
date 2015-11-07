@@ -1,8 +1,11 @@
 'use strict';
+
+import Base from './base.js';
+
 /**
  * websocket adapter for sockjs
  */
-export default class extends think.adapter.websocket {
+export default class extends Base {
   /**
    * run
    * @return {} []

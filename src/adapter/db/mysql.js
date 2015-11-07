@@ -1,11 +1,13 @@
 'use strict';
 
+import Base from './base.js';
+
 let MysqlSocket = think.adapter('socket', 'mysql');
 /**
  * mysql db
  * @type {Class}
  */
-export default class extends think.adapter.db {
+export default class extends Base {
   /**
    * get mysql socket instance
    * @param  {Object} config []

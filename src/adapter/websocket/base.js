@@ -2,7 +2,7 @@
 
 import url from 'url';
 
-export default class extends think.base {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} server []

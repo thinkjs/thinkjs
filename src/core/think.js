@@ -712,7 +712,6 @@ think.middleware = (...args) => {
  */
 think.adapter = (...args) => {
   let [type, name, fn] = args;
-
   let length = args.length, key = 'adapter_';
   if(length === 3){
     //register adapter
@@ -723,7 +722,7 @@ think.adapter = (...args) => {
       return;
     }
     //create adapter
-    //module.exports = think.adapter('session', 'base', {})
+    //module.exports = think.adapter('session', 'memory', {})
     else if(think.isObject(fn)){
       return think.Class(think.adapter(type, name), fn);
     }
@@ -774,6 +773,10 @@ think.adapter = (...args) => {
  */
 think.loadAdapter = (type, name = 'base') => {
   let paths = [`${think.THINK_LIB_PATH}/adapter`];
+  
+  //load base adapter
+  think.adapter.base = require(paths[0] + '/base.js');
+
   //common module adapter
   let adapterPath = think.getPath(undefined, think.dirname.adapter);
   if (think.isDir(adapterPath)) {
@@ -788,12 +791,15 @@ think.loadAdapter = (type, name = 'base') => {
     }else{
       let dirs = fs.readdirSync(path);
       dirs.forEach(dir => {
+        if(!think.isDir(`${path}/${dir}`)){
+          return;
+        }
         think.alias(`adapter_${dir}`, `${path}/${dir}`);
         //adapter type base class
-        let cls = think.require(`adapter_${dir}_base`, true);
-        if(cls){
-          think.adapter[dir] = cls;
-        }
+        // let cls = think.require(`adapter_${dir}_base`, true);
+        // if(cls){
+        //   think.adapter[dir] = cls;
+        // }
       });
     }
   });
@@ -1027,8 +1033,8 @@ think.session = http => {
     http.cookie(name, cookie, options);
   }
 
-  let type = sessionOptions.type || 'base';
-  if (type === 'base') {
+  let type = sessionOptions.type || 'memory';
+  if (type === 'memory') {
     if (think.config('cluster_on')) {
       type = 'file';
       think.log('in cluster mode, session can\'t use memory for storage, convert to File');
@@ -1139,7 +1145,7 @@ think.service = (superClass, methods, module) => {
  */
 think.cache = async (name, value, options = {}) => {
   options = think.mergeConfig(think.config('cache'), options);
-  let Cls = think.adapter('cache', options.type || 'base');
+  let Cls = think.adapter('cache', options.type || 'memory');
   let instance = new Cls(options);
   // get cache
   if(value === undefined){

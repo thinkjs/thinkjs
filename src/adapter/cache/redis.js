@@ -5,7 +5,7 @@ let RedisSocket = think.adapter('socket', 'redis');
 /**
  * redis cache
  */
-export default class extends think.adapter.cache {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} options []

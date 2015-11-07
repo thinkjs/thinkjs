@@ -1,11 +1,12 @@
 'use strict';
 
 import querystring from 'querystring';
+import Base from './base.js';
 
 /**
  * mongodb socket
  */
-export default class extends think.adapter.socket {
+export default class extends Base {
   /**
    * init
    * @param  {Object} config []

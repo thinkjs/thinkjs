@@ -15,12 +15,12 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + '/testApp';
 
-var baseStore = think.adapter('store', 'base');
+var baseStore = think.adapter('store', 'memory');
 
-describe('adapter/store/base', function(){
+describe('adapter/store/memory.js', function(){
   it('get instance', function(){
     var instance = new baseStore();
-    assert.deepEqual(instance.config, { type: 'base' });
+    assert.deepEqual(instance.config, { type: thinkCache.MEMORY });
   })
   it('get instance has type', function(){
     var instance = new baseStore({

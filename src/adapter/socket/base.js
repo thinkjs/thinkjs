@@ -1,8 +1,9 @@
 'use strict';
+
 /**
  * socket base class
  */
-export default class extends think.base {
+export default class extends think.adapter.base {
   /**
    * init
    * @return {} []

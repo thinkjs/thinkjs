@@ -1,8 +1,11 @@
 'use strict';
+
+import Base from './base.js';
+
 /**
  * Redis socket class
  */
-export default class extends think.adapter.socket {
+export default class extends Base {
   /**
    * init
    * @param  {Object} config []

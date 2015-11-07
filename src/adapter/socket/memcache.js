@@ -1,8 +1,11 @@
 'use strict';
+
+import Base from './base.js';
+
 /**
  * memcache socket
  */
-export default class extends think.adapter.socket {
+export default class extends Base {
   /**
    * inti
    * @param  {Object} config []

@@ -5,7 +5,7 @@ let redisSocket = think.adapter('socket', 'redis');
 /**
  * redis session
  */
-export default class extends think.adapter.session {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} options []

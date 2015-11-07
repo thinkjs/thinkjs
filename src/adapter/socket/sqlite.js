@@ -1,9 +1,11 @@
 'use strict';
 
+import Base from './base.js';
+
 /**
  * sqlite socket
  */
-export default class extends think.adapter.socket {
+export default class extends Base {
   /**
    * init
    * @param  {Object} config []

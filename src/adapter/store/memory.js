@@ -2,14 +2,14 @@
 /**
  * store base class
  */
-export default class extends think.base {
+export default class extends think.adapter.base {
   /**
    * init
    * @return {} []
    */
   init(config){
     this.config = think.extend({
-      type: thinkCache.BASE
+      type: thinkCache.MEMORY
     }, config);
     
     this.data = thinkCache(this.config.type);

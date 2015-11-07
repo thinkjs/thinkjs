@@ -1,9 +1,12 @@
 'use strict';
+
+import Base from './base.js';
+
 /**
  * ejs template
  * @type {Class}
  */
-export default class extends think.adapter.template {
+export default class extends Base {
   /**
    * run
    * @param  {String} templateFile []

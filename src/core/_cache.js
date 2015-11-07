@@ -42,7 +42,7 @@ global.thinkCache = (type, name, value) => {
  * memory cache
  * @type {String}
  */
-thinkCache.BASE = 'base';
+thinkCache.MEMORY = 'memory';
 /**
  * for store template file list
  * fast check template file is exist, no file io

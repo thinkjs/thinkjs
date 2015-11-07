@@ -1,10 +1,12 @@
 'use strict';
 
+import Base from './base.js';
+
 let SqliteSocket = think.adapter('socket', 'sqlite');
 /**
  * sqlite db
  */
-export default class extends think.adapter.db {
+export default class extends Base {
   /**
    * get sqlite socket instance
    * @param  {Object} config []

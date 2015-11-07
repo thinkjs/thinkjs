@@ -13,7 +13,7 @@ let FileStore = think.adapter('store', 'file');
 /**
  * file session
  */
-export default class extends think.adapter.session {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} options []

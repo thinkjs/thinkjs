@@ -4,12 +4,12 @@
  * base store
  * @type {Class}
  */
-let BaseStore = think.adapter('store', 'base');
+let BaseStore = think.adapter('store', 'memory');
 
 /**
  * memory session
  */
-export default class extends think.base {
+export default class extends think.adapter.base {
   /**
    * init 
    * @param  {Object} config []

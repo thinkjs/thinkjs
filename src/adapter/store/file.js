@@ -6,7 +6,7 @@ import path from 'path';
 /**
  * file store class
  */
-export default class extends think.adapter.store {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} config []

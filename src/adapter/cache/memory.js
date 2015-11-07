@@ -3,11 +3,11 @@
  * base store
  * @type {Class}
  */
-let BaseStore = think.adapter('store', 'base');
+let BaseStore = think.adapter('store', 'memory');
 /**
  * memory cache
  */
-export default class extends think.base {
+export default class extends think.adapter.base {
   /**
    * init
    * @param  {Object} options []
@@ -20,11 +20,11 @@ export default class extends think.base {
     this.timeout = options.timeout;
 
     this.store = new BaseStore({
-      type: thinkCache.BASE
+      type: thinkCache.MEMORY
     });
     
     //set gc type & start gc
-    this.gcType = 'cache_base';
+    this.gcType = 'cache_memory';
     think.gc(this);
   }
   /**

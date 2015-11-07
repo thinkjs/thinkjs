@@ -17,7 +17,7 @@ var Base = require('../../lib/core/http_base.js');
 
 var list = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];
 
-describe('core/base.js', function(){
+describe('core/http_base.js', function(){
   it('Base is function', function(){
     assert.equal(typeof Base, 'function')
   })
@@ -29,9 +29,11 @@ describe('core/base.js', function(){
   })
   it('get cache', function(done){
     var instance = new Base({});
-    instance.cache('xxx', undefined, {type: 'base'}).then(function(data){
+    instance.cache('xxx', undefined, {type: 'memory'}).then(function(data){
       assert.equal(data, undefined)
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('exec hook', function(done){
