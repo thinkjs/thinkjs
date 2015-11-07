@@ -26,7 +26,8 @@ describe('adapter/template/jade.js', function(){
       return {
         compile: function(content, conf){
           assert.equal(content.indexOf("describe('adapter/template/jade.js'") > -1, true);
-          assert.deepEqual(conf, { filename: __filename })
+          assert.equal(conf.filename, __filename)
+          //assert.deepEqual(conf, { filename: __filename })
           return function(data){
             return content;
           }
@@ -37,6 +38,8 @@ describe('adapter/template/jade.js', function(){
       assert.equal(data.indexOf("describe('adapter/template/jade.js'") > -1, true);
       muk.restore();
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('run, config', function(done){
@@ -45,7 +48,8 @@ describe('adapter/template/jade.js', function(){
       return {
         compile: function(content, conf){
           assert.equal(content.indexOf("describe('adapter/template/jade.js'") > -1, true);
-          assert.deepEqual(conf, { filename: __filename , test: 'haha'})
+          assert.equal(conf.test, 'haha')
+          //assert.deepEqual(conf, { filename: __filename , test: 'haha'})
           return function(data){
             assert.deepEqual(data, {name: 'welefen'})
             return content;
@@ -53,10 +57,11 @@ describe('adapter/template/jade.js', function(){
         }
       }
     })
+    muk(think, 'log', function(){})
     instance.run(__filename, {
       name: 'welefen'
     }, {
-      type: 'ejs', 
+      type: 'jade', 
       options: {
         test: 'haha'
       }
@@ -72,7 +77,8 @@ describe('adapter/template/jade.js', function(){
       return {
         compile: function(content, conf){
           assert.equal(content.indexOf("describe('adapter/template/jade.js'") > -1, true);
-          assert.deepEqual(conf, { filename: __filename , test: 'haha'})
+          assert.equal(conf.test, 'haha')
+          //assert.deepEqual(conf, { filename: __filename , test: 'haha'})
           return function(data){
             assert.deepEqual(data, {name: 'welefen'})
             return content;
@@ -88,9 +94,11 @@ describe('adapter/template/jade.js', function(){
         flag = true;
         assert.equal(think.isObject(jade), true);
       },
-      type: 'ejs', 
-      options: {
-        test: 'haha'
+      type: 'jade', 
+      adapter: {
+        jade: {
+          test: 'haha'
+        }
       }
     }).then(function(data){
       assert.equal(data.indexOf("describe('adapter/template/jade.js'") > -1, true);

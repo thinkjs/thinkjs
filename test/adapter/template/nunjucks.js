@@ -53,6 +53,7 @@ describe('adapter/template/nunjucks.js', function(){
         }
       }
     })
+    muk(think, 'log', function(){})
     instance.run(__filename, {
       name: 'welefen'
     }, {
@@ -94,8 +95,10 @@ describe('adapter/template/nunjucks.js', function(){
         flag = true;
       },
       type: 'nunjucks', 
-      options: {
-        test: 'haha'
+      adapter: {
+        nunjucks: {
+          test: 'haha'
+        }
       }
     }).then(function(data){
       assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);

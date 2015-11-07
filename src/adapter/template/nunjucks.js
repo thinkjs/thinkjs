@@ -14,24 +14,17 @@ export default class extends Base {
    * @return {Promise}             []
    */
   async run(templateFile, tVar, config){
-    
-    let nunjucks = await think.npm('nunjucks');
-    
-    let conf = think.extend({
+
+    let options = this.mergeConfig({
       autoescape: false,
       watch: false,
       noCache: false,
       throwOnUndefined: false
-    }, think.config('view.options'), config && config.options);
+    }, config);
+    let nunjucks = await think.npm('nunjucks');
+    let env = nunjucks.configure(think.ROOT_PATH, options);
 
-    let env = nunjucks.configure(think.ROOT_PATH, conf);
-
-    //pre render
-    let prerender = config && config.prerender;
-    prerender = prerender || think.config('view.prerender');
-    if(think.isFunction(prerender)){
-      prerender(nunjucks, env);
-    }
+    this.prerender(options, nunjucks, env);
 
     return nunjucks.render(templateFile, tVar);
   }

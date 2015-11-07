@@ -8,6 +8,34 @@ import fs from 'fs';
  */
 export default class extends think.adapter.base {
   /**
+   * merge config
+   * @param  {Object} defaultConf []
+   * @param  {Object} extraConf   []
+   * @return {}             []
+   */
+  mergeConfig(defaultConf, extraConf){
+    let config = think.mergeConfig(defaultConf, think.config('view'), extraConf);
+    //compatibility with view.options
+    if(!think.isEmpty(config.options)){
+      think.log(colors => {
+        return colors.yellow('[DEPRECATED]') + ` view.options is deprecated, use view.adapter.${config.type} instead`;
+      });
+      config = think.extend(config, config.options);
+    }
+    return config;
+  }
+  /**
+   * pre render
+   * @param  {Object}    config []
+   * @param  {...[type]} args   []
+   * @return {}           []
+   */
+  prerender(config = {}, ...args){
+    if(think.isFunction(config.prerender)){
+      config.prerender(...args);
+    }
+  }
+  /**
    * get template file content
    * @return {} []
    */

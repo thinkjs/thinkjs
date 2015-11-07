@@ -58,6 +58,7 @@ describe('adapter/template/swig.js', function(){
         }
       }
     })
+    muk(think, 'log', function(){})
     instance.run(__filename, {
       name: 'welefen'
     }, {
@@ -98,8 +99,10 @@ describe('adapter/template/swig.js', function(){
         flag = true;
       },
       type: 'swig', 
-      options: {
-        test: 'haha'
+      adapter: {
+        swig: {
+          test: 'haha'
+        }
       }
     }).then(function(data){
       assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);

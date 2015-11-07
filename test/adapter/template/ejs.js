@@ -25,7 +25,9 @@ describe('adapter/template/ejs.js', function(){
       return {
         compile: function(content, conf){
           assert.equal(content.indexOf("describe('adapter/template/ejs.js'") > -1, true);
-          assert.deepEqual(conf, { filename: __filename, cache: true })
+          assert.equal(conf.filename, __filename);
+          assert.equal(conf.cache, true);
+          //assert.deepEqual(conf, { filename: __filename, cache: true })
           return function(data){
             return content;
           }
@@ -36,6 +38,8 @@ describe('adapter/template/ejs.js', function(){
       assert.equal(data.indexOf("describe('adapter/template/ejs.js'") > -1, true);
       muk.restore();
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('run, config', function(done){
@@ -44,7 +48,10 @@ describe('adapter/template/ejs.js', function(){
       return {
         compile: function(content, conf){
           assert.equal(content.indexOf("describe('adapter/template/ejs.js'") > -1, true);
-          assert.deepEqual(conf, { filename: __filename, cache: true , test: 'haha'})
+          assert.equal(conf.filename, __filename);
+          assert.equal(conf.cache, true);
+          assert.equal(conf.test, 'haha')
+          //assert.deepEqual(conf, { filename: __filename, cache: true , test: 'haha'})
           return function(data){
             assert.deepEqual(data, {name: 'welefen'})
             return content;
@@ -56,8 +63,10 @@ describe('adapter/template/ejs.js', function(){
       name: 'welefen'
     }, {
       type: 'ejs', 
-      options: {
-        test: 'haha'
+      adapter: {
+        ejs: {
+          test: 'haha'
+        }
       }
     }).then(function(data){
       assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
@@ -71,7 +80,10 @@ describe('adapter/template/ejs.js', function(){
       return {
         compile: function(content, conf){
           assert.equal(content.indexOf("describe('adapter/template/ejs.js'") > -1, true);
-          assert.deepEqual(conf, { filename: __filename, cache: true , test: 'haha'})
+          assert.equal(conf.filename, __filename);
+          assert.equal(conf.cache, true);
+          assert.equal(conf.test, 'haha')
+          //assert.deepEqual(conf, { filename: __filename, cache: true , test: 'haha'})
           return function(data){
             assert.deepEqual(data, {name: 'welefen'})
             return content;
@@ -79,6 +91,7 @@ describe('adapter/template/ejs.js', function(){
         }
       }
     })
+    muk(think, 'log', function(){})
     var flag = false;
     instance.run(__filename, {
       name: 'welefen'

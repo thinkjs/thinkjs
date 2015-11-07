@@ -15,21 +15,15 @@ export default class extends Base {
    */
   async run(templateFile, tVar, config){
 
-    let ejs = await think.npm('ejs');
-
-    let conf = think.extend({
+    let options = this.mergeConfig({
       filename: templateFile,
       cache: true
-    }, think.config('view.options'), config && config.options);
+    }, config);
+    let ejs = await think.npm('ejs');
 
-    //pre render
-    let prerender = config && config.prerender;
-    prerender = prerender || think.config('view.prerender');
-    if(think.isFunction(prerender)){
-      prerender(ejs);
-    }
+    this.prerender(options, ejs);
 
     let content = await this.getContent(templateFile);
-    return ejs.compile(content, conf)(tVar);
+    return ejs.compile(content, options)(tVar);
   }
 }
