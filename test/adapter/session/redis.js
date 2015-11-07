@@ -38,9 +38,13 @@ describe('adapter/session/redis', function(){
   })
   it('getData, from redis, empty', function(done){
     var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
-    instance.redis.get = function(cookie){
-      assert.equal(cookie, 'welefen');
-      return Promise.resolve(null)
+    instance.getRedisInstance = function(){
+      return {
+        get: function(cookie){
+          assert.equal(cookie, 'welefen');
+          return Promise.resolve(null)
+        }
+      }
     }
     instance.getData().then(function(data){
       assert.deepEqual(data, {});
@@ -120,11 +124,15 @@ describe('adapter/session/redis', function(){
       instance.data = {name: 'thinkjs', value: '1111'};
       return Promise.resolve(instance.data);
     }
-    instance.redis.set = function(name, value, timeout){
-      assert.equal(name, 'welefen');
-      assert.equal(value, '{"name":"thinkjs","value":"1111"}');
-      assert.equal(timeout, 86400)
-      return Promise.resolve();
+    instance.getRedisInstance = function(){
+      return {
+        set: function(name, value, timeout){
+          assert.equal(name, 'welefen');
+          assert.equal(value, '{"name":"thinkjs","value":"1111"}');
+          assert.equal(timeout, 86400)
+          return Promise.resolve();
+        }
+      }
     }
     instance.flush().then(function(data){
       done();

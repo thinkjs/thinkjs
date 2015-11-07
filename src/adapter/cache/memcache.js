@@ -1,6 +1,6 @@
 'use strict';
 
-let memcacheSocket = think.adapter('socket', 'memcache');
+let MemcacheSocket = think.adapter('socket', 'memcache');
 
 /**
  * memcache cache
@@ -33,7 +33,7 @@ export default class extends think.adapter.base {
 
     let instance = thinkCache(thinkCache.MEMCACHE, key);
     if(!instance){
-      instance = new RedisSocket(options);
+      instance = new MemcacheSocket(options);
       thinkCache(thinkCache.MEMCACHE, key, instance);
     }
 

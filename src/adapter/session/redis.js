@@ -1,6 +1,6 @@
 'use strict';
 
-let redisSocket = think.adapter('socket', 'redis');
+let RedisSocket = think.adapter('socket', 'redis');
 
 /**
  * redis session
@@ -14,10 +14,30 @@ export default class extends think.adapter.base {
   init(options){
     
     options = think.mergeConfig(options);
+    this.options = options;
 
     this.timeout = options.timeout;
     this.cookie = options.cookie;
-    this.redis = new redisSocket(options);
+  }
+  /**
+   * get redis instance
+   * @return {Object} []
+   */
+  getRedisInstance(name){
+
+    let options = this.parseConfig(this.options, {
+      command: name
+    }, 'session');
+
+    let key = think.md5(JSON.stringify(options)).slice(0, 5);
+
+    let instance = thinkCache(thinkCache.REDIS, key);
+    if(!instance){
+      instance = new RedisSocket(options);
+      thinkCache(thinkCache.REDIS, key, instance);
+    }
+
+    return instance;
   }
   /**
    * get session
@@ -27,7 +47,8 @@ export default class extends think.adapter.base {
     if(this.data){
       return Promise.resolve(this.data);
     }
-    return this.redis.get(this.cookie).then(data => {
+    let instance = this.getRedisInstance('get');
+    return instance.get(this.cookie).then(data => {
       this.data = {};
       try{
         this.data = JSON.parse(data) || {};
@@ -79,7 +100,8 @@ export default class extends think.adapter.base {
    */
   flush(){
     return this.getData().then(() => {
-      return this.redis.set(this.cookie, JSON.stringify(this.data), this.timeout);
+      let instance = this.getRedisInstance('set');
+      return instance.set(this.cookie, JSON.stringify(this.data), this.timeout);
     });
   }
 }
