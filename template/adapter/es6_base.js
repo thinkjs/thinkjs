@@ -2,7 +2,7 @@
 /**
  * base adapter
  */
-export default class extends think.base {
+export default class extends think.adapter.base {
   /**
    * init
    * @return {[]}         []

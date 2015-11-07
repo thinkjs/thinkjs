@@ -4,7 +4,7 @@
  * base adapter
  * @return {Class}     []
  */
-module.exports = think.adapter({
+module.exports = think.adapter(think.adapter.base, {
   /**
    * init 
    * @return {} []

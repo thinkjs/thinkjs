@@ -514,31 +514,8 @@ var createAdapter = function(adapter){
   var name = adapter[1] || 'base';
 
   var adapterPath = think.getPath('common', 'adapter');
-  var baseFilePath = adapterPath + '/' + type + '/base.js';
 
-  var sysAdapterPath = path.dirname(__dirname) + '/lib/adapter';
-  var sysAdapterList = fs.readdirSync(sysAdapterPath);
-
-  //mkdir(adapterPath + '/' + type);
-
-  if(name !== 'base'){
-
-    if(!think.isFile(baseFilePath) && sysAdapterList.indexOf(type) === -1){
-      copyFile('adapter/base.js', baseFilePath);
-    }
-
-    copyFile('adapter/index.js', adapterPath + '/' + type + '/' + name + '.js', {
-      '[ADAPTER_TYPE]': type
-    });
-  }else{
-    if( sysAdapterList.indexOf(type) === -1){
-      copyFile('adapter/base.js', baseFilePath);
-    }else{
-      log(function(colors){
-        return colors.yellow('exist') + ' : adapter `' + colors.yellow(type + '/' + name) + '` is exist in system.'; 
-      })
-    }
-  }
+  copyFile('adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
 
   console.log();
 }
