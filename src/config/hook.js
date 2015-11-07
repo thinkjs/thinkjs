@@ -5,7 +5,7 @@ export default {
   payload_parse: ['parse_form_payload', 'parse_single_file_payload', 'parse_json_payload', 'parse_querystring_payload'],
   payload_validate: ['validate_payload'],
   resource: ['check_resource', 'output_resource'],
-  route_parse: ['rewrite_pathname', 'subdomain_deploy', 'route'],
+  route_parse: ['rewrite_pathname', 'subdomain_deploy', 'parse_route'],
   logic_before: ['check_csrf'],
   logic_after: [],
   controller_before: [],

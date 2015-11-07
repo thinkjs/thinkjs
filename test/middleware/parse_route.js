@@ -37,9 +37,9 @@ function execMiddleware(middleware, config, options, data){
   }) 
 }
 
-describe('middleware/route', function(){
+describe('middleware/parse_route', function(){
   it('route_on not on, parsePathname empty', function(done){
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: ''
     }).then(function(http){
       assert.equal(http.module, 'home');
@@ -49,7 +49,7 @@ describe('middleware/route', function(){
     })
   })
   it('route_on not on, has pathname', function(done){
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: 'welefen/suredy'
     }).then(function(http){
       assert.equal(http.module, 'home');
@@ -59,7 +59,7 @@ describe('middleware/route', function(){
     })
   })
   it('route_on not on, has pathname', function(done){
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: 'welefen/suredy/name/test'
     }).then(function(http){
       assert.equal(http.module, 'home');
@@ -71,7 +71,7 @@ describe('middleware/route', function(){
   })
   it('route_on not on, has pathname, has module', function(done){
     muk(think, 'module', ['test'])
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: 'test/welefen/suredy/name/test'
     }).then(function(http){
       assert.equal(http.module, 'test');
@@ -91,7 +91,7 @@ describe('middleware/route', function(){
       assert.equal(http.error.message.indexOf('`test-ww`') > -1, true);
       return think.prevent();
     })
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: 'test-ww/welefen'
     }).catch(function(err){
       muk.restore();
@@ -99,7 +99,7 @@ describe('middleware/route', function(){
     })
   })
   it('route_on not on, has pathname, action has -', function(done){
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: 'welefen/welefen-test'
     }).then(function(data){
       muk.restore();
@@ -115,7 +115,7 @@ describe('middleware/route', function(){
       assert.equal(http.error.message.indexOf('`wele$fen-test`') > -1, true);
       return think.prevent();
     })
-    execMiddleware('route', {}, {
+    execMiddleware('parse_route', {}, {
       pathname: 'welefen/wele$fen-test'
     }).catch(function(err){
       muk.restore();
@@ -126,7 +126,7 @@ describe('middleware/route', function(){
     muk(think, 'route', function(){
       return [];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -143,7 +143,7 @@ describe('middleware/route', function(){
         [/welefen/, 'suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: ''
@@ -160,7 +160,7 @@ describe('middleware/route', function(){
         [/welefensuredy/, 'home/welefen/suredy?name=welefen_suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -179,7 +179,7 @@ describe('middleware/route', function(){
         [/^welefen\/suredy/, 'dddd/welefen/suredy?name=welefen_suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -199,7 +199,7 @@ describe('middleware/route', function(){
         [/^welefen\/(.*)/, 'dddd/welefen/:1?name=suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -219,7 +219,7 @@ describe('middleware/route', function(){
         [/^welefen\/(.*)/, 'dddd/welefen/:1?name=:2']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -239,7 +239,7 @@ describe('middleware/route', function(){
         [/^welefen\/(.*)/, 'dddd/welefen/:1?value=:2']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -259,7 +259,7 @@ describe('middleware/route', function(){
         [/^welefen\/(.*)/, 'dddd/welefen/:1?value=value']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/suredy'
@@ -279,7 +279,7 @@ describe('middleware/route', function(){
         [/^welefen/, 'dddd/welefen/suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy'
@@ -299,7 +299,7 @@ describe('middleware/route', function(){
         [/^welefen/, '/dddd/welefen/suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy'
@@ -319,7 +319,7 @@ describe('middleware/route', function(){
         [/^welefen/, '/dddd/welefen/suredy']
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: '/welefen/name/suredy/'
@@ -342,7 +342,7 @@ describe('middleware/route', function(){
         }]
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy'
@@ -365,7 +365,7 @@ describe('middleware/route', function(){
         }]
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy'
@@ -388,7 +388,7 @@ describe('middleware/route', function(){
         }]
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy'
@@ -411,7 +411,7 @@ describe('middleware/route', function(){
         }]
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy'
@@ -434,7 +434,7 @@ describe('middleware/route', function(){
         }]
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy',
@@ -459,7 +459,7 @@ describe('middleware/route', function(){
         }]
       ];
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'welefen/name/suredy',
@@ -486,7 +486,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/welefen/list',
@@ -512,7 +512,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/welefen/list',
@@ -538,7 +538,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/welefen/list',
@@ -563,7 +563,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/welefen/list',
@@ -589,7 +589,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/welefen/list',
@@ -614,7 +614,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/',
@@ -639,7 +639,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/',
@@ -664,7 +664,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/1234',
@@ -689,7 +689,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/w1234',
@@ -714,7 +714,7 @@ describe('middleware/route', function(){
         }
       }
     })
-    execMiddleware('route', {
+    execMiddleware('parse_route', {
       route_on: true
     }, {
       pathname: 'admin/test/name/wwwww',

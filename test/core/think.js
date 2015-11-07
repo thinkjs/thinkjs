@@ -891,7 +891,7 @@ describe('core/think.js', function(){
     })
     it('get item hook', function(){
       var data = think.hook('route_parse');
-      assert.deepEqual(data, ['rewrite_pathname', 'subdomain_deploy', 'route'])
+      assert.deepEqual(data, ['rewrite_pathname', 'subdomain_deploy', 'parse_route'])
     })
     it('get item hook, not exist', function(){
       var data = think.hook('route_parse111');
@@ -1087,7 +1087,7 @@ describe('core/think.js', function(){
       thinkCache(thinkCache.MIDDLEWARE, 'fasdfasf')
     })
     it('get sys middleware', function(){
-      var fn1 = think.middleware("route");
+      var fn1 = think.middleware("parse_route");
       assert.equal(think.isFunction(fn1), true);
     })
     it('get sys middleware, not found', function(){
