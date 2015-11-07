@@ -13,18 +13,31 @@ export default class extends think.adapter.base {
    */
   init(options = {}){
 
-    options = think.mergeConfig(think.config('memcache'), options);
+    options = this.mergeConfig(think.config('memcache'), options);
+    this.options = options;
     
     this.timeout = options.timeout;
     this.keyPrefix = options.prefix;
+  }
+  /**
+   * get memcache instance
+   * @param  {String} command []
+   * @return {}         []
+   */
+  getMemcacheInstance(name){
+    let options = this.parseConfig(this.options, {
+      command: name
+    }, 'cache');
 
-    let key = think.md5(JSON.stringify(options));
+    let key = think.md5(JSON.stringify(options)).slice(0, 5);
+
     let instance = thinkCache(thinkCache.MEMCACHE, key);
-    if (!instance) {
-      instance = new memcacheSocket(options);
+    if(!instance){
+      instance = new RedisSocket(options);
       thinkCache(thinkCache.MEMCACHE, key, instance);
     }
-    this.memcache = instance;
+
+    return instance;
   }
   /**
    * get data
@@ -32,7 +45,8 @@ export default class extends think.adapter.base {
    * @return {Promise}      []
    */
   get(name){
-    return this.memcache.get(this.keyPrefix + name).then(value => {
+    let instance = this.getMemcacheInstance('get');
+    return instance.get(this.keyPrefix + name).then(value => {
       if (value) {
         return JSON.parse(value);
       }
@@ -51,7 +65,9 @@ export default class extends think.adapter.base {
       value = name[key];
       name = key;
     }
-    return this.memcache.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(() => {});
+    let instance = this.getMemcacheInstance('set');
+    let data = JSON.stringify(value);
+    return instance.set(this.keyPrefix + name, data, timeout).catch(() => {});
   }
   /**
    * delete data
@@ -59,6 +75,7 @@ export default class extends think.adapter.base {
    * @return {Promise}      []
    */
   delete(name){
-    return this.memcache.delete(this.keyPrefix + name).catch(() => {});
+    let instance = this.getMemcacheInstance('delete');
+    return instance.delete(this.keyPrefix + name).catch(() => {});
   }
 }

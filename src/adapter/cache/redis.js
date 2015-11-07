@@ -13,7 +13,7 @@ export default class extends think.adapter.base {
    */
   init(options = {}){
 
-    options = think.mergeConfig(think.config('redis'), options);
+    options = this.mergeConfig(think.config('redis'), options);
     this.options = options;
     
     this.timeout = options.timeout;
@@ -24,19 +24,19 @@ export default class extends think.adapter.base {
    * @return {Object} []
    */
   getRedisInstance(name){
-    let parser = this.options.callback;
-    let options;
-    if(think.isFunction(parser)){
-      options = parser(think.extend(this.options, {command: name}), 'cache');
-    }else{
-      options = this.options;
-    }
-    let key = [options.host, options.port, options.password, options.timeout].join('|');
+
+    let options = this.parseConfig(this.options, {
+      command: name
+    }, 'cache');
+
+    let key = think.md5(JSON.stringify(options)).slice(0, 5);
+
     let instance = thinkCache(thinkCache.REDIS, key);
     if(!instance){
       instance = new RedisSocket(options);
       thinkCache(thinkCache.REDIS, key, instance);
     }
+
     return instance;
   }
   /**
@@ -84,7 +84,7 @@ export default class extends think.adapter.base {
    * @return {[type]}         []
    */
   wrap(command, name, ...data){
-    let instance = this.getRedisInstance('delete');
+    let instance = this.getRedisInstance(command);
     return instance.wrap(command, this.keyPrefix + name, ...data);
   }
 }
