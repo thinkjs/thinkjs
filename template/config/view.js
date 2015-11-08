@@ -9,5 +9,7 @@ module.exports = {
   file_ext: '.html',
   file_depr: '_',
   root_path: think.ROOT_PATH + '/view',
-  options: {}
+  adapter: {
+    ejs: {}
+  }
 };
