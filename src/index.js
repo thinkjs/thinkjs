@@ -315,9 +315,13 @@ export default class {
    * @return {} []
    */
   loadBootstrap(){
+    let common = '';
+    if(think.mode === think.mode_module){
+      common = think.dirname.common + '/';
+    }
     let paths = [
       `${think.THINK_LIB_PATH}/bootstrap`,
-      `${think.APP_PATH}/${think.dirname.common}/${think.dirname.bootstrap}`
+      `${think.APP_PATH}/${common}${think.dirname.bootstrap}`
     ];
     paths.forEach(item => {
       if (!think.isDir(item)) {
