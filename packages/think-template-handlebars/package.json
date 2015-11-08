@@ -1,8 +1,11 @@
 {
   "name": "think-template-handlebars",
   "description": "handlebars template adapter for ThinkJS",
-  "version": "1.0.1",
-  "author": {},
+  "version": "1.0.2",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
   "scripts": {
     "test": "mocha --reporter spec --timeout 5000 --recursive test/",
     "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 5000 --recursive  -R spec test/",
