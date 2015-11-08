@@ -329,6 +329,10 @@ export default class {
       }
       let files = fs.readdirSync(item);
       files.forEach(file => {
+        let extname = path.extname(file);
+        if(extname !== '.js'){
+          return;
+        }
         think.safeRequire(`${item}/${file}`);
       });
     });
