@@ -122,6 +122,31 @@ export default class {
     });
   }
   /**
+   * check dependencies is installed before server start
+   * @return {} []
+   */
+  checkDependencies(){
+    let packageFile = think.ROOT_PATH + '/package.json';
+    if(!think.isFile(packageFile)){
+      return;
+    }
+    let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+    let dependencies = data.dependencies;
+    for(let pkg in dependencies){
+      try{
+        require(pkg);
+      }catch(e){
+        think.log(colors => {
+          let msg = colors.red('[ERROR]') + ` package \`${pkg}\` is not installed. `;
+          msg += 'please run `npm install` command before start server.';
+          return msg;
+        }, '', null);
+        console.log();
+        process.exit();
+      }
+    }
+  }
+  /**
    * get app module list
    * @return {} []
    */
@@ -432,6 +457,7 @@ export default class {
   start(){
     this.checkEnv();
     this.checkFileName();
+    this.checkDependencies();
     this.load();
     this.captureError();
     if (think.config('auto_reload')) {
