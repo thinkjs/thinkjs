@@ -21,7 +21,7 @@ add above code in bootstrap file, like `src/common/boostrap/adapter.js`.
 
 ### change view type
 
-change viwe type in file `src/common/config/view.js`,
+change view type in file `src/common/config/view.js`,
 
 ```js
 export default {
