@@ -12,7 +12,7 @@ var Transform = require('../../lib/config/sys/transform.js');
 describe('config/transform', function(){
   it('transform keys', function(){
     var keys = Object.keys(Transform).sort();
-    assert.deepEqual(keys, [ 'auto_reload_except', 'cache', 'create_server', 'deny_module_list', 'html_cache', 'output_content', 'post', 'session', 'subdomain' ])
+    assert.deepEqual(keys, [ 'cache', 'create_server', 'deny_module_list', 'html_cache', 'output_content', 'post', 'session', 'subdomain' ])
   })
   it('post/json_content_type is function', function(){
     assert.equal(think.isFunction(Transform.post.json_content_type), true)
@@ -41,22 +41,22 @@ describe('config/transform', function(){
   it('session/type', function(){
     assert.equal(Transform.session.type('welefen'), 'welefen')
   })
-  it('auto_reload_except string', function(){
-    var data = Transform.auto_reload_except('welefen');
-    assert.deepEqual(data, ['welefen'])
-  })
-  it('auto_reload_except array', function(){
-    var data = Transform.auto_reload_except(['welefen', 'suredy']);
-    assert.deepEqual(data, ['welefen', 'suredy'])
-  })
-  it('auto_reload_except windows platform', function(){
-    var data = Transform.auto_reload_except(['welefen', 'suredy/welefen']);
-    if(process.platform === 'win32'){
-      assert.deepEqual(data, ['welefen', 'suredy\\welefen']);
-    }else{
-      assert.deepEqual(data, ['welefen', 'suredy/welefen']);
-    }
-  })
+  // it('auto_reload_except string', function(){
+  //   var data = Transform.auto_reload_except('welefen');
+  //   assert.deepEqual(data, ['welefen'])
+  // })
+  // it('auto_reload_except array', function(){
+  //   var data = Transform.auto_reload_except(['welefen', 'suredy']);
+  //   assert.deepEqual(data, ['welefen', 'suredy'])
+  // })
+  // it('auto_reload_except windows platform', function(){
+  //   var data = Transform.auto_reload_except(['welefen', 'suredy/welefen']);
+  //   if(process.platform === 'win32'){
+  //     assert.deepEqual(data, ['welefen', 'suredy\\welefen']);
+  //   }else{
+  //     assert.deepEqual(data, ['welefen', 'suredy/welefen']);
+  //   }
+  // })
   it('html_cache/rules', function(){
     var data = Transform.html_cache.rules({welefen: 'suredy'});
     assert.deepEqual(data, {welefen: ['suredy']})

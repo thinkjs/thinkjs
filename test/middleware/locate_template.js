@@ -128,6 +128,63 @@ describe('middleware/locate_template', function(){
       done();
     })
   })
+  it('mode_module, with theme, has templateFile', function(done){
+    think.mode = think.mode_module;
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.html',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail',
+      _theme: 'color'
+    }, __filename).then(function(data){
+      assert.equal(data, __filename);
+      done();
+    })
+  })
+  it('mode_module, with theme, has templateFile', function(done){
+    think.mode = think.mode_module;
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.html',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail',
+      _theme: 'color'
+    }, {
+      templateFile: __filename
+    }).then(function(data){
+      assert.equal(data, __filename);
+      done();
+    })
+  })
+  it('mode normal, with lang', function(done){
+    think.mode = think.mode_normal;
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.html',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail',
+      //_theme: 'color',
+      _langAsViewPath: true,
+      lang: function(){
+        return 'zh-CN'
+      }
+    }).then(function(data){
+      assert.equal(data, think.APP_PATH + '/zh-CN/view/home/group_detail.html');
+      done();
+    })
+  })
   it('mode normal, with theme', function(done){
     think.mode = think.mode_normal;
     execMiddleware('locate_template', {

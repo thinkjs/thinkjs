@@ -112,22 +112,6 @@ export default {
     }
   },
   /**
-   * auto reload except files
-   * @param  {Array} value []
-   * @return {Array}       []
-   */
-  auto_reload_except: value => {
-    if(!think.isArray(value)){
-      value = [value];
-    }
-    return value.map(item => {
-      if(think.isString(item) && process.platform === 'win32'){
-        item = item.replace(/\//g, '\\');
-      }
-      return item;
-    });
-  },
-  /**
    * cache config
    * @type {Object}
    */

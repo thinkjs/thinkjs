@@ -30,6 +30,13 @@ describe('adapter/session/file', function(){
     //console.log(instance.path)
     assert.equal(instance.path.indexOf('/thinkjs') > -1, true)
   })
+  it('get instance, ingore path', function(){
+    var instance = new FileSession(think.extend({}, {cookie: 'welefen', path: ''}));
+    assert.equal(instance.gcType, instance.path);
+    assert.equal(instance.cookie, 'welefen');
+    //console.log(instance.path)
+    assert.equal(instance.path.indexOf('/thinkjs') > -1, true)
+  })
   it('get file path', function(){
     var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     var filepath = instance.getFilepath();
@@ -48,6 +55,32 @@ describe('adapter/session/file', function(){
       return instance.get('welefen')
     }).then(function(data){
       assert.equal(data, 'suredy');
+      done();
+    })
+  })
+  it('getData, empty', function(done){
+    var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.store = {
+      get: function(){
+        return Promise.resolve(JSON.stringify({
+          expire: Date.now() + 10000
+        }))
+      }
+    }
+    return instance.getData().then(function(data){
+      assert.deepEqual(data, {});
+      done();
+    })
+  })
+  it('getData, error', function(done){
+    var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.store = {
+      get: function(){
+        return Promise.resolve('not json')
+      }
+    }
+    return instance.getData().then(function(data){
+      assert.deepEqual(data, {});
       done();
     })
   })
@@ -132,7 +165,24 @@ describe('adapter/session/file', function(){
         })
       }, 40)
     })
-    
+  })
+  it('gc, json error', function(done){
+    var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'fasdfasdf'}));
+    instance.set('welefen','suredy', 0.01).then(function(){
+      return instance.flush();
+    }).then(function(){
+      let filepath = instance.path + '/' + instance.getFilepath();
+      fs.writeFileSync(filepath, 'not json')
+      setTimeout(function(){
+        instance.gc().then(function(){
+          setTimeout(function(){
+            assert.equal(think.isFile(filepath), false);
+            done();
+          }, 20)
+          //done();
+        })
+      }, 40)
+    })
   })
   it('remove files', function(done){
     var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'fasdfasdf'}));

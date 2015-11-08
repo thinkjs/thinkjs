@@ -25,6 +25,23 @@ describe('adapter/template/base.js', function(){
     assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
     done();
   })
+  it('merge config', function(done){
+    var instance = new baseTemplate();
+    muk(think, 'log', function(callback){
+      let msg = callback && callback({
+        yellow: function(msg){
+          return msg
+        }
+      });
+      assert.equal(msg.indexOf('[DEPRECATED]') > -1, true);
+    })
+    var data = instance.mergeConfig({
+      options: {name: 111}
+    });
+    assert.deepEqual(data.name, 111);
+    muk.restore();
+    done();
+  })
   it('run', function(done){
     var instance = new baseTemplate();
     var data = instance.run(__filename);

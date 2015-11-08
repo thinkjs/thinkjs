@@ -11,7 +11,7 @@ export default class extends think.adapter.base {
    * @param  {Object} options []
    * @return {}         []
    */
-  init(options = {}){
+  init(options){
 
     options = this.mergeConfig(think.config('memcache'), options);
     this.options = options;

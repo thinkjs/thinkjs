@@ -8,6 +8,8 @@ var thinkjs = require('../../../lib/index.js');
 
 think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
 
+var RedisCache = think.adapter('cache', 'redis');
+
 describe('adapter/cache/redis.js', function() {
   var instance;
 
@@ -16,7 +18,7 @@ describe('adapter/cache/redis.js', function() {
     tjs.loadConfig();
     tjs.loadAlias();
 
-    var RedisCache = think.adapter('cache', 'redis');
+    
     instance = new RedisCache(think.config('cache'));
 
     var data = {};
@@ -56,8 +58,61 @@ describe('adapter/cache/redis.js', function() {
     assert.equal(instance.keyPrefix, think.config('cache.prefix'));
   });
 
+  it('get redis instance', function(){
+    var instance = new RedisCache(think.config('cache'));
+    var redisIntance = instance.getRedisInstance('test');
+    assert.equal(think.isObject(redisIntance), true);
+    var redisIntance1 = instance.getRedisInstance('test');
+    assert.equal(redisIntance, redisIntance1)
+  })
+
   it('get empty data', function(done) {
     instance.get('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+      done();
+    });
+  });
+
+  it('get data, store error', function(done) {
+    var instance = new RedisCache(think.config('cache'));
+    instance.getRedisInstance = function(){
+      return {
+        get: function(){
+          return Promise.reject();
+        }
+      }
+    }
+    instance.get('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+      done();
+    });
+  });
+
+  it('set data, store error', function(done) {
+    var instance = new RedisCache(think.config('cache'));
+    instance.getRedisInstance = function(){
+      return {
+        set: function(){
+          return Promise.reject();
+        }
+      }
+    }
+    instance.set('thinkjs', 'data').then(function(data) {
+      assert.equal(data, undefined);
+      done();
+    });
+  });
+
+  it('delete data, store error', function(done) {
+    var instance = new RedisCache(think.config('cache'));
+    instance.getRedisInstance = function(){
+      return {
+        delete: function(){
+          return Promise.reject();
+        }
+      }
+    }
+    instance.delete('thinkjs').then(function(data) {
       assert.equal(data, undefined);
       done();
     });

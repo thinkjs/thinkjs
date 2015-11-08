@@ -168,6 +168,53 @@ describe('bootstrap/middleware.js', function(){
       })
     })
   })
+  it('output_resource file, range', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: JSON.stringify({name: 'welefen', test: 'haha'}),
+      _type: 'application/json',
+      headers: {
+        range: 'bytes=0-'
+      },
+      end: function(){},
+      status: function(status){
+        assert.equal(status, 206);
+      }
+    }).then(function(http){
+      think.middleware('output_resource', http, __filename).catch(function(err){
+        assert.equal(think.isPrevent(err), true)
+        done();
+      })
+    })
+  })
+
+  it('output_resource file, range, more than max', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: JSON.stringify({name: 'welefen', test: 'haha'}),
+      _type: 'application/json',
+      headers: {
+        range: 'bytes=0-1000000'
+      },
+      end: function(){},
+      status: function(status){
+        assert.equal(status, 206);
+      }
+    }).then(function(http){
+      think.middleware('output_resource', http, __filename).catch(function(err){
+        assert.equal(think.isPrevent(err), true)
+        done();
+      })
+    })
+  })
+
+
   it('rewrite_pathname, empty pathname', function(done){
     getHttp({}, {
       pathname: ''

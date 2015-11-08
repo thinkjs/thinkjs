@@ -11,13 +11,20 @@ think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
 describe('adapter/cache/memcache.js', function() {
   var instance;
 
-  before(function() {
+  it('before', function() {
     var tjs = new thinkjs();
     tjs.loadConfig();
     tjs.loadAlias();
 
     var MemcacheCache = think.adapter('cache', 'memcache');
     instance = new MemcacheCache(think.config('cache'));
+
+    var memcacheInstance = instance.getMemcacheInstance();
+    assert.equal(think.isObject(memcacheInstance), true);
+
+    var memcacheInstance1 = instance.getMemcacheInstance();
+    assert.equal(memcacheInstance, memcacheInstance1)
+
     var data = {};
     instance.getMemcacheInstance = function(name){
       return {
@@ -60,6 +67,22 @@ describe('adapter/cache/memcache.js', function() {
       done();
     });
   });
+  it('get data error', function(done) {
+    let get = instance.getMemcacheInstance;
+    instance.getMemcacheInstance = function(){
+      return {
+        get: function(){
+          return Promise.reject(111);
+        }
+      }
+    }
+    instance.get('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+
+      instance.getMemcacheInstance = get;
+      done();
+    });
+  });
 
   it('set cache data', function(done) {
     instance.set('thinkjs', 'maxzhang').then(function() {
@@ -71,6 +94,23 @@ describe('adapter/cache/memcache.js', function() {
   it('set cache data(object)', function(done) {
     instance.set({ 'thinkjs': 'maxzhang' }).then(function() {
       assert(true);
+      done();
+    });
+  });
+
+  it('set data error', function(done) {
+    let get = instance.getMemcacheInstance;
+    instance.getMemcacheInstance = function(){
+      return {
+        set: function(){
+          return Promise.reject(111);
+        }
+      }
+    }
+    instance.set('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+
+      instance.getMemcacheInstance = get;
       done();
     });
   });
@@ -97,6 +137,23 @@ describe('adapter/cache/memcache.js', function() {
         assert.equal(data, undefined);
         done();
       });
+    });
+  });
+
+  it('delete data error', function(done) {
+    let get = instance.getMemcacheInstance;
+    instance.getMemcacheInstance = function(){
+      return {
+        delete: function(){
+          return Promise.reject(111);
+        }
+      }
+    }
+    instance.delete('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+
+      instance.getMemcacheInstance = get;
+      done();
     });
   });
 

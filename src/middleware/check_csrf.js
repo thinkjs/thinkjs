@@ -21,7 +21,6 @@ export default class extends think.middleware.base {
     let isAjax = this.http.isAjax();
     let isJsonp = this.http.isJsonp();
 
-    // CSRF检测，必须通过页面访问注册session，对于未注册session的post、ajax、jsonp请求直接拒绝。
     if (isGet && !isAjax && !isJsonp) {
       let value = await session.get(csrf.session_name);
       if (!value) {

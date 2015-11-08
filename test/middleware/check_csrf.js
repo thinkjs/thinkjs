@@ -116,6 +116,29 @@ describe('middleware/check_csrf', function() {
       done();
     });
   });
+   it('csrf on, other method', function(done) {
+    think.config('csrf.on', true);
+    think.config('csrf.errno', 400);
+    think.config('csrf.errmsg', 'token error');
+    execMiddleware('check_csrf', function(http) {
+      think.session(http);
+      http._session.get = function() {
+        return '12345678901234567890123456789000';
+      };
+      http.isGet = function() {
+        return false;
+      };
+      http.isPost = function() {
+        return false;
+      };
+      http.fail = function(errno, errmsg) {
+        assert.equal(errno, 400);
+        assert.equal(errmsg, 'token error');
+      };
+    }).then(function() {
+      done();
+    });
+  });
   after(function() {
     think.config('csrf.on', false);
   });

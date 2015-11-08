@@ -28,6 +28,24 @@ describe('adapter/session/redis', function(){
     assert.equal(instance.gcType, undefined);
     assert.equal(instance.cookie, 'welefen');
   })
+  it('get redis instance', function(){
+    var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.parseConfig = function(options, command, type){
+      assert.equal(type, 'session')
+      return options;
+    }
+    var redis = instance.getRedisInstance('get');
+    assert.equal(think.isObject(redis), true)
+  })
+  it('get redis instance, exist', function(){
+    var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.parseConfig = function(options, command, type){
+      assert.equal(type, 'session')
+      return options;
+    }
+    var redis = instance.getRedisInstance('get');
+    assert.equal(think.isObject(redis), true)
+  })
   it('getData, exist', function(done){
     var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     instance.data = {name: 'thinkjs'};

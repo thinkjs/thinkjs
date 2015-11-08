@@ -29,6 +29,13 @@ describe('adapter/cache/file.js', function() {
     assert.equal(instance.path_depth, 2);
   });
 
+  it('new  instance', function() {
+    var instance = new FileCache({
+      path: 'www'
+    });
+    assert.equal(instance.path_depth, 1);
+  });
+
   it('get file path', function() {
     var filepath = instance.getFilepath('maxzhang');
     assert.equal(filepath, 'c/b/cbc21016fc89ec482594a22e03e02834.json');
@@ -38,6 +45,61 @@ describe('adapter/cache/file.js', function() {
 
   it('get empty data', function(done) {
     instance.get('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+      done();
+    });
+  });
+  it('get data, file not exist', function(done) {
+    var instance = new FileCache({
+      path: 'www'
+    });
+    instance.store.get = function(){
+      return Promise.reject();
+    }
+    instance.get('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+      done();
+    });
+  });
+  it('get data, not json', function(done) {
+    var instance = new FileCache({
+      path: 'www'
+    });
+    instance.store.get = function(){
+      return Promise.resolve('not json');
+    }
+    var flag = false;
+    instance.store.delete = function(){
+      flag = true;
+    }
+    instance.get('thinkjs').then(function(data) {
+      assert.equal(data, undefined);
+      assert.equal(flag, true)
+      done();
+    });
+  });
+
+  it('set data, store error', function(done) {
+    var instance = new FileCache({
+      path: 'www'
+    });
+    instance.store.set = function(path, data){
+      return Promise.reject();
+    }
+    instance.set('thinkjs', 'test').then(function(data) {
+      assert.equal(data, undefined);
+      done();
+    });
+  });
+
+  it('delete data, store error', function(done) {
+    var instance = new FileCache({
+      path: 'www'
+    });
+    instance.store.delete = function(path, data){
+      return Promise.reject();
+    }
+    instance.delete('thinkjs').then(function(data) {
       assert.equal(data, undefined);
       done();
     });
@@ -117,6 +179,17 @@ describe('adapter/cache/file.js', function() {
         });
       }, 15);
     });
+  });
+  it('run cache gc, not json', function(done) {
+    instance.store.list = function(){
+      require('fs').writeFileSync(instance.path + '/a.json');
+      return Promise.resolve(['a.json']);
+    }
+    instance.gc();
+    setTimeout(function(){
+      assert.equal(think.isFile(instance.path + '/a.json'), false)
+      done();
+    }, 10)
   });
 
   it('custom data timeout', function(done) {

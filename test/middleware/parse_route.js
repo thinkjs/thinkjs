@@ -602,6 +602,40 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
+
+  it('route_on on, rules is object, has reg 3, action has uppercases', function(done){
+    muk(think, 'module', ['admin']);
+    muk(think, 'mode', think.mode_mini);
+    muk(think, 'route', function(){
+      return {
+        admin: {
+          reg: /^admin/,
+          children: [
+            [/^admin\/welefen\/list/, 'welefen/LIST/name/suredy']
+          ]
+        }
+      }
+    })
+    muk(think, 'log', function(callback){
+      var data = callback({
+        yellow: function(msg){return msg}
+      });
+      assert.equal(data.indexOf('[WARNING]') > -1, true)
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'admin/welefen/list',
+    }).then(function(http){
+      assert.equal(http.module, 'home');
+      assert.equal(http.controller, 'welefen');
+      assert.equal(http.action, 'list');
+      assert.deepEqual(http._get, { test: 'welefen', value: '1111', name: 'suredy' });
+      muk.restore();
+      done();
+    })
+  })
+
   it('route_on on, rules is object, no reg, string rule', function(done){
     muk(think, 'module', ['admin']);
     muk(think, 'mode', think.mode_module);
