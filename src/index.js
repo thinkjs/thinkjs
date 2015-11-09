@@ -132,9 +132,13 @@ export default class {
     }
     let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
     let dependencies = data.dependencies;
+    let map = {
+      'babel-runtime': 'babel-runtime/helpers/inherits'
+    };
     for(let pkg in dependencies){
+      let requirePkg = map[pkg] || pkg;
       try{
-        require(pkg);
+        require(requirePkg);
       }catch(e){
         think.log(colors => {
           let msg = colors.red('[ERROR]') + ` package \`${pkg}\` is not installed. `;
@@ -340,13 +344,9 @@ export default class {
    * @return {} []
    */
   loadBootstrap(){
-    let common = '';
-    if(think.mode === think.mode_module){
-      common = think.dirname.common + '/';
-    }
     let paths = [
       `${think.THINK_LIB_PATH}/bootstrap`,
-      `${think.APP_PATH}/${common}${think.dirname.bootstrap}`
+      think.getPath(think.dirname.common, think.dirname.bootstrap)
     ];
     paths.forEach(item => {
       if (!think.isDir(item)) {
