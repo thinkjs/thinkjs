@@ -686,7 +686,7 @@ export default class extends think.base {
     this.emit('afterEnd', this);
 
     //show request info
-    if(this.config('log_request')){
+    if(this.config('log_request') && !this._isResource){
       think.log(colors => {
         let msg = [
           this.method, this.url,

@@ -23,6 +23,8 @@ think.middleware('output_resource', (http, file) => {
     http.end();
     return think.prevent();
   }
+  //flag request is resource
+  http._isResource = true;
 
   let contentType = mime.lookup(file);
   http.type(contentType, false);
