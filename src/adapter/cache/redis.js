@@ -83,8 +83,8 @@ export default class extends think.adapter.base {
    * @param  {...[type]} data []
    * @return {[type]}         []
    */
-  // wrap(command, name, ...data){
-  //   let instance = this.getRedisInstance(command);
-  //   return instance.wrap(command, this.keyPrefix + name, ...data);
-  // }
+  wrap(command, name, ...data){
+    let instance = this.getRedisInstance(command);
+    return instance.wrap(command, this.keyPrefix + name, ...data);
+  }
 }

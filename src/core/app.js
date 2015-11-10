@@ -15,7 +15,7 @@ export default class extends think.http.base {
     let name = `${this.http.module}/${think.dirname.logic}/${this.http.controller}`;
     let cls = think.require(name, true);
     if (!cls) {
-      return Promise.resolve();
+      return;
     }
     let instance = new cls(this.http);
     let action = this.http.action;
@@ -95,7 +95,7 @@ export default class extends think.http.base {
     this.http._config = think.getModuleConfig(this.http.module);
 
     await this.hook('logic_before');
-    await this.execLogic().catch(err => {
+    await Promise.resolve(this.execLogic()).catch(err => {
       //ignore prevent reject promise
       //make logic_after hook can be invoked
       if(!think.isPrevent(err)){

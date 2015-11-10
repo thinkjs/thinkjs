@@ -13,10 +13,10 @@ export default {
       file_ext: '.json'
     },
     redis: {
-      prefix: 'thinkjs_'
+      prefix: ''
     },
     memcache: {
-      prefix: 'thinkjs_'
+      prefix: ''
     }
   }
 };
