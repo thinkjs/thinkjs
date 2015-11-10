@@ -132,13 +132,12 @@ export default class {
     }
     let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
     let dependencies = data.dependencies;
-    let map = {
-      'babel-runtime': 'babel-runtime/helpers/inherits'
-    };
     for(let pkg in dependencies){
-      let requirePkg = map[pkg] || pkg;
+      if(think.isDir(`${think.ROOT_PATH}/node_modules/${pkg}`)){
+        continue;
+      }
       try{
-        require(requirePkg);
+        require(pkg);
       }catch(e){
         think.log(colors => {
           let msg = colors.red('[ERROR]') + ` package \`${pkg}\` is not installed. `;
