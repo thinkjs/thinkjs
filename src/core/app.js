@@ -88,16 +88,37 @@ export default class extends think.http.base {
    * @return {Promise} []
    */
   async exec(){
+    await this.hook('resource');
+    await this.hook('route_parse');
+
+    //set module config, can not set config in request
+    this.http._config = think.getModuleConfig(this.http.module);
+
     await this.hook('logic_before');
-    await this.execLogic();
+    await this.execLogic().catch(err => {
+      //ignore prevent reject promise
+      //make logic_after hook can be invoked
+      if(!think.isPrevent(err)){
+        return Promise.reject(err);
+      }
+    });
     await this.hook('logic_after');
+
     //http is end
     if (this.http._isEnd) {
       return think.prevent();
     }
+
     await this.hook('controller_before');
-    await this.execController();
+    await this.execController().catch(err => {
+      //ignore prevent reject promise
+      //make controller_after & response_end hook can be invoked
+      if(!think.isPrevent(err)){
+        return Promise.reject(err);
+      }
+    });
     await this.hook('controller_after');
+    
     await this.hook('response_end');
   }
   /**
@@ -125,10 +146,6 @@ export default class extends think.http.base {
     });
     instance.run(async () => {
       try{
-        await this.hook('resource');
-        await this.hook('route_parse');
-        //set module config, can not set config in request
-        this.http._config = think.getModuleConfig(this.http.module);
         await this.exec();
       }catch(err){
         http.error = err;

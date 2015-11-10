@@ -174,7 +174,7 @@ describe('core/app.js', function(){
     })
   })
   it('execAction, __call exist', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add'});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add1'});
     var controller = {
       __call: function(){}
     }
@@ -188,7 +188,7 @@ describe('core/app.js', function(){
     })
   })
   it('execAction, action not exist', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add'});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add2'});
     var controller = {
       
     }
@@ -203,19 +203,29 @@ describe('core/app.js', function(){
     })
   })
   it('exec', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add'});
-    instance.execLogic = function(){}
-    instance.execController = function(){}
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add3'});
+    instance.execLogic = function(){
+      return Promise.resolve();
+    }
+    instance.hook = function(){}
+    instance.execController = function(){
+      return Promise.resolve();
+    }
     instance.exec().then(function(){
       muk.restore();
       done();
     })
   })
   it('exec, is end', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add'});
-    instance.execLogic = function(){}
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add4'});
+    instance.execLogic = function(){
+      return Promise.resolve();
+    }
     instance.http._isEnd = true;
-    instance.execController = function(){}
+    instance.execController = function(){
+      return Promise.resolve();
+    }
+    instance.hook = function(){}
     instance.exec().catch(function(err){
       assert.equal(think.isPrevent(err), true)
       muk.restore();
@@ -223,7 +233,7 @@ describe('core/app.js', function(){
     })
   })
   it('run, service off', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add', header: function(){}});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add5', header: function(){}});
     think.config('service_on', false);
     muk(think, 'statusAction', function(status, http, log){
       assert.equal(status, 503);
@@ -237,7 +247,7 @@ describe('core/app.js', function(){
     })
   })
   it('run, proxy on', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add', hostname: '127.0.0.1', header: function(){}});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add6', hostname: '127.0.0.1', header: function(){}});
     think.config('proxy_on', true);
     muk(think, 'statusAction', function(status, http, log){
       assert.equal(status, 403);
@@ -251,7 +261,7 @@ describe('core/app.js', function(){
     })
   })
   it('run, domain error', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add', hostname: '127.0.0.1', header: function(){}});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add7', hostname: '127.0.0.1', header: function(){}});
     var flag = false;
     muk(think, 'statusAction', function(status, http, log){
       assert.equal(status, 500);
@@ -276,13 +286,12 @@ describe('core/app.js', function(){
     done();
   })
   it('run, normal', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add', hostname: '127.0.0.1', header: function(){}});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add8', hostname: '127.0.0.1', header: function(){}});
     var domain = require('domain');
     var flag = false;
-    instance.hook = function(){
+    instance.exec = function(){
       flag = true;
     }
-    instance.exec = function(){}
     muk(domain, 'create', function(){
       return {
         on: function(type, callback){
@@ -299,19 +308,19 @@ describe('core/app.js', function(){
     done();
   })
   it('run, error', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add', hostname: '127.0.0.1', header: function(){}});
+    var instance = new App({module: 'home', controller: 'test', action: 'list_add9', hostname: '127.0.0.1', header: function(){}});
     var domain = require('domain');
     var flag = false;
-    instance.hook = function(){
-      throw new Error();
-    }
+
     muk(think, 'statusAction', function(status, http, log){
       assert.equal(status, 500);
       assert.equal(log, true);
       flag = true;
       return Promise.resolve();
     })
-    instance.exec = function(){}
+    instance.exec = function(){
+      throw new Error();
+    }
     muk(domain, 'create', function(){
       return {
         on: function(type, callback){
