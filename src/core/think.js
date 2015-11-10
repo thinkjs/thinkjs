@@ -14,6 +14,8 @@ import colors from 'colors/safe';
 import base from './base.js';
 import httpBase from './http_base.js';
 import {} from './_cache.js';
+import Cookie from '../util/cookie.js';
+
 
 /**
  * global think variable
@@ -1000,11 +1002,11 @@ think.session = http => {
     return http._session;
   }
 
-  let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
-  if (!Cookie) {
-    Cookie = think.require('cookie');
-    thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
-  }
+  // let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
+  // if (!Cookie) {
+  //   Cookie = think.require('cookie');
+  //   thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
+  // }
 
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
