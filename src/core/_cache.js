@@ -55,6 +55,11 @@ thinkCache.TEMPLATE = 'template';
  */
 thinkCache.VIEW = 'view';
 /**
+ * store view content
+ * @type {String}
+ */
+thinkCache.VIEW_CONTENT = 'view_content';
+/**
  * store db instance
  * @type {String}
  */

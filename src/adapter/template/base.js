@@ -40,7 +40,13 @@ export default class extends think.adapter.base {
    * @return {} []
    */
   getContent(file){
-    return fs.readFileSync(file, 'utf8');
+    let content = thinkCache(thinkCache.VIEW_CONTENT, file);
+    if(content){
+      return content;
+    }
+    content = fs.readFileSync(file, 'utf8');
+    thinkCache(thinkCache.VIEW_CONTENT, file, content);
+    return content;
     // let fn = think.promisify(fs.readFile, fs);
     // return fn(file, 'utf8');
   }
