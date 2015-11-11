@@ -12,12 +12,9 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   init(options){
-
-    options = this.mergeConfig(think.config('memcache'), options);
-    this.options = options;
-    
-    this.timeout = options.timeout;
-    this.keyPrefix = options.prefix;
+    this.options = think.extend({}, think.config('memcache'), options);
+    this.timeout = this.options.timeout || 0;
+    this.prefix = this.options.repfix || '';
   }
   /**
    * get memcache instance
@@ -26,18 +23,12 @@ export default class extends think.adapter.base {
    */
   getMemcacheInstance(name){
     let options = this.parseConfig(this.options, {
-      command: name
-    }, 'cache');
-
-    let key = think.md5(JSON.stringify(options)).slice(0, 5);
-
-    let instance = thinkCache(thinkCache.MEMCACHE, key);
-    if(!instance){
-      instance = new MemcacheSocket(options);
-      thinkCache(thinkCache.MEMCACHE, key, instance);
-    }
-
-    return instance;
+      command: name,
+      from: 'cache'
+    });
+    this.timeout = options.timeout || this.timeout;
+    this.prefix = options.prefix || this.prefix;
+    return MemcacheSocket.getInstance(options, thinkCache.MEMCACHE);
   }
   /**
    * get data
@@ -46,7 +37,7 @@ export default class extends think.adapter.base {
    */
   get(name){
     let instance = this.getMemcacheInstance('get');
-    return instance.get(this.keyPrefix + name).then(value => {
+    return instance.get(this.prefix + name).then(value => {
       if (value) {
         return JSON.parse(value);
       }
@@ -67,7 +58,7 @@ export default class extends think.adapter.base {
     }
     let instance = this.getMemcacheInstance('set');
     let data = JSON.stringify(value);
-    return instance.set(this.keyPrefix + name, data, timeout).catch(() => {});
+    return instance.set(this.prefix + name, data, timeout).catch(() => {});
   }
   /**
    * delete data
@@ -76,6 +67,6 @@ export default class extends think.adapter.base {
    */
   delete(name){
     let instance = this.getMemcacheInstance('delete');
-    return instance.delete(this.keyPrefix + name).catch(() => {});
+    return instance.delete(this.prefix + name).catch(() => {});
   }
 }

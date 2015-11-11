@@ -13,8 +13,8 @@ export default class extends think.adapter.base {
    * @param  {Object} extraConf   []
    * @return {}             []
    */
-  mergeConfig(defaultConf, extraConf){
-    let config = think.mergeConfig(defaultConf, think.config('view'), extraConf);
+  parseConfig(defaultConf, extraConf){
+    let config = think.parseConfig(defaultConf, think.config('view'), extraConf);
     //compatibility with view.options
     if(!think.isEmpty(config.options)){
       think.log(colors => {

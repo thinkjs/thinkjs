@@ -12,32 +12,22 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   init(options){
-
-    options = this.mergeConfig(think.config('redis'), options);
-    this.options = options;
-    
-    this.timeout = options.timeout;
-    this.keyPrefix = options.prefix;
+    this.options = think.extend({}, think.config('redis'), options);
+    this.timeout = this.options.timeout || 0;
+    this.prefix = this.options.prefix || '';
   }
   /**
    * get redis instance
    * @return {Object} []
    */
   getRedisInstance(name){
-
     let options = this.parseConfig(this.options, {
-      command: name
-    }, 'cache');
-
-    let key = think.md5(JSON.stringify(options)).slice(0, 5);
-
-    let instance = thinkCache(thinkCache.REDIS, key);
-    if(!instance){
-      instance = new RedisSocket(options);
-      thinkCache(thinkCache.REDIS, key, instance);
-    }
-
-    return instance;
+      command: name,
+      from: 'cache'
+    });
+    this.timeout = options.timeout || this.timeout;
+    this.prefix = options.prefix || this.prefix;
+    return RedisSocket.getInstance(options, thinkCache.REDIS);
   }
   /**
    * get data
@@ -46,7 +36,7 @@ export default class extends think.adapter.base {
    */
   get(name){
     let instance = this.getRedisInstance('get');
-    return instance.get(this.keyPrefix + name).then(value => {
+    return instance.get(this.prefix + name).then(value => {
       if (value) {
         return JSON.parse(value);
       }
@@ -66,7 +56,7 @@ export default class extends think.adapter.base {
       name = key;
     }
     let instance = this.getRedisInstance('set');
-    return instance.set(this.keyPrefix + name, JSON.stringify(value), timeout).catch(() => {});
+    return instance.set(this.prefix + name, JSON.stringify(value), timeout).catch(() => {});
   }
   /**
    * delete data
@@ -75,7 +65,7 @@ export default class extends think.adapter.base {
    */
   delete(name){
     let instance = this.getRedisInstance('delete');
-    return instance.delete(this.keyPrefix + name).catch(() => {});
+    return instance.delete(this.prefix + name).catch(() => {});
   }
   /**
    * wrap
@@ -83,8 +73,8 @@ export default class extends think.adapter.base {
    * @param  {...[type]} data []
    * @return {[type]}         []
    */
-  wrap(command, name, ...data){
-    let instance = this.getRedisInstance(command);
-    return instance.wrap(command, this.keyPrefix + name, ...data);
-  }
+  // wrap(command, name, ...data){
+  //   let instance = this.getRedisInstance(command);
+  //   return instance.wrap(command, this.prefix + name, ...data);
+  // }
 }

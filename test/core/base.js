@@ -108,11 +108,6 @@ describe('core/base.js', function(){
       done();
     });
   })
-  it('mergeConfig', function(){
-    var instance = new Base();
-    var config = instance.mergeConfig();
-    assert.deepEqual(config, {})
-  })
   it('filename', function(){
     var instance = new Base();
     var filename = instance.filename();

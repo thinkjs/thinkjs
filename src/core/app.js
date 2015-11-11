@@ -15,7 +15,7 @@ export default class extends think.http.base {
     let name = `${this.http.module}/${think.dirname.logic}/${this.http.controller}`;
     let cls = think.require(name, true);
     if (!cls) {
-      return;
+      return Promise.resolve();
     }
     let instance = new cls(this.http);
     let action = this.http.action;
@@ -28,8 +28,9 @@ export default class extends think.http.base {
     }
     //only has before method
     else if(think.isFunction(instance.__before)){
-      return instance.__before(instance);
+      return think.co.wrap(instance.__before).bind(instance)(instance);
     }
+    return Promise.resolve();
   }
   /**
    * exec controller
@@ -95,7 +96,7 @@ export default class extends think.http.base {
     this.http._config = think.getModuleConfig(this.http.module);
 
     await this.hook('logic_before');
-    await Promise.resolve(this.execLogic()).catch(err => {
+    await this.execLogic().catch(err => {
       //ignore prevent reject promise
       //make logic_after hook can be invoked
       if(!think.isPrevent(err)){
@@ -178,7 +179,7 @@ export default class extends think.http.base {
     this.logPid(port);
 
     //start websocket
-    let websocket = think.mergeConfig(think.config('websocket'));
+    let websocket = think.parseConfig(think.config('websocket'));
     if(websocket.on){
       let Cls = think.adapter('websocket', websocket.type);
       let instance = new Cls(server, websocket, this);

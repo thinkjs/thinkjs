@@ -15,7 +15,7 @@ export default class extends Base {
    */
   async run(templateFile, tVar, config){
 
-    let options = this.mergeConfig({
+    let options = this.parseConfig({
       autoescape: true
     }, config);
     let swig = await think.npm('swig');

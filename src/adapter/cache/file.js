@@ -19,7 +19,7 @@ export default class extends think.adapter.base {
    */
   init(options){
     
-    options = think.mergeConfig(options);
+    options = think.parseConfig(think.config('cache'), options);
     
     this.timeout = options.timeout;
     this.file_ext = options.file_ext;

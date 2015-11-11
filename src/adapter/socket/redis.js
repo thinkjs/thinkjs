@@ -14,7 +14,7 @@ export default class extends Base {
   init(config = {}){
     super.init(config);
 
-    this.config = think.extend({}, {
+    this.config = think.extend({
       port: 6379,
       host: '127.0.0.1',
       password: ''

@@ -330,18 +330,26 @@ think.safeRequire = file => {
 };
 
 /**
- * merge config, support adapter config
+ * merge & parse config, support adapter & parser
  * @param  {} configs []
  * @return {}            []
  */
-think.mergeConfig = (...configs) => {
+think.parseConfig = (...configs) => {
   let config = think.extend({}, ...configs);
+
+  //check adapter config exist
   if(config.type && config.adapter){
     let adapterConfig = config.adapter[config.type];
     config = think.extend(config, adapterConfig);
     delete config.adapter;
   }
-  return config;
+
+  //check parser method
+  if(!think.isFunction(config.parser)){
+    return config;
+  }
+  
+  return config.parser(config) || {};
 };
 
 /**
@@ -1043,7 +1051,7 @@ think.session = http => {
     }
   }
   
-  let conf = think.mergeConfig(sessionOptions, {
+  let conf = think.parseConfig(sessionOptions, {
     cookie: sessionCookie
   });
   let cls = think.adapter('session', type);
@@ -1146,7 +1154,7 @@ think.service = (superClass, methods, module) => {
  * @return {}       []
  */
 think.cache = async (name, value, options = {}) => {
-  options = think.mergeConfig(think.config('cache'), options);
+  options = think.extend({}, think.config('cache'), options);
   let Cls = think.adapter('cache', options.type || 'memory');
   let instance = new Cls(options);
   // get cache

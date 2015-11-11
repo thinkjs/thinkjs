@@ -33,7 +33,7 @@ describe('adapter/cache/file.js', function() {
     var instance = new FileCache({
       path: 'www'
     });
-    assert.equal(instance.path_depth, 1);
+    assert.equal(instance.path_depth, 2);
   });
 
   it('get file path', function() {

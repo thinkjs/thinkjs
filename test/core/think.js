@@ -2255,13 +2255,13 @@ describe('core/think.js', function(){
     })
   })
 
-  describe('think.mergeConfig', function(){
+  describe('think.parseConfig', function(){
     it('merge empty', function(){
-      var config = think.mergeConfig();
+      var config = think.parseConfig();
       assert.deepEqual(config, {})
     })
     it('merge, has adapter & type', function(){
-      var config = think.mergeConfig({
+      var config = think.parseConfig({
         type: 'file',
         adapter: {
           file: {

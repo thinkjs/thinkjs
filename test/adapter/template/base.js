@@ -35,7 +35,7 @@ describe('adapter/template/base.js', function(){
       });
       assert.equal(msg.indexOf('[DEPRECATED]') > -1, true);
     })
-    var data = instance.mergeConfig({
+    var data = instance.parseConfig({
       options: {name: 111}
     });
     assert.deepEqual(data.name, 111);

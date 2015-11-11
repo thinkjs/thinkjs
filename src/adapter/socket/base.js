@@ -66,4 +66,22 @@ export default class extends think.adapter.base {
       this.connection = null;
     }
   }
+
+  /**
+   * get instance
+   * @param  {Object} config []
+   * @return {Object}        []
+   */
+  static getInstance(config, type){
+    config = think.parseConfig(config);
+
+    let key = think.md5(JSON.stringify(config)).slice(0, 5);
+
+    let instance = thinkCache(type, key);
+    if(!instance){
+      instance = new this(config);
+      thinkCache(type, key, instance);
+    }
+    return instance;
+  }
 }

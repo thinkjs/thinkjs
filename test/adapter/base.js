@@ -14,12 +14,12 @@ var Base = require('../../lib/adapter/base.js');
 describe('adapter/base.js', function(){
   it('merge config, empty', function(){
     var instance = new Base();
-    var data = instance.mergeConfig();
+    var data = instance.parseConfig();
     assert.deepEqual(data, {})
   })
   it('merge config', function(){
     var instance = new Base();
-    var data = instance.mergeConfig({
+    var data = instance.parseConfig({
       type: 'test',
       name: '111',
       adapter: {
@@ -50,10 +50,10 @@ describe('adapter/base.js', function(){
   })
   it('parse config, has parser, type', function(){
     var instance = new Base();
-    var data = instance.parseConfig({name: 1, parser: function(options, type){
-      assert.equal(type, 'cache')
+    var data = instance.parseConfig({name: 1, from: 'cache', parser: function(options){
+      assert.equal(options.from, 'cache')
       return {name: 2}
-    }}, 'cache');
+    }});
     assert.deepEqual(data, {name: 2})
   })
   it('parse config, has parser, extra, type', function(){

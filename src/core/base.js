@@ -62,12 +62,4 @@ export default class {
     let filename = this.__filename || __filename;
     return path.basename(filename, '.js');
   }
-  /**
-   * merge config, support adapter config
-   * @param  {} configs []
-   * @return {}            []
-   */
-  mergeConfig(...configs){
-    return think.mergeConfig(...configs);
-  }
 }

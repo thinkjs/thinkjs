@@ -22,7 +22,7 @@ export default class extends think.adapter.base {
    */
   init(options){
     
-    options = think.mergeConfig(options);
+    options = think.parseConfig(options);
 
     this.cookie = options.cookie;
     this.timeout = options.timeout;

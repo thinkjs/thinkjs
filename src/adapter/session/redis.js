@@ -12,32 +12,23 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   init(options){
-    
-    options = think.mergeConfig(options);
-    this.options = options;
 
-    this.timeout = options.timeout;
-    this.cookie = options.cookie;
+    this.options = think.extend({}, think.config('session'), options);
+
+    this.timeout = this.options.timeout;
+    this.cookie = this.options.cookie;
   }
   /**
    * get redis instance
    * @return {Object} []
    */
   getRedisInstance(name){
-
     let options = this.parseConfig(this.options, {
-      command: name
-    }, 'session');
-
-    let key = think.md5(JSON.stringify(options)).slice(0, 5);
-
-    let instance = thinkCache(thinkCache.REDIS, key);
-    if(!instance){
-      instance = new RedisSocket(options);
-      thinkCache(thinkCache.REDIS, key, instance);
-    }
-
-    return instance;
+      command: name,
+      from: 'session'
+    });
+    this.timeout = options.timeout || this.timeout;
+    return RedisSocket.getInstance(options, thinkCache.REDIS);
   }
   /**
    * get session
