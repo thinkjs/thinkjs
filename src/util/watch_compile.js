@@ -54,7 +54,7 @@ export default class extends think.base {
     let startTime = Date.now();
     try{
       let data = babel.transform(content, {
-        //retainLines: true,
+        retainLines: true,
         stage: 0,
         modules: 'common',
         loose: true,
