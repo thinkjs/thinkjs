@@ -22,6 +22,21 @@ import Cookie from '../util/cookie.js';
  * @type {Object}
  */
 global.think = Object.create(thinkit);
+
+/**
+ * camelCase string
+ * @TODO move to thinkit package
+ * @param  {String} str []
+ * @return {String}     []
+ */
+think.camelCase = str => {
+  if(str.indexOf('_') > -1){
+    str = str.replace(/_(\w)/g, (a, b) => {
+      return b.toUpperCase();
+    });
+  }
+  return str;
+};
 /**
  * server start time
  * @type {Number}

@@ -18,7 +18,7 @@ export default class extends think.http.base {
       return Promise.resolve();
     }
     let instance = new cls(this.http);
-    let action = this.http.action;
+    let action = think.camelCase(this.http.action);
     if (think.isFunction(instance[`${action}Action`])) {
       return this.action(instance, action);
     }
@@ -66,12 +66,7 @@ export default class extends think.http.base {
       }
       http.action = method;
     }
-    let action = http.action;
-    if(action.indexOf('_') > -1){
-      action = action.replace(/_(\w)/g, (a, b) => {
-        return b.toUpperCase();
-      });
-    }
+    let action = think.camelCase(http.action);
     let actionWithSuffix = `${action}Action`;
     //action is exist
     if(think.isFunction(controller[actionWithSuffix])){
