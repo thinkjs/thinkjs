@@ -23,16 +23,11 @@ export default class extends think.base {
    * @param  {Boolean} log     []
    * @return {}         []
    */
-  init(srcPath, outPath, log){
-    if(srcPath === true){
-      log = true;
-      srcPath = '';
-    }
-    srcPath = srcPath || `${think.ROOT_PATH}/src`;
-    outPath = outPath || `${think.ROOT_PATH}/app`;
+  init(srcPath, outPath, log, callback){
     this.srcPath = srcPath;
     this.outPath = outPath;
     this.log = log;
+    this.callback = callback;
   }
   /**
    * compile single file
@@ -54,6 +49,7 @@ export default class extends think.base {
     let startTime = Date.now();
     try{
       let data = babel.transform(content, {
+        filename: file,
         retainLines: true,
         stage: 0,
         modules: 'common',
@@ -78,6 +74,7 @@ export default class extends think.base {
    */
   compile(){
     let files = think.getFiles(this.srcPath);
+    let changedFiles = [];
     files.forEach(file => {
       let extname = path.extname(file);
       //if is not js file, only copy
@@ -96,21 +93,22 @@ export default class extends think.base {
       }
       if(!this.compiledMtime[file] || mTime > this.compiledMtime[file]){
         this.compileFile(file);
+        changedFiles.push(path.normalize(`${this.outPath}/${file}`));
         this.compiledMtime[file] = mTime;
         return;
       }
     });
+    //notify auto reload service to clear file cache
+    if(changedFiles.length){
+      this.callback && this.callback(changedFiles);
+    }
+    setTimeout(this.compile.bind(this), 100);
   }
   /**
    * run
    * @return {} []
    */
   run(){
-    if(!think.isDir(this.srcPath)){
-      return;
-    }
     this.compile();
-    this.timer = setInterval(this.compile.bind(this), 100);
-    return true;
   }
 }

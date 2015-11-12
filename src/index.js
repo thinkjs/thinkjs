@@ -425,17 +425,6 @@ export default class {
     //this.loadAliasExport();
   }
   /**
-   * auto reload user modified files
-   * @return {} []
-   */
-  autoReload(){
-    let AutoReload = require('./util/auto_reload.js');
-    let instance = new AutoReload(think.APP_PATH, () => {
-      this.load();
-    }, think.config('log_auto_reload'));
-    instance.run();
-  }
-  /**
    * capture error
    * @return {} []
    */
@@ -464,22 +453,64 @@ export default class {
     }
   }
   /**
-   * run
+   * auto reload user modified files
    * @return {} []
    */
-  run(){
-    this.start();
-    return think.require('app').run();
+  autoReload(){
+    //it auto reload by watch compile
+    if(this.compileCallback){
+      return;
+    }
+    let instance = this.getReloadInstance();
+    instance.run();
+  }
+  /**
+   * get auto reload class instance
+   * @param  {String} srcPath []
+   * @return {Object}         []
+   */
+  getReloadInstance(srcPath){
+    srcPath = srcPath || think.APP_PATH;
+    let AutoReload = require('./util/auto_reload.js');
+    AutoReload.rewriteSysModuleLoad();
+
+    let instance = new AutoReload(srcPath, () => {
+      this.load();
+    }, think.config('log_auto_reload') || true);
+    return instance;
   }
   /**
    * use babel compile code
    * @return {} []
    */
   compile(srcPath, outPath, log){
+    if(srcPath === true){
+      log = true;
+      srcPath = '';
+    }
+    srcPath = srcPath || `${think.ROOT_PATH}/src`;
+    outPath = outPath || think.APP_PATH;
+
+    if(!think.isDir(srcPath)){
+      return;
+    }
+    let reloadInstance = this.getReloadInstance(outPath);
+    this.compileCallback = changedFiles => {
+      reloadInstance.clearFilesCache(changedFiles);
+    }.bind(this);
+
     let WatchCompile = require('./util/watch_compile.js');
-    let instance = new WatchCompile(srcPath, outPath, log);
-    let flag = instance.run();
-    think.autoCompile = flag;
+    let instance = new WatchCompile(srcPath, outPath, log, this.compileCallback);
+    instance.run();
+    think.autoCompile = true;
+  }
+  /**
+   * run
+   * @return {} []
+   */
+  run(){
+    this.start();
+    return think.require('app').run();
   }
   /**
    * load, convenient for plugins

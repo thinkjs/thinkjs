@@ -2,6 +2,9 @@
 
 import fs from 'fs';
 import path from 'path';
+import sys_module from 'module';
+
+const NODE_MODULES = `${path.sep}node_modules${path.sep}`;
 
 /**
  * auto reload file
@@ -40,21 +43,39 @@ export default class extends think.base {
    * @return {} []
    */
   clearFileCache(file){
-
     let mod = require.cache[file];
+    if(!mod){
+      return;
+    }
     //remove children
     if(mod && mod.children){
       mod.children.length = 0;
     }
-    //remove require cache
-    delete require.cache[file];
 
     // clear module cache which dependents this module
     for(let fileItem in require.cache){
+      if(fileItem === file || fileItem.indexOf(NODE_MODULES) > -1){
+        continue;
+      }
       let item = require.cache[fileItem];
-      if(item && item.children && item.children.indexOf(mod)){
+      if(item && item.children && item.children.indexOf(mod) > -1){
         this.clearFileCache(fileItem);
       }
+    }
+    //remove require cache
+    delete require.cache[file];
+  }
+  /**
+   * clear files cache
+   * @param  {Array} files []
+   * @return {}       []
+   */
+  clearFilesCache(files){
+    files.forEach(file => {
+      this.clearFileCache(file);
+    });
+    if(this.callback){
+      this.callback();
     }
   }
   /**
@@ -78,10 +99,9 @@ export default class extends think.base {
   checkCacheChange(){
     let autoReload = thinkCache(thinkCache.AUTO_RELOAD);
     let hasChange = false;
-    let nodeModules = `${path.sep}node_modules${path.sep}`;
     for(let file in require.cache){
       //ignore file in node_modules path
-      if(file.indexOf(nodeModules) > -1){
+      if(file.indexOf(NODE_MODULES) > -1){
         continue;
       }
       if(!think.isFile(file)){
@@ -107,11 +127,36 @@ export default class extends think.base {
    * @return {} []
    */
   run(){
-    this.timer = setInterval(() => {
-      let hasChange = this.checkCacheChange() || this.checkFileChange();
-      if(hasChange && this.callback){
-        this.callback();
+    let hasChange = this.checkCacheChange() || this.checkFileChange();
+    if(hasChange && this.callback){
+      this.callback();
+    }
+    setTimeout(this.run.bind(this), 200);
+  }
+  /**
+   * rewrite sys module load method
+   * @return {} []
+   */
+  static rewriteSysModuleLoad(){
+    let load = sys_module._load;
+    
+    //rewrite Module._load method
+    sys_module._load = (request, parent, isMain) => {
+      let exportsObj = load(request, parent, isMain);
+      if(isMain || parent.filename.indexOf(NODE_MODULES) > -1){
+        return exportsObj;
       }
-    }, 200);
+      if(request === 'internal/repl' || request === 'repl'){
+        return exportsObj;
+      }
+      try{
+        let filename = sys_module._resolveFilename(request, parent);
+        let cachedModule = sys_module._cache[filename];
+        if(cachedModule && parent.children.indexOf(cachedModule) === -1){
+          parent.children.push(cachedModule);
+        }
+      }catch(e){}
+      return exportsObj;
+    }
   }
 }
