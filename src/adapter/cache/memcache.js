@@ -12,7 +12,7 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   init(options){
-    this.options = think.extend({}, think.config('memcache'), options);
+    this.options = think.extend({}, think.config('cache'), options);
     this.timeout = this.options.timeout || 0;
     this.prefix = this.options.repfix || '';
   }
@@ -22,7 +22,7 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   getMemcacheInstance(name){
-    let options = this.parseConfig(this.options, {
+    let options = this.parseConfig(think.config('memcache'), this.options, {
       command: name,
       from: 'cache'
     });
