@@ -23,12 +23,13 @@ export default class extends think.adapter.base {
   init(options){
     
     options = think.parseConfig(options);
-
     this.cookie = options.cookie;
+    
     this.timeout = options.timeout;
-
     this.isChanged = false;
-    this.model = think.model('session', think.config('db'));
+
+    let dbConfig = think.extend{(), think.config('db'), options};
+    this.model = think.model('session', dbConfig);
 
     this.gcType = 'session_db';
     think.gc(this);
