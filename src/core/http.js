@@ -660,6 +660,11 @@ export default class extends think.base {
     if (obj === undefined) {
       return;
     }
+    if(think.isPromise(obj)){
+      //ignore Content-Type header before set
+      this._contentTypeIsSend = false;
+      throw new Error('cat not write promise');
+    }
     if (think.isArray(obj) || think.isObject(obj)) {
       obj = JSON.stringify(obj);
     }else if (!think.isBuffer(obj)) {
