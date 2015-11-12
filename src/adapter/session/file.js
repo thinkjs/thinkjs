@@ -48,27 +48,33 @@ export default class extends think.adapter.base {
    * get session data
    * @return {Promise} []
    */
-  getData(){
+  async getData(){
     if(this.data){
-      return Promise.resolve(this.data);
-    }
-    let filepath = this.getFilepath();
-    return this.store.get(filepath).then(data => {
-      this.data = {};
-      if(!data){
-        return;
-      }
-      data = JSON.parse(data);
-      if(Date.now() > data.expire){
-        return this.store.delete(filepath);
-      }else{
-        this.data = data.data || {};
-      }
-    }).catch(() => {
-      this.data = {};
-    }).then(() => {
       return this.data;
-    });
+    }
+
+    let filepath = this.getFilepath();
+    //ignore error
+    let data = await this.store.get(filepath).catch(() => {});
+
+    this.data = {};
+    if(!data){
+      return this.data;
+    }
+
+    try{
+      data = JSON.parse(data);
+    }catch(e){
+      return this.data;
+    }
+
+    if(Date.now() > data.expire){
+      await this.store.delete(filepath);
+    }else{
+      this.data = data.data || {};
+    }
+
+    return this.data;
   }
   /**
    * get data
