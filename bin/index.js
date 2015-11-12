@@ -257,7 +257,7 @@ var _copyWwwFiles = function(){
 
 
   mkdir(projectRootPath + 'www/');
-  copyFile('www/index.js', projectRootPath + 'www/index.js', {
+  copyFile('www/development.js', projectRootPath + 'www/development.js', {
     '<COMPILE_CODE>': program.es6 ? 'instance.compile(true);' : ''
   });
   copyFile('www/production.js', projectRootPath + 'www/production.js');
