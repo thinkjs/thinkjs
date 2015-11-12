@@ -90,6 +90,12 @@ export default class extends think.http.base {
     //set module config, can not set config in request
     this.http._config = think.getModuleConfig(this.http.module);
 
+    //babel compile error
+    if(think.compileError){
+      this.http.error = think.compileError;
+      return think.statusAction(500, this.http);
+    }
+
     await this.hook('logic_before');
     await this.execLogic().catch(err => {
       //ignore prevent reject promise

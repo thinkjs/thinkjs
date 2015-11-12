@@ -17,6 +17,11 @@ export default class extends think.base {
    */
   compiledMtime = {};
   /**
+   * compiled error files
+   * @type {Array}
+   */
+  compiledErrorFiles = [];
+  /**
    * init
    * @param  {String} srcPath []
    * @param  {String} outPath []
@@ -46,6 +51,7 @@ export default class extends think.base {
       fs.writeFileSync(`${this.outPath}/${file}`, content);
       return;
     }
+
     let startTime = Date.now();
     try{
       let data = babel.transform(content, {
@@ -61,11 +67,16 @@ export default class extends think.base {
       }
       think.mkdir(path.dirname(`${this.outPath}/${file}`));
       fs.writeFileSync(`${this.outPath}/${file}`, data.code);
+      return true;
     }catch(e){
+
       think.log(colors => {
         return colors.red(`compile file ${file} error`);
       }, 'BABEL');
       think.log(e);
+
+      e.message = 'Babel Compile Error: ' + e.message;
+      think.compileError = e;
     }
   }
   /**
@@ -75,6 +86,11 @@ export default class extends think.base {
   compile(){
     let files = think.getFiles(this.srcPath);
     let changedFiles = [];
+
+    if(!this.compiledErrorFiles.length){
+      think.compileError = null;
+    }
+
     files.forEach(file => {
       let extname = path.extname(file);
       //if is not js file, only copy
@@ -92,10 +108,18 @@ export default class extends think.base {
         }
       }
       if(!this.compiledMtime[file] || mTime > this.compiledMtime[file]){
-        this.compileFile(file);
+        let ret = this.compileFile(file);
         changedFiles.push(path.normalize(`${this.outPath}/${file}`));
         this.compiledMtime[file] = mTime;
-        return;
+
+        if(ret){
+          let index = this.compiledErrorFiles.indexOf(file);
+          if(index > -1){
+            this.compiledErrorFiles.splice(index, 1);
+          }
+        }else{
+          this.compiledErrorFiles.push(file);
+        }
       }
     });
     //notify auto reload service to clear file cache
