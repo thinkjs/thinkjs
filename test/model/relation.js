@@ -434,15 +434,15 @@ describe('model/relation.js', function(){
     model.getPk = function(){
       return 'id';
     }
-    model.db();
-    model._db.select = function(sql, cache){
+    let DbMysql = think.adapter('db', 'mysql');
+    muk(DbMysql.prototype, 'select', function(sql, cache){
       assert.equal(sql.trim(), 'SELECT b.*, a.cate_id FROM think_post_cate as a, think_cate as b  WHERE ( `cate_id` = 10 ) AND a.cate_id=b.id');
       return [{
         post_id: 10,
         cate_id: 1,
         name: 'cate1'
       }]
-    }
+    })
     var data = {id: 10, title: 'post1'}
     instance._getManyToManyRelation(data, {
       name: 'cate',
@@ -452,6 +452,7 @@ describe('model/relation.js', function(){
     }, {}).then(function(data){
       //console.log(JSON.stringify(data))
       assert.deepEqual(data, {"id":10,"title":"post1","cate":[{"post_id":10,"cate_id":1,"name":"cate1"}]})
+      muk.restore();
       done();
     }).catch(function(err){
       console.log(err.stack)
@@ -463,15 +464,15 @@ describe('model/relation.js', function(){
     model.getPk = function(){
       return 'id';
     }
-    model.db();
-    model._db.select = function(sql, cache){
+    var DbMysql = think.adapter('db', 'mysql');
+    muk(DbMysql.prototype, 'select', function(sql, cache){
       assert.equal(sql.trim(), 'SELECT b.*, a.cate_id FROM think_p_c as a, think_cate as b  WHERE ( `cate_id` = 10 ) AND a.cate_id=b.id');
       return [{
         post_id: 10,
         cate_id: 1,
         name: 'cate1'
       }]
-    }
+    })
     var data = {id: 10, title: 'post1'}
     instance._getManyToManyRelation(data, {
       name: 'cate',
@@ -482,6 +483,7 @@ describe('model/relation.js', function(){
     }, {}).then(function(data){
       //console.log(JSON.stringify(data))
       assert.deepEqual(data, {"id":10,"title":"post1","cate":[{"post_id":10,"cate_id":1,"name":"cate1"}]})
+      muk.restore();
       done();
     }).catch(function(err){
       console.log(err.stack)
@@ -493,15 +495,15 @@ describe('model/relation.js', function(){
     model.getPk = function(){
       return 'id';
     }
-    model.db();
-    model._db.select = function(sql, cache){
+    var DbMysql = think.adapter('db', 'mysql');
+    muk(DbMysql.prototype, 'select', function(sql, cache){
       assert.equal(sql.trim(), 'SELECT b.*, a.cate_id FROM think_p_c as a, think_cate as b  WHERE ( `cate_id` = 10 ) AND a.cate_id=b.id');
       return [{
         post_id: 10,
         cate_id: 1,
         name: 'cate1'
       }]
-    }
+    })
     var data = {id: 10, title: 'post1'}
     instance._getManyToManyRelation(data, {
       name: 'cate',
@@ -513,6 +515,7 @@ describe('model/relation.js', function(){
       //console.log(JSON.stringify(data))
       assert.deepEqual(data, {"id":10,"title":"post1","cate":[{"post_id":10,"cate_id":1,"name":"cate1"}]})
       done();
+      muk.restore();
     }).catch(function(err){
       console.log(err.stack)
     })
@@ -523,15 +526,15 @@ describe('model/relation.js', function(){
     model.getPk = function(){
       return 'id';
     }
-    model.db();
-    model._db.select = function(sql, cache){
+    var DbMysql = think.adapter('db', 'mysql');
+    muk(DbMysql.prototype, 'select', function(sql, cache){
       assert.equal(sql.trim(), 'SELECT b.*, a.cate_id FROM think_p_c as a, think_cate as b  WHERE ( `cate_id` = 10 ) AND a.cate_id=b.id  AND name=1');
       return [{
         post_id: 10,
         cate_id: 1,
         name: 'cate1'
       }]
-    }
+    })
     var data = {id: 10, title: 'post1'}
     instance._getManyToManyRelation(data, {
       name: 'cate',
@@ -544,6 +547,7 @@ describe('model/relation.js', function(){
       //console.log(JSON.stringify(data))
       assert.deepEqual(data, {"id":10,"title":"post1","cate":[{"post_id":10,"cate_id":1,"name":"cate1"}]})
       done();
+      muk.restore();
     }).catch(function(err){
       console.log(err.stack)
     })

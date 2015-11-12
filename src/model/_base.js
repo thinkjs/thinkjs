@@ -95,17 +95,6 @@ export default class extends think.base {
     return this.tablePrefix || '';
   }
   /**
-   * get config key
-   * @return {} []
-   */
-  getConfigKey(){
-    if(this._configKey){
-      return this._configKey;
-    }
-    this._configKey = think.md5(JSON.stringify(this.config));
-    return this._configKey;
-  }
-  /**
    * get db instance
    * @return {Object} []
    */
@@ -113,13 +102,8 @@ export default class extends think.base {
     if (this._db) {
       return this._db;
     }
-    let configKey = this.getConfigKey();
-    if (!thinkCache(thinkCache.DB, configKey)) {
-      let db = think.adapter('db', this.config.type);
-      let instance = new db(this.config);
-      thinkCache(thinkCache.DB, configKey, instance);
-    }
-    this._db = thinkCache(thinkCache.DB, configKey);
+    let DB = think.adapter('db', this.config.type || 'mysql');
+    this._db = new DB(this.config);
     return this._db;
   }
   /**
@@ -490,8 +474,6 @@ export default class extends think.base {
    * @return {} []
    */
   close(){
-    //remove db instance from cache store
-    thinkCache(thinkCache.DB, this.getConfigKey(), null);
     if (this._db) {
       this._db.close();
       this._db = null;

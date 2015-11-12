@@ -12,11 +12,14 @@ export default class extends Base {
    * @param  {Object} config []
    * @return {}        []
    */
-  socket(){
+  socket(sql){
     if(this._socket){
       return this._socket;
     }
-    this._socket = new SqliteSocket(this.config);
+    let config = think.extend({
+      sql: sql
+    }, this.config);
+    this._socket = SqliteSocket.getInstance(config, thinkCache.DB);
     return this._socket;
   }
   /**

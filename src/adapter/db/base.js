@@ -194,7 +194,7 @@ export default class extends Parse {
   query(sql){
     this.sql = sql;
     return think.await(sql, () => {
-      return this.socket().query(sql).then(data => {
+      return this.socket(sql).query(sql).then(data => {
         return this.bufferToString(data);
       });
     });
@@ -224,7 +224,7 @@ export default class extends Parse {
    */
   execute(sql){
     this.sql = sql;
-    return this.socket().execute(sql).then(data => {
+    return this.socket(sql).execute(sql).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }

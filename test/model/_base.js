@@ -48,17 +48,17 @@ describe('model/_base.js', function(){
     var model = instance.model('base');
     assert.deepEqual(think.isObject(model), true);
   })
-  it('getConfigKey', function(){
-    var instance = new Base('user', think.config('db'));
-    var data = instance.getConfigKey();
-    assert.deepEqual(data, 'c9c2617d14387ce79c8cee78ce578972');
-  })
-  it('getConfigKey, exist', function(){
-    var instance = new Base('user', think.config('db'));
-    instance._configKey = 'configKey'
-    var data = instance.getConfigKey();
-    assert.deepEqual(data, 'configKey');
-  })
+  // it('getConfigKey', function(){
+  //   var instance = new Base('user', think.config('db'));
+  //   var data = instance.getConfigKey();
+  //   assert.deepEqual(data, 'c9c2617d14387ce79c8cee78ce578972');
+  // })
+  // it('getConfigKey, exist', function(){
+  //   var instance = new Base('user', think.config('db'));
+  //   instance._configKey = 'configKey'
+  //   var data = instance.getConfigKey();
+  //   assert.deepEqual(data, 'configKey');
+  // })
   it('get db instance', function(){
     var instance = new Base('user', think.config('db'));
     var db = instance.db();

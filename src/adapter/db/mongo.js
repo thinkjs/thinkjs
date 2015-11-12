@@ -27,7 +27,7 @@ export default class extends Parse {
     if(this._socket){
       return this._socket;
     }
-    this._socket = new MongoSocket(this.config);
+    this._socket = MongoSocket.getInstance(this.config, thinkCache.DB);
     return this._socket;
   }
   /**
