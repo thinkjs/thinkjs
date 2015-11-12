@@ -123,8 +123,8 @@ export default class extends think.base {
       }
     });
     //notify auto reload service to clear file cache
-    if(changedFiles.length){
-      this.callback && this.callback(changedFiles);
+    if(changedFiles.length && this.callback){
+      this.callback(changedFiles);
     }
     setTimeout(this.compile.bind(this), 100);
   }

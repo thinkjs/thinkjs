@@ -157,6 +157,6 @@ export default class extends think.base {
         }
       }catch(e){}
       return exportsObj;
-    }
+    };
   }
 }

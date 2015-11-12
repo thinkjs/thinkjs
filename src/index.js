@@ -497,7 +497,7 @@ export default class {
     let reloadInstance = this.getReloadInstance(outPath);
     this.compileCallback = changedFiles => {
       reloadInstance.clearFilesCache(changedFiles);
-    }.bind(this);
+    };
 
     let WatchCompile = require('./util/watch_compile.js');
     let instance = new WatchCompile(srcPath, outPath, log, this.compileCallback);
