@@ -30,7 +30,7 @@ describe('adapter/session/redis', function(){
   })
   it('get redis instance', function(){
     var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
-    instance.parseConfig = function(a, options){
+    instance.parseConfig = function(a, b, options){
       assert.equal(options.from, 'session')
       return options;
     }
