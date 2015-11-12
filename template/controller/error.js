@@ -9,6 +9,18 @@ module.exports = think.controller({
    * @return {Promise}        []
    */
   displayErrorPage: function(status){
+
+    var errorConfig = this.config('error');
+    var message = this.http.error && this.http.error.message || 'error';
+    if(this.isJsonp()){
+      var data = {};
+      data[errorConfig.key] = status;
+      data[errorConfig.msg] = message;
+      return this.jsonp(data);
+    }else if(this.isAjax()){
+      return this.fail(status, message);
+    }
+
     var module = 'common';
     if(think.mode !== think.mode_module){
       module = this.config('default_module');

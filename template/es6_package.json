@@ -1,0 +1,16 @@
+{
+  "name": "thinkjs-application",
+  "description": "application created by thinkjs",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node www/development.js",
+    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir app/ --retain-lines",
+    "watch-compile": "node -e \"console.log('<npm run watch-compile> no longer need, use <npm start> command direct.');console.log();\"",
+    "watch": "npm run watch-compile"
+  },
+  "dependencies": {
+    "thinkjs": "2.0.x",
+    "babel": "5.8.21",
+    "babel-runtime": "5.6.17"
+  }
+}
