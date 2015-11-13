@@ -80,12 +80,34 @@ export default class extends think.base {
     }
   }
   /**
+   * src file is deleted, but app file also exist
+   * then delete app file
+   * @return {} []
+   */
+  getSrcDeletedFiles(srcFiles, appFiles){
+    return appFiles.filter(file => {
+      let extname = path.extname(file);
+      if(extname !== '.js'){
+        return;
+      }
+      //src file not exist
+      if(srcFiles.indexOf(file) === -1){
+        let filepath = this.outPath + '/' + file;
+        fs.unlinkSync(filepath);
+        return true;
+      }
+    }).map(file => {
+      return this.outPath + '/' + file;
+    });
+  }
+  /**
    * compile
    * @return {} []
    */
   compile(){
     let files = think.getFiles(this.srcPath);
-    let changedFiles = [];
+    let appFiles = think.getFiles(this.outPath);
+    let changedFiles = this.getSrcDeletedFiles(files, appFiles);
 
     if(!this.compiledErrorFiles.length){
       think.compileError = null;
@@ -109,7 +131,10 @@ export default class extends think.base {
       }
       if(!this.compiledMtime[file] || mTime > this.compiledMtime[file]){
         let ret = this.compileFile(file);
-        changedFiles.push(path.normalize(`${this.outPath}/${file}`));
+        if(ret){
+          changedFiles.push(path.normalize(`${this.outPath}/${file}`));
+        }
+        
         this.compiledMtime[file] = mTime;
 
         if(ret){
