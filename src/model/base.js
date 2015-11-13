@@ -60,6 +60,9 @@ export default class extends Base {
    * @return {Promise} []
    */
   getPk(){
+    if(this.pk !== 'id'){
+      return Promise.resolve(this.pk);
+    }
     return this.getTableFields().then(() => this.pk);
   }
   /**
@@ -463,7 +466,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async count(field){
-    field = field || await this.getPk();
+    field = field || await this.getPk() || '*';
     return this.getField('COUNT(' + field + ') AS think_count', true);
   }
   /**
@@ -472,7 +475,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async sum(field){
-    field = field || await this.getPk();
+    field = field || await this.getPk() || '*';
     return this.getField('SUM(' + field + ') AS think_sum', true);
   }
   /**
@@ -481,7 +484,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async min(field){
-    field = field || await this.getPk();
+    field = field || await this.getPk() || '*';
     return this.getField('MIN(' + field + ') AS think_min', true);
   }
   /**
@@ -490,7 +493,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async max(field){
-    field = field || await this.getPk();
+    field = field || await this.getPk() || '*';
     return this.getField('MAX(' + field + ') AS think_max', true);
   }
   /**
@@ -499,7 +502,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async avg(field){
-    field = field || await this.getPk();
+    field = field || await this.getPk() || '*';
     return this.getField('AVG(' + field + ') AS think_avg', true);
   }
   /**
