@@ -170,6 +170,9 @@ export default class {
     let denyModuleList = think.config('deny_module_list') || [];
     if (denyModuleList.length > 0) {
       modules = modules.filter(module => {
+        if(module[0] === '.'){
+          return;
+        }
         if (denyModuleList.indexOf(module) === -1) {
           return module;
         }
