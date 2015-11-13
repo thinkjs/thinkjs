@@ -505,7 +505,10 @@ export default class {
     let WatchCompile = require('./util/watch_compile.js');
     let instance = new WatchCompile(srcPath, outPath, log, this.compileCallback);
     instance.run();
+
     think.autoCompile = true;
+    //get app mode
+    think.mode = this.getMode();
   }
   /**
    * run
