@@ -1596,7 +1596,7 @@ describe('core/think.js', function(){
         throw new Error('require error')
       }
       require('child_process').exec = function(cmd, options, callback){
-        assert.equal(cmd, 'npm install package-not-exist');
+        assert.equal(cmd, 'npm install package-not-exist --save');
         flag = true;
         callback && callback();
       }
@@ -1626,7 +1626,7 @@ describe('core/think.js', function(){
         throw new Error('require error 1')
       }
       require('child_process').exec = function(cmd, options, callback){
-        assert.equal(cmd, 'npm install redis@2.3.0');
+        assert.equal(cmd, 'npm install redis@2.3.0 --save');
         flag = true;
         callback && callback();
       }
@@ -1643,7 +1643,7 @@ describe('core/think.js', function(){
       })
       
     })
-    it('install package redis', function(done){
+    it('install package redis 2', function(done){
       var log = think.log;
       think.log = function(){};
       var exec = require('child_process').exec;
@@ -1659,7 +1659,7 @@ describe('core/think.js', function(){
       }
       require('child_process').exec = function(cmd, options, callback){
         console.log(cmd)
-        assert.equal(cmd, 'npm install redis@2.3.0');
+        assert.equal(cmd, 'npm install redis@2.3.0 --save');
         flag = true;
         callback && callback();
       }
@@ -1695,7 +1695,7 @@ describe('core/think.js', function(){
         return callback && callback();
       }
       require('child_process').exec = function(cmd, options, callback){
-        assert.equal(cmd, 'npm install package_not_exist');
+        assert.equal(cmd, 'npm install package_not_exist --save');
         flag = true;
         callback && callback(new Error('package not exist'));
       }
