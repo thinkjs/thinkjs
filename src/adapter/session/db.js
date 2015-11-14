@@ -28,8 +28,8 @@ export default class extends think.adapter.base {
     this.timeout = options.timeout;
     this.isChanged = false;
 
-    let dbConfig = think.extend({}, think.config('db'), options);
-    this.model = think.model('session', dbConfig);
+    //let dbConfig = think.extend({}, think.config('db'), options);
+    this.model = think.model('session', think.config('db'));
 
     this.gcType = 'session_db';
     think.gc(this);
