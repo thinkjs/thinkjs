@@ -641,7 +641,7 @@ describe('model/base.js', function(){
   it('count select, no page', function(done){
     instance.where({name: 'test'}).countSelect().then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT * FROM `think_user` WHERE ( `name` = 'test' ) LIMIT 1,10")
+      assert.equal(sql, "SELECT * FROM `think_user` WHERE ( `name` = 'test' ) LIMIT 0,10")
       //console.log(sql)
       //assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]})
       done();

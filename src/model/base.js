@@ -401,7 +401,7 @@ export default class extends Base {
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
-    options.limit = options.limit || [1, this.config.nums_per_page];
+    options.limit = options.limit || [0, this.config.nums_per_page];
 
     let numsPerPage = options.limit[1];
     //get page options
@@ -420,7 +420,7 @@ export default class extends Base {
       }
     }
     let result = think.extend({count: count, totalPages: totalPage}, data);
-    result.data = await this.select(options);
+    result.data = count ? await this.select(options) : [];
     return result;
   }
   /**

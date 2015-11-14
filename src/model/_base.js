@@ -162,6 +162,10 @@ export default class extends think.base {
     if (offset === undefined) {
       return this;
     }
+    offset = Math.max(parseInt(offset) || 0, 0);
+    if(length){
+      length = Math.max(parseInt(length) || 0, 0);
+    }
     this._options.limit = [offset, length];
     return this;
   }
@@ -179,7 +183,8 @@ export default class extends think.base {
       listRows = page[1] || listRows;
       page = page[0];
     }
-    page = parseInt(page) || 1;
+    page = Math.max(parseInt(page) || 1, 1);
+    listRows = Math.max(parseInt(listRows) || 1, 1);
     this._options.limit = [listRows * (page - 1), listRows];
     return this;
   }

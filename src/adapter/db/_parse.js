@@ -376,14 +376,15 @@ export default class extends think.base {
       return '';
     }
     if(think.isNumber(limit)){
+      limit = Math.max(limit, 0);
       return ` LIMIT ${limit}`;
     }
     if(think.isString(limit)){
       limit = limit.split(/\s*,\s*/);
     }
-    let data = [limit[0] | 0];
+    let data = [Math.max(limit[0] | 0, 0)];
     if(limit[1]){
-      data.push(limit[1] | 0);
+      data.push(Math.max(limit[1] | 0, 0));
     }
     return ' LIMIT ' + data.join(',');
   }
