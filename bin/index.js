@@ -108,7 +108,7 @@ var copyFile = function(source, target, replace, showWarning){
   mkdir(path.dirname(target));
 
   if(program.es6){
-    var es6Source = source.replace(/\/([^/]+)$/, function(a, b){
+    var es6Source = source.replace(/([^/]+)$/, function(a, b){
       return '/es6_' + b;
     });
     if(think.isFile(templatePath + '/' + es6Source)){
