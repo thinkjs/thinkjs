@@ -1364,12 +1364,12 @@ think.npm = (pkg) => {
     }else{
       pkg = pkgWithVersion.split('@')[0];
     }
-    let cmd = `npm install ${pkgWithVersion}`;
+    let cmd = `npm install ${pkgWithVersion} --save`;
     return think.await(cmd, () => {
       let deferred = think.defer();
       think.log(`install package ${pkgWithVersion} start`, 'NPM');
       child_process.exec(cmd, {
-        cwd: think.THINK_PATH
+        cwd: think.ROOT_PATH
       }, err => {
         if(err){
           think.log(new Error(`install package ${pkgWithVersion} error`));
