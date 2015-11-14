@@ -409,6 +409,7 @@ export default class {
     thinkCache(thinkCache.ALIAS, null);
     thinkCache(thinkCache.ALIAS_EXPORT, null);
     thinkCache(thinkCache.MODULE_CONFIG, null);
+    think.route(null);
 
     this.loadConfig();
     this.loadRoute();
