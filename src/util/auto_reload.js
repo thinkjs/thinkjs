@@ -2,7 +2,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import sys_module from 'module';
+
+//can not use import from
+let sys_module = require('module');
 
 const NODE_MODULES = `${path.sep}node_modules${path.sep}`;
 
