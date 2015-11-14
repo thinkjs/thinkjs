@@ -21,8 +21,15 @@ export default class extends Base {
       noCache: false,
       throwOnUndefined: false
     }, config);
+    
     let nunjucks = await think.npm('nunjucks');
-    let env = nunjucks.configure(think.ROOT_PATH, options);
+
+    let env;
+    if(options.root_path){
+      env = nunjucks.configure(options.root_path, options);
+    }else{
+      env = nunjucks.configure(options);
+    }
 
     this.prerender(options, nunjucks, env);
 
