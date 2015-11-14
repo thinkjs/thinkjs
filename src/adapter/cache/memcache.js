@@ -28,7 +28,7 @@ export default class extends think.adapter.base {
     });
     this.timeout = options.timeout || this.timeout;
     this.prefix = options.prefix || this.prefix;
-    return MemcacheSocket.getInstance(options, thinkCache.MEMCACHE);
+    return MemcacheSocket.getInstance(options, thinkCache.MEMCACHE, ['command', 'from']);
   }
   /**
    * get data

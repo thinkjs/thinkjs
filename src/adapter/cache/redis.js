@@ -27,7 +27,7 @@ export default class extends think.adapter.base {
     });
     this.timeout = options.timeout || this.timeout;
     this.prefix = options.prefix || this.prefix;
-    return RedisSocket.getInstance(options, thinkCache.REDIS);
+    return RedisSocket.getInstance(options, thinkCache.REDIS, ['command', 'from']);
   }
   /**
    * get data

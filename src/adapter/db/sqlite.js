@@ -19,7 +19,7 @@ export default class extends Base {
     let config = think.extend({
       sql: sql
     }, this.config);
-    this._socket = SqliteSocket.getInstance(config, thinkCache.DB);
+    this._socket = SqliteSocket.getInstance(config, thinkCache.DB, ['sql']);
     return this._socket;
   }
   /**

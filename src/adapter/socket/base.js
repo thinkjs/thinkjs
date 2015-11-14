@@ -72,9 +72,11 @@ export default class extends think.adapter.base {
    * @param  {Object} config []
    * @return {Object}        []
    */
-  static getInstance(config, type){
+  static getInstance(config, type, extraKeys = []){
     config = think.parseConfig(config);
 
+    //delete extra keys when caculate config md5 value
+    extraKeys.forEach(item => delete config[item]);
     let key = think.md5(JSON.stringify(config)).slice(0, 5);
 
     let instance = thinkCache(type, key);
