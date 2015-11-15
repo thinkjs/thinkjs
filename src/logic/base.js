@@ -27,6 +27,10 @@ export default class extends think.controller.base {
   _parseValidateData(data = {}){
     let result = {};
     for(let name in data){
+      if(!think.isString(data[name])){
+        result[name] = data[name];
+        continue;
+      }
       let rules = data[name].split('|');
       let itemData = {};
       rules.forEach(item => {
