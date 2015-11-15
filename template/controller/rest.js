@@ -11,7 +11,7 @@ module.exports = think.controller('rest', {
    */
   init(http){
     this.super('init', http);
-  }
+  },
   /**
    * before magic method
    * @return {Promise} []
