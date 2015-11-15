@@ -27,31 +27,33 @@ export default class extends think.controller.base {
   _parseValidateData(data = {}){
     let result = {};
     for(let name in data){
-      if(!think.isString(data[name])){
-        result[name] = data[name];
-        continue;
-      }
-      let rules = data[name].split('|');
       let itemData = {};
-      rules.forEach(item => {
-        item = item.trim();
-        if(!item){
-          return;
-        }
-        let pos = item.indexOf(':');
-        if(pos > -1){
-          let name = item.substr(0, pos);
-          let args = item.substr(pos + 1).trim();
-          if(args[0] === '{' || args[0] === '['){
-            args = [(new Function('', `return ${args}`))()];
-          }else if(name !== 'default'){
-            args = args.split(/\s*,\s*/);
+      
+      if(think.isString(data[name])){
+        let rules = data[name].split('|');
+        rules.forEach(item => {
+          item = item.trim();
+          if(!item){
+            return;
           }
-          itemData[name] = args;
-        }else{
-          itemData[item] = true;
-        }
-      });
+          let pos = item.indexOf(':');
+          if(pos > -1){
+            let name = item.substr(0, pos);
+            let args = item.substr(pos + 1).trim();
+            if(args[0] === '{' || args[0] === '['){
+              args = [(new Function('', `return ${args}`))()];
+            }else if(name !== 'default'){
+              args = args.split(/\s*,\s*/);
+            }
+            itemData[name] = args;
+          }else{
+            itemData[item] = true;
+          }
+        });
+      }else{
+        itemData = data[name];
+      }
+
       let method = this.http.method.toLowerCase();
       if(itemData.get){
         method = 'get';

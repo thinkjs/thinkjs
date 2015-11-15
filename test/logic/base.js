@@ -149,6 +149,19 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, object args, object', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      }
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: {required: true, int: true, min: {name: 'welefen'}}
+      });
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: { name: 'welefen' }, value: 10 } })
+      done();
+    })
+  }) 
   it('parse rules, value from get', function(done){
     getInstance({}, {
       _get: {
