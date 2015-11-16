@@ -124,6 +124,10 @@ export default class extends Base {
       if(this.pool && connection.release){
         connection.release();
       }
+      //Connection lost: The server closed the connection.
+      if(err.code === 'PROTOCOL_CONNECTION_LOST'){
+        this.close();
+      }
       
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
