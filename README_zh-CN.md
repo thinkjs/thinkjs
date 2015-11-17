@@ -7,7 +7,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/75team/thinkjs.svg?style=flat-square)](https://coveralls.io/github/75team/thinkjs)
 
 
-## Introduction
+## 介绍
 
 ThinkJS 是一款使用 ES6/7 特性全新开发的 Node.js MVC 框架，使用 ES7 中`async/await`，或者 ES6 中的 `Generator Function` 特性彻底解决了 Node.js 中异步嵌套的问题。同时吸收了国内外众多框架的设计理念和思想，让开发 Node.js 项目更加简单、高效。
 
@@ -42,7 +42,7 @@ export default class extends think.controller.base {
 
 项目中可以大胆使用 ES6/7 里的所有特性，借助 Babel 编译，可以稳定运行在 `>=0.12.0` 的 Node.js 环境中。
 
-## Features
+## 特性
 
 * 使用 ES6/7 全部特性来开发项目
 * 支持多种项目结构和多种项目环境
@@ -62,28 +62,31 @@ export default class extends think.controller.base {
 * 丰富的测试用例，1500+ 测试用里，代码覆盖率 > 95%
 
 
-## Installation
+## 安装 ThinkJS
 
 ```sh
 npm install -g thinkjs
 ```
 
-## Create Application
+## 创建项目
 
 ```sh
 thinkjs new project_path --es6
 ```
 
-http://www.thinkjs.org/doc/create_project.html
-
-## Start Application
+## 安装依赖
 
 ```sh
-cd project_path;
+npm install
+```
+
+## 启动服务
+
+```sh
 npm start
 ```
 
-## Documentation
+## 文档
 
 <https://thinkjs.org/>
 

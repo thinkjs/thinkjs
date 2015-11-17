@@ -71,12 +71,15 @@ npm install -g thinkjs
 thinkjs new project_path --es6
 ```
 
-http://www.thinkjs.org/doc/create_project.html
+## Install dependencies
+
+```sh
+npm install
+```
 
 ## Start Application
 
 ```sh
-cd project_path;
 npm start
 ```
 
