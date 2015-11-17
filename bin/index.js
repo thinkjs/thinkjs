@@ -3,6 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
+//var colors = require('colors');
 
 
 var cwd = process.cwd();
@@ -625,10 +626,33 @@ var createPlugin = function(){
   console.log();
 
 }
+/**
+ * display thinkjs version
+ * @return {} []
+ */
+var displayVersion = function(){
+  var version = getVersion();
+  var chars = [
+    " _______ _     _       _        _  _____ ",
+    "|__   __| |   (_)     | |      | |/ ____|",
+    "   | |  | |__  _ _ __ | | __   | | (___  ",
+    "   | |  | '_ \\| | '_ \\| |/ /   | |\\___ \\ ",
+    "   | |  | | | | | | | |   < |__| |____) |",
+    "   |_|  |_| |_|_|_| |_|_|\\_\\____/|_____/ ",
+    "                                         "                                       
+  ].join("\n");
+  console.log('\n v' + version + '\n');
+  console.log(chars);
+}
 
 
-
-program.version(getVersion()).usage('[command] <options ...>');
+program.usage('[command] <options ...>');
+program.option('-v, --version', 'output the version number', function(){
+  displayVersion();
+});
+program.option('-V', 'output the version number', function(){
+  displayVersion();
+});
 program.option('-e, --es6', 'use es6 for project, used in `new` command');
 program.option('-r, --rest', 'create rest controller, used in `controller` command');
 program.option('-M, --mongo', 'create mongo model, used in `model` command');
