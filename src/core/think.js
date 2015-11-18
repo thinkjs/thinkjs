@@ -691,22 +691,26 @@ think.middleware = (...args) => {
         //class middleware must have run method
         if(think.isFunction(fn.prototype.run)){
           let instance = new fn(http);
-          return think.co.wrap(instance.run).bind(instance)(data);
+          return think.co(instance.run(data));
+          //return think.co.wrap(instance.run).bind(instance)(data);
         }else{
-          return think.co.wrap(fn)(http, data);
+          return think.co(fn(http, data));
+          //return think.co.wrap(fn)(http, data);
         }
       }else{
         let Cls = think.require(prefix + name, true);
         if(Cls){
           let instance = new Cls(http);
-          return think.co.wrap(instance.run).bind(instance)(data);
+          return think.co(instance.run(data));
+          //return think.co.wrap(instance.run).bind(instance)(data);
         }
         let err = new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
         return Promise.reject(err);
       }
     }
     else if (think.isFunction(name)){
-      return think.co.wrap(name)(http, data);
+      return think.co(name(http, data));
+      //return think.co.wrap(name)(http, data);
     }
   }
   // get middleware
@@ -898,8 +902,9 @@ think.route = routes => {
   //may be is dynamic save in db
   if (think.isFunction(config)) {
     return think.await('route', () => {
-      let fn = think.co.wrap(config);
-      return fn().then((route = []) => {
+      //let fn = think.co.wrap(config);
+      //return fn().then((route = []) => {
+      return think.co(config()).then((route = []) => {
         thinkCache(thinkCache.COLLECTION, key, route);
         return route;
       });
@@ -1186,7 +1191,8 @@ think.cache = async (name, value, options = {}) => {
     if(data !== undefined){
       return data;
     }
-    data = await think.co.wrap(value)(name);
+    data = await think.co(value(name));
+    //data = await think.co.wrap(value)(name);
     await instance.set(name, data);
     return data;
   }

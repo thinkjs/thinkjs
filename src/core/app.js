@@ -28,7 +28,8 @@ export default class extends think.http.base {
     }
     //only has before method
     else if(think.isFunction(instance.__before)){
-      return think.co.wrap(instance.__before).bind(instance)(instance);
+      return think.co(instance.__before(instance));
+      //return think.co.wrap(instance.__before).bind(instance)(instance);
     }
     return Promise.resolve();
   }
