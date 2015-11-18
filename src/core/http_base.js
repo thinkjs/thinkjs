@@ -32,14 +32,38 @@ export default class extends Base {
    * @param  {Mixed} data       [action params]
    * @return {}            []
    */
-  action(controller, action){
+  async action(controller, action, transMCA = true){
     if (think.isString(controller)) {
       controller = this.controller(controller);
     }
+    if(!transMCA){
+      if (action !== '__call') {
+        action = think.camelCase(action) + 'Action';
+      }
+      return controller.invoke(action, controller);
+    }
+
+    //change module/controller/action when invoke another action
+    //make this.display() correct when invoked without any paramters
+    let http = this.http;
+    let source = {
+      module: http.module,
+      controller: http.controller,
+      action: http.action
+    };
+    let ret = this.parseFilename(controller.__filename);
+    http.module = ret.module;
+    http.controller = ret.basename;
+    http.action = action;
     if (action !== '__call') {
       action = think.camelCase(action) + 'Action';
     }
-    return controller.invoke(action, controller);
+    let err;
+    let result = await controller.invoke(action, controller).catch(e => {
+      err = e;
+    });
+    think.extend(http, source);
+    return err ? Promise.reject(err) : result;
   }
   /**
    * get or set cache

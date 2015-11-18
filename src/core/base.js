@@ -61,8 +61,24 @@ export default class {
    * get current class filename
    * @return {} []
    */
-  filename(){
-    let filename = this.__filename || __filename;
-    return path.basename(filename, '.js');
+  parseFilename(filename){
+    filename = filename || this.__filename;
+    let filenames = filename.split(path.sep).reverse();
+    let basename = filenames[0].slice(0, -3);
+    let module;
+    switch(think.mode){
+      case think.mode_module:
+        module = filenames[2];
+        break;
+      case think.mode_normal:
+        module = filenames[1];
+        break;
+      default:
+        module = think.config('default_module');
+    }
+    return {
+      module,
+      basename
+    };
   }
 }

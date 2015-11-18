@@ -313,7 +313,7 @@ think.require = (name, flag) => {
 
   let filepath = thinkCache(thinkCache.ALIAS, name);
   if (filepath) {
-    return load(name, filepath);
+    return load(name, path.normalize(filepath));
   }
   // only check in alias
   if (flag) {

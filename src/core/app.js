@@ -20,11 +20,11 @@ export default class extends think.http.base {
     let instance = new cls(this.http);
     let action = think.camelCase(this.http.action);
     if (think.isFunction(instance[`${action}Action`])) {
-      return this.action(instance, action);
+      return this.action(instance, action, false);
     }
     //call action
     else if (think.isFunction(instance.__call)) {
-      return this.action(instance, '__call');
+      return this.action(instance, '__call', false);
     }
     //only has before method
     else if(think.isFunction(instance.__before)){
@@ -71,11 +71,11 @@ export default class extends think.http.base {
     let actionWithSuffix = `${action}Action`;
     //action is exist
     if(think.isFunction(controller[actionWithSuffix])){
-      return this.action(controller, action);
+      return this.action(controller, action, false);
     }
     //call action
     if(think.isFunction(controller.__call)){
-      return this.action(controller, '__call');
+      return this.action(controller, '__call', false);
     }
     http.error = new Error(think.locale('ACTION_NOT_FOUND', actionWithSuffix, http.url));
     return think.statusAction(404, http);
