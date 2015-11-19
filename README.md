@@ -85,7 +85,7 @@ npm start
 
 ## Documentation
 
-<https://thinkjs.org/>
+[https://thinkjs.org/en](https://thinkjs.org/en)
 
 ## License
 
