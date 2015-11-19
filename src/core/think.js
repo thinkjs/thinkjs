@@ -364,7 +364,9 @@ think.parseConfig = (...configs) => {
     return config;
   }
   
-  return config.parser(config) || {};
+  let ret = config.parser(config);
+  delete config.parser;
+  return think.extend(config, ret);
 };
 
 /**
