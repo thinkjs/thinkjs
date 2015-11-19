@@ -28,10 +28,10 @@ export default class extends think.base {
    * @param  {Boolean} log     []
    * @return {}         []
    */
-  init(srcPath, outPath, log, callback){
+  init(srcPath, outPath, options = {}, callback){
     this.srcPath = srcPath;
     this.outPath = outPath;
-    this.log = log;
+    this.options = options;
     this.callback = callback;
   }
   /**
@@ -54,15 +54,16 @@ export default class extends think.base {
 
     let startTime = Date.now();
     try{
+      let retainLines = this.options.retainLines;
       let data = babel.transform(content, {
         filename: file,
-        retainLines: true,
+        retainLines: retainLines === undefined ? true : retainLines,
         stage: 0,
         modules: 'common',
         loose: true,
         optional: 'runtime'
       });
-      if(this.log){
+      if(this.options.log){
         think.log(`compile file ${file}`, 'BABEL', startTime);
       }
       think.mkdir(path.dirname(`${this.outPath}/${file}`));

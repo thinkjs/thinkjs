@@ -487,9 +487,12 @@ export default class {
    * use babel compile code
    * @return {} []
    */
-  compile(srcPath, outPath, log){
-    if(srcPath === true){
-      log = true;
+  compile(srcPath, outPath, options = {}){
+    if(think.isObject(srcPath)){
+      options = srcPath;
+      srcPath = '';
+    }else if(srcPath === true){
+      options = {log: true};
       srcPath = '';
     }
     srcPath = srcPath || `${think.ROOT_PATH}/src`;
@@ -504,7 +507,7 @@ export default class {
     };
 
     let WatchCompile = require('./util/watch_compile.js');
-    let instance = new WatchCompile(srcPath, outPath, log, this.compileCallback);
+    let instance = new WatchCompile(srcPath, outPath, options, this.compileCallback);
     instance.run();
 
     think.autoCompile = true;
