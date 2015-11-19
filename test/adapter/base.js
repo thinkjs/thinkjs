@@ -54,7 +54,7 @@ describe('adapter/base.js', function(){
       assert.equal(options.from, 'cache')
       return {name: 2}
     }});
-    assert.deepEqual(data, {name: 2})
+    assert.deepEqual(data, {name: 2, from: 'cache'});
   })
   it('parse config, has parser, extra, type', function(){
     var instance = new Base();
