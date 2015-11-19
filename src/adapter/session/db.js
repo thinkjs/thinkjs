@@ -29,7 +29,9 @@ export default class extends think.adapter.base {
     this.isChanged = false;
 
     //let dbConfig = think.extend({}, think.config('db'), options);
-    this.model = think.model('session', think.config('db'));
+    this.model = think.model('session', think.extend({
+      from: 'session'
+    }, think.config('db')));
 
     this.gcType = 'session_db';
     think.gc(this);
