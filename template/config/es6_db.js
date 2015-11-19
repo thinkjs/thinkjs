@@ -19,5 +19,9 @@ export default {
     on: true,
     type: '',
     timeout: 3600
+  },
+  adapter: {
+    mysql: {},
+    mongo: {}
   }
 };

@@ -19,5 +19,9 @@ module.exports = {
     on: true,
     type: '',
     timeout: 3600
+  },
+  adapter: {
+    mysql: {},
+    mongo: {}
   }
 };
