@@ -21,7 +21,7 @@ export default class extends Base {
 
     this.prerender(options, jade);
 
-    if (config.adapter.jade && config.adapter.jade.cache_compile) {
+    if (options.cache_compile) {
       let compile = thinkCache(thinkCache.VIEW_CONTENT, templateFile + '-compile');
       if (compile) {
         return compile(tVar);
@@ -31,7 +31,7 @@ export default class extends Base {
     let content = await this.getContent(templateFile);
     let compile = jade.compile(content, options);
 
-    if (config.adapter.jade && config.adapter.jade.cache_compile) {
+    if (options.cache_compile) {
       thinkCache(thinkCache.VIEW_CONTENT, templateFile + '-compile', compile);
     }
 
