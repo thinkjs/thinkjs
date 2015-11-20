@@ -11,9 +11,9 @@ export default class extends Base {
    * run
    * @param  {String} templateFile []
    * @param  {Object} tVar         []
-   * @return {Promise}              []
+   * @return {Promise}             []
    */
-  async run(templateFile, tVar, config){
+  async run(templateFile, tVar, config) {
 
     let options = this.parseConfig({
       filename: templateFile
@@ -22,7 +22,20 @@ export default class extends Base {
 
     this.prerender(options, jade);
 
+    if ('production' === think.env) {
+      let compile = thinkCache(thinkCache.VIEW_CONTENT, templateFile + '-compile');
+      if (compile) {
+        return compile(tVar);
+      }
+    }
+
     let content = await this.getContent(templateFile);
-    return jade.compile(content, options)(tVar);
+    let compile = jade.compile(content, options);
+
+    if ('production' === think.env) {
+      thinkCache(thinkCache.VIEW_CONTENT, templateFile + '-compile', compile);
+    }
+
+    return compile(tVar);
   }
 }
