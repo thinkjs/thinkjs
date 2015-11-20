@@ -145,6 +145,9 @@ export default class extends think.base {
     //rewrite Module._load method
     sys_module._load = (request, parent, isMain) => {
       let exportsObj = load(request, parent, isMain);
+      if(!parent){
+        return exportsObj;
+      }
       if(isMain || parent.filename.indexOf(NODE_MODULES) > -1){
         return exportsObj;
       }
