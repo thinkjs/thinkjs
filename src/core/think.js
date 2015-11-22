@@ -494,7 +494,7 @@ think.config = (name, value, data) => {
   }
   // set or get config
   else if(think.isString(name)){
-    name = name.toLowerCase();
+    //name = name.toLowerCase();
     //one grade config
     if (name.indexOf('.') === -1) {
       return data[name];
