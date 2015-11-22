@@ -469,7 +469,7 @@ think.config = (name, value, data) => {
         think.extend(itemData, name);
       }
       else if(think.isString(name)){
-        name = name.toLowerCase();
+        //name = name.toLowerCase();
         if (name.indexOf('.') === -1) {
           itemData[name] = value;
         }else{
