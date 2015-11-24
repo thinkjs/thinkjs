@@ -431,7 +431,7 @@ export default class extends think.model.base {
           item[mapOpts.fKey] = data[mapOpts.key];
           return item;
         });
-        return model.addAll(mapData);
+        return model.addMany(mapData);
       case 'UPDATE':
         return model.getTableFields().then(() => {
           let pk = model.getPk();
@@ -459,51 +459,41 @@ export default class extends think.model.base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  _postManyToManyRelation(data, mapOpts){
+  async _postManyToManyRelation(data, mapOpts){
     let model = mapOpts.model;
-    let promise = model.getTableFields();
+    await model.getTableFields();
     let rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
-    let type = mapOpts.postType;
-    let mapData = mapOpts.data;
     let relationModel = this.getRelationModel(model);
+
+    let type = mapOpts.postType;
     if (type === 'DELETE' || type === 'UPDATE') {
-      promise = promise.then(() => {
-        let where = {[mapOpts.fKey]: data[mapOpts.key]};
-        return relationModel.where(where).delete(); 
-      });
+      let where = {[mapOpts.fKey]: data[mapOpts.key]};
+      return relationModel.where(where).delete(); 
+    }
+
+    let mapData = mapOpts.data;
+    if (!think.isArray(mapData)) {
+      mapData = think.isString(mapData) ? mapData.split(',') : [mapData];
     }
     if (type === 'ADD' || type === 'UPDATE') {
-      promise = promise.then(() => {
-        if (!think.isArray(mapData)) {
-          mapData = think.isString(mapData) ? mapData.split(',') : [mapData];
+      let firstItem = mapData[0];
+      if (think.isNumberString(firstItem) || (think.isObject(firstItem) && (rfKey in firstItem))) {
+        let postPromises = mapData.map(item => {
+          return relationModel.add({[mapOpts.fKey]: data[mapOpts.key], [rfKey]: item[rfKey] || item}).catch(() => {});
+        });
+        await Promise.all(postPromises);
+      }else{ 
+        let unqiueField = await model.getUniqueField();
+        if (!unqiueField) {
+          return think.reject(new Error('table `' + model.getTableName() + '` has no unqiue field'));
         }
-        let firstItem = mapData[0];
-        
-        if (think.isNumberString(firstItem) || (think.isObject(firstItem) && (rfKey in firstItem))) {
-          
-          let postData = mapData.map(item => {
-            let key = [mapOpts.fKey, rfKey];
-            let val = [data[mapOpts.key], item[rfKey] || item];
-            return {[key]: val};
-          });
-          return relationModel.addAll(postData);
-        }else{ 
-          let unqiueField = model.getUniqueField();
-          if (!unqiueField) {
-            return think.reject(new Error('table `' + model.getTableName() + '` has no unqiue field'));
-          }
-          return this._getRalationAddIds(mapData, model, unqiueField).then(function(ids){
-            let postData = ids.map(id => {
-              let key = [mapOpts.fKey, rfKey];
-              let val = [data[mapOpts.key], id];
-              return {[key]: val};
-            });
-            return relationModel.addAll(postData);
-          });
-        }
-      });
+        let ids = await this._getRalationAddIds(mapData, model, unqiueField);
+        let postPromises = ids.map(id => {
+          return relationModel.add({[mapOpts.fKey]: data[mapOpts.key], [rfKey]: id}).catch(() => {});
+        });
+        await Promise.all(postPromises);
+      }
     }
-    return promise;
   }
   /**
    * insert data, add ids

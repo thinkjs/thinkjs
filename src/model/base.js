@@ -197,9 +197,9 @@ export default class extends Base {
     }
     options = await this.parseOptions(options);
 
-    data = this.parseData(data);
-    data = await this.beforeAdd(data, options);
-    await this.db().add(data, options, replace);
+    let parsedData = this.parseData(data);
+    parsedData = await this.beforeAdd(parsedData, options);
+    await this.db().add(parsedData, options, replace);
     let insertId = data[this.pk] = this.db().getLastInsertId();
     await this.afterAdd(data, options);
     return insertId;
