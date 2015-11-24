@@ -35,8 +35,8 @@ export default class extends think.base {
       return;
     }
     //only log app files changed
-    if(file.indexOf(think.srcPath) === 0){
-      file = file.slice(think.srcPath.length);
+    if(file.indexOf(this.srcPath) === 0){
+      file = file.slice(this.srcPath.length);
       think.log(`reload file ${file}`, 'RELOAD');
     }
   }
