@@ -468,30 +468,30 @@ export default class extends think.model.base {
     let type = mapOpts.postType;
     if (type === 'DELETE' || type === 'UPDATE') {
       let where = {[mapOpts.fKey]: data[mapOpts.key]};
-      return relationModel.where(where).delete(); 
+      await relationModel.where(where).delete(); 
     }
 
-    let mapData = mapOpts.data;
-    if (!think.isArray(mapData)) {
-      mapData = think.isString(mapData) ? mapData.split(',') : [mapData];
-    }
     if (type === 'ADD' || type === 'UPDATE') {
+      let mapData = mapOpts.data;
+      if (!think.isArray(mapData)) {
+        mapData = think.isString(mapData) ? mapData.split(',') : [mapData];
+      }
       let firstItem = mapData[0];
       if (think.isNumberString(firstItem) || (think.isObject(firstItem) && (rfKey in firstItem))) {
-        let postPromises = mapData.map(item => {
-          return relationModel.add({[mapOpts.fKey]: data[mapOpts.key], [rfKey]: item[rfKey] || item}).catch(() => {});
+        let postData = mapData.map(item => {
+          return {[mapOpts.fKey]: data[mapOpts.key], [rfKey]: item[rfKey] || item};
         });
-        await Promise.all(postPromises);
+        await relationModel.addMany(postData);
       }else{ 
         let unqiueField = await model.getUniqueField();
         if (!unqiueField) {
           return think.reject(new Error('table `' + model.getTableName() + '` has no unqiue field'));
         }
         let ids = await this._getRalationAddIds(mapData, model, unqiueField);
-        let postPromises = ids.map(id => {
-          return relationModel.add({[mapOpts.fKey]: data[mapOpts.key], [rfKey]: id}).catch(() => {});
+        let postData = ids.map(id => {
+          return {[mapOpts.fKey]: data[mapOpts.key], [rfKey]: id};
         });
-        await Promise.all(postPromises);
+        await relationModel.addMany(postData);
       }
     }
   }
