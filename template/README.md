@@ -18,5 +18,5 @@ npm start
 use pm2 to deploy app on production envrioment.
 
 ```
-pm2 startOrGracefulReload pm2.json
+pm2 startOrReload pm2.json
 ```
