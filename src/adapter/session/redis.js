@@ -34,18 +34,28 @@ export default class extends think.adapter.base {
    * get session
    * @return {Promise} []
    */
-  getData(){
+  async getData(){
+    
     if(this.data){
-      return Promise.resolve(this.data);
-    }
-    let instance = this.getRedisInstance('get');
-    return instance.get(this.cookie).then(data => {
-      this.data = {};
-      try{
-        this.data = JSON.parse(data) || {};
-      }catch(e){}
       return this.data;
+    }
+
+    let instance = this.getRedisInstance('get');
+
+    let data = await think.await(`session_${this.cookie}`, () => {
+      return instance.get(this.cookie);
     });
+
+    if(this.data){
+      return this.data;
+    }
+
+    this.data = {};
+    try{
+      this.data = JSON.parse(data) || {};
+    }catch(e){}
+
+    return this.data;
   }
   /**
    * get data

@@ -55,7 +55,14 @@ export default class extends think.adapter.base {
 
     let filepath = this.getFilepath();
     //ignore error
-    let data = await this.store.get(filepath).catch(() => {});
+    let data = await think.await(`session_${this.cookie}`, () => {
+      return this.store.get(filepath).catch(() => {});
+    });
+
+    //when data is set, return
+    if(this.data){
+      return this.data;
+    }
 
     this.data = {};
     if(!data){

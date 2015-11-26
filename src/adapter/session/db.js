@@ -44,18 +44,29 @@ export default class extends think.adapter.base {
     if(this.data){
       return this.data;
     }
-    let data = await this.model.where({cookie: this.cookie}).find();
+    //let data = await this.model.where({cookie: this.cookie}).find();
+    let data = await think.await(`session_${this.cookie}`, () => {
+      return this.model.where({cookie: this.cookie}).find();
+    });
+
+    if(this.data){
+      return this.data;
+    }
+
     this.data = {};
     if(think.isEmpty(data)){
       await this.model.add({cookie: this.cookie, expire: Date.now() + this.timeout * 1000});
       return this.data;
     }
+
     if(Date.now() > data.expire){
       return this.data;
     }
+
     try{
       this.data = JSON.parse(data.data) || {};
     }catch(e){}
+    
     return this.data;
   }
   /**
