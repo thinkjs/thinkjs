@@ -35,6 +35,9 @@ describe('Validator', function(){
   it('equals success', function(){
     assert.equal(Validator.equals('welefen', 'welefen'), true);
   })
+  it('equalsValue success', function(){
+    assert.equal(Validator.equalsValue('welefen', 'welefen'), true);
+  })
   it('different fail', function(){
     assert.equal(Validator.different('welefen', 'welefen'), false);
   })
@@ -60,10 +63,13 @@ describe('Validator', function(){
     assert.equal(Validator.required(), false);
   })
   it('length: emtpy', function(){
-    assert.equal(Validator.length(), false);
+    assert.equal(Validator.length(''), true);
+  })
+  it('length, min 0', function(){
+    assert.equal(Validator.length('welefen', 0), true);
   })
   it('length: emtpy, min 1', function(){
-    assert.equal(Validator.length('', 1), false);
+    assert.equal(Validator.length('', 1), true);
   })
   it('length, min 1', function(){
     assert.equal(Validator.length('welefen', 1), true);
@@ -113,8 +119,14 @@ describe('Validator', function(){
   it('order', function(){
     assert.equal(Validator.order('name ASC, id DESC'), true);
   })
+  it('order, empty', function(){
+    assert.equal(Validator.order(''), true);
+  })
   it('order fail', function(){
-    assert.equal(Validator.order(''), false);
+    assert.equal(Validator.order('AA|ww'), false);
+  })
+  it('field empty', function(){
+    assert.equal(Validator.field(), true);
   })
   it('field', function(){
     assert.equal(Validator.field('*'), true);
@@ -206,7 +218,7 @@ describe('Validator', function(){
     assert.equal(Validator.fqdn('ww-w.gmail.com'), true);
   })
   it('float NaN', function(){
-    assert.equal(Validator.float(NaN), false);
+    assert.equal(Validator.float(NaN), true);
   })
   it('float', function(){
     assert.equal(Validator.float('3.5'), true);
@@ -254,7 +266,7 @@ describe('Validator', function(){
     assert.equal(Validator.notIn('w', 'sw'), true);
   })
   it('int', function(){
-    assert.equal(Validator.int(NaN), false);
+    assert.equal(Validator.int(NaN), true);
   })
   it('int, with min', function(){
     assert.equal(Validator.int(10, 3), true);
@@ -295,6 +307,9 @@ describe('Validator', function(){
   it('url', function(){
     assert.equal(Validator.url('www.welefen.com/test'), false);
   })
+  it('url, empty', function(){
+    assert.equal(Validator.url(''), true);
+  })
   it('url, http', function(){
     assert.equal(Validator.url('http://www.welefen.com/test'), true);
   })
@@ -315,6 +330,9 @@ describe('Validator', function(){
   })
   it('image', function(){
     assert.equal(Validator.image('$$$$$￥w'), false);
+  })
+  it('image, empty', function(){
+    assert.equal(Validator.image(''), true);
   })
   it('image, jpg', function(){
     assert.equal(Validator.image('test.jpg'), true);

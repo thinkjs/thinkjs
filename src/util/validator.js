@@ -173,7 +173,7 @@ Validator.contains = (value, str) => {
   return validator.contains(value, str);
 };
 /**
- *  check if the string matches the comparison.
+ * check if the string matches the comparison.
  * @param  {String} value      []
  * @param  {String} comparison []
  * @return {Boolean}            []
@@ -189,6 +189,15 @@ Validator.equals = (value, comparison) => {
  */
 Validator._equals = (args, data) => {
   return [data[args[0]].value];
+};
+/**
+ * check if the string matches the comparison.
+ * @param  {String} value      []
+ * @param  {String} comparison []
+ * @return {Boolean}            []
+ */
+Validator.equalsValue = (value, comparison) => {
+  return validator.equals(value, comparison);
 };
 /**
  * check if the string not matches the comparison.
@@ -213,7 +222,7 @@ Validator._different = (args, data) => {
  * @return {Boolean}       []
  */
 Validator.after = (value, date) => {
-  return validator.isAfter(value, date);
+  return !value || validator.isAfter(value, date);
 };
 /**
  * parse after args
@@ -234,7 +243,7 @@ Validator._after = (args, data) => {
  * @return {Boolean}       []
  */
 Validator.alpha = value => {
-  return validator.isAlpha(value);
+  return !value || validator.isAlpha(value);
 };
 /**
  * check if the string contains only letters and dashes(a-zA-Z_).
@@ -242,7 +251,7 @@ Validator.alpha = value => {
  * @return {Boolean}       []
  */
 Validator.alphaDash = value => {
-  return /^[A-Z_]+$/i.test(value);
+  return !value || /^[A-Z_]+$/i.test(value);
 };
 /**
  * check if the string contains only letters and numbers.
@@ -250,7 +259,7 @@ Validator.alphaDash = value => {
  * @return {Boolean}       []
  */
 Validator.alphaNumeric = value => {
-  return validator.isAlphanumeric(value);
+  return !value || validator.isAlphanumeric(value);
 };
 /**
  * check if the string contains only letters or numbers or dash.
@@ -258,7 +267,7 @@ Validator.alphaNumeric = value => {
  * @return {Boolean}       []
  */
 Validator.alphaNumericDash = value => {
-  return /^\w+$/i.test(value);
+  return !value || /^\w+$/i.test(value);
 };
 /**
  * check if the string contains ASCII chars only.
@@ -266,7 +275,7 @@ Validator.alphaNumericDash = value => {
  * @return {Boolean}      []
  */
 Validator.ascii = value => {
-  return validator.isAscii(value);
+  return !value || validator.isAscii(value);
 };
 /**
  * check if a string is base64 encoded.
@@ -274,7 +283,7 @@ Validator.ascii = value => {
  * @return {Boolean}       []
  */
 Validator.base64 = value => {
-  return validator.isBase64(value);
+  return !value || validator.isBase64(value);
 };
 /**
  * check if the string is a date that's before the specified date.
@@ -283,7 +292,7 @@ Validator.base64 = value => {
  * @return {Boolean}       []
  */
 Validator.before = (value, date) => {
-  return validator.isBefore(value, date);
+  return !value || validator.isBefore(value, date);
 };
 /**
  * parse before args
@@ -300,7 +309,7 @@ Validator._before = (args, data) => {
  * @return {Boolean}       []
  */
 Validator.byteLength = (value, min, max) => {
-  return validator.isByteLength(value, min, max);
+  return !value || validator.isByteLength(value, min, max);
 };
 /**
  *  check if the string is a credit card.
@@ -308,7 +317,7 @@ Validator.byteLength = (value, min, max) => {
  * @return {Boolean}       []
  */
 Validator.creditcard = value => {
-  return validator.isCreditCard(value);
+  return !value || validator.isCreditCard(value);
 };
 /**
  * check if the string is a valid currency amount. options is an object which defaults to
@@ -317,7 +326,7 @@ Validator.creditcard = value => {
  * @return {Boolean}         []
  */
 Validator.currency = (value, options) => {
-  return validator.isCurrency(value, options);
+  return !value || validator.isCurrency(value, options);
 };
 /**
  * check if the string is a date.
@@ -325,7 +334,7 @@ Validator.currency = (value, options) => {
  * @return {Boolean}       []
  */
 Validator.date = value => {
-  return validator.isDate(value);
+  return !value || validator.isDate(value);
 };
 /**
  * check if the string represents a decimal number, such as 0.1, .3, 1.1, 1.00003, 4.0, etc.
@@ -333,7 +342,7 @@ Validator.date = value => {
  * @return {Boolean}       []
  */
 Validator.decimal = value => {
-  return validator.isDecimal(value);
+  return !value || validator.isDecimal(value);
 };
 /**
  * check if the string is a number that's divisible by another.
@@ -342,7 +351,7 @@ Validator.decimal = value => {
  * @return {Boolean}        []
  */
 Validator.divisibleBy = (value, number) => {
-  return validator.isDivisibleBy(value, number);
+  return !value || validator.isDivisibleBy(value, number);
 };
 /**
  * check if the string is an email. 
@@ -359,7 +368,7 @@ Validator.divisibleBy = (value, number) => {
  * @return {Boolean}         []
  */
 Validator.email = (value, options) => {
-  return validator.isEmail(value, options);
+  return !value || validator.isEmail(value, options);
 };
 /**
  * check if the string is a fully qualified domain name (e.g. domain.com). 
@@ -373,7 +382,7 @@ Validator.email = (value, options) => {
  * @return {Boolean}         []
  */
 Validator.fqdn = (value, options) => {
-  return validator.isFQDN(value, options);
+  return !value || validator.isFQDN(value, options);
 };
 /**
  *  check if the string is a float. 
@@ -384,6 +393,9 @@ Validator.fqdn = (value, options) => {
  * @return {Boolean}         []
  */
 Validator.float = (value, min, max) => {
+  if(!value){
+    return true;
+  }
   let options = {};
   if(min){
     options.min = min;
@@ -399,7 +411,7 @@ Validator.float = (value, min, max) => {
  * @return {Boolean}       []
  */
 Validator.fullWidth = value => {
-  return validator.isFullWidth(value);
+  return !value || validator.isFullWidth(value);
 };
 /**
  * check if the string contains any half-width chars.
@@ -407,7 +419,7 @@ Validator.fullWidth = value => {
  * @return {Boolean}       []
  */
 Validator.halfWidth = value => {
-  return validator.isHalfWidth(value);
+  return !value || validator.isHalfWidth(value);
 };
 /**
  * check if the string is a hexadecimal color.
@@ -415,7 +427,7 @@ Validator.halfWidth = value => {
  * @return {Boolean}       []
  */
 Validator.hexColor = value => {
-  return validator.isHexColor(value);
+  return !value || validator.isHexColor(value);
 };
 /**
  * check if the string is a hexadecimal number.
@@ -423,7 +435,7 @@ Validator.hexColor = value => {
  * @return {Boolean}       []
  */
 Validator.hex = value => {
-  return validator.isHexadecimal(value);
+  return !value || validator.isHexadecimal(value);
 };
 /**
  * check if the string is an IP (version 4 or 6).
@@ -431,7 +443,7 @@ Validator.hex = value => {
  * @return {Boolean}       []
  */
 Validator.ip = value => {
-  return !!net.isIP(value);
+  return !value || !!net.isIP(value);
 };
 /**
  * check if the string is an IP v4
@@ -439,7 +451,7 @@ Validator.ip = value => {
  * @return {Boolean}       []
  */
 Validator.ip4 = value => {
-  return net.isIPv4(value);
+  return !value || net.isIPv4(value);
 };
 /**
  * check if the string is an IP v6
@@ -447,7 +459,7 @@ Validator.ip4 = value => {
  * @return {Boolean}       []
  */
 Validator.ip6 = value => {
-  return net.isIPv6(value);
+  return !value || net.isIPv6(value);
 };
 /**
  * check if the string is an ISBN (version 10 or 13).
@@ -456,7 +468,7 @@ Validator.ip6 = value => {
  * @return {Boolean}         []
  */
 Validator.isbn = (value, version) => {
-  return validator.isISBN(value, version);
+  return !value || validator.isISBN(value, version);
 };
 /**
  * check if the string is an ISIN (stock/security identifier).
@@ -465,7 +477,7 @@ Validator.isbn = (value, version) => {
  * @return {Boolean}       []
  */
 Validator.isin = value => {
-  return validator.isISIN(value);
+  return !value || validator.isISIN(value);
 };
 /**
  * check if the string is a valid ISO 8601 date.
@@ -474,21 +486,21 @@ Validator.isin = value => {
  * @return {Boolean}       []
  */
 Validator.iso8601 = value => {
-  return validator.isISO8601(value);
+  return !value || validator.isISO8601(value);
 };
 /**
  * check if the string is in a array of allowed values.
  * @type {Boolean}
  */
 Validator.in = (value, ...values) => {
-  return validator.isIn(value, values);
+  return !value || validator.isIn(value, values);
 };
 /**
  * check if the string is not in a array of allowed values.
  * @type {Boolean}
  */
 Validator.notIn = (value, ...values) => {
-  return !validator.isIn(value, values);
+  return !value || !validator.isIn(value, values);
 };
 /**
  * check if the string is an integer. 
@@ -496,6 +508,9 @@ Validator.notIn = (value, ...values) => {
  * @type {Boolean}
  */
 Validator.int = (value, min, max) => {
+  if(!value){
+    return true;
+  }
   let options = {};
   if(min){
     options.min = min | 0;
@@ -536,6 +551,9 @@ Validator.max = (value, max) => {
  * @return {Boolean}       []
  */
 Validator.length = (value, min, max) => {
+  if(!value){
+    return true;
+  }
   if(min){
     min = min | 0;
   }else{
@@ -553,7 +571,7 @@ Validator.length = (value, min, max) => {
  * @return {Boolean}       []
  */
 Validator.minLength = (value, min) => {
-  return validator.isLength(value, min | 0);
+  return !value || validator.isLength(value, min | 0);
 };
 /**
  * check is the string's length is min than max
@@ -562,7 +580,7 @@ Validator.minLength = (value, min) => {
  * @return {Boolean}       []
  */
 Validator.maxLength = (value, max) => {
-  return validator.isLength(value, 0, max | 0);
+  return !value || validator.isLength(value, 0, max | 0);
 };
 /**
  * check if the string is lowercase.
@@ -570,7 +588,7 @@ Validator.maxLength = (value, max) => {
  * @return {Boolean}       []
  */
 Validator.lowercase = value => {
-  return validator.isLowercase(value);
+  return !value || validator.isLowercase(value);
 };
 /**
  * check if the string is a mobile phone number, 
@@ -580,7 +598,7 @@ Validator.lowercase = value => {
  * @return {Boolean}       []
  */
 Validator.mobile = (value, locale = 'zh-CN') => {
-  return validator.isMobilePhone(value, locale);
+  return !value || validator.isMobilePhone(value, locale);
 };
 /**
  *  check if the string is a valid hex-encoded representation of a MongoDB ObjectId.
@@ -588,7 +606,7 @@ Validator.mobile = (value, locale = 'zh-CN') => {
  * @return {Boolean}       []
  */
 Validator.mongoId = value => {
-  return validator.isMongoId(value);
+  return !value || validator.isMongoId(value);
 };
 /**
  * check if the string contains one or more multibyte chars.
@@ -596,7 +614,7 @@ Validator.mongoId = value => {
  * @return {Boolean}       []
  */
 Validator.multibyte = value => {
-  return validator.isMultibyte(value);
+  return !value || validator.isMultibyte(value);
 };
 /**
  * check if the string contains only numbers.
@@ -622,6 +640,9 @@ Validator.multibyte = value => {
  * @type {Boolean}
  */
 Validator.url = (value, options) => {
+  if(!value){
+    return true;
+  }
   options = think.extend({
     require_protocol: true,
     protocols: ['http', 'https']
@@ -634,7 +655,7 @@ Validator.url = (value, options) => {
  * @return {Boolean}       []
  */
 Validator.uppercase = value => {
-  return validator.isUppercase(value);
+  return !value || validator.isUppercase(value);
 };
 /**
  * check if the string contains a mixture of full and half-width chars.
@@ -642,7 +663,7 @@ Validator.uppercase = value => {
  * @return {Boolean}       []
  */
 Validator.variableWidth = value => {
-  return validator.isVariableWidth(value);
+  return !value || validator.isVariableWidth(value);
 };
 /**
  * check is sql order string
@@ -650,6 +671,9 @@ Validator.variableWidth = value => {
  * @return {Boolean}       []
  */
 Validator.order = value => {
+  if(!value){
+    return true;
+  }
   return value.split(/\s*,\s*/).every(item => {
     return /^\w+\s+(?:ASC|DESC)$/i.test(item);
   });
@@ -660,6 +684,9 @@ Validator.order = value => {
  * @return {Boolean}       []
  */
 Validator.field = value => {
+  if(!value){
+    return true;
+  }
   return value.split(/\s*,\s*/).every(item => {
     return item === '*' || /^\w+$/.test(item);
   });
@@ -670,6 +697,9 @@ Validator.field = value => {
  * @return {Boolean}       []
  */
 Validator.image = value => {
+  if(!value){
+    return true;
+  }
   if(think.isObject(value)){
     value = value.originalFilename;
   }
@@ -682,7 +712,7 @@ Validator.image = value => {
  * @return {Boolean}       []
  */
 Validator.startWith = (value, str) => {
-  return value.indexOf(str) === 0;
+  return !value || value.indexOf(str) === 0;
 };
 /**
  * check is string end with str
@@ -691,7 +721,7 @@ Validator.startWith = (value, str) => {
  * @return {Boolean}       []
  */
 Validator.endWith = (value, str) => {
-  return value.lastIndexOf(str) === (value.length - str.length);
+  return !value || value.lastIndexOf(str) === (value.length - str.length);
 };
 /**
  * check value is string value
