@@ -3,7 +3,15 @@
  * configs in production enviroment
  */
 
-let configs = {};
+let configs = {
+  view: {
+    adapter: {
+      jade: {
+        cache_compile: true
+      }
+    }
+  }
+};
 
 if(think.cli){
   configs = think.extend(configs, {
