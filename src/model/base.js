@@ -420,6 +420,10 @@ export default class extends Base {
       }
     }
     let result = think.extend({count: count, totalPages: totalPage}, data);
+    
+    if(options.cache && options.cache.key){
+      options.cache.key += '_count';
+    }
     result.data = count ? await this.select(options) : [];
     return result;
   }
