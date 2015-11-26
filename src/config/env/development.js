@@ -10,6 +10,10 @@ let configs = {
   },
   error: {
     detail: true
+  },
+  db: {
+    log_sql: true,
+    log_connect: true
   }
 };
 
