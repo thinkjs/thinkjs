@@ -43,6 +43,7 @@ With the help of Babel compiling, we can use the ES6/7 features bodly, and then 
 ## Features
 
 * Developing projects using all the new features of ES6/7.
+* Auto compiling & auto hot reload when file changed.
 * Supporting various project construct forms and environments.
 * Supporting Mysql, MongoDB and SQLite databases.
 * Automatically updating code, no need to restart Node.js server.
