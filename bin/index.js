@@ -319,6 +319,7 @@ var _copyCommonConfigFiles = function(){
   copyFile('config/session.js', rootPath + '/session.js', {
     '<SECRET>': getSecret()
   });
+  copyFile('config/error.js', rootPath + '/error.js');
 
   mkdir(rootPath + '/env');
   copyFile('config/env/development.js', rootPath + '/env/development.js');
