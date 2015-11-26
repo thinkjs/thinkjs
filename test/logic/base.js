@@ -564,6 +564,74 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, requiredWithout, empty', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: "requiredWithout:suredy|email",
+        suredy: "requiredWithout:welefen|mobile"
+      });
+      assert.deepEqual(data, false);
+      done();
+    })
+  })
+  it('parse rules, requiredWithout, has one', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 'welefen@gmail.com',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: "requiredWithout:suredy|email",
+        suredy: "requiredWithout:welefen|mobile"
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
+  it('parse rules, requiredWithout, has two', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 'welefen@gmail.com',
+        suredy: '15811300250'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: "requiredWithout:suredy|email",
+        suredy: "requiredWithout:welefen|mobile"
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
+  it('parse rules, requiredWithout, has two, not mobile', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 'welefen@gmail.com',
+        suredy: '1581130025ww0'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: "requiredWithout:suredy|email",
+        suredy: "requiredWithout:welefen|mobile"
+      });
+      assert.deepEqual(data, false);
+      done();
+    })
+  })
   it('parse rules, string, default, object', function(done){
     getInstance({}, {
       _config: think.config(),

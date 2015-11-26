@@ -1308,14 +1308,8 @@ think.validate = (name, callback) => {
 
   for(let name in data){
     item = data[name];
-    if(item.value === '' || item.value === undefined || item.value === null){
-      if(item.required){
-        msg[name] = getMsg('required', name, item.value, []);
-      }
-      continue;
-    }
     for(let vitem in item){
-      if(vitem === 'value' || vitem === 'required'){
+      if(vitem === 'value'){
         continue;
       }
       //if has array rule, then foreach check value for every rule

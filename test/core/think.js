@@ -1909,7 +1909,7 @@ describe('core/think.js', function(){
       var msg = think.validate(data);
       assert.deepEqual(Object.keys(msg), {});
     })
-      it('value is array, not valid', function(){
+    it('value is array, not valid', function(){
       var data = {
         welefen: {
           value: [10, 'ww'],
