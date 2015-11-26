@@ -128,9 +128,14 @@ export default class extends think.model.base {
         return;
       }
 
-      let modelOpts = {
+      let modelOpts = think.extend({}, {
         cache: options.cache
-      };
+      });
+      //remove cache key
+      if(modelOpts.cache && modelOpts.cache.key){
+        delete modelOpts.cache.key;
+      }
+
       ['where', 'field', 'order', 'limit', 'page'].forEach(optItem => {
         if(think.isFunction(item[optItem])){
           modelOpts[optItem] = item[optItem].call(this);
