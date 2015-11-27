@@ -69,6 +69,18 @@ describe('adapter/session/db', function(){
       done();
     })
   })
+   it('get data, normal 2', function(done){
+    var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.model.find = function(){
+      return {expire: Date.now() + 100000, data: JSON.stringify({name: 'thinkjs', value: '2.0'})};
+    }
+    //get data multi 
+    instance.getData();
+    instance.getData().then(function(){
+      assert.deepEqual(instance.data, {name: 'thinkjs', value: '2.0'});
+      done();
+    })
+  })
   it('get data, parse error', function(done){
     var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     instance.model.find = function(){
@@ -95,6 +107,18 @@ describe('adapter/session/db', function(){
       instance.data = {name: 'wwww'}
       return Promise.resolve();
     }
+    instance.get().then(function(data){
+      assert.deepEqual(data, {name: 'wwww'});
+      done();
+    })
+  })
+  it('get data, all 1', function(done){
+    var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.getData = function(){
+      instance.data = {name: 'wwww'};
+      return Promise.resolve();
+    }
+    instance.get();
     instance.get().then(function(data){
       assert.deepEqual(data, {name: 'wwww'});
       done();

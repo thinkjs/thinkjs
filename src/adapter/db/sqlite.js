@@ -29,11 +29,11 @@ export default class extends Base {
    */
   async getFields(table){
     let fieldPromise = this.query(`PRAGMA table_info( ${table} )`);
-    let indexPromise = this.query(`PRAGMA INDEX_LIST(${table})`).then(async list => {
+    let indexPromise = this.query(`PRAGMA INDEX_LIST( ${table} )`).then(async list => {
       let indexes = {};
       let promises = list.map(async item => {
         if(item.unique){
-          let list = await this.query(`PRAGMA index_info(${item.name})`);
+          let list = await this.query(`PRAGMA index_info( ${item.name} )`);
           list.forEach(item => {
             indexes[item.name] = {unique: true};
           });
@@ -52,7 +52,7 @@ export default class extends Base {
         default: item.dflt_value,
         primary: !!item.pk,
         auto_increment: false,
-        unique: !item.pk && indexes[item.name] && indexes[item.name].unique
+        unique: !!(!item.pk && indexes[item.name] && indexes[item.name].unique)
       };
     });
     return ret;

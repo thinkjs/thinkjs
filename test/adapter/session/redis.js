@@ -70,6 +70,22 @@ describe('adapter/session/redis', function(){
       done();
     })
   })
+  it('getData, from redis, empty 1', function(done){
+    var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.getRedisInstance = function(){
+      return {
+        get: function(cookie){
+          assert.equal(cookie, 'welefen');
+          return Promise.resolve(null)
+        }
+      }
+    }
+    instance.getData()
+    instance.getData().then(function(data){
+      assert.deepEqual(data, {});
+      done();
+    })
+  })
    it('get, item', function(done){
     var instance = new RedisSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     instance.getData = function(){

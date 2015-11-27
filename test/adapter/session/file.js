@@ -72,6 +72,21 @@ describe('adapter/session/file', function(){
       done();
     })
   })
+  it('getData, empty 2', function(done){
+    var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.store = {
+      get: function(){
+        return Promise.resolve(JSON.stringify({
+          expire: Date.now() + 10000
+        }))
+      }
+    }
+    instance.getData();
+    return instance.getData().then(function(data){
+      assert.deepEqual(data, {});
+      done();
+    })
+  })
   it('getData, error', function(done){
     var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     instance.store = {

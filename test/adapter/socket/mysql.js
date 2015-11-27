@@ -187,6 +187,17 @@ describe('adapter/socket/mysql', function(){
         done();
       });
     });
+    it('query connention_lost', function(done){
+      var socket = new MysqlSocket();
+      var flag = false;
+      socket.close = function(){
+        flag = true;
+      }
+      socket.query('SELECT * FROM `connention_lost`').catch(function(){
+        assert.equal(flag, true);
+        done();
+      });
+    });
     it('query error', function(done){
       var socket = new MysqlSocket();
       socket.query('SELECT * FROM `query_error`').catch(function(){

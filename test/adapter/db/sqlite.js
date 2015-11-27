@@ -66,14 +66,41 @@ describe('adapter/db/sqlite', function(){
     var str = instance.parseLimit([12, 10]);
     assert.equal(str, ' LIMIT 10 OFFSET 12')
   })
-  it('get fields', function(){
+  it('get fields', function(done){
     var instance = new Sqlite();
     instance.query = function(sql){
-      assert.equal(sql, 'PRAGMA table_info( user )')
-      return [{"cid":0,"name":"id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"pwd","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"create_time","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0}];
+      if(sql === 'PRAGMA table_info( user )'){
+        return Promise.resolve([{"cid":0,"name":"id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"pwd","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"create_time","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0}]);
+      }
+      return Promise.resolve([]);
     }
     instance.getFields('user').then(function(data){
-      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false}})
+      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false}})
+      done();
+    })
+  })
+  it('getFields 1', function(done){
+    var instance = new Sqlite();
+    instance.query = function(sql){
+      if(sql === 'PRAGMA table_info( user )'){
+        return Promise.resolve([{"cid":0,"name":"id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"pwd","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"create_time","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0}]);
+      }else if(sql === 'PRAGMA INDEX_LIST( user )'){
+        return Promise.resolve([{
+          name: 'xxxx',
+          unique: true
+        }, {
+          name: 'test'
+        }]);
+      }else if(sql === 'PRAGMA index_info( xxxx )'){
+        return Promise.resolve([{
+          name: 'name'
+        }])
+      }
+      return Promise.resolve([]);
+    }
+    instance.getFields('user').then(function(data){
+      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":true},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false}});
+      done();
     })
   })
 })
