@@ -28,7 +28,7 @@ describe('adapter/session/file', function(){
     assert.equal(instance.gcType, instance.path);
     assert.equal(instance.cookie, 'welefen');
     //console.log(instance.path)
-    assert.equal(instance.path.indexOf(path.sep + '/thinkjs') > -1, true)
+    assert.equal(instance.path.indexOf(path.sep + 'thinkjs') > -1, true)
   })
   it('get instance, ingore path 2', function(){
     var instance = new FileSession(think.extend({}, {cookie: 'welefen', path: ''}));
