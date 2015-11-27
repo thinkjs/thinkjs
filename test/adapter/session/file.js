@@ -171,7 +171,7 @@ describe('adapter/session/file', function(){
     instance.set('welefen','suredy', 0.01).then(function(){
       return instance.flush();
     }).then(function(){
-      let filepath = instance.path + '/' + instance.getFilepath();
+      var filepath = instance.path + '/' + instance.getFilepath();
       fs.writeFileSync(filepath, 'not json')
       setTimeout(function(){
         instance.gc().then(function(){

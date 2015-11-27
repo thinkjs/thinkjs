@@ -434,7 +434,7 @@ describe('model/relation.js', function(){
     model.getPk = function(){
       return 'id';
     }
-    let DbMysql = think.adapter('db', 'mysql');
+    var DbMysql = think.adapter('db', 'mysql');
     muk(DbMysql.prototype, 'select', function(sql, cache){
       assert.equal(sql.trim(), 'SELECT b.*, a.cate_id FROM think_post_cate as a, think_cate as b  WHERE ( `cate_id` = 10 ) AND a.cate_id=b.id');
       return [{

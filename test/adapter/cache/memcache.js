@@ -68,7 +68,7 @@ describe('adapter/cache/memcache.js', function() {
     });
   });
   it('get data error', function(done) {
-    let get = instance.getMemcacheInstance;
+    var get = instance.getMemcacheInstance;
     instance.getMemcacheInstance = function(){
       return {
         get: function(){
@@ -99,7 +99,7 @@ describe('adapter/cache/memcache.js', function() {
   });
 
   it('set data error', function(done) {
-    let get = instance.getMemcacheInstance;
+    var get = instance.getMemcacheInstance;
     instance.getMemcacheInstance = function(){
       return {
         set: function(){
@@ -141,7 +141,7 @@ describe('adapter/cache/memcache.js', function() {
   });
 
   it('delete data error', function(done) {
-    let get = instance.getMemcacheInstance;
+    var get = instance.getMemcacheInstance;
     instance.getMemcacheInstance = function(){
       return {
         delete: function(){

@@ -28,7 +28,7 @@ describe('adapter/template/base.js', function(){
   it('merge config', function(done){
     var instance = new baseTemplate();
     muk(think, 'log', function(callback){
-      let msg = callback && callback({
+      var msg = callback && callback({
         yellow: function(msg){
           return msg
         }
