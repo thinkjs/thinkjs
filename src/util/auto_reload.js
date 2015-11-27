@@ -19,10 +19,9 @@ export default class extends think.base {
    * @param  {Boolean}  log      [log reload file]
    * @return {}            []
    */
-  init(srcPath, callback, showLog){
+  init(srcPath, callback){
     this.srcPath = srcPath;
     this.callback = callback;
-    this.showLog = showLog;
     this.prevFilesCount = 0;
   }
   /**
@@ -31,9 +30,6 @@ export default class extends think.base {
    * @return {}      []
    */
   log(file){
-    if(!this.showLog || !file){
-      return;
-    }
     //only log app files changed
     if(file.indexOf(this.srcPath) === 0){
       file = file.slice(this.srcPath.length);
@@ -45,10 +41,14 @@ export default class extends think.base {
    * @return {} []
    */
   clearFileCache(file){
+    if(file.indexOf(NODE_MODULES) > -1 || file.indexOf(this.srcPath) !== 0){
+      return;
+    }
     let mod = require.cache[file];
     if(!mod){
       return;
     }
+    //think.log(`reload file ${file.slice(this.srcPath.length)}`, 'RELOAD');
     //remove children
     if(mod && mod.children){
       mod.children.length = 0;
@@ -119,7 +119,6 @@ export default class extends think.base {
         this.clearFileCache(file);
         autoReload[file] = mTime;
         hasChange = true;
-        this.log(file);
       }
     }
     return hasChange;

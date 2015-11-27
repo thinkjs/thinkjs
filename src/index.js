@@ -477,10 +477,9 @@ export default class {
     srcPath = srcPath || think.APP_PATH;
     let AutoReload = require('./util/auto_reload.js');
     AutoReload.rewriteSysModuleLoad();
-
     let instance = new AutoReload(srcPath, () => {
       this.load();
-    }, think.config('log_auto_reload') || true);
+    });
     return instance;
   }
   /**
