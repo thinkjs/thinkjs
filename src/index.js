@@ -4,8 +4,6 @@ import fs from 'fs';
 import path from 'path';
 import './core/think.js';
 
-
-
 export default class {
   /**
    * init
