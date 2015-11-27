@@ -1,4 +1,7 @@
 'use strict';
+
+import path from 'path';
+
 /**
  * REST Base Controller
  * @return {} []
@@ -25,7 +28,7 @@ export default class extends think.controller.base {
    */
   getResource(){
     let filename = this.__filename || __filename;
-    let last = filename.lastIndexOf('/');
+    let last = filename.lastIndexOf(path.sep);
     return filename.substr(last + 1, filename.length - last - 4);
   }
   /**
@@ -37,7 +40,7 @@ export default class extends think.controller.base {
     if(id && think.isString(id) || think.isNumber(id)){
       return id;
     }
-    let last = this.http.pathname.split('/').slice(-1)[0];
+    let last = this.http.pathname.split(path.sep).slice(-1)[0];
     if(last !== this.resource){
       return last;
     }

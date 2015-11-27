@@ -28,14 +28,14 @@ describe('adapter/session/file', function(){
     assert.equal(instance.gcType, instance.path);
     assert.equal(instance.cookie, 'welefen');
     //console.log(instance.path)
-    assert.equal(instance.path.indexOf('/thinkjs') > -1, true)
+    assert.equal(instance.path.indexOf(path.sep + '/thinkjs') > -1, true)
   })
-  it('get instance, ingore path', function(){
+  it('get instance, ingore path 2', function(){
     var instance = new FileSession(think.extend({}, {cookie: 'welefen', path: ''}));
     assert.equal(instance.gcType, instance.path);
     assert.equal(instance.cookie, 'welefen');
     //console.log(instance.path)
-    assert.equal(instance.path.indexOf('/thinkjs') > -1, true)
+    assert.equal(instance.path.indexOf(path.sep + 'thinkjs') > -1, true)
   })
   it('get file path', function(){
     var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
