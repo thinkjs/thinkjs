@@ -235,6 +235,9 @@ var _copyWwwFiles = function(){
   copyFile('nginx.conf', projectRootPath + 'nginx.conf', {
     '<ROOT_PATH>': ROOT_PATH
   });
+  copyFile('nginx_ssl_http2.conf', projectRootPath + 'nginx_ssl_http2.conf', {
+    '<ROOT_PATH>': ROOT_PATH
+  });
   copyFile('pm2.json', projectRootPath + 'pm2.json', {
     '<ROOT_PATH>': ROOT_PATH,
     '<APP_NAME>': getAppName()
