@@ -37,22 +37,27 @@ export default class extends think.base {
    * @param {Array} dataList [data array]
    */
   addMany(dataList, ignoreError){
-    if (!dataList || dataList.length === 0) {
+    if (think.isEmpty(dataList)) {
       return Promise.resolve();
     }
-    dataList.forEach(item => {
-      return this.add(item);
-    });
-    let promises = this.deferreds.map( deferred => {
-      //ignore erros
-      if (ignoreError) {
-        return deferred.promise.catch(() => {
-          return;
-        });
-      }
-      return deferred.promise;
+    let promises = dataList.map(item => {
+      let promise = this.add(item);
+      return ignoreError ? promise.catch(() => {}) : promise;
     });
     return Promise.all(promises);
+  }
+  /**
+   * next
+   * @return {Function} [description]
+   */
+  next(){
+    this.doing --;
+
+    //reduce deferreds avoid memory leak when use single item data
+    this.deferreds.splice(this.index - 1, 1);
+    this.index--;
+
+    this.run();
   }
   /**
    * run
@@ -73,13 +78,11 @@ export default class extends think.base {
       result = Promise.resolve(result);
     }
     return result.then(data => {
-      this.doing --;
-      this.run();
+      this.next();
       //resolve item
       item.resolve(data);
     }).catch(err => {
-      this.doing --;
-      this.run();
+      this.next();
       //reject item
       item.reject(err);
     });
