@@ -41,7 +41,8 @@
     "mocha": "1.20.1",
     "muk": "0.3.1",
     "istanbul": "0.4.0",
-    "babel": "5.8.23"
+    "babel": "5.8.23",
+    "eslint": "1.10.2"
   },
   "keywords": [
     "thinkjs",
