@@ -180,7 +180,7 @@ export default class extends think.middleware.base {
     let pathname = this.http.pathname.split('/');
     rule = rule.split('/');
     let i = 0, length = rule.length, plength = pathname.length, item, pitem;
-    //if rule lenth is more then pathname, it will be false
+    //if rule lenth is more than pathname, it will be false
     if (length > plength) {
       return false;
     }
