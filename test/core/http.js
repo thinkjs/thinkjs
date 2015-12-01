@@ -89,7 +89,7 @@ describe('core/http.js', function() {
     };
     var instance = new Http(timeoutHttp.req, timeoutHttp.res);
     instance.run();
-    instance.http.on('timeout', function() {
+    instance.on('timeout', function() {
       timeoutHttp.res.setTimeout = noop;
       setTimeout(function(){
         muk.restore();
