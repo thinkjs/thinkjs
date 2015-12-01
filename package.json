@@ -13,7 +13,8 @@
     "watch-compile": "npm run compile -- --watch",
     "watch": "npm run watch-compile",
     "prepublish": "npm run compile",
-    "eslint": "eslint src/"
+    "eslint": "eslint src/",
+    "test-all": "npm run eslint; npm run test-cov"
   },
   "bin": {
     "thinkjs": "./bin/index.js"
