@@ -1,6 +1,7 @@
 'use strict';
 
 import fs from 'fs';
+import path from 'path';
 
 /**
  * file store
@@ -39,8 +40,8 @@ export default class extends think.adapter.base {
    */
   getFilepath(name){
     name = think.md5(name);
-    let dir = name.slice(0, this.path_depth).split('').join('/');
-    return `${dir}/${name}${this.file_ext}`;
+    let dir = name.slice(0, this.path_depth).split('').join(path.sep);
+    return `${dir}${path.sep}${name}${this.file_ext}`;
   }
   /**
    * get data
@@ -103,7 +104,7 @@ export default class extends think.adapter.base {
     let now = Date.now();
     return this.store.list().then(files => {
       files.forEach(file => {
-        let filepath = `${this.path}/${file}`;
+        let filepath = `${this.path}${path.sep}${file}`;
         let content = fs.readFileSync(filepath, 'utf8');
         try{
           let data = JSON.parse(content);

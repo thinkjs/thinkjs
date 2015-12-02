@@ -31,7 +31,7 @@ export default class extends think.adapter.base {
    * @return {Promise}     []
    */
   get(key){
-    let filepath = this.config.path + '/' + key;
+    let filepath = this.config.path + path.sep + key;
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
@@ -43,7 +43,7 @@ export default class extends think.adapter.base {
    * @param {String} content []
    */
   set(key, content){
-    let filepath = this.config.path + '/' + key;
+    let filepath = this.config.path + path.sep + key;
     think.mkdir(path.dirname(filepath));
     let fn = think.promisify(fs.writeFile, fs);
     return fn(filepath, content).then(() => {
@@ -56,7 +56,7 @@ export default class extends think.adapter.base {
    * @return {Promise}     []
    */
   delete(key){
-    let filepath = this.config.path + '/' + key;
+    let filepath = this.config.path + path.sep + key;
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
