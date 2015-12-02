@@ -20,7 +20,7 @@ export default class extends think.base {
    * @return {}            []
    */
   init(srcPath, callback){
-    this.srcPath = srcPath;
+    this.srcPath = path.normalize(srcPath);
     this.callback = callback;
     this.prevFilesCount = 0;
   }
@@ -29,13 +29,13 @@ export default class extends think.base {
    * @param  {String} file []
    * @return {}      []
    */
-  log(file){
-    //only log app files changed
-    if(file.indexOf(this.srcPath) === 0){
-      file = file.slice(this.srcPath.length);
-      think.log(`reload file ${file}`, 'RELOAD');
-    }
-  }
+  // log(file){
+  //   //only log app files changed
+  //   if(file.indexOf(this.srcPath) === 0){
+  //     file = file.slice(this.srcPath.length);
+  //     think.log(`reload file ${file}`, 'RELOAD');
+  //   }
+  // }
   /**
    * clear file cache, also clear dependents file cache
    * @return {} []
