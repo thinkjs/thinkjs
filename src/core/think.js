@@ -13,8 +13,8 @@ import colors from 'colors/safe';
 
 import base from './base.js';
 import httpBase from './http_base.js';
-import {} from './_cache.js';
 import Cookie from '../util/cookie.js';
+import './_cache.js';
 
 
 /**
@@ -99,7 +99,7 @@ think.mode_module = 0x0004;
  * thinkjs module lib path
  * @type {String}
  */
-think.THINK_LIB_PATH = path.normalize(`${__dirname}/..`);
+think.THINK_LIB_PATH = path.dirname(__dirname);
 /**
  * thinkjs module root path
  * @type {String}

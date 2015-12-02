@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import './core/think.js';
 
+let {sep} = path;
+
 export default class {
   /**
    * init
@@ -13,6 +15,12 @@ export default class {
   constructor(options = {}){
     //extend options to think
     think.extend(think, this.getPath(), options);
+
+    //normalize path
+    think.APP_PATH = path.normalize(think.APP_PATH);
+    think.ROOT_PATH = path.normalize(think.ROOT_PATH);
+    think.RESOURCE_PATH = path.normalize(think.RESOURCE_PATH);
+
     //parse data from process arguments
     let i = 2;
     let argv = process.argv[i];
@@ -57,7 +65,7 @@ export default class {
   getPath(){
     let filepath = process.argv[1];
     let ROOT_PATH = path.dirname(filepath);
-    let APP_PATH = `${path.dirname(ROOT_PATH)}/app`;
+    let APP_PATH = `${path.dirname(ROOT_PATH)}${sep}app`;
     return {
       APP_PATH,
       RESOURCE_PATH: ROOT_PATH,
@@ -101,12 +109,14 @@ export default class {
     let files = think.getFiles(think.APP_PATH);
     let reg = /\.(js|html|tpl)$/;
     let uppercaseReg = /[A-Z]+/;
+    let localPath = `${sep}${think.dirname.locale}${sep}`;
     let filter = item => {
       if(!reg.test(item)){
         return;
       }
+      item = path.normalize(item);
       //ignore files in config/locale
-      if(item.indexOf(`/${think.dirname.locale}/`) > -1){
+      if(item.indexOf(localPath) > -1){
         return;
       }
       return true;
@@ -130,8 +140,9 @@ export default class {
     }
     let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
     let dependencies = data.dependencies;
+    let pkgPath = `${think.ROOT_PATH}${sep}node_modules${sep}`;
     for(let pkg in dependencies){
-      if(think.isDir(`${think.ROOT_PATH}/node_modules/${pkg}`)){
+      if(think.isDir(`${pkgPath}${pkg}`)){
         continue;
       }
       try{
@@ -159,7 +170,7 @@ export default class {
     }
     let modulePath = think.APP_PATH;
     if (think.mode === think.mode_normal) {
-      modulePath += `/${think.dirname.controller}`;
+      modulePath += `${sep}${think.dirname.controller}`;
     }
     if(!think.isDir(modulePath)){
       return [];
@@ -282,7 +293,7 @@ export default class {
    */
   loadMiddleware(){
     let paths = [
-      `${think.THINK_LIB_PATH}/middleware`,
+      `${think.THINK_LIB_PATH}${sep}middleware`,
       `${think.getPath(undefined, think.dirname.middleware)}`
     ];
     think.alias('middleware', paths);
@@ -327,14 +338,14 @@ export default class {
       logic: ['base'],
       service: ['base']
     };
-    for(let type in types){
-      think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
-      types[type].forEach(item => {
-        think[type][item] = think.require(`${type}_${item}`);
+    for(let itemType in types){
+      think.alias(itemType, `${think.THINK_LIB_PATH}${sep}${itemType}`);
+      types[itemType].forEach(item => {
+        think[itemType][item] = think.require(`${itemType}_${item}`);
       });
       think.module.forEach(module => {
-        let moduleType = `${module}/${type}`;
-        let filepath = think.getPath(module, think.dirname[type]);
+        let moduleType = `${module}${sep}${itemType}`;
+        let filepath = think.getPath(module, think.dirname[itemType]);
         think.alias(moduleType, filepath, true);
       });
     }
@@ -345,7 +356,7 @@ export default class {
    */
   loadBootstrap(){
     let paths = [
-      `${think.THINK_LIB_PATH}/bootstrap`,
+      `${think.THINK_LIB_PATH}${sep}bootstrap`,
       think.getPath(think.dirname.common, think.dirname.bootstrap)
     ];
     paths.forEach(item => {
@@ -358,7 +369,7 @@ export default class {
         if(extname !== '.js'){
           return;
         }
-        think.safeRequire(`${item}/${file}`);
+        think.safeRequire(`${item}${sep}${file}`);
       });
     });
   }
@@ -376,13 +387,13 @@ export default class {
       }
       let files = think.getFiles(filepath);
       files.forEach(file => {
-        let key = path.normalize(`${filepath}/${file}`);
+        let key = `${filepath}${sep}${file}`;
         data[key] = true;
       });
     };
     let {root_path} = think.config('view');
     if(root_path){
-      add(root_path);
+      add(path.normalize(root_path));
     }else{
       think.module.forEach(module => {
         add(think.getPath(module, think.dirname.view));
@@ -395,7 +406,7 @@ export default class {
    * @return {} []
    */
   loadError(){
-    let message = require(think.THINK_LIB_PATH + '/config/sys/error.js');
+    let message = require(think.THINK_LIB_PATH + `/config/sys/error.js`);
     thinkCache(thinkCache.ERROR, message);
   }
   /**
@@ -492,7 +503,7 @@ export default class {
       options = {log: true};
       srcPath = '';
     }
-    srcPath = srcPath || `${think.ROOT_PATH}/src`;
+    srcPath = srcPath || `${think.ROOT_PATH}${sep}src`;
     outPath = outPath || think.APP_PATH;
 
     if(!think.isDir(srcPath)){
