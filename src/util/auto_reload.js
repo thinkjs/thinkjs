@@ -20,7 +20,7 @@ export default class extends think.base {
    * @return {}            []
    */
   init(srcPath, callback){
-    this.srcPath = srcPath;
+    this.srcPath = path.normalize(srcPath);
     this.callback = callback;
     this.prevFilesCount = 0;
   }
