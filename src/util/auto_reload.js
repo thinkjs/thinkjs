@@ -86,7 +86,7 @@ export default class extends think.base {
    * @return {} []
    */
   checkFileChange(){
-    let filesCount = think.getFiles(this.srcPath).filter(file => {
+    let filesCount = think.getFiles(this.srcPath, true).filter(file => {
       let extname = path.extname(file);
       return extname === '.js';
     }).length;

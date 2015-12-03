@@ -106,8 +106,8 @@ export default class extends think.base {
    * @return {} []
    */
   compile(){
-    let files = think.getFiles(this.srcPath);
-    let appFiles = think.getFiles(this.outPath);
+    let files = think.getFiles(this.srcPath, true);
+    let appFiles = think.getFiles(this.outPath, true);
     let changedFiles = this.getSrcDeletedFiles(files, appFiles);
 
     if(!this.compiledErrorFiles.length){

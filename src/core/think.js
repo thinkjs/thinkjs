@@ -851,7 +851,7 @@ think.alias = (type, paths, slash) => {
     paths = [paths];
   }
   paths.forEach(path => {
-    let files = think.getFiles(path);
+    let files = think.getFiles(path, true);
     files.forEach(file => {
       if(file.slice(-3) !== '.js' || file[0] === '_'){
         return;

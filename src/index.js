@@ -106,7 +106,7 @@ export default class {
    * @return {} []
    */
   checkFileName(){
-    let files = think.getFiles(think.APP_PATH);
+    let files = think.getFiles(think.APP_PATH, true);
     let reg = /\.(js|html|tpl)$/;
     let uppercaseReg = /[A-Z]+/;
     let localPath = `${sep}${think.dirname.locale}${sep}`;
@@ -385,7 +385,7 @@ export default class {
       if (!think.isDir(filepath)) {
         return;
       }
-      let files = think.getFiles(filepath);
+      let files = think.getFiles(filepath, true);
       files.forEach(file => {
         let key = `${filepath}${sep}${file}`;
         data[key] = true;
