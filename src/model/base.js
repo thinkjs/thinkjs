@@ -424,6 +424,10 @@ export default class extends Base {
     if(options.cache && options.cache.key){
       options.cache.key += '_count';
     }
+
+    //delete table options avoid error when has alias
+    delete options.table;
+    
     result.data = count ? await this.select(options) : [];
     return result;
   }
