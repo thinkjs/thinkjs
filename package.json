@@ -31,7 +31,6 @@
     "mysql": "2.9.0",
     "thinkit": "3.4.0",
     "babel-runtime": "5.8.25",
-    "babel-core": "5.8.33",
     "co": "4.6.0",
     "colors": "1.1.2",
     "validator": "4.2.0",
@@ -42,7 +41,8 @@
     "muk": "0.3.1",
     "istanbul": "0.4.0",
     "babel": "5.8.23",
-    "eslint": "1.10.2"
+    "eslint": "1.10.2",
+    "babel-eslint": "5.0.0-beta4"
   },
   "keywords": [
     "thinkjs",
