@@ -364,6 +364,15 @@ export default class {
         return;
       }
       let files = fs.readdirSync(item);
+
+      //must reload all bootstrap files.
+      if (think.config('auto_reload')) {
+        var AutoReload = require('./util/auto_reload.js');
+        AutoReload.rewriteSysModuleLoad();
+        var instance = new AutoReload(item, ()=>{});
+        instance.clearFilesCache(files.map(file => item + '/' + file));
+      }
+
       files.forEach(file => {
         let extname = path.extname(file);
         if(extname !== '.js'){
