@@ -350,14 +350,19 @@ think.safeRequire = file => {
  * @return {}            []
  */
 think.parseConfig = (...configs) => {
-  let config = think.extend({}, ...configs);
 
-  //check adapter config exist
-  if(config.type && config.adapter){
-    let adapterConfig = config.adapter[config.type];
-    config = think.extend(config, adapterConfig);
-    delete config.adapter;
-  }
+  configs = configs.map(config => {
+    config = think.extend({}, config);
+    //check adapter config exist
+    if(config.type && config.adapter){
+      let adapterConfig = config.adapter[config.type];
+      config = think.extend(config, adapterConfig);
+      delete config.adapter;
+    }
+    return config;
+  });
+  
+  let config = think.extend({}, ...configs);
 
   //check parser method
   if(!think.isFunction(config.parser)){

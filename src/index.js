@@ -20,6 +20,7 @@ export default class {
     think.APP_PATH = path.normalize(think.APP_PATH);
     think.ROOT_PATH = path.normalize(think.ROOT_PATH);
     think.RESOURCE_PATH = path.normalize(think.RESOURCE_PATH);
+    think.RUNTIME_PATH = path.normalize(think.RUNTIME_PATH);
 
     //parse data from process arguments
     let i = 2;
@@ -66,10 +67,12 @@ export default class {
     let filepath = process.argv[1];
     let ROOT_PATH = path.dirname(filepath);
     let APP_PATH = `${path.dirname(ROOT_PATH)}${sep}app`;
+    let RUNTIME_PATH = ROOT_PATH + sep + think.dirname.runtime;
     return {
       APP_PATH,
       RESOURCE_PATH: ROOT_PATH,
-      ROOT_PATH
+      ROOT_PATH,
+      RUNTIME_PATH
     };
   }
   /**
@@ -246,7 +249,7 @@ export default class {
       errorConfigKeys = thinkCache(thinkCache.COLLECTION, errorKey);
     }
 
-    let checkModuleConfig = module => {
+    let checkMConfig = module => {
       if(keys.length === 0){
         keys = Object.keys(require(`${think.THINK_LIB_PATH}/config/config.js`));
       }
@@ -269,7 +272,7 @@ export default class {
     //load modules config
     modules.forEach(module => {
       if(module !== 'common'){
-        checkModuleConfig(module);
+        checkMConfig(module);
       }
     });
   }

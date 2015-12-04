@@ -79,7 +79,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('common/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -120,7 +120,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('common/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -162,7 +162,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('common/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -205,7 +205,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('common/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -249,7 +249,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('common/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -298,7 +298,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('common/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){

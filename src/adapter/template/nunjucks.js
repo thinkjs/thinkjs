@@ -30,6 +30,9 @@ export default class extends Base {
     }else{
       env = nunjucks.configure(options);
     }
+    
+    // add global variable think
+    env.addGlobal('think', think);
 
     this.prerender(options, nunjucks, env);
 

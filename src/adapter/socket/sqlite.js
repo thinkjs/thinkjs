@@ -18,7 +18,7 @@ export default class extends Base {
     if(config.path === true){
       config.path = ':memory:';
     }else{
-      config.path = config.path || think.getPath(undefined, think.dirname.runtime) + path.sep + 'sqlite';
+      config.path = config.path || think.RUNTIME_PATH + path.sep + 'sqlite';
       think.mkdir(config.path);
       config.path += `${path.sep}${config.name}.sqlite`;
     }

@@ -23,7 +23,11 @@ describe('adapter/template/nunjucks.js', function(){
     var instance = new Template();
     muk(think, 'npm', function(){
       return {
-        configure: function(){},
+        configure: function(){
+          return {
+            addGlobal: function(){}
+          }
+        },
         render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
@@ -44,7 +48,11 @@ describe('adapter/template/nunjucks.js', function(){
     var instance = new Template();
     muk(think, 'npm', function(){
       return {
-        configure: function(){},
+        configure: function(){
+          return {
+            addGlobal: function(){}
+          }
+        },
         render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
@@ -74,7 +82,7 @@ describe('adapter/template/nunjucks.js', function(){
     muk(think, 'npm', function(){
       return {
         configure: function(){
-          return {addFilter: function(){}};
+          return {addFilter: function(){}, addGlobal: function(){}};
         },
         render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
