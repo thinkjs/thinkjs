@@ -12,7 +12,7 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   init(options){
-    this.options = think.extend({}, think.config('cache'), options);
+    this.options = think.parseConfig(think.config('cache'), options);
     this.timeout = this.options.timeout || 0;
     this.prefix = this.options.prefix || '';
   }
