@@ -5,14 +5,23 @@ import {EventEmitter} from 'events';
 import fs from 'fs';
 import mime from 'mime';
 import util from 'util';
+import cookie from '../util/cookie.js';
 
-let cookie = think.require('cookie');
+// let cookie = think.require('cookie');
 
 /**
  * wrap for request & response
  * @type {Object}
  */
-export default class extends think.base {
+export default class extends EventEmitter {
+  /**
+   * constructor
+   * @return {} []
+   */
+  constructor(req, res){
+    super();
+    this.init(req, res);
+  }
   /**
    * init method
    * @param  {Object} req [request]
@@ -24,20 +33,16 @@ export default class extends think.base {
     this.req = req;
     //response object
     this.res = res;
-    //instance of EventEmitter
-    this.http = new EventEmitter();
 
-    this.http.req = req;
-    this.http.res = res;
     //set http start time
-    this.http.startTime = Date.now();
+    this.startTime = Date.now();
 
     //set request timeout
     let timeout = think.config('timeout');
     if(timeout){
       res.setTimeout(timeout * 1000, () => {
-        this.http.emit('timeout');
-        this.http.end();
+        this.emit('timeout');
+        this.end();
       });
     }
   }
@@ -46,15 +51,15 @@ export default class extends think.base {
    * @return Promise            []
    */
   async run(){
-    this.bind();
+    this.parseProperties();
     
-    await think.hook('request_begin', this.http);
+    await think.hook('request_begin', this);
     //array indexOf is faster than string
     let methods = ['POST', 'PUT', 'PATCH'];
     if (methods.indexOf(this.req.method) > -1) {
       await this.parsePayload();
     }
-    return this.http;
+    return this;
   }
   /**
    * check request has post data
@@ -102,68 +107,48 @@ export default class extends think.base {
    */
   async parsePayload(){
     if(this.hasPayload()){
-      await think.hook('payload_parse', this.http);
-      await think.hook('payload_validate', this.http);
+      await think.hook('payload_parse', this);
+      await think.hook('payload_validate', this);
     }
   }
   /**
-   * bind props & methods to http
+   * parse properties
    * @return {} []
    */
-  bind(){
-    let http = this.http;
-    http.url = this.req.url;
-    http.version = this.req.httpVersion;
-    http.method = this.req.method;
-    http.headers = this.req.headers;
+  parseProperties(){
+    this.url = this.req.url;
+    this.version = this.req.httpVersion;
+    this.method = this.req.method;
+    this.headers = this.req.headers;
+    this.host = this.headers.host;
 
-    let urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
-    let pathname = decodeURIComponent(urlInfo.pathname);
-    http.pathname = this.normalizePathname(pathname);
-    http.query = urlInfo.query;
-    http.host = urlInfo.host;
-    http.hostname = urlInfo.hostname;
+    this._file = {};
+    this._post = {};
+    this._cookie = {};
+    this._sendCookie = {};
+    this._type = (this.headers['content-type'] || '').split(';')[0].trim();
+    this._contentTypeIsSend = false;
 
-    http._file = {};
-    http._post = {};
-    http._cookie = cookie.parse(http.headers.cookie);
-    http._sendCookie = {};
-    http._get = think.extend({}, urlInfo.query);
-    http._type = (http.headers['content-type'] || '').split(';')[0].trim();
-    http._contentTypeIsSend = false;
+    //optimize for homepage request
+    if(this.req.url === '/'){
+      this.pathname = '/';
+      this.query = {};
+      this._get = {};
+      let pos = this.host.indexOf(':');
+      this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
+    }else{
+      let urlInfo = url.parse('//' + this.headers.host + this.req.url, true, true);
+      let pathname = decodeURIComponent(urlInfo.pathname);
+      this.pathname = this.normalizePathname(pathname);
+      this.query = urlInfo.query;
+      this.hostname = urlInfo.hostname;
+      this._get = think.extend({}, urlInfo.query);
+    }
 
-    http.getPayload = this.getPayload;
-    http.config = this.config;
-    http.referrer = this.referrer;
-    http.userAgent = this.userAgent;
-    http.isGet = this.isGet;
-    http.isPost = this.isPost;
-    http.isAjax = this.isAjax;
-    http.isJsonp = this.isJsonp;
-    http.get = this.get;
-    http.post = this.post;
-    http.param = this.param;
-    http.file = this.file;
-    http.header = this.header;
-    http.status = this.status;
-    http.ip = this.ip;
-    http.lang = this.lang;
-    http.theme = this.theme;
-    http.cookie = this.cookie;
-    http.redirect = this.redirect;
-    http.write = this.write;
-    http.end = this.end;
-    http._end = this._end;
-    http.sendTime = this.sendTime;
-    http.type = this.type;
-    http.success = this.success;
-    http.fail = this.fail;
-    http.jsonp = this.jsonp;
-    http.json = this.json;
-    http.view = this.view;
-    http.expires = this.expires;
-    http.locale = this.locale;
-    http.session = this.session;
+    //parse cookie when cookie is set
+    if(this.headers.cookie){
+      this._cookie = cookie.parse(this.headers.cookie);
+    }
   }
   /**
    * normalize pathname, remove hack chars
@@ -231,11 +216,11 @@ export default class extends think.base {
    * @return {String}      []
    */
   referrer(host){
-    let referrer = this.headers.referer || this.headers.referrer || '';
-    if (!referrer || !host) {
-      return referrer;
+    let referer = this.headers.referer || this.headers.referrer || '';
+    if (!referer || !host) {
+      return referer;
     }
-    let info = url.parse(referrer);
+    let info = url.parse(referer);
     return info.hostname;
   }
   /**
@@ -373,7 +358,7 @@ export default class extends think.base {
    */
   ip(forward){
     let proxy = think.config('proxy_on') || this.host === this.hostname;
-    let ip;
+    let userIP;
     if (proxy) {
       if (forward) {
         return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
@@ -383,26 +368,26 @@ export default class extends think.base {
           }
         });
       }
-      ip = this.headers['x-real-ip'];
+      userIP = this.headers['x-real-ip'];
     }else{
       let connection = this.req.connection;
       let socket = this.req.socket;
       if (connection && connection.remoteAddress !== '127.0.0.1') {
-        ip = connection.remoteAddress;
+        userIP = connection.remoteAddress;
       }else if (socket && socket.remoteAddress !== '127.0.0.1') {
-        ip = socket.remoteAddress;
+        userIP = socket.remoteAddress;
       }
     }
-    if (!ip) {
+    if (!userIP) {
       return '127.0.0.1';
     }
-    if (ip.indexOf(':') > -1) {
-      ip = ip.split(':').slice(-1)[0];
+    if (userIP.indexOf(':') > -1) {
+      userIP = userIP.split(':').slice(-1)[0];
     }
-    if (!think.isIP(ip)) {
+    if (!think.isIP(userIP)) {
       return '127.0.0.1';
     }
-    return ip;
+    return userIP;
   }
   /**
    * get or set language

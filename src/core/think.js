@@ -13,8 +13,8 @@ import colors from 'colors/safe';
 
 import base from './base.js';
 import httpBase from './http_base.js';
-import {} from './_cache.js';
 import Cookie from '../util/cookie.js';
+import './_cache.js';
 
 
 /**
@@ -99,7 +99,7 @@ think.mode_module = 0x0004;
  * thinkjs module lib path
  * @type {String}
  */
-think.THINK_LIB_PATH = path.normalize(`${__dirname}/..`);
+think.THINK_LIB_PATH = path.dirname(__dirname);
 /**
  * thinkjs module root path
  * @type {String}
@@ -350,14 +350,19 @@ think.safeRequire = file => {
  * @return {}            []
  */
 think.parseConfig = (...configs) => {
-  let config = think.extend({}, ...configs);
 
-  //check adapter config exist
-  if(config.type && config.adapter){
-    let adapterConfig = config.adapter[config.type];
-    config = think.extend(config, adapterConfig);
-    delete config.adapter;
-  }
+  configs = configs.map(config => {
+    config = think.extend({}, config);
+    //check adapter config exist
+    if(config.type && config.adapter){
+      let adapterConfig = config.adapter[config.type];
+      config = think.extend(config, adapterConfig);
+      delete config.adapter;
+    }
+    return config;
+  });
+  
+  let config = think.extend({}, ...configs);
 
   //check parser method
   if(!think.isFunction(config.parser)){
@@ -851,7 +856,7 @@ think.alias = (type, paths, slash) => {
     paths = [paths];
   }
   paths.forEach(path => {
-    let files = think.getFiles(path);
+    let files = think.getFiles(path, true);
     files.forEach(file => {
       if(file.slice(-3) !== '.js' || file[0] === '_'){
         return;

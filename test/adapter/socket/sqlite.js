@@ -33,7 +33,7 @@ describe('adapter/socket/sqlite', function(){
     var instance = new sqliteSocket({
       name: 'test'
     })
-    assert.deepEqual(instance.config, {name: 'test', path: think.APP_PATH + '/common/runtime/sqlite/test.sqlite'});
+    assert.deepEqual(instance.config, {name: 'test', path: think.RUNTIME_PATH + '/sqlite/test.sqlite'});
     think.mkdir = mkdir;
   })
     it('get instance, config is empty', function(){
@@ -42,7 +42,7 @@ describe('adapter/socket/sqlite', function(){
 
     }
     var instance = new sqliteSocket()
-    assert.deepEqual(instance.config, {path: think.APP_PATH + '/common/runtime/sqlite/undefined.sqlite'});
+    assert.deepEqual(instance.config, {path: think.RUNTIME_PATH + '/sqlite/undefined.sqlite'});
     think.mkdir = mkdir;
   })
   it('get instance, path is set', function(){

@@ -276,18 +276,6 @@ export default class extends Base {
 
     options = await this.parseOptions(options);
 
-    //check where condition
-    if(think.isEmpty(options.where)){
-      //get where condition from data
-      let pk = await this.getPk();
-      if(data[pk]){
-        options.where = {[pk]: data[pk]};
-        delete data[pk];
-      }else {
-        return think.reject(new Error(think.locale('MISS_WHERE_CONDITION')));
-      }
-    }
-
     //remove readonly field data
     this.readonlyFields.forEach(item => {
       delete data[item];
@@ -297,9 +285,21 @@ export default class extends Base {
       return think.reject(new Error(think.locale('DATA_EMPTY')));
     }
 
-    data = this.parseData(data);
-    data = await this.beforeUpdate(data, options);
-    let rows = await this.db().update(data, options);
+    let parsedData = this.parseData(data);
+    //check where condition
+    if(think.isEmpty(options.where)){
+      //get where condition from data
+      let pk = await this.getPk();
+      if(parsedData[pk]){
+        options.where = {[pk]: parsedData[pk]};
+        delete parsedData[pk];
+      }else {
+        return think.reject(new Error(think.locale('MISS_WHERE_CONDITION')));
+      }
+    }
+    
+    parsedData = await this.beforeUpdate(parsedData, options);
+    let rows = await this.db().update(parsedData, options);
     await this.afterUpdate(data, options);
     return rows;
   }
@@ -395,9 +395,10 @@ export default class extends Base {
     let pk = this.pk;
     let table = options.alias || this.getTableName();
 
+    //delete table options avoid error when has alias
+    delete options.table;
+    
     if(!count){
-      //get count
-      delete options.alias;
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
@@ -424,6 +425,7 @@ export default class extends Base {
     if(options.cache && options.cache.key){
       options.cache.key += '_count';
     }
+
     result.data = count ? await this.select(options) : [];
     return result;
   }

@@ -66,7 +66,8 @@ describe('model/base.js', function(){
         return Promise.resolve(data);
       }else if(sql.indexOf('SHOW COLUMNS ') > -1){
         if(sql.indexOf(' AS ') > -1){
-          return Promise.reject(new ERROR('columns has can not as'));
+          console.log(sql)
+          return Promise.reject(new Error('columns has can not as'));
         }
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":""},
@@ -645,6 +646,13 @@ describe('model/base.js', function(){
       //console.log(sql)
       //assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]})
       done();
+    })
+  })
+  it('count select, table has alias', function(done){
+    instance.where({name: 'test'}).page(3).alias('XXX').countSelect(true).then(function(data){
+      done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('count select, pageFlag: true', function(done){
