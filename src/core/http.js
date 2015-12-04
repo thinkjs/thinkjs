@@ -216,11 +216,11 @@ export default class extends EventEmitter {
    * @return {String}      []
    */
   referrer(host){
-    let referrer = this.headers.referer || this.headers.referrer || '';
-    if (!referrer || !host) {
-      return referrer;
+    let referer = this.headers.referer || this.headers.referrer || '';
+    if (!referer || !host) {
+      return referer;
     }
-    let info = url.parse(referrer);
+    let info = url.parse(referer);
     return info.hostname;
   }
   /**
@@ -358,7 +358,7 @@ export default class extends EventEmitter {
    */
   ip(forward){
     let proxy = think.config('proxy_on') || this.host === this.hostname;
-    let ip;
+    let userIP;
     if (proxy) {
       if (forward) {
         return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
@@ -368,26 +368,26 @@ export default class extends EventEmitter {
           }
         });
       }
-      ip = this.headers['x-real-ip'];
+      userIP = this.headers['x-real-ip'];
     }else{
       let connection = this.req.connection;
       let socket = this.req.socket;
       if (connection && connection.remoteAddress !== '127.0.0.1') {
-        ip = connection.remoteAddress;
+        userIP = connection.remoteAddress;
       }else if (socket && socket.remoteAddress !== '127.0.0.1') {
-        ip = socket.remoteAddress;
+        userIP = socket.remoteAddress;
       }
     }
-    if (!ip) {
+    if (!userIP) {
       return '127.0.0.1';
     }
-    if (ip.indexOf(':') > -1) {
-      ip = ip.split(':').slice(-1)[0];
+    if (userIP.indexOf(':') > -1) {
+      userIP = userIP.split(':').slice(-1)[0];
     }
-    if (!think.isIP(ip)) {
+    if (!think.isIP(userIP)) {
       return '127.0.0.1';
     }
-    return ip;
+    return userIP;
   }
   /**
    * get or set language

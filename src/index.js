@@ -246,7 +246,7 @@ export default class {
       errorConfigKeys = thinkCache(thinkCache.COLLECTION, errorKey);
     }
 
-    let checkModuleConfig = module => {
+    let checkMConfig = module => {
       if(keys.length === 0){
         keys = Object.keys(require(`${think.THINK_LIB_PATH}/config/config.js`));
       }
@@ -269,7 +269,7 @@ export default class {
     //load modules config
     modules.forEach(module => {
       if(module !== 'common'){
-        checkModuleConfig(module);
+        checkMConfig(module);
       }
     });
   }
