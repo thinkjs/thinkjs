@@ -543,8 +543,6 @@ let _createProject = () => {
   _copyWwwFiles();
 
   mkdir(think.APP_PATH);
-  let runtimePath = think.getPath('common', 'runtime');
-  mkdir(runtimePath);
 
   _copyCommonBootstrapFiles();
   _copyCommonConfigFiles();

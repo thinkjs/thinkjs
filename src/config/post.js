@@ -2,8 +2,6 @@
 
 import path from 'path';
 
-let runtimePrefix = think.getPath(undefined, think.dirname.runtime);
-
 /**
  * configs for post request
  */
@@ -13,6 +11,6 @@ export default {
   max_fields: 100, 
   max_fields_size: 2 * 1024 * 1024, //2M,
   single_file_header: 'x-filename',
-  file_upload_path: runtimePrefix + path.sep + 'upload',
+  file_upload_path: think.RUNTIME_PATH + path.sep + 'upload',
   file_auto_remove: true
 };

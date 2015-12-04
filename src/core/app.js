@@ -222,7 +222,7 @@ export default class extends think.http.base {
     if (!cluster.isMaster || !think.config('log_pid')) {
       return;
     }
-    let dir = think.getPath(undefined, think.dirname.runtime) + '/pid';
+    let dir = think.RUNTIME_PATH + '/pid';
     think.mkdir(dir);
     let pidFile = `${dir}/${port}.pid`;
     fs.writeFileSync(pidFile, process.pid);
