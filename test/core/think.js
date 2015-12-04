@@ -2271,6 +2271,19 @@ describe('core/think.js', function(){
       });
       assert.deepEqual(config, {'type': 'file', 'name': '111'})
     })
+    it('merge, has adapter & type 1', function(){
+      var config = think.parseConfig({
+        type: 'file',
+        adapter: {
+          file: {
+            name: '111'
+          }
+        }
+      }, {
+        name: 222
+      });
+      assert.deepEqual(config, {'type': 'file', 'name': 222})
+    })
   })
   
   describe('think.error', function(){
