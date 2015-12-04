@@ -10,4 +10,11 @@ var instance = new thinkjs({
   env: 'development'
 });
 
+//compile src/ to app/
+instance.compile({
+  retainLines: true, 
+  log: true,
+  type: 'ts' //TypeScript
+});
+
 instance.run();

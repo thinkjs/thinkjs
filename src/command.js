@@ -110,7 +110,17 @@ let copyFile = (source, target, replace, showWarning) => {
 
   mkdir(path.dirname(target));
 
-  if(commander.es6){
+  //TypeScript
+  if(commander.ts){
+    let tsSource = source.replace(/([^/]+)$/, (a, b) => {
+      return '/ts_' + b;
+    });
+    if(think.isFile(templatePath + '/' + tsSource)){
+      source = tsSource;
+    }
+  }
+  //ECMAScript 6/7
+  else if(commander.es6){
     let es6Source = source.replace(/([^/]+)$/, (a, b) => {
       return '/es6_' + b;
     });
@@ -181,6 +191,7 @@ let parseAppConfig = () => {
   let content = fs.readFileSync(filepath, 'utf8');
   let data = JSON.parse(content);
 
+  commander.ts = data.ts;
   commander.es6 = data.es6;
   think.mode = think['mode_' + data.mode];
 
@@ -237,10 +248,9 @@ let _copyWwwFiles = () => {
   }else if(think.mode === think.mode_module){
     mode = 'module';
   }
-  copyFile('.thinkjsrc', projectRootPath + '.thinkjsrc', {
+  copyFile('thinkjsrc', projectRootPath + '.thinkjsrc', {
     '<createAt>': getDateTime(),
-    '<mode>': mode,
-    '"<es6>"': !!commander.es6
+    '<mode>': mode
   });
 
   let ROOT_PATH = cwd + '/' + projectRootPath + 'www';
@@ -260,9 +270,7 @@ let _copyWwwFiles = () => {
 
 
   mkdir(projectRootPath + 'www/');
-  copyFile('www/development.js', projectRootPath + 'www/development.js', {
-    '<COMPILE_CODE>': commander.es6 ? 'instance.compile({retainLines: true, log: true});' : ''
-  });
+  copyFile('www/development.js', projectRootPath + 'www/development.js');
   copyFile('www/production.js', projectRootPath + 'www/production.js');
   copyFile('www/testing.js', projectRootPath + 'www/testing.js');
   copyFile('www/README.md', projectRootPath + 'www/README.md');
@@ -600,7 +608,7 @@ let createPlugin = () => {
     '<PLUGIN_NAME>': pluginName
   });
   copyFile('plugin/.eslintrc', projectRootPath + '.eslintrc');
-  copyFile('plugin/.gitignore', projectRootPath + '.gitignore');
+  copyFile('plugin/gitignore', projectRootPath + '.gitignore');
   copyFile('plugin/.npmignore', projectRootPath + '.npmignore');
   copyFile('plugin/.travis.yml', projectRootPath + '.travis.yml');
   copyFile('plugin/package.json', projectRootPath + 'package.json', {
@@ -657,6 +665,7 @@ commander.option('-V', 'output the version number', () => {
   displayVersion();
 });
 commander.option('-e, --es6', 'use es6 for project, used in `new` command');
+commander.option('-t, --ts', 'use TypeScript for project, used in `new` command');
 commander.option('-r, --rest', 'create rest controller, used in `controller` command');
 commander.option('-M, --mongo', 'create mongo model, used in `model` command');
 commander.option('-R, --relation', 'create relation model, used in `model` command');
