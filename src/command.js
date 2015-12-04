@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import commander from 'commander';
-import '../lib/core/think.js';
+import './core/think.js';
 
 let {sep} = path;
 let cwd = process.cwd();
@@ -255,7 +255,7 @@ let _copyWwwFiles = () => {
     '<APP_NAME>': getAppName()
   });
 
-  copyFile('.gitignore', projectRootPath + '.gitignore');
+  copyFile('gitignore', projectRootPath + '.gitignore');
   copyFile('README.md', projectRootPath + 'README.md');
 
 
