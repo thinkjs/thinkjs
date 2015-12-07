@@ -6,6 +6,9 @@ import path from 'path';
 //can not use import from
 let sys_module = require('module');
 
+//rewriteSysModuleLoad flag
+let _rewriteSysModuleLoad = false;
+
 const NODE_MODULES = `${path.sep}node_modules${path.sep}`;
 
 /**
@@ -139,6 +142,12 @@ export default class extends think.base {
    * @return {} []
    */
   static rewriteSysModuleLoad(){
+
+    if(_rewriteSysModuleLoad){
+      return;
+    }
+    _rewriteSysModuleLoad = true;
+
     let load = sys_module._load;
     
     //rewrite Module._load method
