@@ -397,9 +397,10 @@ export default class extends Base {
     let pk = this.pk;
     let table = options.alias || this.getTableName();
 
+    //delete table options avoid error when has alias
+    delete options.table;
+
     if(!count){
-      //get count
-      delete options.alias;
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
