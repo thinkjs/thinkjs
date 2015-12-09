@@ -124,7 +124,14 @@ describe('model/base.js', function(){
         return Promise.resolve({
           affectedRows: 1
         })
-      }else if(sql.trim() === "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 102 )"){
+      }
+      else if(sql.trim() === "UPDATE `think_cate` SET `title`='title1' WHERE ( `id` = 102 )"){
+        return Promise.resolve({
+          affectedRows: 3
+        })
+      }
+
+      else if(sql.trim() === "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 102 )"){
         return Promise.resolve({
           affectedRows: 3
         })
@@ -500,6 +507,7 @@ describe('model/base.js', function(){
     })
   })
   it('update, where condition from data', function(done){
+    var instance = new Base('cate', think.config('db'));
     instance.update({
       id: 102,
       name: 'name1',
@@ -507,9 +515,11 @@ describe('model/base.js', function(){
     }).then(function(rows){
       var sql = instance.getLastSql();
       //console.log(sql, rows)
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 102 )")
+      assert.equal(sql, "UPDATE `think_cate` SET `title`='title1' WHERE ( `id` = 102 )")
       assert.equal(rows, 3);
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('update many, empty', function(done){
@@ -518,18 +528,20 @@ describe('model/base.js', function(){
     })
   })
   it('update many', function(done){
+    var instance = new Base('cate', think.config('db'));
     instance.updateMany([{
       id: 105,
       name: 'name1',
       title: 'title1'
     }]).then(function(rows){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 105 )")
-      assert.equal(rows, 1);
+      assert.equal(sql, "UPDATE `think_cate` SET `title`='title1' WHERE ( `id` = 105 )")
+      assert.equal(rows, 0);
       done();
     })
   })
   it('update many 2', function(done){
+    var instance = new Base('cate', think.config('db'));
     instance.updateMany([{
       id: 100,
       name: 'name1',
@@ -540,8 +552,8 @@ describe('model/base.js', function(){
       title: 'title2'
     }]).then(function(rows){
       var sql = instance.getLastSql();
-      assert.equal(sql, "UPDATE `think_user` SET `title`='title2' WHERE ( `id` = 106 )")
-      assert.equal(rows, 4);
+      assert.equal(sql, "UPDATE `think_cate` SET `title`='title2' WHERE ( `id` = 106 )")
+      assert.equal(rows, 0);
       done();
     })
   })
