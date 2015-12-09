@@ -16,7 +16,7 @@ export default class extends Base {
   async run(templateFile, tVar, config){
 
     let options = this.parseConfig({
-      autoescape: false,
+      autoescape: true,
       watch: false,
       noCache: false,
       throwOnUndefined: false

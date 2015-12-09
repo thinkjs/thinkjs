@@ -280,12 +280,14 @@ export default class extends Base {
     this.readonlyFields.forEach(item => {
       delete data[item];
     });
-    //check data is empty
-    if (think.isEmpty(data)) {
-      return think.reject(new Error(think.locale('DATA_EMPTY')));
-    }
 
     let parsedData = this.parseData(data);
+    //check data is empty
+    if (think.isEmpty(parsedData)) {
+      return think.reject(new Error(think.locale('DATA_EMPTY')));
+    }
+    let copyData = think.extend({}, parsedData);
+
     //check where condition
     if(think.isEmpty(options.where)){
       //get where condition from data
@@ -300,7 +302,7 @@ export default class extends Base {
     
     parsedData = await this.beforeUpdate(parsedData, options);
     let rows = await this.db().update(parsedData, options);
-    await this.afterUpdate(data, options);
+    await this.afterUpdate(copyData, options);
     return rows;
   }
   /**
@@ -397,7 +399,7 @@ export default class extends Base {
 
     //delete table options avoid error when has alias
     delete options.table;
-    
+
     if(!count){
       count = await this.options(options).count(`${table}.${pk}`);
     }
@@ -425,7 +427,6 @@ export default class extends Base {
     if(options.cache && options.cache.key){
       options.cache.key += '_count';
     }
-
     result.data = count ? await this.select(options) : [];
     return result;
   }

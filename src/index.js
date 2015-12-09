@@ -65,12 +65,13 @@ export default class {
    */
   getPath(){
     let filepath = process.argv[1];
-    let ROOT_PATH = path.dirname(filepath);
-    let APP_PATH = `${path.dirname(ROOT_PATH)}${sep}app`;
+    let RESOURCE_PATH = path.dirname(filepath);
+    let ROOT_PATH = path.dirname(RESOURCE_PATH);
+    let APP_PATH = `${ROOT_PATH}${sep}app`;
     let RUNTIME_PATH = ROOT_PATH + sep + think.dirname.runtime;
     return {
       APP_PATH,
-      RESOURCE_PATH: ROOT_PATH,
+      RESOURCE_PATH,
       ROOT_PATH,
       RUNTIME_PATH
     };
