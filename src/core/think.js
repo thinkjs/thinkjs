@@ -659,7 +659,10 @@ think.hook = (...args) => {
   let execMiddleware = async () => {
     for(let i = 0; i < length; i++){
       let data = await think.middleware(list[i], http, http._middleware);
-      if (data !== undefined) {
+      //prevent next middlewares invoked in hook
+      if(data === null){
+        break;
+      }else if (data !== undefined) {
         http._middleware = data;
       }
     }
