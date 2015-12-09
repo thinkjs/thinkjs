@@ -327,7 +327,7 @@ describe('controller/base.js', function(){
   it('lang use cookie', function(done){
     getInstance().then(function(instance){
       var data = instance.lang();
-      assert.deepEqual(data, 'zh-CN')
+      assert.deepEqual(data, 'zh-cn')
       done();
     }).catch(function(err){
       console.log(err.stack)

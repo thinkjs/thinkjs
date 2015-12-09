@@ -412,7 +412,8 @@ export default class extends EventEmitter {
     }
     //get from header
     lang = this.header('accept-language');
-    this._lang = lang.split(',')[0];
+    //language to lowercase
+    this._lang = (lang.split(',')[0] || '').toLowerCase();
     return this._lang;
   }
   /**
