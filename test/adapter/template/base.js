@@ -21,9 +21,10 @@ describe('adapter/template/base.js', function(){
   })
   it('get content success', function(done){
     var instance = new baseTemplate();
-    var data = instance.getContent(__filename);
-    assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
-    done();
+    instance.getContent(__filename).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      done();
+    })
   })
   it('merge config', function(done){
     var instance = new baseTemplate();

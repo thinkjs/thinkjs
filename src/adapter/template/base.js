@@ -45,11 +45,13 @@ export default class extends think.adapter.base {
     if(fileCache && fileCache[0] >= mTime){
       return fileCache[1];
     }
-    let content = fs.readFileSync(file, 'utf8');
-    thinkCache(thinkCache.VIEW_CONTENT, file, [mTime, content]);
-    return content;
-    // let fn = think.promisify(fs.readFile, fs);
-    // return fn(file, 'utf8');
+    return think.await(`template_${file}`, () => {
+      let fn = think.promisify(fs.readFile, fs);
+      return fn(file, 'utf8');
+    }).then(content => {
+      thinkCache(thinkCache.VIEW_CONTENT, file, [mTime, content]);
+      return content;
+    });
   }
   /**
    * run
