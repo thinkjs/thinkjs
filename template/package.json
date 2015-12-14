@@ -1,0 +1,11 @@
+{
+  "name": "thinkjs-application",
+  "description": "application created by thinkjs",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node www/development.js"
+  },
+  "dependencies": {
+    "thinkjs": "2.0.x"
+  }
+}

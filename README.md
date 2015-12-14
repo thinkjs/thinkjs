@@ -1,63 +1,92 @@
-[![NPM version](https://badge.fury.io/js/thinkjs.svg)](http://badge.fury.io/js/thinkjs)
-[![travis-ci](https://travis-ci.org/75team/thinkjs.svg?branch=master)](https://travis-ci.org/75team/thinkjs)
-[![Coverage Status](https://coveralls.io/repos/75team/thinkjs/badge.png?branch=master)](https://coveralls.io/r/75team/thinkjs?branch=master)
+[![Coverage Status](https://p.ssl.qhimg.com/d/inn/e270ec1e/logo_large.jpg)](https://thinkjs.org/)
 
-## 介绍
+-----
 
-thinkjs是一款基于Promise的Node.js MVC框架，借鉴于ThinkPHP。具有如下特性：
+[![NPM version](https://img.shields.io/npm/v/thinkjs.svg?style=flat-square)](http://badge.fury.io/js/thinkjs) [![travis-ci](https://img.shields.io/travis/75team/thinkjs.svg?style=flat-square)](https://travis-ci.org/75team/thinkjs) [![Coverage Status](https://img.shields.io/coveralls/75team/thinkjs.svg?style=flat-square)](https://coveralls.io/github/75team/thinkjs)
 
-* 使用Promise，完美的解决了异步嵌套的问题
-* 支持Http、命令行、WebSocket、Restful等多种访问方式
-* C(Core) + B(Behavior) + D(Driver)架构
-* 封装了Db、Session、Cache等功能
-* 开发模式下修改后立即生效
+[简体中文文档](https://github.com/75team/thinkjs/blob/master/README_zh-CN.md)
 
-## 安装
 
-```
-npm install -g thinkjs-cmd
-```
+## Introduction 
 
-## 创建项目
+As a Node.js MVC framework, ThinkJS 2.0 had completelly been rewritten with brand-new ECMAScript 6/7 features. By using ES7's `async/await` or ES6's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, ThinkJS 2.0 has designed by absorb the concepts and ideas from many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
 
-```
-# 在合适的位置创建一个新目录，new_dir_name为你想创建的文件夹名字
-mkdir new_dir_name; 
-# 通过thinkjs命令创建项目
-thinkjs new_dir_name
-```
+It's the trend that using ES6/7 features to develop projects thanks to the high development efficiency. The new version of Node.js has improved to support many ES6 featrues, though some features have not been supported until now, and for those features we can use [Babel](http://babeljs.io/) to compile the code.
 
-执行后，如果当前环境有浏览器，会自动用打开浏览器，并且会看到如下内容。
-
-```
-hello, thinkjs!
-```
-
-看到这个内容后，说明项目已经成功创建。
-
-更多介绍请见 http://thinkjs.org/doc/start.html
-
-## 贡献者
-
-```
-   944  welefen                 94.8%
-    14  李成银                   1.4%
-     7  akira                   0.7%
-     5  Rayi                    0.5%
-     5  炎燎                     0.5%
-     4  JerryQu                 0.4%
-     3  wavelynn                0.3%
-     3  zhangdaiping            0.3%
-     2  AlphaTr                 0.2%
-     2  Startan                 0.2%
-     2  jiangyuan               0.2%
-     1  snadn                   0.1%
-     1  qgy18                   0.1%
-     1  liupengke               0.1%
-     1  akira-cn                0.1%
-     1  Jackson Tian            0.1%
+```js
+//user controller, home/controller/user.js
+export default class extends think.controller.base {
+  //login action
+  async loginAction(self){
+    //if it's GET method，display the login page
+    if(this.isGet()){
+      return this.display();
+    }
+    //here, we can use POST retrieve all data, and the data have been validated in the logic
+    let data = this.post();
+    let md5 = think.md5('think_' + data.pwd);
+    //user name and encrypted password are used to match the recod in the database
+    let result = await this.model('user').where({name: data.name, pwd: md5}).find();
+    //if nothing matched, mean user name or password is/or all are incorrect
+    if(think.isEmpty(result)){
+      return this.fail('login fail');
+    }
+    //obtain the user infomation, and write to the seesion
+    await this.session('userInfo', result);
+    return this.success();
+  }
+}
 ```
 
-## 协议
+With the help of Babel compiling, we can use the ES6/7 features bodly, and then the code can running in the Node.js 0.12.0+ environment stably.
 
-MIT
+## Features
+
+* Developing projects using all the new features of ES6/7.
+* Auto compiling & auto hot reload when file changed, no need to restart Node.js server.
+* Supporting various project construct forms and environments.
+* Supporting Mysql, MongoDB and SQLite databases.
+* Supporting various WebSocket libraries such as socket.io and SockJS.
+* Supporting various Sessions such as Memory, File, Db and Redis.
+* Supporting various Caches such as Memory, File, Redis and Memcache.
+* Supporting various template engines such as ejs, jade, swig and numjucks.
+* Supporting AOP, and magic methods such as __before and __after.
+* Supporting 400, 404, 500 and 503 error pages.
+* Supporting command-line call and crontab timing task execution.
+* Multiple Hooks and Middlewares.
+* Logs with details, such as requests, errors, performance, etc.
+* Supporting commands that could auto create REST API.
+* Supporting internationalization and multiple themes.
+* 1500+ test cases, code coverage greater than 95%.
+
+## Installation
+
+```sh
+npm install -g thinkjs
+```
+
+## Create Application
+
+```sh
+thinkjs new project_path --es6
+```
+
+## Install dependencies
+
+```sh
+npm install
+```
+
+## Start Application
+
+```sh
+npm start
+```
+
+## Documentation
+
+[https://thinkjs.org/en](https://thinkjs.org/en)
+
+## License
+
+[MIT](https://github.com/75team/thinkjs/blob/master/LICENSE)

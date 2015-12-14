@@ -5,3 +5,5 @@ log
 npm-debug.log
 test/App/Runtime/Cache/
 coverage
+lib/
+demo/

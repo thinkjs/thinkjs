@@ -1,0 +1,22 @@
+'use strict';
+
+/**
+ * cache configs
+ */
+export default {
+  type: 'file', //cache type
+  timeout: 6 * 3600, //6 hours
+  adapter: {
+    file: {
+      path: think.getPath(undefined, think.dirname.runtime) + '/cache',
+      path_depth: 2,
+      file_ext: '.json'
+    },
+    redis: {
+      prefix: ''
+    },
+    memcache: {
+      prefix: ''
+    }
+  }
+};

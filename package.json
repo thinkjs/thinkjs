@@ -1,35 +1,47 @@
 {
   "name": "thinkjs",
-  "description": "A Node.js MVC Web Framework Based On Promise",
-  "version": "1.1.10",
+  "description": "ThinkJS - use full ES6/7 features to develop web applications",
+  "version": "2.0.13",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "make test"
+    "test": "mocha --reporter spec --timeout 2000 --recursive test/",
+    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/",
+    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "watch-compile": "npm run compile -- --watch",
+    "watch": "npm run watch-compile",
+    "prepublish": "npm run compile",
+    "eslint": "eslint src/",
+    "test-all": "npm run eslint; npm run test-cov"
   },
-  "contributors": [
-    {
-      "name": "welefen",
-      "email": "welefen@gmail.com"
-    }
-  ],
+  "bin": {
+    "thinkjs": "./bin/index.js"
+  },
+  "contributors": [{
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  }],
+  "main": "lib/index.js",
   "dependencies": {
-    "ejs": "2.2.4",
-    "multiparty": "4.1.1",
-    "es6-promise": "2.0.1",
-    "mime": "1.2.11",
-    "mysql": "2.5.4",
-    "websocket-driver": "0.5.3",
-    "thinkjs-util": ">=1.0.0"
+    "ejs": "2.3.4",
+    "multiparty": "4.1.2",
+    "mime": "1.3.4",
+    "mysql": "2.9.0",
+    "thinkit": "3.1.0",
+    "babel-runtime": "5.8.25",
+    "babel-core": "5.8.33",
+    "co": "4.6.0",
+    "colors": "1.1.2",
+    "validator": "4.2.0",
+    "commander": "2.9.0"
   },
   "devDependencies": {
-    "should": "4.0.4",
-    "jshint": "2.5.1",
     "mocha": "1.20.1",
     "muk": "0.3.1",
-    "istanbul": "*"
+    "istanbul": "0.4.0",
+    "babel": "5.8.23"
   },
   "keywords": [
     "thinkjs",
@@ -38,16 +50,23 @@
     "rest",
     "restful",
     "router",
-    "app",
-    "api"
+    "api",
+    "es6",
+    "es7",
+    "async",
+    "await",
+    "yield",
+    "websocket",
+    "generator-function"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/welefen/thinkjs"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
+  "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/welefen/thinkjs/issues"

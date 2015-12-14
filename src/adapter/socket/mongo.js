@@ -1,0 +1,65 @@
+'use strict';
+
+import querystring from 'querystring';
+import Base from './base.js';
+
+/**
+ * mongodb socket
+ */
+export default class extends Base {
+  /**
+   * init
+   * @param  {Object} config []
+   * @return {}        []
+   */
+  init(config){
+    super.init(config);
+
+    this.config = think.extend({}, {
+      host: '127.0.0.1'
+    }, config);
+    this.config.port = this.config.port || 27017;
+  }
+  /**
+   * get connection
+   * @return {Promise} []
+   */
+  async getConnection(){
+    if(this.connection){
+      return this.connection;
+    }
+    let mongo = await think.npm('mongodb');
+    let config = this.config;
+    let auth = '';
+
+    this.mongo = mongo;
+    if(this.config.user){
+      auth = `${config.user}:${config.pwd}@`;
+    }
+    // connection options
+    // http://mongodb.github.io/node-mongodb-native/2.0/tutorials/urls/
+    let options = '';
+    if(config.options){
+      options = '?' + querystring.stringify(config.options);
+    }
+    let str = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
+
+    return think.await(str, () => {
+      let fn = think.promisify(mongo.MongoClient.connect, mongo.MongoClient);
+      let promise = fn(str, this.config).then(connection => {
+        this.logConnect(str, 'mongodb');
+        //set logger level
+        if(config.log_level){
+          mongo.Logger.setLevel(config.log_level);
+        }
+        this.connection = connection;
+        return connection;
+      }).catch(err => {
+        this.logConnect(str, 'mongodb');
+        return Promise.reject(err);
+      });
+      let err = new Error(str);
+      return think.error(promise, err);
+    });
+  }
+}

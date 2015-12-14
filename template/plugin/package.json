@@ -1,0 +1,42 @@
+{
+  "name": "<PLUGIN_NAME>",
+  "description": "",
+  "version": "1.0.0",
+  "author": {},
+  "scripts": {
+    "test": "mocha --reporter spec --timeout 5000 --recursive test/",
+    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 5000 --recursive  -R spec test/",
+    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "watch-compile": "npm run compile -- --watch",
+    "prepublish": "npm run compile",
+    "eslint": "eslint src/"
+  },
+  "contributors": [],
+  "main": "lib/index.js",
+  "dependencies": {
+    "babel-runtime": "5.8.25"
+  },
+  "devDependencies": {
+    "mocha": "1.20.1",
+    "istanbul": "0.4.0",
+    "babel": "5.8.23",
+    "thinkjs": "2.x.x",
+    "eslint": "1.8.0",
+    "babel-eslint": "4.1.3"
+  },
+  "keywords": [
+    "thinkjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "<Github URL>"
+  },
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "<Github URL>/issues"
+  }
+}
