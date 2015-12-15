@@ -40,7 +40,7 @@ export default class extends think.controller.base {
     if(id && think.isString(id) || think.isNumber(id)){
       return id;
     }
-    let last = this.http.pathname.split(path.sep).slice(-1)[0];
+    let last = this.http.pathname.split('/').slice(-1)[0];
     if(last !== this.resource){
       return last;
     }
