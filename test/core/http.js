@@ -417,6 +417,27 @@ describe('core/http.js', function() {
       done();
     });
   });
+  it('get file 1', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&24');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._file = {image: {name: 'welefen'}}
+      var data = http.file('image');
+      assert.deepEqual(data, {name: 'welefen'})
+      done();
+    });
+  });
+  it('get file 2', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&24');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._file = {image: {name: 'welefen'}}
+      var data = http.file('image');
+      data.name = 'suredy';
+      assert.deepEqual(http._file, {image: {name: 'welefen'}})
+      done();
+    });
+  });
 
   it('get user agent', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');

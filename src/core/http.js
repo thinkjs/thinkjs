@@ -312,9 +312,9 @@ export default class extends EventEmitter {
   file(name, value){
     if (value === undefined) {
       if (name === undefined) {
-        return this._file;
+        return think.extend({}, this._file);
       }
-      return this._file[name] || {};
+      return think.extend({}, this._file[name]);
     }
     this._file[name] = value;
   }

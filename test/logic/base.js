@@ -215,14 +215,31 @@ describe('logic/base', function(){
         welefen: '10'
       },
       _file: {
-        welefen: '20'
+        welefen: {path: 'filepath'}
       },
       method: 'POST'
     }).then(function(instance){
       var data = instance._parseValidateData({
-        welefen: 'required|file|int|min: {name: "welefen"}'
+        welefen: 'required|file|object'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 20 } })
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {path: 'filepath'} } })
+      done();
+    })
+  })
+  it('parse rules, value from file, method is post 1', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _file: {
+        welefen: {path: 'filepath'}
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|file'
+      });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {path: 'filepath'} } })
       done();
     })
   })

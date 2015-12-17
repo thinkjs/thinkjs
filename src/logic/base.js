@@ -60,6 +60,7 @@ export default class extends think.controller.base {
         delete itemData.get;
       }else if(itemData.file){
         method = 'file';
+        itemData.object = true; //when type is file, set data type to `object`
         delete itemData.file;
       }
       let value = this[method](name);
