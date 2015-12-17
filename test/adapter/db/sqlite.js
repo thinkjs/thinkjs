@@ -10,7 +10,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 var Sqlite = require('../../../lib/adapter/db/sqlite.js');
 
