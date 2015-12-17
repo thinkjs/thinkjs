@@ -333,10 +333,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_mini;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
 
       var path = think.getPath();
-      assert.equal(path, '/path/to/project/app/controller');
+      assert.equal(path, __dirname + think.sep + 'controller');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -344,11 +344,11 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_mini;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
 
-      var path = think.getPath(undefined, undefined, '/prefix');
+      var path = think.getPath(undefined, undefined, think.sep + 'prefix');
       //console.log(path)
-      assert.equal(path, '/path/to/project/app/prefix/controller');
+      assert.equal(path, __dirname + think.sep + 'prefix' + think.sep + 'controller');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -356,10 +356,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_mini;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
 
       var path = think.getPath(think.dirname.common, think.dirname.model);
-      assert.equal(path, '/path/to/project/app/model');
+      assert.equal(path, __dirname + think.sep + 'model');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -367,10 +367,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_mini;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
 
       var path = think.getPath(think.dirname.common, think.dirname.view);
-      assert.equal(path, '/path/to/project/app/view');
+      assert.equal(path, __dirname + think.sep + 'view');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -378,10 +378,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_normal;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       think.config('default_module', 'home')
       var path = think.getPath();
-      assert.equal(path, '/path/to/project/app/controller/home');
+      assert.equal(path, __dirname + think.sep + 'controller' + think.sep + 'home');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -389,10 +389,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_normal;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       think.config('default_module', 'home')
       var path = think.getPath(undefined, think.dirname.controller);
-      assert.equal(path, '/path/to/project/app/controller/home');
+      assert.equal(path, __dirname + think.sep + 'controller' + think.sep + 'home');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -400,10 +400,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_normal;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       think.config('default_module', 'home')
       var path = think.getPath(undefined, think.dirname.view);
-      assert.equal(path, '/path/to/project/app/view/home');
+      assert.equal(path, __dirname + think.sep + 'view' + think.sep + 'home');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -411,10 +411,10 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_normal;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       think.config('default_module', 'home')
       var path = think.getPath('welefen', think.dirname.view);
-      assert.equal(path, '/path/to/project/app/view/welefen');
+      assert.equal(path, __dirname + think.sep + 'view' + think.sep + 'welefen');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -422,9 +422,9 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_module;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       var path = think.getPath();
-      assert.equal(path, '/path/to/project/app/common/controller');
+      assert.equal(path, __dirname + think.sep + 'common' + think.sep + 'controller');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -432,9 +432,9 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_module;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       var path = think.getPath(undefined, think.dirname.model);
-      assert.equal(path, '/path/to/project/app/common/model');
+      assert.equal(path, __dirname + think.sep + 'common' + think.sep + 'model');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -442,9 +442,9 @@ describe('core/think.js', function(){
       var mode = think.mode;
       think.mode = think.mode_module;
       var APP_PATH = think.APP_PATH;
-      think.APP_PATH = '/path/to/project/app';
+      think.APP_PATH = __dirname;
       var path = think.getPath('test', think.dirname.model);
-      assert.equal(path, '/path/to/project/app/test/model');
+      assert.equal(path, __dirname + think.sep + 'test' + think.sep + 'model');
       think.mode = mode;
       think.APP_PATH = APP_PATH;
     })
@@ -1286,7 +1286,7 @@ describe('core/think.js', function(){
       var routes = thinkCache(thinkCache.COLLECTION, 'route');
       thinkCache(thinkCache.COLLECTION, 'route', null);
 
-      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+      var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
 
       delete require.cache[filepath];
 
@@ -1304,7 +1304,7 @@ describe('core/think.js', function(){
       var routes = thinkCache(thinkCache.COLLECTION, 'route');
       thinkCache(thinkCache.COLLECTION, 'route', null);
 
-      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+      var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
 
       delete require.cache[filepath];
 
@@ -1322,7 +1322,7 @@ describe('core/think.js', function(){
       var routes = thinkCache(thinkCache.COLLECTION, 'route');
       thinkCache(thinkCache.COLLECTION, 'route', null);
 
-      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+      var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
 
       delete require.cache[filepath];
 
@@ -1340,8 +1340,8 @@ describe('core/think.js', function(){
       var routes = thinkCache(thinkCache.COLLECTION, 'route');
       thinkCache(thinkCache.COLLECTION, 'route', null);
 
-      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';
-      var adminpath = think.getPath('admin', think.dirname.config) + '/route.js';
+      var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';
+      var adminpath = think.getPath('admin', think.dirname.config) + think.sep + 'route.js';
       delete require.cache[filepath];
       delete require.cache[adminpath];
 
@@ -1361,7 +1361,7 @@ describe('core/think.js', function(){
       var routes = thinkCache(thinkCache.COLLECTION, 'route');
       thinkCache(thinkCache.COLLECTION, 'route', null);
 
-      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';
+      var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';
       delete require.cache[filepath];
 
       think.mkdir(path.dirname(filepath));
