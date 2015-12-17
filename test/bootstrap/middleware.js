@@ -66,19 +66,19 @@ describe('bootstrap/middleware.js', function(){
       })
     })
   })
-  it('parse_json_payload, has content-type', function(done){
+  it('parse_json_payload, has content-type, but payload is querystring', function(done){
     getHttp({
       post: {
         json_content_type: ['application/json']
       },
     }, {
-      payload: 'welefen',
+      payload: 'welefen=suredy',
 
       _type: 'application/json'
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
-        assert.deepEqual(http._post, {});
+        assert.deepEqual(http._post, {welefen: 'suredy'});
         done();
       }).catch(function(err){
         console.log(err.stack)

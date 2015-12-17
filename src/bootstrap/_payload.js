@@ -116,10 +116,18 @@ think.middleware('parse_json_payload', http => {
     return;
   }
   return http.getPayload().then(payload => {
+    let data;
     try{
-      http._post = think.extend(http._post, JSON.parse(payload));
-      return null;
-    }catch(e){}
+      data = JSON.parse(payload);
+    }catch(e){
+      //if using json parse error, then use querystring parse.
+      //sometimes http header has json content-type, but payload data is querystring type
+      data = querystring.parse(payload);
+    }
+    if(!think.isEmpty(data)){
+      http._post = think.extend(http._post, data);
+    }
+    return null;
   });
 });
 
