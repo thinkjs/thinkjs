@@ -815,7 +815,7 @@ think.adapter = (...args) => {
  * @return {} []
  */
 think.loadAdapter = (type, name = 'base') => {
-  let paths = [`${think.THINK_LIB_PATH}/adapter`];
+  let paths = [`${think.THINK_LIB_PATH}${think.sep}adapter`];
   
   //load base adapter
   think.adapter.base = require(paths[0] + '/base.js');
@@ -827,7 +827,7 @@ think.loadAdapter = (type, name = 'base') => {
   }
   paths.forEach(path => {
     if(type){
-      let filepath = `${path}/${type}/${name}.js`;
+      let filepath = `${path}${think.sep}${type}${think.sep}${name}.js`;
       if(think.isFile(filepath)){
         thinkCache(thinkCache.ALIAS, `adapter_${type}_${name}`, filepath);
       }
@@ -837,12 +837,7 @@ think.loadAdapter = (type, name = 'base') => {
         if(!think.isDir(`${path}/${dir}`)){
           return;
         }
-        think.alias(`adapter_${dir}`, `${path}/${dir}`);
-        //adapter type base class
-        // let cls = think.require(`adapter_${dir}_base`, true);
-        // if(cls){
-        //   think.adapter[dir] = cls;
-        // }
+        think.alias(`adapter_${dir}`, `${path}${think.sep}${dir}`);
       });
     }
   });
