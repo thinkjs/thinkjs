@@ -115,7 +115,7 @@ export default class extends think.base {
       return this.name;
     }
     let filename = this.__filename || __filename;
-    let last = filename.lastIndexOf('/');
+    let last = filename.lastIndexOf(think.sep);
     this.name = filename.substr(last + 1, filename.length - last - 4);
     return this.name;
   }
