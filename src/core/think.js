@@ -13,8 +13,8 @@ import colors from 'colors/safe';
 
 import base from './base.js';
 import httpBase from './http_base.js';
-import {} from './_cache.js';
 import Cookie from '../util/cookie.js';
+import './_cache.js';
 
 
 /**
@@ -22,21 +22,11 @@ import Cookie from '../util/cookie.js';
  * @type {Object}
  */
 global.think = Object.create(thinkit);
-
 /**
- * camelCase string
- * @TODO move to thinkit package
- * @param  {String} str []
- * @return {String}     []
+ * path seperator
+ * @type {String}
  */
-think.camelCase = str => {
-  if(str.indexOf('_') > -1){
-    str = str.replace(/_(\w)/g, (a, b) => {
-      return b.toUpperCase();
-    });
-  }
-  return str;
-};
+think.sep = path.sep;
 /**
  * server start time
  * @type {Number}
@@ -125,6 +115,21 @@ think.module = [];
  * @type {Class}
  */
 think.base = base;
+
+/**
+ * camelCase string
+ * @TODO move to thinkit package
+ * @param  {String} str []
+ * @return {String}     []
+ */
+think.camelCase = str => {
+  if(str.indexOf('_') > -1){
+    str = str.replace(/_(\w)/g, (a, b) => {
+      return b.toUpperCase();
+    });
+  }
+  return str;
+};
 /**
  * get deferred object
  * @return {Object} []
