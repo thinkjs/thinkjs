@@ -37,7 +37,7 @@ function execMiddleware(middleware, config, options, data){
   })
 }
 
-describe('bootstrap/middleware.js', function(){
+describe('bootstrap/_payload.js', function(){
   it('parse_form_payload,readable false', function(done){
     getHttp('', {
       payload: '',
@@ -79,7 +79,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'runtime' + think.sep + 'upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -120,7 +120,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'runtime' + think.sep + 'upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -162,7 +162,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'runtime' + think.sep + 'upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -205,7 +205,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'runtime' + think.sep + 'upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -249,7 +249,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'runtime' + think.sep + 'upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -298,7 +298,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/runtime/upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'runtime' + think.sep + 'upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -351,7 +351,7 @@ describe('bootstrap/middleware.js', function(){
         assert.equal(options.maxFieldsSize, 2097152);
         assert.equal(options.maxFields, 100);
         assert.equal(options.maxFilesSize, 1073741824);
-        assert.equal(options.uploadDir.indexOf('/thinkjs_upload') > -1, true);
+        assert.equal(options.uploadDir.indexOf(think.sep + 'thinkjs_upload') > -1, true);
         return {
           on: function(type, callback){
             if(type === 'close'){
@@ -507,7 +507,7 @@ it('parse_querystring_payload,readable', function(done){
 
       think.middleware('parse_single_file_payload', http).then(function(data){
         assert.equal(think.isObject(http._file.file), true);
-        assert.equal(http._file.file.path.indexOf('/thinkjs_upload')> -1, true)
+        assert.equal(http._file.file.path.indexOf(think.sep + 'thinkjs_upload')> -1, true)
         muk.restore();
         done();
       }).catch(function(err){
