@@ -221,7 +221,7 @@ describe('middleware/locate_template', function(){
   })
   it('mode mini, with rootPath', function(done){
     think.mode = think.mode_mini;
-    var rootPath = __dirname + '/rootPath';
+    var rootPath = __dirname + think.sep + 'rootPath';
     execMiddleware('locate_template', {
       view: {
         file_depr: '_',
@@ -239,7 +239,7 @@ describe('middleware/locate_template', function(){
   })
   it('mode normal, with rootPath', function(done){
     think.mode = think.mode_normal;
-    var rootPath = __dirname + '/rootPath';
+    var rootPath = __dirname + think.sep + 'rootPath';
     execMiddleware('locate_template', {
       view: {
         file_depr: '_',
@@ -257,7 +257,7 @@ describe('middleware/locate_template', function(){
   })
   it('mode module, with rootPath', function(done){
     think.mode = think.mode_module;
-    var rootPath = __dirname + '/rootPath';
+    var rootPath = __dirname + think.sep + 'rootPath';
     execMiddleware('locate_template', {
       view: {
         file_depr: '_',
