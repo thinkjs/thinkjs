@@ -348,7 +348,7 @@ export default class {
         think[itemType][item] = think.require(`${itemType}_${item}`);
       });
       think.module.forEach(module => {
-        let moduleType = `${module}${sep}${itemType}`;
+        let moduleType = `${module}/${itemType}`; //can not use think.sep
         let filepath = think.getPath(module, think.dirname[itemType]);
         think.alias(moduleType, filepath, true);
       });
