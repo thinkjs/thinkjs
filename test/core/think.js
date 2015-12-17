@@ -21,7 +21,7 @@ think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 var _http = require('../_http.js');
 
 function getHttp(config, options){
-  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
   var req = think.extend({}, _http.req);
   var res = think.extend({}, _http.res);
   return think.http(req, res).then(function(http){
