@@ -38,9 +38,9 @@ describe('adapter/cache/file.js', function() {
 
   it('get file path', function() {
     var filepath = instance.getFilepath('maxzhang');
-    assert.equal(filepath, 'c/b/cbc21016fc89ec482594a22e03e02834.json');
+    assert.equal(filepath, 'c' + think.sep + 'b' + think.sep + 'cbc21016fc89ec482594a22e03e02834.json');
     filepath = instance.getFilepath('Max Zhang');
-    assert.equal(filepath, '5/e/5e98a6842702de206202d9ddd0a6bbc2.json');
+    assert.equal(filepath, '5' + think.sep + 'e' + think.sep + '5e98a6842702de206202d9ddd0a6bbc2.json');
   });
 
   it('get empty data', function(done) {
