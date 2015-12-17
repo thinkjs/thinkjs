@@ -6,21 +6,22 @@ var fs = require('fs');
 var muk = require('muk');
 
 
-for(var filepath in require.cache){
-  delete require.cache[filepath];
-}
+// for(var filepath in require.cache){
+//   delete require.cache[filepath];
+// }
 var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Base = require('../../lib/model/base.js');
-var mysqlSocket = think.adapter('socket', 'mysql');
+var Base;
 
 describe('model/base.js', function(){
   var instance = null;
   it('before', function(){
+    Base = require('../../lib/model/base.js');
+    var mysqlSocket = think.adapter('socket', 'mysql');
     instance = new Base('user', think.config('db'));
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){

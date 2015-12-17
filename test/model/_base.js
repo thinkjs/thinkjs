@@ -6,18 +6,21 @@ var fs = require('fs');
 var muk = require('muk');
 
 
-for(var filepath in require.cache){
-  delete require.cache[filepath];
-}
+// for(var filepath in require.cache){
+//   delete require.cache[filepath];
+// }
 var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Base = require('../../lib/model/_base.js');
+var Base;
 
 describe('model/_base.js', function(){
+  it('before', function(){
+    Base = require('../../lib/model/_base.js');
+  })
   it('get instance', function(){
     var instance = new Base('user');
     assert.deepEqual(instance.config, {});
@@ -48,17 +51,6 @@ describe('model/_base.js', function(){
     var model = instance.model('base');
     assert.deepEqual(think.isObject(model), true);
   })
-  // it('getConfigKey', function(){
-  //   var instance = new Base('user', think.config('db'));
-  //   var data = instance.getConfigKey();
-  //   assert.deepEqual(data, 'c9c2617d14387ce79c8cee78ce578972');
-  // })
-  // it('getConfigKey, exist', function(){
-  //   var instance = new Base('user', think.config('db'));
-  //   instance._configKey = 'configKey'
-  //   var data = instance.getConfigKey();
-  //   assert.deepEqual(data, 'configKey');
-  // })
   it('get db instance', function(){
     var instance = new Base('user', think.config('db'));
     var db = instance.db();
@@ -84,7 +76,7 @@ describe('model/_base.js', function(){
   it('getModelName, from filename', function(){
     var instance = new Base('', think.config('db'));
     var data = instance.getModelName();
-    assert.equal(data, '_base')
+    assert.equal(data, 'base')
   })
   it('getTableName', function(){
     var instance = new Base('user', think.config('db'));
