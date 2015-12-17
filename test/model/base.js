@@ -20,7 +20,7 @@ var mysqlSocket = think.adapter('socket', 'mysql');
 
 describe('model/base.js', function(){
   var instance = null;
-  before(function(){
+  it('before', function(){
     instance = new Base('user', think.config('db'));
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){
@@ -897,7 +897,7 @@ describe('model/base.js', function(){
       done();
     })
   })
-  after(function(){
+  it('after', function(){
     muk.restore();
   })
 })
