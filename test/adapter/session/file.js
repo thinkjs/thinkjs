@@ -13,7 +13,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 var FileSession = think.adapter('session', 'file');
 
@@ -39,7 +39,7 @@ describe('adapter/session/file', function(){
   it('get file path', function(){
     var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     var filepath = instance.getFilepath();
-    assert.equal(filepath, 'w/welefen.json');
+    assert.equal(filepath, 'w' + think.sep +'welefen.json');
   })
   it('get data, undefined', function(done){
     var instance = new FileSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
