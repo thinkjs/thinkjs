@@ -76,7 +76,7 @@ describe('model/_base.js', function(){
   it('getModelName, from filename', function(){
     var instance = new Base('', think.config('db'));
     var data = instance.getModelName();
-    assert.equal(data, 'base')
+    assert.equal(data.indexOf('base') > -1, true);
   })
   it('getTableName', function(){
     var instance = new Base('user', think.config('db'));
