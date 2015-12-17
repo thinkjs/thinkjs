@@ -870,7 +870,7 @@ think.alias = (type, paths, slash) => {
       }
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
-      thinkCache(thinkCache.ALIAS, name, `${path}/${file}`);
+      thinkCache(thinkCache.ALIAS, name, `${path}${think.sep}${file}`);
     });
   });
 };
