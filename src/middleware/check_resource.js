@@ -13,7 +13,7 @@ export default class extends think.middleware.base {
     if (!think.RESOURCE_PATH || !this.config('resource_on') || !this.http.pathname) {
       return false;
     }
-    let pathname = this.http.pathname;
+    let pathname = decodeURIComponent(this.http.pathname);
     let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
       return false;

@@ -138,7 +138,9 @@ export default class extends EventEmitter {
       this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
     }else{
       let urlInfo = url.parse('//' + this.headers.host + this.req.url, true, true);
-      let pathname = decodeURIComponent(urlInfo.pathname);
+      //can not use decodeURIComponent, pathname may be has encode / chars
+      //decodeURIComponent value after parse route
+      let pathname = urlInfo.pathname;
       this.pathname = this.normalizePathname(pathname);
       this.query = urlInfo.query;
       this.hostname = urlInfo.hostname;

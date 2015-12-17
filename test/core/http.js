@@ -99,6 +99,22 @@ describe('core/http.js', function() {
     think.config('timeout', 10);
   });
 
+  it('parse pathname', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index/name/w%2Fww');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, 'index/index/name/w%2Fww');
+      done();
+    });
+  });
+  it('parse pathname 1', function(done) {
+    var defaultHttp = getDefaultHttp('/index/w%2Fww');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, 'index/w%2Fww');
+      done();
+    });
+  });
   it('GET, query', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&1');
     var instance = new Http(defaultHttp.req, defaultHttp.res);

@@ -167,7 +167,7 @@ export default class extends think.middleware.base {
     for(let i = 0, name, length = Math.ceil(paths.length) / 2; i < length; i++){
       name = paths[i * 2];
       if(name){
-        this.http._get[name] = paths[i * 2 + 1] || '';
+        this.http._get[name] = decodeURIComponent(paths[i * 2 + 1] || '');
       }
     }
   }

@@ -448,6 +448,54 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
+  it('route_on on, has rules, has method, post, has extra pathname', function(done){
+    muk(think, 'module', ['dddd'])
+    muk(think, 'route', function(){
+      return [
+        [/^welefen/, {
+          get: '/dddd/welefen/get',
+          post: '/dddd/welefen/post'
+        }]
+      ];
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'welefen/name/suredy/value/2222',
+      method: 'POST'
+    }).then(function(http){
+      assert.equal(http.module, 'dddd');
+      assert.equal(http.controller, 'welefen');
+      assert.equal(http.action, 'post');
+      assert.deepEqual(http._get, { test: 'welefen', value: '2222', name: 'suredy' });
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, has rules, has method, post, has extra pathname, decode', function(done){
+    muk(think, 'module', ['dddd'])
+    muk(think, 'route', function(){
+      return [
+        [/^welefen/, {
+          get: '/dddd/welefen/get',
+          post: '/dddd/welefen/post'
+        }]
+      ];
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'welefen/name/suredy/value/w%2Fww',
+      method: 'POST'
+    }).then(function(http){
+      assert.equal(http.module, 'dddd');
+      assert.equal(http.controller, 'welefen');
+      assert.equal(http.action, 'post');
+      assert.deepEqual(http._get, { test: 'welefen', value: 'w/ww', name: 'suredy' });
+      muk.restore();
+      done();
+    })
+  })
   it('route_on on, has rules, has method, delete', function(done){
     muk(think, 'module', ['welefen']);
     muk(think, 'mode', think.mode_module);
@@ -525,7 +573,7 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
-    it('route_on on, rules is object, has reg 2', function(done){
+  it('route_on on, rules is object, has reg 2', function(done){
     muk(think, 'module', ['test']);
     muk(think, 'mode', think.mode_module);
     muk(think, 'route', function(){
