@@ -21,18 +21,18 @@ export default class extends think.middleware.base {
     
     //support locale
     if(lang){
-      prefix += `/${lang}`;
+      prefix += think.sep + lang;
     }
     //support theme
     if(theme){
-      prefix += `/${theme}`;
+      prefix += think.sep + theme;
     }
 
     //view root path is defined
     if(root_path){
       pathPrefix = path.normalize(root_path);
       if(think.mode !== think.mode_mini){
-        pathPrefix += prefix + '/' + module;
+        pathPrefix += prefix + think.sep + module;
       }
     }else{
       pathPrefix = think.getPath(module, think.dirname.view, prefix);
@@ -64,7 +64,7 @@ export default class extends think.middleware.base {
     
     // this.display()
     if (!templateFile) {
-      return path.normalize(pathPrefix + '/' + http.controller + file_depr + http.action + file_ext);
+      return path.normalize(pathPrefix + think.sep + http.controller + file_depr + http.action + file_ext);
     }
     //replace : to /
     templateFile = templateFile.replace(/\:/g, '/');
@@ -81,7 +81,7 @@ export default class extends think.middleware.base {
       pathPrefix = this.getPathPrefix(module);
     }
 
-    templateFile = pathPrefix + '/' + controller + file_depr + action;
+    templateFile = pathPrefix + think.sep + controller + file_depr + action;
     if (action.indexOf('.') === -1) {
       templateFile += file_ext;
     }

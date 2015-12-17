@@ -41,7 +41,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/group/detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group' + think.sep + 'detail.html');
       done();
     }).catch(function(err){
       console.log(err.stack)
@@ -59,7 +59,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/group/detail.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group' + think.sep + 'detail.txt');
       done();
     })
   })
@@ -75,7 +75,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -91,7 +91,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/home/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'home' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -107,7 +107,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -124,7 +124,7 @@ describe('middleware/locate_template', function(){
       action: 'detail',
       _theme: 'color'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/color/home/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'color' + think.sep + 'home' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -181,7 +181,7 @@ describe('middleware/locate_template', function(){
         return 'zh-CN'
       }
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/zh-CN/view/home/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'zh-CN' + think.sep + 'view' + think.sep + 'home' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -198,7 +198,7 @@ describe('middleware/locate_template', function(){
       action: 'detail',
       _theme: 'color'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/color/view/home/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'color' + think.sep + 'view' + think.sep + 'home' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -215,7 +215,7 @@ describe('middleware/locate_template', function(){
       action: 'detail',
       _theme: 'color'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/color/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'color' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -233,7 +233,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, rootPath + '/group_detail.txt');
+      assert.equal(data, rootPath + think.sep + 'group_detail.txt');
       done();
     })
   })
@@ -251,7 +251,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, rootPath + '/home/group_detail.txt');
+      assert.equal(data, rootPath + think.sep + 'home' + think.sep + 'group_detail.txt');
       done();
     })
   })
@@ -269,7 +269,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, rootPath + '/home/group_detail.txt');
+      assert.equal(data, rootPath + think.sep + 'home' + think.sep + 'group_detail.txt');
       done();
     })
   })
@@ -285,7 +285,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx').then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/group_xxx.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'group_xxx.txt');
       done();
     })
   })
@@ -301,7 +301,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy').then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/xxx_yyy.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'xxx_yyy.txt');
       done();
     })
   })
@@ -317,7 +317,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy/zzz').then(function(data){
-      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'xxx' + think.sep + 'view' + think.sep + 'yyy_zzz.txt');
       done();
     })
   })
@@ -333,7 +333,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy/zzz.hhh').then(function(data){
-      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.hhh');
+      assert.equal(data, think.APP_PATH + think.sep + 'xxx' + think.sep + 'view' + think.sep + 'yyy_zzz.hhh');
       done();
     })
   })
@@ -349,7 +349,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx:yyy:zzz.hhh').then(function(data){
-      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.hhh');
+      assert.equal(data, think.APP_PATH + think.sep + 'xxx' + think.sep + 'view' + think.sep + 'yyy_zzz.hhh');
       done();
     })
   })
