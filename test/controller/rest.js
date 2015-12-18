@@ -77,6 +77,43 @@ describe('controller/rest.js', function(){
       done();
     })
   })
+  it('get instance, get resource', function(done){
+    getInstance({
+      pathname: 'rest'
+    }).then(function(instance){
+      instance.__filename = __filename + think.sep + 'test.js';
+      var resource = instance.getResource();
+      assert.equal(resource, 'test');
+      done();
+    })
+  })
+  it('get instance, get id, no id', function(done){
+    getInstance({
+      pathname: 'rest'
+    }).then(function(instance){
+      var id = instance.getId();
+      assert.equal(id, '');
+      done();
+    })
+  })
+  it('get instance, get id,  id', function(done){
+    getInstance({
+      pathname: 'rest/1111'
+    }).then(function(instance){
+      var id = instance.getId();
+      assert.equal(id, '1111');
+      done();
+    })
+  })
+  it('get instance, get id,  id, has -', function(done){
+    getInstance({
+      pathname: 'rest/1111-abc-ddd'
+    }).then(function(instance){
+      var id = instance.getId();
+      assert.equal(id, '1111-abc-ddd');
+      done();
+    })
+  })
   it('getAction, no id', function(done){
     getInstance({
       pathname: 'rest'
