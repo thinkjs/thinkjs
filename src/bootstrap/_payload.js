@@ -22,7 +22,7 @@ think.middleware('parse_form_payload', http => {
   }
 
   let deferred = think.defer();
-  let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + think.sep + 'thinkjs_upload');
+  let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + think.sep + 'thinkjs' + think.sep + 'upload');
   think.mkdir(uploadDir);
   
   let postConfig = think.config('post');
