@@ -165,9 +165,10 @@ export default class extends think.http.base {
     let host = think.config('host');
     let port = think.port || think.config('port'); 
     //createServer callback
-    let callback = async (req, res) => {
-      let http = await think.http(req, res);
-      return new this(http).run();
+    let callback =  (req, res) => {
+      think.http(req, res).then(http => {
+        new this(http).run();
+      });
     };
     let server;
     //define createServer in application
