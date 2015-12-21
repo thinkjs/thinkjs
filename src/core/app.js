@@ -178,7 +178,6 @@ export default class extends think.http.base {
       server = http.createServer(callback);
       server.listen(port, host);
     }
-    this.logPid(port);
 
     //start websocket
     let websocket = think.parseConfig(think.config('websocket'));
@@ -213,28 +212,6 @@ export default class extends think.http.base {
   static async cli(){
     let http = await think.http(think.cli);
     return new this(http).run();
-  }
-  /**
-   * load process id
-   * @return {} []
-   */
-  static logPid(port){
-    if (!cluster.isMaster || !think.config('log_pid')) {
-      return;
-    }
-    let dir = think.RUNTIME_PATH + '/pid';
-    think.mkdir(dir);
-    let pidFile = `${dir}/${port}.pid`;
-    fs.writeFileSync(pidFile, process.pid);
-    //change pid file mode
-    think.chmod(pidFile);
-    //remove pid file when process exit
-    process.on('SIGTERM', () => {
-      if (fs.existsSync(pidFile)) {
-        fs.unlinkSync(pidFile);
-      }
-      process.exit(0);
-    });
   }
   /**
    * http mode
