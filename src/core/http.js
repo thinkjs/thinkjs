@@ -73,6 +73,7 @@ export default class {
     this._session = null; //session instance
     this._lang = ''; //language
     this._langAsViewPath = false; //language as view path
+    this._config = null; // config
 
     this.payload = ''; //request payload
 
