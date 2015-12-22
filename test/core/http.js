@@ -163,27 +163,35 @@ describe('core/http.js', function() {
 
   it('get type', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&6');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'content-type': 'application/json'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.type(), 'application/json');
       done();
+    }).catch(function(err) {
+      console.log(err.stack)
     });
   });
 
   it('get type, _contentTypeIsSend', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&7');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'content-type': 'text/html'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'content-type': 'text/html'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       http._contentTypeIsSend = true;
       http.type('application/json');
       assert.equal(http.type(), 'text/html');
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     });
   });
 
@@ -215,10 +223,12 @@ describe('core/http.js', function() {
 
   it('get referrer', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&10');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'referrer': 'http://www.thinkjs.org/index?name=maxzhang'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'referrer': 'http://www.thinkjs.org/index?name=maxzhang'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.referrer('www.thinkjs.org'), 'www.thinkjs.org');
       done();
@@ -227,10 +237,12 @@ describe('core/http.js', function() {
 
   it('isAjax 1', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&11');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'x-requested-with': 'XMLHttpRequest'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-requested-with': 'XMLHttpRequest'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.req.method = 'POST';
     instance.run().then(function(http) {
       assert.equal(http.isAjax(), true);
@@ -240,11 +252,13 @@ describe('core/http.js', function() {
 
   it('isAjax 2', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&12');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'x-requested-with': 'XMLHttpRequest'
-    };
-    instance.req.method = 'POST';
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-requested-with': 'XMLHttpRequest'
+      },
+      method: 'POST'
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.isAjax('GET'), false);
       done();
@@ -302,21 +316,30 @@ describe('core/http.js', function() {
 
   it('ip with x-real-ip', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&17');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-real-ip': '10.0.0.1'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     think.config('proxy_on', true);
-    instance.req.headers = {
-      'x-real-ip': '10.0.0.1'
-    };
     instance.run().then(function(http) {
       assert.equal(http.ip(), '10.0.0.1');
       think.config('proxy_on', false);
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     });
   });
 
   it('ip with x-forwarded-for', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&18');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-forwarded-for': '10.0.0.1'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     think.config('proxy_on', true);
     instance.req.headers = {
       'x-forwarded-for': '10.0.0.1'
@@ -441,21 +464,22 @@ describe('core/http.js', function() {
 
   it('get user agent', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2478.0 Safari/537.36'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2478.0 Safari/537.36'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.userAgent(), 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2478.0 Safari/537.36');
       done();
-    });
+    })
   });
 
   it('get empty user agent', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&25');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      console.log(http.userAgent());
       assert.equal(http.userAgent(), '');
       done();
     });

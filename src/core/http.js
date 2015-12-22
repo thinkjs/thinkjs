@@ -37,6 +37,8 @@ export default class extends EventEmitter {
     //set http start time
     this.startTime = Date.now();
 
+    this.parseRequest();
+
     //set request timeout
     let timeout = think.config('timeout');
     if(timeout){
@@ -51,7 +53,6 @@ export default class extends EventEmitter {
    * @return Promise            []
    */
   async run(){
-    this.parseProperties();
     
     await think.hook('request_begin', this);
     //array indexOf is faster than string
@@ -115,25 +116,37 @@ export default class extends EventEmitter {
    * parse properties
    * @return {} []
    */
-  parseProperties(){
+  parseRequest(){
     this.url = this.req.url;
     this.version = this.req.httpVersion;
     this.method = this.req.method;
     this.headers = this.req.headers;
     this.host = this.headers.host;
+    this.hostname = '';
+    this.pathname = '';
 
+    this.query = {};
     this._file = {};
     this._post = {};
     this._cookie = {};
     this._sendCookie = {};
+    this._get = {};
     this._type = (this.headers['content-type'] || '').split(';')[0].trim();
-    this._contentTypeIsSend = false;
+
+    this._contentTypeIsSend = false; //aleady send content-type header
+    this._isResource = false; //is resource request
+    this._isEnd = false; //request is end
+
+    this._outputContentPromise = [];
+    this._view = null; //view instance
+    this._lang = ''; //language
+    this._langAsViewPath = false; //language as view path
+
+    this.payload = ''; //request payload
 
     //optimize for homepage request
     if(this.req.url === '/'){
       this.pathname = '/';
-      this.query = {};
-      this._get = {};
       let pos = this.host.indexOf(':');
       this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
     }else{
@@ -662,9 +675,6 @@ export default class extends EventEmitter {
     if (!outputConfig) {
       return this.res.write(obj, encoding);
     }
-    if (!this._outputContentPromise) {
-      this._outputContentPromise = [];
-    }
     let fn = think.co.wrap(outputConfig);
     let promise = fn(obj, encoding, this);
     this._outputContentPromise.push(promise);
@@ -708,12 +718,12 @@ export default class extends EventEmitter {
     this.write(obj, encoding);
     //set http end flag
     this._isEnd = true;
-    if (!this._outputContentPromise) {
+    if (!this._outputContentPromise.length) {
       return this._end();
     }
 
     return Promise.all(this._outputContentPromise).then(() => {
-      this._outputContentPromise = undefined;
+      this._outputContentPromise = [];
       this._end();
     }).catch(() => {
       this._end();
