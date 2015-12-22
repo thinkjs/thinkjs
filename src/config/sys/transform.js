@@ -89,29 +89,6 @@ export default {
    */
   create_server: value => getFn(value, 'create_server'),
   /**
-   * html cache config
-   * @type {Object}
-   */
-  html_cache: {
-    rules: rules => {
-      let data = {};
-      for(let key in rules){
-        let value = rules[key];
-        key = key.replace(/\:/g, '/');
-        //to array
-        if(!think.isArray(value)){
-          value = [value];
-        }
-        if(think.isFunction(value[1])){
-          value[2] = value[1];
-          value[1] = 0;
-        }
-        data[key] = value;
-      }
-      return data;
-    }
-  },
-  /**
    * cache config
    * @type {Object}
    */
