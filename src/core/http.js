@@ -1,25 +1,21 @@
 'use strict';
 
 import url from 'url';
-import {EventEmitter} from 'events';
 import fs from 'fs';
 import mime from 'mime';
 import util from 'util';
 import cookie from '../util/cookie.js';
 
-// let cookie = think.require('cookie');
-
 /**
  * wrap for request & response
  * @type {Object}
  */
-export default class extends EventEmitter {
+export default class {
   /**
    * constructor
    * @return {} []
    */
   constructor(req, res){
-    super();
     this.init(req, res);
   }
   /**
@@ -43,9 +39,62 @@ export default class extends EventEmitter {
     let timeout = think.config('timeout');
     if(timeout){
       res.setTimeout(timeout * 1000, () => {
-        this.emit('timeout');
         this.end();
       });
+    }
+  }
+  /**
+   * parse properties
+   * @return {} []
+   */
+  parseRequest(){
+    this.url = this.req.url;
+    this.version = this.req.httpVersion;
+    this.method = this.req.method;
+    this.headers = this.req.headers;
+    this.host = this.headers.host;
+    this.hostname = '';
+    this.pathname = '';
+
+    this.query = {};
+    this._file = {};
+    this._post = {};
+    this._cookie = {};
+    this._sendCookie = {};
+    this._get = {};
+    this._type = (this.headers['content-type'] || '').split(';')[0].trim();
+
+    this._contentTypeIsSend = false; //aleady send content-type header
+    this._isResource = false; //is resource request
+    this._isEnd = false; //request is end
+
+    this._outputContentPromise = [];
+    this._view = null; //view instance
+    this._session = null; //session instance
+    this._lang = ''; //language
+    this._langAsViewPath = false; //language as view path
+
+    this.payload = ''; //request payload
+
+    //optimize for homepage request
+    if(this.req.url === '/'){
+      this.pathname = '/';
+      let pos = this.host.indexOf(':');
+      this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
+    }else{
+      let urlInfo = url.parse('//' + this.headers.host + this.req.url, true, true);
+      //can not use decodeURIComponent, pathname may be has encode / chars
+      //decodeURIComponent value after parse route
+      let pathname = urlInfo.pathname;
+      this.pathname = this.normalizePathname(pathname);
+      this.query = urlInfo.query;
+      this.hostname = urlInfo.hostname;
+      this._get = think.extend({}, urlInfo.query);
+    }
+
+    //parse cookie when cookie is set
+    if(this.headers.cookie){
+      this._cookie = cookie.parse(this.headers.cookie);
     }
   }
   /**
@@ -112,59 +161,7 @@ export default class extends EventEmitter {
       await think.hook('payload_validate', this);
     }
   }
-  /**
-   * parse properties
-   * @return {} []
-   */
-  parseRequest(){
-    this.url = this.req.url;
-    this.version = this.req.httpVersion;
-    this.method = this.req.method;
-    this.headers = this.req.headers;
-    this.host = this.headers.host;
-    this.hostname = '';
-    this.pathname = '';
-
-    this.query = {};
-    this._file = {};
-    this._post = {};
-    this._cookie = {};
-    this._sendCookie = {};
-    this._get = {};
-    this._type = (this.headers['content-type'] || '').split(';')[0].trim();
-
-    this._contentTypeIsSend = false; //aleady send content-type header
-    this._isResource = false; //is resource request
-    this._isEnd = false; //request is end
-
-    this._outputContentPromise = [];
-    this._view = null; //view instance
-    this._lang = ''; //language
-    this._langAsViewPath = false; //language as view path
-
-    this.payload = ''; //request payload
-
-    //optimize for homepage request
-    if(this.req.url === '/'){
-      this.pathname = '/';
-      let pos = this.host.indexOf(':');
-      this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
-    }else{
-      let urlInfo = url.parse('//' + this.headers.host + this.req.url, true, true);
-      //can not use decodeURIComponent, pathname may be has encode / chars
-      //decodeURIComponent value after parse route
-      let pathname = urlInfo.pathname;
-      this.pathname = this.normalizePathname(pathname);
-      this.query = urlInfo.query;
-      this.hostname = urlInfo.hostname;
-      this._get = think.extend({}, urlInfo.query);
-    }
-
-    //parse cookie when cookie is set
-    if(this.headers.cookie){
-      this._cookie = cookie.parse(this.headers.cookie);
-    }
-  }
+  
   /**
    * normalize pathname, remove hack chars
    * @param  {String} pathname []
@@ -686,7 +683,11 @@ export default class extends EventEmitter {
   _end(){
     this.cookie(true);
     this.res.end();
-    this.emit('afterEnd', this);
+
+    //flush session
+    if(this._session && this._session.flush){
+      this._session.flush();
+    }
 
     //show request info
     if(this.config('log_request') && !this._isResource){

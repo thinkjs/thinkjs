@@ -71,11 +71,11 @@ function getDefaultHttp(data) {
 think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
 
 describe('core/http.js', function() {
-  it('is EventEmitter instance', function(done) {
+  it('is EventEmitter instance, false', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&48');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      assert.equal(http instanceof EventEmitter, true);
+      assert.equal(http instanceof EventEmitter, false);
       done();
     });
   });
@@ -85,17 +85,11 @@ describe('core/http.js', function() {
     think.config('timeout', 0.01);
     muk(think, 'log', function(){})
     timeoutHttp.res.setTimeout = function(delay, fn) {
+      done();
       setTimeout(fn, delay);
     };
     var instance = new Http(timeoutHttp.req, timeoutHttp.res);
     instance.run();
-    instance.on('timeout', function() {
-      timeoutHttp.res.setTimeout = noop;
-      setTimeout(function(){
-        muk.restore();
-        done();
-      }, 20)
-    });
     think.config('timeout', 10);
   });
 

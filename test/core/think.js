@@ -2246,7 +2246,7 @@ describe('core/think.js', function(){
         session.flush = function(){
           value = '222';
         }
-        http.emit('afterEnd');
+        http._session.flush();
         setTimeout(function(){
           assert.equal(value, '222')
           done();

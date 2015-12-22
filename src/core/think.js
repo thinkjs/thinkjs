@@ -1088,7 +1088,7 @@ think.session = http => {
   http._session = session;
 
   //save session data after request end
-  http.once('afterEnd', () => session.flush && session.flush());
+  //http.once('afterEnd', () => session.flush && session.flush());
   return session;
 };
 
