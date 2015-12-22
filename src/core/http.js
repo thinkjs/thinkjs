@@ -74,6 +74,7 @@ export default class {
     this._lang = ''; //language
     this._langAsViewPath = false; //language as view path
     this._config = null; // config
+    this._middleware = undefined; //middleware exec data
 
     this.payload = ''; //request payload
 
