@@ -88,10 +88,14 @@ export default class {
       //can not use decodeURIComponent, pathname may be has encode / chars
       //decodeURIComponent value after parse route
       let pathname = urlInfo.pathname;
+      //remove unsafe chars in pathname
       this.pathname = this.normalizePathname(pathname);
-      this.query = urlInfo.query;
       this.hostname = urlInfo.hostname;
-      this._get = think.extend({}, urlInfo.query);
+      if(!think.isEmpty(urlInfo.query)){
+        this.query = urlInfo.query;
+        this._get = think.extend({}, urlInfo.query);
+      }
+      
     }
 
     //parse cookie when cookie is set

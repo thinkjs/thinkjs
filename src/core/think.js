@@ -14,6 +14,7 @@ import colors from 'colors/safe';
 import base from './base.js';
 import httpBase from './http_base.js';
 import Cookie from '../util/cookie.js';
+import Http from './http.js';
 import './_cache.js';
 
 
@@ -1000,11 +1001,6 @@ think._http = (data = {}) => {
  * @return {Promise}     []
  */
 think.http = (req, res) => {
-  let Http = thinkCache(thinkCache.COLLECTION, 'http');
-  if (!Http) {
-    Http = think.require('http');
-    thinkCache(thinkCache.COLLECTION, 'http', Http);
-  }
   //for cli request
   if (res === undefined) {
     ({req, res} = think._http(req));
