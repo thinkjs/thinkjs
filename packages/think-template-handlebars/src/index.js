@@ -16,7 +16,7 @@ export default class extends Base {
    * @return {Promise}              []
    */
   async run(templateFile, tVar, config){
-    let options = this.mergeConfig(config);
+    let options = this.parseConfig(config);
 
     this.prerender(options, handlebars);
 
