@@ -74,7 +74,7 @@ think.middleware('output_resource', (http, file) => {
  */
 think.middleware('rewrite_pathname', http => {
   let pathname = http.pathname;
-  if (!pathname) {
+  if (!pathname || pathname === '/') {
     return;
   }
   let prefix = http.config('pathname_prefix');
