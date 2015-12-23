@@ -811,6 +811,14 @@ think.adapter = (...args) => {
     //get adapter
     //think.adapter('session', 'redis')
     else if (think.isString(name)) {
+      let nameLower = name.toLowerCase();
+      if(name !== nameLower){
+        name = nameLower;
+        think.log(colors => {
+          return colors.yellow(`[WARNING]`) + ` adapter type \`${name}\` has uppercase chars.`;
+        });
+      }
+      
       key += type + '_' + name;
       let cls = think.require(key, true);
       if (cls) {
