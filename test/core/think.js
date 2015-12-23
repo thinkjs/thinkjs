@@ -891,7 +891,7 @@ describe('core/think.js', function(){
     })
     it('get item hook', function(){
       var data = think.hook('route_parse');
-      assert.deepEqual(data, ['rewrite_pathname', 'subdomain_deploy', 'parse_route'])
+      assert.deepEqual(data, ['rewrite_pathname', 'parse_route'])
     })
     it('get item hook, not exist', function(){
       var data = think.hook('route_parse111');

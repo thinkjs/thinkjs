@@ -29,21 +29,23 @@ function execMiddleware(middleware, config, options, data){
 }
 
 describe('middleware/check_resource', function(){
-  it('base, RESOURCE_PATH not set', function(done){
-    var RESOURCE_PATH = think.RESOURCE_PATH;
-    think.RESOURCE_PATH = '';
-    execMiddleware('check_resource', {}, {}).then(function(data){
-      assert.equal(data, false);
-      think.RESOURCE_PATH = RESOURCE_PATH;
-      done();
-    })
-  })
+  // it('base, RESOURCE_PATH not set', function(done){
+  //   var RESOURCE_PATH = think.RESOURCE_PATH;
+  //   think.RESOURCE_PATH = '';
+  //   execMiddleware('check_resource', {}, {}).then(function(data){
+  //     assert.equal(data, false);
+  //     think.RESOURCE_PATH = RESOURCE_PATH;
+  //     done();
+  //   })
+  // })
   it('base, resource_on off', function(done){
     execMiddleware('check_resource', {
       resource_on: false
     }, {}).then(function(data){
-      assert.equal(data, false);
+      assert.equal(data, null);
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('base, pathname empty', function(done){
@@ -52,7 +54,7 @@ describe('middleware/check_resource', function(){
     }, {
       pathname: ''
     }).then(function(data){
-      assert.equal(data, false);
+      assert.equal(data, null);
       done();
     })
   })
@@ -63,7 +65,7 @@ describe('middleware/check_resource', function(){
     }, {
       pathname: 'wwww'
     }).then(function(data){
-      assert.equal(data, false);
+      assert.equal(data, null);
       done();
     })
   })

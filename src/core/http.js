@@ -6,6 +6,8 @@ import mime from 'mime';
 import util from 'util';
 import cookie from '../util/cookie.js';
 
+const PAYLOAD_METHODS = ['POST', 'PUT', 'PATCH'];
+
 /**
  * wrap for request & response
  * @type {Object}
@@ -109,10 +111,9 @@ export default class {
    */
   async run(){
     
-    await think.hook('request_begin', this);
+    await think.hook.exec('request_begin', this);
     //array indexOf is faster than string
-    let methods = ['POST', 'PUT', 'PATCH'];
-    if (methods.indexOf(this.req.method) > -1) {
+    if (PAYLOAD_METHODS.indexOf(this.req.method) > -1) {
       await this.parsePayload();
     }
     return this;

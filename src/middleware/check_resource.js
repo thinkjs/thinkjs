@@ -10,13 +10,14 @@ export default class extends think.middleware.base {
    * @return {Promise} []
    */
   async run(){
-    if (!think.RESOURCE_PATH || !this.config('resource_on') || !this.http.pathname) {
-      return false;
+    let pathname = this.http.pathname;
+    if (!this.config('resource_on') || !pathname || pathname === '/') {
+      return null;
     }
-    let pathname = decodeURIComponent(this.http.pathname);
+    pathname = decodeURIComponent(pathname);
     let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
-      return false;
+      return null;
     }
     let file = `${think.RESOURCE_PATH}/${pathname}`;
     //resource exist
