@@ -19,17 +19,16 @@ export default class extends think.http.base {
     }
     let instance = new cls(this.http);
     let action = think.camelCase(this.http.action);
-    if (think.isFunction(instance[`${action}Action`])) {
+    if (instance[`${action}Action`]) {
       return this.action(instance, action, false);
     }
     //call action
-    else if (think.isFunction(instance.__call)) {
+    else if (instance.__call) {
       return this.action(instance, '__call', false);
     }
     //only has before method
-    else if(think.isFunction(instance.__before)){
+    else if(instance.__before){
       return think.co(instance.__before(instance));
-      //return think.co.wrap(instance.__before).bind(instance)(instance);
     }
     return Promise.resolve();
   }
@@ -70,11 +69,11 @@ export default class extends think.http.base {
     let action = think.camelCase(http.action);
     let actionWithSuffix = `${action}Action`;
     //action is exist
-    if(think.isFunction(controller[actionWithSuffix])){
+    if(controller[actionWithSuffix]){
       return this.action(controller, action, false);
     }
     //call action
-    if(think.isFunction(controller.__call)){
+    if(controller.__call){
       return this.action(controller, '__call', false);
     }
     http.error = new Error(think.locale('ACTION_NOT_FOUND', actionWithSuffix, http.url));
