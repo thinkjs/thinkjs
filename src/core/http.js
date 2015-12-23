@@ -62,7 +62,6 @@ export default class {
     this._cookie = {};
     this._sendCookie = {};
     this._get = {};
-    //this._type = (this.headers['content-type'] || '').split(';')[0].trim();
 
     this._contentTypeIsSend = false; //aleady send content-type header
     this._isResource = false; //is resource request
@@ -75,6 +74,8 @@ export default class {
     this._langAsViewPath = false; //language as view path
     this._config = null; // config
     this._middleware = undefined; //middleware exec data
+    this._error = undefined; //error message
+    this._theme = undefined; //theme
 
     this.payload = ''; //request payload
 
@@ -87,21 +88,15 @@ export default class {
       let urlInfo = url.parse('//' + this.headers.host + this.req.url, true, true);
       //can not use decodeURIComponent, pathname may be has encode / chars
       //decodeURIComponent value after parse route
-      let pathname = urlInfo.pathname;
       //remove unsafe chars in pathname
-      this.pathname = this.normalizePathname(pathname);
+      this.pathname = this.normalizePathname(urlInfo.pathname);
       this.hostname = urlInfo.hostname;
-      if(!think.isEmpty(urlInfo.query)){
-        this.query = urlInfo.query;
-        this._get = think.extend({}, urlInfo.query);
-      }
-      
+      let query = urlInfo.query;
+      if(!think.isEmpty(query)){
+        this.query = query;
+        this._get = think.extend({}, query);
+      } 
     }
-
-    //parse cookie when cookie is set
-    // if(this.headers.cookie){
-    //   this._cookie = cookie.parse(this.headers.cookie);
-    // }
   }
   /**
    * exec
@@ -133,7 +128,7 @@ export default class {
    */
   getPayload(){
 
-    if(think.isString(this.payload)){
+    if(this.payload){
       return Promise.resolve(this.payload);
     }
 
