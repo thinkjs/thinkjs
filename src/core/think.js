@@ -184,7 +184,15 @@ think.isHttp = obj => {
  * alias co module to think.co
  * @type {Object}
  */
-think.co = co;
+think.co = obj => {
+  //optimize invoke co package
+  if(obj && typeof obj.next === 'function'){
+    return co(obj);
+  }
+  return Promise.resolve(obj);
+};
+think.co.wrap = co.wrap;
+
 /**
  * create class
  * @param {Object} methods [methods and props]
@@ -338,6 +346,7 @@ think.require = (name, flag) => {
 think.safeRequire = file => {
   // absolute file path is not exist
   if (path.isAbsolute(file)) {
+    //no need optimize, only invoked before service start
     if(!think.isFile(file)){
       return null;
     }
@@ -750,7 +759,7 @@ think.middleware.exec = (name, http, data) => {
     if (middlwares[name]) {
       let fn = middlwares[name];
       //class middleware must have run method
-      if(think.isFunction(fn.prototype.run)){
+      if(fn.prototype.run){
         let instance = new fn(http);
         return think.co(instance.run(data));
       }else{
@@ -766,9 +775,7 @@ think.middleware.exec = (name, http, data) => {
       return Promise.reject(err);
     }
   }
-  else if (think.isFunction(name)){
-    return think.co(name(http, data));
-  }
+  return think.co(name(http, data));
 }
 
 

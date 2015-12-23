@@ -574,7 +574,7 @@ export default class extends Base {
     let result;
     await this.startTrans();
     try{
-      result = await think.co(fn);
+      result = await think.co(fn());
       await this.commit();
     }catch(e){
       await this.rollback();
