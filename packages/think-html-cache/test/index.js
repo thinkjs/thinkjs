@@ -97,6 +97,8 @@ describe('think-html-cache', function(){
       assert.equal(instance.config.path.length > 0, true);
       assert.equal(data, undefined);
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('html_cache has rules, getMatchRule, not match', function(done){

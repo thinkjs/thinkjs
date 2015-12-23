@@ -21,7 +21,7 @@ export default class extends think.middleware.base {
       return content;
     }
 
-    this.config = this.mergeConfig({
+    this.config = think.parseConfig({
       type: 'file',
       adapter: {
         file: {
@@ -128,8 +128,9 @@ export default class extends think.middleware.base {
     //cookie value
     let cookiePars = {};
     let http = this.http;
-    for(let name in http._cookie){
-      cookiePars['cookie.' + name] = http._cookie[name];
+    let cookies = http.cookie();
+    for(let name in cookies){
+      cookiePars['cookie.' + name] = cookies[name];
     }
     let pars = think.extend({}, http._get, cookiePars, {
       ':module': http.module,
