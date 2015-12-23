@@ -56,8 +56,7 @@ describe('bootstrap/middleware.js', function(){
         json_content_type: ['application/json']
       },
     }, {
-      payload: 'welefen',
-      _type: ''
+      payload: 'welefen'
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -73,8 +72,9 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: 'welefen=suredy',
-
-      _type: 'application/json'
+      headers: {
+        'content-type': 'application/json'
+      }
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -95,7 +95,9 @@ describe('bootstrap/middleware.js', function(){
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
 
-      _type: 'application/json'
+       headers: {
+        'content-type': 'application/json'
+      }
     }).then(function(http){
       think.middleware('parse_json_payload', http).then(function(data){
         assert.equal(data, undefined);
@@ -112,7 +114,9 @@ describe('bootstrap/middleware.js', function(){
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
 
-      _type: 'application/json'
+       headers: {
+        'content-type': 'application/json'
+      }
     }).then(function(http){
       think.middleware('output_resource', http, false).then(function(data){
         assert.equal(data, undefined)
@@ -128,7 +132,9 @@ describe('bootstrap/middleware.js', function(){
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
 
-      _type: 'application/json'
+      headers: {
+        'content-type': 'application/json'
+      }
     }).then(function(http){
       think.middleware('output_resource', http, true).catch(function(err){
         assert.equal(think.isPrevent(err), true)
@@ -144,7 +150,9 @@ describe('bootstrap/middleware.js', function(){
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
 
-      _type: 'application/json'
+       headers: {
+        'content-type': 'application/json'
+      }
     }).then(function(http){
       think.middleware('output_resource', http, __filename).catch(function(err){
         assert.equal(think.isPrevent(err), true);
@@ -160,7 +168,9 @@ describe('bootstrap/middleware.js', function(){
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
 
-      _type: 'application/json'
+       headers: {
+        'content-type': 'application/json'
+      }
     }).then(function(http){
       think.middleware('output_resource', http, __filename + '_____').catch(function(err){
         assert.equal(think.isError(err), true);
@@ -175,9 +185,9 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
-      _type: 'application/json',
       headers: {
-        range: 'bytes=0-'
+        range: 'bytes=0-',
+        'content-type': 'application/json'
       },
       end: function(){},
       status: function(status){
@@ -198,9 +208,9 @@ describe('bootstrap/middleware.js', function(){
       },
     }, {
       payload: JSON.stringify({name: 'welefen', test: 'haha'}),
-      _type: 'application/json',
       headers: {
-        range: 'bytes=0-1000000'
+        range: 'bytes=0-1000000',
+        'content-type': 'application/json'
       },
       end: function(){},
       status: function(status){

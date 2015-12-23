@@ -62,7 +62,7 @@ export default class {
     this._cookie = {};
     this._sendCookie = {};
     this._get = {};
-    this._type = (this.headers['content-type'] || '').split(';')[0].trim();
+    //this._type = (this.headers['content-type'] || '').split(';')[0].trim();
 
     this._contentTypeIsSend = false; //aleady send content-type header
     this._isResource = false; //is resource request
@@ -208,7 +208,7 @@ export default class {
    */
   type(contentType, encoding){
     if (!contentType) {
-      return this._type;
+      return (this.headers['content-type'] || '').split(';')[0].trim();
     }
     if (this._contentTypeIsSend) {
       return;
