@@ -291,11 +291,22 @@ think.getPath = (module, type = think.dirname.controller, prefix = '') => {
   }
 };
 
+
 /**
  * require module
  * @param  {String} name []
  * @return {mixed}      []
  */
+let _loadRequire = (name, filepath) => {
+  let obj = think.safeRequire(filepath);
+  if (think.isFunction(obj)) {
+    obj.prototype.__filename = filepath;
+  }
+  if(obj){
+    thinkCache(thinkCache.ALIAS_EXPORT, name, obj);
+  }
+  return obj;
+};
 think.require = (name, flag) => {
   if (!think.isString(name)) {
     return name;
@@ -306,28 +317,19 @@ think.require = (name, flag) => {
     return Cls;
   }
 
-  let load = (name, filepath) => {
-    let obj = think.safeRequire(filepath);
-    if (think.isFunction(obj)) {
-      obj.prototype.__filename = filepath;
-    }
-    if(obj){
-      thinkCache(thinkCache.ALIAS_EXPORT, name, obj);
-    }
-    return obj;
-  };
-
   let filepath = thinkCache(thinkCache.ALIAS, name);
   if (filepath) {
-    return load(name, path.normalize(filepath));
+    return _loadRequire(name, path.normalize(filepath));
   }
   // only check in alias
   if (flag) {
     return null;
   }
   filepath = require.resolve(name);
-  return load(name, filepath);
+  return _loadRequire(name, filepath);
 };
+
+
 /**
  * safe require
  * @param  {String} file []
@@ -606,8 +608,10 @@ think.transformConfig = (config, transforms) => {
   }
   return config;
 };
+
+
 /**
- * exec hook
+ * regitster or exec hook
  * @param  {String} name []
  * @return {}      []
  */
@@ -652,19 +656,28 @@ think.hook = (...args) => {
     thinkCache(thinkCache.HOOK, name, hooks);
     return;
   }
-
+  return think.hook.exec(name, http, data);
+};
+/**
+ * exec hook
+ * @param  {String} name [hook name]
+ * @param  {Object} http []
+ * @param  {Mixed} data []
+ * @return {Promise}      []
+ */
+think.hook.exec = (name, http, data) => {
   //exec hook 
-  let list = thinkCache(thinkCache.HOOK, name) || [];
-  let length = list.length;
-  if (length === 0) {
+  let list = thinkCache(thinkCache.HOOK, name);
+  if (!list || list.length === 0) {
     return Promise.resolve(data);
   }
-  http._middleware = data;
 
+  let length = list.length;
+  http._middleware = data;
   //exec middleware
   let execMiddleware = async () => {
     for(let i = 0; i < length; i++){
-      let data = await think.middleware(list[i], http, http._middleware);
+      let data = await think.middleware.exec(list[i], http, http._middleware);
       //prevent next middlewares invoked in hook
       if(data === null){
         break;
@@ -676,7 +689,10 @@ think.hook = (...args) => {
   };
 
   return execMiddleware();
-};
+}
+
+
+
 /**
  * create or exec middleware
  * @param  {Function} superClass []
@@ -698,35 +714,7 @@ think.middleware = (...args) => {
   // exec middleware
   // think.middleware('parsePayLoad', http, data)
   if (length >= 2 && think.isHttp(methods)) {
-    let name = superClass, http = methods;
-    if (think.isString(name)) {
-      // name is in middleware cache
-      if (name in middlwares) {
-        let fn = middlwares[name];
-        //class middleware must have run method
-        if(think.isFunction(fn.prototype.run)){
-          let instance = new fn(http);
-          return think.co(instance.run(data));
-          //return think.co.wrap(instance.run).bind(instance)(data);
-        }else{
-          return think.co(fn(http, data));
-          //return think.co.wrap(fn)(http, data);
-        }
-      }else{
-        let Cls = think.require(prefix + name, true);
-        if(Cls){
-          let instance = new Cls(http);
-          return think.co(instance.run(data));
-          //return think.co.wrap(instance.run).bind(instance)(data);
-        }
-        let err = new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
-        return Promise.reject(err);
-      }
-    }
-    else if (think.isFunction(name)){
-      return think.co(name(http, data));
-      //return think.co.wrap(name)(http, data);
-    }
+    return think.middleware.exec(superClass, methods, data);
   }
   // get middleware
   // think.middleware('parsePayLoad')
@@ -748,6 +736,41 @@ think.middleware = (...args) => {
   // create middleware
   return middleware(superClass, methods);
 };
+/**
+ * exec middleware
+ * @param  {String} name []
+ * @param  {Object} http []
+ * @param  {Mixed} data []
+ * @return {Promise}      []
+ */
+think.middleware.exec = (name, http, data) => {
+  if (think.isString(name)) {
+    let middlwares = thinkCache(thinkCache.MIDDLEWARE);
+    // name is in middleware cache
+    if (middlwares[name]) {
+      let fn = middlwares[name];
+      //class middleware must have run method
+      if(think.isFunction(fn.prototype.run)){
+        let instance = new fn(http);
+        return think.co(instance.run(data));
+      }else{
+        return think.co(fn(http, data));
+      }
+    }else{
+      let Cls = think.require('middleware_' + name, true);
+      if(Cls){
+        let instance = new Cls(http);
+        return think.co(instance.run(data));
+      }
+      let err = new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
+      return Promise.reject(err);
+    }
+  }
+  else if (think.isFunction(name)){
+    return think.co(name(http, data));
+  }
+}
+
 
 /**
  * create, register, call adapter
@@ -1024,6 +1047,7 @@ think.uuid = (length = 32) => {
   let str = crypto.randomBytes(Math.ceil(length * 0.75)).toString('base64').slice(0, length);
   return str.replace(/[\+\/]/g, '_');
 };
+
 /**
  * start session
  * @param  {Object} http []
@@ -1034,12 +1058,6 @@ think.session = http => {
   if (http._session) {
     return http._session;
   }
-
-  // let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
-  // if (!Cookie) {
-  //   Cookie = think.require('cookie');
-  //   thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
-  // }
 
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
@@ -1088,6 +1106,7 @@ think.session = http => {
   return session;
 };
 
+
 /**
  * create controller sub class
  * @type {Function}
@@ -1107,6 +1126,8 @@ think.controller = (superClass, methods, module) => {
   //create sub controller class
   return controller(superClass, methods);
 };
+
+
 /**
  * create logic class
  * @type {Function}
@@ -1126,6 +1147,8 @@ think.logic = (superClass, methods, module) => {
   //create sub logic class
   return logic(superClass, methods);
 };
+
+
 /**
  * create model sub class
  * @type {Function}
@@ -1204,6 +1227,8 @@ think.cache = async (name, value, options = {}) => {
   //set cache
   return instance.set(name, value);
 };
+
+
 /**
  * get locale message
  * @param  {String} key  []
@@ -1225,6 +1250,8 @@ think.locale = (key, ...data) => {
   var msg = util.format(value, ...data);
   return msg;
 };
+
+
 /**
  * validate data
  * {
@@ -1399,7 +1426,8 @@ think.error = (err, addon = '') => {
     return err.catch(err => {
       return think.reject(think.error(err, addon));
     });
-  }else if(think.isError(err)){
+  }
+  if(think.isError(err)){
     let message = err.message;
     let errors = thinkCache(thinkCache.ERROR);
     let key, value, reg = /^[A-Z\_]$/;
@@ -1427,9 +1455,8 @@ think.error = (err, addon = '') => {
       }
     }
     return err;
-  }else{
-    return new Error(err);
   }
+  return new Error(err);
 };
 /**
  * exec status action

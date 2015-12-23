@@ -82,7 +82,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   hook(event, data){
-    return think.hook(event, this.http, data);
+    return think.hook.exec(event, this.http, data);
   }
   /**
    * get model

@@ -1060,17 +1060,17 @@ describe('core/think.js', function(){
         })
       })
     })
-    it('exec middleware, object', function(done){
-      getHttp().then(function(http){
-        var data = think.middleware({
-          getNwwwwame: function(){
-            return 'test';
-          }
-        }, http, '___http');
-        assert.equal(think.isFunction(data.prototype.getNwwwwame), true);
-        done();
-      })
-    })
+    // it('exec middleware, object', function(done){
+    //   getHttp().then(function(http){
+    //     var data = think.middleware({
+    //       getNwwwwame: function(){
+    //         return 'test';
+    //       }
+    //     }, http, '___http');
+    //     assert.equal(think.isFunction(data.prototype.getNwwwwame), false);
+    //     done();
+    //   })
+    // })
     // it('exec middleware, deny_ip', function(done){
     //   getHttp().then(function(http){
     //     think.middleware('deny_ip', http, '___http').then(function(data){
