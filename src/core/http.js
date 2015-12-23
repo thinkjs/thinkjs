@@ -99,9 +99,9 @@ export default class {
     }
 
     //parse cookie when cookie is set
-    if(this.headers.cookie){
-      this._cookie = cookie.parse(this.headers.cookie);
-    }
+    // if(this.headers.cookie){
+    //   this._cookie = cookie.parse(this.headers.cookie);
+    // }
   }
   /**
    * exec
@@ -465,7 +465,12 @@ export default class {
       this.header('Set-Cookie', cookies);
       this._sendCookie = {};
       return;
-    }else if (name === undefined) {
+    }
+    //parse cookie
+    if(think.isEmpty(this._cookie) && this.headers.cookie){
+      this._cookie = cookie.parse(this.headers.cookie);
+    }
+    if (name === undefined) {
       return this._cookie;
     }else if (value === undefined) {
       return this._cookie[name] || '';

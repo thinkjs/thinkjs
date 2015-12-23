@@ -1061,7 +1061,7 @@ think.session = http => {
 
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
-  let cookie = http._cookie[name];
+  let cookie = http.cookie(name);
   
   //validate cookie sign
   if (cookie && secret) {
