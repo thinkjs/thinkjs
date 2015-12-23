@@ -76,6 +76,11 @@ export default class {
     this._middleware = undefined; //middleware exec data
     this._error = undefined; //error message
     this._theme = undefined; //theme
+    this.error = null; //error object
+    
+    this.module = '';
+    this.controller = '';
+    this.action = '';
 
     this.payload = ''; //request payload
 

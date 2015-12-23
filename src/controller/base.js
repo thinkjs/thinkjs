@@ -11,11 +11,7 @@ export default class extends think.http.base {
    * @return {void} []
    */
   init(http){
-    super.init(http);
-    this.assign('controller', this);
-    this.assign('http', this.http);
-    this.assign('config', this.http._config);
-    this.assign('_', this.locale.bind(this));
+    this.http = http;
   }
   /**
    * get client ip
@@ -90,25 +86,6 @@ export default class extends think.http.base {
   isJsonp(name){
     return this.http.isJsonp(name);
   }
-  /**
-   * get or check token
-   * @param  {String} token []
-   * @return {String | Boolean}       []
-   */
-  // async token(token){
-  //   let tokenConfig = this.config('token');
-  //   let tokenValue = await this.session(tokenConfig.name);
-  //   if (token) {
-  //     return tokenValue === token;
-  //   }else{
-  //     if(tokenValue){
-  //       return tokenValue;
-  //     }
-  //     token = think.uuid(tokenConfig.length);
-  //     await this.session(tokenConfig.name, token);
-  //     return token;
-  //   }
-  // }
   /**
    * get get params
    * @param  {String} name [query name]
@@ -228,11 +205,22 @@ export default class extends think.http.base {
     return this.view().assign(name, value);
   }
   /**
+   * base assign
+   * @return {} []
+   */
+  _baseAssign(){
+    this.assign('controller', this);
+    this.assign('http', this.http);
+    this.assign('config', this.http._config);
+    this.assign('_', this.locale.bind(this));
+  }
+  /**
    * fetch template content
    * @param  {String} templateFile [template filepath]
    * @return {promise}              []
    */
   fetch(templateFile) {
+    this._baseAssign();
     return this.view().fetch(templateFile);
   }
   /**
@@ -243,6 +231,7 @@ export default class extends think.http.base {
    * @return {Promise}              []
    */
   display(templateFile, charset, contentType) {
+    this._baseAssign();
     return this.view().display(templateFile, charset, contentType);
   }
   /**
