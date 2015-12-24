@@ -159,9 +159,19 @@ think.promisify = (fn, receiver) => {
   };
 };
 /**
- * [description]
- * @param  {[type]} err [description]
- * @return {[type]}     [description]
+ * to fast properties
+ * @param  {Object} obj []
+ * @return {void}     []
+ */
+think.toFastProperties = obj => {
+  let f = () => {};
+  f.prototype = obj;
+  new f();
+}
+/**
+ * reject promise
+ * @param  {[type]} err []
+ * @return {[type]}     []
  */
 think.reject = (err) => {
   //delay to show error
@@ -538,7 +548,7 @@ let _getConfig = configPath => {
 };
 
 let _getItemConfig = (configPath, item) => {
-  let fileFilters = ['config', 'route'];
+  let fileFilters = ['config', 'route', 'hook'];
   let dirFilters = ['env', 'sys'];
   if(think.isDir(`${configPath}/${item}`)){
     if(dirFilters.indexOf(item) === -1){
@@ -1273,6 +1283,8 @@ think.locale = (key, ...data) => {
     value = config[lang][key];
   }else if(config[_default][key]){
     value = config[_default][key];
+  }else if(config.en[key]){ //sys locales
+    value = config.en[key];
   }else{
     value = key;
   }

@@ -629,10 +629,11 @@ export default class {
     let locales = this.config(think.dirname.locale);
     let values = locales[lang] || {};
     let defaultLocales = locales[this.config('locale.default')];
+    let enLocales = locales.en;
     if(!key){
       return think.isEmpty(values) ? defaultLocales : values;
     }
-    let value = values[key] || defaultLocales[key] || key;
+    let value = values[key] || defaultLocales[key] || enLocales[key] || key;
     if(!think.isString(value)){
       return value;
     }
