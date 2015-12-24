@@ -674,7 +674,8 @@ think.hook = (...args) => {
  * @param  {Mixed} data []
  * @return {Promise}      []
  */
-think.hook.exec = (name, http, data) => {
+
+think.hook.exec = async (name, http, data) => {
   //exec hook 
   let list = thinkCache(thinkCache.HOOK, name);
   if (!list || list.length === 0) {
@@ -682,22 +683,16 @@ think.hook.exec = (name, http, data) => {
   }
 
   let length = list.length;
-  http._middleware = data;
-  //exec middleware
-  let execMiddleware = async () => {
-    for(let i = 0; i < length; i++){
-      let data = await think.middleware.exec(list[i], http, http._middleware);
-      //prevent next middlewares invoked in hook
-      if(data === null){
-        break;
-      }else if (data !== undefined) {
-        http._middleware = data;
-      }
+  for(let i = 0; i < length; i++){
+    let result = await think.middleware.exec(list[i], http, data);
+    //prevent next middlewares invoked in hook
+    if(result === null){
+      break;
+    }else if (result !== undefined) {
+      data = result;
     }
-    return http._middleware;
-  };
-
-  return execMiddleware();
+  }
+  return data;
 }
 
 
