@@ -468,8 +468,30 @@ think.log = (msg, type, showTime) => {
  * get or set config
  * @return {mixed} []
  */
-think.config = (name, value, data) => {
+//if set common config, must sync to module config
+let _setConfig = (name, value, flag, data) => {
+  let configs = [];
+  if(flag){
+    configs = think.module.map(item => think.getModuleConfig(item));
+  }
+  [data, ...configs].forEach(itemData => {
+    if(think.isObject(name)){
+      think.extend(itemData, name);
+    }
+    else if(think.isString(name)){
+      //name = name.toLowerCase();
+      if (name.indexOf('.') === -1) {
+        itemData[name] = value;
+      }else{
+        let names = name.split('.');
+        itemData[names[0]] = itemData[names[0]] || {};
+        itemData[names[0]][names[1]] = value;
+      }
+    }
 
+  });
+};
+think.config = (name, value, data) => {
   let flag = false;
   //get module config
   if(data && think.isString(data)){
@@ -478,52 +500,21 @@ think.config = (name, value, data) => {
     flag = true;
     data = thinkCache(thinkCache.CONFIG);
   }
-
-  //if set common config, must sync to module config
-  let setConfig = (name, value) => {
-    let configs = [];
-    if(flag){
-      configs = think.module.map(item => think.getModuleConfig(item));
-    }
-    [data, ...configs].forEach(itemData => {
-      if(think.isObject(name)){
-        think.extend(itemData, name);
-      }
-      else if(think.isString(name)){
-        //name = name.toLowerCase();
-        if (name.indexOf('.') === -1) {
-          itemData[name] = value;
-        }else{
-          let names = name.split('.');
-          itemData[names[0]] = itemData[names[0]] || {};
-          itemData[names[0]][names[1]] = value;
-        }
-      }
-
-    });
-  };
-
   // get all config
-  // think.config();
   if (name === undefined) {
     return data;
   }
   // merge config
-  // think.config({name: 'welefen'})
-  else if (think.isObject(name) || value !== undefined) {
-    setConfig(name, value);
+  if (think.isObject(name) || value !== undefined) {
+    return _setConfig(name, value, flag, data);
   }
-  // set or get config
-  else if(think.isString(name)){
-    //name = name.toLowerCase();
-    //one grade config
-    if (name.indexOf('.') === -1) {
-      return data[name];
-    }
-    name = name.split('.');
-    value = data[name[0]] || {};
-    return value[name[1]];
+  //get config
+  if (name.indexOf('.') === -1) {
+    return data[name];
   }
+  name = name.split('.');
+  value = data[name[0]] || {};
+  return value[name[1]];
 };
 /**
  * get module config
@@ -903,6 +894,9 @@ think.alias = (type, paths, slash) => {
     });
   });
 };
+
+
+
 /**
  * load route
  * route detail config
@@ -923,6 +917,45 @@ think.alias = (type, paths, slash) => {
  * 
  * @return {} []
  */
+let _getDynamicRoute = (fn, key) => {
+  return think.await('route', () => {
+    return think.co(fn()).then((route = []) => {
+      thinkCache(thinkCache.COLLECTION, key, route);
+      return route;
+    });
+  });
+};
+
+let _getModuleRoute = (config, key) => {
+  for(let module in config){
+    let filepath = think.getPath(module, think.dirname.config) + '/route.js';
+    let moduleConfig = think.safeRequire(filepath);
+    config[module].children = moduleConfig || [];
+  }
+  thinkCache(thinkCache.COLLECTION, key, config);
+  return config;
+};
+/**
+ * get route
+ * @param  {} key []
+ * @return {}     []
+ */
+let _getRoute = key => {
+  let file = think.getPath(undefined, think.dirname.config) + '/route.js';
+  let config = think.safeRequire(file) || [];
+
+  //route config is funciton, may be is dynamic save in db
+  if (think.isFunction(config)) {
+    return _getDynamicRoute(config, key);
+  }
+  //get module route config
+  if(think.isObject(config) && think.mode === think.mode_module){
+    return _getModuleRoute(config, key);
+  }
+  thinkCache(thinkCache.COLLECTION, key, config);
+  return config;
+};
+
 think.route = routes => {
   let key = 'route';
   if(routes === null){
@@ -930,7 +963,7 @@ think.route = routes => {
     return;
   }
   //set route
-  else if (think.isArray(routes) || think.isObject(routes)) {
+  if (think.isArray(routes) || think.isObject(routes)) {
     thinkCache(thinkCache.COLLECTION, key, routes);
     return;
   }
@@ -938,32 +971,11 @@ think.route = routes => {
   if (routes) {
     return routes;
   }
-  let file = think.getPath(undefined, think.dirname.config) + '/route.js';
-  let config = think.safeRequire(file) || [];
-
-  //route config is funciton
-  //may be is dynamic save in db
-  if (think.isFunction(config)) {
-    return think.await('route', () => {
-      //let fn = think.co.wrap(config);
-      //return fn().then((route = []) => {
-      return think.co(config()).then((route = []) => {
-        thinkCache(thinkCache.COLLECTION, key, route);
-        return route;
-      });
-    });
-  }
-  //get module route config
-  else if(think.isObject(config) && think.mode === think.mode_module){
-    for(let module in config){
-      let filepath = think.getPath(module, think.dirname.config) + '/route.js';
-      let moduleConfig = think.safeRequire(filepath);
-      config[module].children = moduleConfig || [];
-    }
-  }
-  thinkCache(thinkCache.COLLECTION, key, config);
-  return config;
+  return _getRoute(key);
 };
+
+
+
 /**
  * regist gc
  * @param  {Object} instance [class instance]

@@ -47,13 +47,11 @@ export default class extends think.http.base {
     return think.statusAction(404, http);
   }
   /**
-   * exec action
-   * @param  {Object} controller [controller instance]
-   * @param  {Boolean} call       [is call controller]
-   * @return {Promise}            []
+   * controller is rest
+   * @param  {Object} controller []
+   * @return {}            []
    */
-  execAction(controller){
-    let http = this.http;
+  checkRestController(controller){
     //if is rest api, rewrite action
     if(controller._isRest){
       let method = controller._method;
@@ -62,10 +60,21 @@ export default class extends think.http.base {
         method = controller.get(method).toLowerCase();
       }
       if(!method){
-        method = http.method.toLowerCase();
+        method = this.http.method.toLowerCase();
       }
-      http.action = method;
+      this.http.action = method;
     }
+  }
+  /**
+   * exec action
+   * @param  {Object} controller [controller instance]
+   * @param  {Boolean} call       [is call controller]
+   * @return {Promise}            []
+   */
+  execAction(controller){
+    this.checkRestController(controller);
+    
+    let http = this.http;
     let action = think.camelCase(http.action);
     let actionWithSuffix = `${action}Action`;
     //action is exist

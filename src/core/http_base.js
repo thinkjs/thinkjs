@@ -26,23 +26,12 @@ export default class extends Base {
     return think.config(name, value, this.http._config);
   }
   /**
-   * invoke action
-   * @param  {Object} controller [controller instance]
-   * @param  {String} action     [action name]
-   * @param  {Mixed} data       [action params]
-   * @return {}            []
+   * change module/controller/action when invoked action
+   * @param  {Object} controller []
+   * @param  {String} action     []
+   * @return {Promise}            []
    */
-  async action(controller, action, transMCA = true){
-    if (think.isString(controller)) {
-      controller = this.controller(controller);
-    }
-    if(!transMCA){
-      if (action !== '__call') {
-        action = think.camelCase(action) + 'Action';
-      }
-      return controller.invoke(action, controller);
-    }
-
+  async _transMCAAction(controller, action){
     //change module/controller/action when invoke another action
     //make this.display() correct when invoked without any paramters
     let http = this.http;
@@ -64,6 +53,25 @@ export default class extends Base {
     });
     think.extend(http, source);
     return err ? Promise.reject(err) : result;
+  }
+  /**
+   * invoke action
+   * @param  {Object} controller [controller instance]
+   * @param  {String} action     [action name]
+   * @param  {Mixed} data       [action params]
+   * @return {}            []
+   */
+  action(controller, action, transMCA = true){
+    if (think.isString(controller)) {
+      controller = this.controller(controller);
+    }
+    if(!transMCA){
+      if (action !== '__call') {
+        action = think.camelCase(action) + 'Action';
+      }
+      return controller.invoke(action, controller);
+    }
+    return this._transMCAAction(controller, action);
   }
   /**
    * get or set cache

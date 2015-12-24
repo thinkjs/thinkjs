@@ -6,7 +6,7 @@
  */
 global.thinkCache = (type, name, value) => {
   type = `_${type}`;
-  if (!(type in thinkCache)) {
+  if (!thinkCache[type]) {
     thinkCache[type] = {};
   }
   // get cache
@@ -14,12 +14,12 @@ global.thinkCache = (type, name, value) => {
     return thinkCache[type];
   }
   //remove cache
-  else if(name === null){
+  if(name === null){
     thinkCache[type] = {};
     return;
   }
   // get cache
-  else if (value === undefined) {
+  if (value === undefined) {
     if (think.isString(name)) {
       return thinkCache[type][name];
     }
@@ -27,7 +27,7 @@ global.thinkCache = (type, name, value) => {
     return;
   }
   //remove cache
-  else if (value === null) {
+  if (value === null) {
     delete thinkCache[type][name];
     return;
   }
