@@ -120,11 +120,6 @@ thinkCache.TIMER = 'timer';
  */
 thinkCache.AUTO_RELOAD = 'auto_reload';
 /**
- * think hook
- * @type {String}
- */
-thinkCache.HOOK = 'hook';
-/**
  * think validate
  * @type {String}
  */

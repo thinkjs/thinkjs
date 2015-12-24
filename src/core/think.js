@@ -15,7 +15,8 @@ import base from './base.js';
 import httpBase from './http_base.js';
 import Cookie from '../util/cookie.js';
 import Http from './http.js';
-import './_cache.js';
+import './think_cache.js';
+import './think_data.js';
 
 
 /**
@@ -602,6 +603,9 @@ think.getModuleConfig = (module = think.dirname.common) => {
   let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
   config = think.transformConfig(config, transforms);
 
+  //convert config to fast properties
+  think.toFastProperties(config);
+
   //set config to module cache
   thinkCache(thinkCache.MODULE_CONFIG, module, config);
   return config;
@@ -633,48 +637,54 @@ think.transformConfig = (config, transforms) => {
  * @return {}      []
  */
 think.hook = (...args) => {
-  let [name, http = {}, data] = args;
+  let [name, http, data] = args;
   //get hook data
   if (args.length === 1) {
-    return thinkCache(thinkCache.HOOK, name) || [];
+    return thinkData.hook[name] || [];
+  }
+  //remove hook
+  if(http === null){
+    thinkData.hook[name] = [];
+    return;
   }
   // set hook data
   // think.hook('test', ['middleware1', 'middleware2'])
-  else if(think.isArray(http)){
-    if(data !== 'append' && data !== 'prepend'){
-      thinkCache(thinkCache.HOOK, name, []);
-    }
-    http.forEach(item => {
-      think.hook(name, item, data);
-    });
-    return;
+  if(think.isArray(http) || !think.isHttp(http)){
+    return think.hook.set(name, http, data);
   }
-  //remove hook
-  else if(http === null){
-    thinkCache(thinkCache.HOOK, name, []);
-    return;
-  }
-  //set hook data
-  else if (!think.isHttp(http)){
-    // think.hook('test', function or class);
-    if(think.isFunction(http)){
-      let name = 'middleware_' + think.uuid();
-      think.middleware(name, http);
-      http = name;
-    }
-    let hooks = thinkCache(thinkCache.HOOK, name) || [];
-    if(data === 'append'){
-      hooks.push(http);
-    }else if(data === 'prepend'){
-      hooks.unshift(http);
-    }else{
-      hooks = [http];
-    }
-    thinkCache(thinkCache.HOOK, name, hooks);
-    return;
-  }
+  //exec hook
   return think.hook.exec(name, http, data);
 };
+/**
+ * set hook
+ * @return {} []
+ */
+think.hook.set = (name, hooks, flag) => {
+  //think.hook.set('test', function or class)
+  if(think.isFunction(hooks)){
+    let mname = 'middleware_' + think.uuid();
+    think.middleware(mname, hooks);
+    hooks = [mname];
+  }
+  else if(!think.isArray(hooks)){
+    hooks = [hooks];
+  }
+  else{
+    let first = hooks[0];
+    if(first === 'append' || first === 'prepend'){
+      flag = hooks.shift();
+    }
+  }
+  let oriHooks = thinkData.hook[name] || [];
+  if(flag === 'append'){
+    oriHooks = oriHooks.concat(hooks);
+  }else if(flag === 'prepend'){
+    oriHooks = hooks.concat(oriHooks);
+  }else{
+    oriHooks = hooks;
+  }
+  thinkData.hook[name] = oriHooks;
+}
 /**
  * exec hook
  * @param  {String} name [hook name]
@@ -682,10 +692,9 @@ think.hook = (...args) => {
  * @param  {Mixed} data []
  * @return {Promise}      []
  */
-
 think.hook.exec = async (name, http, data) => {
   //exec hook 
-  let list = thinkCache(thinkCache.HOOK, name);
+  let list = thinkData.hook[name];
   if (!list || list.length === 0) {
     return Promise.resolve(data);
   }

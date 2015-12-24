@@ -4,7 +4,7 @@ var fs = require('fs');
 var muk = require('muk');
 
 
-require('../../lib/core/_cache.js');
+require('../../lib/core/think_cache.js');
 
 
 describe('core/_cache.js', function(){

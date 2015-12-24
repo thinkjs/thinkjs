@@ -98,6 +98,7 @@ export default class extends think.http.base {
 
     //set module config, can not set config in request
     this.http._config = think.getModuleConfig(this.http.module);
+    //console.log(eval('%HasFastProperties(this.http._config)'));
 
     //babel compile error
     if(think.compileError){

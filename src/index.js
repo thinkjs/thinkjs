@@ -310,26 +310,13 @@ export default class {
    */
   loadHook(){
     let hookPath = `${think.THINK_LIB_PATH}/config/hook.js`;
-    let hook = think.extend({}, require(hookPath));
+    thinkData.hook = think.extend({}, require(hookPath));
+
     let file = `${think.getPath(undefined, think.dirname.config)}/hook.js`;
     let data = think.extend({}, think.safeRequire(file));
-    let key, value;
-    for(key in data){
-      value = data[key];
-      if (!(key in hook)) {
-        hook[key] = data[key];
-      }else if (value[0] === 'append' || value[0] === 'prepend') {
-        let flag = value.shift();
-        if (flag === 'append') {
-          hook[key] = hook[key].concat(value);
-        }else{
-          hook[key] = value.concat(hook[key]);
-        }
-      }else{
-        hook[key] = value;
-      }
+    for(let key in data){
+      think.hook.set(key, data[key]); 
     }
-    thinkCache(thinkCache.HOOK, hook);
   }
   /**
    * load controller, model, logic, service files
