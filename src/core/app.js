@@ -23,11 +23,11 @@ export default class extends think.http.base {
       return this.action(instance, action, false);
     }
     //call action
-    else if (instance.__call) {
+    if (instance.__call) {
       return this.action(instance, '__call', false);
     }
     //only has before method
-    else if(instance.__before){
+    if(instance.__before){
       return think.co(instance.__before(instance));
     }
     return Promise.resolve();

@@ -9,7 +9,7 @@ export default class extends think.middleware.base {
    * run
    * @return {Promise} []
    */
-  async run(){
+  run(){
     let pathname = this.http.pathname;
     if (!this.config('resource_on') || !pathname || pathname === '/') {
       return null;

@@ -29,11 +29,11 @@ export default class extends think.middleware.base {
    * run
    * @return {Promise} []
    */
-  async run(){
+  run(){
     if (!this.config('route_on')) {
       return this.parsePathname();
     }
-    let rules = await think.route();
+    let rules = think.route();
     return this.parse(rules);
   }
   /**
