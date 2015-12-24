@@ -97,6 +97,64 @@ describe('adapter/socket/mongo', function(){
       done();
     })
   })
+  it('get connection, change host', function(done){
+    var npm = think.npm;
+    think.npm = function(){
+      return {
+        MongoClient: {
+          connect: function(url, config, callback){
+            assert.equal(url, 'mongodb://welefen:suredy@welefen.com:1234/test?slaveOk=true');
+            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', pwd: 'suredy', name: 'test' });
+            callback && callback(null);
+          }
+        }
+      }
+    }
+    var instance = new mongoSocket({
+      host: 'welefen.com',
+      port: 1234,
+      user: 'welefen',
+      pwd: 'suredy',
+      name: 'test',
+      options: {
+        slaveOk: true
+      }
+    });
+    instance.getConnection().then(function(connection){
+      think.npm = npm;
+
+      done();
+    })
+  })
+  it('get connection, many host', function(done){
+    var npm = think.npm;
+    think.npm = function(){
+      return {
+        MongoClient: {
+          connect: function(url, config, callback){
+            assert.equal(url, 'mongodb://welefen:suredy@welefen.com:6350,suredy.com:1234/test?slaveOk=true');
+            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', pwd: 'suredy', name: 'test' });
+            callback && callback(null);
+          }
+        }
+      }
+    }
+    var instance = new mongoSocket({
+      host: ['welefen.com', 'suredy.com'],
+      port: [6350, 1234],
+      user: 'welefen',
+      pwd: 'suredy',
+      name: 'test',
+      options: {
+        slaveOk: true
+      }
+    });
+    instance.getConnection().then(function(connection){
+      think.npm = npm;
+
+      done();
+    })
+  })
   it('get connection, log level', function(done){
     var npm = think.npm;
     think.npm = function(){

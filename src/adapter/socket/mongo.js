@@ -42,7 +42,18 @@ export default class extends Base {
     if(config.options){
       options = '?' + querystring.stringify(config.options);
     }
-    let str = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
+
+    //many hosts
+    let hostStr = '';
+    if(think.isArray(config.host)){
+      hostStr = config.host.map((item, i) => {
+        return item + ':' + (config.port[i] || config.port[0]);
+      }).join(',');
+    }else{
+      hostStr = config.host + ':' + config.port;
+    }
+
+    let str = `mongodb://${auth}${hostStr}/${config.name}${options}`;
 
     return think.await(str, () => {
       let fn = think.promisify(mongo.MongoClient.connect, mongo.MongoClient);
