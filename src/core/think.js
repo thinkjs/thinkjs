@@ -516,16 +516,53 @@ think.config = (name, value, data) => {
   value = data[name[0]] || {};
   return value[name[1]];
 };
+
+
+
+
 /**
  * get module config
  * @param  {String} module []
  * @return {Object}        []
  */
+let _getConfig = configPath => {
+  let config = {};
+  if(!think.isDir(configPath)){
+    return config;
+  }
+  fs.readdirSync(configPath).forEach(item => {
+    let data = _getItemConfig(configPath, item);
+    config = think.extend(config, data);
+  });
+  return config;
+};
+
+let _getItemConfig = (configPath, item) => {
+  let fileFilters = ['config', 'route'];
+  let dirFilters = ['env', 'sys'];
+  if(think.isDir(`${configPath}/${item}`)){
+    if(dirFilters.indexOf(item) === -1){
+      return {
+        [item]: _getConfig(`${configPath}/${item}`)
+      }
+    }
+    return;
+  }
+  item = item.slice(0, -3);
+  if(item[0] === '_' || fileFilters.indexOf(item) > -1){
+    return;
+  }
+  let conf = think.safeRequire(`${configPath}/${item}.js`);
+  if(conf){
+    return {[item]: conf};
+  }
+}
+
 think.getModuleConfig = (module = think.dirname.common) => {
 
   //get module config from cache
   let moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
-  if (module in moduleConfig) {
+  if (moduleConfig[module]) {
     return moduleConfig[module];
   }
 
@@ -537,41 +574,12 @@ think.getModuleConfig = (module = think.dirname.common) => {
     rootPath = think.getPath(module, think.dirname.config);
   }
 
-  let fileFilters = ['config', 'route'];
-  let dirFilters = ['env', 'sys'];
-  //load conf
-  let getConfig = configPath => {
-    let config = {};
-    if(!think.isDir(configPath)){
-      return config;
-    }
-    fs.readdirSync(configPath).forEach(item => {
-      if(think.isDir(`${configPath}/${item}`)){
-        if(dirFilters.indexOf(item) === -1){
-          config = think.extend(config, {
-            [item]: getConfig(`${configPath}/${item}`)
-          });
-        }
-        return;
-      }
-      item = item.slice(0, -3);
-      if(item[0] === '_' || fileFilters.indexOf(item) > -1){
-        return;
-      }
-      let conf = think.safeRequire(`${configPath}/${item}.js`);
-      if(conf){
-        config = think.extend(config, {[item]: conf});
-      }
-    });
-    return config;
-  };
-
   //config.js
   let config = think.safeRequire(`${rootPath}/config.js`);
-  let envConfig = {}, extraConfig = getConfig(rootPath);
+  let envConfig = {}, extraConfig = _getConfig(rootPath);
 
   envConfig = think.safeRequire(`${rootPath}/env/${think.env}.js`);
-  envConfig = think.extend(envConfig, getConfig(`${rootPath}/env/${think.env}`));
+  envConfig = think.extend(envConfig, _getConfig(`${rootPath}/env/${think.env}`));
 
   //merge all configs
   config = think.extend({}, config, extraConfig, envConfig);
@@ -586,7 +594,6 @@ think.getModuleConfig = (module = think.dirname.common) => {
 
   //set config to module cache
   thinkCache(thinkCache.MODULE_CONFIG, module, config);
-
   return config;
 };
 /**
