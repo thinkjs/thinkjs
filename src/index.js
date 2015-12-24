@@ -412,6 +412,8 @@ export default class {
     thinkCache(thinkCache.ALIAS_EXPORT, null);
     
     thinkData.config = {};
+    thinkData.hook = {};
+
     think.route(null);
 
     this.loadConfig();
