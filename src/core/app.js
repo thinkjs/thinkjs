@@ -97,7 +97,7 @@ export default class extends think.http.base {
     await this.hook('route_parse');
 
     //set module config, can not set config in request
-    this.http._config = think.getModuleConfig(this.http.module);
+    this.http._config = thinkData.config[this.http.module];
     //console.log(eval('%HasFastProperties(this.http._config)'));
 
     //babel compile error

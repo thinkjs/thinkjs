@@ -220,16 +220,9 @@ export default class {
    * @return {} []
    */
   loadConfig(){
-    //sys config
-    let config = think.getModuleConfig(true);
-    //common module config
-    let commonConfig = think.getModuleConfig();
-    let configs = think.extend(config, commonConfig);
-    thinkCache(thinkCache.CONFIG, configs);
-    let modules = this.getModule();
-
+    think.getModuleConfig();
     //load modules config
-    modules.forEach(module => {
+    this.getModule().forEach(module => {
       think.getModuleConfig(module);
     });
   }
@@ -417,7 +410,8 @@ export default class {
     //clear all cache for reload
     thinkCache(thinkCache.ALIAS, null);
     thinkCache(thinkCache.ALIAS_EXPORT, null);
-    thinkCache(thinkCache.MODULE_CONFIG, null);
+    
+    thinkData.config = {};
     think.route(null);
 
     this.loadConfig();

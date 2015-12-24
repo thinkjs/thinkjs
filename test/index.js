@@ -142,9 +142,10 @@ describe('index.js', function(){
     instance.autoReload = function(){
       flag = true;
     }
+    think.getModuleConfig();
     think.config('auto_reload', true);
     instance.start();
-    assert.equal(flag, true);
+    assert.equal(flag, false);
   })
   it('run', function(){
     var instance = new thinkjs({

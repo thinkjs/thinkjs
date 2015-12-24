@@ -506,10 +506,10 @@ think.config = (name, value, data) => {
   let flag = false;
   //get module config
   if(data && think.isString(data)){
-    data = think.getModuleConfig(data);
+    data = think.getModuleConfig(name);
   }else if(!data){
     flag = true;
-    data = thinkCache(thinkCache.CONFIG);
+    data = think.getModuleConfig();
   }
   // get all config
   if (name === undefined) {
@@ -572,7 +572,7 @@ let _getItemConfig = (configPath, item) => {
 think.getModuleConfig = (module = think.dirname.common) => {
 
   //get module config from cache
-  let moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
+  let moduleConfig = thinkData.config;
   if (moduleConfig[module]) {
     return moduleConfig[module];
   }
@@ -594,11 +594,14 @@ think.getModuleConfig = (module = think.dirname.common) => {
 
   //merge all configs
   config = think.extend({}, config, extraConfig, envConfig);
-  //merge common configs to module
+  //merge sys, common configs to module
   if(module !== true){
-    config = think.extend({}, thinkCache(thinkCache.CONFIG), config);
+    if(module === think.dirname.common){
+      config = think.extend({}, think.getModuleConfig(true), config);
+    }else{
+      config = think.extend({}, think.getModuleConfig(), config);
+    }
   }
-
   //transform config
   let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
   config = think.transformConfig(config, transforms);
@@ -606,8 +609,10 @@ think.getModuleConfig = (module = think.dirname.common) => {
   //convert config to fast properties
   think.toFastProperties(config);
 
-  //set config to module cache
-  thinkCache(thinkCache.MODULE_CONFIG, module, config);
+  if(module !== true){
+    thinkData.config[module] = config;
+  }
+
   return config;
 };
 /**

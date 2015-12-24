@@ -85,16 +85,6 @@ thinkCache.REDIS = 'redis';
  */
 thinkCache.MEMCACHE = 'memcache';
 /**
- * think config
- * @type {String}
- */
-thinkCache.CONFIG = 'config';
-/**
- * think module config
- * @type {String}
- */
-thinkCache.MODULE_CONFIG = 'module_config';
-/**
  * think alias
  * @type {String}
  */
