@@ -59,7 +59,7 @@ export default class extends think.controller.base {
 * 详细的日志，如：请求日志、错误日志、性能日志
 * 支持命令自动创建 REST API
 * 支持国际化和多主题
-* 丰富的测试用例，1500+ 测试用里，代码覆盖率 > 95%
+* 丰富的测试用例，1500+ 测试用例，代码覆盖率 > 95%
 
 
 ## 安装 ThinkJS
