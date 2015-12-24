@@ -26,7 +26,12 @@ export default class extends Base {
 
     let env;
     if(options.root_path){
-      env = nunjucks.configure(options.root_path, options);
+      //if templateFile not start with root_path, can not set root_path
+      if(path.isAbsolute(templateFile) && templateFile.indexOf(options.root_path) !== 0){
+        env = nunjucks.configure(options);
+      }else{
+        env = nunjucks.configure(options.root_path, options);
+      }
     }else{
       env = nunjucks.configure(options);
     }
