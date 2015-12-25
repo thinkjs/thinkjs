@@ -200,20 +200,7 @@ export default class {
    */
   loadAlias(){
     let aliasPath = `${think.THINK_LIB_PATH}/config/sys/alias.js`;
-    thinkCache(thinkCache.ALIAS, require(aliasPath));
-  }
-  /**
-   * load alias module export
-   * @return {} []
-   */
-  loadAliasExport(){
-    var alias = thinkCache(thinkCache.ALIAS);
-    for(let key in alias){
-      if (thinkCache(thinkCache.ALIAS_EXPORT, key)) {
-        continue;
-      }
-      thinkCache(thinkCache.ALIAS_EXPORT, key, think.require(key));
-    }
+    thinkData.alias = require(aliasPath);
   }
   /**
    * load config
@@ -408,12 +395,10 @@ export default class {
    */
   load(){
     //clear all cache for reload
-    thinkCache(thinkCache.ALIAS, null);
-    thinkCache(thinkCache.ALIAS_EXPORT, null);
-    
+    thinkData.alias = {};
+    thinkData.export = {};
     thinkData.config = {};
     thinkData.hook = {};
-
     think.route(null);
 
     this.loadConfig();
@@ -425,13 +410,12 @@ export default class {
     this.loadHook();
     this.loadTemplate();
     this.loadError();
-
     this.loadBootstrap();
 
     this.checkModuleConfig();
 
-    //load alias export at last
-    //this.loadAliasExport();
+    think.toFastProperties(thinkData.alias);
+    //console.log(eval('%HasFastProperties(thinkData.alias)'))
   }
   /**
    * capture error

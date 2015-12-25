@@ -10,17 +10,22 @@ global.thinkData = {};
  */
 thinkData.hook = {};
 /**
- * store route
- * @type {Object}
- */
-thinkData.route = {};
-/**
- * store template file list
- * @type {Object}
- */
-thinkData.template = {};
-/**
  * store module config
  * @type {Object}
  */
 thinkData.config = {};
+/**
+ * module alias
+ * @type {Object}
+ */
+thinkData.alias = {};
+/**
+ * module exports object
+ * @type {Object}
+ */
+thinkData.export = {};
+/**
+ * store route
+ * @type {Object}
+ */
+thinkData.route = {};

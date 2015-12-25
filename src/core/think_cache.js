@@ -85,16 +85,6 @@ thinkCache.REDIS = 'redis';
  */
 thinkCache.MEMCACHE = 'memcache';
 /**
- * think alias
- * @type {String}
- */
-thinkCache.ALIAS = 'alias';
-/**
- * think alias_export
- * @type {String}
- */
-thinkCache.ALIAS_EXPORT = 'alias_export';
-/**
  * think middleware
  * @type {String}
  */

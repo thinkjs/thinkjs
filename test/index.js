@@ -91,16 +91,7 @@ describe('index.js', function(){
       ROOT_PATH: __dirname
     });
     instance.loadAlias();
-    var alias = thinkCache(thinkCache.ALIAS);
-    assert.equal(think.isObject(alias), true)
-  })
-  it('loadAlias', function(){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    instance.loadAliasExport();
-    var alias = thinkCache(thinkCache.ALIAS_EXPORT);
+    var alias = thinkData.alias;
     assert.equal(think.isObject(alias), true)
   })
   it('load', function(){

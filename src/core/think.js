@@ -322,7 +322,7 @@ let _loadRequire = (name, filepath) => {
     obj.prototype.__filename = filepath;
   }
   if(obj){
-    thinkCache(thinkCache.ALIAS_EXPORT, name, obj);
+    thinkData.export[name] = obj;
   }
   return obj;
 };
@@ -331,12 +331,12 @@ think.require = (name, flag) => {
     return name;
   }
   // adapter or middle by register
-  let Cls = thinkCache(thinkCache.ALIAS_EXPORT, name);
+  let Cls = thinkData.export[name];
   if (Cls) {
     return Cls;
   }
 
-  let filepath = thinkCache(thinkCache.ALIAS, name);
+  let filepath = thinkData.alias[name];
   if (filepath) {
     return _loadRequire(name, path.normalize(filepath));
   }
@@ -809,7 +809,7 @@ think.adapter = (...args) => {
     //think.adapter('session', 'redis', function(){})
     if (think.isFunction(fn)) {
       key += `${type}_${name}`;
-      thinkCache(thinkCache.ALIAS_EXPORT, key, fn);
+      thinkData.export[key] = fn;
       return;
     }
     //create adapter
@@ -885,7 +885,7 @@ think.loadAdapter = (type, name = 'base') => {
     if(type){
       let filepath = `${path}${think.sep}${type}${think.sep}${name}.js`;
       if(think.isFile(filepath)){
-        thinkCache(thinkCache.ALIAS, `adapter_${type}_${name}`, filepath);
+        thinkData.alias[`adapter_${type}_${name}`] = filepath;
       }
     }else{
       let dirs = fs.readdirSync(path);
@@ -907,7 +907,7 @@ think.loadAdapter = (type, name = 'base') => {
  */
 think.alias = (type, paths, slash) => {
   if(!type){
-    return thinkCache(thinkCache.ALIAS);
+    return thinkData.alias;
   }
   //regist alias
   if (!think.isArray(paths)) {
@@ -921,7 +921,7 @@ think.alias = (type, paths, slash) => {
       }
       let name = file.slice(0, -3);
       name = type + (slash ? '/' : '_') + name;
-      thinkCache(thinkCache.ALIAS, name, `${path}${think.sep}${file}`);
+      thinkData.alias[name] = `${path}${think.sep}${file}`;
     });
   });
 };
