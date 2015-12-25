@@ -696,7 +696,16 @@ export default class {
   _end(){
     this.cookie(true);
     this.res.end();
-
+    
+    process.nextTick(() => {
+      this._afterEnd();
+    });
+  }
+  /**
+   * after end
+   * @return {} []
+   */
+  _afterEnd(){
     //flush session
     if(this._session && this._session.flush){
       this._session.flush();
