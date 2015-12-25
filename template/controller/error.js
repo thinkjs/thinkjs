@@ -10,6 +10,11 @@ module.exports = think.controller({
    */
   displayErrorPage: function(status){
 
+    //hide error message on production env
+    if(think.env === 'production'){
+      this.http.error = null;
+    }
+
     var errorConfig = this.config('error');
     var message = this.http.error && this.http.error.message || 'error';
     if(this.isJsonp()){
