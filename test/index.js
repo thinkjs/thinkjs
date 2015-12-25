@@ -136,7 +136,7 @@ describe('index.js', function(){
     think.getModuleConfig();
     think.config('auto_reload', true);
     instance.start();
-    assert.equal(flag, false);
+    assert.equal(flag, true);
   })
   it('run', function(){
     var instance = new thinkjs({

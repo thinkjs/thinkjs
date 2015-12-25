@@ -386,21 +386,28 @@ export default class {
    * @return {} []
    */
   loadError(){
-    let message = require(think.THINK_LIB_PATH + `/config/sys/error.js`);
-    thinkData.error = message;
+    thinkData.error = require(think.THINK_LIB_PATH + `/config/sys/error.js`);
+  }
+  /**
+   * clear all cache for reload
+   * @return {void} []
+   */
+  clearData(){
+    thinkData.alias = {};
+    thinkData.export = {};
+    thinkData.config = {};
+    thinkData.hook = {};
+    thinkData.template = {};
+    thinkData.middleware = {};
+
+    think.route(null);
   }
   /**
    * load all config or modules
    * @return {} []
    */
   load(){
-    //clear all cache for reload
-    thinkData.alias = {};
-    thinkData.export = {};
-    thinkData.config = {};
-    thinkData.hook = {};
-    think.route(null);
-
+    
     this.loadConfig();
     this.loadRoute();
     this.loadAlias();
@@ -419,9 +426,10 @@ export default class {
     think.toFastProperties(thinkData.hook);
     think.toFastProperties(thinkData.middleware);
     think.toFastProperties(thinkData.error);
+    think.toFastProperties(thinkData.template);
 
     //console.log(thinkData.alias)
-    //console.log(eval('%HasFastProperties(thinkData.error)'))
+    //console.log(eval('%HasFastProperties(thinkData.template)'))
   }
   /**
    * capture error
@@ -473,6 +481,7 @@ export default class {
     let AutoReload = require('./util/auto_reload.js');
     AutoReload.rewriteSysModuleLoad();
     let instance = new AutoReload(srcPath, () => {
+      this.clearData();
       this.load();
     });
     return instance;
