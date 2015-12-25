@@ -24,6 +24,7 @@
   },
   "globals": {
     "think": true,
-    "thinkCache": true
+    "thinkCache": true,
+    "thinkData": true
   }
 }

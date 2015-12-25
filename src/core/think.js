@@ -167,8 +167,9 @@ think.promisify = (fn, receiver) => {
 think.toFastProperties = obj => {
   let f = () => {};
   f.prototype = obj;
+  /*eslint-disable no-new*/
   new f();
-}
+};
 /**
  * reject promise
  * @param  {[type]} err []
@@ -531,6 +532,34 @@ think.config = (name, value, data) => {
 
 
 
+
+/**
+ * get item config
+ * @param  {} configPath []
+ * @param  {} item       []
+ * @return {}            []
+ */
+let _getItemConfig = (configPath, item) => {
+  let fileFilters = ['config', 'route', 'hook'];
+  let dirFilters = ['env', 'sys'];
+  if(think.isDir(`${configPath}/${item}`)){
+    if(dirFilters.indexOf(item) === -1){
+      return {
+        [item]: _getConfig(`${configPath}/${item}`)
+      };
+    }
+    return;
+  }
+  item = item.slice(0, -3);
+  if(item[0] === '_' || fileFilters.indexOf(item) > -1){
+    return;
+  }
+  let conf = think.safeRequire(`${configPath}/${item}.js`);
+  if(conf){
+    return {[item]: conf};
+  }
+};
+
 /**
  * get module config
  * @param  {String} module []
@@ -547,27 +576,6 @@ let _getConfig = configPath => {
   });
   return config;
 };
-
-let _getItemConfig = (configPath, item) => {
-  let fileFilters = ['config', 'route', 'hook'];
-  let dirFilters = ['env', 'sys'];
-  if(think.isDir(`${configPath}/${item}`)){
-    if(dirFilters.indexOf(item) === -1){
-      return {
-        [item]: _getConfig(`${configPath}/${item}`)
-      }
-    }
-    return;
-  }
-  item = item.slice(0, -3);
-  if(item[0] === '_' || fileFilters.indexOf(item) > -1){
-    return;
-  }
-  let conf = think.safeRequire(`${configPath}/${item}.js`);
-  if(conf){
-    return {[item]: conf};
-  }
-}
 
 think.getModuleConfig = (module = think.dirname.common) => {
 
@@ -657,6 +665,7 @@ think.hook = (...args) => {
   //exec hook
   return think.hook.exec(name, http, data);
 };
+
 /**
  * set hook
  * @return {} []
@@ -686,7 +695,8 @@ think.hook.set = (name, hooks, flag) => {
     oriHooks = hooks;
   }
   thinkData.hook[name] = oriHooks;
-}
+};
+
 /**
  * exec hook
  * @param  {String} name [hook name]
@@ -712,7 +722,7 @@ think.hook.exec = async (name, http, data) => {
     }
   }
   return data;
-}
+};
 
 
 
@@ -725,7 +735,6 @@ think.hook.exec = async (name, http, data) => {
 think.middleware = (...args) => {
   let [superClass, methods, data] = args;
   let length = args.length;
-  let prefix = 'middleware_';
 
   // register functional or class middleware
   // think.middleware('parsePayLoad', function(){})
@@ -741,16 +750,18 @@ think.middleware = (...args) => {
   // get middleware
   // think.middleware('parsePayLoad')
   if (length === 1 && think.isString(superClass)) {
-    let middlwares = thinkData.middleware;
-    if(superClass in middlwares){
-      return middlwares[superClass];
-    }
-    let cls = think.require(prefix + superClass, true);
-    if (cls) {
-      return cls;
-    }
-    throw new Error(think.locale('MIDDLEWARE_NOT_FOUND', superClass));
+    return think.middleware.get(superClass);
   }
+  return think.middleware.create(superClass, methods);
+};
+
+/**
+ * create middleware
+ * @param  {Class} superClass []
+ * @param  {Object} methods    []
+ * @return {Class}            []
+ */
+think.middleware.create = (superClass, methods) => {
   let middleware = thinkCache(thinkCache.COLLECTION, 'middleware');
   if (!middleware) {
     middleware = think.Class('middleware');
@@ -759,6 +770,24 @@ think.middleware = (...args) => {
   // create middleware
   return middleware(superClass, methods);
 };
+
+/**
+ * get middleware
+ * @param  {String} name []
+ * @return {Class}      []
+ */
+think.middleware.get = name => {
+  let middlware = thinkData.middleware[name];
+  if(middlware){
+    return middlware;
+  }
+  let cls = think.require('middleware_' + name, true);
+  if (cls) {
+    return cls;
+  }
+  throw new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
+};
+
 /**
  * exec middleware
  * @param  {String} name []
@@ -768,10 +797,9 @@ think.middleware = (...args) => {
  */
 think.middleware.exec = (name, http, data) => {
   if (think.isString(name)) {
-    let middlwares = thinkData.middleware;
+    let fn = thinkData.middleware[name];
     // name is in middleware cache
-    if (middlwares[name]) {
-      let fn = middlwares[name];
+    if (fn) {
       //class middleware must have run method
       if(fn.prototype.run){
         let instance = new fn(http);
@@ -790,7 +818,8 @@ think.middleware.exec = (name, http, data) => {
     }
   }
   return think.co(name(http, data));
-}
+};
+
 
 
 /**
@@ -1462,7 +1491,8 @@ let _dynamicInstall = pkg => {
     });
     return deferred.promise;
   });
-}
+};
+
 think.npm = (pkg) => {
   try{
     return Promise.resolve(require(pkg));

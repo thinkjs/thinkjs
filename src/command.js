@@ -138,7 +138,8 @@ let copyFile = (source, target, replace, showWarning) => {
   //replace content 
   if(replace){
     for(let key in replace){
-      while(true){
+      /*eslint-disable no-constant-condition*/
+      while(1){ 
         let content1 = content.replace(key, replace[key]);
         if(content1 === content){
           content = content1;
@@ -313,7 +314,7 @@ let getSecret = length => {
     return Math.random() >= 0.5 ? 1 : -1;
   }).slice(0, length);
   return arr.join('');
-}
+};
 /**
  * copy common config files
  * @return {}             []
@@ -512,7 +513,7 @@ let createMiddleware = middleware => {
   copyFile('middleware/base.js', filepath);
 
   console.log();
-}
+};
 
 /**
  * create adapter
@@ -532,7 +533,7 @@ let createAdapter = adapter => {
   copyFile('adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
 
   console.log();
-}
+};
 
 /**
  * module app
@@ -634,7 +635,7 @@ let createPlugin = () => {
 
   console.log();
 
-}
+};
 /**
  * display thinkjs version
  * @return {} []
@@ -652,7 +653,7 @@ let displayVersion = () => {
   ].join('\n');
   console.log('\n v' + version + '\n');
   console.log(chars);
-}
+};
 
 
 commander.usage('[command] <options ...>');

@@ -1,7 +1,6 @@
 'use strict';
 
 import cluster from 'cluster';
-import fs from 'fs';
 import domain from 'domain';
 import os from 'os';
 import http from 'http';
@@ -174,7 +173,7 @@ export default class extends think.http.base {
     let host = think.config('host');
     let port = think.port || think.config('port'); 
     //createServer callback
-    let callback =  (req, res) => {
+    let callback = (req, res) => {
       think.http(req, res).then(http => {
         new this(http).run();
       });
