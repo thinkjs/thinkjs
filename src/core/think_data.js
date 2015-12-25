@@ -29,3 +29,8 @@ thinkData.export = {};
  * @type {Object}
  */
 thinkData.route = {};
+/**
+ * store middleware, which dynamic registed
+ * @type {Object}
+ */
+thinkData.middleware = {};

@@ -999,20 +999,19 @@ describe('core/think.js', function(){
   describe('think.middleware', function(){
     it('register middleware, function', function(){
       var fn = function(){}
-      var data = think.middleware('___test', fn)
-      assert.equal(thinkCache(thinkCache.MIDDLEWARE, '___test'), fn);
+      var data = think.middleware('___test', fn);
+      assert.equal(thinkData.middleware.___test, fn);
       assert.equal(data, undefined);
-      thinkCache(thinkCache.MIDDLEWARE, '___test', null)
-      
+      delete thinkData.middleware.___test;
     })
     it('register middleware, class', function(){
       var fn = think.Class({
         run: function(){}
       }, true)
       var data = think.middleware('___test', fn)
-      assert.equal(thinkCache(thinkCache.MIDDLEWARE, '___test'), fn);
+      assert.equal(thinkData.middleware.___test, fn);
       assert.equal(data, undefined);
-      thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+      delete thinkData.middleware.___test
     })
     it('exec middleware, no data', function(done){
       think.middleware('___test', function(){
@@ -1021,7 +1020,7 @@ describe('core/think.js', function(){
       getHttp().then(function(http){
         think.middleware('___test', http).then(function(data){
           assert.equal(data, 'http');
-          thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+          delete thinkData.middleware.___test;
           done();
         })
       })
@@ -1033,7 +1032,7 @@ describe('core/think.js', function(){
       getHttp().then(function(http){
         think.middleware('___test', http, '___http').then(function(data){
           assert.equal(data, '___http');
-          thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+          delete thinkData.middleware.___test;
           done();
         })
       })
@@ -1042,7 +1041,7 @@ describe('core/think.js', function(){
       getHttp().then(function(http){
         return think.middleware('___testxxx', http, '___http').catch(function(err){
           assert.equal(err.stack.indexOf('`___testxxx`') > -1, true);
-          thinkCache(thinkCache.MIDDLEWARE, '___test', null)
+          delete thinkData.middleware.___test;
           done();
         })
       })
@@ -1081,7 +1080,7 @@ describe('core/think.js', function(){
       think.middleware('fasdfasf', fn);
       var fn1 = think.middleware("fasdfasf");
       assert.equal(fn1, fn);
-      thinkCache(thinkCache.MIDDLEWARE, 'fasdfasf')
+      delete thinkData.middleware.fasdfasf;
     })
     it('get sys middleware', function(){
       var fn1 = think.middleware("parse_route");

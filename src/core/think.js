@@ -606,9 +606,6 @@ think.getModuleConfig = (module = think.dirname.common) => {
   let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
   config = think.transformConfig(config, transforms);
 
-  //convert config to fast properties
-  think.toFastProperties(config);
-
   if(module !== true){
     thinkData.config[module] = config;
   }
@@ -730,11 +727,10 @@ think.middleware = (...args) => {
   let length = args.length;
   let prefix = 'middleware_';
 
-  let middlwares = thinkCache(thinkCache.MIDDLEWARE);
   // register functional or class middleware
   // think.middleware('parsePayLoad', function(){})
   if (think.isString(superClass) && think.isFunction(methods)) {
-    thinkCache(thinkCache.MIDDLEWARE, superClass, methods);
+    thinkData.middleware[superClass] = methods;
     return;
   }
   // exec middleware
@@ -745,6 +741,7 @@ think.middleware = (...args) => {
   // get middleware
   // think.middleware('parsePayLoad')
   if (length === 1 && think.isString(superClass)) {
+    let middlwares = thinkData.middleware;
     if(superClass in middlwares){
       return middlwares[superClass];
     }
@@ -771,7 +768,7 @@ think.middleware = (...args) => {
  */
 think.middleware.exec = (name, http, data) => {
   if (think.isString(name)) {
-    let middlwares = thinkCache(thinkCache.MIDDLEWARE);
+    let middlwares = thinkData.middleware;
     // name is in middleware cache
     if (middlwares[name]) {
       let fn = middlwares[name];

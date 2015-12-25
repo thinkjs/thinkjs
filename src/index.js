@@ -415,7 +415,12 @@ export default class {
     this.checkModuleConfig();
 
     think.toFastProperties(thinkData.alias);
-    //console.log(eval('%HasFastProperties(thinkData.alias)'))
+    think.toFastProperties(thinkData.config);
+    think.toFastProperties(thinkData.hook);
+    think.toFastProperties(thinkData.middleware);
+
+    //console.log(thinkData.alias)
+    //console.log(eval('%HasFastProperties(thinkData.middleware)'))
   }
   /**
    * capture error

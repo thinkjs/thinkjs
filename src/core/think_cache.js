@@ -85,11 +85,6 @@ thinkCache.REDIS = 'redis';
  */
 thinkCache.MEMCACHE = 'memcache';
 /**
- * think middleware
- * @type {String}
- */
-thinkCache.MIDDLEWARE = 'middleware';
-/**
  * think timer
  * @type {String}
  */
