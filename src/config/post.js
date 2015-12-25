@@ -12,5 +12,6 @@ export default {
   max_fields_size: 2 * 1024 * 1024, //2M,
   single_file_header: 'x-filename',
   file_upload_path: think.RUNTIME_PATH + path.sep + 'upload',
-  file_auto_remove: true
+  file_auto_remove: true,
+  log_error: false
 };
