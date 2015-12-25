@@ -1,5 +1,6 @@
 'use strict';
 
+import path from 'path';
 import Base from './base.js';
 
 /**
