@@ -1437,37 +1437,40 @@ think.await = (key, callback) => {
  * @param  {String} pkg [package name]
  * @return {Promise}     []
  */
+let _dynamicInstall = pkg => {
+  let pkgWithVersion = pkg;
+  //get package version
+  if(pkgWithVersion.indexOf('@') === -1){
+    let version = think.config('package')[pkg];
+    if(version){
+      pkgWithVersion += '@' + version;
+    }
+  }else{
+    pkg = pkgWithVersion.split('@')[0];
+  }
+  let cmd = `npm install ${pkgWithVersion} --save`;
+  return think.await(cmd, () => {
+    let deferred = think.defer();
+    think.log(`install package ${pkgWithVersion} start`, 'NPM');
+    child_process.exec(cmd, {
+      cwd: think.ROOT_PATH
+    }, err => {
+      if(err){
+        think.log(new Error(`install package ${pkgWithVersion} error`));
+        deferred.reject(err);
+      }else{
+        think.log(`install package ${pkgWithVersion} finish`, 'NPM');
+        deferred.resolve(think.require(pkg));
+      }
+    });
+    return deferred.promise;
+  });
+}
 think.npm = (pkg) => {
   try{
-    return Promise.resolve(think.require(pkg));
+    return Promise.resolve(require(pkg));
   } catch(e){
-    let pkgWithVersion = pkg;
-    //get package version
-    if(pkgWithVersion.indexOf('@') === -1){
-      let version = think.config('package')[pkg];
-      if(version){
-        pkgWithVersion += '@' + version;
-      }
-    }else{
-      pkg = pkgWithVersion.split('@')[0];
-    }
-    let cmd = `npm install ${pkgWithVersion} --save`;
-    return think.await(cmd, () => {
-      let deferred = think.defer();
-      think.log(`install package ${pkgWithVersion} start`, 'NPM');
-      child_process.exec(cmd, {
-        cwd: think.ROOT_PATH
-      }, err => {
-        if(err){
-          think.log(new Error(`install package ${pkgWithVersion} error`));
-          deferred.reject(err);
-        }else{
-          think.log(`install package ${pkgWithVersion} finish`, 'NPM');
-          deferred.resolve(think.require(pkg));
-        }
-      });
-      return deferred.promise;
-    });
+    return _dynamicInstall(pkg);
   }
 };
 /**
