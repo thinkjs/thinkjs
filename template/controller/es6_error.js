@@ -9,6 +9,11 @@ export default class extends think.controller.base {
    * @return {Promise}        []
    */
   displayErrorPage(status){
+    
+    //hide error message on production env
+    if(think.env === 'production'){
+      this.http.error = null;
+    }
 
     let errorConfig = this.config('error');
     let message = this.http.error && this.http.error.message || 'error';
