@@ -8,7 +8,7 @@ module.exports = think.controller({
    * @param  {Number} status []
    * @return {Promise}        []
    */
-  displayErrorPage: function(status){
+  displayError: function(status){
 
     //hide error message on production env
     if(think.env === 'production'){
@@ -41,7 +41,7 @@ module.exports = think.controller({
    * @return {Promise} []
    */
   _400Action: function(self){
-    return self.displayErrorPage(400);
+    return self.displayError(400);
   },
   /**
    * Forbidden 
@@ -49,7 +49,7 @@ module.exports = think.controller({
    * @return {Promise} []
    */
   _403Action: function(self){
-    return self.displayErrorPage(403);
+    return self.displayError(403);
   },
   /**
    * Not Found 
@@ -57,7 +57,7 @@ module.exports = think.controller({
    * @return {Promise}      []
    */
   _404Action: function(self){
-    return self.displayErrorPage(404);
+    return self.displayError(404);
   },
   /**
    * Internal Server Error
@@ -65,7 +65,7 @@ module.exports = think.controller({
    * @return {Promise}      []
    */
   _500Action: function(self){
-    return self.displayErrorPage(500);
+    return self.displayError(500);
   },
   /**
    * Service Unavailable
@@ -73,6 +73,6 @@ module.exports = think.controller({
    * @return {Promise}      []
    */
   _503Action: function(self){
-    return self.displayErrorPage(503);
+    return self.displayError(503);
   }
 });
