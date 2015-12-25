@@ -34,3 +34,8 @@ thinkData.route = {};
  * @type {Object}
  */
 thinkData.middleware = {};
+/**
+ * store system error message
+ * message in file `config/sys/error.js`
+ */
+thinkData.error = {}

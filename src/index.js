@@ -387,7 +387,7 @@ export default class {
    */
   loadError(){
     let message = require(think.THINK_LIB_PATH + `/config/sys/error.js`);
-    thinkCache(thinkCache.ERROR, message);
+    thinkData.error = message;
   }
   /**
    * load all config or modules
@@ -418,9 +418,10 @@ export default class {
     think.toFastProperties(thinkData.config);
     think.toFastProperties(thinkData.hook);
     think.toFastProperties(thinkData.middleware);
-
+    think.toFastProperties(thinkData.error);
+    
     //console.log(thinkData.alias)
-    //console.log(eval('%HasFastProperties(thinkData.middleware)'))
+    //console.log(eval('%HasFastProperties(thinkData.error)'))
   }
   /**
    * capture error

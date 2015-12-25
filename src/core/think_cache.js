@@ -105,11 +105,6 @@ thinkCache.VALIDATOR = 'validator';
  */
 thinkCache.COLLECTION = 'collection';
 /**
- * system error message
- * @type {String}
- */
-thinkCache.ERROR = 'error';
-/**
  * store websockets
  * @type {String}
  */

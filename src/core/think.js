@@ -1484,7 +1484,7 @@ think.error = (err, addon = '') => {
   }
   if(think.isError(err)){
     let message = err.message;
-    let errors = thinkCache(thinkCache.ERROR);
+    let errors = thinkData.error;
     let key, value, reg = /^[A-Z\_]$/;
     for(key in errors){
       let pos = message.indexOf(key);
