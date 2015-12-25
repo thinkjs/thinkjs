@@ -50,9 +50,13 @@ think.middleware('parse_form_payload', http => {
   form.on('close', () => {
     deferred.resolve(http);
   });
-  form.on('error', () => {
+  form.on('error', err => {
     http.res.statusCode = 400;
     http.end();
+    //log error
+    if(http.config('post.log_error')){
+      think.log(err);
+    }
   });
   form.parse(http.req);
   return deferred.promise;
@@ -83,9 +87,13 @@ think.middleware('parse_single_file_payload', http => {
   let filepath = uploadDir + '/' + name + path.extname(filename).slice(0, 5);
   let stream = fs.createWriteStream(filepath);
   http.req.pipe(stream);
-  stream.on('error', () => {
+  stream.on('error', err => {
     http.res.statusCode = 400;
     http.end();
+    //log error
+    if(http.config('post.log_error')){
+      think.log(err);
+    }
   });
   stream.on('close', () => {
     http._file.file = {
@@ -118,7 +126,12 @@ think.middleware('parse_json_payload', http => {
   return http.getPayload().then(payload => {
     try{
       http._post = think.extend(http._post, JSON.parse(payload));
-    }catch(e){}
+    }catch(err){
+      //log error
+      if(http.config('post.log_error')){
+        think.log(new Error('JSON.parse error, payload is not a valid JSON data'));
+      }
+    }
   });
 });
 
@@ -135,9 +148,7 @@ think.middleware('parse_querystring_payload', http => {
   }
   
   return http.getPayload().then(payload => {
-    try{
-      http._post = think.extend(http._post, querystring.parse(payload));
-    }catch(e){}
+    http._post = think.extend(http._post, querystring.parse(payload));
   });
 });
 

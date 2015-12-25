@@ -14,6 +14,9 @@ let configs = {
   db: {
     log_sql: true,
     log_connect: true
+  },
+  post: {
+    log_error: true
   }
 };
 
