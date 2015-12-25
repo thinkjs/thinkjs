@@ -38,4 +38,9 @@ thinkData.middleware = {};
  * store system error message
  * message in file `config/sys/error.js`
  */
-thinkData.error = {}
+thinkData.error = {};
+/**
+ * store template file list, for check template file exist in view class
+ * @type {Object}
+ */
+thinkData.template = {};

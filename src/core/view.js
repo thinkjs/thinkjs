@@ -81,7 +81,7 @@ export default class extends think.http.base {
    * @return {Promise}              []
    */
   checkTemplateExist(templateFile){
-    let cacheData = thinkCache(thinkCache.TEMPLATE);
+    let cacheData = thinkData.template;
     if (templateFile in cacheData) {
       return true;
     }

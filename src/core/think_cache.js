@@ -44,12 +44,6 @@ global.thinkCache = (type, name, value) => {
  */
 thinkCache.MEMORY = 'memory';
 /**
- * for store template file list
- * fast check template file is exist, no file io
- * @type {String}
- */
-thinkCache.TEMPLATE = 'template';
-/**
  * store controller/action template file
  * @type {String}
  */

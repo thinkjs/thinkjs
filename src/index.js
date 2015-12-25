@@ -379,7 +379,7 @@ export default class {
         add(think.getPath(module, think.dirname.view));
       });
     }
-    thinkCache(thinkCache.TEMPLATE, data);
+    thinkData.template = data;
   }
   /**
    * load system error message
@@ -419,7 +419,7 @@ export default class {
     think.toFastProperties(thinkData.hook);
     think.toFastProperties(thinkData.middleware);
     think.toFastProperties(thinkData.error);
-    
+
     //console.log(thinkData.alias)
     //console.log(eval('%HasFastProperties(thinkData.error)'))
   }
