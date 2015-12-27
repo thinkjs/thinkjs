@@ -287,48 +287,7 @@ describe('bootstrap/middleware.js', function(){
       })
     })
   })
-   it('subdomain_deploy, subdomain emtpy', function(done){
-    getHttp({
-      subdomain: {},
-    }, {
-      pathname: '/test/welefen.text'
-    }).then(function(http){
-      think.middleware('subdomain_deploy', http).then(function(data){
-        assert.equal(http.pathname, '/test/welefen.text');
-        done();
-      })
-    })
-  })
-   it('subdomain_deploy, subdomain', function(done){
-    getHttp({
-      subdomain: {
-        test: 'test'
-      },
-    }, {
-      hostname: 'www.thinkjs.org',
-      pathname: '/test/welefen.text'
-    }).then(function(http){
-      think.middleware('subdomain_deploy', http).then(function(data){
-        assert.equal(http.pathname, '/test/welefen.text');
-        done();
-      })
-    })
-  })
-  it('subdomain_deploy, subdomain 1', function(done){
-    getHttp({
-      subdomain: {
-        test: 'test'
-      },
-    }, {
-      hostname: 'test.thinkjs.org',
-      pathname: 'welefen.text'
-    }).then(function(http){
-      think.middleware('subdomain_deploy', http).then(function(data){
-        assert.equal(http.pathname, 'test/welefen.text');
-        done();
-      })
-    })
-  })
+   
 
 
 

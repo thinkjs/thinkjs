@@ -87,22 +87,3 @@ think.middleware('rewrite_pathname', http => {
   }
   http.pathname = pathname;
 });
-
-
-/**
- * sub domain deploy
- * @param  {Object} http){}
- * @return {}
- */
-think.middleware('subdomain_deploy', http => {
-  let subdomain = http.config('subdomain');
-  if (think.isEmpty(subdomain)) {
-    return;
-  }
-  let hostname = http.hostname.split('.')[0];
-  let value = subdomain[hostname];
-  if (!value) {
-    return;
-  }
-  http.pathname = value + '/' + http.pathname;
-});
