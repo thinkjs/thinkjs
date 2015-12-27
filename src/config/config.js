@@ -14,6 +14,7 @@ let config = {
   cluster_on: false,
 
   service_on: true, //Service available
+  logic_on: true, //enable logic
 
   timeout: 120, //120 seconds
 

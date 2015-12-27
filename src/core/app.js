@@ -7,6 +7,32 @@ import http from 'http';
 
 export default class extends think.http.base {
   /**
+   * invoke logic
+   * @return {} []
+   */
+  invokeLogic(){
+    if(!think.config('logic_on')){
+      return;
+    }
+
+    return this.hook('logic_before').then(() => {
+      return this.execLogic();
+    }).catch(err => {
+      //ignore prevent reject promise
+      //make logic_after hook can be invoked
+      if(!think.isPrevent(err)){
+        return Promise.reject(err);
+      }
+    }).then(() => {
+      return this.hook('logic_after');
+    }).then(() => {
+      //http is end
+      if (this.http._isEnd) {
+        return think.prevent();
+      }
+    });
+  }
+  /**
    * exec logic
    * @return {Promise} []
    */
@@ -30,6 +56,23 @@ export default class extends think.http.base {
       return think.co(instance.__before(instance));
     }
     return Promise.resolve();
+  }
+  /**
+   * invoke controller
+   * @return {} []
+   */
+  invokeController(){
+    return this.hook('controller_before').then(() => {
+      return this.execController();
+    }).catch(err => {
+      //ignore prevent reject promise
+      //make controller_after & response_end hook can be invoked
+      if(!think.isPrevent(err)){
+        return Promise.reject(err);
+      }
+    }).then(() => {
+      return this.hook('controller_after');
+    });
   }
   /**
    * exec controller
@@ -87,6 +130,7 @@ export default class extends think.http.base {
     http.error = new Error(think.locale('ACTION_NOT_FOUND', actionWithSuffix, http.url));
     return think.statusAction(404, http);
   }
+
   /**
    * exec 
    * @return {Promise} []
@@ -104,32 +148,8 @@ export default class extends think.http.base {
       this.http.error = think.compileError;
       return think.statusAction(500, this.http);
     }
-
-    await this.hook('logic_before');
-    await this.execLogic().catch(err => {
-      //ignore prevent reject promise
-      //make logic_after hook can be invoked
-      if(!think.isPrevent(err)){
-        return Promise.reject(err);
-      }
-    });
-    await this.hook('logic_after');
-
-    //http is end
-    if (this.http._isEnd) {
-      return think.prevent();
-    }
-
-    await this.hook('controller_before');
-    await this.execController().catch(err => {
-      //ignore prevent reject promise
-      //make controller_after & response_end hook can be invoked
-      if(!think.isPrevent(err)){
-        return Promise.reject(err);
-      }
-    });
-    await this.hook('controller_after');
-    
+    await this.invokeLogic();
+    await this.invokeController();
     await this.hook('response_end');
   }
   /**
@@ -139,29 +159,17 @@ export default class extends think.http.base {
   run(){
     let http = this.http;
     http.header('X-Powered-By', `thinkjs-${think.version}`);
-    //service off
-    if(!think.config('service_on')){
-      http.error = new Error(think.locale('SERVICE_UNAVAILABLE'));
-      return think.statusAction(503, http);
-    }
-    //deny access by ip + port
-    if (think.config('proxy_on') && http.host !== http.hostname && !http.socket) {
-      http.error = new Error(think.locale('DISALLOW_PORT'));
-      return think.statusAction(403, http);
-    }
     
     let instance = domain.create();
     instance.on('error', err => {
       http.error = err;
       think.statusAction(500, http, true);
     });
-    instance.run(async () => {
-      try{
-        await this.exec();
-      }catch(err){
+    instance.run(() => {
+      this.exec().catch(err => {
         http.error = err;
         think.statusAction(500, http, true);
-      }
+      });
     });
   }
   /**
