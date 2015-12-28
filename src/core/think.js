@@ -705,26 +705,49 @@ think.hook.set = (name, hooks, flag) => {
  * @param  {Mixed} data []
  * @return {Promise}      []
  */
+// think.hook.exec = async (name, http, data) => {
+//   //exec hook 
+//   let list = thinkData.hook[name];
+//   if (!list || list.length === 0) {
+//     return Promise.resolve(data);
+//   }
+
+//   let length = list.length;
+//   for(let i = 0; i < length; i++){
+//     let result = await think.middleware.exec(list[i], http, data);
+//     //prevent next middlewares invoked in hook
+//     if(result === null){
+//       break;
+//     }else if (result !== undefined) {
+//       data = result;
+//     }
+//   }
+//   return data;
+// };
+
+let _execItemMiddleware = (list, index, http, data) => {
+  let item = list[index];
+  if(!item){
+    return data;
+  }
+  return think.middleware.exec(item, http, data).then(result => {
+    if(result === null){
+      return data;
+    }else if(result !== undefined){
+      data = result;
+    }
+    return _execItemMiddleware(list, index + 1, http, data);
+  });
+};
+
 think.hook.exec = async (name, http, data) => {
   //exec hook 
   let list = thinkData.hook[name];
   if (!list || list.length === 0) {
     return Promise.resolve(data);
   }
-
-  let length = list.length;
-  for(let i = 0; i < length; i++){
-    let result = await think.middleware.exec(list[i], http, data);
-    //prevent next middlewares invoked in hook
-    if(result === null){
-      break;
-    }else if (result !== undefined) {
-      data = result;
-    }
-  }
-  return data;
+  return _execItemMiddleware(list, 0, http, data);
 };
-
 
 
 /**
