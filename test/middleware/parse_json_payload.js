@@ -123,4 +123,75 @@ describe('middleware/parse_json_payload', function(){
       })
     })
   })
+  it('parse_json_payload empty', function(done){
+    getHttp('', {
+      payload: ''
+    }).then(function(http){
+      think.middleware('parse_json_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {});
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
+    }).catch(function(err){
+      console.log(err.stack)
+    })
+  })
+  it('parse_json_payload, empty content-type', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: 'welefen'
+    }).then(function(http){
+      think.middleware('parse_json_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {});
+        done();
+      })
+    })
+  })
+  it('parse_json_payload, has content-type, but payload is querystring', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: 'welefen=suredy',
+      headers: {
+        'content-type': 'application/json'
+      }
+    }).then(function(http){
+      think.middleware('parse_json_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {welefen: 'suredy'});
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
+    }).catch(function(err){
+      console.log(err.stack)
+    })
+  })
+  it('parse_json_payload, has payload', function(done){
+    getHttp({
+      post: {
+        json_content_type: ['application/json']
+      },
+    }, {
+      payload: JSON.stringify({name: 'welefen', test: 'haha'}),
+
+       headers: {
+        'content-type': 'application/json'
+      }
+    }).then(function(http){
+      think.middleware('parse_json_payload', http).then(function(data){
+        assert.equal(data, undefined);
+        assert.deepEqual(http._post, {name: 'welefen', test: 'haha'});
+        done();
+      })
+    })
+  })
 })
