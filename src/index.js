@@ -436,13 +436,16 @@ export default class {
    * @return {} []
    */
   captureError(){
-    process.on('uncaughtException', function(err){
+    process.on('uncaughtException', err => {
       let msg = err.message;
       err = think.error(err, 'port:' + think.config('port'));
       think.log(err);
       if(msg.indexOf(' EADDRINUSE ') > -1){
         process.exit();
       }
+    });
+    process.on('unhandledRejection', err => {
+      think.log(err);
     });
   }
   /**
