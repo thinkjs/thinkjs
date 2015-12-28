@@ -3,64 +3,6 @@ import os from 'os';
 import path from 'path';
 import querystring from 'querystring';
 
-import multiparty from 'multiparty';
-/**
- * parse data by form
- * @param  {} http []
- * @return {}      []
- */
-think.middleware('parse_form_payload', http => {
-
-  if(!http.req.readable){
-    return;
-  }
-
-  let multiReg = /^multipart\/(form-data|related);\s*boundary=(?:"([^"]+)"|([^;]+))$/i;
-  //file upload by form or FormData
-  if (!multiReg.test(http.req.headers['content-type'])) {
-    return;
-  }
-
-  let deferred = think.defer();
-  let uploadDir = think.config('post.file_upload_path') || (os.tmpdir() + think.sep + 'thinkjs' + think.sep + 'upload');
-  think.mkdir(uploadDir);
-  
-  let postConfig = think.config('post');
-  let form = new multiparty.Form({
-    maxFieldsSize: postConfig.max_fields_size,
-    maxFields: postConfig.max_fields,
-    maxFilesSize: postConfig.max_file_size,
-    uploadDir: uploadDir
-  });
-  //support for file with multiple="multiple"
-  let files = http._file;
-  form.on('file', (name, value) => {
-    if (name in files) {
-      if (!think.isArray(files[name])) {
-        files[name] = [files[name]];
-      }
-      files[name].push(value);
-    }else{
-      files[name] = value;
-    }
-  });
-  form.on('field', (name, value) => {
-    http._post[name] = value;
-  });
-  form.on('close', () => {
-    deferred.resolve(null);
-  });
-  form.on('error', err => {
-    http.res.statusCode = 400;
-    http.end();
-    //log error
-    if(http.config('post.log_error')){
-      think.log(err);
-    }
-  });
-  form.parse(http.req);
-  return deferred.promise;
-});
 
 
 /**
