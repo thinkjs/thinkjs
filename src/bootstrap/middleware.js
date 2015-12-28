@@ -65,25 +65,3 @@ think.middleware('output_resource', (http, file) => {
 
   return think.prevent();
 });
-
-
-/**
- * rewrite pathname, remove prefix & suffix
- * @param  {Object} http
- * @return {}         []
- */
-think.middleware('rewrite_pathname', http => {
-  let pathname = http.pathname;
-  if (!pathname || pathname === '/') {
-    return;
-  }
-  let prefix = http.config('pathname_prefix');
-  if (prefix && pathname.indexOf(prefix) === 0) {
-    pathname = pathname.substr(prefix.length);
-  }
-  let suffix = http.config('pathname_suffix');
-  if (suffix && pathname.substr(0 - suffix.length) === suffix) {
-    pathname = pathname.substr(0, pathname.length - suffix.length);
-  }
-  http.pathname = pathname;
-});

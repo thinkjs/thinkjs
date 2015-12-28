@@ -224,69 +224,6 @@ describe('bootstrap/middleware.js', function(){
     })
   })
 
-
-  it('rewrite_pathname, empty pathname', function(done){
-    getHttp({}, {
-      pathname: ''
-    }).then(function(http){
-      think.middleware('rewrite_pathname', http).then(function(data){
-        assert.equal(data, undefined);
-        done();
-      })
-    })
-  })
-  it('rewrite_pathname, pathname', function(done){
-    getHttp({
-      pathname_prefix: '',
-      pathname_suffix: ''
-    }, {
-      pathname: 'welefen'
-    }).then(function(http){
-      think.middleware('rewrite_pathname', http).then(function(data){
-        assert.equal(http.pathname, 'welefen');
-        done();
-      })
-    })
-  })
-  it('rewrite_pathname, pathname, has prefix', function(done){
-    getHttp({
-      pathname_prefix: '/test',
-      pathname_suffix: ''
-    }, {
-      pathname: '/test/welefen'
-    }).then(function(http){
-      think.middleware('rewrite_pathname', http).then(function(data){
-        assert.equal(http.pathname, '/welefen');
-        done();
-      })
-    })
-  })
-  it('rewrite_pathname, pathname, has suffix', function(done){
-    getHttp({
-      pathname_prefix: '',
-      pathname_suffix: '.text'
-    }, {
-      pathname: '/test/welefen.text'
-    }).then(function(http){
-      think.middleware('rewrite_pathname', http).then(function(data){
-        assert.equal(http.pathname, '/test/welefen');
-        done();
-      })
-    })
-  })
-  it('rewrite_pathname, pathname, has prefix & suffix', function(done){
-    getHttp({
-      pathname_prefix: '/test/',
-      pathname_suffix: '.text'
-    }, {
-      pathname: '/test/welefen.text'
-    }).then(function(http){
-      think.middleware('rewrite_pathname', http).then(function(data){
-        assert.equal(http.pathname, 'welefen');
-        done();
-      })
-    })
-  })
    
 
 
