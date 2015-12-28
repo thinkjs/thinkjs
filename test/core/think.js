@@ -1243,44 +1243,47 @@ describe('core/think.js', function(){
 
   describe('think.route', function(){
     it('clear route', function(){
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      var routes = thinkData.route;
       think.route(null);
-      assert.equal(thinkCache(thinkCache.COLLECTION, 'route'), undefined);
-      thinkCache(thinkCache.COLLECTION, 'route', routes);
+      assert.equal(thinkData.route, null);
+      thinkData.route = routes;
     })
     it('set routes, array', function(){
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      var routes = thinkData.route;
       think.route(['welefen']);
-      assert.deepEqual(thinkCache(thinkCache.COLLECTION, 'route'), ['welefen']);
-      thinkCache(thinkCache.COLLECTION, 'route', routes);
+      assert.deepEqual(thinkData.route, ['welefen']);
+      thinkData.route = routes;
     })
     it('get routes, exist', function(){
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
+      var routes = thinkData.route;
       think.route(['welefen']);
       assert.deepEqual(think.route(), ['welefen']);
-      thinkCache(thinkCache.COLLECTION, 'route', routes);
+      thinkData.route = routes;
     })
     it('route config exports is function', function(done){
       think.mode = think.mode_mini;
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
-      thinkCache(thinkCache.COLLECTION, 'route', null);
+      var routes = thinkData.route;
+      think.route(null);
 
+      var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
       delete require.cache[filepath];
 
-      var filepath = think.getPath(undefined, think.dirname.config) + '/route.js';;
+      
       think.mkdir(path.dirname(filepath));
       require('fs').writeFileSync(filepath, 'module.exports=function(){return ["welefen", "suredy"]}');
 
-      think.route().then(function(data){
+      Promise.resolve(think.route()).then(function(data){
         assert.deepEqual(data, ['welefen', 'suredy']);
-        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        thinkData.route = routes;
         think.rmdir(think.APP_PATH).then(done);
+      }).catch(function(err){
+        console.log(err.stack)
       });
     })
     it('route config exports is function 2', function(done){
       think.mode = think.mode_mini;
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
-      thinkCache(thinkCache.COLLECTION, 'route', null);
+      var routes = thinkData.route;
+      think.route(null);
 
       var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
 
@@ -1291,14 +1294,14 @@ describe('core/think.js', function(){
 
       think.route().then(function(data){
         assert.deepEqual(data, ['welefen', 'suredy', '1111']);
-        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        thinkData.route = routes;
         think.rmdir(think.APP_PATH).then(done);
       });
     })
     it('route config exports is function, no return', function(done){
       think.mode = think.mode_mini;
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
-      thinkCache(thinkCache.COLLECTION, 'route', null);
+      var routes = thinkData.route;
+      think.route(null);
 
       var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
 
@@ -1309,14 +1312,14 @@ describe('core/think.js', function(){
 
       think.route().then(function(data){
         assert.deepEqual(data, []);
-        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        thinkData.route = routes;
         think.rmdir(think.APP_PATH).then(done);
       });
     })
     it('route config exports object', function(done){
       think.mode = think.mode_mini;
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
-      thinkCache(thinkCache.COLLECTION, 'route', null);
+      var routes = thinkData.route;
+      think.route(null);
 
       var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';;
 
@@ -1327,14 +1330,14 @@ describe('core/think.js', function(){
 
       Promise.resolve(think.route()).then(function(data){
         assert.deepEqual(data, {admin: {reg: /^admin/, children: []}});
-        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        thinkData.route = routes;
         think.rmdir(think.APP_PATH).then(done);
       });
     })
     it('common route is object, load module route', function(done){
       think.mode = think.mode_module;
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
-      thinkCache(thinkCache.COLLECTION, 'route', null);
+      var routes = thinkData.route;
+      think.route(null);
 
       var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';
       var adminpath = think.getPath('admin', think.dirname.config) + think.sep + 'route.js';
@@ -1348,14 +1351,14 @@ describe('core/think.js', function(){
 
       Promise.resolve(think.route()).then(function(data){
         assert.deepEqual(data, {admin: {reg: /^admin/, children: [[/^admin\/index/, "admin/index/list"]]}});
-        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        thinkData.route = routes;
         think.rmdir(think.APP_PATH).then(done);
       });
     })
     it('common route is object, load module route, module route not exist', function(done){
       think.mode = think.mode_module;
-      var routes = thinkCache(thinkCache.COLLECTION, 'route');
-      thinkCache(thinkCache.COLLECTION, 'route', null);
+      var routes = thinkData.route;
+      think.route(null);
 
       var filepath = think.getPath(undefined, think.dirname.config) + think.sep + 'route.js';
       delete require.cache[filepath];
@@ -1365,7 +1368,7 @@ describe('core/think.js', function(){
 
       Promise.resolve(think.route()).then(function(data){
         assert.deepEqual(data, {test: {reg: /^admin/, children: []}});
-        thinkCache(thinkCache.COLLECTION, 'route', routes);
+        thinkData.route = routes;
         think.rmdir(think.APP_PATH).then(done);
       });
     })

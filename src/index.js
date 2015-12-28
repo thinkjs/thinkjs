@@ -399,8 +399,7 @@ export default class {
     thinkData.hook = {};
     thinkData.template = {};
     thinkData.middleware = {};
-
-    think.route(null);
+    thinkData.route = null;
   }
   /**
    * load all config or modules

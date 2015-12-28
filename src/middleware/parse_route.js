@@ -30,10 +30,16 @@ export default class extends think.middleware.base {
    * @return {Promise} []
    */
   run(){
+    this.cleanPathname();
+
     if (!this.config('route_on')) {
       return this.parsePathname();
     }
+
     let rules = think.route();
+    if(think.isEmpty(rules)){
+      return this.parsePathname();
+    }
     return this.parse(rules);
   }
   /**
@@ -42,7 +48,6 @@ export default class extends think.middleware.base {
    * @return {}        []
    */
   parse(rules){
-    this.cleanPathname();
     if(think.isArray(rules)){
       return this.parseRules(rules);
     }
@@ -94,6 +99,10 @@ export default class extends think.middleware.base {
    */
   cleanPathname(){
     let pathname = this.http.pathname;
+    if(pathname === '/'){
+      this.http.pathname = '';
+      return;
+    }
     if (pathname[0] === '/') {
       pathname = pathname.slice(1);
     }
@@ -106,8 +115,8 @@ export default class extends think.middleware.base {
    * parse pathname
    * @return {} []
    */
-  async parsePathname(){
-    let pathname = this.http.pathname, http = this.http;
+  parsePathname(){
+    let http = this.http, pathname = http.pathname;
     if (!pathname) {
       this.http.module = this.getModule();
       this.http.controller = this.getController();

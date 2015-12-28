@@ -266,7 +266,7 @@ describe('core/app.js', function(){
   //     done();
   //   })
   // })
-  it('run, domain error', function(done){
+  it('run, domain error, not use', function(done){
     var instance = new App({module: 'home', controller: 'test', action: 'list_add7', hostname: '127.0.0.1', header: function(){}});
     var flag = false;
     muk(think, 'statusAction', function(status, http, log){
@@ -288,7 +288,7 @@ describe('core/app.js', function(){
     })
     instance.run();
     muk.restore();
-    assert.equal(flag, true)
+    assert.equal(flag, false)
     done();
   })
   it('run, normal', function(done){

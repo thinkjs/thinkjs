@@ -15,6 +15,7 @@ import base from './base.js';
 import httpBase from './http_base.js';
 import Cookie from '../util/cookie.js';
 import Http from './http.js';
+import Await from '../util/await.js';
 import './think_cache.js';
 import './think_data.js';
 
@@ -974,22 +975,20 @@ think.alias = (type, paths, slash) => {
  * 
  * @return {} []
  */
-let _getDynamicRoute = (fn, key) => {
-  return think.await('route', () => {
-    return think.co(fn()).then((route = []) => {
-      thinkCache(thinkCache.COLLECTION, key, route);
-      return route;
-    });
+let _getDynamicRoute = fn => {
+  return think.co(fn()).then((route = []) => {
+    thinkData.route = route;
+    return route;
   });
 };
 
-let _getModuleRoute = (config, key) => {
+let _getModuleRoute = config => {
   for(let module in config){
     let filepath = think.getPath(module, think.dirname.config) + '/route.js';
     let moduleConfig = think.safeRequire(filepath);
     config[module].children = moduleConfig || [];
   }
-  thinkCache(thinkCache.COLLECTION, key, config);
+  thinkData.route = config;
   return config;
 };
 /**
@@ -997,38 +996,38 @@ let _getModuleRoute = (config, key) => {
  * @param  {} key []
  * @return {}     []
  */
-let _getRoute = key => {
+let _getRoute = () => {
   let file = think.getPath(undefined, think.dirname.config) + '/route.js';
   let config = think.safeRequire(file) || [];
 
   //route config is funciton, may be is dynamic save in db
   if (think.isFunction(config)) {
-    return _getDynamicRoute(config, key);
+    return _getDynamicRoute(config);
   }
   //get module route config
   if(think.isObject(config) && think.mode === think.mode_module){
-    return _getModuleRoute(config, key);
+    return _getModuleRoute(config);
   }
-  thinkCache(thinkCache.COLLECTION, key, config);
+  thinkData.route = config;
   return config;
 };
 
 think.route = routes => {
-  let key = 'route';
+  //remove route
   if(routes === null){
-    thinkCache(thinkCache.COLLECTION, key, null);
+    thinkData.route = null;
     return;
   }
   //set route
   if (think.isArray(routes) || think.isObject(routes)) {
-    thinkCache(thinkCache.COLLECTION, key, routes);
+    thinkData.route = routes;
     return;
   }
-  routes = thinkCache(thinkCache.COLLECTION, key);
-  if (routes) {
-    return routes;
+  //get route
+  if (thinkData.route) {
+    return thinkData.route;
   }
-  return _getRoute(key);
+  return _getRoute();
 };
 
 
@@ -1449,12 +1448,7 @@ think.validate = (name, callback) => {
  * @return {Promise}            []
  */
 think.await = (key, callback) => {
-  let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
-  if(!awaitInstance){
-    let Await = think.require('await');
-    awaitInstance = new Await();
-    thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
-  }
+  let awaitInstance = new Await();
   return awaitInstance.run(key, callback);
 };
 

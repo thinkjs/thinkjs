@@ -26,9 +26,10 @@ thinkData.alias = {};
 thinkData.export = {};
 /**
  * store route
+ * default is null, can not set [] or {}
  * @type {Object}
  */
-thinkData.route = {};
+thinkData.route = null;
 /**
  * store middleware, which dynamic registed
  * @type {Object}
