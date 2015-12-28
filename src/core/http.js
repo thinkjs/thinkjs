@@ -75,7 +75,6 @@ export default class {
     this._lang = ''; //language
     this._langAsViewPath = false; //language as view path
     this._config = null; // config
-    this._middleware = undefined; //middleware exec data
     this._error = undefined; //error message
     this._theme = undefined; //theme
     this.error = null; //error object
