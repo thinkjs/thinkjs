@@ -16,6 +16,8 @@ let config = {
   service_on: true, //Service available
   logic_on: true, //enable logic
 
+  domain_on: false, //use domain
+
   timeout: 120, //120 seconds
 
   auto_reload: false, //file auto reload

@@ -153,6 +153,16 @@ export default class extends think.http.base {
     await this.hook('response_end');
   }
   /**
+   * exec error
+   * @param  {Error} err []
+   * @return {}     []
+   */
+  execError(err){
+    let http = this.http;
+    http.error = err;
+    think.statusAction(500, http, true);
+  }
+  /**
    * run
    * @return {} []
    */
@@ -160,17 +170,21 @@ export default class extends think.http.base {
     let http = this.http;
     http.header('X-Powered-By', `thinkjs-${think.version}`);
     
-    let instance = domain.create();
-    instance.on('error', err => {
-      http.error = err;
-      think.statusAction(500, http, true);
-    });
-    instance.run(() => {
-      this.exec().catch(err => {
-        http.error = err;
-        think.statusAction(500, http, true);
+    if(think.config('domain_on')){
+      let instance = domain.create();
+      instance.on('error', err => {
+        this.execError(err);
       });
-    });
+      instance.run(() => {
+        this.exec().catch(err => {
+          this.execError(err);
+        });
+      });
+    }else{
+      this.exec().catch(err => {
+        this.execError(err);
+      });
+    }
   }
   /**
    * create server
