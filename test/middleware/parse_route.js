@@ -624,9 +624,9 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
-  it('route_on on, rules is object, has reg 3, mode_mini', function(done){
+  it('route_on on, rules is object, has reg 3, mode_normal', function(done){
     muk(think, 'module', ['admin']);
-    muk(think, 'mode', think.mode_mini);
+    muk(think, 'mode', think.mode_normal);
     muk(think, 'route', function(){
       return {
         admin: {
@@ -653,7 +653,7 @@ describe('middleware/parse_route', function(){
 
   it('route_on on, rules is object, has reg 3, action has uppercases', function(done){
     muk(think, 'module', ['admin']);
-    muk(think, 'mode', think.mode_mini);
+    muk(think, 'mode', think.mode_normal);
     muk(think, 'route', function(){
       return {
         admin: {

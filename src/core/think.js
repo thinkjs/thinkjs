@@ -82,8 +82,6 @@ think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
  * @type {Boolean}
  */
 think.mode = 0x0001;
-//mini mode, no module
-think.mode_mini = 0x0001;
 //normal mode
 think.mode_normal = 0x0002;
 //module mode
@@ -291,25 +289,11 @@ think.lookClass = (name, type, module, base) => {
  * @return {String} []
  */
 think.getPath = (module, type = think.dirname.controller, prefix = '') => {
-  switch(think.mode){
-    case think.mode_mini:
-      return `${think.APP_PATH}${prefix}${think.sep}${type}`;
-    case think.mode_normal:
-      let filepath = `${think.APP_PATH}${prefix}${think.sep}${type}`;
-      switch(type){
-        case think.dirname.controller:
-        case think.dirname.logic:
-        case think.dirname.service:
-        case think.dirname.view:
-          module = module || think.config('default_module');
-          filepath += think.sep + module;
-          break;
-      }
-      return filepath;
-    case think.mode_module:
-      module = module || think.dirname.common;
-      return `${think.APP_PATH}${prefix}${think.sep}${module}${think.sep}${type}`;
+  let mod = '';
+  if(think.mode === think.mode_module){
+    mod = (module || think.dirname.common) + think.sep;
   }
+  return `${think.APP_PATH}${prefix}${think.sep}${mod}${type}`;
 };
 
 

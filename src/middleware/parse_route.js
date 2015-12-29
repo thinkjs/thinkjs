@@ -126,7 +126,7 @@ export default class extends think.middleware.base {
     let paths = pathname.split('/');
     let module, controller, action;
 
-    if (think.mode !== think.mode_mini) {
+    if (think.mode === think.mode_module) {
       module = paths[0].toLowerCase();
       if(this.module){
         if(this.module === module){
@@ -290,7 +290,7 @@ export default class extends think.middleware.base {
    * @return {String}        []
    */
    getModule(module){
-    if (!module || think.mode === think.mode_mini) {
+    if (!module || think.mode === think.mode_normal) {
       return think.config('default_module');
     }
     this.checkLowerCase(module);

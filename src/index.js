@@ -49,13 +49,7 @@ export default class {
   getMode(){
     let filepath = `${think.APP_PATH}/${think.dirname.controller}`;
     if (think.isDir(filepath)) {
-      let files = fs.readdirSync(filepath);
-      let flag = files.some(file => {
-        if (think.isDir(`${filepath}/${file}`)) {
-          return true;
-        }
-      });
-      return flag ? think.mode_normal : think.mode_mini;
+      return think.mode_normal;
     }
     return think.mode_module;
   }
@@ -168,14 +162,11 @@ export default class {
    */
   getModule(){
     //only have default module in mini mode
-    if (think.mode === think.mode_mini) {
+    if (think.mode === think.mode_normal) {
       think.module = [think.config('default_module')];
       return think.module;
     }
     let modulePath = think.APP_PATH;
-    if (think.mode === think.mode_normal) {
-      modulePath += `${sep}${think.dirname.controller}`;
-    }
     if(!think.isDir(modulePath)){
       return [];
     }

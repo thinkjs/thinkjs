@@ -43,23 +43,13 @@ describe('index.js', function(){
     var instance = new thinkjs();
     assert.equal(think.cli, '')
   })
-  it('getMode, module', function(){
+  it('getMode, module', function(done){
     var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
+      APP_PATH: __dirname + '/testApp11',
       ROOT_PATH: __dirname
     });
     var mode = instance.getMode();
     assert.equal(mode, think.mode_module);
-  })
-  it('getMode, mini', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mkdir(think.APP_PATH + '/controller');
-    fs.writeFileSync(think.APP_PATH + '/controller/index.js', 'file content');
-    var mode = instance.getMode();
-    assert.equal(mode, think.mode_mini);
     think.rmdir(think.APP_PATH).then(done)
   })
   it('getMode, normal', function(done){
@@ -154,51 +144,6 @@ describe('index.js', function(){
     muk.restore();
     assert.equal(flag, true);
   })
-  // it('autoReload', function(){
-  //   var instance = new thinkjs({
-  //     APP_PATH: __dirname + '/testApp',
-  //     ROOT_PATH: __dirname
-  //   });
-  //   muk(global, 'setInterval', function(fn, time){
-  //     fn();
-  //   })
-  //   instance.autoReload();
-  // })
-  // it('checkAppPath, empty', function(){
-  //   var instance = new thinkjs({
-  //     ROOT_PATH: __dirname,
-  //     APP_PATH: __dirname + '/testApp',
-  //   });
-  //   instance.checkAppPath();
-  // })
-  // it('checkAppPath, empty', function(done){
-  //   var instance = new thinkjs({
-  //     ROOT_PATH: __dirname,
-  //     APP_PATH: __dirname + '/testApp',
-  //   });
-  //   think.mkdir(think.APP_PATH)
-  //   instance.checkAppPath();
-  //   think.rmdir(think.APP_PATH).then(done)
-  // })
-  // it('checkAppPath, has src', function(done){
-  //   var instance = new thinkjs({
-  //     APP_PATH: __dirname + '/testApp',
-  //     ROOT_PATH: __dirname
-  //   });
-  //   think.mkdir(think.ROOT_PATH + '/src');
-  //   var flag = 0;
-  //   muk(think, 'log', function(fn){
-  //     fn({red: function(){}, cyan: function(){}});
-  //     flag++;
-  //   })
-  //   muk(process, 'exit', function(){
-  //     flag++;
-  //   })
-  //   instance.checkAppPath();
-  //   assert.equal(flag, 2);
-  //   muk.restore();
-  //   think.rmdir(think.ROOT_PATH + '/src').then(done);
-  // })
   it('checkFileName, path not exist', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',
@@ -236,12 +181,12 @@ describe('index.js', function(){
     instance.checkFileName();
     think.rmdir(think.APP_PATH).then(done)
   })
-  it('getModule, mini', function(){
+  it('getModule, mode_normal', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',
       ROOT_PATH: __dirname
     });
-    think.mode = think.mode_mini;
+    think.mode = think.mode_normal;
     var modules = instance.getModule();
     assert.deepEqual(modules, ['home'])
   })
@@ -252,34 +197,6 @@ describe('index.js', function(){
     });
     think.mode = think.mode_normal;
     var modules = instance.getModule();
-    assert.deepEqual(modules, [])
-  })
-  it('getModule, normal', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mode = think.mode_normal;
-    think.mkdir(think.APP_PATH + '/controller/home');
-    think.mkdir(think.APP_PATH + '/controller/admin');
-    var modules = instance.getModule();
-    assert.deepEqual(modules, ['admin', 'home']);
-    think.rmdir(think.APP_PATH).then(done);
-  })
-  it('getModule, normal', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mode = think.mode_normal;
-    think.mkdir(think.APP_PATH + '/controller/home');
-    think.mkdir(think.APP_PATH + '/controller/admin');
-    think.config('deny_module_list', ['home'])
-    var modules = instance.getModule();
-    assert.deepEqual(modules, ['admin']);
-    think.rmdir(think.APP_PATH).then(function(){
-      done();
-      think.config('deny_module_list', [])
-    });
+    assert.deepEqual(modules, ['home'])
   })
 })

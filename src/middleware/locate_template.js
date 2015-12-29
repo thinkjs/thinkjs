@@ -31,7 +31,7 @@ export default class extends think.middleware.base {
     //view root path is defined
     if(root_path){
       pathPrefix = path.normalize(root_path);
-      if(think.mode !== think.mode_mini){
+      if(think.mode === think.mode_module){
         pathPrefix += prefix + think.sep + module;
       }
     }else{
