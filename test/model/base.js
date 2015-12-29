@@ -222,6 +222,17 @@ describe('model/base.js', function(){
       return Promise.resolve(data);
     })
   })
+  it('model, dynamic get module', function(done){
+    var model = think.model;
+    think.model = function(name, options, module){
+      assert.equal(name, 'model');
+      assert.equal(module, 'lib');
+    }
+    var instance = new Base('user', think.config('db'));
+    instance.model('model');
+    think.model = model;
+    done();
+  })
   it('getTableFields', function(done){
     instance.getTableFields().then(function(data){
       assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })

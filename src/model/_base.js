@@ -81,7 +81,7 @@ export default class extends think.base {
     }
     if(!module){
       let filename = this.__filename || __filename;
-      let seps = filename.split('/').reverse();
+      let seps = filename.split(think.sep).reverse();
       module = seps[2];
     }
     options = think.extend({}, this.config, options);

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "npm run eslint && npm run test-cov",
-    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/",
+    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/model/base.js",
     "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
     "watch-compile": "npm run compile -- --watch",
     "watch": "npm run watch-compile",
