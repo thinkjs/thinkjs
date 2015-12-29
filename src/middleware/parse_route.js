@@ -148,9 +148,10 @@ export default class extends think.middleware.base {
     if(!pathname){
       return '';
     }
+    let pos = pathname.indexOf('/');
     //search sub controller
-    if(subControllers){
-      for(let i = 0 ,length = subControllers.length, item; i < length; i++){
+    if(pos > -1 && subControllers){
+      for(let i = 0, length = subControllers.length, item; i < length; i++){
         item = subControllers[i];
         if(pathname === item || pathname.indexOf(item + '/') === 0){
           http.pathname = http.pathname.substr(item.length + 1);
@@ -158,7 +159,6 @@ export default class extends think.middleware.base {
         }
       } 
     }
-    let pos = pathname.indexOf('/');
     let controller = pos === -1 ? pathname : pathname.substr(0, pos);
     http.pathname = http.pathname.substr(controller.length + 1);
     return controller;

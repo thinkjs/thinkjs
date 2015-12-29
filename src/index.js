@@ -329,6 +329,13 @@ export default class {
         return true;
       }).map(item => {
         return item.slice(0, -3).replace(/\\/g, '/');
+      }).sort((a, b) => {
+        let al = a.split('/').length;
+        let bl = b.split('/').length;
+        if(al === bl){
+          return a < b ? 1 : -1;
+        }
+        return al < bl ? 1 : -1;
       });
       if(subControllers.length){
         thinkData.subController[module] = subControllers;
