@@ -9,9 +9,10 @@ let {sep} = path;
 let cwd = process.cwd();
 let templatePath = path.dirname(__dirname) + sep + 'template';
 let projectRootPath = './'; //project root path
-let modeList = ['mini', 'normal', 'module'];
+let modeList = ['normal', 'module'];
 
 think.mode = think.mode_module;
+think.ROOT_PATH = cwd;
 
 /**
  * get date time
@@ -204,17 +205,25 @@ let parseAppConfig = () => {
  * @return {String}             []
  */
 let getProjectViewPath = module => {
-  //if(commander.es6){
-    let APP_PATH = think.APP_PATH;
-    think.APP_PATH = projectRootPath + 'view';
-    let viewPath = think.getPath(module, '');
+  let APP_PATH = think.APP_PATH;
 
-    if(think.mode === think.mode_normal){
-      viewPath += '/' + module + '/';
+  think.APP_PATH = projectRootPath + 'view';
+
+  //read view config, view root_path may be changed it.
+  let viewConfigFile = projectRootPath + 'app/common/config/view.js';
+  if(think.isFile(viewConfigFile)){
+    let data = require(path.resolve(cwd, viewConfigFile));
+    let viewRootPath = path.normalize(data.root_path || data.default && data.default.root_path);
+    if(viewRootPath.indexOf(cwd) === 0){
+      viewRootPath = viewRootPath.slice(cwd.length + 1);
     }
-    
-    think.APP_PATH = APP_PATH;
-    return path.normalize(viewPath).slice(0, -1);
+    think.APP_PATH = viewRootPath;
+  }
+  
+  let viewPath = think.getPath(module, '');
+
+  think.APP_PATH = APP_PATH;
+  return path.normalize(viewPath).slice(0, -1);
 };
 
 /**
@@ -243,10 +252,8 @@ let _copyWwwFiles = () => {
 
   copyFile('package.json', projectRootPath + 'package.json');
 
-  let mode = 'mini';
-  if(think.mode === think.mode_normal){
-    mode = 'normal';
-  }else if(think.mode === think.mode_module){
+  let mode = 'normal';
+  if(think.mode === think.mode_module){
     mode = 'module';
   }
   copyFile('thinkjsrc', projectRootPath + '.thinkjsrc', {
@@ -359,6 +366,12 @@ let _copyCommonBootstrapFiles = () => {
  * @return {}             []
  */
 let _createModule = module => {
+  if(think.mode !== think.mode_module){
+    log(colors => {
+      return colors.red('app mode is not module, can not create module.\n');
+    });
+    process.exit();
+  }
   if(isModuleExist(module)){
     log(colors => {
       return colors.red('module `' + module + '` is exist.\n');
@@ -668,7 +681,7 @@ commander.option('-t, --ts', 'use TypeScript for project, used in `new` command'
 commander.option('-r, --rest', 'create rest controller, used in `controller` command');
 commander.option('-M, --mongo', 'create mongo model, used in `model` command');
 commander.option('-R, --relation', 'create relation model, used in `model` command');
-commander.option('-m, --mode <mode>', 'project mode type(mini, normal, module), default is module, used in `new` command', mode => {
+commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is module, used in `new` command', mode => {
   if(modeList.indexOf(mode) === -1){
     console.log('mode value must one of ' + modeList.join(', '));
     process.exit();
