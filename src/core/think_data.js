@@ -45,3 +45,11 @@ thinkData.error = {};
  * @type {Object}
  */
 thinkData.template = {};
+/**
+ * store sorted controllers in module, for parse route which support sub controllers
+ * {
+ *   home: ['test/index', 'test', 'index', 'base']
+ * }
+ * @type {Object}
+ */
+thinkData.controller = {};
