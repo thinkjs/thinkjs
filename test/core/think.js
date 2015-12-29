@@ -1809,13 +1809,13 @@ describe('core/think.js', function(){
   })
   it('think.cache waiting for function, exist 1', function(done){
     think.config('gc.on', false);
-    think.cache('welefen++++', 'welefen', {}).then(function(){
-      return think.cache('welefen++++', function(){
+    think.cache('welefen++++1', 'welefen', {}).then(function(){
+      return think.cache('welefen++++1', function(){
         assert.equal(1, 2)
         return 'suredy';
       }).then(function(data){
         assert.equal(data, 'welefen');
-        return think.cache('welefen++++', null)
+        return think.cache('welefen++++1', null)
       }).then(function(){
         done();
       })
@@ -1829,13 +1829,13 @@ describe('core/think.js', function(){
       muk.restore();
       return adapter(atype, 'file');
     })
-    think.cache('welefen++++', 'welefen', {type: 'file'}).then(function(){
-      return think.cache('welefen++++', function(){
+    think.cache('welefen++++2', 'welefen', {type: 'file'}).then(function(){
+      return think.cache('welefen++++2', function(){
         assert.equal(1, 2)
         return 'suredy';
       }).then(function(data){
         assert.equal(data, 'welefen');
-        return think.cache('welefen++++', null)
+        return think.cache('welefen++++2', null)
       }).then(function(){
         done();
       }).catch(function(err){
