@@ -63,6 +63,11 @@ export default class extends think.middleware.base {
     let pathPrefix = this.getPathPrefix();
     let controller = http.controller.replace(/\//g, think.sep);
 
+    //if file_depr is /, replace to think.sep, avoid error on windows
+    if(file_depr === '/'){
+      file_depr = think.sep;
+    }
+
     // this.display()
     if (!templateFile) {
       return pathPrefix + think.sep + controller + file_depr + http.action + file_ext;

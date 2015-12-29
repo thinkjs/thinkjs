@@ -29,11 +29,11 @@ describe('middleware/locate_template', function(){
     var instance = new Index();
     instance.load();
   })
-  it('mode_normal, file_depr: /', function(done){
+  it('mode_normal, file_depr: ' + think.sep, function(done){
     think.mode = think.mode_normal;
     execMiddleware('locate_template', {
       view: {
-        file_depr: '/',
+        file_depr: think.sep,
         file_ext: '.html'
       }
     }, {
@@ -51,7 +51,7 @@ describe('middleware/locate_template', function(){
     think.mode = think.mode_normal;
     execMiddleware('locate_template', {
       view: {
-        file_depr: '/',
+        file_depr: think.sep,
         file_ext: '.txt'
       }
     }, {
