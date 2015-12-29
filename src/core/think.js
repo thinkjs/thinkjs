@@ -245,42 +245,52 @@ think.Class = (type, clean) => {
     return Class(superClass, methods);
   };
 };
+
+
 /**
  * look up class
  * @param  {String} type   [class type, model, controller, service]
  * @param  {String} module [module name]
  * @return {String}        []
  */
+let _getClass1 = (name, type, module, base) => {
+  let clsPath, cls;
+  // find from current module
+  if (module) {
+    clsPath = `${module}/${type}/${name}`;
+    cls = think.require(clsPath, true);
+    if (cls) {
+      return cls;
+    }
+  }
+  // find from common module
+  module = think.mode !== think.mode_module ? think.config('default_module') : think.dirname.common;
+  let list = [
+    `${module}/${type}/${name}`,
+    `${type}_${name}`,
+    base || `${type}_base`
+  ];
+  for(let i = 0, length = list.length; i < length; i++){
+    cls = think.require(list[i], true);
+    if(cls){
+      return cls;
+    }
+  }
+};
+
 think.lookClass = (name, type, module, base) => {
   let names = name.split('/');
-  switch(names.length){
-    // home/controller/base
-    case 3:
-      return think.require(name);
-    // home/base
-    case 2:
-      return think.require(`${names[0]}/${type}/${names[1]}`);
-    // base
-    case 1:
-      let clsPath, cls;
-      // find from current module
-      if (module) {
-        clsPath = `${module}/${type}/${name}`;
-        cls = think.require(clsPath, true);
-        if (cls) {
-          return cls;
-        }
-      }
-      // find from common module
-      module = think.mode !== think.mode_module ? think.config('default_module') : think.dirname.common;
-      let list = [
-        `${module}/${type}/${name}`,
-        `${type}_${name}`,
-        base || `${type}_base`
-      ];
-      list.some(item => cls = think.require(item, true));
-      return cls;
+  let length = names.length;
+  if(length === 1){
+    return _getClass1(name, type, module, base);
   }
+  if(length === 2 && (think.module.indexOf(names[0]) > -1 || !module)){
+    return think.require(`${names[0]}/${type}/${names[1]}`);
+  }
+  if(length === 3 && (name.indexOf(`/${type}/`) > -1 || !type || !module)){
+    return think.require(name);
+  }
+  return think.require(`${module}/${type}/${name}`);
 };
 /**
  * get common module path

@@ -81,6 +81,9 @@ export default class extends Base {
    * @return {}         []
    */
   cache(name, value, options){
+    if(think.isString(options)){
+      options = {type: options};
+    }
     options = think.extend({}, this.config('cache'), options);
     return think.cache(name, value, options);
   }
@@ -98,9 +101,12 @@ export default class extends Base {
    * @param  {Object} options [model options]
    * @return {Object}         [model instance]
    */
-  model(name = 'base', options = {}){
+  model(name = 'base', options, module){
+    if(think.isString(options)){
+      options = {type: options};
+    }
     options = think.extend({}, this.config('db'), options);
-    return think.model(name, options, this.http.module);
+    return think.model(name, options, module || this.http.module);
   }
   /**
    * get controller
@@ -108,8 +114,8 @@ export default class extends Base {
    * @param  {String} name [controller name]
    * @return {Object}      []
    */
-  controller(name){
-    let Cls = think.lookClass(name, 'controller', this.http.module);
+  controller(name, module){
+    let Cls = think.lookClass(name, 'controller', module || this.http.module);
     return new Cls(this.http);
   }
   /**
@@ -117,7 +123,7 @@ export default class extends Base {
    * @param  {String} name [service name]
    * @return {Object}      []
    */
-  service(name){
-    return think.service(name, this.http, this.http.module);
+  service(name, module){
+    return think.service(name, this.http, module || this.http.module);
   }
 }

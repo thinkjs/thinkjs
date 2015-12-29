@@ -280,19 +280,25 @@ describe('core/think.js', function(){
     delete thinkData.export['module/is/exist'];
   })
   it('think.lookClass("home/group", "controller") not found', function(){
+    let modules = think.module;
+    think.module = ['home'];
     try{
       think.lookClass("home/group", "controller")
     }catch(e){
       assert.equal(e.message.indexOf('home/controller/group') > -1, true);
     }
+    think.module = modules;
   })
   it('think.lookClass("home/group", "service") is function', function(){
+    let modules = think.module;
+    think.module = ['home'];
     thinkData.export['home/service/group'] =function(){
       return 'home/service/group';
     }
     var fn = think.lookClass("home/group", "service");
     assert.equal(fn(), 'home/service/group');
-    delete thinkData.export['home/service/group']
+    delete thinkData.export['home/service/group'];
+    think.module = modules;
   })
   it('think.lookClass("detail", "controller", "homwwwe") not found', function(){
     var cls = think.lookClass('detail', 'controller', 'homwwwe', 'homwwww');
