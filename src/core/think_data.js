@@ -48,8 +48,8 @@ thinkData.template = {};
 /**
  * store sorted controllers in module, for parse route which support sub controllers
  * {
- *   home: ['test/index', 'test', 'index', 'base']
+ *   home: ['test/index']
  * }
  * @type {Object}
  */
-thinkData.controller = {};
+thinkData.subController = {};

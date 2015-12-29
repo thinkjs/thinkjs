@@ -313,6 +313,29 @@ export default class {
     }
   }
   /**
+   * load sub controller
+   * @return {} []
+   */
+  loadSubController(){
+    think.module.forEach(module => {
+      let filepath = think.getPath(module, think.dirname.controller);
+      let subControllers = think.getFiles(filepath).filter(item => {
+        if(item.indexOf(think.sep) === -1){
+          return;
+        }
+        if(path.extname(item) !== '.js'){
+          return;
+        }
+        return true;
+      }).map(item => {
+        return item.slice(0, -3).replace(/\\/g, '/');
+      });
+      if(subControllers.length){
+        thinkData.subController[module] = subControllers;
+      }
+    });
+  }
+  /**
    * load bootstrap
    * @return {} []
    */
@@ -390,6 +413,7 @@ export default class {
     thinkData.hook = {};
     thinkData.template = {};
     thinkData.middleware = {};
+    thinkData.subController = {};
     thinkData.route = null;
   }
   /**
@@ -404,6 +428,7 @@ export default class {
     this.loadAdapter();
     this.loadMiddleware();
     this.loadMVC();
+    this.loadSubController();
     this.loadHook();
     this.loadTemplate();
     this.loadError();
@@ -417,6 +442,7 @@ export default class {
     think.toFastProperties(thinkData.middleware);
     think.toFastProperties(thinkData.error);
     think.toFastProperties(thinkData.template);
+    think.toFastProperties(thinkData.subController);
 
     //console.log(thinkData.alias)
     //console.log(eval('%HasFastProperties(thinkData.template)'))
