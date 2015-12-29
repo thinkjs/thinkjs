@@ -193,7 +193,7 @@ describe('adapter/cache/file.js', function() {
   });
 
   it('custom data timeout', function(done) {
-    var instance = new FileCache(think.extend(think.config('cache'), { timeout: 0.01 }));
+    var instance = new FileCache(think.extend({}, think.config('cache'), { timeout: 0.01 }));
     instance.set('thinkjs3', 'maxzhang', 10).then(function() {
       setTimeout(function() {
         instance.gc();
