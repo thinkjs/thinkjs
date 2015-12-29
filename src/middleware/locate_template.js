@@ -61,23 +61,36 @@ export default class extends think.middleware.base {
     let http = this.http;
     let {file_depr, file_ext} = options;
     let pathPrefix = this.getPathPrefix();
-    
+    let controller = http.controller.replace(/\//g, think.sep);
+
     // this.display()
     if (!templateFile) {
-      return path.normalize(pathPrefix + think.sep + http.controller + file_depr + http.action + file_ext);
+      return pathPrefix + think.sep + controller + file_depr + http.action + file_ext;
     }
     //replace : to /
     templateFile = templateFile.replace(/\:/g, '/');
+
     // this.display('detail')
     // this.display('index/detail')
     // this.display('admin/index/detail')
     // this.display('admin/index/detail.html')
     let paths = templateFile.split('/');
-    let action = paths.pop();
-    let controller = paths.pop() || http.controller;
-    let module = paths.pop() || http.module;
+    let length = paths.length;
+    let action = paths[length - 1];
 
-    if (module !== http.module) {
+    let module;
+    if(length > 1){
+      let index = think.module.indexOf(paths[0]) > -1 ? 1 : 0;
+      if(index){
+        module = paths[0];
+      }
+      let newController = paths.slice(index, length - 1 - index).join('/');
+      if(newController){
+        controller = newController;
+      }
+    }
+
+    if (module && module !== http.module) {
       pathPrefix = this.getPathPrefix(module);
     }
 
@@ -85,6 +98,6 @@ export default class extends think.middleware.base {
     if (action.indexOf('.') === -1) {
       templateFile += file_ext;
     }
-    return path.normalize(templateFile);
+    return templateFile;
   }
 }

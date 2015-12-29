@@ -317,7 +317,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy/zzz').then(function(data){
-      assert.equal(data, think.APP_PATH + think.sep + 'xxx' + think.sep + 'view' + think.sep + 'yyy_zzz.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'home'  + think.sep + 'view' +think.sep + 'xxx' + think.sep + 'yyy_zzz.txt');
       done();
     })
   })
@@ -333,7 +333,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy/zzz.hhh').then(function(data){
-      assert.equal(data, think.APP_PATH + think.sep + 'xxx' + think.sep + 'view' + think.sep + 'yyy_zzz.hhh');
+      assert.equal(data, think.APP_PATH + think.sep  + 'home'  + think.sep + 'view'+ think.sep + 'xxx' + think.sep + 'yyy_zzz.hhh');
       done();
     })
   })
@@ -349,7 +349,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx:yyy:zzz.hhh').then(function(data){
-      assert.equal(data, think.APP_PATH + think.sep + 'xxx' + think.sep + 'view' + think.sep + 'yyy_zzz.hhh');
+      assert.equal(data, think.APP_PATH + think.sep + 'home'  + think.sep + 'view' + think.sep + 'xxx'  + think.sep + 'yyy_zzz.hhh');
       done();
     })
   })
