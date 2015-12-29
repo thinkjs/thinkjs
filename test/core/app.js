@@ -238,111 +238,91 @@ describe('core/app.js', function(){
       done();
     })
   })
-  // it('run, service off', function(done){
-  //   var instance = new App({module: 'home', controller: 'test', action: 'list_add5', header: function(){}});
-  //   think.config('service_on', false);
+  // it('run, domain error, not use', function(done){
+  //   var instance = new App({
+  //     pathname: '', 
+  //     module: 'home', 
+  //     controller: 'test', 
+  //     action: 'list_add7', 
+  //     hostname: '127.0.0.1', 
+  //     url: '',
+  //     header: function(){}
+  //   });
+  //   var flag = false;
   //   muk(think, 'statusAction', function(status, http, log){
-  //     assert.equal(status, 503);
-  //     assert.equal(log, undefined);
+  //     assert.equal(status, 500);
+  //     assert.equal(log, true);
+  //     flag = true;
   //     return Promise.resolve();
   //   })
-  //   instance.run().then(function(){
-  //     think.config('service_on', true);
-  //     muk.restore();
-  //     done();
+  //   var domain = require('domain');
+  //   muk(domain, 'create', function(){
+  //     return {
+  //       on: function(type, callback){
+  //         callback && callback(new Error());
+  //       },
+  //       run: function(){
+
+  //       }
+  //     }
   //   })
+  //   instance.run();
+  //   muk.restore();
+  //   assert.equal(flag, false)
+  //   done();
   // })
-  // it('run, proxy on', function(done){
-  //   var instance = new App({module: 'home', controller: 'test', action: 'list_add6', hostname: '127.0.0.1', header: function(){}});
-  //   think.config('proxy_on', true);
+  // it('run, normal', function(done){
+  //   var instance = new App({module: 'home', controller: 'test', action: 'list_add8', hostname: '127.0.0.1', header: function(){}});
+  //   var domain = require('domain');
+  //   var flag = false;
+  //   instance.exec = function(){
+  //     flag = true;
+  //     return Promise.resolve();
+  //   }
+  //   muk(domain, 'create', function(){
+  //     return {
+  //       on: function(type, callback){
+  //         //callback && callback(new Error());
+  //       },
+  //       run: function(callback){
+  //         callback && callback();
+  //       }
+  //     }
+  //   })
+  //   instance.run();
+  //   muk.restore();
+  //   assert.equal(flag, true)
+  //   done();
+  // })
+  // it('run, error', function(done){
+  //   var instance = new App({module: 'home', controller: 'test', action: 'list_add9', hostname: '127.0.0.1', header: function(){}});
+  //   var domain = require('domain');
+  //   var flag = false;
+
   //   muk(think, 'statusAction', function(status, http, log){
-  //     assert.equal(status, 403);
-  //     assert.equal(log, undefined);
+  //     assert.equal(status, 500);
+  //     assert.equal(log, true);
+  //     flag = true;
   //     return Promise.resolve();
   //   })
-  //   instance.run().then(function(){
-  //     think.config('proxy_on', false);
-  //     muk.restore();
-  //     done();
+  //   instance.exec = function(){
+  //     return Promise.reject(new Error());
+  //   }
+  //   muk(domain, 'create', function(){
+  //     return {
+  //       on: function(type, callback){
+  //         //callback && callback(new Error());
+  //       },
+  //       run: function(callback){
+  //         callback && callback();
+  //       }
+  //     }
   //   })
+  //   instance.run();
+  //   setTimeout(function(){
+  //     muk.restore();
+  //     assert.equal(flag, true)
+  //     done();
+  // }, 50)
   // })
-  it('run, domain error, not use', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add7', hostname: '127.0.0.1', header: function(){}});
-    var flag = false;
-    muk(think, 'statusAction', function(status, http, log){
-      assert.equal(status, 500);
-      assert.equal(log, true);
-      flag = true;
-      return Promise.resolve();
-    })
-    var domain = require('domain');
-    muk(domain, 'create', function(){
-      return {
-        on: function(type, callback){
-          callback && callback(new Error());
-        },
-        run: function(){
-
-        }
-      }
-    })
-    instance.run();
-    muk.restore();
-    assert.equal(flag, false)
-    done();
-  })
-  it('run, normal', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add8', hostname: '127.0.0.1', header: function(){}});
-    var domain = require('domain');
-    var flag = false;
-    instance.exec = function(){
-      flag = true;
-      return Promise.resolve();
-    }
-    muk(domain, 'create', function(){
-      return {
-        on: function(type, callback){
-          //callback && callback(new Error());
-        },
-        run: function(callback){
-          callback && callback();
-        }
-      }
-    })
-    instance.run();
-    muk.restore();
-    assert.equal(flag, true)
-    done();
-  })
-  it('run, error', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list_add9', hostname: '127.0.0.1', header: function(){}});
-    var domain = require('domain');
-    var flag = false;
-
-    muk(think, 'statusAction', function(status, http, log){
-      assert.equal(status, 500);
-      assert.equal(log, true);
-      flag = true;
-      return Promise.resolve();
-    })
-    instance.exec = function(){
-      return Promise.reject(new Error());
-    }
-    muk(domain, 'create', function(){
-      return {
-        on: function(type, callback){
-          //callback && callback(new Error());
-        },
-        run: function(callback){
-          callback && callback();
-        }
-      }
-    })
-    instance.run();
-    setTimeout(function(){
-      muk.restore();
-      assert.equal(flag, true)
-      done();
-  }, 50)
-  })
 })
