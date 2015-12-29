@@ -17,9 +17,7 @@ export default class extends think.adapter.base {
     let config = think.parseConfig(defaultConf, think.config('view'), extraConf);
     //compatibility with view.options
     if(!think.isEmpty(config.options)){
-      think.log(colors => {
-        return colors.yellow('[DEPRECATED]') + ` view.options is deprecated, use view.adapter.${config.type} instead`;
-      });
+      think.log(`view.options is deprecated, use view.adapter.${config.type} instead`, 'WARNING');
       config = think.extend(config, config.options);
     }
     return config;

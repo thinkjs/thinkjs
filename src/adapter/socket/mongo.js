@@ -53,7 +53,7 @@ export default class extends Base {
       hostStr = config.host + ':' + config.port;
     }
 
-    let str = `mongodb://${auth}${hostStr}/${config.name}${options}`;
+    let str = `mongodb://${auth}${hostStr}/${config.database}${options}`;
 
     return think.await(str, () => {
       let fn = think.promisify(mongo.MongoClient.connect, mongo.MongoClient);

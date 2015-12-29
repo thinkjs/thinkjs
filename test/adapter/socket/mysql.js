@@ -103,7 +103,7 @@ describe('adapter/socket/mysql', function(){
         port: 3306,
         user: 'root',
         pwd: '123',
-        name: 'thinkjs'
+        database: 'thinkjs'
       };
       var socket = new MysqlSocket(config);
       assert.deepEqual(socket.config, {

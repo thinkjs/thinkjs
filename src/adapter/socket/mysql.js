@@ -19,10 +19,6 @@ export default class extends Base {
       config.password = config.pwd;
       delete config.pwd;
     }
-    if (config.name) {
-      config.database = config.name;
-      delete config.name;
-    }
     //merge config
     this.config = think.extend({
       host: '127.0.0.1',

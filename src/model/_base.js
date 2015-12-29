@@ -53,6 +53,12 @@ export default class extends think.base {
       config = name;
       name = '';
     }
+    
+    if(config.name && !config.database){
+      config.database = config.name;
+      delete config.name;
+      think.log(`db.name is deprecated, use db.database instead`, 'WARNING');
+    }
 
     this.config = config;
     this._db = null;

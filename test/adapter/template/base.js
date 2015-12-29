@@ -28,13 +28,8 @@ describe('adapter/template/base.js', function(){
   })
   it('merge config', function(done){
     var instance = new baseTemplate();
-    muk(think, 'log', function(callback){
-      var msg = callback && callback({
-        yellow: function(msg){
-          return msg
-        }
-      });
-      assert.equal(msg.indexOf('[DEPRECATED]') > -1, true);
+    muk(think, 'log', function(msg){
+      assert.equal(msg.indexOf('view.options') > -1, true);
     })
     var data = instance.parseConfig({
       options: {name: 111}

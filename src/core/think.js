@@ -465,7 +465,11 @@ think.log = (msg, type, showTime) => {
     msg += ' ' + colors.green(`${time}ms`);
   }
   if(type){
-    console.log(dateTime + colors.cyan(`[${type}] `) + msg);
+    if(type === 'WARNING'){
+      console.warn(dateTime + colors.yellow(`[${type}] `) + msg);
+    }else{
+      console.log(dateTime + colors.cyan(`[${type}] `) + msg);
+    }
   }else{
     console.log(dateTime + msg); 
   }
