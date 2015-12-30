@@ -39,7 +39,7 @@ export default class extends Base {
     }
 
     let config = this.config;
-    let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}`;
+    let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
     if (this.pool) {
       return think.await(str, () => {
