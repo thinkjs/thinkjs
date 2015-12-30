@@ -911,7 +911,7 @@ think.alias = (type, paths, slash) => {
   paths.forEach(path => {
     let files = think.getFiles(path);
     files.forEach(file => {
-      if(file.slice(-3) !== '.js' || file[0] === '_'){
+      if(file.slice(-3) !== '.js' || file[0] === '_' || file.indexOf(think.sep) > -1){
         return;
       }
       let name = file.slice(0, -3);
