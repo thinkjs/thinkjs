@@ -11,5 +11,6 @@ export default {
   memjs: '0.8.7',
   sockjs: '0.3.15',
   nunjucks: '2.2.0',
-  'socket.io': '1.3.7'
+  'socket.io': '1.3.7',
+  pg: '4.4.3'
 };
