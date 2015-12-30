@@ -44,6 +44,18 @@ export default class extends Base {
     return schema;
   }
   /**
+   * start transaction
+   * @return {Promise} []
+   */
+  startTrans(){
+    if (this.transTimes === 0) {
+      this.transTimes++;
+      return this.execute('BEGIN');
+    }
+    this.transTimes++;
+    return Promise.resolve();
+  }
+  /**
    * parse limit
    * @param  {String} limit []
    * @return {String}       []
