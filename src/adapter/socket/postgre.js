@@ -15,9 +15,8 @@ export default class extends Base {
   init(config){
     super.init(config);
 
-    config = think.extend({
-      port: 5432
-    }, config);
+    config.port = config.port || 5432;
+
     this.config = config;
   }
   /**
