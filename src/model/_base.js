@@ -54,10 +54,18 @@ export default class extends think.base {
       name = '';
     }
     
+    //change property name `name`
     if(config.name && !config.database){
       config.database = config.name;
       delete config.name;
       think.log(`db.name is deprecated, use db.database instead`, 'WARNING');
+    }
+
+    //check property name `fields`
+    if(!think.isEmpty(this.fields)){
+      this.schema = this.fields;
+      delete this.fields;
+      think.log(`fields property is deprecated, use schema instead`, 'WARNING');
     }
 
     this.config = config;
