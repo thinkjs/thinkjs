@@ -9,31 +9,31 @@ import Base from './_base.js';
  */
 export default class extends Base {
   /**
-   * get table fields
+   * get table schema
    * @param  {String} table [table name]
    * @return {}       []
    */
-  async getTableFields(table){
+  async getSchema(table){
     table = table || this.getTableName();
-    let storeKey = `${this.config.type}_${table}_fields`;
-    let fields = thinkCache(thinkCache.TABLE, storeKey);
-    if(!fields){
-      fields = await this.db().getFields(table);
-      thinkCache(thinkCache.TABLE, storeKey, fields);
+    let storeKey = `${this.config.type}_${table}_schema`;
+    let schema = thinkCache(thinkCache.TABLE, storeKey);
+    if(!schema){
+      schema = await this.db().getSchema(table);
+      thinkCache(thinkCache.TABLE, storeKey, schema);
     }
     if(table !== this.getTableName()){
-      return fields;
+      return schema;
     }
     //get primary key
-    for(let name in fields){
-      if(fields[name].primary){
+    for(let name in schema){
+      if(schema[name].primary){
         this.pk = name;
         break;
       }
     }
-    //merge user set fields config
-    this.fields = think.extend({}, fields, this.fields);
-    return this.fields;
+    //merge user set schema config
+    this.schema = think.extend({}, schema, this.schema);
+    return this.schema;
   }
   /**
    * get unique field
@@ -41,9 +41,9 @@ export default class extends Base {
    * @return {Promise}      []
    */
   async getUniqueField(data){
-    let fields = await this.getTableFields();
-    for(let name in fields){
-      if(fields[name].unique && (!data || data[name])){
+    let schema = await this.getSchema();
+    for(let name in schema){
+      if(schema[name].unique && (!data || data[name])){
         return name;
       }
     }
@@ -63,7 +63,7 @@ export default class extends Base {
     if(this.pk !== 'id'){
       return Promise.resolve(this.pk);
     }
-    return this.getTableFields().then(() => this.pk);
+    return this.getSchema().then(() => this.pk);
   }
   /**
    * build sql
@@ -92,8 +92,8 @@ export default class extends Base {
     options.tablePrefix = this.getTablePrefix();
     options.model = this.getModelName();
     
-    //get table fields can not use table alias
-    let fields = await this.getTableFields(options.table);
+    //get table schema can not use table alias
+    let schema = await this.getSchema(options.table);
 
     //table alias
     if (options.alias) {
@@ -104,7 +104,7 @@ export default class extends Base {
       options = think.extend(options, this.parseWhereOptions(oriOpts, extraOptions));
     }
     //check where key
-    if(options.where && !think.isEmpty(fields)){
+    if(options.where && !think.isEmpty(schema)){
       let keyReg = /^[\w\.\|\&]+$/;
       for(let key in options.where){
         if(!keyReg.test(key)){
@@ -118,13 +118,13 @@ export default class extends Base {
       //reset fieldReverse value
       options.fieldReverse = false;
       let optionsField = options.field;
-      options.field = Object.keys(fields).filter(item => {
+      options.field = Object.keys(schema).filter(item => {
         if(optionsField.indexOf(item) === -1){
           return item;
         }
       });
     }
-    return this.optionsFilter(options, fields);
+    return this.optionsFilter(options, schema);
   }
   /**
    * parse where options
@@ -147,7 +147,7 @@ export default class extends Base {
    * @return {}      []
    */
   parseType(key, value){
-    let fieldType = this.fields[key].type || '';
+    let fieldType = this.schema[key].type || '';
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
       return parseInt(value, 10) || 0;
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
@@ -168,7 +168,7 @@ export default class extends Base {
     for(let key in data){
       let val = data[key];
       //remove data not in fields
-      if (!this.fields[key]) {
+      if (!this.schema[key]) {
         delete data[key];
       }else if(think.isNumber(val) || think.isString(val) || think.isBoolean(val)){
         data[key] = this.parseType(key, val);
@@ -374,7 +374,7 @@ export default class extends Base {
       promise = options.parseOptions();
     }
     let data = await Promise.all([this.parseOptions(), promise]);
-    let fields = data[0].field || Object.keys(this.fields);
+    let fields = data[0].field || Object.keys(this.schema);
     return this.db().selectAdd(fields, data[0].table, data[1]);
   }
   /**

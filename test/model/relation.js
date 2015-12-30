@@ -113,7 +113,7 @@ describe('model/relation.js', function(){
   it('getRelation, HAS_ONE, _relationName is true', function(done){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: think.model.HAS_ONE}
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance._getHasOneRelation = function(data, opts, options){
@@ -131,7 +131,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: think.model.HAS_ONE}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance._getHasOneRelation = function(data, opts, options){
@@ -149,7 +149,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: think.model.HAS_ONE}
     instance._relationName = ['user'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance.getRelation([{name: 1}], {}).then(function(data){
@@ -167,7 +167,7 @@ describe('model/relation.js', function(){
       assert.deepEqual(opts, {"name":"cate","type":think.model.HAS_ONE,"key":"id","fKey":"user_id","relation":true})
       return Promise.resolve();
     }
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance.getRelation([{name: 1}], {}).then(function(data){
@@ -179,7 +179,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: {type: think.model.HAS_ONE}}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance.getRelation({id: 1, value: 'thinkjs', cate: {user_id: 10}}).then(function(data){
@@ -191,7 +191,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: {type: think.model.HAS_ONE, page: function(){return 10}}}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance._getHasOneRelation = function(data, opts, options){
@@ -208,7 +208,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: {type: think.model.HAS_ONE, relation: false}}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance.model = function(){
@@ -236,7 +236,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: think.model.BELONG_TO}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance._getBelongsToRelation = function(data, opts, options){
@@ -254,7 +254,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: think.model.HAS_MANY}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance._getHasManyRelation = function(data, opts, options){
@@ -272,7 +272,7 @@ describe('model/relation.js', function(){
     var instance = new Relation('user', think.config('db'));
     instance.relation = {cate: think.model.MANY_TO_MANY}
     instance._relationName = ['cate'];
-    instance.getTableFields = function(){
+    instance.getSchema = function(){
       return Promise.resolve();
     }
     instance._getManyToManyRelation = function(data, opts, options){

@@ -27,7 +27,7 @@ export default class extends Base {
    * @param  {String} table [table name]
    * @return {Promise}       []
    */
-  async getFields(table){
+  async getSchema(table){
     let fieldPromise = this.query(`PRAGMA table_info( ${table} )`);
     let indexPromise = this.query(`PRAGMA INDEX_LIST( ${table} )`).then(async list => {
       let indexes = {};

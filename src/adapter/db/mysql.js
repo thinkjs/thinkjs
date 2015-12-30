@@ -24,11 +24,11 @@ export default class extends Base {
     return this._socket;
   }
   /**
-   * get table info
+   * get table schema
    * @param  {String} table [table name]
    * @return {Promise}       []
    */
-  async getFields(table){
+  async getSchema(table){
     let data = await this.query(`SHOW COLUMNS FROM ${this.parseKey(table)}`);
     let ret = {};
     data.forEach(item => {

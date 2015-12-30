@@ -18,7 +18,7 @@ export default class extends think.base {
       tablePrefix: undefined, //table prefix
       tableName: '', //table name, without prefix
       /**
-       * fields list
+       * schema
        * {
        *   name: {
        *     type: 'string',
@@ -30,7 +30,7 @@ export default class extends think.base {
        *   }
        * }
        */
-      fields: {}, //table fields
+      schema: {}, //table schema
       /**
        * table indexes
        * {

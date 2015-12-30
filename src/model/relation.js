@@ -438,7 +438,7 @@ export default class extends think.model.base {
         });
         return model.addMany(mapData);
       case 'UPDATE':
-        return model.getTableFields().then(() => {
+        return model.getSchema().then(() => {
           let pk = model.getPk();
           let promises = mapData.map(item => {
             if (item[pk]) {
@@ -466,7 +466,7 @@ export default class extends think.model.base {
    */
   async _postManyToManyRelation(data, mapOpts){
     let model = mapOpts.model;
-    await model.getTableFields();
+    await model.getSchema();
     let rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
     let relationModel = this.getRelationModel(model);
 

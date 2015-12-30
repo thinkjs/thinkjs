@@ -233,38 +233,38 @@ describe('model/base.js', function(){
     think.model = model;
     done();
   })
-  it('getTableFields', function(done){
-    instance.getTableFields().then(function(data){
+  it('getSchema', function(done){
+    instance.getSchema().then(function(data){
       assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
-  it('getTableFields, exist', function(done){
-    instance.getTableFields().then(function(){
-      return instance.getTableFields();
+  it('getSchema, exist', function(done){
+    instance.getSchema().then(function(){
+      return instance.getSchema();
     }).then(function(data){
       assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false, default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
-  it('getTableFields, type', function(done){
-    return instance.getTableFields('think_type').then(function(data){
+  it('getSchema, type', function(done){
+    return instance.getSchema('think_type').then(function(data){
       assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,    default: null,    primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,    default: '1',    primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false } })
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_type`');
       done();
     })
   })
-  it('getTableFields, change pk', function(done){
+  it('getSchema, change pk', function(done){
     var instance = new Base('tag', think.config('db'))
-    return instance.getTableFields('think_tag').then(function(data){
+    return instance.getSchema('think_tag').then(function(data){
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
       assert.equal(instance.pk, 'wid');
       done();
     })
   })
-  it('getTableFields, change pk, getPk', function(done){
+  it('getSchema, change pk, getPk', function(done){
     var instance = new Base('tag', think.config('db'))
-    return instance.getTableFields('think_tag').then(function(data){
+    return instance.getSchema('think_tag').then(function(data){
       return instance.getPk();
     }).then(function(pk){
       //assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
@@ -301,7 +301,7 @@ describe('model/base.js', function(){
   })
   it('parseType', function(done){
     var instance = new Base('tag', think.config('db'));
-    instance.fields = {
+    instance.schema = {
       id: {type: 'int'},
       bid: {type: 'bigint'},
       cid: {type: 'double'},

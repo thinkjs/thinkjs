@@ -74,12 +74,12 @@ describe('adapter/db/sqlite', function(){
       }
       return Promise.resolve([]);
     }
-    instance.getFields('user').then(function(data){
+    instance.getSchema('user').then(function(data){
       assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false}})
       done();
     })
   })
-  it('getFields 1', function(done){
+  it('getSchema 1', function(done){
     var instance = new Sqlite();
     instance.query = function(sql){
       if(sql === 'PRAGMA table_info( user )'){
@@ -98,7 +98,7 @@ describe('adapter/db/sqlite', function(){
       }
       return Promise.resolve([]);
     }
-    instance.getFields('user').then(function(data){
+    instance.getSchema('user').then(function(data){
       assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":true},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false}});
       done();
     })
