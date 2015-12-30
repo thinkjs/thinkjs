@@ -116,59 +116,6 @@ think.module = [];
  * @type {Class}
  */
 think.base = base;
-
-/**
- * camelCase string
- * @TODO move to thinkit package
- * @param  {String} str []
- * @return {String}     []
- */
-think.camelCase = str => {
-  if(str.indexOf('_') > -1){
-    str = str.replace(/_(\w)/g, (a, b) => {
-      return b.toUpperCase();
-    });
-  }
-  return str;
-};
-/**
- * get deferred object
- * @return {Object} []
- */
-think.defer = () => {
-  let deferred = {};
-  deferred.promise = new Promise((resolve, reject) => {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  return deferred;
-};
-/**
- * make callback function to promise
- * @param  {Function} fn       []
- * @param  {Object}   receiver []
- * @return {Promise}            []
- */
-think.promisify = (fn, receiver) => {
-  return (...args) => {
-    return new Promise((resolve, reject) => {
-      fn.apply(receiver, [...args, (err, res) => {
-        return err ? reject(err) : resolve(res);
-      }]);
-    });
-  };
-};
-/**
- * to fast properties
- * @param  {Object} obj []
- * @return {void}     []
- */
-think.toFastProperties = obj => {
-  let f = () => {};
-  f.prototype = obj;
-  /*eslint-disable no-new*/
-  new f();
-};
 /**
  * reject promise
  * @param  {[type]} err []
