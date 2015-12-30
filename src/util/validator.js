@@ -755,5 +755,27 @@ Validator.boolean = value => {
 Validator.object = value => {
   return think.isObject(value);
 };
-
+/**
+ * check type
+ * @param  {Mixed} value []
+ * @param  {String} type  []
+ * @return {Boolean}       []
+ */
+Validator.type = (value, type) => {
+  switch(type){
+    case 'int':
+      return Validator.int(value);
+    case 'float':
+      return Validator.float(value);
+    case 'string':
+      return Validator.string(value);
+    case 'boolean':
+      return Validator.boolean(value);
+    case 'array':
+      return Validator.array(value);
+    case 'object':
+      return Validator.object(value);
+  }
+  return false;
+};
 export default Validator;
