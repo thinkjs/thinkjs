@@ -22,17 +22,14 @@ export default class extends Base {
     this.config = config;
   }
   /**
-   * get connection
+   * get pg
    * @return {} []
    */
-  async getConnection(){
-    if(this.connection){
-      return this.connection;
+  async getPG(){
+    if(this.pg){
+      return this.pg;
     }
     let pg = await think.npm('pg');
-    let config = this.config;
-    let connectionStr = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
-
     //set poolSize
     if(this.config.poolSize){
       pg.defaults.poolSize = this.config.poolSize;
@@ -41,15 +38,29 @@ export default class extends Base {
     pg.defaults.poolIdleTimeout = this.config.poolIdleTimeout * 1000 || 8 * 60 * 60 * 1000;
 
     //when has error, close connection
-    pg.once('error', () => {
+    pg.on('error', () => {
       this.close();
     });
-    pg.once('end', () => {
+    pg.on('end', () => {
       this.close();
     });
-    pg.once('close', () => {
+    pg.on('close', () => {
       this.close();
     });
+    this.pg = pg;
+    return pg;
+  }
+  /**
+   * get connection
+   * @return {} []
+   */
+  async getConnection(){
+    if(this.connection){
+      return this.connection;
+    }
+    let pg = await this.getPG();
+    let config = this.config;
+    let connectionStr = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
     return think.await(connectionStr, () => {
       let deferred = think.defer();
@@ -81,6 +92,12 @@ export default class extends Base {
       }
       return data.rows;
     }).catch(err => {
+      //when socket is closed, try it
+      if(err.message === 'This socket is closed.'){
+        this.close();
+        return this.query(sql);
+      }
+
       this.release();
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
