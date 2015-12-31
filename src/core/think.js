@@ -1409,16 +1409,19 @@ think.validate = (name, callback) => {
   }
   return msg;
 };
+
+
 /**
  * await 
  * @param  {String}   key      []
  * @param  {Function} callback []
  * @return {Promise}            []
  */
+let _awaitInstance = new Await();
 think.await = (key, callback) => {
-  let awaitInstance = new Await();
-  return awaitInstance.run(key, callback);
+  return _awaitInstance.run(key, callback);
 };
+
 
 /**
  * install node package
