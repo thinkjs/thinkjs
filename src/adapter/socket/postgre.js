@@ -44,6 +44,12 @@ export default class extends Base {
     pg.once('error', () => {
       this.close();
     });
+    pg.once('end', () => {
+      this.close();
+    });
+    pg.once('close', () => {
+      this.close();
+    });
 
     return think.await(connectionStr, () => {
       let deferred = think.defer();
