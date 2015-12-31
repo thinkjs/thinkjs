@@ -28,20 +28,34 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async getSchema(table){
-    let sql = `select fields_name,fields_type,fields_not_null,fields_key_name,fields_default,fields_default from table_msg('${table}');`;
-    let data = await this.query(sql);
+    let columnSql = `select column_name,is_nullable,data_type from INFORMATION_SCHEMA.COLUMNS where table_name = '${table}'`;
+    let columnsPromise = this.query(columnSql);
+    let indexSql = `select indexname,indexdef from pg_indexes where tablename = '${table}'`;
+    let indexPromise = this.query(indexSql);
+    let {columns, indexs} = await Promise.all([columnsPromise, indexPromise]);
     let schema = {};
-    data.forEach(item => {
-      schema[item.fields_name] = {
-        name: item.fields_name,
-        type: item.fields_type,
-        required: item.fields_not_null,
-        default: item.fields_default,
-        primary: item.key.toLowerCase() === 'pri',
-        auto_increment: item.fields_extra.toLowerCase() === 'auto_increment'
+    columns.forEach(item => {
+      schema[item.column_name] = {
+        name: item.column_name,
+        type: item.data_type,
+        required: item.is_nullable === 'NO',
+        default: '',
+        auto_increment: false
       };
     });
-    return schema;
+    let extra = {};
+    let reg = /\((\w+)(?:, (\w+))*\)/;
+    indexs.forEach(item => {
+      let [, name, ...others] = item.indexdef.match(reg);
+      extra[name] = {};
+      if(item.indexdef.indexOf(' pkey ') > -1){
+        extra[name].primary = true;
+      }
+      let index = item.indexdef.indexOf(' UNIQUE ') > -1 ? 'unique' : 'index';
+      extra[name][index] = others.length ? others : true;
+    });
+
+    return think.extend(schema, extra);
   }
   /**
    * start transaction

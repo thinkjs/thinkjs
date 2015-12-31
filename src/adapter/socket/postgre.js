@@ -31,7 +31,7 @@ export default class extends Base {
     }
     let pg = await think.npm('pg');
     let config = this.config;
-    let connectionStr = `postgres://${config.user}:${config.pwd}@${config.host}/${config.database}`;
+    let connectionStr = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
     let deferred = think.defer();
     pg.connect(this.config, (err, client, done) => {
