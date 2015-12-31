@@ -28,9 +28,9 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async getSchema(table){
-    let columnSql = `select column_name,is_nullable,data_type from INFORMATION_SCHEMA.COLUMNS where table_name = '${table}'`;
+    let columnSql = `SELECT column_name,is_nullable,data_type FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name='${table}'`;
     let columnsPromise = this.query(columnSql);
-    let indexSql = `select indexname,indexdef from pg_indexes where tablename = '${table}'`;
+    let indexSql = `SELECT indexname,indexdef FROM pg_indexes WHERE tablename='${table}'`;
     let indexPromise = this.query(indexSql);
     let [columns, indexs] = await Promise.all([columnsPromise, indexPromise]);
     let schema = {};
