@@ -16,6 +16,8 @@ export default class extends Base {
     super.init(config);
 
     config.port = config.port || 5432;
+    config.password = config.pwd;
+    delete config.pwd;
 
     this.config = config;
   }
@@ -32,7 +34,7 @@ export default class extends Base {
     let connectionStr = `postgres://${config.user}:${config.pwd}@${config.host}/${config.database}`;
 
     let deferred = think.defer();
-    pg.connect(connectionStr, (err, client, done) => {
+    pg.connect(this.config, (err, client, done) => {
       this.logConnect(connectionStr, 'postgre');
       if(err){
         deferred.reject(err);
