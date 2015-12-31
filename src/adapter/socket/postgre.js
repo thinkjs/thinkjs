@@ -33,6 +33,13 @@ export default class extends Base {
     let config = this.config;
     let connectionStr = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
+    //set poolSize
+    if(this.config.poolSize){
+      pg.defaults.poolSize = this.config.poolSize;
+    }
+    //set poolIdleTimeout, change default `30 seconds` to 8 hours
+    pg.defaults.poolIdleTimeout = this.config.poolIdleTimeout * 1000 || 8 * 60 * 60 * 1000;
+
     //when has error, close connection
     pg.once('error', () => {
       this.close();
