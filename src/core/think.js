@@ -1277,26 +1277,33 @@ think.cache = async (name, value, options = {}) => {
 
 /**
  * get locale message
+ * can not use arrow function!
  * @param  {String} key  []
  * @param  {String} lang []
  * @return {String}      []
  */
-think.locale = (key, ...data) => {
-  let _default = think.config('locale.default');
-  let lang = think.lang || _default;
-  let config = think.config('locale');
-  let value;
-  if(config[lang] && config[lang][key]){
-    value = config[lang][key];
-  }else if(config[_default][key]){
-    value = config[_default][key];
-  }else if(config.en[key]){ //sys locales
-    value = config.en[key];
+think.locale = function(key, ...data) {
+  let lang, locales, defaultLang;
+  if(this === think){
+    defaultLang = think.config('locale.default');
+    lang = think.lang || defaultLang;
+    locales = think.config('locale');
   }else{
-    value = key;
+    defaultLang = this.config('locale.default');
+    lang = this.lang();
+    locales = this.config(think.dirname.locale);
   }
-  var msg = util.format(value, ...data);
-  return msg;
+  let langLocale = locales[lang] || {};
+  let defaultLangLocale = locales[defaultLang] || {};
+  if(!key){
+    return think.isEmpty(langLocale) ? defaultLangLocale : langLocale;
+  }
+  let enLocale = locales.en || {};
+  let value = langLocale[key] || defaultLangLocale[key] || enLocale[key] || key;
+  if(!think.isString(value)){
+    return value;
+  }
+  return util.format(value, ...data);
 };
 
 
