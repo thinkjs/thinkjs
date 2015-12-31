@@ -2,7 +2,7 @@
 
 import Base from './base.js';
 
-let PostgreSocket = think.adapter('socket', 'postgre');
+let PostgreSocket = think.adapter('socket', 'postgresql');
 /**
  * postgre db
  */
