@@ -89,7 +89,7 @@ export default class extends think.middleware.base {
       if(index){
         module = paths[0];
       }
-      let newController = paths.slice(index, length - 1 - index).join(think.sep);
+      let newController = paths.slice(index, length - 1).join(think.sep);
       if(newController){
         controller = newController;
       }
