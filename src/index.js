@@ -362,7 +362,7 @@ export default class {
         var AutoReload = require('./util/auto_reload.js');
         AutoReload.rewriteSysModuleLoad();
         var instance = new AutoReload(item, ()=>{});
-        instance.clearFilesCache(files.map(file => item + '/' + file));
+        instance.clearFilesCache(files.map(file => item + think.sep + file));
       }
 
       files.forEach(file => {
