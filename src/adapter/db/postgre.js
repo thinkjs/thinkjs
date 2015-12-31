@@ -32,7 +32,7 @@ export default class extends Base {
     let columnsPromise = this.query(columnSql);
     let indexSql = `select indexname,indexdef from pg_indexes where tablename = '${table}'`;
     let indexPromise = this.query(indexSql);
-    let {columns, indexs} = await Promise.all([columnsPromise, indexPromise]);
+    let [columns, indexs] = await Promise.all([columnsPromise, indexPromise]);
     let schema = {};
     columns.forEach(item => {
       schema[item.column_name] = {

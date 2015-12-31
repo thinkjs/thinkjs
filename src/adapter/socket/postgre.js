@@ -59,7 +59,7 @@ export default class extends Base {
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
-      return data;
+      return data.rows;
     }).catch(err => {
       this.release();
       if (this.config.log_sql) {
