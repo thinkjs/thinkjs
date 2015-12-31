@@ -33,8 +33,9 @@ export default class extends Base {
     let auth = '';
 
     this.mongo = mongo;
+    //connect with auth
     if(this.config.user){
-      auth = `${config.user}:${config.pwd}@`;
+      auth = `${config.user}:${config.password}@`;
     }
     // connection options
     // http://mongodb.github.io/node-mongodb-native/2.0/tutorials/urls/

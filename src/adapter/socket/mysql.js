@@ -14,11 +14,12 @@ export default class extends Base {
    */
   init(config = {}){
     super.init(config);
+    
     //alias password config
-    if (config.pwd) {
-      config.password = config.pwd;
-      delete config.pwd;
-    }
+    // if (config.pwd) {
+    //   config.password = config.pwd;
+    //   delete config.pwd;
+    // }
     //merge config
     this.config = think.extend({
       host: '127.0.0.1',

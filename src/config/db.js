@@ -9,7 +9,7 @@ export default {
   port: '',
   name: '',
   user: '',
-  pwd: '',
+  password: '',
   prefix: 'think_',
   encoding: 'utf8',
   nums_per_page: 10,

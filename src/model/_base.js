@@ -61,6 +61,12 @@ export default class extends think.base {
       think.log(`db.name is deprecated, use db.database instead`, 'WARNING');
     }
 
+    if(config.pwd && !config.password){
+      config.password = config.pwd;
+      delete config.pwd;
+      think.log(`db.pwd is deprecated, use db.password instead`, 'WARNING');
+    }
+
     //check property name `fields`
     if(!think.isEmpty(this.fields)){
       this.schema = this.fields;

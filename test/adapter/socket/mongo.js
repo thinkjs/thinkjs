@@ -53,7 +53,7 @@ describe('adapter/socket/mongo', function(){
         MongoClient: {
           connect: function(url, config, callback){
             assert.equal(url, 'mongodb://welefen:suredy@127.0.0.1:27017/test');
-            assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', pwd: 'suredy', database: 'test' });
+            assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', password: 'suredy', database: 'test' });
             callback && callback(null);
           }
         }
@@ -61,7 +61,7 @@ describe('adapter/socket/mongo', function(){
     }
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test'
     });
     instance.getConnection().then(function(connection){
@@ -77,7 +77,7 @@ describe('adapter/socket/mongo', function(){
         MongoClient: {
           connect: function(url, config, callback){
             assert.equal(url, 'mongodb://welefen:suredy@127.0.0.1:27017/test?slaveOk=true');
-            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', pwd: 'suredy', database: 'test' });
+            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', password: 'suredy', database: 'test' });
             callback && callback(null);
           }
         }
@@ -85,7 +85,7 @@ describe('adapter/socket/mongo', function(){
     }
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       options: {
         slaveOk: true
@@ -104,7 +104,7 @@ describe('adapter/socket/mongo', function(){
         MongoClient: {
           connect: function(url, config, callback){
             assert.equal(url, 'mongodb://welefen:suredy@welefen.com:1234/test?slaveOk=true');
-            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', pwd: 'suredy', database: 'test' });
+            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', password: 'suredy', database: 'test' });
             callback && callback(null);
           }
         }
@@ -114,7 +114,7 @@ describe('adapter/socket/mongo', function(){
       host: 'welefen.com',
       port: 1234,
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       options: {
         slaveOk: true
@@ -133,7 +133,7 @@ describe('adapter/socket/mongo', function(){
         MongoClient: {
           connect: function(url, config, callback){
             assert.equal(url, 'mongodb://welefen:suredy@welefen.com:6350,suredy.com:1234/test?slaveOk=true');
-            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', pwd: 'suredy', database: 'test' });
+            //assert.deepEqual(config, { host: '127.0.0.1', port: 27017, user: 'welefen', password: 'suredy', database: 'test' });
             callback && callback(null);
           }
         }
@@ -143,7 +143,7 @@ describe('adapter/socket/mongo', function(){
       host: ['welefen.com', 'suredy.com'],
       port: [6350, 1234],
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       options: {
         slaveOk: true
@@ -174,7 +174,7 @@ describe('adapter/socket/mongo', function(){
     }
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       log_level: 'welefen',
       options: {
@@ -205,7 +205,7 @@ describe('adapter/socket/mongo', function(){
     };
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       log_level: 'welefen',
       options: {
@@ -237,7 +237,7 @@ describe('adapter/socket/mongo', function(){
     };
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       log_level: 'welefen',
       options: {
@@ -265,7 +265,7 @@ describe('adapter/socket/mongo', function(){
     }
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       options: {
         slaveOk: true
@@ -282,7 +282,7 @@ describe('adapter/socket/mongo', function(){
   it('close, connection not exist', function(done){
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       options: {
         slaveOk: true
@@ -309,7 +309,7 @@ describe('adapter/socket/mongo', function(){
     }
     var instance = new mongoSocket({
       user: 'welefen',
-      pwd: 'suredy',
+      password: 'suredy',
       database: 'test',
       options: {
         slaveOk: true

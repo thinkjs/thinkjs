@@ -13,7 +13,7 @@ export default {
       port: '',
       database: '',
       user: '',
-      pwd: '',
+      password: '',
       prefix: 'think_',
       encoding: 'utf8'
     },

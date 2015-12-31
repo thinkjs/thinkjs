@@ -16,8 +16,8 @@ export default class extends Base {
     super.init(config);
 
     config.port = config.port || 5432;
-    config.password = config.pwd;
-    delete config.pwd;
+    //config.password = config.pwd;
+    //delete config.pwd;
 
     this.config = config;
   }
