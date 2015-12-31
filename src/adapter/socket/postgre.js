@@ -33,18 +33,20 @@ export default class extends Base {
     let config = this.config;
     let connectionStr = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
-    let deferred = think.defer();
-    pg.connect(this.config, (err, client, done) => {
-      this.logConnect(connectionStr, 'postgre');
-      if(err){
-        deferred.reject(err);
-      }else{
-        this.connection = client;
-        this.release = done;
-        deferred.resolve(client);
-      }
+    return think.await(connectionStr, () => {
+      let deferred = think.defer();
+      pg.connect(this.config, (err, client, done) => {
+        this.logConnect(connectionStr, 'postgre');
+        if(err){
+          deferred.reject(err);
+        }else{
+          this.connection = client;
+          this.release = done;
+          deferred.resolve(client);
+        }
+      });
+      return deferred.promise;
     });
-    return deferred.promise;
   }
   /**
    * query
