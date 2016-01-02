@@ -14,7 +14,7 @@ instance.load();
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 
-var Validator = require('../../lib/util/validator.js');
+var Validator = think.safeRequire(path.resolve(__dirname, '../../lib/util/validator.js'));
 
 describe('Validator', function(){
   it('is object', function(){

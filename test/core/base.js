@@ -3,8 +3,10 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-var Base = require('../../lib/core/base.js');
 require('../../lib/core/think.js');
+
+var Base = think.safeRequire(path.resolve(__dirname, '../../lib/core/base.js'));
+
 
 var Cls = think.Class(Base, {
   __before: function(){

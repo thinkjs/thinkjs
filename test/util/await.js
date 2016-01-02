@@ -8,7 +8,7 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-var Await = require('../../lib/util/await.js');
+var Await = think.safeRequire(path.resolve(__dirname, '../../lib/util/await.js'));
 
 describe('await', function(){
   it('is class', function(){

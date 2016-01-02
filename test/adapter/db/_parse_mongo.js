@@ -12,7 +12,7 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Parse = require('../../../lib/adapter/db/_parse_mongo.js');
+var Parse = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter/db/_parse_mongo.js'));
 
 describe('adapter/db/_parse_mongo', function(){
   it('init', function(){

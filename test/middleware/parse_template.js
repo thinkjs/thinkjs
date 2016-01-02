@@ -25,7 +25,7 @@ function execMiddleware(middleware, config, options, data){
 
 describe('middleware/parse_template', function(){
   it('base', function(done){
-    var filePath = __dirname + '/parse_template.js';
+    var filePath = __dirname + think.sep + 'parse_template.js';
     execMiddleware('parse_template', {
       tpl: {
         type: 'base'
@@ -37,7 +37,7 @@ describe('middleware/parse_template', function(){
     })
   })
   it('base, file exist', function(done){
-    var filePath = __dirname + '/parse_template.js';
+    var filePath = __dirname + think.sep + 'parse_template.js';
     execMiddleware('parse_template', {
       tpl: {
         type: undefined
@@ -49,7 +49,7 @@ describe('middleware/parse_template', function(){
     })
   })
   it('base, file not exist', function(done){
-    var filePath = __dirname + '/parse_template11111.js';
+    var filePath = __dirname + think.sep + 'parse_template11111.js';
     execMiddleware('parse_template', {
       tpl: {
         type: undefined

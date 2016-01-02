@@ -4,7 +4,11 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-var Cookie = require('../../lib/util/cookie.js');
+var Index = require('../../lib/index.js');
+var instance = new Index();
+instance.load();
+
+var Cookie = think.safeRequire(path.resolve(__dirname, '../../lib/util/cookie.js'));
 
 describe('Cookie', function(){
   describe('stringify', function(){

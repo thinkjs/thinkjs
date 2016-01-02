@@ -10,7 +10,7 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Base = require('../../lib/adapter/base.js');
+var Base = think.safeRequire(path.resolve(__dirname, '../../lib/adapter/base.js'));
 describe('adapter/base.js', function(){
   it('merge config, empty', function(){
     var instance = new Base();

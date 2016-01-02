@@ -32,7 +32,7 @@ function getHttp(config, options){
     return http;
   })
 }
-var RestController = require('../../lib/controller/rest.js');
+var RestController = think.safeRequire(path.resolve(__dirname, '../../lib/controller/rest.js'));
 
 function getInstance(options){
   return getHttp().then(function(http){

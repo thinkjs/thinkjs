@@ -14,7 +14,15 @@ const NODE_MODULES = `${path.sep}node_modules${path.sep}`;
 /**
  * auto reload file
  */
-export default class extends think.base {
+export default class {
+  /**
+   * constructor
+   * @param  {Array} args []
+   * @return {}         []
+   */
+  constructor(...args){
+    this.init(...args);
+  }
   /**
    * init
    * @param  {String}   srcPath  [source path]

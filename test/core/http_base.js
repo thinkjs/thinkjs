@@ -12,7 +12,7 @@ var tjs = new thinkjs();
 tjs.load();
 
 
-var Base = require('../../lib/core/http_base.js');
+var Base = think.safeRequire(path.resolve(__dirname, '../../lib/core/http_base.js'));
 
 
 var list = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];

@@ -12,7 +12,7 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Mongo = require('../../lib/model/mongo.js');
+var Mongo = think.safeRequire(path.resolve(__dirname, '../../lib/model/mongo.js'));
 
 
 describe('model/mongo.js', function(){

@@ -297,6 +297,14 @@ think.require = (name, flag) => {
  * @param  {String} file []
  * @return {mixed}      []
  */
+let _interopSafeRequire = file => {
+  let obj = require(file);
+  if(obj && obj.__esModule && obj.default){
+    return obj.default;
+  }
+  return obj;
+};
+
 think.safeRequire = file => {
   // absolute file path is not exist
   if (path.isAbsolute(file)) {
@@ -305,10 +313,10 @@ think.safeRequire = file => {
       return null;
     }
     //when file is exist, require direct
-    return require(file);
+    return _interopSafeRequire(file);
   }
   try{
-    return require(file);
+    return _interopSafeRequire(file);
   }catch(err){
     think.log(err);
   }
@@ -557,7 +565,7 @@ think.getModuleConfig = (module = think.dirname.common) => {
     }
   }
   //transform config
-  let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
+  let transforms = think.safeRequire(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
   config = think.transformConfig(config, transforms);
 
   if(module !== true){
@@ -869,7 +877,7 @@ think.loadAdapter = (type, name = 'base') => {
   let paths = [`${think.THINK_LIB_PATH}${think.sep}adapter`];
   
   //load base adapter
-  think.adapter.base = require(paths[0] + '/base.js');
+  think.adapter.base = think.safeRequire(paths[0] + '/base.js');
 
   //common module adapter
   let adapterPath = think.getPath(undefined, think.dirname.adapter);
@@ -1247,7 +1255,7 @@ think.service = (superClass, methods, module) => {
  * @param  {Mixed} value [cache value]
  * @return {}       []
  */
-think.cache = async (name, value, options = {}) => {
+think.cache = async (name, value, options) => {
   options = think.extend({}, think.config('cache'), options);
   let Cls = think.adapter('cache', options.type || 'memory');
   let instance = new Cls(options);
@@ -1467,7 +1475,7 @@ let _dynamicInstall = pkg => {
 
 think.npm = (pkg) => {
   try{
-    return Promise.resolve(require(pkg));
+    return Promise.resolve(_interopSafeRequire(pkg));
   } catch(e){
     return _dynamicInstall(pkg);
   }
@@ -1521,7 +1529,8 @@ think.error = (err, addon = '') => {
  * @param  {Object} http   []
  * @return {}        []
  */
-think.statusAction = async (status = 500, http, log) => {
+think.statusAction = async (status, http, log) => {
+  status = status || 500;
   if(think.isPrevent(http.error)){
     return;
   }

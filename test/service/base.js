@@ -9,7 +9,7 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-var Service = require('../../lib/service/base.js');
+var Service = think.safeRequire(path.resolve(__dirname, '../../lib/service/base.js'));
 
 describe('service/base.js', function(){
   it('instance', function(){

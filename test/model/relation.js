@@ -11,7 +11,7 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Relation = require('../../lib/model/relation.js');
+var Relation = think.safeRequire(path.resolve(__dirname, '../../lib/model/relation.js'));
 
 describe('model/relation.js', function(){
   it('init', function(){

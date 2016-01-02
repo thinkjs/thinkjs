@@ -370,7 +370,8 @@ export default class extends Base {
    */
   async selectAdd(options){
     let promise = Promise.resolve(options);
-    if (options instanceof module.exports) {
+    let Class = module.exports.default || module.exports;
+    if (options instanceof Class) {
       promise = options.parseOptions();
     }
     let data = await Promise.all([this.parseOptions(), promise]);

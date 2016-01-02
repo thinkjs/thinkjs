@@ -11,7 +11,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + think.sep + 'testApp';
 
 describe('adapter/cache/file.js', function() {
   var instance;

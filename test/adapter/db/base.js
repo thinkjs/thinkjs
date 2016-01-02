@@ -12,7 +12,7 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Base = require('../../../lib/adapter/db/base.js');
+var Base = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter/db/base.js'));
 
 describe('adapter/db/base.js', function(){
   it('get instance', function(){

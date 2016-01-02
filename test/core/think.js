@@ -2188,7 +2188,7 @@ describe('core/think.js', function(){
     })
   })
 
-  it('think.parallelLimit normal', function(){
+  it('think.parallelLimit normal', function(done){
     think.parallelLimit('key', 'name', function(name){
       return name;
     }).then(function(data){
@@ -2206,7 +2206,7 @@ describe('core/think.js', function(){
     };
   })
 
-  it('think.parallelLimit normal, with options', function(){
+  it('think.parallelLimit normal, with options', function(done){
     think.parallelLimit('key', 'name', function(name){
       return name;
     }, {limit: 10}).then(function(data){
@@ -2214,7 +2214,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is not set', function(){
+  it('think.parallelLimit key is not set', function(done){
     think.parallelLimit('data', function(name){
       return name;
     }).then(function(data){
@@ -2222,7 +2222,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is not string', function(){
+  it('think.parallelLimit key is not string', function(done){
     think.parallelLimit({name: 'thinkjs'}, function(name){
       return name;
     }).then(function(data){
@@ -2230,7 +2230,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array', function(){
+  it('think.parallelLimit key is array', function(done){
     think.parallelLimit(['thinkjs', 'test'], function(name){
       return name;
     }, {array: true}).then(function(data){
@@ -2238,7 +2238,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array, reject', function(){
+  it('think.parallelLimit key is array, reject', function(done){
     think.parallelLimit(['thinkjs', 'test'], function(name){
       return Promise.reject(new Error('error'));
     }, {array: true}).catch(function(err){
@@ -2246,15 +2246,15 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array, add many, empty', function(){
+  it('think.parallelLimit key is array, add many, empty', function(done){
     think.parallelLimit([], function(name){
       return name + 'www';
     }).then(function(data){
-      assert.deepEqual(data, []);
+      assert.deepEqual(data, undefined);
       done();
     })
   })
-  it('think.parallelLimit key is array, add many', function(){
+  it('think.parallelLimit key is array, add many', function(done){
     think.parallelLimit(['thinkjs', 'test'], function(name){
       return name + 'www';
     }).then(function(data){
@@ -2262,7 +2262,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array, add many, reject', function(){
+  it('think.parallelLimit key is array, add many, reject', function(done){
     think.parallelLimit(['thinkjs', 'test'], function(name){
       return Promise.reject(new Error(name))
     }).catch(function(err){
@@ -2270,7 +2270,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array, add many, reject, ignore error', function(){
+  it('think.parallelLimit key is array, add many, reject, ignore error', function(done){
     think.parallelLimit(['thinkjs', 'test'], function(name){
       return Promise.reject(new Error(name))
     }, {ignoreError: true}).then(function(data){
@@ -2278,7 +2278,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array, add many, reject, ignore error 1', function(){
+  it('think.parallelLimit key is array, add many, reject, ignore error 1', function(done){
     think.parallelLimit('dddd', ['thinkjs', 'test'], function(name){
       return Promise.reject(new Error(name))
     }, {ignoreError: true}).then(function(data){
@@ -2286,7 +2286,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is array, add many, with limit 1', function(){
+  it('think.parallelLimit key is array, add many, with limit 1', function(done){
     think.parallelLimit(['thinkjs', 'test'], function(name){
       return name + 'www';
     }, {limit: 1}).then(function(data){
@@ -2294,7 +2294,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is function', function(){
+  it('think.parallelLimit key is function', function(done){
     think.parallelLimit(function(name){
       return 'thinkjs';
     }).then(function(data){
@@ -2302,7 +2302,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is function, with limit', function(){
+  it('think.parallelLimit key is function, with limit', function(done){
     think.parallelLimit(function(name){
       return 'thinkjs';
     }, 20).then(function(data){
@@ -2310,7 +2310,7 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is function, with limit 2', function(){
+  it('think.parallelLimit key is function, with limit 2', function(done){
     think.parallelLimit(function(name){
       return 'thinkjs';
     }, {limit: 20}).then(function(data){

@@ -6,7 +6,7 @@ var muk = require('muk');
 
 var thinkjs = require('../../../lib/index.js');
 
-think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + think.sep + 'testApp';
 
 describe('adapter/cache/memcache.js', function() {
   var instance;

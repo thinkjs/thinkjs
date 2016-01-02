@@ -12,7 +12,7 @@ instance.load();
 
 think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Mysql = require('../../../lib/adapter/db/mysql.js');
+var Mysql = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter/db/mysql.js'));
 
 
 describe('adapter/db/mysql.js', function(){

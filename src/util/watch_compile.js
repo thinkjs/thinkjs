@@ -10,7 +10,7 @@ let babel = require('babel-core');
 /**
  * watch compile
  */
-export default class extends think.base {
+export default class {
   /**
    * store compiled files last mtime
    * @type {Object}
@@ -21,6 +21,14 @@ export default class extends think.base {
    * @type {Array}
    */
   compiledErrorFiles = [];
+  /**
+   * constructor
+   * @param  {Array} args []
+   * @return {}         []
+   */
+  constructor(...args){
+    this.init(...args);
+  }
   /**
    * init
    * @param  {String} srcPath []
@@ -58,10 +66,8 @@ export default class extends think.base {
       let data = babel.transform(content, {
         filename: file,
         retainLines: retainLines === undefined ? true : retainLines,
-        stage: 0,
-        modules: 'common',
-        loose: true,
-        optional: 'runtime'
+        presets: ['es2015-loose', 'stage-1'],
+        plugins: ['transform-runtime']
       });
       if(this.options.log){
         think.log(`compile file ${file}`, 'BABEL', startTime);

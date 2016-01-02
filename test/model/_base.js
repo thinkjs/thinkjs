@@ -19,7 +19,7 @@ var Base;
 
 describe('model/_base.js', function(){
   it('before', function(){
-    Base = require('../../lib/model/_base.js');
+    Base = think.safeRequire(path.resolve(__dirname, '../../lib/model/_base.js'));
   })
   it('get instance', function(){
     var instance = new Base('user');

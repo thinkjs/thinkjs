@@ -4,6 +4,12 @@ var fs = require('fs');
 var muk = require('muk');
 
 
+var thinkjs = require('../../lib/index.js');
+
+var tjs = new thinkjs();
+tjs.load();
+
+
 require('../../lib/core/think_cache.js');
 
 

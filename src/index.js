@@ -2,9 +2,13 @@
 
 import fs from 'fs';
 import path from 'path';
-import './core/think.js';
 
-let {sep} = path;
+//rewite promise, bluebird is more faster
+require('babel-runtime/core-js/promise').default = require('bluebird');
+
+import AutoReload from './util/auto_reload.js';
+import WatchCompile from './util/watch_compile.js';
+import './core/think.js';
 
 export default class {
   /**
@@ -61,8 +65,8 @@ export default class {
     let filepath = process.argv[1];
     let RESOURCE_PATH = path.dirname(filepath);
     let ROOT_PATH = path.dirname(RESOURCE_PATH);
-    let APP_PATH = `${ROOT_PATH}${sep}app`;
-    let RUNTIME_PATH = ROOT_PATH + sep + think.dirname.runtime;
+    let APP_PATH = `${ROOT_PATH}${think.sep}app`;
+    let RUNTIME_PATH = ROOT_PATH + think.sep + think.dirname.runtime;
     return {
       APP_PATH,
       RESOURCE_PATH,
@@ -107,7 +111,7 @@ export default class {
     let files = think.getFiles(think.APP_PATH, true);
     let reg = /\.(js|html|tpl)$/;
     let uppercaseReg = /[A-Z]+/;
-    let localPath = `${sep}${think.dirname.locale}${sep}`;
+    let localPath = `${think.sep}${think.dirname.locale}${think.sep}`;
     let filter = item => {
       if(!reg.test(item)){
         return;
@@ -138,7 +142,7 @@ export default class {
     }
     let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
     let dependencies = data.dependencies;
-    let pkgPath = `${think.ROOT_PATH}${sep}node_modules${sep}`;
+    let pkgPath = `${think.ROOT_PATH}${think.sep}node_modules${think.sep}`;
     for(let pkg in dependencies){
       if(think.isDir(`${pkgPath}${pkg}`)){
         continue;
@@ -191,7 +195,7 @@ export default class {
    */
   loadAlias(){
     let aliasPath = `${think.THINK_LIB_PATH}/config/sys/alias.js`;
-    thinkData.alias = require(aliasPath);
+    thinkData.alias = think.safeRequire(aliasPath);
   }
   /**
    * load config
@@ -223,13 +227,13 @@ export default class {
 
     let checkMConfig = module => {
       if(keys.length === 0){
-        keys = Object.keys(require(`${think.THINK_LIB_PATH}/config/config.js`));
+        keys = Object.keys(think.safeRequire(`${think.THINK_LIB_PATH}/config/config.js`));
       }
       let configFilePath = think.getPath(module, think.dirname.config) + '/config.js';
       if(!think.isFile(configFilePath)){
         return;
       }
-      let config = require(configFilePath);
+      let config = think.safeRequire(configFilePath);
       keys.forEach(key => {
         if(config[key] && errorConfigKeys.indexOf(key) === -1){
           errorConfigKeys.push(key);
@@ -268,7 +272,7 @@ export default class {
    */
   loadMiddleware(){
     let paths = [
-      `${think.THINK_LIB_PATH}${sep}middleware`,
+      `${think.THINK_LIB_PATH}${think.sep}middleware`,
       `${think.getPath(undefined, think.dirname.middleware)}`
     ];
     think.alias('middleware', paths);
@@ -281,7 +285,7 @@ export default class {
    */
   loadHook(){
     let hookPath = `${think.THINK_LIB_PATH}/config/hook.js`;
-    thinkData.hook = think.extend({}, require(hookPath));
+    thinkData.hook = think.extend({}, think.safeRequire(hookPath));
 
     let file = `${think.getPath(undefined, think.dirname.config)}/hook.js`;
     let data = think.extend({}, think.safeRequire(file));
@@ -301,7 +305,7 @@ export default class {
       service: ['base']
     };
     for(let itemType in types){
-      think.alias(itemType, `${think.THINK_LIB_PATH}${sep}${itemType}`);
+      think.alias(itemType, `${think.THINK_LIB_PATH}${think.sep}${itemType}`);
       types[itemType].forEach(item => {
         think[itemType][item] = think.require(`${itemType}_${item}`);
       });
@@ -348,7 +352,7 @@ export default class {
    */
   loadBootstrap(){
     let paths = [
-      `${think.THINK_LIB_PATH}${sep}bootstrap`,
+      `${think.THINK_LIB_PATH}${think.sep}bootstrap`,
       think.getPath(think.dirname.common, think.dirname.bootstrap)
     ];
     paths.forEach(item => {
@@ -359,7 +363,6 @@ export default class {
 
       //must reload all bootstrap files.
       if (think.config('auto_reload')) {
-        var AutoReload = require('./util/auto_reload.js');
         AutoReload.rewriteSysModuleLoad();
         var instance = new AutoReload(item, ()=>{});
         instance.clearFilesCache(files.map(file => item + think.sep + file));
@@ -370,7 +373,7 @@ export default class {
         if(extname !== '.js'){
           return;
         }
-        think.safeRequire(`${item}${sep}${file}`);
+        think.safeRequire(`${item}${think.sep}${file}`);
       });
     });
   }
@@ -388,7 +391,7 @@ export default class {
       }
       let files = think.getFiles(filepath, true);
       files.forEach(file => {
-        let key = `${filepath}${sep}${file}`;
+        let key = `${filepath}${think.sep}${file}`;
         data[key] = true;
       });
     };
@@ -407,7 +410,7 @@ export default class {
    * @return {} []
    */
   loadError(){
-    thinkData.error = require(think.THINK_LIB_PATH + `/config/sys/error.js`);
+    thinkData.error = think.safeRequire(think.THINK_LIB_PATH + `/config/sys/error.js`);
   }
   /**
    * clear all cache for reload
@@ -504,7 +507,6 @@ export default class {
    */
   getReloadInstance(srcPath){
     srcPath = srcPath || think.APP_PATH;
-    let AutoReload = require('./util/auto_reload.js');
     AutoReload.rewriteSysModuleLoad();
     let instance = new AutoReload(srcPath, () => {
       this.clearData();
@@ -524,7 +526,7 @@ export default class {
       options = {log: true};
       srcPath = '';
     }
-    srcPath = srcPath || `${think.ROOT_PATH}${sep}src`;
+    srcPath = srcPath || `${think.ROOT_PATH}${think.sep}src`;
     outPath = outPath || think.APP_PATH;
 
     if(!think.isDir(srcPath)){
@@ -535,7 +537,6 @@ export default class {
       reloadInstance.clearFilesCache(changedFiles);
     };
 
-    let WatchCompile = require('./util/watch_compile.js');
     let instance = new WatchCompile(srcPath, outPath, options, this.compileCallback);
     instance.run();
 
@@ -560,3 +561,5 @@ export default class {
     instance.load();
   }
 }
+
+module.exports = exports.default;

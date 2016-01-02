@@ -13,7 +13,7 @@ var thinkjs = require('../../lib/index.js');
 new thinkjs().load();
 
 
-var Http = require('../../lib/core/http.js');
+var Http = think.safeRequire(path.resolve(__dirname, '../../lib/core/http.js'));
 
 var localeIp = '127.0.0.1';
 function noop(data) {

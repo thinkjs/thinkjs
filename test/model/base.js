@@ -20,7 +20,10 @@ var Base;
 describe('model/base.js', function(){
   var instance = null;
   it('before', function(){
-    Base = require('../../lib/model/base.js');
+    //console.log('base.js')
+    //console.log(path.resolve(__dirname, '../../lib/model/base.js'));
+
+    Base = think.safeRequire(path.resolve(__dirname, '../../lib/model/base.js'));
     var mysqlSocket = think.adapter('socket', 'mysql');
     instance = new Base('user', think.config('db'));
     var tagCacheKeyNum = 0;
@@ -638,6 +641,8 @@ describe('model/base.js', function(){
       var sql = instance.getLastSql();
       assert.equal(sql, "INSERT INTO `think_user` (`wid`,`title`,`cate_id`,`cate_no`) SELECT * FROM `think_tag` WHERE ( `name` = 'test' )")
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('select add, instance', function(done){

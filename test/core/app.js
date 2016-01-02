@@ -11,7 +11,7 @@ var thinkjs = require('../../lib/index.js');
 var tjs = new thinkjs();
 tjs.load();
 
-var App = require('../../lib/core/app.js');
+var App = think.safeRequire(path.resolve(__dirname, '../../lib/core/app.js'));
 
 describe('core/app.js', function(){
   it('init', function(){

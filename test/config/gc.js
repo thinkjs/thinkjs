@@ -7,7 +7,7 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-var gc = require('../../lib/config/gc.js');
+var gc = think.safeRequire(path.resolve(__dirname, '../../lib/config/gc.js'));
 
 describe('config/gc', function(){
   it('gc filter', function(){
