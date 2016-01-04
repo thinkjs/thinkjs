@@ -3,10 +3,6 @@
 import fs from 'fs';
 import path from 'path';
 
-//babel not export default property
-//so can not use `import babel from 'babel-core'`
-let babel = require('babel-core');
-
 /**
  * watch compile
  */
@@ -63,6 +59,9 @@ export default class {
     let startTime = Date.now();
     try{
       let retainLines = this.options.retainLines;
+      //babel not export default property
+      //so can not use `import babel from 'babel-core'`
+      let babel = require('babel-core');
       let data = babel.transform(content, {
         filename: file,
         retainLines: retainLines === undefined ? true : retainLines,
