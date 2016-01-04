@@ -12,7 +12,7 @@ var tjs = new thinkjs();
 tjs.load();
 
 
-var Base = think.safeRequire(path.resolve(__dirname, '../../lib/core/http_base.js'));
+var Base = think.require(path.resolve(__dirname, '../../lib/core/http_base.js'));
 
 
 var list = ['init', 'invoke', 'config', 'action', 'cache', 'hook', 'model', 'controller', 'service'];
@@ -52,7 +52,7 @@ describe('core/http_base.js', function(){
     var instance = new Base({res: {}, req: {}, view: function(){}});
     try{
       var cins = instance.controller('testddd');
-      assert.equal(1, 2)
+      assert.equal(1, 2);
     }catch(e){
 
     }
@@ -74,31 +74,41 @@ describe('core/http_base.js', function(){
   })
   it('action, controller not found', function(){
     var instance = new Base({res: {}, req: {}, view: function(){}, module: 'home'});
-    try{instance.action('user', 'test');
-      assert.equal(1, 2)
+    try{
+      instance.action('user', 'test').catch(function(){});
+      assert.equal(1, 2);
     }catch(e){}
   })
-  it('action, test', function(){
+  it('action, test', function(done){
     var instance = new Base({res: {}, req: {}, view: function(){}, module: 'home'});
     instance.action({
+      __filename: __filename,
       invoke: function(action){
-        assert.equal(action, 'testAction')
+        assert.equal(action, 'testAction');
+        done();
+        return Promise.resolve();
       }
     }, 'test')
   })
-  it('action, test_add', function(){
+  it('action, test_add', function(done){
     var instance = new Base({res: {}, req: {}, view: function(){}, module: 'home'});
     instance.action({
+      __filename: __dirname,
       invoke: function(action){
-        assert.equal(action, 'testAddAction')
+        assert.equal(action, 'testAddAction');
+        done();
+        return Promise.resolve();
       }
     }, 'test_add')
   })
-  it('action, __call', function(){
+  it('action, __call', function(done){
     var instance = new Base({res: {}, req: {}, view: function(){}, module: 'home'});
     instance.action({
+      __filename: __filename,
       invoke: function(action){
-        assert.equal(action, '__call')
+        assert.equal(action, '__call');
+        done();
+        return Promise.resolve();
       }
     }, '__call')
   })
