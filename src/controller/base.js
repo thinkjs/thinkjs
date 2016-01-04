@@ -268,7 +268,7 @@ export default class extends think.http.base {
    */
   deny(status = 403){
     this.status(status);
-    this.end();
+    this.http.end();
     return think.prevent();
   }
   /**

@@ -206,25 +206,32 @@ describe('controller/base.js', function(){
   it('error', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.error();
-      muk.restore();
-      done();
+      instance.error().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
+      
     })
   })
   it('fail', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.fail();
-      muk.restore();
-      done();
+      var data = instance.fail().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('success', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.success();
-      muk.restore();
-      done();
+      var data = instance.success().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('type', function(done){
@@ -238,17 +245,21 @@ describe('controller/base.js', function(){
   it('end', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.end();
-      muk.restore();
-      done();
+      var data = instance.end().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('send', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.send();
-      muk.restore();
-      done();
+      var data = instance.send().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('expires', function(done){
@@ -275,9 +286,11 @@ describe('controller/base.js', function(){
   it('deny', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.deny();
-      muk.restore();
-      done();
+      var data = instance.deny().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('deny 404', function(done){
@@ -287,15 +300,18 @@ describe('controller/base.js', function(){
         assert.equal(status, 404);
       }
     }).then(function(instance){
-      var data = instance.deny(404);
-      muk.restore();
-      done();
+      instance.deny(404).catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('status', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
       var data = instance.status();
+      assert.equal(data, instance);
       muk.restore();
       done();
     })
@@ -303,25 +319,31 @@ describe('controller/base.js', function(){
   it('json', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.json();
-      muk.restore();
-      done();
+      var data = instance.json().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('jsonp', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.jsonp();
-      muk.restore();
-      done();
+      var data = instance.jsonp().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('redirect', function(done){
     muk(think, 'log', function(){})
     getInstance().then(function(instance){
-      var data = instance.redirect();
-      muk.restore();
-      done();
+      var data = instance.redirect().catch(function(err){
+        assert.equal(think.isPrevent(err), true);
+        muk.restore();
+        done();
+      });
     })
   })
   it('lang use cookie', function(done){
@@ -473,43 +495,6 @@ describe('controller/base.js', function(){
       done();
     })
   })
-
-  // it('token', function(done){
-  //   getInstance({
-  //   }).then(function(instance){
-  //     return instance.token()
-  //   }).then(function(data){
-  //     assert.equal(data.length, 32);
-  //     done();
-  //   })
-  // })
-  // it('token twice', function(done){
-  //   var d, ins;
-  //   getInstance({
-  //   }).then(function(instance){
-  //     ins = instance;
-  //     return instance.token()
-  //   }).then(function(data){
-  //     d = data;
-  //     return ins.token();
-  //   }).then(function(data){
-  //     assert.equal(data, d);
-  //     done();
-  //   })
-  // })
-  // it('token twice', function(done){
-  //   var ins;
-  //   getInstance({
-  //   }).then(function(instance){
-  //     ins = instance;
-  //     return instance.token()
-  //   }).then(function(data){
-  //     return ins.token(data);
-  //   }).then(function(data){
-  //     assert.equal(data, true);
-  //     done();
-  //   })
-  // })
   it('get session', function(done){
     getInstance({
     }).then(function(instance){
