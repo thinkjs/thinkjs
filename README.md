@@ -9,9 +9,9 @@
 
 ## Introduction 
 
-As a Node.js MVC framework, ThinkJS 2.0 had completelly been rewritten with brand-new ECMAScript 6/7 features. By using ES7's `async/await` or ES6's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, ThinkJS 2.0 has designed by absorb the concepts and ideas from many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
+As a Node.js MVC framework, ThinkJS 2.0 has completely been rewritten with brand-new ECMAScript 6/7 features. By using ES7's `async/await` or ES6's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, ThinkJS 2.0 has designed by absorbing the concepts and ideas of many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
 
-It's the trend that using ES6/7 features to develop projects thanks to the high development efficiency. The new version of Node.js has improved to support many ES6 featrues, though some features have not been supported until now, and for those features we can use [Babel](http://babeljs.io/) to compile the code.
+It's a trend that using ES6/7 features to develop projects thanks to the high development efficiency. The new version of Node.js has improved to support many ES6/7 features, though some features have not been supported until now, and for those features we can use [Babel](http://babeljs.io/) to compile the code.
 
 ```js
 //user controller, home/controller/user.js
@@ -38,7 +38,7 @@ export default class extends think.controller.base {
 }
 ```
 
-With the help of Babel compiling, we can use the ES6/7 features bodly, and then the code can running in the Node.js 0.12.0+ environment stably.
+With the help of Babel compiling, we can use the ES6/7 features boldly, and then the code can run in the Node.js 0.12.0+ environment stably.
 
 ## Features
 
@@ -55,7 +55,7 @@ With the help of Babel compiling, we can use the ES6/7 features bodly, and then 
 * Supporting command-line call and crontab timing task execution.
 * Multiple Hooks and Middlewares.
 * Logs with details, such as requests, errors, performance, etc.
-* Supporting commands that could auto create REST API.
+* Supporting commands that could automatically create REST API.
 * Supporting internationalization and multiple themes.
 * 1500+ test cases, code coverage greater than 95%.
 
