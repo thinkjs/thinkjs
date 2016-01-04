@@ -40,9 +40,13 @@ export default class extends Base {
       controller: http.controller,
       action: http.action
     };
-    let ret = this.parseFilename(controller.__filename);
-    http.module = ret.module;
-    http.controller = ret.basename;
+    //parse module from pathname
+    http.module = think.config('default_module');
+    if(think.mode === think.mode_module){
+      http.module = controller.__filename.split(think.sep).reverse()[2];
+    }
+
+    http.controller = this.basename(controller.__filename);
     http.action = action;
     if (action !== '__call') {
       action = think.camelCase(action) + 'Action';

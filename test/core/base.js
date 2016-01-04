@@ -105,16 +105,16 @@ describe('core/base.js', function(){
   })
   it('no __before & __after', function(done){
     var instance = new Cls4();
-    instance.invoke('parseFilename', 'getName.js').then(function(data){
-      assert.deepEqual(data.basename, 'getName');
+    instance.invoke('basename', 'getName.js').then(function(data){
+      assert.deepEqual(data, 'getName');
       done();
     }).catch(function(err){
       console.log(err.stack)
     });
   })
-  it('parseFilename', function(){
+  it('basename', function(){
     var instance = new Base();
-    var ret = instance.parseFilename(__filename);
-    assert.equal(ret.basename, 'base')
+    var ret = instance.basename(__filename);
+    assert.equal(ret, 'base')
   })
 })
