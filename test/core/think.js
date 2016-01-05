@@ -1723,6 +1723,50 @@ describe('core/think.js', function(){
     var msg = think.validate(data);
     assert.deepEqual(Object.keys(msg), ['welefen']);
   })
+  it('think.validate value is empty, required|int', function(){
+    var data = {
+      welefen: {
+        value: '',
+        int: true,
+        required: true
+      }
+    }
+    var msg = think.validate(data);
+    assert.deepEqual(Object.keys(msg), ['welefen']);
+  })
+  it('think.validate value not number, required|int', function(){
+    var data = {
+      welefen: {
+        value: 'aaaa',
+        int: true,
+        required: true
+      }
+    }
+    var msg = think.validate(data);
+    assert.deepEqual(Object.keys(msg), ['welefen']);
+  })
+  it('think.validate value number string, required|int', function(){
+    var data = {
+      welefen: {
+        value: '11111',
+        int: true,
+        required: true
+      }
+    }
+    var msg = think.validate(data);
+    assert.deepEqual(Object.keys(msg), []);
+  })
+  it('think.validate value float string, required|int', function(){
+    var data = {
+      welefen: {
+        value: '111.11',
+        int: true,
+        required: true
+      }
+    }
+    var msg = think.validate(data);
+    assert.deepEqual(Object.keys(msg), ['welefen']);
+  })
   it('think.validate value is array', function(){
     var data = {
       welefen: {
@@ -1732,7 +1776,7 @@ describe('core/think.js', function(){
       }
     }
     var msg = think.validate(data);
-    assert.deepEqual(Object.keys(msg), {});
+    assert.deepEqual(Object.keys(msg), []);
   })
   it('think.validate value is array, not valid', function(){
     var data = {

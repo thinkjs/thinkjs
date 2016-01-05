@@ -89,11 +89,6 @@ thinkCache.TIMER = 'timer';
  */
 thinkCache.AUTO_RELOAD = 'auto_reload';
 /**
- * think validate
- * @type {String}
- */
-thinkCache.VALIDATOR = 'validator';
-/**
  * think collection class or function
  * @type {String}
  */

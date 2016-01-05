@@ -16,6 +16,8 @@ import httpBase from './http_base.js';
 import Cookie from '../util/cookie.js';
 import Http from './http.js';
 import Await from '../util/await.js';
+import Validator from '../util/validator.js';
+
 import './think_cache.js';
 import './think_data.js';
 
@@ -1340,75 +1342,69 @@ think.locale = function(key, ...data) {
  * @return {}            []
  */
 think.validate = (name, callback) => {
-  let Validator = thinkCache(thinkCache.VALIDATOR);
-  if (think.isEmpty(Validator)) {
-    Validator = think.require('validator');
-    thinkCache(thinkCache.VALIDATOR, Validator);
-  }
   // register validate callback
   if (think.isString(name)) {
     // think.validate('test', function(){})
     if (think.isFunction(callback)) {
-      thinkCache(thinkCache.VALIDATOR, name, callback);
+      Validator[name] = callback;
       return;
     }
     // get validator callback
-    return thinkCache(thinkCache.VALIDATOR, name);
+    return Validator[name];
   }
-  let data = name, msg = {}, msgs = callback || {}, item;
+  return think.validate.exec(name, callback);
+};
 
-  //get error message
-  let getMsg = (type, name, value, args) => {
-    let key = `validate_${type}`;
-    let keyWithName = `${key}_${name}`;
-    let msg = msgs[keyWithName];
-    if(!msg && think.locale(keyWithName) !== keyWithName){
-      msg = think.locale(keyWithName);
-    }
-    msg = msg || msgs[key];
-    if(!msg && think.locale(key) !== key){
-      msg = think.locale(key);
-    }
-    if(!msg){
-      msg = think.locale('PARAMS_NOT_VALID');
-    }
-    return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
-  };
+//get error message
+let _getValidateErrorMsg = (type, name, value, args, msgs) => {
+  let key = `validate_${type}`;
+  let keyWithName = `${key}_${name}`;
+  let msg = msgs[keyWithName];
+  if(!msg && think.locale(keyWithName) !== keyWithName){
+    msg = think.locale(keyWithName);
+  }
+  msg = msg || msgs[key];
+  if(!msg && think.locale(key) !== key){
+    msg = think.locale(key);
+  }
+  msg = msg || think.locale('PARAMS_NOT_VALID');
+  return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
+};
 
-  //validate item rule
-  let validateRule = (name, type, value, args) => {
-    let fn = Validator[type];
-    if (!think.isFunction(fn)) {
-      throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${type} type`));
-    }
-    if(think.isBoolean(args)){
-      args = [];
-    }else if(!think.isArray(args)){
-      args = [args];
-    }
-    let msgArgs = [...args];
-    let parseArgs = Validator[`_${type}`];
-    //parse args
-    if(think.isFunction(parseArgs)){
-      args = parseArgs(args, data);
-    }
-    let result = fn(value, ...args);
-    if(!result){
-      msg[name] = getMsg(type, name, value, msgArgs);
-    }
-    return result;
-  };
+let _getValidateRuleFnAndArgs = (type, args, rules) => {
+  let fn = Validator[type];
+  if (!think.isFunction(fn)) {
+    throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${type} type`));
+  }
+  if(think.isBoolean(args)){
+    args = [];
+  }else if(!think.isArray(args)){
+    args = [args];
+  }
+  let parseArgs = Validator[`_${type}`];
+  //parse args
+  if(think.isFunction(parseArgs)){
+    args = parseArgs(args, rules);
+  }
+  return {fn, args};
+}
 
-  for(let name in data){
-    item = data[name];
-    for(let vitem in item){
-      if(vitem === 'value'){
+think.validate.exec = (rules, msgs = {}) => {
+  let ret = {};
+  for(let name in rules){
+    let item = rules[name];
+    for(let vtype in item){
+      if(vtype === 'value'){
         continue;
       }
       //if has array rule, then foreach check value for every rule
-      if('array' in item && vitem !== 'array' && think.isArray(item.value)){
+      if(item.array && vtype !== 'array' && think.isArray(item.value)){
         let flag = item.value.some(itemValue => {
-          if(!validateRule(name, vitem, itemValue, item[vitem])){
+          let {fn, args} = _getValidateRuleFnAndArgs(vtype, item[vtype], rules);
+          let result = fn(itemValue, ...args);
+          if(!result){
+            let msg = _getValidateErrorMsg(vtype, name, itemValue, args, msgs);
+            ret[name] = msg;
             return true;
           }
         });
@@ -1416,14 +1412,18 @@ think.validate = (name, callback) => {
           break;
         }
       }else{
-        if(!validateRule(name, vitem, item.value, item[vitem])){
+        let {fn, args} = _getValidateRuleFnAndArgs(vtype, item[vtype], rules);
+        let result = fn(item.value, ...args);
+        if(!result){
+          let msg = _getValidateErrorMsg(vtype, name, item.value, args, msgs);
+          ret[name] = msg;
           break;
         }
       }
     }
   }
-  return msg;
-};
+  return ret;
+}
 
 
 /**

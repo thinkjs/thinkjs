@@ -518,7 +518,7 @@ Validator.int = (value, min, max) => {
   if(max){
     options.max = max | 0;
   }
-  return validator.isInt(value, options);
+  return !isNaN(value) && validator.isInt(value, options);
 };
 /**
  * check if the string greater than min value
@@ -778,4 +778,5 @@ Validator.type = (value, type) => {
   }
   return false;
 };
+
 export default Validator;
