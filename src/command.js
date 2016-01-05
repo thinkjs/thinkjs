@@ -69,7 +69,7 @@ let getVersion = () => {
  */
 let getProjectAppPath = () => {
   let path = projectRootPath + '/';
-  path += commander.es ? 'src' : 'app';
+  path += commander.es || commander.ts ? 'src' : 'app';
   return path;
 };
 /**
@@ -122,7 +122,7 @@ let copyFile = (source, target, replace, showWarning) => {
       source = tsSource;
     }
     //replace target file extname to .ts
-    target = target.replace(/\.js$/, 'ts');
+    target = target.replace(/\.js$/, '.ts');
   }
   //ECMAScript 2015/2016
   else if(es){

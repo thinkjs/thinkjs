@@ -68,7 +68,7 @@ think.port = 0;
  * is command line
  * @type {String}
  */
-think.cli = false;
+think.cli = '';
 /**
  * get locale
  * @type {String}

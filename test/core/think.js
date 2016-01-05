@@ -41,7 +41,7 @@ function getHttp(config, options){
 
 describe('core/think.js', function(){
   it('before', function(){
-    think.cli = false;
+    think.cli = '';
     think.mode = think.mode_normal;
     think.module = [];
   })
@@ -73,8 +73,8 @@ describe('core/think.js', function(){
   it('think.port is number', function(){
     assert.equal(typeof think.port, 'number');
   })
-  it('think.cli is boolean', function(){
-    assert.equal(typeof think.cli, 'boolean');
+  it('think.cli is string', function(){
+    assert.equal(typeof think.cli, 'string');
   })
 
   it('think.lang is set', function(){
@@ -742,7 +742,7 @@ describe('core/think.js', function(){
     var _moduleConfig = thinkData.config;
     thinkData.config = {};
     var cli = think.cli;
-    think.cli = true;
+    think.cli = 'test';
     var configs = think.getModuleConfig(true);
     assert.equal(think.isObject(configs), true);
     assert.equal(configs.auto_reload, false);
