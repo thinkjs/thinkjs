@@ -1569,6 +1569,25 @@ think.statusAction = async (status, http, log) => {
 };
 
 /**
+ * waterfall
+ * @param  {Array}   dataList []
+ * @param  {Function} callback []
+ * @return {Promise}            []
+ */
+think.waterfall = async (dataList, callback) => {
+  let itemFn = think.isFunction(dataList[0]);
+  let data;
+  for(let i = 0, length = dataList.length; i < length; i++){
+    let ret = itemFn ? dataList[i](callback, data) : callback(dataList[i], data);
+    data = await think.co(ret);
+    if(data === null){
+      return data;
+    }
+  }
+  return data;
+}
+
+/**
  * parallel limit exec
  * @param  {String}   key      []
  * @param  {Mixed}   data     []
