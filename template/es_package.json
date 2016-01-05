@@ -9,14 +9,14 @@
     "watch": "npm run watch-compile"
   },
   "dependencies": {
-    "thinkjs": "2.0.x",
-    "babel-runtime": "^6.3.19"
+    "thinkjs": "2.1.x",
+    "babel-runtime": "6.x.x"
   },
   "devDependencies": {
-    "babel-cli": "^6.3.17",
-    "babel-preset-es2015-loose": "^6.1.4",
-    "babel-preset-stage-1": "^6.3.13",
-    "babel-plugin-transform-runtime": "^6.3.13",
-    "babel-core": "^6.3.26"
+    "babel-cli": "6.x.x",
+    "babel-preset-es2015-loose": "6.x.x",
+    "babel-preset-stage-1": "6.x.x",
+    "babel-plugin-transform-runtime": "6.x.x",
+    "babel-core": "6.x.x"
   }
 }
