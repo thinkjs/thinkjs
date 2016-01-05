@@ -8,11 +8,11 @@ import './core/think.js';
 let {sep} = path;
 let cwd = process.cwd();
 let templatePath = path.dirname(__dirname) + sep + 'template';
-let projectRootPath = './'; //project root path
+let projectRootPath = cwd; //project root path
 let modeList = ['normal', 'module'];
 
 think.mode = think.mode_module;
-think.ROOT_PATH = cwd;
+
 
 /**
  * get date time
@@ -49,7 +49,7 @@ let mkdir = dir => {
   }
   think.mkdir(dir);
   log(colors => {
-    return colors.cyan('create') + ' : ' + path.normalize(dir);
+    return colors.cyan('create') + ' : ' + path.relative(cwd, dir);
   });
 };
 
@@ -68,7 +68,7 @@ let getVersion = () => {
  * @return {} []
  */
 let getProjectAppPath = () => {
-  let path = projectRootPath;
+  let path = projectRootPath + '/';
   path += commander.es ? 'src' : 'app';
   return path;
 };
@@ -157,7 +157,7 @@ let copyFile = (source, target, replace, showWarning) => {
 
   fs.writeFileSync(target, content);
   log(colors => {
-    return colors.cyan('create') + ' : ' + path.normalize(target);
+    return colors.cyan('create') + ' : ' + path.relative(cwd, target);
   });
 };
 
@@ -168,7 +168,7 @@ let copyFile = (source, target, replace, showWarning) => {
  */
 let isThinkApp = projectRootPath => {
   if(think.isDir(projectRootPath)){
-    let filepath = projectRootPath + '.thinkjsrc';
+    let filepath = projectRootPath + '/.thinkjsrc';
     if(think.isFile(filepath)){
       return true;
     }
@@ -193,7 +193,7 @@ let isModuleExist = module => {
  * @return {}             []
  */
 let parseAppConfig = () => {
-  let filepath = projectRootPath + '.thinkjsrc';
+  let filepath = projectRootPath + '/.thinkjsrc';
   let content = fs.readFileSync(filepath, 'utf8');
   let data = JSON.parse(content);
 
@@ -211,20 +211,21 @@ let parseAppConfig = () => {
 let getProjectViewPath = module => {
   let APP_PATH = think.APP_PATH;
 
-  think.APP_PATH = projectRootPath + 'view';
+  think.APP_PATH = projectRootPath + '/view';
 
   //read view config, view root_path may be changed it.
-  let viewConfigFile = projectRootPath + 'app/common/config/view.js';
+  let viewConfigFile = projectRootPath + '/app/common/config/view.js';
+  if(think.mode === think.mode_normal){
+    viewConfigFile = projectRootPath + '/app/config/view.js';
+  }
+  think.ROOT_PATH = projectRootPath;
   if(think.isFile(viewConfigFile)){
-    let data = require(path.resolve(cwd, viewConfigFile));
+    let data = require(viewConfigFile);
     let viewRootPath = path.normalize(data.root_path || data.default && data.default.root_path);
-    if(viewRootPath.indexOf(cwd) === 0){
-      viewRootPath = viewRootPath.slice(cwd.length + 1);
-    }
     think.APP_PATH = viewRootPath;
   }
-  
   let viewPath = think.getPath(module, '');
+
 
   think.APP_PATH = APP_PATH;
   return path.normalize(viewPath).slice(0, -1);
@@ -254,43 +255,41 @@ let _checkEnv = () => {
 let _copyWwwFiles = () => {
   mkdir(projectRootPath);
 
-  copyFile('package.json', projectRootPath + 'package.json');
+  copyFile('package.json', projectRootPath + '/package.json');
 
   let mode = 'normal';
   if(think.mode === think.mode_module){
     mode = 'module';
   }
-  copyFile('thinkjsrc.json', projectRootPath + '.thinkjsrc', {
+  copyFile('thinkjsrc.json', projectRootPath + '/.thinkjsrc', {
     '<createAt>': getDateTime(),
     '<mode>': mode
   });
 
-  let ROOT_PATH = cwd + '/' + projectRootPath + 'www';
-  copyFile('nginx.conf', projectRootPath + 'nginx.conf', {
+  let ROOT_PATH = cwd + '/' + projectRootPath + '/www';
+  copyFile('nginx.conf', projectRootPath + '/nginx.conf', {
     '<ROOT_PATH>': ROOT_PATH
   });
-  copyFile('nginx_ssl_http2.conf', projectRootPath + 'nginx_ssl_http2.conf', {
-    '<ROOT_PATH>': ROOT_PATH
-  });
-  copyFile('pm2.json', projectRootPath + 'pm2.json', {
+
+  copyFile('pm2.json', projectRootPath + '/pm2.json', {
     '<ROOT_PATH>': path.dirname(ROOT_PATH),
     '<APP_NAME>': getAppName()
   });
 
-  copyFile('gitignore.log', projectRootPath + '.gitignore');
-  copyFile('README.md', projectRootPath + 'README.md');
+  copyFile('gitignore.log', projectRootPath + '/.gitignore');
+  copyFile('README.md', projectRootPath + '/README.md');
 
 
-  mkdir(projectRootPath + 'www/');
-  copyFile('www/development.js', projectRootPath + 'www/development.js');
-  copyFile('www/production.js', projectRootPath + 'www/production.js');
-  copyFile('www/testing.js', projectRootPath + 'www/testing.js');
-  copyFile('www/README.md', projectRootPath + 'www/README.md');
+  mkdir(projectRootPath + '/www');
+  copyFile('www/development.js', projectRootPath + '/www/development.js');
+  copyFile('www/production.js', projectRootPath + '/www/production.js');
+  copyFile('www/testing.js', projectRootPath + '/www/testing.js');
+  copyFile('www/README.md', projectRootPath + '/www/README.md');
 
-  mkdir(projectRootPath + 'www/static/');
-  mkdir(projectRootPath + 'www/static/js');
-  mkdir(projectRootPath + 'www/static/css');
-  mkdir(projectRootPath + 'www/static/img');
+  mkdir(projectRootPath + '/www/static/');
+  mkdir(projectRootPath + '/www/static/js');
+  mkdir(projectRootPath + '/www/static/css');
+  mkdir(projectRootPath + '/www/static/img');
 };
 /**
  * copy error template files
@@ -370,7 +369,7 @@ let _copyCommonBootstrapFiles = () => {
  * @return {}             []
  */
 let _createModule = module => {
-  if(think.mode !== think.mode_module){
+  if(think.mode !== think.mode_module && module !== 'home'){
     log(colors => {
       return colors.red('app mode is not module, can not create module.\n');
     });
@@ -589,7 +588,7 @@ let createProject = () => {
 
   console.log();
   console.log('  enter path:');
-  console.log('  $ cd ' + projectRootPath);
+  console.log('  $ cd ' + projectRootPath.slice(cwd.length + 1));
   console.log();
 
   console.log('  install dependencies:');
@@ -620,18 +619,18 @@ let createPlugin = () => {
     pluginName = 'think-' + pluginName;
   }
 
-  copyFile('plugin/src/index.js', projectRootPath + 'src/index.js');
-  copyFile('plugin/test/index.js', projectRootPath + 'test/index.js', {
+  copyFile('plugin/src/index.js', projectRootPath + '/src/index.js');
+  copyFile('plugin/test/index.js', projectRootPath + '/test/index.js', {
     '<PLUGIN_NAME>': pluginName
   });
-  copyFile('plugin/.eslintrc', projectRootPath + '.eslintrc');
-  copyFile('plugin/gitignore', projectRootPath + '.gitignore');
-  copyFile('plugin/.npmignore', projectRootPath + '.npmignore');
-  copyFile('plugin/.travis.yml', projectRootPath + '.travis.yml');
-  copyFile('plugin/package.json', projectRootPath + 'package.json', {
+  copyFile('plugin/.eslintrc', projectRootPath + '/.eslintrc');
+  copyFile('plugin/gitignore', projectRootPath + '/.gitignore');
+  copyFile('plugin/.npmignore', projectRootPath + '/.npmignore');
+  copyFile('plugin/.travis.yml', projectRootPath + '/.travis.yml');
+  copyFile('plugin/package.json', projectRootPath + '/package.json', {
     '<PLUGIN_NAME>': pluginName
   });
-  copyFile('plugin/README.md', projectRootPath + 'README.md', {
+  copyFile('plugin/README.md', projectRootPath + '/README.md', {
     '<PLUGIN_NAME>': pluginName
   });
 
@@ -697,7 +696,7 @@ commander.option('-m, --mode <mode>', 'project mode type(normal, module), defaul
 
 //create project
 commander.command('new <projectPath>').description('create project').action(projectPath => {
-  projectRootPath = path.normalize(projectPath + '/');
+  projectRootPath = path.resolve(projectRootPath, projectPath);
   commander.es = commander.es || commander.es6;
   createProject();
 });
@@ -734,7 +733,7 @@ commander.command('adapter <adapterName>').description('add adapter').action(ada
 
 //create plugin
 commander.command('plugin <pluginPath>').description('create ThinkJS plugin').action(pluginPath => {
-  projectRootPath = path.normalize(pluginPath + '/');
+  projectRootPath = path.resolve(projectRootPath, pluginPath);
   
   createPlugin();
 });
