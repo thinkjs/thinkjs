@@ -69,7 +69,7 @@ let getVersion = () => {
  */
 let getProjectAppPath = () => {
   let path = projectRootPath;
-  path += commander.es6 ? 'src' : 'app';
+  path += commander.es ? 'src' : 'app';
   return path;
 };
 /**
@@ -111,6 +111,8 @@ let copyFile = (source, target, replace, showWarning) => {
 
   mkdir(path.dirname(target));
 
+  let es = commander.es || commander.es6;
+
   //TypeScript
   if(commander.ts){
     let tsSource = source.replace(/([^/]+)$/, (a, b) => {
@@ -121,12 +123,12 @@ let copyFile = (source, target, replace, showWarning) => {
     }
   }
   //ECMAScript 6/7
-  else if(commander.es6){
-    let es6Source = source.replace(/([^/]+)$/, (a, b) => {
-      return '/es6_' + b;
+  else if(es){
+    let esSource = source.replace(/([^/]+)$/, (a, b) => {
+      return '/es_' + b;
     });
-    if(think.isFile(templatePath + '/' + es6Source)){
-      source = es6Source;
+    if(think.isFile(templatePath + '/' + esSource)){
+      source = esSource;
     }
   }
 
@@ -194,7 +196,7 @@ let parseAppConfig = () => {
   let data = JSON.parse(content);
 
   commander.ts = data.ts;
-  commander.es6 = data.es6;
+  commander.es = data.es || data.es6; //compatible with 2.0.x
   think.mode = think['mode_' + data.mode];
 
   think.APP_PATH = getProjectAppPath();
@@ -554,6 +556,7 @@ let createAdapter = adapter => {
  * @return {}             []
  */
 let _createProject = () => {
+
   _copyWwwFiles();
 
   mkdir(think.APP_PATH);
@@ -676,7 +679,8 @@ commander.option('-v, --version', 'output the version number', () => {
 commander.option('-V', 'output the version number', () => {
   displayVersion();
 });
-commander.option('-e, --es6', 'use es6 for project, used in `new` command');
+commander.option('-e, --es', 'use es for project, used in `new` command');
+commander.option('--es6', 'use es for project, used in `new` command');
 commander.option('-t, --ts', 'use TypeScript for project, used in `new` command');
 commander.option('-r, --rest', 'create rest controller, used in `controller` command');
 commander.option('-M, --mongo', 'create mongo model, used in `model` command');
@@ -692,6 +696,7 @@ commander.option('-m, --mode <mode>', 'project mode type(normal, module), defaul
 //create project
 commander.command('new <projectPath>').description('create project').action(projectPath => {
   projectRootPath = path.normalize(projectPath + '/');
+  commander.es = commander.es || commander.es6;
   createProject();
 });
 
