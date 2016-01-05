@@ -235,6 +235,16 @@ export default class extends think.http.base {
     return this.view().display(templateFile, charset, contentType);
   }
   /**
+   * alias of display
+   * @param  {String} templateFile [template filepath]
+   * @param  {String} charset      [content encoding]
+   * @param  {String} contentType  [content type]
+   * @return {Promise}              []
+   */
+  render(templateFile, charset, contentType){
+    return this.display(templateFile, charset, contentType);
+  }
+  /**
    * output with jsonp
    * @param  {Object} data [output data]
    * @return {}      []

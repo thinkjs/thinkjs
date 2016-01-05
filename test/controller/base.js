@@ -423,6 +423,17 @@ describe('controller/base.js', function(){
       done();
     })
   })
+  it('render', function(done){
+    muk(think, 'log', function(){})
+    getInstance({
+    }).then(function(instance){
+      return instance.render(__filename)
+    }).catch(function(err){
+      assert.equal(think.isPrevent(err), true);
+      muk.restore();
+      done();
+    })
+  })
   it('download', function(done){
     getInstance({
       header: function(type, value){
