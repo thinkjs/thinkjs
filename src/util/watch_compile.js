@@ -18,6 +18,11 @@ export default class {
    */
   compiledErrorFiles = [];
   /**
+   * allow file ext in src path
+   * @type {Array}
+   */
+  allowFileExt = ['.js', '.ts'];
+  /**
    * constructor
    * @param  {Array} args []
    * @return {}         []
@@ -45,34 +50,25 @@ export default class {
    * @return {}          []
    */
   compileFile(file, onlyCopy){
-    let filePath = `${this.srcPath}/${file}`;
+    let filePath = `${this.srcPath}${think.sep}${file}`;
     let content = fs.readFileSync(filePath, 'utf8');
 
+    //when get file content empty, maybe file is locked
     if(!content){
       return;
     }
+    // only copy file content
     if(onlyCopy){
-      fs.writeFileSync(`${this.outPath}/${file}`, content);
+      fs.writeFileSync(`${this.outPath}${think.sep}${file}`, content);
       return;
     }
 
-    let startTime = Date.now();
     try{
-      let retainLines = this.options.retainLines;
-      //babel not export default property
-      //so can not use `import babel from 'babel-core'`
-      let babel = require('babel-core');
-      let data = babel.transform(content, {
-        filename: file,
-        retainLines: retainLines === undefined ? true : retainLines,
-        presets: ['es2015-loose', 'stage-1'],
-        plugins: ['transform-runtime']
-      });
-      if(this.options.log){
-        think.log(`compile file ${file}`, 'BABEL', startTime);
+      if(this.options.ts){
+        this.compileByTypeScript(file);
+      }else{
+        this.compileByBabel(file);
       }
-      think.mkdir(path.dirname(`${this.outPath}/${file}`));
-      fs.writeFileSync(`${this.outPath}/${file}`, data.code);
       return true;
     }catch(e){
 
@@ -81,9 +77,38 @@ export default class {
       }, 'BABEL');
       think.log(e);
 
-      e.message = 'Babel Compile Error: ' + e.message;
+      e.message = 'Compile Error: ' + e.message;
       think.compileError = e;
     }
+  }
+  /**
+   * typescript compile
+   * @return {} []
+   */
+  compileByTypeScript(){
+
+  }
+  /**
+   * babel compile
+   * @return {} []
+   */
+  compileByBabel(){
+    let startTime = Date.now();
+    let retainLines = this.options.retainLines;
+    //babel not export default property
+    //so can not use `import babel from 'babel-core'`
+    let babel = require('babel-core');
+    let data = babel.transform(content, {
+      filename: file,
+      retainLines: retainLines === undefined ? true : retainLines,
+      presets: ['es2015-loose', 'stage-1'],
+      plugins: ['transform-runtime']
+    });
+    if(this.options.log){
+      think.log(`compile file ${file}`, 'BABEL', startTime);
+    }
+    think.mkdir(path.dirname(`${this.outPath}${think.sep}${file}`));
+    fs.writeFileSync(`${this.outPath}${think.sep}${file}`, data.code);
   }
   /**
    * src file is deleted, but app file also exist
@@ -93,17 +118,17 @@ export default class {
   getSrcDeletedFiles(srcFiles, appFiles){
     return appFiles.filter(file => {
       let extname = path.extname(file);
-      if(extname !== '.js'){
+      if(this.allowFileExt.indexOf(extname) === -1){
         return;
       }
       //src file not exist
       if(srcFiles.indexOf(file) === -1){
-        let filepath = this.outPath + '/' + file;
+        let filepath = this.outPath + think.sep + file;
         fs.unlinkSync(filepath);
         return true;
       }
     }).map(file => {
-      return this.outPath + '/' + file;
+      return this.outPath + think.sep + file;
     });
   }
   /**
@@ -122,12 +147,12 @@ export default class {
     files.forEach(file => {
       let extname = path.extname(file);
       //if is not js file, only copy
-      if(extname !== '.js'){
+      if(this.allowFileExt.indexOf(extname) === -1){
         this.compileFile(file, true);
         return;
       }
-      let mTime = fs.statSync(`${this.srcPath}/${file}`).mtime.getTime();
-      let outFile = `${this.outPath}/${file}`;
+      let mTime = fs.statSync(`${this.srcPath}${think.sep}${file}`).mtime.getTime();
+      let outFile = `${this.outPath}${think.sep}${file}`;
       if(think.isFile(outFile)){
         let outmTime = fs.statSync(outFile).mtime.getTime();
         //if compiled file mtime is after than source file, return
@@ -138,7 +163,7 @@ export default class {
       if(!this.compiledMtime[file] || mTime > this.compiledMtime[file]){
         let ret = this.compileFile(file);
         if(ret){
-          changedFiles.push(path.normalize(`${this.outPath}/${file}`));
+          changedFiles.push(path.normalize(`${this.outPath}${think.sep}${file}`));
         }
         
         this.compiledMtime[file] = mTime;
