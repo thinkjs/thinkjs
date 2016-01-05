@@ -1,5 +1,5 @@
 {
   "createAt": "<createAt>",
   "mode": "<mode>",
-  "es6": true
+  "es": true
 }

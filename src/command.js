@@ -115,17 +115,19 @@ let copyFile = (source, target, replace, showWarning) => {
 
   //TypeScript
   if(commander.ts){
-    let tsSource = source.replace(/([^/]+)$/, (a, b) => {
-      return '/ts_' + b;
+    let tsSource = source.replace(/\.\w+$/, () => {
+      return '.ts';
     });
     if(think.isFile(templatePath + '/' + tsSource)){
       source = tsSource;
     }
+    //replace target file extname to .ts
+    target = target.replace(/\.js$/, 'ts');
   }
-  //ECMAScript 6/7
+  //ECMAScript 2015/2016
   else if(es){
-    let esSource = source.replace(/([^/]+)$/, (a, b) => {
-      return '/es_' + b;
+    let esSource = source.replace(/\.\w+$/, (a) => {
+      return a === '.js' ? '.es' : a + '.es';
     });
     if(think.isFile(templatePath + '/' + esSource)){
       source = esSource;
@@ -258,7 +260,7 @@ let _copyWwwFiles = () => {
   if(think.mode === think.mode_module){
     mode = 'module';
   }
-  copyFile('thinkjsrc', projectRootPath + '.thinkjsrc', {
+  copyFile('thinkjsrc.json', projectRootPath + '.thinkjsrc', {
     '<createAt>': getDateTime(),
     '<mode>': mode
   });
@@ -275,7 +277,7 @@ let _copyWwwFiles = () => {
     '<APP_NAME>': getAppName()
   });
 
-  copyFile('gitignore', projectRootPath + '.gitignore');
+  copyFile('gitignore.log', projectRootPath + '.gitignore');
   copyFile('README.md', projectRootPath + 'README.md');
 
 
