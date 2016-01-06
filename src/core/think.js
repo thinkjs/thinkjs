@@ -17,6 +17,8 @@ import Cookie from '../util/cookie.js';
 import Http from './http.js';
 import Await from '../util/await.js';
 import Validate from './think_validate.js';
+import Middleware from './think_middleware.js';
+import Hook from './think_hook.js';
 
 import './think_cache.js';
 import './think_data.js';
@@ -145,6 +147,18 @@ think.isHttp = obj => {
  * @type {Function}
  */
 think.validate = Validate;
+
+/**
+ * middleware
+ * @type {Function}
+ */
+think.middleware = Middleware;
+
+/**
+ * hook
+ * @type {Function}
+ */
+think.hook = Hook;
 
 /**
  * alias co module to think.co
@@ -600,209 +614,6 @@ think.transformConfig = (config, transforms) => {
     }
   }
   return config;
-};
-
-
-/**
- * regitster or exec hook
- * @param  {String} name []
- * @return {}      []
- */
-think.hook = (...args) => {
-  let [name, http, data] = args;
-  //get hook data
-  if (args.length === 1) {
-    return thinkData.hook[name] || [];
-  }
-  //remove hook
-  if(http === null){
-    thinkData.hook[name] = [];
-    return;
-  }
-  // set hook data
-  // think.hook('test', ['middleware1', 'middleware2'])
-  if(think.isArray(http) || !think.isHttp(http)){
-    return think.hook.set(name, http, data);
-  }
-  //exec hook
-  return think.hook.exec(name, http, data);
-};
-
-/**
- * set hook
- * @return {} []
- */
-think.hook.set = (name, hooks, flag) => {
-  //think.hook.set('test', function or class)
-  if(think.isFunction(hooks)){
-    let mname = 'middleware_' + think.uuid();
-    think.middleware(mname, hooks);
-    hooks = [mname];
-  }
-  else if(!think.isArray(hooks)){
-    hooks = [hooks];
-  }
-  else{
-    let first = hooks[0];
-    if(first === 'append' || first === 'prepend'){
-      flag = hooks.shift();
-    }
-  }
-  let oriHooks = thinkData.hook[name] || [];
-  if(flag === 'append'){
-    oriHooks = oriHooks.concat(hooks);
-  }else if(flag === 'prepend'){
-    oriHooks = hooks.concat(oriHooks);
-  }else{
-    oriHooks = hooks;
-  }
-  thinkData.hook[name] = oriHooks;
-};
-
-/**
- * exec hook
- * @param  {String} name [hook name]
- * @param  {Object} http []
- * @param  {Mixed} data []
- * @return {Promise}      []
- */
-// think.hook.exec = async (name, http, data) => {
-//   //exec hook 
-//   let list = thinkData.hook[name];
-//   if (!list || list.length === 0) {
-//     return Promise.resolve(data);
-//   }
-
-//   let length = list.length;
-//   for(let i = 0; i < length; i++){
-//     let result = await think.middleware.exec(list[i], http, data);
-//     //prevent next middlewares invoked in hook
-//     if(result === null){
-//       break;
-//     }else if (result !== undefined) {
-//       data = result;
-//     }
-//   }
-//   return data;
-// };
-
-let _execItemMiddleware = (list, index, http, data) => {
-  let item = list[index];
-  if(!item){
-    return data;
-  }
-  return think.middleware.exec(item, http, data).then(result => {
-    if(result === null){
-      return data;
-    }else if(result !== undefined){
-      data = result;
-    }
-    return _execItemMiddleware(list, index + 1, http, data);
-  });
-};
-
-think.hook.exec = async (name, http, data) => {
-  //exec hook 
-  let list = thinkData.hook[name];
-  if (!list || list.length === 0) {
-    return Promise.resolve(data);
-  }
-  return _execItemMiddleware(list, 0, http, data);
-};
-
-
-/**
- * create or exec middleware
- * @param  {Function} superClass []
- * @param  {Object} methods      []
- * @return {mixed}            []
- */
-think.middleware = (...args) => {
-  let [superClass, methods, data] = args;
-  let length = args.length;
-
-  // register functional or class middleware
-  // think.middleware('parsePayLoad', function(){})
-  if (think.isString(superClass) && think.isFunction(methods)) {
-    thinkData.middleware[superClass] = methods;
-    return;
-  }
-  // exec middleware
-  // think.middleware('parsePayLoad', http, data)
-  if (length >= 2 && think.isHttp(methods)) {
-    return think.middleware.exec(superClass, methods, data);
-  }
-  // get middleware
-  // think.middleware('parsePayLoad')
-  if (length === 1 && think.isString(superClass)) {
-    return think.middleware.get(superClass);
-  }
-  return think.middleware.create(superClass, methods);
-};
-
-/**
- * create middleware
- * @param  {Class} superClass []
- * @param  {Object} methods    []
- * @return {Class}            []
- */
-think.middleware.create = (superClass, methods) => {
-  let middleware = thinkCache(thinkCache.COLLECTION, 'middleware');
-  if (!middleware) {
-    middleware = think.Class('middleware');
-    thinkCache(thinkCache.COLLECTION, 'middleware', middleware);
-  }
-  // create middleware
-  return middleware(superClass, methods);
-};
-
-/**
- * get middleware
- * @param  {String} name []
- * @return {Class}      []
- */
-think.middleware.get = name => {
-  let middlware = thinkData.middleware[name];
-  if(middlware){
-    return middlware;
-  }
-  let cls = think.require('middleware_' + name, true);
-  if (cls) {
-    return cls;
-  }
-  throw new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
-};
-
-/**
- * exec middleware
- * @param  {String} name []
- * @param  {Object} http []
- * @param  {Mixed} data []
- * @return {Promise}      []
- */
-think.middleware.exec = (name, http, data) => {
-  if (think.isString(name)) {
-    let fn = thinkData.middleware[name];
-    // name is in middleware cache
-    if (fn) {
-      //class middleware must have run method
-      if(fn.prototype.run){
-        let instance = new fn(http);
-        return think.co(instance.run(data));
-      }else{
-        return think.co(fn(http, data));
-      }
-    }else{
-      let Cls = think.require('middleware_' + name, true);
-      if(Cls){
-        let instance = new Cls(http);
-        return think.co(instance.run(data));
-      }
-      let err = new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
-      return Promise.reject(err);
-    }
-  }
-  return think.co(name(http, data));
 };
 
 
