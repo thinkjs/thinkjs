@@ -65,9 +65,9 @@ export default class {
 
     try{
       if(this.options.ts){
-        this.compileByTypeScript(file);
+        this.compileByTypeScript(content, file);
       }else{
-        this.compileByBabel(file);
+        this.compileByBabel(content, file);
       }
       return true;
     }catch(e){
@@ -85,14 +85,14 @@ export default class {
    * typescript compile
    * @return {} []
    */
-  compileByTypeScript(){
+  compileByTypeScript(/*content, file*/){
 
   }
   /**
    * babel compile
    * @return {} []
    */
-  compileByBabel(){
+  compileByBabel(content, file){
     let startTime = Date.now();
     let retainLines = this.options.retainLines;
     //babel not export default property

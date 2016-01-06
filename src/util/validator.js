@@ -745,7 +745,7 @@ Validator.array = value => {
  * @return {Boolean}       []
  */
 Validator.boolean = value => {
-  return value === true;
+  return ['yes', 'on', '1', 'true', true].indexOf(value) > -1;
 };
 /**
  * check value is object
@@ -754,6 +754,16 @@ Validator.boolean = value => {
  */
 Validator.object = value => {
   return think.isObject(value);
+};
+
+/**
+ * check value with regexp
+ * @param  {Mixed} value []
+ * @param  {RegExp} reg   []
+ * @return {Boolean}       []
+ */
+Validator.regexp = (value, reg) => {
+  return reg.test(value);
 };
 /**
  * check type

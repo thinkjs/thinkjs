@@ -3,7 +3,6 @@
 import url from 'url';
 import fs from 'fs';
 import mime from 'mime';
-import util from 'util';
 import cookie from '../util/cookie.js';
 
 const PAYLOAD_METHODS = ['POST', 'PUT', 'PATCH'];

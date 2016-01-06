@@ -16,7 +16,7 @@ import httpBase from './http_base.js';
 import Cookie from '../util/cookie.js';
 import Http from './http.js';
 import Await from '../util/await.js';
-import Validator from '../util/validator.js';
+import Validate from './think_validate.js';
 
 import './think_cache.js';
 import './think_data.js';
@@ -139,6 +139,12 @@ think.reject = (err) => {
 think.isHttp = obj => {
   return !!(obj && think.isObject(obj.req) && think.isObject(obj.res));
 };
+
+/**
+ * validate 
+ * @type {Function}
+ */
+think.validate = Validate;
 
 /**
  * alias co module to think.co
@@ -1317,113 +1323,6 @@ think.locale = function(key, ...data) {
 };
 
 
-/**
- * validate data
- * {
- *   name: {
- *     value: 'test',
- *     required: true,
- *     length: [4, 20],
- *     email: true
- *   },
- *   pwd: {
- *     value: '12345678',
- *     required: true,
- *     length: [6, 20]
- *   }
- *   confirm_pwd: {
- *     value: '12345678',
- *     required: true,
- *     equals: 'pwd'
- *   }
- * }
- * @param  {String | Object}   name     []
- * @param  {Function} callback []
- * @return {}            []
- */
-think.validate = (name, callback) => {
-  // register validate callback
-  if (think.isString(name)) {
-    // think.validate('test', function(){})
-    if (think.isFunction(callback)) {
-      Validator[name] = callback;
-      return;
-    }
-    // get validator callback
-    return Validator[name];
-  }
-  return think.validate.exec(name, callback);
-};
-
-//get error message
-let _getValidateErrorMsg = (type, name, value, args, msgs) => {
-  let key = `validate_${type}`;
-  let keyWithName = `${key}_${name}`;
-  let msg = msgs[keyWithName];
-  if(!msg && think.locale(keyWithName) !== keyWithName){
-    msg = think.locale(keyWithName);
-  }
-  msg = msg || msgs[key];
-  if(!msg && think.locale(key) !== key){
-    msg = think.locale(key);
-  }
-  msg = msg || think.locale('PARAMS_NOT_VALID');
-  return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
-};
-
-let _getValidateRuleFnAndArgs = (type, args, rules) => {
-  let fn = Validator[type];
-  if (!think.isFunction(fn)) {
-    throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${type} type`));
-  }
-  if(think.isBoolean(args)){
-    args = [];
-  }else if(!think.isArray(args)){
-    args = [args];
-  }
-  let parseArgs = Validator[`_${type}`];
-  //parse args
-  if(think.isFunction(parseArgs)){
-    args = parseArgs(args, rules);
-  }
-  return {fn, args};
-}
-
-think.validate.exec = (rules, msgs = {}) => {
-  let ret = {};
-  for(let name in rules){
-    let item = rules[name];
-    for(let vtype in item){
-      if(vtype === 'value'){
-        continue;
-      }
-      //if has array rule, then foreach check value for every rule
-      if(item.array && vtype !== 'array' && think.isArray(item.value)){
-        let flag = item.value.some(itemValue => {
-          let {fn, args} = _getValidateRuleFnAndArgs(vtype, item[vtype], rules);
-          let result = fn(itemValue, ...args);
-          if(!result){
-            let msg = _getValidateErrorMsg(vtype, name, itemValue, args, msgs);
-            ret[name] = msg;
-            return true;
-          }
-        });
-        if(flag){
-          break;
-        }
-      }else{
-        let {fn, args} = _getValidateRuleFnAndArgs(vtype, item[vtype], rules);
-        let result = fn(item.value, ...args);
-        if(!result){
-          let msg = _getValidateErrorMsg(vtype, name, item.value, args, msgs);
-          ret[name] = msg;
-          break;
-        }
-      }
-    }
-  }
-  return ret;
-}
 
 
 /**
@@ -1585,7 +1484,7 @@ think.waterfall = async (dataList, callback) => {
     }
   }
   return data;
-}
+};
 
 /**
  * parallel limit exec
