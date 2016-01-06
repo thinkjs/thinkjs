@@ -115,8 +115,8 @@ let copyFile = (source, target, replace, showWarning) => {
 
   //TypeScript
   if(commander.ts){
-    let tsSource = source.replace(/\.\w+$/, () => {
-      return '.ts';
+    let tsSource = source.replace(/\.\w+$/, a => {
+      return a === '.js' ? '.ts' : '_ts' + a;
     });
     if(think.isFile(templatePath + '/' + tsSource)){
       source = tsSource;
@@ -126,8 +126,8 @@ let copyFile = (source, target, replace, showWarning) => {
   }
   //ECMAScript 2015/2016
   else if(es){
-    let esSource = source.replace(/\.\w+$/, (a) => {
-      return a === '.js' ? '.es' : a + '.es';
+    let esSource = source.replace(/\.\w+$/, a => {
+      return a === '.js' ? '.es' : '_es' + a;
     });
     if(think.isFile(templatePath + '/' + esSource)){
       source = esSource;
