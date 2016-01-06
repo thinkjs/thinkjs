@@ -20,6 +20,7 @@ import Validate from './think_validate.js';
 import Middleware from './think_middleware.js';
 import Hook from './think_hook.js';
 import Route from './think_route.js';
+import Config from './think_config.js';
 
 import './think_cache.js';
 import './think_data.js';
@@ -166,6 +167,20 @@ think.hook = Hook;
  * @type {Function}
  */
 think.route = Route;
+
+/**
+ * config
+ * @type {Function}
+ */
+think.config = Config;
+/**
+ * get module config
+ * @param  {String} module []
+ * @return {Object}        []
+ */
+think.getModuleConfig = module => {
+  return think.config(undefined, undefined, module);
+};
 
 /**
  * alias co module to think.co
@@ -458,171 +473,6 @@ think.log = (msg, type, showTime) => {
     console.log(dateTime + msg); 
   }
 };
-
-/**
- * get or set config
- * @return {mixed} []
- */
-//if set common config, must sync to module config
-let _setConfig = (name, value, flag, data) => {
-  let configs = [];
-  if(flag){
-    configs = think.module.map(item => think.getModuleConfig(item));
-  }
-  [data, ...configs].forEach(itemData => {
-    if(think.isObject(name)){
-      think.extend(itemData, name);
-    }
-    else if(think.isString(name)){
-      //name = name.toLowerCase();
-      if (name.indexOf('.') === -1) {
-        itemData[name] = value;
-      }else{
-        let names = name.split('.');
-        itemData[names[0]] = itemData[names[0]] || {};
-        itemData[names[0]][names[1]] = value;
-      }
-    }
-
-  });
-};
-think.config = (name, value, data) => {
-  let flag = false;
-  //get module config
-  if(data && think.isString(data)){
-    data = think.getModuleConfig(name);
-  }else if(!data){
-    flag = true;
-    data = think.getModuleConfig();
-  }
-  // get all config
-  if (name === undefined) {
-    return data;
-  }
-  // merge config
-  if (think.isObject(name) || value !== undefined) {
-    return _setConfig(name, value, flag, data);
-  }
-  //get config
-  if (name.indexOf('.') === -1) {
-    return data[name];
-  }
-  name = name.split('.');
-  value = data[name[0]] || {};
-  return value[name[1]];
-};
-
-
-
-
-
-/**
- * get item config
- * @param  {} configPath []
- * @param  {} item       []
- * @return {}            []
- */
-let _getItemConfig = (configPath, item) => {
-  let fileFilters = ['config', 'route', 'hook'];
-  let dirFilters = ['env', 'sys'];
-  if(think.isDir(`${configPath}/${item}`)){
-    if(dirFilters.indexOf(item) === -1){
-      return {
-        [item]: _getConfig(`${configPath}/${item}`)
-      };
-    }
-    return;
-  }
-  item = item.slice(0, -3);
-  if(item[0] === '_' || fileFilters.indexOf(item) > -1){
-    return;
-  }
-  let conf = think.safeRequire(`${configPath}/${item}.js`);
-  if(conf){
-    return {[item]: conf};
-  }
-};
-
-/**
- * get module config
- * @param  {String} module []
- * @return {Object}        []
- */
-let _getConfig = configPath => {
-  let config = {};
-  if(!think.isDir(configPath)){
-    return config;
-  }
-  fs.readdirSync(configPath).forEach(item => {
-    let data = _getItemConfig(configPath, item);
-    config = think.extend(config, data);
-  });
-  return config;
-};
-
-think.getModuleConfig = (module = think.dirname.common) => {
-
-  //get module config from cache
-  let moduleConfig = thinkData.config;
-  if (moduleConfig[module]) {
-    return moduleConfig[module];
-  }
-
-  let rootPath;
-  //get sys config
-  if (module === true) {
-    rootPath = `${think.THINK_LIB_PATH}/config`;
-  }else{
-    rootPath = think.getPath(module, think.dirname.config);
-  }
-
-  //config.js
-  let config = think.safeRequire(`${rootPath}/config.js`);
-  let envConfig = {}, extraConfig = _getConfig(rootPath);
-
-  envConfig = think.safeRequire(`${rootPath}/env/${think.env}.js`);
-  envConfig = think.extend(envConfig, _getConfig(`${rootPath}/env/${think.env}`));
-
-  //merge all configs
-  config = think.extend({}, config, extraConfig, envConfig);
-  //merge sys, common configs to module
-  if(module !== true){
-    if(module === think.dirname.common){
-      config = think.extend({}, think.getModuleConfig(true), config);
-    }else{
-      config = think.extend({}, think.getModuleConfig(), config);
-    }
-  }
-  //transform config
-  let transforms = think.safeRequire(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
-  config = think.transformConfig(config, transforms);
-
-  if(module !== true){
-    thinkData.config[module] = config;
-  }
-
-  return config;
-};
-/**
- * transform config
- * @param  {Object} config []
- * @return {Object}        []
- */
-think.transformConfig = (config, transforms) => {
-  for(let key in transforms){
-    if (!(key in config)) {
-      continue;
-    }
-    let value = transforms[key];
-    if (think.isFunction(value)) {
-      config[key] = value(config[key], config);
-    }else {
-      config[key] = think.transformConfig(config[key], value);
-    }
-  }
-  return config;
-};
-
 
 
 /**
