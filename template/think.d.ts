@@ -773,6 +773,23 @@ declare module think {
      * @return {Promise}         [description]
      */
     exec(name: string, http: HttpObject, data?: any): Promise;
+    /**
+     * think.middleware.base
+     * @type {think_middleware_base}
+     */
+    base: think_middleware_base
+  }
+
+  interface think_middleware_base {
+    new(http: HttpObject): think_middleware_base_instance
+  }
+
+  interface think_middleware_base_instance extends think_http_base_instance {
+    /**
+     * run
+     * @return {any} [description]
+     */
+    run(): any;
   }
 
   export var middleware: think_middleware;
@@ -882,7 +899,7 @@ declare module think {
      * @param  {any[]}       ...args [description]
      * @return {EmptyObject}         [description]
      */
-    parseConfig(...args: any[]): EmptyObject;
+    //parseConfig(...args: any[]): EmptyObject;
   }
 
   interface think_adapter {
@@ -1739,9 +1756,28 @@ declare module think {
   }
 
   interface think_model_mongo_instance extends think_model_$base_instance {
+    /**
+     * get pk field
+     * @return {Promise} [description]
+     */
     getPk(): Promise;
+    /**
+     * create indexed
+     * @return {Promise} [description]
+     */
     _createIndexes(): Promise;
+    /**
+     * parse options
+     * @param  {EmptyObject} opt1 [description]
+     * @param  {EmptyObject} opt2 [description]
+     * @return {Promise}          [description]
+     */
     parseOptions(opt1?: EmptyObject, opt2?: EmptyObject): Promise;
+    /**
+     * parse data
+     * @param  {any} data [description]
+     * @return {any}      [description]
+     */
     parseData(data: any): any;
     /**
      * get collection
