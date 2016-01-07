@@ -36,12 +36,12 @@ declare module think {
   interface DeferObject {
     /**
      * resove
-     * @param {any} data [description]
+     * @param {any} data []
      */
     resolve(data: any): void;
     /**
      * reject
-     * @param {any} err [description]
+     * @param {any} err []
      */
     reject(err: any): void;
     /**
@@ -56,14 +56,14 @@ declare module think {
   interface Promise {
     /**
      * then
-     * @param  {Function} fn [description]
-     * @return {Promise}     [description]
+     * @param  {Function} fn []
+     * @return {Promise}     []
      */
     then(fn: Function): Promise;
     /**
      * catch
-     * @param  {Function} fn [description]
-     * @return {Promise}     [description]
+     * @param  {Function} fn []
+     * @return {Promise}     []
      */
     catch(fn: Function): Promise;
   }
@@ -256,17 +256,17 @@ declare module think {
     payload: string;
     /**
      * run
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     run(): Promise;
     /**
      * check request has payload data
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     hasPayload(): boolean;
     /**
      * get payload data
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     getPayload(): Promise;
     /**
@@ -275,195 +275,195 @@ declare module think {
     parsePayload(): void;
     /**
      * parse pathname
-     * @param  {string} pathname [description]
-     * @return {string}          [description]
+     * @param  {string} pathname []
+     * @return {string}          []
      */
     normalizePathname(pathname: string): string;
     /**
      * get or set config
-     * @param  {string} name  [description]
-     * @param  {any}    value [description]
-     * @return {any}          [description]
+     * @param  {string} name  []
+     * @param  {any}    value []
+     * @return {any}          []
      */
     config(name?:string, value?:any): any;
     /**
      * get or set content-type
-     * @param  {string} contentType [description]
-     * @param  {string} encoding    [description]
-     * @return {any}                [description]
+     * @param  {string} contentType []
+     * @param  {string} encoding    []
+     * @return {any}                []
      */
     type(contentType?:string, encoding?:string): any;
     /**
      * get userAgent
-     * @return {string} [description]
+     * @return {string} []
      */
     userAgent(): string;
     /**
      * get referrer
-     * @param  {boolean} host [description]
-     * @return {string}       [description]
+     * @param  {boolean} host []
+     * @return {string}       []
      */
     referrer(host?:boolean): string;
     /**
      * is get request
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     isGet(): boolean;
     /**
      * is post request
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     isPost(): boolean;
     /**
      * is ajax request
-     * @param  {string}  method [description]
-     * @return {boolean}        [description]
+     * @param  {string}  method []
+     * @return {boolean}        []
      */
     isAjax(method?:string): boolean;
     /**
      * is jsonp request
-     * @param  {string}  name [description]
-     * @return {boolean}      [description]
+     * @param  {string}  name []
+     * @return {boolean}      []
      */
     isJsonp(name?:string): boolean;
     /**
      * get or set get value
-     * @param  {string} name  [description]
-     * @param  {any}    value [description]
-     * @return {any}          [description]
+     * @param  {string} name  []
+     * @param  {any}    value []
+     * @return {any}          []
      */
     get(name?:string, value?:any): any;
     /**
      * set or set post value
-     * @param  {string} name  [description]
-     * @param  {any}    value [description]
-     * @return {any}          [description]
+     * @param  {string} name  []
+     * @param  {any}    value []
+     * @return {any}          []
      */
     post(name?:string, value?: any): any;
     /**
      * get parameters
-     * @param  {string} name [description]
-     * @return {any}         [description]
+     * @param  {string} name []
+     * @return {any}         []
      */
     param(name?:string): any;
     /**
      * get or set file 
-     * @param  {string}      name  [description]
-     * @param  {EmptyObject} value [description]
-     * @return {any}               [description]
+     * @param  {string}      name  []
+     * @param  {EmptyObject} value []
+     * @return {any}               []
      */
     file(name?:string, value?: EmptyObject): any;
     /**
      * get or set header
-     * @param  {string} name  [description]
-     * @param  {string} value [description]
-     * @return {any}          [description]
+     * @param  {string} name  []
+     * @param  {string} value []
+     * @return {any}          []
      */
     header(name?:string, value?:string): any;
     /**
      * set status
-     * @param  {number} status [description]
-     * @return {any}           [description]
+     * @param  {number} status []
+     * @return {any}           []
      */
     status(status?:number): HttpObject;
     /**
      * get user ip
-     * @param  {boolean} forward [description]
-     * @return {string}          [description]
+     * @param  {boolean} forward []
+     * @return {string}          []
      */
     ip(forward?:boolean): string;
     /**
      * get language
-     * @param  {[type]} lang       [description]
-     * @param  {[type]} asViewPath [description]
-     * @return {any}               [description]
+     * @param  {[type]} lang       []
+     * @param  {[type]} asViewPath []
+     * @return {any}               []
      */
     lang(): string;
     /**
      * set language
-     * @param {string}  lang       [description]
-     * @param {boolean} asViewPath [description]
+     * @param {string}  lang       []
+     * @param {boolean} asViewPath []
      */
     lang(lang: string, asViewPath?: boolean): void;
     /**
      * get theme
-     * @return {string} [description]
+     * @return {string} []
      */
     theme(): string;
     /**
      * set theme
-     * @param {string} theme [description]
+     * @param {string} theme []
      */
     theme(theme:string): void;
     /**
      * get or set cookie
-     * @param  {string}      name    [description]
-     * @param  {string}      value   [description]
-     * @param  {EmptyObject} options [description]
-     * @return {any}                 [description]
+     * @param  {string}      name    []
+     * @param  {string}      value   []
+     * @param  {EmptyObject} options []
+     * @return {any}                 []
      */
     cookie(name?:string, value?:string, options?:EmptyObject): any;
     /**
      * redirect
-     * @param {string} url  [description]
-     * @param {number} code [description]
+     * @param {string} url  []
+     * @param {number} code []
      */
     redirect(url?:string, code?:number):void;
     /**
      * send time
-     * @param {string} name [description]
+     * @param {string} name []
      */
     sendTime(name?:string):void;
     /**
      * send success data
-     * @param {any} data    [description]
-     * @param {any} message [description]
+     * @param {any} data    []
+     * @param {any} message []
      */
     success(data?:any, message?: any): void;
     /**
      * send fail data
-     * @param {string |      number}      errno [description]
-     * @param {string}    errmsg [description]
-     * @param {any}       data   [description]
+     * @param {string |      number}      errno []
+     * @param {string}    errmsg []
+     * @param {any}       data   []
      */
     fail(errno?:string | number, errmsg?:string, data?:any): void;
     /**
      * send jsonp data
-     * @param {any} data [description]
+     * @param {any} data []
      */
     jsonp(data?:any):void;
     /**
      * send json data
-     * @param {any} data [description]
+     * @param {any} data []
      */
     json(data?:any):void;
     /**
      * get view instance
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     view(): EmptyObject;
     /**
      * set expires time
-     * @param {number} time [description]
+     * @param {number} time []
      */
     expires(time:number): void;
     /**
      * locale
-     * @param  {MixedArray[]} ...args [description]
-     * @return {any}                  [description]
+     * @param  {MixedArray[]} ...args []
+     * @return {any}                  []
      */
     locale(...args: MixedArray[]): any;
     /**
      * get or set session
-     * @param  {string}  name  [description]
-     * @param  {any}     value [description]
-     * @return {Promise}       [description]
+     * @param  {string}  name  []
+     * @param  {any}     value []
+     * @return {Promise}       []
      */
     session(name?:string, value?:any): Promise;
     /**
      * write content
-     * @param {any}    obj      [description]
-     * @param {string} encoding [description]
+     * @param {any}    obj      []
+     * @param {string} encoding []
      */
     write(obj?:any, encoding?:string): void;
     /**
@@ -476,22 +476,22 @@ declare module think {
     _afterEnd():void;
     /**
      * end
-     * @param {any}    obj      [description]
-     * @param {string} encoding [description]
+     * @param {any}    obj      []
+     * @param {string} encoding []
      */
     end(obj?:any, encoding?:string):void;
   }
 
   /**
    * to fast properties
-   * @param {EmptyObject} obj [description]
+   * @param {EmptyObject} obj []
    */
   export function toFastProperties(obj: EmptyObject): void;
   /**
    * promisify
-   * @param  {any[])   =>       any}         fn [description]
-   * @param  {EmptyObject} recevier [description]
-   * @return {any}                  [description]
+   * @param  {any[])   =>       any}         fn []
+   * @param  {EmptyObject} recevier []
+   * @return {any}                  []
    */
   export function promisify(fn: Function, recevier: any): any;
   /**
@@ -672,7 +672,7 @@ declare module think {
   interface think_base_instance {
     /**
      * init
-     * @param {any[]} ...args [description]
+     * @param {any[]} ...args []
      */
     init(...args:any[]): void;
     /**
@@ -711,21 +711,21 @@ declare module think {
     (name: EmptyObject, msg?: EmptyObject): EmptyObject;
     /**
      * exec
-     * @param  {EmptyObject} rules [description]
-     * @param  {EmptyObject} msg   [description]
-     * @return {EmptyObject}       [description]
+     * @param  {EmptyObject} rules []
+     * @param  {EmptyObject} msg   []
+     * @return {EmptyObject}       []
      */
     exec(rules: EmptyObject, msg?: EmptyObject): EmptyObject;
     /**
      * get values
-     * @param  {EmptyObject} rules [description]
-     * @return {EmptyObject}       [description]
+     * @param  {EmptyObject} rules []
+     * @return {EmptyObject}       []
      */
     values(rules: EmptyObject): EmptyObject;
     /**
      * parse string rule to object
-     * @param  {string}      rule [description]
-     * @return {EmptyObject}      [description]
+     * @param  {string}      rule []
+     * @return {EmptyObject}      []
      */
     parse(rule: string): EmptyObject;
   }
@@ -752,25 +752,25 @@ declare module think {
 
     /**
      * create
-     * @param  {any}         superClass [description]
-     * @param  {EmptyObject} methods    [description]
-     * @return {Function}               [description]
+     * @param  {any}         superClass []
+     * @param  {EmptyObject} methods    []
+     * @return {Function}               []
      */
     create(superClass: any, methods: EmptyObject): Function;
 
     /**
      * get
-     * @param  {string}   name [description]
-     * @return {Function}      [description]
+     * @param  {string}   name []
+     * @return {Function}      []
      */
     get(name: string): Function;
 
     /**
      * exec
-     * @param  {string}     name [description]
-     * @param  {HttpObject} http [description]
-     * @param  {any}        data [description]
-     * @return {Promise}         [description]
+     * @param  {string}     name []
+     * @param  {HttpObject} http []
+     * @param  {any}        data []
+     * @return {Promise}         []
      */
     exec(name: string, http: HttpObject, data?: any): Promise;
     /**
@@ -787,7 +787,7 @@ declare module think {
   interface think_middleware_base_instance extends think_http_base_instance {
     /**
      * run
-     * @return {any} [description]
+     * @return {any} []
      */
     run(): any;
   }
@@ -807,28 +807,28 @@ declare module think {
      */
     (name: string, value: any): void;
     /**
-     * [name description]
+     * [name ]
      * @type {string}
      */
     (name: string, http: HttpObject, data?: any): Promise;
     /**
      * set function
-     * @param {[type]}   name [description]
-     * @param {Function} fn   [description]
+     * @param {[type]}   name []
+     * @param {Function} fn   []
      */
     set(name, fn: Function): void;
     /**
      * set array
-     * @param {[type]}      name [description]
-     * @param {StringArray} arr  [description]
+     * @param {[type]}      name []
+     * @param {StringArray} arr  []
      */
     set(name, arr: StringArray): void;
     /**
      * exec
-     * @param  {string}     name [description]
-     * @param  {HttpObject} http [description]
-     * @param  {any}        data [description]
-     * @return {Promise}         [description]
+     * @param  {string}     name []
+     * @param  {HttpObject} http []
+     * @param  {any}        data []
+     * @return {Promise}         []
      */
     exec(name: string, http: HttpObject, data?: any): Promise;
   }
@@ -896,8 +896,8 @@ declare module think {
   interface think_adapter_base_instance extends think_base_instance {
     /**
      * parse config
-     * @param  {any[]}       ...args [description]
-     * @return {EmptyObject}         [description]
+     * @param  {any[]}       ...args []
+     * @return {EmptyObject}         []
      */
     //parseConfig(...args: any[]): EmptyObject;
   }
@@ -946,67 +946,67 @@ declare module think {
     http: HttpObject;
     /**
      * get config
-     * @param  {string} name [description]
-     * @return {any}         [description]
+     * @param  {string} name []
+     * @return {any}         []
      */
     config(name: string): any;
     /**
      * set config
-     * @param {string} name  [description]
-     * @param {any}    value [description]
+     * @param {string} name  []
+     * @param {any}    value []
      */
     config(name: string, value: any): void;
     /**
      * invoke action
-     * @param  {string}  controller [description]
-     * @param  {string}  action     [description]
-     * @param  {boolean} transMCA   [description]
-     * @return {Promise}            [description]
+     * @param  {string}  controller []
+     * @param  {string}  action     []
+     * @param  {boolean} transMCA   []
+     * @return {Promise}            []
      */
     action(controller: string, action: string, transMCA?: boolean): Promise;
     /**
      * invoke action
-     * @param  {think_controller_base} controller [description]
-     * @param  {string}                action     [description]
-     * @param  {boolean}               transMCA   [description]
-     * @return {Promise}                          [description]
+     * @param  {think_controller_base} controller []
+     * @param  {string}                action     []
+     * @param  {boolean}               transMCA   []
+     * @return {Promise}                          []
      */
     action(controller: think_controller_base_instance, action: string, transMCA?: boolean): Promise;
     /**
      * get or set cache
-     * @param  {string}    key   [description]
-     * @param  {any}       value [description]
-     * @param  {string |     EmptyObject} options [description]
-     * @return {Promise}         [description]
+     * @param  {string}    key   []
+     * @param  {any}       value []
+     * @param  {string |     EmptyObject} options []
+     * @return {Promise}         []
      */
     cache(key: string, value?: any, options?: string | EmptyObject): Promise;
     /**
      * exec hook
-     * @param  {string}  event [description]
-     * @param  {any}     data  [description]
-     * @return {Promise}       [description]
+     * @param  {string}  event []
+     * @param  {any}     data  []
+     * @return {Promise}       []
      */
     hook(event: string, data?: any): Promise;
     /**
      * get model instance
-     * @param  {string}           name   [description]
-     * @param  {string        |      EmptyObject} options [description]
-     * @param  {string}           module [description]
-     * @return {think_model_base}        [description]
+     * @param  {string}           name   []
+     * @param  {string        |      EmptyObject} options []
+     * @param  {string}           module []
+     * @return {think_model_base}        []
      */
     model(name: string, options: string | EmptyObject, module?: string): think_model_base_instance;
     /**
      * get controller instance
-     * @param  {string}                name   [description]
-     * @param  {string}                module [description]
-     * @return {think_controller_base}        [description]
+     * @param  {string}                name   []
+     * @param  {string}                module []
+     * @return {think_controller_base}        []
      */
     controller(name: string, module?: string): think_controller_base_instance;
     /**
      * get service
-     * @param  {string} name   [description]
-     * @param  {string} module [description]
-     * @return {any}           [description]
+     * @param  {string} name   []
+     * @param  {string} module []
+     * @return {any}           []
      */
     service(name: string, module?: string): any;
   }
@@ -1014,15 +1014,15 @@ declare module think {
   export var http: think_http;
   /**
    * get uuid
-   * @param  {number} length [description]
-   * @return {string}        [description]
+   * @param  {number} length []
+   * @return {string}        []
    */
   export function uuid(length?: number): string;
 
   /**
    * session
-   * @param  {HttpObject}  http [description]
-   * @return {EmptyObject}      [description]
+   * @param  {HttpObject}  http []
+   * @return {EmptyObject}      []
    */
   export function session(http: HttpObject): EmptyObject;
 
@@ -1066,337 +1066,337 @@ declare module think {
   interface think_controller_base_instance extends think_http_base_instance {
     /**
      * get ip
-     * @return {string} [description]
+     * @return {string} []
      */
     ip(): string;
     /**
      * get view instance
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     view(): EmptyObject;
     /**
      * get http method
-     * @return {string} [description]
+     * @return {string} []
      */
     method(): string;
     /**
      * is method
-     * @param  {string}  method [description]
-     * @return {boolean}        [description]
+     * @param  {string}  method []
+     * @return {boolean}        []
      */
     isMethod(method: string): boolean;
     /**
      * is get
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     isGet(): boolean;
     /**
      * is post
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     isPost(): boolean;
     /**
      * is ajax request
-     * @param  {string}  method [description]
-     * @return {boolean}        [description]
+     * @param  {string}  method []
+     * @return {boolean}        []
      */
     isAjax(method?: string): boolean;
     /**
      * is websocket request
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     isWebSocket(): boolean;
     /**
      * is cli env
-     * @return {boolean} [description]
+     * @return {boolean} []
      */
     isCli(): boolean;
     /**
      * is jsonp request
-     * @param  {string}  name [description]
-     * @return {boolean}      [description]
+     * @param  {string}  name []
+     * @return {boolean}      []
      */
     isJsonp(name?: string): boolean;
     /**
      * get all parameters
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     get(): EmptyObject;
     /**
      * get one paramter
-     * @param  {string} name [description]
-     * @return {any}         [description]
+     * @param  {string} name []
+     * @return {any}         []
      */
     get(name: string): any;
     /**
      * set one paramter value
-     * @param {string} name  [description]
-     * @param {any}    value [description]
+     * @param {string} name  []
+     * @param {any}    value []
      */
     get(name: string, value: any): void;
     /**
      * get all post parameters
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     post(): EmptyObject;
     /**
      * get one post parameter
-     * @param  {string} name [description]
-     * @return {any}         [description]
+     * @param  {string} name []
+     * @return {any}         []
      */
     post(name: string): any;
     /**
      * set one post parameter
-     * @param {string} name  [description]
-     * @param {any}    value [description]
+     * @param {string} name  []
+     * @param {any}    value []
      */
     post(name: string, value: any): void;
     /**
      * get all parameters
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     param(): EmptyObject;
     /**
      * get one parameter
-     * @param  {string} name [description]
-     * @return {any}         [description]
+     * @param  {string} name []
+     * @return {any}         []
      */
     param(name: string): any;
     /**
      * get all upload files
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     file(): EmptyObject;
     /**
      * get one upload file
-     * @param  {string}      name [description]
-     * @return {EmptyObject}      [description]
+     * @param  {string}      name []
+     * @return {EmptyObject}      []
      */
     file(name: string): EmptyObject;
     /**
      * set one upload file
-     * @param {string} name  [description]
-     * @param {any}    value [description]
+     * @param {string} name  []
+     * @param {any}    value []
      */
     file(name: string, value: any): void;
     /**
      * get all request headers
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     header(): EmptyObject;
     /**
      * get one header
-     * @param  {string} name [description]
-     * @return {string}      [description]
+     * @param  {string} name []
+     * @return {string}      []
      */
     header(name: string): string;
     /**
      * set one header
-     * @param {string} name  [description]
-     * @param {string} value [description]
+     * @param {string} name  []
+     * @param {string} value []
      */
     header(name: string, value: string): void;
     /**
      * get request userAgent
-     * @return {string} [description]
+     * @return {string} []
      */
     userAgent(): string;
     /**
      * get request referrer
-     * @param  {boolean} onlyHost [description]
-     * @return {string}           [description]
+     * @param  {boolean} onlyHost []
+     * @return {string}           []
      */
     referrer(onlyHost?: boolean): string;
     /**
      * get all cookies
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     cookie(): EmptyObject;
     /**
      * get one cookie
-     * @param  {string} name [description]
-     * @return {string}      [description]
+     * @param  {string} name []
+     * @return {string}      []
      */
     cookie(name: string): string;
     /**
      * set one cookie
-     * @param {string} name    [description]
-     * @param {string} value   [description]
-     * @param {any}    options [description]
+     * @param {string} name    []
+     * @param {string} value   []
+     * @param {any}    options []
      */
     cookie(name: string, value: string, options?: any): void;
     /**
      * get session data
-     * @param  {string}  name [description]
-     * @return {Promise}      [description]
+     * @param  {string}  name []
+     * @return {Promise}      []
      */
     session(name: string): Promise;
     /**
      * set or remove session data
-     * @param  {string}  name  [description]
-     * @param  {any}     value [description]
-     * @return {Promise}       [description]
+     * @param  {string}  name  []
+     * @param  {any}     value []
+     * @return {Promise}       []
      */
     session(name: string, value: any): Promise;
     /**
      * get language
-     * @return {string} [description]
+     * @return {string} []
      */
     lang(): string;
     /**
      * set language
-     * @param {string}  lang       [description]
-     * @param {boolean} asViewPath [description]
+     * @param {string}  lang       []
+     * @param {boolean} asViewPath []
      */
     lang(lang:string, asViewPath?: boolean): void;
     /**
      * get all locales
-     * @return {EmptyObject} [description]
+     * @return {EmptyObject} []
      */
     locale(): EmptyObject;
     /**
      * get one locale
-     * @param  {string}   key     [description]
-     * @param  {string[]} ...data [description]
-     * @return {string}           [description]
+     * @param  {string}   key     []
+     * @param  {string[]} ...data []
+     * @return {string}           []
      */
     locale(key: string, ...data: string[]): string;
     /**
      * redirect
-     * @param  {string}         url  [description]
-     * @param  {number}         code [description]
-     * @return {PreventPromise}      [description]
+     * @param  {string}         url  []
+     * @param  {number}         code []
+     * @return {PreventPromise}      []
      */
     redirect(url?: string, code?: number): PreventPromise;
     /**
      * get template content after render
-     * @param  {string}  templateFile [description]
-     * @return {Promise}              [description]
+     * @param  {string}  templateFile []
+     * @return {Promise}              []
      */
     fetch(templateFile: string): Promise;
     /**
      * display template file
-     * @param  {string}         templateFile [description]
-     * @param  {string}         charset      [description]
-     * @param  {string}         contentType  [description]
-     * @return {PreventPromise}              [description]
+     * @param  {string}         templateFile []
+     * @param  {string}         charset      []
+     * @param  {string}         contentType  []
+     * @return {PreventPromise}              []
      */
     display(templateFile?: string, charset?: string, contentType?: string): PreventPromise;
     /**
      * render template file
-     * @param  {string}         templateFile [description]
-     * @param  {string}         charset      [description]
-     * @param  {string}         contentType  [description]
-     * @return {PreventPromise}              [description]
+     * @param  {string}         templateFile []
+     * @param  {string}         charset      []
+     * @param  {string}         contentType  []
+     * @return {PreventPromise}              []
      */
     render(templateFile?: string, charset?: string, contentType?: string): PreventPromise;
     /**
      * send jsonp data
-     * @param  {any}            data [description]
-     * @return {PreventPromise}      [description]
+     * @param  {any}            data []
+     * @return {PreventPromise}      []
      */
     jsonp(data: any): PreventPromise;
     /**
      * send json data
-     * @param  {any}            data [description]
-     * @return {PreventPromise}      [description]
+     * @param  {any}            data []
+     * @return {PreventPromise}      []
      */
     json(data: any): PreventPromise;
     /**
      * set http status
-     * @param  {number}                         status [description]
-     * @return {think_controller_base_instance}        [description]
+     * @param  {number}                         status []
+     * @return {think_controller_base_instance}        []
      */
     status(status?: number): think_controller_base_instance;
     /**
      * deny request
-     * @param  {number}         status [description]
-     * @return {PreventPromise}        [description]
+     * @param  {number}         status []
+     * @return {PreventPromise}        []
      */
     deny(status?: number): PreventPromise;
     /**
      * set expires
-     * @param  {number}                         time [description]
-     * @return {think_controller_base_instance}      [description]
+     * @param  {number}                         time []
+     * @return {think_controller_base_instance}      []
      */
     expires(time: number): think_controller_base_instance;
     /**
      * send some content
-     * @param {any}    obj      [description]
-     * @param {string} encoding [description]
+     * @param {any}    obj      []
+     * @param {string} encoding []
      */
     write(obj: any, encoding?: string): void;
     /**
      * end request
-     * @param  {any}            obj      [description]
-     * @param  {string}         encoding [description]
-     * @return {PreventPromise}          [description]
+     * @param  {any}            obj      []
+     * @param  {string}         encoding []
+     * @return {PreventPromise}          []
      */
     end(obj: any, encoding?: string): PreventPromise;
     /**
      * send content and end request
-     * @param  {any}            obj      [description]
-     * @param  {string}         encoding [description]
-     * @return {PreventPromise}          [description]
+     * @param  {any}            obj      []
+     * @param  {string}         encoding []
+     * @return {PreventPromise}          []
      */
     send(obj: any, encoding?: string): PreventPromise;
     /**
      * get content-type
-     * @return {string} [description]
+     * @return {string} []
      */
     type(): string;
     /**
      * set conent-type
-     * @param {string} type     [description]
-     * @param {string} encoding [description]
+     * @param {string} type     []
+     * @param {string} encoding []
      */
     type(type: string, encoding?: string): void;
     /**
      * download file
-     * @param  {string}         filepath    [description]
-     * @param  {string}         contentType [description]
-     * @param  {string}         filename    [description]
-     * @return {PreventPromise}             [description]
+     * @param  {string}         filepath    []
+     * @param  {string}         contentType []
+     * @param  {string}         filename    []
+     * @return {PreventPromise}             []
      */
     download(filepath: string, contentType?: string, filename?: string): PreventPromise;
     /**
      * send success data
-     * @param  {any}            data    [description]
-     * @param  {any}            message [description]
-     * @return {PreventPromise}         [description]
+     * @param  {any}            data    []
+     * @param  {any}            message []
+     * @return {PreventPromise}         []
      */
     success(data: any, message?: any): PreventPromise;
     /**
      * send fail data
-     * @param  {number      |      string}      errno [description]
-     * @param  {string}         errmsg [description]
-     * @param  {any}            data   [description]
-     * @return {PreventPromise}        [description]
+     * @param  {number      |      string}      errno []
+     * @param  {string}         errmsg []
+     * @param  {any}            data   []
+     * @return {PreventPromise}        []
      */
     fail(errno?: number | string, errmsg?: string, data?: any): PreventPromise;
     /**
      * send fail data, alias fail method
-     * @param  {number      |      string}      errno [description]
-     * @param  {string}         errmsg [description]
-     * @param  {any}            data   [description]
-     * @return {PreventPromise}        [description]
+     * @param  {number      |      string}      errno []
+     * @param  {string}         errmsg []
+     * @param  {any}            data   []
+     * @return {PreventPromise}        []
      */
     error(errno?: number | string, errmsg?: string, data?: any): PreventPromise;
     /**
      * send exec time
-     * @param {string} name [description]
+     * @param {string} name []
      */
     sendTime(name: string): void;
     /**
      * emit event
-     * @param {string} event [description]
-     * @param {any}    data  [description]
+     * @param {string} event []
+     * @param {any}    data  []
      */
     emit(event: string, data: any): void;
     /**
      * boradcast event
-     * @param {string} event [description]
-     * @param {any}    data  [description]
+     * @param {string} event []
+     * @param {any}    data  []
      */
     broadcast(event: string, data: any): void;
   }
@@ -1543,214 +1543,214 @@ declare module think {
   interface think_model_base_instance extends think_model_$base_instance {
     /**
      * get table schema
-     * @param  {string}  table [description]
-     * @return {Promise}       [description]
+     * @param  {string}  table []
+     * @return {Promise}       []
      */
     getSchema(table?:string): Promise;
     /**
      * get unique field in schema
-     * @param  {MixedArray[]} data [description]
-     * @return {string}            [description]
+     * @param  {MixedArray[]} data []
+     * @return {string}            []
      */
     getUniqueField(data?: MixedArray[]): string;
     /**
      * get last sql
-     * @return {string} [description]
+     * @return {string} []
      */
     getLastSql(): string;
     /**
      * get pk
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     getPk(): Promise;
     /**
      * build sql
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     buildSql(options?:EmptyObject): Promise;
     /**
      * parse options
-     * @param  {EmptyObject} opt1 [description]
-     * @param  {EmptyObject} opt2 [description]
-     * @return {Promise}          [description]
+     * @param  {EmptyObject} opt1 []
+     * @param  {EmptyObject} opt2 []
+     * @return {Promise}          []
      */
     parseOptions(opt1?: EmptyObject, opt2?: EmptyObject): Promise;
     /**
      * parse where options
-     * @param  {EmptyObject} options [description]
-     * @return {EmptyObject}         [description]
+     * @param  {EmptyObject} options []
+     * @return {EmptyObject}         []
      */
     parseWhereOptions(options: EmptyObject): EmptyObject;
     /**
      * parse type
-     * @param  {string}      key   [description]
-     * @param  {EmptyObject} value [description]
-     * @return {EmptyObject}       [description]
+     * @param  {string}      key   []
+     * @param  {EmptyObject} value []
+     * @return {EmptyObject}       []
      */
     parseType(key: string, value: EmptyObject): EmptyObject;
     /**
      * parse data
-     * @param  {EmptyObject} data [description]
-     * @return {EmptyObject}      [description]
+     * @param  {EmptyObject} data []
+     * @return {EmptyObject}      []
      */
     parseData(data: EmptyObject): EmptyObject;
     /**
      * add data
-     * @param  {EmptyObject} data    [description]
-     * @param  {EmptyObject} options [description]
-     * @param  {boolean}     replace [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} data    []
+     * @param  {EmptyObject} options []
+     * @param  {boolean}     replace []
+     * @return {Promise}             []
      */
     add(data: EmptyObject, options?: EmptyObject, replace?:boolean): Promise;
     /**
      * then add
-     * @param  {EmptyObject} data   [description]
-     * @param  {[type]}      where? any           [description]
-     * @return {Promise}            [description]
+     * @param  {EmptyObject} data   []
+     * @param  {[type]}      where? any           []
+     * @return {Promise}            []
      */
     thenAdd(data: EmptyObject, where?: any): Promise;
     /**
      * add many
-     * @param  {MixedArray}  data    [description]
-     * @param  {EmptyObject} options [description]
-     * @param  {boolean}     replace [description]
-     * @return {Promise}             [description]
+     * @param  {MixedArray}  data    []
+     * @param  {EmptyObject} options []
+     * @param  {boolean}     replace []
+     * @return {Promise}             []
      */
     addMany(data: MixedArray, options?: EmptyObject, replace?: boolean): Promise;
     /**
      * delete
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     delete(options: EmptyObject):Promise;
     /**
      * update data
-     * @param  {EmptyObject} data    [description]
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} data    []
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     update(data: EmptyObject, options?: EmptyObject): Promise;
     /**
      * update many
-     * @param  {MixedArray}  data    [description]
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {MixedArray}  data    []
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     updateMany(data: MixedArray, options?: EmptyObject): Promise;
     /**
      * increment field 
-     * @param  {string}  field [description]
-     * @param  {number}  step  [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @param  {number}  step  []
+     * @return {Promise}       []
      */
     increment(field: string, step?:number): Promise;
     /**
      * decrement field
-     * @param  {string}  field [description]
-     * @param  {number}  step  [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @param  {number}  step  []
+     * @return {Promise}       []
      */
     decrement(field: string, step?:number): Promise;
     /**
      * find data
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     find(options?:EmptyObject): Promise;
     /**
      * select data
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     select(options?:EmptyObject): Promise;
     /**
      * select add
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     selectAdd(options?:EmptyObject): Promise;
     /**
      * count select
-     * @param  {EmptyObject} options [description]
-     * @param  {boolean}     flag    [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @param  {boolean}     flag    []
+     * @return {Promise}             []
      */
     countSelect(options?:EmptyObject, flag?:boolean): Promise;
     /**
      * get field data
-     * @param  {string}     field [description]
-     * @param  {boolean |     number}      one [description]
-     * @return {Promise}          [description]
+     * @param  {string}     field []
+     * @param  {boolean |     number}      one []
+     * @return {Promise}          []
      */
     getField(field:string, one?:boolean | number): Promise;
     /**
      * count
-     * @param  {string}  field [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @return {Promise}       []
      */
     count(field?:string): Promise;
     /**
      * sum
-     * @param  {string}  field [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @return {Promise}       []
      */
     sum(field?:string): Promise;
     /**
      * get min value
-     * @param  {[type]}  field?string [description]
-     * @return {Promise}              [description]
+     * @param  {[type]}  field?string []
+     * @return {Promise}              []
      */
     min(field?:string): Promise;
     /**
      * get max value
-     * @param  {string}  field [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @return {Promise}       []
      */
     max(field?:string): Promise;
     /**
      * get value average
-     * @param  {string}  field [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @return {Promise}       []
      */
     avg(field?:string): Promise;
     /**
      * query
-     * @param  {StringArray[]} ...args [description]
-     * @return {Promise}               [description]
+     * @param  {StringArray[]} ...args []
+     * @return {Promise}               []
      */
     query(...args: StringArray[]): Promise;
     /**
      * execute
-     * @param  {StringArray[]} ...args [description]
-     * @return {Promise}               [description]
+     * @param  {StringArray[]} ...args []
+     * @return {Promise}               []
      */
     execute(...args: StringArray[]): Promise;
     /**
      * parse sql
-     * @param  {StringArray[]} ...args [description]
-     * @return {string}                [description]
+     * @param  {StringArray[]} ...args []
+     * @return {string}                []
      */
     parseSql(...args: StringArray[]): string;
     /**
      * start transactions
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     startTrans(): Promise;
     /**
      * commit transactions
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     commit(): Promise;
     /**
      * rollback transactions
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     rollback(): Promise;
     /**
      * transaction
-     * @param  {Function} fn [description]
-     * @return {Promise}     [description]
+     * @param  {Function} fn []
+     * @return {Promise}     []
      */
     transaction(fn: Function): Promise;
   }
@@ -1758,151 +1758,151 @@ declare module think {
   interface think_model_mongo_instance extends think_model_$base_instance {
     /**
      * get pk field
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     getPk(): Promise;
     /**
      * create indexed
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     _createIndexes(): Promise;
     /**
      * parse options
-     * @param  {EmptyObject} opt1 [description]
-     * @param  {EmptyObject} opt2 [description]
-     * @return {Promise}          [description]
+     * @param  {EmptyObject} opt1 []
+     * @param  {EmptyObject} opt2 []
+     * @return {Promise}          []
      */
     parseOptions(opt1?: EmptyObject, opt2?: EmptyObject): Promise;
     /**
      * parse data
-     * @param  {any} data [description]
-     * @return {any}      [description]
+     * @param  {any} data []
+     * @return {any}      []
      */
     parseData(data: any): any;
     /**
      * get collection
-     * @param  {string}      table [description]
-     * @return {EmptyObject}       [description]
+     * @param  {string}      table []
+     * @return {EmptyObject}       []
      */
     collection(table?:string): EmptyObject;
     /**
      * add data
-     * @param  {EmptyObject} data    [description]
-     * @param  {EmptyObject} options [description]
-     * @param  {boolean}     replace [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} data    []
+     * @param  {EmptyObject} options []
+     * @param  {boolean}     replace []
+     * @return {Promise}             []
      */
     add(data: EmptyObject, options?: EmptyObject, replace?:boolean): Promise;
     /**
      * then add
-     * @param  {EmptyObject} data   [description]
-     * @param  {[type]}      where? any           [description]
-     * @return {Promise}            [description]
+     * @param  {EmptyObject} data   []
+     * @param  {[type]}      where? any           []
+     * @return {Promise}            []
      */
     thenAdd(data: EmptyObject, where?: any): Promise;
     /**
      * add many
-     * @param  {MixedArray}  data    [description]
-     * @param  {EmptyObject} options [description]
-     * @param  {boolean}     replace [description]
-     * @return {Promise}             [description]
+     * @param  {MixedArray}  data    []
+     * @param  {EmptyObject} options []
+     * @param  {boolean}     replace []
+     * @return {Promise}             []
      */
     addMany(data: MixedArray, options?: EmptyObject, replace?: boolean): Promise;
     /**
      * delete
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     delete(options: EmptyObject):Promise;
     /**
      * update data
-     * @param  {EmptyObject} data    [description]
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} data    []
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     update(data: EmptyObject, options?: EmptyObject): Promise;
     /**
      * update many
-     * @param  {MixedArray}  data    [description]
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {MixedArray}  data    []
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     updateMany(data: MixedArray, options?: EmptyObject): Promise;
     /**
      * find
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     find(options?:EmptyObject): Promise;
     /**
      * select data
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     select(options?:EmptyObject): Promise;
     /**
      * select add
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     selectAdd(options?:EmptyObject): Promise;
     /**
      * count select
-     * @param  {EmptyObject} options [description]
-     * @param  {boolean}     flag    [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @param  {boolean}     flag    []
+     * @return {Promise}             []
      */
     countSelect(options?:EmptyObject, flag?:boolean): Promise;
      /**
      * increment field 
-     * @param  {string}  field [description]
-     * @param  {number}  step  [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @param  {number}  step  []
+     * @return {Promise}       []
      */
     increment(field: string, step?:number): Promise;
     /**
      * decrement field
-     * @param  {string}  field [description]
-     * @param  {number}  step  [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @param  {number}  step  []
+     * @return {Promise}       []
      */
     decrement(field: string, step?:number): Promise;
     /**
      * count
-     * @param  {string}  field [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @return {Promise}       []
      */
     count(field?:string): Promise;
     /**
      * sum
-     * @param  {string}  field [description]
-     * @return {Promise}       [description]
+     * @param  {string}  field []
+     * @return {Promise}       []
      */
     sum(field?:string): Promise;
     /**
      * aggregate
-     * @param  {EmptyObject} options [description]
-     * @return {Promise}             [description]
+     * @param  {EmptyObject} options []
+     * @return {Promise}             []
      */
     aggregate(options?:EmptyObject): Promise;
     /**
      * map reduce
-     * @param  {any}     map    [description]
-     * @param  {any}     resuce [description]
-     * @param  {any}     out    [description]
-     * @return {Promise}        [description]
+     * @param  {any}     map    []
+     * @param  {any}     resuce []
+     * @param  {any}     out    []
+     * @return {Promise}        []
      */
     mapReduce(map: any, resuce: any, out: any): Promise;
     /**
      * create index
-     * @param  {any}     indexes [description]
-     * @param  {any}     options [description]
-     * @return {Promise}         [description]
+     * @param  {any}     indexes []
+     * @param  {any}     options []
+     * @return {Promise}         []
      */
     createIndex(indexes:any, options: any): Promise;
     /**
      * get indexes
-     * @return {Promise} [description]
+     * @return {Promise} []
      */
     getIndexes(): Promise;
   }
@@ -1938,61 +1938,61 @@ declare module think {
   export var service: think_service;
   /**
    * think.cache
-   * @param  {string}  name    [description]
-   * @param  {any}     value   [description]
-   * @param  {any}     options [description]
-   * @return {Promise}         [description]
+   * @param  {string}  name    []
+   * @param  {any}     value   []
+   * @param  {any}     options []
+   * @return {Promise}         []
    */
   export function cache(name: string, value?: any, options?: any): Promise;
   /**
    * think.locale
-   * @param  {string}   key     [description]
-   * @param  {string[]} ...data [description]
-   * @return {string}           [description]
+   * @param  {string}   key     []
+   * @param  {string[]} ...data []
+   * @return {string}           []
    */
   export function locale(key?: string, ...data: string[]): string | EmptyObject;
   /**
    * think.await
-   * @param  {string}   key      [description]
-   * @param  {Function} callback [description]
-   * @return {Promise}           [description]
+   * @param  {string}   key      []
+   * @param  {Function} callback []
+   * @return {Promise}           []
    */
   export function await(key: string, callback: Function): Promise;
   /**
    * think.npm
-   * @param  {string}  package [description]
-   * @return {Promise}         [description]
+   * @param  {string}  package []
+   * @return {Promise}         []
    */
   export function npm(pkg: string): Promise;
   /**
    * think.error
-   * @param  {string   |     EmptyObject} err [description]
-   * @param  {string}      addOn [description]
-   * @return {EmptyObject}       [description]
+   * @param  {string   |     EmptyObject} err []
+   * @param  {string}      addOn []
+   * @return {EmptyObject}       []
    */
   export function error(err: string | EmptyObject, addOn?: string): ErrorObject;
   /**
    * think.statusAction
-   * @param  {number}         status [description]
-   * @param  {HttpObject}     http   [description]
-   * @param  {boolean}        log    [description]
-   * @return {PreventPromise}        [description]
+   * @param  {number}         status []
+   * @param  {HttpObject}     http   []
+   * @param  {boolean}        log    []
+   * @return {PreventPromise}        []
    */
   export function statusAction(status?: number, http?: HttpObject, log?: boolean): PreventPromise;
   /**
    * think.waterfall
-   * @param  {MixedArray} data     [description]
-   * @param  {any}        callback [description]
-   * @return {Promise}             [description]
+   * @param  {MixedArray} data     []
+   * @param  {any}        callback []
+   * @return {Promise}             []
    */
   export function waterfall(data: MixedArray, callback: any): Promise;
   /**
    * think.parallelLimit
-   * @param  {any}         key      [description]
-   * @param  {any}         data     [description]
-   * @param  {any}         callback [description]
-   * @param  {EmptyObject} options  [description]
-   * @return {Promise}              [description]
+   * @param  {any}         key      []
+   * @param  {any}         data     []
+   * @param  {any}         callback []
+   * @param  {EmptyObject} options  []
+   * @return {Promise}              []
    */
   export function parallelLimit(key?: any, data?: any, callback?: any, options?: EmptyObject): Promise;
 
