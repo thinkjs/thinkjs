@@ -121,8 +121,10 @@ let copyFile = (source, target, replace, showWarning) => {
     if(think.isFile(templatePath + '/' + tsSource)){
       source = tsSource;
     }
-    //replace target file extname to .ts
-    target = target.replace(/\.js$/, '.ts');
+    if(target.indexOf('/www/') === -1){
+      //replace target file extname to .ts
+      target = target.replace(/\.js$/, '.ts');
+    }
   }
   //ECMAScript 2015/2016
   else if(es){
@@ -141,7 +143,7 @@ let copyFile = (source, target, replace, showWarning) => {
 
   let content = fs.readFileSync(templatePath + '/' + source, 'utf8');
   //replace content 
-  if(replace){
+  if(think.isObject(replace)){
     for(let key in replace){
       /*eslint-disable no-constant-condition*/
       while(1){ 
@@ -279,6 +281,9 @@ let _copyWwwFiles = () => {
   copyFile('gitignore.log', projectRootPath + '/.gitignore');
   copyFile('README.md', projectRootPath + '/README.md');
 
+  if(commander.ts){
+    copyFile('tsconfig.json', projectRootPath + '/tsconfig.json');
+  }
 
   mkdir(projectRootPath + '/www');
   copyFile('www/development.js', projectRootPath + '/www/development.js');

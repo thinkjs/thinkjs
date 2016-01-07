@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import child_process from 'child_process';
 
 /**
  * watch compile
@@ -74,7 +75,7 @@ export default class {
 
       think.log(colors => {
         return colors.red(`compile file ${file} error`);
-      }, 'BABEL');
+      }, 'COMPILE');
       think.log(e);
 
       e.message = 'Compile Error: ' + e.message;
@@ -85,8 +86,18 @@ export default class {
    * typescript compile
    * @return {} []
    */
-  compileByTypeScript(/*content, file*/){
-
+  compileByTypeScript(content, file){
+    let tsc = require.resolve('typescript/lib/tsc.js');
+    let srcFile = `${this.srcPath}${think.sep}${file}`;
+    let outFile = `${this.outPath}${think.sep}${file}`;
+    let cmd = `${tsc} --module commonjs --target ES6 --out ${outFile} ${srcFile}`;
+    let result = child_process.execSync(cmd, {
+      cwd: think.ROOT_PATH,
+      timeout: 30 * 1000,
+      maxBuffer: 100 * 1024 * 1024,
+      encoding: 'utf8'
+    });
+    return result;
   }
   /**
    * babel compile

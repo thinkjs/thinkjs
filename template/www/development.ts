@@ -12,7 +12,6 @@ var instance = new thinkjs({
 
 //compile src/ to app/
 instance.compile({
-  retainLines: true, 
   log: true,
   type: 'ts' //TypeScript
 });

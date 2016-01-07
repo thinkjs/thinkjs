@@ -9,14 +9,19 @@ declare module think {
    * The current version of ThinkJS
    * @type {string}
    */
-  export var version: string;
+  var version: string;
   /**
    * to fast properties
    * @param {EmptyObject} obj [description]
    */
   export function toFastProperties(obj: EmptyObject): void;
-
-  //export function promisify(fn: xx, recevier: EmptyObject): any;
+  /**
+   * promisify
+   * @param  {any[])   =>       any}         fn [description]
+   * @param  {EmptyObject} recevier [description]
+   * @return {any}                  [description]
+   */
+  export function promisify(fn: (...args: any[]) => any, recevier: EmptyObject): any;
   /**
    * path seperator
    * @type {string}
