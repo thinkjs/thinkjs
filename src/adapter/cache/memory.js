@@ -15,7 +15,7 @@ export default class extends think.adapter.base {
    */
   init(options){
 
-    options = think.parseConfig(options);
+    options = think.parseConfig(think.config('cache'), options);
 
     this.timeout = options.timeout;
 
