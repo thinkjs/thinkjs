@@ -54,7 +54,7 @@ export default class extends think.http.base {
     }
     try{
       await this.hook('view_before');
-      let content = await this.fetch(templateFile, config);
+      let content = await this.fetch(templateFile, undefined, config);
       await this.render(content, charset, contentType);
       await this.hook('view_after', content);
     }catch(err){
@@ -97,8 +97,8 @@ export default class extends think.http.base {
    * @param  {String} templateFile [template file]
    * @return {Promise}             []
    */
-  async fetch(templateFile, config){
-    let tVar = this.tVar;
+  async fetch(templateFile, data, config){
+    let tVar = data && think.isObject(data) ? data : this.tVar;
     config = think.extend({
       templateFile: templateFile
     }, this.config('view'), config);
