@@ -65,7 +65,7 @@ export default class {
     }
 
     try{
-      if(this.options.ts){
+      if(this.options.type === 'ts'){
         this.compileByTypeScript(content, file);
       }else{
         this.compileByBabel(content, file);
@@ -88,16 +88,21 @@ export default class {
    */
   compileByTypeScript(content, file){
     let tsc = require.resolve('typescript/lib/tsc.js');
+    let extname = path.extname(file);
+    if(extname !== '.ts'){
+      return;
+    }
+
     let srcFile = `${this.srcPath}${think.sep}${file}`;
-    let outFile = `${this.outPath}${think.sep}${file}`;
-    let cmd = `${tsc} --module commonjs --target ES6 --out ${outFile} ${srcFile}`;
-    let result = child_process.execSync(cmd, {
+    let outFile = `${this.outPath}${think.sep}${file}`.replace(/\.ts$/, '.js');
+    let cmd = `node ${tsc} ${srcFile} --module commonjs --target ES6 --outFile ${outFile}`;
+    think.mkdir(path.dirname(outFile));
+    child_process.execSync(cmd, {
       cwd: think.ROOT_PATH,
       timeout: 30 * 1000,
       maxBuffer: 100 * 1024 * 1024,
       encoding: 'utf8'
     });
-    return result;
   }
   /**
    * babel compile
