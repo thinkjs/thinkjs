@@ -22,7 +22,7 @@ export default class extends think.adapter.base {
    * @return {}         []
    */
   getMemcacheInstance(name){
-    let options = this.parseConfig(think.config('memcache'), {
+    let options = think.parseConfig.call(this.options, think.config('memcache'), {
       command: name,
       from: 'cache'
     });

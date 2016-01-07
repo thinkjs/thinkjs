@@ -372,7 +372,7 @@ think.safeRequire = file => {
  * @param  {} configs []
  * @return {}            []
  */
-think.parseConfig = (...configs) => {
+think.parseConfig = function(...configs) {
   configs = configs.map(config => {
     config = think.extend({}, config);
     //check adapter config exist
@@ -391,7 +391,7 @@ think.parseConfig = (...configs) => {
     return config;
   }
   
-  let ret = config.parser(config);
+  let ret = config.parser(config, this !== think ? this : undefined);
   delete config.parser;
   return think.extend(config, ret);
 };
