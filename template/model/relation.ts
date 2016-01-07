@@ -1,3 +1,5 @@
+/// <reference path="../../../typings/thinkjs/think.d.ts" />
+
 'use strict';
 /**
  * relation model

@@ -283,6 +283,7 @@ let _copyWwwFiles = () => {
 
   if(commander.ts){
     copyFile('tsconfig.json', projectRootPath + '/tsconfig.json');
+    copyFile('think.d.ts', projectRootPath + '/typings/thinkjs/think.d.ts');
   }
 
   mkdir(projectRootPath + '/www');
