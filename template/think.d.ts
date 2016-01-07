@@ -53,7 +53,20 @@ declare module think {
   /**
    * Promise
    */
-  interface Promise {}
+  interface Promise {
+    /**
+     * then
+     * @param  {Function} fn [description]
+     * @return {Promise}     [description]
+     */
+    then(fn: Function): Promise;
+    /**
+     * catch
+     * @param  {Function} fn [description]
+     * @return {Promise}     [description]
+     */
+    catch(fn: Function): Promise;
+  }
 
   /**
    * prevent Promise
@@ -77,7 +90,9 @@ declare module think {
     host: string;
     type: string
   }
-
+  /**
+   * http object
+   */
   interface HttpObject {
     /**
      * request
@@ -1509,11 +1524,351 @@ declare module think {
   }
 
   interface think_model_base_instance extends think_model_$base_instance {
-
+    /**
+     * get table schema
+     * @param  {string}  table [description]
+     * @return {Promise}       [description]
+     */
+    getSchema(table?:string): Promise;
+    /**
+     * get unique field in schema
+     * @param  {MixedArray[]} data [description]
+     * @return {string}            [description]
+     */
+    getUniqueField(data?: MixedArray[]): string;
+    /**
+     * get last sql
+     * @return {string} [description]
+     */
+    getLastSql(): string;
+    /**
+     * get pk
+     * @return {Promise} [description]
+     */
+    getPk(): Promise;
+    /**
+     * build sql
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    buildSql(options?:EmptyObject): Promise;
+    /**
+     * parse options
+     * @param  {EmptyObject} opt1 [description]
+     * @param  {EmptyObject} opt2 [description]
+     * @return {Promise}          [description]
+     */
+    parseOptions(opt1?: EmptyObject, opt2?: EmptyObject): Promise;
+    /**
+     * parse where options
+     * @param  {EmptyObject} options [description]
+     * @return {EmptyObject}         [description]
+     */
+    parseWhereOptions(options: EmptyObject): EmptyObject;
+    /**
+     * parse type
+     * @param  {string}      key   [description]
+     * @param  {EmptyObject} value [description]
+     * @return {EmptyObject}       [description]
+     */
+    parseType(key: string, value: EmptyObject): EmptyObject;
+    /**
+     * parse data
+     * @param  {EmptyObject} data [description]
+     * @return {EmptyObject}      [description]
+     */
+    parseData(data: EmptyObject): EmptyObject;
+    /**
+     * add data
+     * @param  {EmptyObject} data    [description]
+     * @param  {EmptyObject} options [description]
+     * @param  {boolean}     replace [description]
+     * @return {Promise}             [description]
+     */
+    add(data: EmptyObject, options?: EmptyObject, replace?:boolean): Promise;
+    /**
+     * then add
+     * @param  {EmptyObject} data   [description]
+     * @param  {[type]}      where? any           [description]
+     * @return {Promise}            [description]
+     */
+    thenAdd(data: EmptyObject, where?: any): Promise;
+    /**
+     * add many
+     * @param  {MixedArray}  data    [description]
+     * @param  {EmptyObject} options [description]
+     * @param  {boolean}     replace [description]
+     * @return {Promise}             [description]
+     */
+    addMany(data: MixedArray, options?: EmptyObject, replace?: boolean): Promise;
+    /**
+     * delete
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    delete(options: EmptyObject):Promise;
+    /**
+     * update data
+     * @param  {EmptyObject} data    [description]
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    update(data: EmptyObject, options?: EmptyObject): Promise;
+    /**
+     * update many
+     * @param  {MixedArray}  data    [description]
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    updateMany(data: MixedArray, options?: EmptyObject): Promise;
+    /**
+     * increment field 
+     * @param  {string}  field [description]
+     * @param  {number}  step  [description]
+     * @return {Promise}       [description]
+     */
+    increment(field: string, step?:number): Promise;
+    /**
+     * decrement field
+     * @param  {string}  field [description]
+     * @param  {number}  step  [description]
+     * @return {Promise}       [description]
+     */
+    decrement(field: string, step?:number): Promise;
+    /**
+     * find data
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    find(options?:EmptyObject): Promise;
+    /**
+     * select data
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    select(options?:EmptyObject): Promise;
+    /**
+     * select add
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    selectAdd(options?:EmptyObject): Promise;
+    /**
+     * count select
+     * @param  {EmptyObject} options [description]
+     * @param  {boolean}     flag    [description]
+     * @return {Promise}             [description]
+     */
+    countSelect(options?:EmptyObject, flag?:boolean): Promise;
+    /**
+     * get field data
+     * @param  {string}     field [description]
+     * @param  {boolean |     number}      one [description]
+     * @return {Promise}          [description]
+     */
+    getField(field:string, one?:boolean | number): Promise;
+    /**
+     * count
+     * @param  {string}  field [description]
+     * @return {Promise}       [description]
+     */
+    count(field?:string): Promise;
+    /**
+     * sum
+     * @param  {string}  field [description]
+     * @return {Promise}       [description]
+     */
+    sum(field?:string): Promise;
+    /**
+     * get min value
+     * @param  {[type]}  field?string [description]
+     * @return {Promise}              [description]
+     */
+    min(field?:string): Promise;
+    /**
+     * get max value
+     * @param  {string}  field [description]
+     * @return {Promise}       [description]
+     */
+    max(field?:string): Promise;
+    /**
+     * get value average
+     * @param  {string}  field [description]
+     * @return {Promise}       [description]
+     */
+    avg(field?:string): Promise;
+    /**
+     * query
+     * @param  {StringArray[]} ...args [description]
+     * @return {Promise}               [description]
+     */
+    query(...args: StringArray[]): Promise;
+    /**
+     * execute
+     * @param  {StringArray[]} ...args [description]
+     * @return {Promise}               [description]
+     */
+    execute(...args: StringArray[]): Promise;
+    /**
+     * parse sql
+     * @param  {StringArray[]} ...args [description]
+     * @return {string}                [description]
+     */
+    parseSql(...args: StringArray[]): string;
+    /**
+     * start transactions
+     * @return {Promise} [description]
+     */
+    startTrans(): Promise;
+    /**
+     * commit transactions
+     * @return {Promise} [description]
+     */
+    commit(): Promise;
+    /**
+     * rollback transactions
+     * @return {Promise} [description]
+     */
+    rollback(): Promise;
+    /**
+     * transaction
+     * @param  {Function} fn [description]
+     * @return {Promise}     [description]
+     */
+    transaction(fn: Function): Promise;
   }
 
   interface think_model_mongo_instance extends think_model_$base_instance {
-
+    getPk(): Promise;
+    _createIndexes(): Promise;
+    parseOptions(opt1?: EmptyObject, opt2?: EmptyObject): Promise;
+    parseData(data: any): any;
+    /**
+     * get collection
+     * @param  {string}      table [description]
+     * @return {EmptyObject}       [description]
+     */
+    collection(table?:string): EmptyObject;
+    /**
+     * add data
+     * @param  {EmptyObject} data    [description]
+     * @param  {EmptyObject} options [description]
+     * @param  {boolean}     replace [description]
+     * @return {Promise}             [description]
+     */
+    add(data: EmptyObject, options?: EmptyObject, replace?:boolean): Promise;
+    /**
+     * then add
+     * @param  {EmptyObject} data   [description]
+     * @param  {[type]}      where? any           [description]
+     * @return {Promise}            [description]
+     */
+    thenAdd(data: EmptyObject, where?: any): Promise;
+    /**
+     * add many
+     * @param  {MixedArray}  data    [description]
+     * @param  {EmptyObject} options [description]
+     * @param  {boolean}     replace [description]
+     * @return {Promise}             [description]
+     */
+    addMany(data: MixedArray, options?: EmptyObject, replace?: boolean): Promise;
+    /**
+     * delete
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    delete(options: EmptyObject):Promise;
+    /**
+     * update data
+     * @param  {EmptyObject} data    [description]
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    update(data: EmptyObject, options?: EmptyObject): Promise;
+    /**
+     * update many
+     * @param  {MixedArray}  data    [description]
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    updateMany(data: MixedArray, options?: EmptyObject): Promise;
+    /**
+     * find
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    find(options?:EmptyObject): Promise;
+    /**
+     * select data
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    select(options?:EmptyObject): Promise;
+    /**
+     * select add
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    selectAdd(options?:EmptyObject): Promise;
+    /**
+     * count select
+     * @param  {EmptyObject} options [description]
+     * @param  {boolean}     flag    [description]
+     * @return {Promise}             [description]
+     */
+    countSelect(options?:EmptyObject, flag?:boolean): Promise;
+     /**
+     * increment field 
+     * @param  {string}  field [description]
+     * @param  {number}  step  [description]
+     * @return {Promise}       [description]
+     */
+    increment(field: string, step?:number): Promise;
+    /**
+     * decrement field
+     * @param  {string}  field [description]
+     * @param  {number}  step  [description]
+     * @return {Promise}       [description]
+     */
+    decrement(field: string, step?:number): Promise;
+    /**
+     * count
+     * @param  {string}  field [description]
+     * @return {Promise}       [description]
+     */
+    count(field?:string): Promise;
+    /**
+     * sum
+     * @param  {string}  field [description]
+     * @return {Promise}       [description]
+     */
+    sum(field?:string): Promise;
+    /**
+     * aggregate
+     * @param  {EmptyObject} options [description]
+     * @return {Promise}             [description]
+     */
+    aggregate(options?:EmptyObject): Promise;
+    /**
+     * map reduce
+     * @param  {any}     map    [description]
+     * @param  {any}     resuce [description]
+     * @param  {any}     out    [description]
+     * @return {Promise}        [description]
+     */
+    mapReduce(map: any, resuce: any, out: any): Promise;
+    /**
+     * create index
+     * @param  {any}     indexes [description]
+     * @param  {any}     options [description]
+     * @return {Promise}         [description]
+     */
+    createIndex(indexes:any, options: any): Promise;
+    /**
+     * get indexes
+     * @return {Promise} [description]
+     */
+    getIndexes(): Promise;
   }
 
   export var model: think_model;
