@@ -121,7 +121,7 @@ let copyFile = (source, target, replace, showWarning) => {
     if(think.isFile(templatePath + '/' + tsSource)){
       source = tsSource;
     }
-    if(target.indexOf('/www/') === -1){
+    if(target.indexOf('/src/') > -1){
       //replace target file extname to .ts
       target = target.replace(/\.js$/, '.ts');
     }
@@ -282,7 +282,7 @@ let _copyWwwFiles = () => {
   copyFile('README.md', projectRootPath + '/README.md');
 
   if(commander.ts){
-    copyFile('tsconfig.json', projectRootPath + '/tsconfig.json');
+    copyFile('bin/compile.ts', projectRootPath + '/bin/compile.js');
     copyFile('think.d.ts', projectRootPath + '/typings/thinkjs/think.d.ts');
   }
 

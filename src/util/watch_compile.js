@@ -38,8 +38,8 @@ export default class {
    * @return {}         []
    */
   init(srcPath, outPath, options = {}, callback){
-    this.srcPath = srcPath;
-    this.outPath = outPath;
+    this.srcPath = path.normalize(srcPath);
+    this.outPath = path.normalize(outPath);
     this.options = options;
     this.callback = callback;
   }
@@ -104,7 +104,7 @@ export default class {
       think.log(`Compile file ${file}`, 'TypeScript', startTime);
     }
     //change file extname to js
-    file = file.replace('.ts', '.js');
+    file = this.replaceExtName(file, '.js');
     let saveFile = `${this.outPath}${think.sep}${file}`;
     think.mkdir(path.dirname(saveFile));
     fs.writeFileSync(saveFile, result);
@@ -138,14 +138,14 @@ export default class {
    */
   getSrcDeletedFiles(srcFiles, appFiles){
     let srcFilesWithoutExt = srcFiles.map(item => {
-      return item.replace(/\.\w+$/, '');
+      return this.replaceExtName(item);
     });
     return appFiles.filter(file => {
       let extname = path.extname(file);
       if(this.allowFileExt.indexOf(extname) === -1){
         return;
       }
-      let fileWithoutExt = file.replace(/\.\w+$/, '');
+      let fileWithoutExt = this.replaceExtName(file);
       //src file not exist
       if(srcFilesWithoutExt.indexOf(fileWithoutExt) === -1){
         let filepath = this.outPath + think.sep + file;
@@ -157,10 +157,19 @@ export default class {
     });
   }
   /**
+   * replace filepath extname
+   * @param  {String} filepath []
+   * @param  {String} extname  []
+   * @return {String}          []
+   */
+  replaceExtName(filepath, extname = ''){
+    return filepath.replace(/\.\w+$/, extname);
+  }
+  /**
    * compile
    * @return {} []
    */
-  compile(){
+  compile(once){
     let files = think.getFiles(this.srcPath, true);
     let appFiles = think.getFiles(this.outPath, true);
     let changedFiles = this.getSrcDeletedFiles(files, appFiles);
@@ -179,9 +188,9 @@ export default class {
       let mTime = fs.statSync(`${this.srcPath}${think.sep}${file}`).mtime.getTime();
       let outFile = `${this.outPath}${think.sep}${file}`;
 
-      if(this.options.type === 'ts'){
-        outFile = outFile.replace(/\.ts$/, '.js');
-      }
+      //change extname to .js.
+      //in typescript, file extname is .ts
+      outFile = this.replaceExtName(outFile, '.js');
 
       if(think.isFile(outFile)){
         let outmTime = fs.statSync(outFile).mtime.getTime();
@@ -193,7 +202,7 @@ export default class {
       if(!this.compiledMtime[file] || mTime > this.compiledMtime[file]){
         let ret = this.compileFile(file);
         if(ret){
-          changedFiles.push(path.normalize(`${this.outPath}${think.sep}${file}`));
+          changedFiles.push(outFile);
         }
         
         this.compiledMtime[file] = mTime;
@@ -212,7 +221,9 @@ export default class {
     if(changedFiles.length && this.callback){
       this.callback(changedFiles);
     }
-    setTimeout(this.compile.bind(this), 100);
+    if(!once){
+      setTimeout(this.compile.bind(this), 100);
+    }
   }
   /**
    * run
@@ -220,5 +231,13 @@ export default class {
    */
   run(){
     this.compile();
+  }
+  /**
+   * compile
+   * @return {} []
+   */
+  static compile(srcPath, outPath, options = {}){
+    let instance = new this(srcPath, outPath, options);
+    instance.compile(true);
   }
 }

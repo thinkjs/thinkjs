@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node www/development.js",
-    "compile": "tsc"
+    "compile": "node bin/compile.js"
   },
   "dependencies": {
     "thinkjs": "2.1.x"
