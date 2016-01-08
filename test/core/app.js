@@ -91,7 +91,7 @@ describe('core/app.js', function(){
       assert.equal(think.isObject(ins), true)
       return Promise.resolve();
     }
-    instance.execController().then(function(){
+    instance.execController({}).then(function(){
       muk.restore();
       done();
     })
@@ -112,7 +112,7 @@ describe('core/app.js', function(){
     })
   })
   it('execAction, _isRest', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list',method: 'get'});
+    var instance = new App({module: 'home', controller: 'test', action: 'get',method: 'get'});
     var controller = {
       _isRest: true,
       getAction: function(){}
@@ -124,10 +124,12 @@ describe('core/app.js', function(){
     instance.execAction(controller).then(function(){
       muk.restore();
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('execAction, _isRest, _method', function(done){
-    var instance = new App({module: 'home', controller: 'test', action: 'list',method: 'get', _get: {_method: 'user_add'}});
+    var instance = new App({module: 'home', controller: 'test', action: 'user_add',method: 'get', _get: {_method: 'user_add'}});
     var controller = {
       _isRest: true,
       _method: '_method',

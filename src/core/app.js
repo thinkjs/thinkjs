@@ -61,9 +61,9 @@ export default class extends think.http.base {
    * invoke controller
    * @return {} []
    */
-  invokeController(){
+  invokeController(controller){
     return this.hook('controller_before').then(() => {
-      return this.execController();
+      return this.execController(controller);
     }).catch(err => {
       //ignore prevent reject promise
       //make controller_after & response_end hook can be invoked
@@ -75,37 +75,42 @@ export default class extends think.http.base {
     });
   }
   /**
-   * exec controller
-   * @return {Promise} []
+   * get controller instance
+   * @return {} []
    */
-  execController(){
+  getControllerInstance(){
     let http = this.http;
     let name = `${http.module}/${think.dirname.controller}/${http.controller}`;
-    let cls = think.require(name, true);
-    if (cls) {
-      return this.execAction(new cls(http));
+    let Controller = think.require(name, true);
+    if (!Controller) {
+      return;
     }
-    http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', http.controller, http.url));
-    return think.statusAction(404, http);
-  }
-  /**
-   * controller is rest
-   * @param  {Object} controller []
-   * @return {}            []
-   */
-  checkRestController(controller){
-    //if is rest api, rewrite action
-    if(controller._isRest){
-      let method = controller._method;
+    let instance = new Controller(http);
+    //rewrite action when controller is rest
+    if(instance._isRest){
+      let method = instance._method;
       //get method from GET params
       if(method){
-        method = controller.get(method).toLowerCase();
+        method = instance.get(method).toLowerCase();
       }
       if(!method){
         method = this.http.method.toLowerCase();
       }
       this.http.action = method;
     }
+    return instance;
+  }
+  /**
+   * exec controller
+   * @return {Promise} []
+   */
+  execController(controller){
+    if (controller) {
+      return this.execAction(controller);
+    }
+    let http = this.http;
+    http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', http.controller, http.url));
+    return think.statusAction(404, http);
   }
   /**
    * exec action
@@ -114,8 +119,6 @@ export default class extends think.http.base {
    * @return {Promise}            []
    */
   execAction(controller){
-    this.checkRestController(controller);
-    
     let http = this.http;
     let action = think.camelCase(http.action);
     let actionWithSuffix = `${action}Action`;
@@ -148,8 +151,11 @@ export default class extends think.http.base {
       this.http.error = think.compileError;
       return think.statusAction(500, this.http);
     }
+    //must get controller before invoke logic
+    let controller = this.getControllerInstance();
+
     await this.invokeLogic();
-    await this.invokeController();
+    await this.invokeController(controller);
     await this.hook('response_end');
   }
   /**
@@ -160,7 +166,7 @@ export default class extends think.http.base {
   execError(err){
     let http = this.http;
     http.error = err;
-    think.statusAction(500, http, true);
+    return think.statusAction(500, http, true);
   }
   /**
    * run
