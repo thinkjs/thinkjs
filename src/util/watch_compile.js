@@ -2,7 +2,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import child_process from 'child_process';
 
 /**
  * watch compile
@@ -87,22 +86,28 @@ export default class {
    * @return {} []
    */
   compileByTypeScript(content, file){
-    let tsc = require.resolve('typescript/lib/tsc.js');
-    let extname = path.extname(file);
-    if(extname !== '.ts'){
-      return;
+    let ts = require('typescript');
+    let startTime = Date.now();
+    let diagnostics = [];
+    let result = ts.transpile(content, {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES5
+    }, file, diagnostics);
+    //has error
+    if(diagnostics.length){
+      let firstDiagnostics = diagnostics[0];
+      let {line, character} = firstDiagnostics.file.getLineAndCharacterOfPosition(firstDiagnostics.start);
+      let message = ts.flattenDiagnosticMessageText(firstDiagnostics.messageText, '\n');
+      throw new Error(`${message} on Line ${line + 1}, Character ${character}`);
     }
-
-    let srcFile = `${this.srcPath}${think.sep}${file}`;
-    let outFile = `${this.outPath}${think.sep}${file}`.replace(/\.ts$/, '.js');
-    let cmd = `node ${tsc} ${srcFile} --module commonjs --target ES6 --outFile ${outFile}`;
-    think.mkdir(path.dirname(outFile));
-    child_process.execSync(cmd, {
-      cwd: think.ROOT_PATH,
-      timeout: 30 * 1000,
-      maxBuffer: 100 * 1024 * 1024,
-      encoding: 'utf8'
-    });
+    if(this.options.log){
+      think.log(`Compile file ${file}`, 'TypeScript', startTime);
+    }
+    //change file extname to js
+    file = file.replace('.ts', '.js');
+    let saveFile = `${this.outPath}${think.sep}${file}`;
+    think.mkdir(path.dirname(saveFile));
+    fs.writeFileSync(saveFile, result);
   }
   /**
    * babel compile
@@ -121,7 +126,7 @@ export default class {
       plugins: ['transform-runtime']
     });
     if(this.options.log){
-      think.log(`compile file ${file}`, 'BABEL', startTime);
+      think.log(`Compile file ${file}`, 'BABEL', startTime);
     }
     think.mkdir(path.dirname(`${this.outPath}${think.sep}${file}`));
     fs.writeFileSync(`${this.outPath}${think.sep}${file}`, data.code);
@@ -132,13 +137,17 @@ export default class {
    * @return {} []
    */
   getSrcDeletedFiles(srcFiles, appFiles){
+    let srcFilesWithoutExt = srcFiles.map(item => {
+      return item.replace(/\.\w+$/, '');
+    });
     return appFiles.filter(file => {
       let extname = path.extname(file);
       if(this.allowFileExt.indexOf(extname) === -1){
         return;
       }
+      let fileWithoutExt = file.replace(/\.\w+$/, '');
       //src file not exist
-      if(srcFiles.indexOf(file) === -1){
+      if(srcFilesWithoutExt.indexOf(fileWithoutExt) === -1){
         let filepath = this.outPath + think.sep + file;
         fs.unlinkSync(filepath);
         return true;
@@ -169,6 +178,11 @@ export default class {
       }
       let mTime = fs.statSync(`${this.srcPath}${think.sep}${file}`).mtime.getTime();
       let outFile = `${this.outPath}${think.sep}${file}`;
+
+      if(this.options.type === 'ts'){
+        outFile = outFile.replace(/\.ts$/, '.js');
+      }
+
       if(think.isFile(outFile)){
         let outmTime = fs.statSync(outFile).mtime.getTime();
         //if compiled file mtime is after than source file, return
