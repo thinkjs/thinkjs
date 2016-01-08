@@ -28,6 +28,7 @@ describe('model/base.js', function(){
     instance = new Base('user', think.config('db'));
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){
+
       if (sql === 'SHOW COLUMNS FROM `think_friend`') {
         var data = [
           {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
@@ -193,7 +194,15 @@ describe('model/base.js', function(){
         return Promise.resolve([{
           think_count: 40000
         }])
+      }else if(sql.trim() === "SELECT COUNT(`id`) AS think_count FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_count: 40000
+        }])
       }else if(sql.trim() === "SELECT SUM(id) AS think_sum FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_sum: 1000
+        }])
+      }else if(sql.trim() === "SELECT SUM(`id`) AS think_sum FROM `think_user` LIMIT 1"){
         return Promise.resolve([{
           think_sum: 1000
         }])
@@ -201,11 +210,25 @@ describe('model/base.js', function(){
         return Promise.resolve([{
           think_min: 1000
         }])
+      }else if(sql.trim() === "SELECT MIN(`id`) AS think_min FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_min: 1000
+        }])
       }else if(sql.trim() === "SELECT MAX(id) AS think_max FROM `think_user` LIMIT 1"){
         return Promise.resolve([{
           think_max: 1000
         }])
+      }
+      else if(sql.trim() === "SELECT MAX(`id`) AS think_max FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_max: 1000
+        }])
       }else if(sql.trim() === "SELECT AVG(id) AS think_avg FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_avg: 1000
+        }])
+      }
+      else if(sql.trim() === "SELECT AVG(`id`) AS think_avg FROM `think_user` LIMIT 1"){
         return Promise.resolve([{
           think_avg: 1000
         }])
@@ -794,8 +817,15 @@ describe('model/base.js', function(){
   it('sum, with field', function(done){
     instance.sum('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT SUM(id) AS think_sum FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT SUM(`id`) AS think_sum FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('sum, with field key', function(done){
+    instance.sum('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT SUM(`key`) AS think_sum FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -810,8 +840,15 @@ describe('model/base.js', function(){
   it('min, with field', function(done){
     instance.min('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT MIN(id) AS think_min FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT MIN(`id`) AS think_min FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('min, with field key', function(done){
+    instance.min('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT MIN(`key`) AS think_min FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -826,8 +863,15 @@ describe('model/base.js', function(){
   it('max, with field', function(done){
     instance.max('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT MAX(id) AS think_max FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT MAX(`id`) AS think_max FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('max, with field key', function(done){
+    instance.max('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT MAX(`key`) AS think_max FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -842,8 +886,15 @@ describe('model/base.js', function(){
   it('avg, with field', function(done){
     instance.avg('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT AVG(id) AS think_avg FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT AVG(`id`) AS think_avg FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('avg, with field key', function(done){
+    instance.avg('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT AVG(`key`) AS think_avg FROM `think_user` LIMIT 1");
       done();
     })
   })
