@@ -667,6 +667,20 @@ export default class {
     }else if (!think.isBuffer(obj)) {
       obj += '';
     }
+    
+    //write after end
+    if(this._isEnd){
+      if(think.isBuffer(obj)){
+        think.log('write after end, content is buffer', 'WARNING');
+      }else{
+        let pos = obj.indexOf('\n');
+        if(pos > -1){
+          obj = obj.slice(0, pos) + '...';
+        }
+        think.log('write after end, content is `' + obj + '`', 'WARNING');
+      }
+      return;
+    }
     let outputConfig = this.config('output_content');
     if (!outputConfig) {
       return this.res.write(obj, encoding);
