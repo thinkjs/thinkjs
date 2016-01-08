@@ -22,11 +22,11 @@ describe('middleware/check_csrf', function() {
     var instance = new Index();
     instance.load();
   });
-  it('csrf off', function(done) {
-    execMiddleware('check_csrf').then(function() {
-      done();
-    });
-  });
+  // it('csrf off', function(done) {
+  //   execMiddleware('check_csrf').then(function() {
+  //     done();
+  //   });
+  // });
   it('csrf on', function(done) {
     think.config('csrf.on', true);
     var uuid = think.uuid;
