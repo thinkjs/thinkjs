@@ -80,11 +80,11 @@ let _getRuleValues = rules => {
  * @return {Mixed}       []
  */
 let _parseValue = (value, item) => {
-  if(item.int){
+  if(item.int || item.type === 'int'){
     return parseInt(value);
-  }else if(item.float){
+  }else if(item.float || item.type === 'float'){
     return parseFloat(value);
-  }else if(item.boolean){
+  }else if(item.boolean || item.type === 'boolean'){
     return Validator.boolean(value);
   }
   return value;
@@ -99,7 +99,10 @@ let _parseValue = (value, item) => {
 let _getItemValue = (item, values, parse) => {
   //get item value
   //avoid default is undefined, but check type is string
-  let itemValue = item.value || item.default || item.value;
+  let itemValue = item.value;
+  if(!itemValue && item.default !== undefined){
+    itemValue = item.default;
+  }
   if(think.isFunction(itemValue)){
     itemValue = itemValue.call(values);
   }

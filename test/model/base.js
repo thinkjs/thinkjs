@@ -33,7 +33,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -41,7 +41,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -49,7 +49,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -57,7 +57,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -65,7 +65,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
           {"Field":"flo","Type":"float(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -76,7 +76,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -261,7 +261,7 @@ describe('model/base.js', function(){
   })
   it('getSchema', function(done){
     instance.getSchema().then(function(data){
-      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
+      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: null,     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
@@ -269,13 +269,13 @@ describe('model/base.js', function(){
     instance.getSchema().then(function(){
       return instance.getSchema();
     }).then(function(data){
-      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false, default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
+      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false, default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: null,     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
   it('getSchema, type', function(done){
     return instance.getSchema('think_type').then(function(data){
-      assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,    default: null,    primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,    default: '1',    primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false } })
+      assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,    default: null,    primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false } })
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_type`');
       done();
     })
@@ -419,6 +419,51 @@ describe('model/base.js', function(){
       done();
     })
   })
+  it('add data, has default', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: 'haha'
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`,`name`) VALUES ('test','haha')");
+      done();
+    })
+  })
+  it('add data, has default function', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: function(){return 'haha'}
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`,`name`) VALUES ('test','haha')");
+      done();
+    })
+  })
+  it('add data, has default function, this', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: function(){return this.title + '_name'}
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`,`name`) VALUES ('test','test_name')");
+      done();
+    })
+  })
   it('add data, has data', function(done){
     instance.add({
       name: 'welefen',
@@ -528,6 +573,8 @@ describe('model/base.js', function(){
       assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 401 )")
       instance.readonlyFields = [];
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('update, missing where condition', function(done){

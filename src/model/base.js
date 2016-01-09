@@ -191,17 +191,19 @@ export default class extends Base {
     data = think.extend({}, this._data, data);
     //clear data
     this._data = {};
-    if (think.isEmpty(data)) {
-      let msg = new Error(think.locale('DATA_EMPTY'));
-      return think.reject(msg);
-    }
+    
     options = await this.parseOptions(options);
 
     let parsedData = this.parseData(data);
     parsedData = await this.beforeAdd(parsedData, options);
+    if (think.isEmpty(parsedData)) {
+      let msg = new Error(think.locale('DATA_EMPTY'));
+      return think.reject(msg);
+    }
+
     await this.db().add(parsedData, options, replace);
-    let insertId = data[this.pk] = this.db().getLastInsertId();
-    await this.afterAdd(data, options);
+    let insertId = parsedData[this.pk] = this.db().getLastInsertId();
+    await this.afterAdd(parsedData, options);
     return insertId;
   }
   /**
@@ -276,17 +278,7 @@ export default class extends Base {
 
     options = await this.parseOptions(options);
 
-    //remove readonly field data
-    this.readonlyFields.forEach(item => {
-      delete data[item];
-    });
-
     let parsedData = this.parseData(data);
-    //check data is empty
-    if (think.isEmpty(parsedData)) {
-      return think.reject(new Error(think.locale('DATA_EMPTY')));
-    }
-    let copyData = think.extend({}, parsedData);
 
     //check where condition
     if(think.isEmpty(options.where)){
@@ -295,13 +287,19 @@ export default class extends Base {
       if(parsedData[pk]){
         options.where = {[pk]: parsedData[pk]};
         delete parsedData[pk];
-      }else {
+      }else{
         return think.reject(new Error(think.locale('MISS_WHERE_CONDITION')));
       }
     }
-    
+
     parsedData = await this.beforeUpdate(parsedData, options);
+    //check data is empty
+    if (think.isEmpty(parsedData)) {
+      return think.reject(new Error(think.locale('DATA_EMPTY')));
+    }
+
     let rows = await this.db().update(parsedData, options);
+    let copyData = think.extend({}, parsedData);
     await this.afterUpdate(copyData, options);
     return rows;
   }

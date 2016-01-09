@@ -1,5 +1,6 @@
 'use strict';
 
+import Validator from '../core/think_validate.js';
 /**
  * base model class
  */
@@ -39,8 +40,8 @@ export default class extends think.base {
        * }
        * @type {Object}
        */
-      indexes: {},
-      readonlyFields: []// readonly fields
+      indexes: {}
+      //readonlyFields: []// readonly fields
     };
     //if is set in subclass, can't be override
     for(let key in options){
@@ -419,7 +420,26 @@ export default class extends think.base {
    * @return {}      []
    */
   beforeAdd(data){
-    return data;
+    let ret = {};
+    //fields in schema
+    for(let field in this.schema){
+      let _default = this.schema[field].default;
+      if(data[field] !== undefined || _default){
+        ret[field] = {
+          value: data[field] || '',
+          default: _default
+        };
+      }
+    }
+    for(let field in data){
+      if(!ret[field]){
+        ret[field] = {
+          value: data[field]
+        };
+      }
+    }
+    ret = Validator.values(ret);
+    return ret;
   }
   /**
    * after add
@@ -443,7 +463,25 @@ export default class extends think.base {
    * @return {}      []
    */
   beforeUpdate(data){
-    return data;
+
+    //check property readonlyFields
+    if(!think.isEmpty(this.readonlyFields)){
+      let ret = {};
+      this.readonlyFields.forEach(item => {
+        ret[item] = {readonly: true};
+      });
+      this.schema = think.extend(ret, this.schema);
+      think.log(`readonlyFields property is deprecated, use schema[field].readonly instead`, 'WARNING');
+    }
+
+    let ret = {};
+    for(let field in data){
+      let schema = this.schema[field];
+      if(!schema || !schema.readonly){
+        ret[field] = data[field];
+      }
+    }
+    return ret;
   }
   /**
    * after update
