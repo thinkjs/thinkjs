@@ -128,6 +128,12 @@ export default class extends Base {
    * @return {Object}      []
    */
   service(name, module){
+    if(module && !think.isString(module)){
+      throw new Error('module argument must be string');
+    }
+    if(module && think.module.indexOf(module) === -1){
+      throw new Error('module `' + module + '` not exist');
+    }
     return think.service(name, this.http, module || this.http.module);
   }
 }

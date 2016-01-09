@@ -27,9 +27,22 @@ describe('core/http_base.js', function(){
       assert.equal(typeof instance[item], 'function');
     })
   })
+  it('init', function(){
+    var instance = new Base();
+    assert.deepEqual(instance.http, {});
+  })
   it('get cache', function(done){
     var instance = new Base({});
     instance.cache('xxx', undefined, {type: 'memory'}).then(function(data){
+      assert.equal(data, undefined)
+      done();
+    }).catch(function(err){
+      console.log(err.stack)
+    })
+  })
+  it('get cache, options is string', function(done){
+    var instance = new Base({});
+    instance.cache('xxx', undefined, 'memory').then(function(data){
       assert.equal(data, undefined)
       done();
     }).catch(function(err){
@@ -43,11 +56,39 @@ describe('core/http_base.js', function(){
       done();
     })
   })
-  it('service', function(){
+  it('service ', function(){
     var instance = new Base({res: {}, req: {}});
-    var cls = instance.service('fasdfasdfasfww', {});
+    var cls = instance.service('fasdfasdfasfww');
     assert.equal(think.isFunction(cls), true)
   })
+  it('service module', function(){
+    var instance = new Base({res: {}, req: {}});
+    muk(think, 'module', ['home']);
+    var cls = instance.service('fasdfasdfasfww', 'home');
+    assert.equal(think.isFunction(cls), true);
+    muk.restore();
+  })
+  it('service module not string', function(){
+    var instance = new Base({res: {}, req: {}});
+    muk(think, 'module', ['home']);
+    try{
+      var cls = instance.service('fasdfasdfasfww', {});
+      assert.equal(1, 2);
+    }catch(e){}
+    //assert.equal(think.isFunction(cls), true);
+    muk.restore();
+  })
+  it('service module not exist', function(){
+    var instance = new Base({res: {}, req: {}});
+    muk(think, 'module', ['home']);
+    try{
+      var cls = instance.service('fasdfasdfasfww', 'not exist');
+      assert.equal(1, 2);
+    }catch(e){}
+    //assert.equal(think.isFunction(cls), true);
+    muk.restore();
+  })
+  
   it('controller not found', function(){
     var instance = new Base({res: {}, req: {}, view: function(){}});
     try{
@@ -70,6 +111,11 @@ describe('core/http_base.js', function(){
   it('model, user', function(){
     var instance = new Base({res: {}, req: {}, view: function(){}, module: 'home'});
     var model = instance.model('user', {});
+    assert.equal(think.isObject(model), true)
+  })
+  it('model, user, options is string', function(){
+    var instance = new Base({res: {}, req: {}, view: function(){}, module: 'home'});
+    var model = instance.model('user', 'test');
     assert.equal(think.isObject(model), true)
   })
   it('action, controller not found', function(){
