@@ -1,9 +1,14 @@
 'use strict';
 
 import handlebars from 'handlebars';
+import layouts from 'handlebars-layouts';
 
 let Base = think.adapter('template', 'base');
 
+/**
+ * register layout helper
+ */
+handlebars.registerHelper(layouts(handlebars));
 /**
  * handlebars template adapter
  */
@@ -18,7 +23,7 @@ export default class extends Base {
   async run(templateFile, tVar, config){
     let options = this.parseConfig(config);
 
-    this.prerender(options, handlebars);
+    this.prerender(options, handlebars, templateFile);
 
     let content = await this.getContent(templateFile);
 
