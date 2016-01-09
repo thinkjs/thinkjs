@@ -772,13 +772,14 @@ Validator.regexp = (value, reg) => {
  * @return {Boolean}       []
  */
 Validator.type = (value, type) => {
+  if(!value){
+    return true;
+  }
   switch(type){
     case 'int':
       return Validator.int(value);
     case 'float':
       return Validator.float(value);
-    case 'string':
-      return Validator.string(value);
     case 'boolean':
       return Validator.boolean(value);
     case 'array':
@@ -786,7 +787,7 @@ Validator.type = (value, type) => {
     case 'object':
       return Validator.object(value);
   }
-  return false;
+  return Validator.string(value);
 };
 
 export default Validator;

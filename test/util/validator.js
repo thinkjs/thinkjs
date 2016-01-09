@@ -517,4 +517,44 @@ describe('Validator', function(){
     var data = Validator.object({});
     assert.equal(data, true)
   })
+  it('type empty', function(){
+    var data = Validator.type('', 'int');
+    assert.equal(data, true)
+  })
+  it('type int', function(){
+    var data = Validator.type('10', 'int');
+    assert.equal(data, true)
+  })
+  it('type int 1', function(){
+    var data = Validator.type(10, 'int');
+    assert.equal(data, true)
+  })
+  it('type int 2', function(){
+    var data = Validator.type(10.3, 'int');
+    assert.equal(data, false)
+  })
+  it('type float', function(){
+    var data = Validator.type(10.1, 'float');
+    assert.equal(data, true)
+  })
+  it('type boolean', function(){
+    var data = Validator.type(true, 'boolean');
+    assert.equal(data, true)
+  })
+  it('type boolean 1', function(){
+    var data = Validator.type('1', 'boolean');
+    assert.equal(data, true)
+  })
+  it('type array', function(){
+    var data = Validator.type([], 'array');
+    assert.equal(data, true)
+  })
+  it('type object', function(){
+    var data = Validator.type({}, 'object');
+    assert.equal(data, true)
+  })
+  it('type string', function(){
+    var data = Validator.type('test');
+    assert.equal(data, true)
+  })
 })

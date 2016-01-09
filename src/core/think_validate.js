@@ -85,7 +85,7 @@ let _parseValue = (value, item) => {
   }else if(item.float){
     return parseFloat(value);
   }else if(item.boolean){
-    return !!value;
+    return Validator.boolean(value);
   }
   return value;
 };

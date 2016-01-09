@@ -343,7 +343,7 @@ think.require = (name, flag) => {
  */
 let _interopSafeRequire = file => {
   let obj = require(file);
-  if(obj && obj.default){
+  if(obj && obj.__esModule && obj.default){
     return obj.default;
   }
   return obj;

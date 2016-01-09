@@ -135,7 +135,7 @@ export default class extends think.middleware.base {
     }else{
       mod = '';
     }
-    return mod || defaultModule;
+    return this.getModule(mod);
   }
   /**
    * get controller from pathname

@@ -1969,6 +1969,41 @@ describe('core/think.js', function(){
     var msg = think.validate.values(data);
     assert.deepEqual(msg, {welefen: 'test', test: 'test'});
   })
+  it('think.validate.values default is function, with other field 1', function(){
+    var data = {
+      welefen: {
+        value: '',
+        default: function(){return this.test}
+      },
+      test: {
+        value: 'test'
+      },
+      haha: {
+        value: '1',
+        boolean: true
+      }
+    }
+    var msg = think.validate.values(data);
+    assert.deepEqual(msg, {welefen: 'test', test: 'test',haha: true});
+  })
+  it('think.validate.values default is function, with other field 2', function(){
+    var data = {
+      welefen: {
+        value: '',
+        default: function(){return this.test}
+      },
+      test: {
+        value: 'test'
+      },
+      haha: {
+        value: 'no',
+        boolean: true
+      }
+    }
+    var msg = think.validate.values(data);
+    assert.deepEqual(msg, {welefen: 'test', test: 'test',haha: false});
+  })
+
 
   it('think.cache get cache not exist', function(done){
     think.config('gc.on', false);
@@ -2303,6 +2338,39 @@ describe('core/think.js', function(){
       name: 222
     });
     assert.deepEqual(config, {'type': 'file', 'name': 222})
+  });
+  it('think.parseConfig merge, parser', function(){
+    var config = think.parseConfig({
+      type: 'file',
+      adapter: {
+        file: {
+          name: '111'
+        }
+      },
+      parser: function(options){
+        return {type: 'parser_type'}
+      }
+    }, {
+      name: 222
+    });
+    assert.deepEqual(config, {'type': 'parser_type', 'name': 222})
+  })
+  it('think.parseConfig merge, parser, change this', function(){
+    var config = think.parseConfig.call({name: 'this'},{
+      type: 'file',
+      adapter: {
+        file: {
+          name: '111'
+        }
+      },
+      parser: function(options, other){
+        assert.deepEqual(other, {name: 'this'})
+        return {type: 'parser_type'}
+      }
+    }, {
+      name: 222
+    });
+    assert.deepEqual(config, {'type': 'parser_type', 'name': 222})
   })
   
   it('think.error not error', function(){

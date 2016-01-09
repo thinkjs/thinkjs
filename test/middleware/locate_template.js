@@ -369,4 +369,42 @@ describe('middleware/locate_template', function(){
       done();
     })
   })
+  it('mode module, change module', function(done){
+    think.mode = think.mode_module;
+    var module = think.module;
+    think.module = ['test'];
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.txt',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }, 'test/yyy/zzz.hhh').then(function(data){
+      assert.equal(data, think.APP_PATH + think.sep + 'test' + think.sep + 'view' + think.sep + 'yyy_zzz.hhh');
+      think.module = module;
+      done();
+    })
+  })
+  it('mode module, change module, controller empty', function(done){
+    think.mode = think.mode_module;
+    var module = think.module;
+    think.module = ['test'];
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.txt',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }, 'test/group').then(function(data){
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'test_group.txt');
+      think.module = module;
+      done();
+    })
+  })
 })

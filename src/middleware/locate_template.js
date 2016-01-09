@@ -84,7 +84,9 @@ export default class extends think.middleware.base {
     let action = paths[length - 1];
 
     let module;
-    if(length > 1){
+    if(length === 2){
+      controller = paths[0];
+    }else if(length > 2){
       let index = think.module.indexOf(paths[0]) > -1 ? 1 : 0;
       if(index){
         module = paths[0];
