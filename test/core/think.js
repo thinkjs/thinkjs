@@ -844,9 +844,21 @@ describe('core/think.js', function(){
     assert.deepEqual(think.hook('test'), ['suredy', 'welefen']);
     delete thinkData.hook.test;
   })
+  it('think.hook set hook data, append 1', function(){
+    thinkData.hook.test = ['suredy']
+    think.hook('test', ['append', 'welefen']);
+    assert.deepEqual(think.hook('test'), ['suredy', 'welefen']);
+    delete thinkData.hook.test;
+  })
   it('think.hook set hook data, prepend', function(){
     thinkData.hook.test = ['suredy']
     think.hook('test', ['welefen'], 'prepend');
+    assert.deepEqual(think.hook('test'), ['welefen', 'suredy']);
+    delete thinkData.hook.test;
+  })
+  it('think.hook set hook data, prepend 1', function(){
+    thinkData.hook.test = ['suredy']
+    think.hook('test', ['prepend', 'welefen']);
     assert.deepEqual(think.hook('test'), ['welefen', 'suredy']);
     delete thinkData.hook.test;
   })
@@ -908,6 +920,67 @@ describe('core/think.js', function(){
       })
     })
   })
+  it('think.hook exec hook, no return', function(done){
+    thinkData.hook.haha = [function(){
+      return 1;
+    }, function(){
+      return 2;
+    }]
+    getHttp().then(function(http){
+      think.hook('haha', http, 'haha').then(function(data){
+        assert.equal(data, 2);
+        delete thinkData.hook.haha;
+        done();
+      })
+    })
+  })
+  it('think.hook exec hook, hook empty 2', function(done){
+    thinkData.hook.haha = [function(){
+      return 1;
+    }, function(){
+      return 2;
+    }]
+    getHttp().then(function(http){
+      think.hook('haha2', http, 'haha').then(function(data){
+        assert.equal(data, 'haha');
+        delete thinkData.hook.haha;
+        done();
+      })
+    })
+  })
+  it('think.hook exec hook, return null', function(done){
+    thinkData.hook.haha = [function(){
+      return 1;
+    }, function(){
+      return null;
+    }, function(){
+      return 3;
+    }]
+    getHttp().then(function(http){
+      think.hook('haha', http, 'haha').then(function(data){
+        assert.equal(data, 1);
+        delete thinkData.hook.haha;
+        done();
+      })
+    })
+  })
+  it('think.hook exec hook, return undefined', function(done){
+    thinkData.hook.haha = [function(){
+      return 1;
+    }, function(){
+      return 2;
+    }, function(){
+      return undefined;
+    }]
+    getHttp().then(function(http){
+      think.hook('haha', http, 'haha').then(function(data){
+        assert.equal(data, 2);
+        delete thinkData.hook.haha;
+        done();
+      })
+    })
+  })
+
 
   it('think.hook exec hook, class', function(done){
     var cls = think.Class({

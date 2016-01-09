@@ -99,7 +99,7 @@ let _execItemMiddleware = (list, index, http, data) => {
   });
 };
 
-Hook.exec = async (name, http, data) => {
+Hook.exec = (name, http, data) => {
   //exec hook 
   let list = thinkData.hook[name];
   if (!list || list.length === 0) {

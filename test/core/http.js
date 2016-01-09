@@ -92,7 +92,45 @@ describe('core/http.js', function() {
     instance.run();
     think.config('timeout', 10);
   });
+  it('response timeout false', function(done) {
+    var timeoutHttp = getDefaultHttp('/index/index?k=timeout');
+    think.config('timeout', 0);
+    muk(think, 'log', function(){});
+    var flag = false;
+    timeoutHttp.res.setTimeout = function(delay, fn) {
+      flag = true;
+      setTimeout(fn, delay);
+    };
+    var instance = new Http(timeoutHttp.req, timeoutHttp.res);
+    instance.run().then(function(){
+      assert.equal(flag, false)
+      done();
+    });
+    think.config('timeout', 10);
+  });
 
+  it('parse pathname /', function(done) {
+    var defaultHttp = getDefaultHttp('/');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, '/');
+      done();
+    });
+  });
+  it('parse pathname /', function(done) {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        host: 'test.com:1234'
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, '/');
+      assert.deepEqual(http.hostname, 'test.com')
+      done();
+    });
+  });
   it('parse pathname', function(done) {
     var defaultHttp = getDefaultHttp('/index/index/name/w%2Fww');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
@@ -109,6 +147,43 @@ describe('core/http.js', function() {
       done();
     });
   });
+
+  it('hasPayload', function() {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var data = instance.hasPayload();
+    assert.equal(data, false)
+  });
+  it('hasPayload transfer-encoding', function() {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        'transfer-encoding': 'gzip'
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var data = instance.hasPayload();
+    assert.equal(data, true)
+  });
+  it('hasPayload content-length', function() {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        'content-length': 100
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var data = instance.hasPayload();
+    assert.equal(data, true)
+  });
+
+
+
   it('GET, query', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&1');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
