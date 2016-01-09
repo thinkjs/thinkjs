@@ -391,7 +391,7 @@ think.parseConfig = function(...configs) {
     return config;
   }
   
-  let ret = config.parser(config, this !== think ? this : undefined);
+  let ret = config.parser(config, this !== think ? this : {});
   delete config.parser;
   return think.extend(config, ret);
 };
