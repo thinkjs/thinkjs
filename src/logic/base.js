@@ -101,12 +101,23 @@ export default class extends think.controller.base {
    * @return {} []
    */
   __after(){
+    let error = this.config('error');
+    
+    //check request method
+    let allowMethods = this.allowMethods;
+    if(!think.isEmpty(allowMethods)){
+      let method = this.http.method.toLowerCase();
+      if(allowMethods.indexOf(method) === -1){
+        return this.fail(error.validate_errno, this.locale('METHOD_NOT_ALLOWED')); 
+      }
+    }
+
+    //check rules
     if(think.isEmpty(this.rules) || this._validateInvoked){
       return;
     }
     let flag = this.validate(this.rules);
     if(!flag){
-      let error = this.config('error');
       return this.fail(error.validate_errno, this.errors());
     }
   }

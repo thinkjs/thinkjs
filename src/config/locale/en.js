@@ -30,6 +30,7 @@ export default {
   DISALLOW_PORT: 'proxy on, cannot visit with port',
   SERVICE_UNAVAILABLE: 'Service Unavailable',
   URL_HAS_UPPERCASE: 'url has uppercases(%s), auto convert to lowercase.',
+  METHOD_NOT_ALLOWED: 'request method is not allowed.',
 
   validate_required: '{name} can not be blank',
   validate_contains: '{name} need contains {args}',
