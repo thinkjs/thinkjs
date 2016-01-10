@@ -675,13 +675,20 @@ think._http = (data = {}) => {
  * @param  {Object} res []
  * @return {Promise}     []
  */
-think.http = (req, res) => {
+think.http = async (req, res) => {
+  let execFlag = res === true;
   //for cli request
-  if (res === undefined) {
+  if (res === undefined || res === true) {
     ({req, res} = think._http(req));
   }
   let instance = new Http(req, res);
-  return instance.run();
+  let http = await instance.run();
+  if(!execFlag){
+    return http;
+  }
+  let App = think.require('app');
+  let appInstance = new App(http);
+  return appInstance.run();
 };
 /**
  * base class for has http property
