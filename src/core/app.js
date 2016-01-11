@@ -235,7 +235,7 @@ export default class extends think.http.base {
     let clusterStatus = think.config('cluster_on') ? 'open' : 'closed';
 
     think.log('Server running at http://' + (host || '127.0.0.1') + ':' + port + '/', 'THINK');
-    think.log(() => `ThinkJS Version: ${think.version}`, 'THINK');
+    think.log(`ThinkJS Version: ${think.version}`, 'THINK');
     think.log(colors => `Cluster Status: ${colors.magenta(clusterStatus)}`, 'THINK');
     think.log(colors => `WebSocket Status: ${colors.magenta(websocketStatus)}`, 'THINK');
     think.log(colors => `File Auto Compile: ${colors.magenta(!!think.autoCompile)}`, 'THINK');
