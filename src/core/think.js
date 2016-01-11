@@ -250,7 +250,7 @@ think.Class = (type, clean) => {
  * @param  {String} module [module name]
  * @return {String}        []
  */
-let _getClass1 = (name, type, module, base) => {
+let _getClass = (name, type, module, base) => {
   let clsPath, cls;
   // find from current module
   if (module) {
@@ -279,7 +279,7 @@ think.lookClass = (name, type, module, base) => {
   let names = name.split('/');
   let length = names.length;
   if(length === 1){
-    return _getClass1(name, type, module, base);
+    return _getClass(name, type, module, base);
   }
   if(length === 2 && (think.module.indexOf(names[0]) > -1 || !module)){
     return think.require(`${names[0]}/${type}/${names[1]}`);
