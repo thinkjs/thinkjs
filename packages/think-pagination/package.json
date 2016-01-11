@@ -1,0 +1,54 @@
+{
+  "name": "think-pagenation",
+  "description": "pagenation for ThinkJS 2",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "npm run eslint && npm run test-cov",
+    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/",
+    "compile": "babel --presets es2015-loose,stage-1 src/ --out-dir lib/",
+    "watch-compile": "npm run compile -- --watch",
+    "watch": "npm run watch-compile",
+    "prepublish": "npm run compile",
+    "eslint": "eslint src/"
+  },
+  "bin": {
+    "thinkjs": "./bin/index.js"
+  },
+  "contributors": [{
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  }],
+  "main": "lib/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "1.20.1",
+    "muk": "0.3.1",
+    "istanbul": "0.4.0",
+    "babel-cli": "6.3.17",
+    "babel-preset-es2015-loose": "6.1.4",
+    "babel-preset-stage-1": "6.3.13",
+    "babel-plugin-transform-runtime": "6.3.13",
+    "eslint": "1.10.2",
+    "babel-eslint": "5.0.0-beta4"
+  },
+  "keywords": [
+    "thinkjs",
+    "pagenation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs-team/think-pagenation"
+  },
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs-team/think-pagenation/issues"
+  }
+}
