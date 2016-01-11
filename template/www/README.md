@@ -32,12 +32,6 @@ pm2 start www/production.js
 npm run compile
 ```
 
-watch file change:
-
-```
-npm run wacth-compile
-```
-
 ### how to link resource
 
 *in template file*
