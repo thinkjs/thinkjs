@@ -199,4 +199,67 @@ describe('index.js', function(){
     var modules = instance.getModule();
     assert.deepEqual(modules, ['home'])
   })
+  it('clearData', function(){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    instance.clearData();
+    instance.load();
+  })
+  it('compile', function(){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(srcPath, outPath);
+  })
+  it('compile, with options', function(){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(srcPath, outPath, {});
+  })
+  it('compile, srcPath exist', function(done){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    think.mkdir(srcPath)
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(srcPath, outPath);
+    think.rmdir(srcPath).then(function(){
+      done();
+    })
+  })
+  it('compile, srcPath exist, options', function(done){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(true);
+    think.rmdir(srcPath).then(function(){
+      done();
+    })
+  })
+  it('compile, srcPath exist, log true', function(done){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile({log: true});
+    think.rmdir(srcPath).then(function(){
+      done();
+    })
+  })
 })
