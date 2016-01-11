@@ -29,7 +29,9 @@ describe('watch_compile', function(){
     var result = instance.compileByTypeScript('let a = 1', 'a.ts');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
     assert.equal(content.trim(), 'var a = 1;');
-    think.rmdir(outPath).then(done);
+    think.rmdir(outPath).then(function(){
+      done();
+    });
   })
   it('compileByTypeScript, has error', function(){
     var srcPath = __dirname + think.sep + 'compile_src';
@@ -53,7 +55,9 @@ describe('watch_compile', function(){
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
     assert.equal(content.trim(), 'var a = 1;');
     muk.restore();
-    think.rmdir(outPath).then(done);
+    think.rmdir(outPath).then(function(){
+      done();
+    });
   })
   it('compileByBabel', function(done){
     var srcPath = __dirname + think.sep + 'compile_src';
@@ -62,7 +66,9 @@ describe('watch_compile', function(){
     var result = instance.compileByBabel('let a = 1', 'a.js');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
     assert.equal(content, '"use strict";var a = 1;');
-    think.rmdir(outPath).then(done);
+    think.rmdir(outPath).then(function(){
+      done();
+    });
   })
   it('compileByBabel, retainLines', function(done){
     var srcPath = __dirname + think.sep + 'compile_src';
@@ -84,7 +90,9 @@ describe('watch_compile', function(){
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
     assert.equal(content, '"use strict";var a = 1;');
     muk.restore();
-    think.rmdir(outPath).then(done);
+    think.rmdir(outPath).then(function(){
+      done();
+    });
   })
   it('replaceExtName', function(){
     var srcPath = __dirname + think.sep + 'compile_src';
