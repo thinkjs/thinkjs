@@ -7,6 +7,35 @@
  */
 export default class extends think.controller.base {
   /**
+   * get validate method
+   * @return {} []
+   */
+  _getValidateItemMethod(itemData){
+    let list = ['get', 'post', 'file'];
+    for(let i = 0, length = list.length; i < length; i++){
+      let item = list[i];
+      if(itemData[list[i]]){
+        delete itemData[item];
+        return item;
+      }
+    }
+    //for rest request
+    let method = this._isRest && this._method;
+    if(method){
+      method = this.get(method);
+    }
+    if(!method){
+      method = this.http.method.toLowerCase();
+    }
+    if(method === 'put' || method === 'patch'){
+      return 'post';
+    }
+    if(list.indexOf(method) > -1){
+      return method;
+    }
+    return 'post';
+  }
+  /**
    * parse validate data
    * {
    *   name: 'required|int|min:10|max:20',
@@ -29,14 +58,9 @@ export default class extends think.controller.base {
         itemData = think.extend({}, itemData);
       }
 
-      let method = this.http.method.toLowerCase();
-      if(itemData.get){
-        method = 'get';
-        delete itemData.get;
-      }else if(itemData.file){
-        method = 'file';
-        itemData.object = true; //when type is file, set data type to `object`
-        delete itemData.file;
+      let method = this._getValidateItemMethod(itemData);
+      if(method === 'file'){
+        itemData.object = true;
       }
       itemData._method = method;
       itemData.value = this[method](name);
