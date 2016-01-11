@@ -59,7 +59,9 @@ export default class {
     }
     // only copy file content
     if(onlyCopy){
-      fs.writeFileSync(`${this.outPath}${think.sep}${file}`, content);
+      let saveFilepath = `${this.outPath}${think.sep}${file}`;
+      think.mkdir(path.dirname(saveFilepath));
+      fs.writeFileSync(saveFilepath, content);
       return;
     }
 
@@ -126,7 +128,7 @@ export default class {
       plugins: ['transform-runtime']
     });
     if(this.options.log){
-      think.log(`Compile file ${file}`, 'BABEL', startTime);
+      think.log(`Compile file ${file}`, 'Babel', startTime);
     }
     think.mkdir(path.dirname(`${this.outPath}${think.sep}${file}`));
     fs.writeFileSync(`${this.outPath}${think.sep}${file}`, data.code);
@@ -149,7 +151,9 @@ export default class {
       //src file not exist
       if(srcFilesWithoutExt.indexOf(fileWithoutExt) === -1){
         let filepath = this.outPath + think.sep + file;
-        fs.unlinkSync(filepath);
+        if(think.isFile(filepath)){
+          fs.unlinkSync(filepath);
+        }
         return true;
       }
     }).map(file => {
@@ -195,7 +199,7 @@ export default class {
       if(think.isFile(outFile)){
         let outmTime = fs.statSync(outFile).mtime.getTime();
         //if compiled file mtime is after than source file, return
-        if(outmTime > mTime){
+        if(outmTime >= mTime){
           return;
         }
       }
