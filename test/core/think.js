@@ -1185,26 +1185,26 @@ describe('core/think.js', function(){
     assert.equal(think.isFunction(fn.prototype.get), true);
   })
 
-  it('think.loadAdapter base', function(done){
+  it('think.adapter.load base', function(done){
     var mode = think.mode;
     var path = think.getPath(undefined, think.dirname.adapter);;
     think.mkdir(path);
-    think.loadAdapter(true);
+    think.adapter.load(true);
     think.rmdir(path).then(done);
   })
-  it('think.loadAdapter load, store/base adapter', function(done){
+  it('think.adapter.load load, store/base adapter', function(done){
     var mode = think.mode;
     var path = think.getPath(undefined, think.dirname.adapter);;
     think.mkdir(path);
-    think.loadAdapter('store', 'memory');
+    think.adapter.load('store', 'memory');
     think.rmdir(path).then(done);
   })
-  it('think.loadAdapter extra adapter', function(done){
+  it('think.adapter.load extra adapter', function(done){
     var mode = think.mode;
     var path = think.getPath(undefined, think.dirname.adapter);;
     think.mkdir(path + '/welefentest');
     require('fs').writeFileSync(path + '/welefentest/base.js', 'module.exports=think.Class({}, true)')
-    think.loadAdapter();
+    think.adapter.load();
     assert.equal(think.isFunction(think.adapter.welefentest), false);
     delete think.adapter.welefentest;
     think.rmdir(path).then(done);
