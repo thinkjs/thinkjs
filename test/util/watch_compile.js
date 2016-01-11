@@ -28,7 +28,7 @@ describe('watch_compile', function(){
     var instance = new Compile(srcPath, outPath);
     var result = instance.compileByTypeScript('let a = 1', 'a.ts');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content, 'var a = 1;\n');
+    assert.equal(content.trim(), 'var a = 1;');
     think.rmdir(outPath).then(done);
   })
   it('compileByTypeScript, has error', function(){
@@ -51,7 +51,7 @@ describe('watch_compile', function(){
     })
     var result = instance.compileByTypeScript('let a = 1', 'a.ts');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content, 'var a = 1;\n');
+    assert.equal(content.trim(), 'var a = 1;');
     muk.restore();
     think.rmdir(outPath).then(done);
   })
@@ -139,7 +139,7 @@ describe('watch_compile', function(){
     fs.writeFileSync(srcFilepath, 'let a = 2');
     instance.compileFile('test' + think.sep + 'a.js');
     var content = fs.readFileSync(outPath + think.sep + 'test' + think.sep + 'a.js', 'utf8');
-    assert.equal(content, 'var a = 2;\n');
+    assert.equal(content.trim(), 'var a = 2;');
     Promise.all([
       think.rmdir(srcPath),
       think.rmdir(outPath)
@@ -150,7 +150,7 @@ describe('watch_compile', function(){
   it('compileFile, Babel', function(done){
     var srcPath = __dirname + think.sep + 'compile_src';
     var outPath = __dirname + think.sep + 'compile_output';
-    var instance = new Compile(srcPath, outPath, {retainLines: true});
+    var instance = new Compile(srcPath, outPath);
     var srcFilepath = srcPath + think.sep + 'test' + think.sep + 'a.js';
     think.mkdir(path.dirname(srcFilepath));
     fs.writeFileSync(srcFilepath, 'let a = 2');
