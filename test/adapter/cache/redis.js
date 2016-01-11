@@ -24,7 +24,7 @@ describe('adapter/cache/redis.js', function() {
     var data = {};
     
     instance.getRedisInstance = function(){
-      return {
+      let obj = {
         set: function(name, value, timeout) {
           data[name] = {
             name: name,
@@ -47,8 +47,12 @@ describe('adapter/cache/redis.js', function() {
         delete: function(name) {
           delete data[name];
           return Promise.resolve();
+        },
+        wrap: function(command, name, value, timeout){
+          return obj[command](name, value, timeout);
         }
       }
+      return obj;
     }
 
     
@@ -64,6 +68,10 @@ describe('adapter/cache/redis.js', function() {
     assert.equal(think.isObject(redisIntance), true);
     var redisIntance1 = instance.getRedisInstance('test');
     assert.equal(redisIntance, redisIntance1)
+  })
+  it('get redis instance 1', function(){
+    var instance = new RedisCache({timeout: 0});
+    assert.equal(instance.timeout, 0);
   })
 
   it('get empty data', function(done) {
@@ -124,6 +132,12 @@ describe('adapter/cache/redis.js', function() {
       done();
     });
   });
+  it('set cache data, wrap', function(done) {
+    instance.wrap('set', 'thinkjs', 'maxzhang', 3000).then(function() {
+      assert(true);
+      done();
+    });
+  });
 
   it('set cache data(object)', function(done) {
     instance.set({ 'thinkjs': 'maxzhang' }).then(function() {
@@ -150,6 +164,14 @@ describe('adapter/cache/redis.js', function() {
 
   it('remove cache data', function(done) {
     instance.delete('thinkjs1').then(function() {
+      instance.get('thinkjs1').then(function(data) {
+        assert.equal(data, undefined);
+        done();
+      });
+    });
+  });
+  it('remove cache data, wrap', function(done) {
+    instance.wrap('delete', 'thinkjs1').then(function() {
       instance.get('thinkjs1').then(function(data) {
         assert.equal(data, undefined);
         done();
