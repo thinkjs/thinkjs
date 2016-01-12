@@ -53,7 +53,7 @@ export default class {
     this.version = this.req.httpVersion;
     this.method = this.req.method;
     this.headers = this.req.headers;
-    this.host = this.headers.host;
+    this.host = this.headers.host || '';
     this.hostname = '';
     this.pathname = '';
 
@@ -90,7 +90,7 @@ export default class {
       let pos = this.host.indexOf(':');
       this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
     }else{
-      let urlInfo = url.parse('//' + this.headers.host + this.req.url, true, true);
+      let urlInfo = url.parse('//' + this.host + this.req.url, true, true);
       //can not use decodeURIComponent, pathname may be has encode / chars
       //decodeURIComponent value after parse route
       //remove unsafe chars in pathname
