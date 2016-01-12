@@ -1,11 +1,11 @@
-# think-pagenation
+# think-pagination
 
-pagenation for ThinkJS 2
+pagination for ThinkJS 2
 
 ## install
 
 ```sh
-npm install think-pagenation
+npm install think-pagination
 ```
 
 ## how to use
@@ -13,12 +13,12 @@ npm install think-pagenation
 ### controller
 
 ```js
-import pagenation from 'think-pagenation';
+import pagination from 'think-pagination';
 export default class think.controller.base {
   async indexAction(){
     let data = await this.model('user').countSelect();
-    let html = pagenation(data, this.http, {});
-    this.assign('pagenation', html);
+    let html = pagination(data, this.http, {});
+    this.assign('pagination', html);
   }
 }
 ```
@@ -28,18 +28,18 @@ export default class think.controller.base {
 #### ejs
 
 ```html
-{%-pagenation%}
+{%-pagination%}
 ```
 
 #### nunjucks
 
 ```html
-{{pagenation | safe}}
+{{pagination | safe}}
 ```
 
 ## api
 
-### pagenation(pagerData, http, options)
+### pagination(pagerData, http, options)
 
 * `pagerData`  get from by model.countSelect
 * `http` http object
