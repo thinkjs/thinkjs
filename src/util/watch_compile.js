@@ -93,7 +93,9 @@ export default class {
     let diagnostics = [];
     let result = ts.transpile(content, {
       module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES5
+      target: ts.ScriptTarget.ES6,
+      experimentalDecorators: true,
+      emitDecoratorMetadata: true
     }, file, diagnostics);
     //has error
     if(diagnostics.length){
@@ -105,17 +107,14 @@ export default class {
     if(this.options.log){
       think.log(`Compile file ${file}`, 'TypeScript', startTime);
     }
-    //change file extname to js
     file = this.replaceExtName(file, '.js');
-    let saveFile = `${this.outPath}${think.sep}${file}`;
-    think.mkdir(path.dirname(saveFile));
-    fs.writeFileSync(saveFile, result);
+    this.compileByBabel(result, file, true);
   }
   /**
    * babel compile
    * @return {} []
    */
-  compileByBabel(content, file){
+  compileByBabel(content, file, logged){
     let startTime = Date.now();
     let retainLines = this.options.retainLines;
     //babel not export default property
@@ -127,7 +126,7 @@ export default class {
       presets: ['es2015-loose', 'stage-1'],
       plugins: ['transform-runtime']
     });
-    if(this.options.log){
+    if(!logged && this.options.log){
       think.log(`Compile file ${file}`, 'Babel', startTime);
     }
     think.mkdir(path.dirname(`${this.outPath}${think.sep}${file}`));

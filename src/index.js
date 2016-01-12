@@ -5,6 +5,7 @@ import path from 'path';
 
 //rewite promise, bluebird is more faster
 require('babel-runtime/core-js/promise').default = require('bluebird');
+global.Promise = require('bluebird');
 
 import AutoReload from './util/auto_reload.js';
 import WatchCompile from './util/watch_compile.js';

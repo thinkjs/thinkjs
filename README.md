@@ -44,8 +44,9 @@ With the help of Babel compiling, we can use the ES6/7 features boldly, and then
 
 * Developing projects using all the new features of ES6/7.
 * Auto compiling & auto hot reload when file changed, no need to restart Node.js server.
+* Supporting TypeScript.
 * Supporting various project construct forms and environments.
-* Supporting Mysql, MongoDB and SQLite databases.
+* Supporting MySQL, MongoDB, PostgreSQL and SQLite databases.
 * Supporting various WebSocket libraries such as socket.io and SockJS.
 * Supporting various Sessions such as Memory, File, Db and Redis.
 * Supporting various Caches such as Memory, File, Redis and Memcache.
@@ -81,6 +82,18 @@ npm install
 
 ```sh
 npm start
+```
+
+You will see some messages on console like :
+
+```text
+[2016-01-12 15:09:51] [THINK] Server running at http://127.0.0.1:8360/
+[2016-01-12 15:09:51] [THINK] ThinkJS Version: 2.1.0
+[2016-01-12 15:09:51] [THINK] Cluster Status: closed
+[2016-01-12 15:09:51] [THINK] WebSocket Status: closed
+[2016-01-12 15:09:51] [THINK] File Auto Compile: true
+[2016-01-12 15:09:51] [THINK] File Auto Reload: true
+[2016-01-12 15:09:51] [THINK] App Enviroment: development
 ```
 
 ## Documentation

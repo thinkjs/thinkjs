@@ -28,7 +28,7 @@ describe('watch_compile', function(){
     var instance = new Compile(srcPath, outPath);
     var result = instance.compileByTypeScript('let a = 1', 'a.ts');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content.trim(), 'var a = 1;');
+    assert.equal(content.trim(), '"use strict";var a = 1;');
     think.rmdir(outPath).then(function(){
       done();
     });
@@ -53,7 +53,7 @@ describe('watch_compile', function(){
     })
     var result = instance.compileByTypeScript('let a = 1', 'a.ts');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content.trim(), 'var a = 1;');
+    assert.equal(content.trim(), '"use strict";var a = 1;');
     muk.restore();
     think.rmdir(outPath).then(function(){
       done();
@@ -147,7 +147,7 @@ describe('watch_compile', function(){
     fs.writeFileSync(srcFilepath, 'let a = 2');
     instance.compileFile('test' + think.sep + 'a.js');
     var content = fs.readFileSync(outPath + think.sep + 'test' + think.sep + 'a.js', 'utf8');
-    assert.equal(content.trim(), 'var a = 2;');
+    assert.equal(content.trim(), '"use strict";var a = 2;');
     Promise.all([
       think.rmdir(srcPath),
       think.rmdir(outPath)
