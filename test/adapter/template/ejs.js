@@ -74,7 +74,7 @@ describe('adapter/template/ejs.js', function(){
       done();
     })
   })
-  it('run, config, with prerender, not support', function(done){
+  it('run, config, with prerender', function(done){
     var instance = new Template();
     muk(think, 'npm', function(){
       return {
@@ -107,7 +107,7 @@ describe('adapter/template/ejs.js', function(){
     }).then(function(data){
       assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
       muk.restore();
-      assert.equal(flag, false)
+      assert.equal(flag, true)
       done();
     })
   })
