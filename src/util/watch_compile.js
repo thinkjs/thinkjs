@@ -82,6 +82,7 @@ export default class {
       e.message = 'Compile Error: ' + e.message;
       think.compileError = e;
     }
+    return false;
   }
   /**
    * typescript compile
@@ -122,7 +123,7 @@ export default class {
     let babel = require('babel-core');
     let data = babel.transform(content, {
       filename: file,
-      retainLines: retainLines === undefined ? true : retainLines,
+      retainLines: retainLines,
       presets: ['es2015-loose', 'stage-1'],
       plugins: ['transform-runtime']
     });
