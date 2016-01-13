@@ -471,8 +471,14 @@ think.log = (msg, type, showTime) => {
   }
   if(type){
     if(type === 'WARNING'){
-      console.warn(dateTime + colors.yellow(`[${type}] `) + msg);
-    }else{
+      console.warn(dateTime + colors.yellow(`[Warning] `) + msg);
+    }
+    else if(type === 'EXIT'){
+      console.error(colors.red('[Error] ' + msg));
+      console.log();
+      process.exit();
+    }
+    else{
       console.log(dateTime + colors.cyan(`[${type}] `) + msg);
     }
   }else{
