@@ -11,7 +11,7 @@
     "babel-runtime": "6.x.x"
   },
   "devDependencies": {
-    "typescript": "1.7.x",
+    "typescript": "next",
     "babel-cli": "6.x.x",
     "babel-preset-es2015-loose": "6.x.x",
     "babel-preset-stage-1": "6.x.x",

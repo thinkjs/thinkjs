@@ -46,7 +46,7 @@
     "babel-plugin-transform-runtime": "6.3.13",
     "eslint": "1.10.2",
     "babel-eslint": "5.0.0-beta4",
-    "typescript": "1.x.x",
+    "typescript": "next",
     "babel-core": "6.x.x"
   },
   "keywords": [
