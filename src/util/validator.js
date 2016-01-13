@@ -745,7 +745,7 @@ Validator.array = value => {
  * @return {Boolean}       []
  */
 Validator.boolean = value => {
-  return ['yes', 'on', '1', 'true', true].indexOf(value) > -1;
+  return think.isBoolean(value);
 };
 /**
  * check value is object

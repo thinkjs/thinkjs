@@ -361,7 +361,7 @@ describe('Validator', function(){
     assert.equal(Validator.boolean(true), true);
   })
   it('boolean fail', function(){
-    assert.equal(Validator.boolean(false), false);
+    assert.equal(Validator.boolean(false), true);
   })
   it('required if', function(){
     var data = Validator.requiredIf('welefen', 'test');
@@ -543,7 +543,7 @@ describe('Validator', function(){
   })
   it('type boolean 1', function(){
     var data = Validator.type('1', 'boolean');
-    assert.equal(data, true)
+    assert.equal(data, false)
   })
   it('type array', function(){
     var data = Validator.type([], 'array');

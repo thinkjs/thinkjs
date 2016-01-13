@@ -73,6 +73,16 @@ let _getRuleValues = rules => {
   }
   return ret;
 };
+
+/**
+ * to boolean
+ * @param  {Mixed} value []
+ * @return {Boolean}       []
+ */
+let _toBoolean = value => {
+  return ['yes', 'on', '1', 'true', true].indexOf(value) > -1;
+};
+
 /**
  * parse value
  * @param  {Mixed} value []
@@ -85,11 +95,10 @@ let _parseValue = (value, item) => {
   }else if(item.float || item.type === 'float'){
     return parseFloat(value);
   }else if(item.boolean || item.type === 'boolean'){
-    return Validator.boolean(value);
+    return _toBoolean(value);
   }
   return value;
 };
-
 /**
  * get item value
  * @param  {Object} item   []
@@ -106,6 +115,7 @@ let _getItemValue = (item, values, parse) => {
   if(think.isFunction(itemValue)){
     itemValue = itemValue.call(values);
   }
+
   //make data to array when type is array
   if(item.value && item.array && !think.isArray(item.value)){
     if(think.isString(itemValue)){
@@ -119,10 +129,13 @@ let _getItemValue = (item, values, parse) => {
     }
   }
   //make data to object when type is object
-  if(item.value && item.object && think.isString(itemValue)){
+  else if(item.value && item.object && think.isString(itemValue)){
     try{
       itemValue = JSON.parse(itemValue);
     }catch(e){}
+  }
+  else if(item.boolean){
+    itemValue = _toBoolean(itemValue);
   }
 
   //parse value
