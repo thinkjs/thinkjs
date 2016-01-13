@@ -16,7 +16,7 @@ module.exports = think.controller({
     }
 
     var errorConfig = this.config('error');
-    var message = this.http.error && this.http.error.message || 'error';
+    var message = this.http.error && this.http.error.message || '';
     if(this.isJsonp()){
       var data = {};
       data[errorConfig.key] = status;
@@ -32,8 +32,13 @@ module.exports = think.controller({
     }
     var file = module + '/error/' + status + '.html';
     var options = this.config('tpl');
-    options = think.extend({}, options, {type: 'ejs', file_depr: '_'});
-    return this.display(file, options);
+    var self = this;
+    options = think.extend({}, options, {type: 'base', file_depr: '_'});
+    this.fetch(file, {}, options).then(function(content){
+      content = content.replace('ERROR_MESSAGE', message);
+      self.type(options.content_type);
+      self.end(content);
+    });
   },
   /**
    * Bad Request 

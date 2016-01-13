@@ -18,7 +18,7 @@ export default class extends think.controller.base {
     }
 
     let errorConfig = this.config('error');
-    let message = this.http.error && this.http.error.message || 'error';
+    let message = this.http.error && this.http.error.message || '';
     if(this.isJsonp()){
       return this.jsonp({
         [errorConfig.key]: status,
@@ -34,8 +34,12 @@ export default class extends think.controller.base {
     }
     let file = `${module}/error/${status}.html`;
     let options = this.config('tpl');
-    options = think.extend({}, options, {type: 'ejs', file_depr: '_'});
-    return this.display(file, options);
+    options = think.extend({}, options, {type: 'base', file_depr: '_'});
+    this.fetch(file, {}, options).then(content => {
+      content = content.replace('ERROR_MESSAGE', message);
+      this.type(options.content_type);
+      this.end(content);
+    });
   }
   /**
    * Bad Request 
