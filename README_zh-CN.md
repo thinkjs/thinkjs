@@ -44,9 +44,11 @@ export default class extends think.controller.base {
 
 ## 特性
 
-* 使用 ES6/7 全部特性来开发项目
+* 支持使用 ES6/7 全部特性来开发项目
+* 支持使用 TypeScript 开发项目
 * 支持多种项目结构和多种项目环境
-* 支持 Mysql，MongoDB，SQLite 等多种数据库
+* 支持多级 Controller
+* 支持 MySQL，MongoDB，SQLite, PostgreSQL 等多种数据库
 * 代码自动更新，无需重启 Node 服务
 * 支持 socket.io，SockJS 等多种 WebSocket 库
 * 支持 Memory，File，Db，Redis 等多种 Session
@@ -84,6 +86,18 @@ npm install
 
 ```sh
 npm start
+```
+
+启动后，会看到类似下面的信息：
+
+```text
+[2016-01-12 15:09:51] [THINK] Server running at http://127.0.0.1:8360/
+[2016-01-12 15:09:51] [THINK] ThinkJS Version: 2.1.0
+[2016-01-12 15:09:51] [THINK] Cluster Status: closed
+[2016-01-12 15:09:51] [THINK] WebSocket Status: closed
+[2016-01-12 15:09:51] [THINK] File Auto Compile: true
+[2016-01-12 15:09:51] [THINK] File Auto Reload: true
+[2016-01-12 15:09:51] [THINK] App Enviroment: development
 ```
 
 ## 文档

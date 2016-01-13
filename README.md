@@ -52,13 +52,14 @@ With the help of Babel compiling, we can use the ES6/7 features boldly, and then
 * Supporting various Caches such as Memory, File, Redis and Memcache.
 * Supporting various template engines such as ejs, jade, swig and numjucks.
 * Supporting AOP, and magic methods such as __before and __after.
+* Supporting multistage Controller.
 * Supporting 400, 404, 500 and 503 error pages.
 * Supporting command-line call and crontab timing task execution.
 * Multiple Hooks and Middlewares.
 * Logs with details, such as requests, errors, performance, etc.
 * Supporting commands that could automatically create REST API.
 * Supporting internationalization and multiple themes.
-* 1500+ test cases, code coverage greater than 95%.
+* 1700+ test cases, code coverage greater than 95%.
 
 ## Installation
 
