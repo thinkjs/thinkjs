@@ -21,7 +21,7 @@ export default class extends Base {
     }, config);
     let ejs = await think.npm('ejs');
 
-    this.prerender(options, ejs);
+    //this.prerender(options, ejs);
 
     let content = await this.getContent(templateFile);
     return ejs.compile(content, options)(tVar);
