@@ -104,6 +104,10 @@ npm start
 
 <https://thinkjs.org/>
 
+## 讨论组
+
+* QQ 群：339337680
+
 ## License
 
 [MIT](https://github.com/75team/thinkjs/blob/master/LICENSE)
