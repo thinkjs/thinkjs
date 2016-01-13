@@ -926,7 +926,7 @@ declare module think {
      * get http
      * @type {[type]}
      */
-    (req: string | EmptyObject, res?: EmptyObject): Promise;
+    (req: string | EmptyObject, res?: EmptyObject | boolean): Promise;
     /**
      * think.http.base
      * @type {think_http_base}

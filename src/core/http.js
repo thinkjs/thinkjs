@@ -77,6 +77,7 @@ export default class {
     this._error = undefined; //error message
     this._theme = undefined; //theme
     this.error = null; //error object
+    this._cli = !!think.cli; //cli request
     
     this.module = '';
     this.controller = '';
@@ -253,6 +254,13 @@ export default class {
    */
   isPost(){
     return this.method === 'POST';
+  }
+  /**
+   * is cli request
+   * @return {Boolean} []
+   */
+  isCli(){
+    return this._cli;
   }
   /**
    * is ajax request

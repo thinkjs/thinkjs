@@ -76,7 +76,7 @@ export default class extends think.http.base {
    * @return {Boolean} []
    */
   isCli(){
-    return !!think.cli;
+    return this.http.isCli();
   }
   /**
    * check is jsonp

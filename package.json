@@ -1,6 +1,6 @@
 {
   "name": "thinkjs",
-  "description": "ThinkJS - use full ES6/7 features to develop web applications",
+  "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
   "version": "2.1.0",
   "author": {
     "name": "welefen",
@@ -63,7 +63,8 @@
     "await",
     "yield",
     "websocket",
-    "generator-function"
+    "generator-function",
+    "typescript"
   ],
   "repository": {
     "type": "git",

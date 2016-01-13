@@ -595,6 +595,8 @@ think.http = async (req, res) => {
   if(!execFlag){
     return http;
   }
+  //flag to cli request, make isCli detect true
+  http._cli = true; 
   let App = think.require('app');
   let appInstance = new App(http);
   return appInstance.run();
