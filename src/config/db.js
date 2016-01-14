@@ -7,7 +7,7 @@ export default {
   type: 'mysql',
   host: '127.0.0.1',
   port: '',
-  name: '',
+  database: '',
   user: '',
   password: '',
   prefix: 'think_',
