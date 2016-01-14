@@ -36,6 +36,15 @@ export default class extends Base {
     return this.schema;
   }
   /**
+   * get table fields
+   * @param  {String} table []
+   * @return {Promise}       []
+   */
+  getTableFields(table){
+    think.log('model.getTableFields is deprecated, use model.getSchema instead.', 'WARNING');
+    return this.getSchema(table);
+  }
+  /**
    * get unique field
    * @param  {Object} data []
    * @return {Promise}      []
