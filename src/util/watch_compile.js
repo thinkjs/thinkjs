@@ -124,8 +124,8 @@ export default class {
     let data = babel.transform(content, {
       filename: file,
       retainLines: retainLines,
-      presets: ['es2015-loose', 'stage-1'],
-      plugins: ['transform-runtime']
+      presets: ['es2015-loose', 'stage-1'].concat(this.options.presets || []),
+      plugins: ['transform-runtime'].concat(this.options.plugins || [])
     });
     if(!logged && this.options.log){
       think.log(`Compile file ${file}`, 'Babel', startTime);
