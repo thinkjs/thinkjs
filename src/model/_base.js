@@ -54,6 +54,8 @@ export default class extends think.base {
       config = name;
       name = '';
     }
+
+    config = think.parseConfig(true, config);
     
     //change property name `name`
     if(config.name && !config.database){
@@ -75,7 +77,7 @@ export default class extends think.base {
       think.log(`fields property is deprecated, use schema instead`, 'WARNING');
     }
 
-    this.config = think.parseConfig(config);
+    this.config = config;
     this._db = null;
     this._data = {};
     this._options = {};

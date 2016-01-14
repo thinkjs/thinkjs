@@ -379,6 +379,11 @@ think.safeRequire = file => {
  * @return {}            []
  */
 think.parseConfig = function(...configs) {
+  let onlyMerge = false;
+  if(configs[0] === true){
+    onlyMerge = true;
+    configs = configs.slice(1);
+  }
   configs = configs.map(config => {
     config = think.extend({}, config);
     //check adapter config exist
@@ -393,7 +398,7 @@ think.parseConfig = function(...configs) {
   let config = think.extend({}, ...configs);
 
   //check parser method
-  if(!think.isFunction(config.parser)){
+  if(!think.isFunction(config.parser) || onlyMerge){
     return config;
   }
   
