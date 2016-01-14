@@ -1,24 +1,18 @@
 'use strict';
+
+import subdomain from './subdomain.js';
+
 /**
- * subdomain
+ * subdomain deploy
  * @type {}
  */
-export default class extends think.middleware.base {
+export default class extends subdomain {
   /**
    * run
-   * @return {} []
+   * @return {Promise} []
    */
   run(){
-    let subdomain = this.config('subdomain');
-    if (think.isEmpty(subdomain)) {
-      return;
-    }
-    let http = this.http;
-    let hostname = http.hostname.split('.')[0];
-    let value = subdomain[hostname];
-    if (!value) {
-      return;
-    }
-    http.pathname = value + '/' + http.pathname;
+    think.log('`subdomain_deploy` middleware is deprecated, use `subdomain` instead', 'WARNING');
+    return super.run();
   }
 }
