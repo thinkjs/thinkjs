@@ -1117,6 +1117,7 @@ declare module think {
      * @return {boolean}      []
      */
     isJsonp(name?: string): boolean;
+
     /**
      * get all parameters
      * @return {EmptyObject} []
@@ -1268,6 +1269,30 @@ declare module think {
      * @return {PreventPromise}      []
      */
     redirect(url?: string, code?: number): PreventPromise;
+    /**
+     * assign data
+     * @param  {string} name  [description]
+     * @param  {any}    value [description]
+     * @return {any}          [description]
+     */
+    assign(name: string, value: any): any;
+    /**
+     * get assign data
+     * @param  {string} name [description]
+     * @return {any}         [description]
+     */
+    assign(name: string): any;
+    /**
+     * get all assign data
+     * @return {EmptyObject} [description]
+     */
+    assign(): EmptyObject;
+    /**
+     * assign object
+     * @param  {EmptyObject} name [description]
+     * @return {any}              [description]
+     */
+    assign(name: EmptyObject): any;
     /**
      * get template content after render
      * @param  {string}  templateFile []
