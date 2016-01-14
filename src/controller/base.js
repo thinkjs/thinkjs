@@ -12,6 +12,7 @@ export default class extends think.http.base {
    */
   init(http){
     this.http = http;
+    this._baseAssigned = false;
   }
   /**
    * get client ip
@@ -202,6 +203,7 @@ export default class extends think.http.base {
    * @return {}       []
    */
   assign(name, value) {
+    this._baseAssign();
     return this.view().assign(name, value);
   }
   /**
@@ -209,6 +211,10 @@ export default class extends think.http.base {
    * @return {} []
    */
   _baseAssign(){
+    if(this._baseAssigned){
+      return;
+    }
+    this._baseAssigned = true;
     this.assign('controller', this);
     this.assign('http', this.http);
     this.assign('config', this.http._config);
