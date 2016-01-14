@@ -75,7 +75,7 @@ export default class extends think.base {
       think.log(`fields property is deprecated, use schema instead`, 'WARNING');
     }
 
-    this.config = config;
+    this.config = think.parseConfig(config);
     this._db = null;
     this._data = {};
     this._options = {};
