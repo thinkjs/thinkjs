@@ -215,10 +215,12 @@ export default class extends think.http.base {
       return;
     }
     this._baseAssigned = true;
-    this.assign('controller', this);
-    this.assign('http', this.http);
-    this.assign('config', this.http._config);
-    this.assign('_', this.locale.bind(this));
+    this.view().assign({
+      controller: this,
+      http: this.http,
+      config: this.http._config,
+      _: this.locale.bind(this)
+    });
   }
   /**
    * fetch template content
