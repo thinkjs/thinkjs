@@ -58,7 +58,10 @@ export default {
       return;
     }
     let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-    let dependencies = think.extend({}, data.dependencies, data.devDependencies);
+    let dependencies = think.extend({}, data.dependencies);
+    if(think.env === 'development'){
+      dependencies = think.extend(dependencies, data.devDependencies);
+    }
     let pkgPath = `${think.ROOT_PATH}${think.sep}node_modules${think.sep}`;
     for(let pkg in dependencies){
       if(think.isDir(`${pkgPath}${pkg}`)){
