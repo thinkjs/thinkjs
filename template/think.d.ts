@@ -658,6 +658,11 @@ declare module think {
    * @type {string}
    */
   export var RESOURCE_PATH: string;
+  /**
+   * runtime path
+   * @type {string}
+   */
+  export var RUNTIME_PATH: string;
 
   export function reject(err: any): Promise;
 
