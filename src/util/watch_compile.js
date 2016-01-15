@@ -96,7 +96,8 @@ export default class {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES6,
       experimentalDecorators: true,
-      emitDecoratorMetadata: true
+      emitDecoratorMetadata: true,
+      allowSyntheticDefaultImports: true
     }, file, diagnostics);
     //has error
     if(diagnostics.length){
