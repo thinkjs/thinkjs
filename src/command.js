@@ -68,7 +68,7 @@ let getVersion = () => {
  * @return {} []
  */
 let getProjectAppPath = () => {
-  let path = projectRootPath + '/';
+  let path = projectRootPath + think.sep;
   path += commander.es || commander.ts ? 'src' : 'app';
   return path;
 };
@@ -121,7 +121,7 @@ let copyFile = (source, target, replace, showWarning) => {
     if(think.isFile(templatePath + '/' + tsSource)){
       source = tsSource;
     }
-    if(target.indexOf('/src/') > -1){
+    if(target.indexOf(think.sep + 'src' + think.sep) > -1){
       //replace target file extname to .ts
       target = target.replace(/\.js$/, '.ts');
     }
@@ -131,17 +131,17 @@ let copyFile = (source, target, replace, showWarning) => {
     let esSource = source.replace(/\.\w+$/, a => {
       return a === '.js' ? '.es' : '_es' + a;
     });
-    if(think.isFile(templatePath + '/' + esSource)){
+    if(think.isFile(templatePath + think.sep + esSource)){
       source = esSource;
     }
   }
 
   //if source file is not exist
-  if(!think.isFile(templatePath + '/' + source)){
+  if(!think.isFile(templatePath + think.sep + source)){
     return;
   }
 
-  let content = fs.readFileSync(templatePath + '/' + source, 'utf8');
+  let content = fs.readFileSync(templatePath + think.sep + source, 'utf8');
   //replace content 
   if(think.isObject(replace)){
     for(let key in replace){
