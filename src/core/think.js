@@ -6,6 +6,7 @@ import util from 'util';
 import crypto from 'crypto';
 import querystring from 'querystring';
 import child_process from 'child_process';
+import cluster from 'cluster';
 
 import thinkit from 'thinkit';
 import co from 'co';
@@ -81,6 +82,11 @@ think.cli = '';
  * @type {String}
  */
 think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
+/**
+ * is master
+ * @type {Boolean}
+ */
+think.isMaster = cluster.isMaster;
 /**
  * app mode
  * 0x0001: mini

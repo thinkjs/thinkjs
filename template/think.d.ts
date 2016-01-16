@@ -500,6 +500,11 @@ declare module think {
    */
   export var sep: string;
   /**
+   * is master
+   * @type {boolean}
+   */
+  export var isMaster: boolean;
+  /**
    * camel case
    * @param  {string} str []
    * @return {string}     []
