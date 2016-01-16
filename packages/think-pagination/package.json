@@ -15,9 +15,6 @@
     "prepublish": "npm run compile",
     "eslint": "eslint src/"
   },
-  "bin": {
-    "thinkjs": "./bin/index.js"
-  },
   "contributors": [{
     "name": "welefen",
     "email": "welefen@gmail.com"
