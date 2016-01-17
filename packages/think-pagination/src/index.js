@@ -84,6 +84,7 @@ module.exports = (pagerData, http, options) => {
   }, options);
 
   let pageUrl = getPageUrl(options, http);
+  let currentPage = pagerData.currentPage | 0 || 1;
 
   let html = `<ul class="pagination">`;
   if(options.class){
@@ -93,8 +94,8 @@ module.exports = (pagerData, http, options) => {
     let total = options.text.total.replace('${count}', pagerData.count).replace('${pages}', pagerData.totalPages);
     html += `<li class="disabled"><span>${total}</span></li>`;
   }
-  if(pagerData.currentPage > 1){
-    html += `<li class="prev"><a href="${pageUrl.replace('${page}', pagerData.currentPage - 1)}">${options.text.prev}</a></li>`;
+  if(currentPage > 1){
+    html += `<li class="prev"><a href="${pageUrl.replace('${page}', currentPage - 1)}">${options.text.prev}</a></li>`;
   }
 
   let pageIndex = getPageIndex(pagerData, options);
@@ -105,10 +106,9 @@ module.exports = (pagerData, http, options) => {
     html += `<li class="disabled"><span>...</span></li>`;
   }
 
-  let page = pagerData.currentPage | 0 || 1;
   for (let i = 0, length = pageIndex.length; i < length; i++) {
     let p = pageIndex[i];
-    if (p === page) {
+    if (p === currentPage) {
       html += `<li class="active"><a href="${pageUrl.replace('${page}', p)}">${p}</a></li>`;
     } else { 
       html += `<li><a href="${pageUrl.replace('${page}', p)}">${p}</a></li>`;
@@ -123,8 +123,8 @@ module.exports = (pagerData, http, options) => {
       html += `<li><a href="${pageUrl.replace('${page}', pagerData.totalPages)}">${pagerData.totalPages}</a></li>`;
     }
   }
-  if (page < pagerData.totalPages) {
-    html += `<li class="next"><a href="${pageUrl.replace('${page}', pagerData.currentPage + 1)}">${options.text.next}</a></li>`;
+  if (currentPage < pagerData.totalPages) {
+    html += `<li class="next"><a href="${pageUrl.replace('${page}', currentPage + 1)}">${options.text.next}</a></li>`;
   }
   return html;
 };
