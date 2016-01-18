@@ -553,6 +553,11 @@ describe('adapter/db/_parse.js', function(){
 
     }
   })
+  it('parseWhere, string & object', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: 'welefen', _string: 'status=1'});
+    assert.equal(data, ' WHERE ( title = \'welefen\' ) AND ( status=1 )')
+  })
   it('parseWhere, null', function(){
     var instance = new Parse();
     var data = instance.parseWhere({title: null});

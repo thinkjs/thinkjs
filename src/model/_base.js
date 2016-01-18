@@ -221,7 +221,11 @@ export default class extends think.base {
     if (think.isString(where)) {
       where = {_string: where};
     }
-    this._options.where = think.extend(this._options.where || {}, where);
+    let options = this._options;
+    if(options.where && think.isString(options.where)){
+      options.where = {_string: options.where};
+    }
+    options.where = think.extend({}, options.where, where);
     return this;
   }
   /**

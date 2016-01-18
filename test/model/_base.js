@@ -154,6 +154,24 @@ describe('model/_base.js', function(){
     var data = instance.where('id=1');
     assert.deepEqual(instance._options.where, {_string: 'id=1'})
   })
+  it('where, string', function(){
+    var instance = new Base('user', think.config('db'));
+    instance._options.where = 'status=1';
+    var data = instance.where('id=1');
+    assert.deepEqual(instance._options.where, {_string: 'id=1'})
+  })
+  it('where, _string', function(){
+    var instance = new Base('user', think.config('db'));
+    instance._options.where = 'status=1';
+    var data = instance.where('id=1');
+    assert.deepEqual(instance._options.where, {_string: 'id=1'})
+  })
+  it('where, _string 2', function(){
+    var instance = new Base('user', think.config('db'));
+    instance._options.where = 'status=1';
+    var data = instance.where({id: 1});
+    assert.deepEqual(instance._options.where, {_string: 'status=1', id: 1})
+  })
   it('where, object', function(){
     var instance = new Base('user', think.config('db'));
     var data = instance.where({name: 'welefen'});
