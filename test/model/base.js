@@ -252,7 +252,7 @@ describe('model/base.js', function(){
     var model = think.model;
     think.model = function(name, options, module){
       assert.equal(name, 'model');
-      assert.equal(module, 'lib');
+      assert.equal(module, '');
     }
     var instance = new Base('user', think.config('db'));
     instance.model('model');

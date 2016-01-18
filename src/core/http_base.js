@@ -23,6 +23,10 @@ export default class extends Base {
    * @return {mixed}       []
    */
   config(name, value){
+    let module = this.parseModuleFromPath();
+    if(module){
+      return think.config(name, value, module);
+    }
     return think.config(name, value, this.http._config);
   }
   /**
@@ -100,6 +104,24 @@ export default class extends Base {
     return think.hook.exec(event, this.http, data);
   }
   /**
+   * get module
+   * @param  {String} module []
+   * @return {String}        []
+   */
+  _getModule(module){
+    if(module){
+      if(!think.isString(module)){
+        throw new Error('module argument must be string');
+      }
+      if(think.module.indexOf(module) === -1){
+        throw new Error('module `' + module + '` not exist');
+      }
+    }else{
+      module = this.parseModuleFromPath() || this.http.module;
+    }
+    return module;
+  }
+  /**
    * get model
    * @param  {String} name    [model name]
    * @param  {Object} options [model options]
@@ -109,8 +131,9 @@ export default class extends Base {
     if(think.isString(options)){
       options = {type: options};
     }
-    options = think.extend({}, this.config('db'), options);
-    return think.model(name, options, module || this.http.module);
+    module = this._getModule(module);
+    options = think.extend({}, think.config('db', undefined, module), options);
+    return think.model(name, options, module);
   }
   /**
    * get controller
@@ -119,7 +142,8 @@ export default class extends Base {
    * @return {Object}      []
    */
   controller(name, module){
-    let Cls = think.lookClass(name, 'controller', module || this.http.module);
+    module = this._getModule(module);
+    let Cls = think.lookClass(name, 'controller', module);
     return new Cls(this.http);
   }
   /**
@@ -128,12 +152,7 @@ export default class extends Base {
    * @return {Object}      []
    */
   service(name, module){
-    if(module && !think.isString(module)){
-      throw new Error('module argument must be string');
-    }
-    if(module && think.module.indexOf(module) === -1){
-      throw new Error('module `' + module + '` not exist');
-    }
-    return think.service(name, this.http, module || this.http.module);
+    module = this._getModule(module);
+    return think.service(name, this.http, module);
   }
 }

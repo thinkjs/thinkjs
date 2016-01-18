@@ -46,7 +46,7 @@ describe('model/_base.js', function(){
     assert.deepEqual(instance.name, '');
     assert.deepEqual(instance.tablePrefix, 'think_')
   })
-  it('get instance, name is object', function(){
+  it('get instance, name is object 2', function(){
     var instance = new Base('user', think.config('db'));
     var model = instance.model('base');
     assert.deepEqual(think.isObject(model), true);

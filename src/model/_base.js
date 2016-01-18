@@ -102,11 +102,7 @@ export default class extends think.base {
       module = options;
       options = {};
     }
-    if(!module){
-      let filename = this.__filename || __filename;
-      let seps = filename.split(think.sep).reverse();
-      module = seps[2];
-    }
+    module = module || this.parseModuleFromPath();
     if(think.isString(options)){
       options = {type: options};
     }
