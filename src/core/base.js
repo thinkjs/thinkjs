@@ -48,4 +48,31 @@ export default class {
   basename(filepath = this.__filename){
     return path.basename(filepath, '.js');
   }
+  /**
+   * parse module from filepath
+   * @param  {String} filepath []
+   * @return {String}          []
+   */
+  parseModuleFromPath(filepath = this.__filename){
+    if(!filepath){
+      return '';
+    }
+    if(think.mode !== think.mode_module){
+      return '';
+    }
+    let prefix = think.APP_PATH + think.sep;
+    let pos = filepath.indexOf(prefix);
+    if(pos === -1){
+      return '';
+    }
+    let nextPos = filepath.indexOf(think.sep, pos + prefix.length);
+    if(nextPos === -1){
+      return '';
+    }
+    let module = filepath.slice(pos + prefix.length, nextPos);
+    if(think.module.indexOf(module) > -1){
+      return module;
+    }
+    return '';
+  }
 }
