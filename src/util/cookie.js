@@ -16,6 +16,9 @@ let Cookie = {
     if (!str) {
       return data;
     }
+    //replace , to ; 
+    //cookie value has , in some nginx versions when use HTTP/2
+    str = str.replace(/, /g, '; ');
     str.split(/; */).forEach(item => {
       let pos = item.indexOf('=');
       if (pos === -1) {
