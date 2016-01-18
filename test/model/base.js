@@ -430,7 +430,115 @@ describe('model/base.js', function(){
       title: 'test'
     }).then(function(insertId){
       var sql = instance.getLastSql();
-      assert.equal(sql, "INSERT INTO `think_user` (`title`,`name`) VALUES ('test','haha')");
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES ('haha','test')");
+      done();
+    })
+  })
+  it('add data, has default null', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: null
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES ('test')");
+      done();
+    })
+  })
+  it('add data, has default empty', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: ''
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES ('test')");
+      done();
+    })
+  })
+  it('add data, has default undefined', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: undefined
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES ('test')");
+      done();
+    })
+  })
+  it('add data, has default 0', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: 0
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (0,'test')");
+      done();
+    })
+  })
+  it('add data, has default null, value 0', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: null
+      }
+    }
+    instance.add({
+      name: 0,
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (0,'test')");
+      done();
+    })
+  })
+  it('add data, has default empty, value 0', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: ''
+      }
+    }
+    instance.add({
+      name: 0,
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (0,'test')");
+      done();
+    })
+  })
+  it('add data, has default 0, value 1', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: 0
+      }
+    }
+    instance.add({
+      name: 1,
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (1,'test')");
       done();
     })
   })
@@ -445,7 +553,7 @@ describe('model/base.js', function(){
       title: 'test'
     }).then(function(insertId){
       var sql = instance.getLastSql();
-      assert.equal(sql, "INSERT INTO `think_user` (`title`,`name`) VALUES ('test','haha')");
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES ('haha','test')");
       done();
     })
   })
@@ -460,7 +568,7 @@ describe('model/base.js', function(){
       title: 'test'
     }).then(function(insertId){
       var sql = instance.getLastSql();
-      assert.equal(sql, "INSERT INTO `think_user` (`title`,`name`) VALUES ('test','test_name')");
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES ('test_name','test')");
       done();
     })
   })

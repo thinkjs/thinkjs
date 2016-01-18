@@ -109,7 +109,8 @@ let _getItemValue = (item, values, parse) => {
   //get item value
   //avoid default is undefined, but check type is string
   let itemValue = item.value;
-  if(!itemValue && item.default !== undefined){
+  let _default = item.default;
+  if(!itemValue && _default !== undefined && _default !== null && _default !== ''){
     itemValue = item.default;
   }
   if(think.isFunction(itemValue)){

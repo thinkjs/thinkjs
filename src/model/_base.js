@@ -426,9 +426,9 @@ export default class extends think.base {
     //fields in schema
     for(let field in this.schema){
       let _default = this.schema[field].default;
-      if(data[field] !== undefined || _default){
+      if(_default !== undefined && _default !== null && _default !== ''){
         ret[field] = {
-          value: data[field] || '',
+          value: data[field],
           default: _default
         };
       }
