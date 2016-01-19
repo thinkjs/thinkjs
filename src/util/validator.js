@@ -763,6 +763,9 @@ Validator.object = value => {
  * @return {Boolean}       []
  */
 Validator.regexp = (value, reg) => {
+  if(!value){
+    return true;
+  }
   return reg.test(value);
 };
 /**
