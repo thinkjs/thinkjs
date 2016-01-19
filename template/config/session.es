@@ -14,7 +14,7 @@ export default {
   },
   adapter: {
     file: {
-      path: think.getPath('common', 'runtime') + '/session',
+      path: think.RUNTIME_PATH + '/session',
     }
   }
 };
