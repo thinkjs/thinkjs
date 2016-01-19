@@ -422,6 +422,14 @@ export default class extends think.base {
    * @return {}      []
    */
   beforeAdd(data){
+    
+    //for addMany invoked
+    if(think.isArray(data)){
+      return data.map(item => {
+        return this.beforeAdd(item);
+      });
+    }
+
     let ret = {};
     //fields in schema
     for(let field in this.schema){
