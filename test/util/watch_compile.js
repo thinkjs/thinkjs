@@ -147,7 +147,7 @@ describe('watch_compile', function(){
     fs.writeFileSync(srcFilepath, 'let a = 2');
     instance.compileFile('test' + think.sep + 'a.ts');
     var content = fs.readFileSync(outPath + think.sep + 'test' + think.sep + 'a.js', 'utf8');
-    assert.equal(content.trim(), '"use strict";\nvar a = 2;');
+    assert.equal(content.indexOf('var a = 2;') > -1, true);
     Promise.all([
       think.rmdir(srcPath),
       think.rmdir(outPath)
