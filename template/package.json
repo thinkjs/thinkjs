@@ -7,5 +7,7 @@
   },
   "dependencies": {
     "thinkjs": "2.1.x"
-  }
+  },
+  "repository": "",
+  "license": "MIT"
 }

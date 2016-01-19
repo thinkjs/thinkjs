@@ -17,5 +17,7 @@
     "babel-preset-stage-1": "6.x.x",
     "babel-plugin-transform-runtime": "6.x.x",
     "babel-core": "6.x.x"
-  }
+  },
+  "repository": "",
+  "license": "MIT"
 }
