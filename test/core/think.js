@@ -280,7 +280,7 @@ describe('core/think.js', function(){
     delete thinkData.export['module/is/exist'];
   })
   it('think.lookClass("home/group", "controller") not found', function(){
-    let modules = think.module;
+    var modules = think.module;
     think.module = ['home'];
     try{
       think.lookClass("home/group", "controller")
@@ -290,7 +290,7 @@ describe('core/think.js', function(){
     think.module = modules;
   })
   it('think.lookClass("home/group", "service") is function', function(){
-    let modules = think.module;
+    var modules = think.module;
     think.module = ['home'];
     thinkData.export['home/service/group'] =function(){
       return 'home/service/group';

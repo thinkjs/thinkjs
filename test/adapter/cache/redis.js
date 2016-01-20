@@ -24,7 +24,7 @@ describe('adapter/cache/redis.js', function() {
     var data = {};
     
     instance.getRedisInstance = function(){
-      let obj = {
+      var obj = {
         set: function(name, value, timeout) {
           data[name] = {
             name: name,
