@@ -20,7 +20,7 @@ export default class extends Base {
     }else{
       config.path = config.path || think.RUNTIME_PATH + path.sep + 'sqlite';
       think.mkdir(config.path);
-      config.path += `${path.sep}${config.name}.sqlite`;
+      config.path += `${path.sep}${config.database}.sqlite`;
     }
     this.config = config;
   }

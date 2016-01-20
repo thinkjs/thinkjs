@@ -20,10 +20,10 @@ var sqliteSocket = think.adapter('socket', 'sqlite');
 describe('adapter/socket/sqlite', function(){
   it('get instance, path is true', function(){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: true
     });
-    assert.deepEqual(instance.config, { name: 'test', path: ':memory:' });
+    assert.deepEqual(instance.config, { database: 'test', path: ':memory:' });
   })
   it('get instance, path is not set', function(){
     var mkdir = think.mkdir;
@@ -31,9 +31,9 @@ describe('adapter/socket/sqlite', function(){
 
     }
     var instance = new sqliteSocket({
-      name: 'test'
+      database: 'test'
     })
-    assert.deepEqual(instance.config, {name: 'test', path: think.RUNTIME_PATH + think.sep + 'sqlite' + think.sep + 'test.sqlite'});
+    assert.deepEqual(instance.config, {database: 'test', path: think.RUNTIME_PATH + think.sep + 'sqlite' + think.sep + 'test.sqlite'});
     think.mkdir = mkdir;
   })
     it('get instance, config is empty', function(){
@@ -49,15 +49,25 @@ describe('adapter/socket/sqlite', function(){
     var mkdir = think.mkdir;
     think.mkdir = function(){}
     var instance = new sqliteSocket({
+      database: 'test',
+      path: think.APP_PATH + think.sep + 'test'
+    })
+    assert.deepEqual(instance.config, {database: 'test', path: think.APP_PATH + think.sep + 'test' + think.sep + 'test.sqlite'});
+    think.mkdir = mkdir;
+  })
+  it('get instance, path is set, is name', function(){
+    var mkdir = think.mkdir;
+    think.mkdir = function(){}
+    var instance = new sqliteSocket({
       name: 'test',
       path: think.APP_PATH + think.sep + 'test'
     })
-    assert.deepEqual(instance.config, {name: 'test', path: think.APP_PATH + think.sep + 'test' + think.sep + 'test.sqlite'});
+    assert.deepEqual(instance.config, {name: 'test', path: think.APP_PATH + think.sep + 'test' + think.sep + 'undefined.sqlite'});
     think.mkdir = mkdir;
   })
   it('get connection', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     var npm = think.npm;
@@ -76,7 +86,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('get connection, verbose', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       verbose: true,
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
@@ -100,7 +110,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('get connection, busyTimeout', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       verbose: true,
       path: think.APP_PATH + think.sep + 'fsafasf',
       timeout: 100
@@ -131,7 +141,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('get connection, error', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     var npm = think.npm;
@@ -162,7 +172,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('get connection, exist', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     instance.connection = {};
@@ -173,7 +183,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('execute', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     instance.getConnection = function(){
@@ -194,7 +204,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('execute, log sql', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf',
       log_sql: true
     })
@@ -223,7 +233,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('execute, error', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     var error = think.error;
@@ -246,7 +256,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('query', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     instance.getConnection = function(){
@@ -264,7 +274,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('query, log sql', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf',
       log_sql: true
     })
@@ -290,7 +300,7 @@ describe('adapter/socket/sqlite', function(){
   })
    it('query error, log sql', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf',
       log_sql: true
     })
@@ -320,7 +330,7 @@ describe('adapter/socket/sqlite', function(){
   })
   it('query, error', function(done){
     var instance = new sqliteSocket({
-      name: 'test',
+      database: 'test',
       path: think.APP_PATH + think.sep + 'fsafasf'
     })
     var error = think.error;
