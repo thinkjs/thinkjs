@@ -206,7 +206,7 @@ export default class extends think.base {
       page = page[0];
     }
     page = Math.max(parseInt(page) || 1, 1);
-    listRows = Math.max(parseInt(listRows) || 1, 1);
+    listRows = Math.max(parseInt(listRows) || 10, 1);
     this._options.limit = [listRows * (page - 1), listRows];
     return this;
   }
@@ -434,7 +434,7 @@ export default class extends think.base {
     //fields in schema
     for(let field in this.schema){
       let _default = this.schema[field].default;
-      if(_default !== undefined && _default !== null && _default !== ''){
+      if(!think.isTrueEmpty(_default)){
         ret[field] = {
           value: data[field],
           default: _default
@@ -473,13 +473,13 @@ export default class extends think.base {
    * @return {}      []
    */
   beforeUpdate(data){
-
     //check property readonlyFields
     if(!think.isEmpty(this.readonlyFields)){
       let ret = {};
       this.readonlyFields.forEach(item => {
         ret[item] = {readonly: true};
       });
+      delete this.readonlyFields;
       this.schema = think.extend(ret, this.schema);
       think.log(`readonlyFields property is deprecated, use schema[field].readonly instead`, 'WARNING');
     }
@@ -488,9 +488,20 @@ export default class extends think.base {
     for(let field in data){
       let schema = this.schema[field];
       if(!schema || !schema.readonly){
-        ret[field] = data[field];
+        ret[field] = {value: data[field]};
       }
     }
+    for(let field in this.schema){
+      let item = this.schema[field];
+      let _default = item.default;
+      if(!think.isTrueEmpty(_default) && !item.readonly && item.update){
+        ret[field] = {
+          value: data[field],
+          default: _default
+        };
+      }
+    }
+    ret = Validator.values(ret);
     return ret;
   }
   /**
@@ -534,8 +545,8 @@ export default class extends think.base {
    * @param  {Mixed} options []
    * @return {}         []
    */
-  options(options = {}){
-    if (options === true) {
+  options(options){
+    if (!options) {
       return this._options;
     }
     this._options = options;
