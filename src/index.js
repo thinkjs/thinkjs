@@ -416,16 +416,21 @@ export default class {
       return;
     }
     let reloadInstance = this.getReloadInstance(outPath);
+    let _getMode = false;
     this.compileCallback = changedFiles => {
-      process.nextTick(() => reloadInstance.clearFilesCache(changedFiles));
+      if(!_getMode){
+        _getMode = true;
+        //get app mode
+        think.mode = this.getMode();
+      }
+
+      reloadInstance.clearFilesCache(changedFiles);
     };
 
     let instance = new WatchCompile(srcPath, outPath, options, this.compileCallback);
     instance.run();
 
-    think.autoCompile = true;
-    //get app mode
-    think.mode = this.getMode();
+    think.autoCompile = true; 
   }
   /**
    * run
