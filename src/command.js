@@ -439,9 +439,9 @@ let createController = controller => {
 
   controller = controller.split('/');
   let module = 'common';
-  if(controller.length === 2){
+  if(controller.length >= 2){
     module = controller[0];
-    controller = controller[1];
+    controller = controller.slice(1).join('/');
   }else{
     controller = controller[0];
   }
