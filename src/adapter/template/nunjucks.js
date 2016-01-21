@@ -37,6 +37,10 @@ export default class extends Base {
       env = nunjucks.configure(options);
     }
 
+    env.addGlobal('think', think);
+    env.addGlobal('JSON', JSON);
+    env.addGlobal('eval', eval);
+
     this.prerender(options, nunjucks, env);
 
     return nunjucks.render(templateFile, tVar);

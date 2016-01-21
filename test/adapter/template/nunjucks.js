@@ -85,6 +85,9 @@ describe('adapter/template/nunjucks.js', function(){
         configure: function(root_path){
           assert.equal(root_path, __dirname);
           flag = true;
+          return {
+            addGlobal: function(){}
+          }
         },
         render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
@@ -120,6 +123,9 @@ describe('adapter/template/nunjucks.js', function(){
         configure: function(config){
           assert.equal(config.root_path, 'test' + __dirname)
           flag = true;
+          return {
+            addGlobal: function(){}
+          }
         },
         render: function(filepath, conf){
           var content = fs.readFileSync(filepath, 'utf8')
