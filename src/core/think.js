@@ -518,7 +518,7 @@ think.alias = (type, paths, slash) => {
       if(file.slice(-3) !== '.js' || file[0] === '_'){
         return;
       }
-      let name = file.slice(0, -3);
+      let name = file.slice(0, -3).replace(/\\/g, '/');//replace \\ to / on windows
       name = type + (slash ? '/' : '_') + name;
       thinkData.alias[name] = `${path}${think.sep}${file}`;
     });
