@@ -417,7 +417,7 @@ export default class {
     }
     let reloadInstance = this.getReloadInstance(outPath);
     this.compileCallback = changedFiles => {
-      reloadInstance.clearFilesCache(changedFiles);
+      process.nextTick(() => reloadInstance.clearFilesCache(changedFiles));
     };
 
     let instance = new WatchCompile(srcPath, outPath, options, this.compileCallback);
