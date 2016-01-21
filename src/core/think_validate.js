@@ -109,8 +109,12 @@ let _getItemValue = (item, values, parse) => {
   //get item value
   //avoid default is undefined, but check type is string
   let itemValue = item.value;
+  //trim value
+  if(item.trim && itemValue && itemValue.trim){
+    itemValue = itemValue.trim();
+  }
   let _default = item.default;
-  if(!itemValue && _default !== undefined && _default !== null && _default !== ''){
+  if(!itemValue && !think.isTrueEmpty(_default)){
     itemValue = item.default;
   }
   if(think.isFunction(itemValue)){
@@ -182,7 +186,7 @@ Validate.exec = (rules, msgs = {}) => {
     let item = rules[name];
     let itemValue = _getItemValue(item, values);
     for(let vtype in item){
-      if(vtype === 'value' || vtype === 'default'){
+      if(vtype === 'value' || vtype === 'default' || vtype === 'trim'){
         continue;
       }
       //if has array rule, then foreach check value for every rule

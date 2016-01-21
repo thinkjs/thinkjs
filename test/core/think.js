@@ -2059,6 +2059,41 @@ describe('core/think.js', function(){
     var msg = think.validate.values(data);
     assert.deepEqual(msg, {welefen: 'test', test: 'test',haha: true});
   })
+  it('think.validate.values default is function, with other field 1, trim not open', function(){
+    var data = {
+      welefen: {
+        value: '',
+        default: function(){return this.test}
+      },
+      test: {
+        value: 'test',
+        trim: true
+      },
+      haha: {
+        value: '1  ',
+      }
+    }
+    var msg = think.validate.values(data);
+    assert.deepEqual(msg, {welefen: 'test', test: 'test',haha: '1  '});
+  })
+  it('think.validate.values default is function, with other field 1, trim', function(){
+    var data = {
+      welefen: {
+        value: '',
+        default: function(){return this.test}
+      },
+      test: {
+        value: 'test',
+        trim: true
+      },
+      haha: {
+        value: '1  ',
+        trim: true
+      }
+    }
+    var msg = think.validate.values(data);
+    assert.deepEqual(msg, {welefen: 'test', test: 'test',haha: '1'});
+  })
   it('think.validate.values default is function, with other field 2', function(){
     var data = {
       welefen: {
