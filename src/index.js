@@ -458,8 +458,8 @@ export default class {
    * load, convenient for plugins
    * @return {} []
    */
-  static load(){
-    let instance = new this();
+  static load(options){
+    let instance = new this(options);
     instance.load();
   }
 }
