@@ -43,6 +43,7 @@ export default class extends Base {
 
     this.prerender(options, nunjucks, env);
 
-    return nunjucks.render(templateFile, tVar);
+    let fn = think.promisify(nunjucks.render);
+    return fn(templateFile, tVar);
   }
 }

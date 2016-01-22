@@ -28,11 +28,11 @@ describe('adapter/template/nunjucks.js', function(){
             addGlobal: function(){}
           }
         },
-        render: function(filepath, conf){
+        render: function(filepath, conf, callback){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
           assert.deepEqual(conf, undefined)
-          return content;
+          callback(null, content);
         }
       }
     })
@@ -53,11 +53,11 @@ describe('adapter/template/nunjucks.js', function(){
             addGlobal: function(){}
           }
         },
-        render: function(filepath, conf){
+        render: function(filepath, conf, callback){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
           assert.deepEqual(conf,{ name: 'welefen' })
-          return content;
+          callback(null, content)
         }
       }
     })
@@ -89,11 +89,11 @@ describe('adapter/template/nunjucks.js', function(){
             addGlobal: function(){}
           }
         },
-        render: function(filepath, conf){
+        render: function(filepath, conf, callback){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
           assert.deepEqual(conf,{ name: 'welefen' })
-          return content;
+          callback(null, content)
         }
       }
     })
@@ -127,11 +127,11 @@ describe('adapter/template/nunjucks.js', function(){
             addGlobal: function(){}
           }
         },
-        render: function(filepath, conf){
+        render: function(filepath, conf, callback){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
           assert.deepEqual(conf,{ name: 'welefen' })
-          return content;
+          callback(null, content)
         }
       }
     })
@@ -160,11 +160,11 @@ describe('adapter/template/nunjucks.js', function(){
         configure: function(){
           return {addFilter: function(){}, addGlobal: function(){}};
         },
-        render: function(filepath, conf){
+        render: function(filepath, conf, callback){
           var content = fs.readFileSync(filepath, 'utf8')
           assert.equal(content.indexOf("describe('adapter/template/nunjucks.js'") > -1, true);
           assert.deepEqual(conf,{ name: 'welefen' })
-          return content;
+          callback(null, content)
         }
       }
     })
