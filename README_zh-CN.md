@@ -100,6 +100,19 @@ npm start
 [2016-01-12 15:09:51] [THINK] App Enviroment: development
 ```
 
+## 性能对比
+
+评价一个框架是否出色，一方面看支持的功能，另一方面也要看性能。虽然 ThinkJS 更适合大型项目，功能和复杂度远远超过 Express 和 Koa，但性能上并不比 Express 和 Koa 逊色多少，具体的测试数据请见下图。
+
+![ThinkJS 性能测试](https://p.ssl.qhimg.com/t018bc14974bff742de.jpg)
+
+`注`：以上数据使用分布式压力测试系统测试。
+
+
+从上图中测试数据可以看到，虽然 ThinkJS 比 Express 和 Koa 性能要差一些，但差别并不大。ThinkJS 和 Sails.js 都更符合大型项目，但 ThinkJS 的性能要比 Sails.js 高很多。
+
+具体测试代码请见：<https://github.com/thinkjs-team/thinkjs-performance-test>，可以下载代码在本机测试，如果使用 `ab` 测试工具，请注意该工具在 Mac 系统下很不稳定，多次测试结果会相差很大。
+
 ## 文档
 
 <https://thinkjs.org/>

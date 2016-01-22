@@ -97,6 +97,18 @@ You will see some messages on console like :
 [2016-01-12 15:09:51] [THINK] App Enviroment: development
 ```
 
+## Performance comparsion
+
+Evaluate whether a good framework, on the one hand to see the support of the function, it also depends on the performance. Although ThinkJS more suits for large projects, functions and complexity far exceeds Express and Koa, but the performance is not much less than the Express and Koa.
+
+![thinkjs-performance](https://p.ssl.qhimg.com/t01897b6d34f6e0ea31.png)
+
+`tips`: The above data using distributed stress testing system to test.
+
+All we can see is that there has just little distance in ThinkJS and Express, Koa. ThinkJS and Sails.js both suits large projects, but ThinkJS has higher performance than Sails.js.
+
+You can go <https://github.com/thinkjs-team/thinkjs-performance-test> to clone all testing code and run in local. If you use `ab` testing tool, you shoud know it is instability on Mac.
+
 ## Documentation
 
 [https://thinkjs.org/en](https://thinkjs.org/en)
