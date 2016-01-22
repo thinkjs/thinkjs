@@ -1,0 +1,26 @@
+{
+  "name": "thinkjs-application",
+  "description": "application created by thinkjs",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node www/development.js",
+    "compile": "node bin/compile.js",
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 10000 --recursive  -R spec test/"
+  },
+  "dependencies": {
+    "thinkjs": "2.1.x",
+    "babel-runtime": "6.x.x"
+  },
+  "devDependencies": {
+    "typescript": "next",
+    "babel-cli": "6.x.x",
+    "babel-preset-es2015-loose": "6.x.x",
+    "babel-preset-stage-1": "6.x.x",
+    "babel-plugin-transform-runtime": "6.x.x",
+    "babel-core": "6.x.x",
+    "mocha": "1.20.1",
+    "istanbul": "0.4.0"
+  },
+  "repository": "",
+  "license": "MIT"
+}

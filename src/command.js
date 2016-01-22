@@ -257,7 +257,8 @@ let _checkEnv = () => {
 let _copyWwwFiles = () => {
   mkdir(projectRootPath);
 
-  copyFile('package.json', projectRootPath + '/package.json');
+  let name = commander.test ? 'package_test' : 'package';
+  copyFile(name + '.json', projectRootPath + '/package.json');
 
   let mode = 'normal';
   if(think.mode === think.mode_module){
@@ -573,6 +574,10 @@ let _createProject = () => {
   _copyErrorTemplateFiles();
 
   _createModule('home');
+
+  if(commander.test){
+    copyFile('test/index.js', projectRootPath + '/test/index.js');
+  }
 };
 /**
  * create project
@@ -689,6 +694,7 @@ commander.option('-V', 'output the version number', () => {
 commander.option('-e, --es', 'use es for project, used in `new` command');
 commander.option('--es6', 'use es for project, used in `new` command');
 commander.option('-t, --ts', 'use TypeScript for project, used in `new` command');
+commander.option('-T, --test', 'add test dirs when create project, used in `new` command');
 commander.option('-r, --rest', 'create rest controller, used in `controller` command');
 commander.option('-M, --mongo', 'create mongo model, used in `model` command');
 commander.option('-R, --relation', 'create relation model, used in `model` command');
