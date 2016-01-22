@@ -433,11 +433,25 @@ export default class {
     think.autoCompile = true; 
   }
   /**
+   * pre require
+   * @return {} []
+   */
+  preload(){
+    let startTime = Date.now();
+    for(let name in thinkData.alias){
+      think.require(thinkData.alias[name]);
+    }
+    think.log('preload packages finished', 'PRELOAD', startTime);
+  }
+  /**
    * run
    * @return {} []
    */
-  run(){
+  run(preload){
     this.start();
+    if(preload){
+      this.preload();
+    }
     return think.require('app').run();
   }
   /**

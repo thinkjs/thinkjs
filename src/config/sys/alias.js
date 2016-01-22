@@ -13,7 +13,7 @@ export default {
   app: `${rootPath}core${sep}app.js`,
   http: `${rootPath}core${sep}http.js`,
   view: `${rootPath}core${sep}view.js`,
-  auth: `${rootPath}util${sep}auth.js`,
+  // auth: `${rootPath}util${sep}auth.js`,
   cookie: `${rootPath}util${sep}cookie.js`,
   validator: `${rootPath}util${sep}validator.js`,
   await: `${rootPath}util${sep}await.js`,
