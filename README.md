@@ -9,9 +9,9 @@
 
 ## Introduction 
 
-As a Node.js MVC framework, ThinkJS 2.0 has completely been rewritten with brand-new ECMAScript 6/7 features. By using ES7's `async/await` or ES6's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, ThinkJS 2.0 has designed by absorbing the concepts and ideas of many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
+As a Node.js MVC framework, ThinkJS 2.0 has completely been rewritten with brand-new ECMAScript 2015/2016 features. By using ES2016's `async/await` or ES2015's `Generator Function` features, ThinkJS 2.0 could thoroughly solve the asynchronous nesting problem within Node.js. Also, ThinkJS 2.0 has designed by absorbing the concepts and ideas of many frameworks around the world, so developing Node.js projects with ThinkJS would be more simple and efficient than ever.
 
-It's a trend that using ES6/7 features to develop projects thanks to the high development efficiency. The new version of Node.js has improved to support many ES6/7 features, though some features have not been supported until now, and for those features we can use [Babel](http://babeljs.io/) to compile the code.
+It's a trend that using ES2015/2016 features to develop projects thanks to the high development efficiency. The new version of Node.js has improved to support many ES2015/2016 features, though some features have not been supported until now, and for those features we can use [Babel](http://babeljs.io/) to compile the code.
 
 ```js
 //user controller, home/controller/user.js
@@ -38,11 +38,11 @@ export default class extends think.controller.base {
 }
 ```
 
-With the help of Babel compiling, we can use the ES6/7 features boldly, and then the code can run in the Node.js 0.12.0+ environment stably.
+With the help of Babel compiling, we can use the ES2015/2016 features boldly, and then the code can run in the Node.js 0.12.0+ environment stably.
 
 ## Features
 
-* Developing projects using all the new features of ES6/7.
+* Developing projects using all the new features of ES2015/2016.
 * Auto compiling & auto hot reload when file changed, no need to restart Node.js server.
 * Supporting TypeScript.
 * Supporting various project construct forms and environments.
@@ -70,7 +70,7 @@ npm install -g thinkjs
 ## Create Application
 
 ```sh
-thinkjs new project_path --es6
+thinkjs new demo --es
 ```
 
 ## Install dependencies
