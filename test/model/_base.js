@@ -547,6 +547,17 @@ describe('model/_base.js', function(){
     var data = instance.beforeAdd({name: ''});
     assert.deepEqual(data, {name: 1});
   })
+   it('beforeAdd, default other field', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen'});
+    assert.deepEqual(data, {name: 'welefen', username: 'welefen'});
+  })
    it('beforeUpdate, emtpy', function(){
     var instance = new Base('user', think.config('db'));
     instance.schema = {
