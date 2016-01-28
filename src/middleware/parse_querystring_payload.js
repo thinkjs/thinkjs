@@ -17,9 +17,15 @@ export default class extends think.middleware.base {
     if (!http.req.readable) {
       return;
     }
+
+    let contentType = http.type();
+    if(contentType.indexOf('application/x-www-form-urlencoded') === -1){
+      return;
+    }
     
     return http.getPayload().then(payload => {
       http._post = think.extend(http._post, querystring.parse(payload));
+      return null;
     });
   }
 }

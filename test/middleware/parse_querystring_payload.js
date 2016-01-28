@@ -71,9 +71,28 @@ describe('middleware/parse_json_payload', function(){
       })
     })
   })
+  it('parse_querystring_payload, getPayload, contentType fail', function(done){
+    getHttp('', {
+      payload: '',
+      //_post: {name: 'thinkjs'},
+      getPayload: function(){
+        return Promise.resolve('name=thinkjs1')
+      }
+    }).then(function(http){
+      think.middleware('parse_querystring_payload', http).then(function(data){
+        assert.deepEqual(http._post, {});
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
+    })
+  })
   it('parse_querystring_payload, getPayload', function(done){
     getHttp('', {
       payload: '',
+      type: function(){
+        return 'application/x-www-form-urlencoded'
+      },
       //_post: {name: 'thinkjs'},
       getPayload: function(){
         return Promise.resolve('name=thinkjs1')
