@@ -384,6 +384,7 @@ export default class {
   ip(forward){
     let proxy = think.config('proxy_on') || this.host === this.hostname;
     let userIP;
+    let localIP = '127.0.0.1';
     if (proxy) {
       if (forward) {
         return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
@@ -397,20 +398,20 @@ export default class {
     }else{
       let connection = this.req.connection;
       let socket = this.req.socket;
-      if (connection && connection.remoteAddress !== '127.0.0.1') {
+      if (connection && connection.remoteAddress !== localIP) {
         userIP = connection.remoteAddress;
-      }else if (socket && socket.remoteAddress !== '127.0.0.1') {
+      }else if (socket && socket.remoteAddress !== localIP) {
         userIP = socket.remoteAddress;
       }
     }
     if (!userIP) {
-      return '127.0.0.1';
+      return localIP;
     }
     if (userIP.indexOf(':') > -1) {
       userIP = userIP.split(':').slice(-1)[0];
     }
     if (!think.isIP(userIP)) {
-      return '127.0.0.1';
+      return localIP;
     }
     return userIP;
   }
