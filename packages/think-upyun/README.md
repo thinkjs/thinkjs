@@ -1,2 +1,15 @@
 # think-upyun
-Use upyun to store files for ThinkJS 2.x
+
+## Install
+
+```
+npm install think-upyun
+```
+
+## How to use
+
+
+
+## LICENSE
+
+MIT
