@@ -9,7 +9,7 @@
 
 ## 介绍
 
-ThinkJS 是一款使用 ES2015/2016 特性全新开发的 Node.js MVC 框架，使用 ES2016 中`async/await`，或者 ES2015 中的 `Generator Function` 特性彻底解决了 Node.js 中异步嵌套的问题。同时吸收了国内外众多框架的设计理念和思想，让开发 Node.js 项目更加简单、高效。
+ThinkJS 是一款使用 ES2015/2016 特性全新开发的 Node.js MVC 框架，使用 ES2016 中 `async/await`，或者 ES2015 中的 `Generator Function` 特性彻底解决了 Node.js 中异步嵌套的问题。同时吸收了国内外众多框架的设计理念和思想，让开发 Node.js 项目更加简单、高效。
 
 使用 ES2015/2016 特性来开发项目可以大大提高开发效率，是趋势所在。并且新版的 Node.js 对 ES6 特性也有了较好的支持，即使有些特性还没有支持，也可以借助 [Babel](http://babeljs.io/) 编译来支持。
 
