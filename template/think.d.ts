@@ -548,7 +548,11 @@ declare module think {
 
   export function isFile(obj: string): boolean;
 
+  export function isFileAsync(obj: string): Promise;
+
   export function isDir(obj: string): boolean;
+
+  export function isDirAsync(obj: string): Promise;
 
   export function isNumberString(obj: string): boolean;
 
@@ -573,6 +577,8 @@ declare module think {
   export function getFiles(path: string): StringArray;
 
   export function escapeHtml(str: string): string;
+
+  export function datetime(d: any): string;
 
   /**
    * The current version of ThinkJS
