@@ -40,8 +40,9 @@ describe('adapter/template/base.js', function(){
   })
   it('run', function(done){
     var instance = new baseTemplate();
-    var data = instance.run(__filename);
-    assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
-    done();
+    instance.run(__filename).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      done();
+    });
   })
 })

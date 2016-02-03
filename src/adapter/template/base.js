@@ -37,8 +37,9 @@ export default class extends think.adapter.base {
    * get template file content
    * @return {} []
    */
-  getContent(file){
-    let mTime = fs.statSync(file).mtime.getTime();
+  async getContent(file){
+    let stat = await think.promisify(fs.stat, fs)(file);
+    let mTime = stat.mtime.getTime();
     let fileCache = thinkCache(thinkCache.VIEW_CONTENT, file);
     if(fileCache && fileCache[0] >= mTime){
       return fileCache[1];
@@ -47,6 +48,10 @@ export default class extends think.adapter.base {
       let fn = think.promisify(fs.readFile, fs);
       return fn(file, 'utf8');
     }).then(content => {
+      //if content is empty, not cached
+      if(!content){
+        return content;
+      }
       thinkCache(thinkCache.VIEW_CONTENT, file, [mTime, content]);
       return content;
     });
