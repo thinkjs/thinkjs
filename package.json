@@ -44,8 +44,8 @@
     "babel-preset-es2015-loose": "6.1.4",
     "babel-preset-stage-1": "6.3.13",
     "babel-plugin-transform-runtime": "6.3.13",
-    "eslint": "1.10.2",
-    "babel-eslint": "5.0.0-beta4",
+    "eslint": "^1.10.3",
+    "babel-eslint": "4.1.8",
     "typescript": "next",
     "babel-core": "6.x.x"
   },
