@@ -447,15 +447,8 @@ think.log = (msg, type, showTime) => {
     showTime = '';
   }
 
-  let fn = d => {
-    return ('0' + d).slice(-2);
-  };
 
-  let d = new Date();
-  let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
-  let time = `${fn(d.getHours())}:${fn(d.getMinutes())}:${fn(d.getSeconds())}`;
-
-  let dateTime = colors.gray(`[${date} ${time}] `);
+  let dateTime = colors.gray(`[${think.datetime()}] `);
   if(showTime === null){
     dateTime = '';
   }
