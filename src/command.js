@@ -597,9 +597,15 @@ let createProject = () => {
   think.APP_PATH = getProjectAppPath();
   _createProject();
 
+
+  let p = projectRootPath.slice(cwd.length);
+  if(p[0] === think.sep){
+    p = p.slice(1);
+  }
+
   console.log();
   console.log('  enter path:');
-  console.log('  $ cd ' + projectRootPath.slice(cwd.length + 1));
+  console.log('  $ cd ' + p);
   console.log();
 
   console.log('  install dependencies:');
