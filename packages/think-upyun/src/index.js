@@ -48,7 +48,7 @@ module.exports = class {
    * @param {[type]} str [description]
    */
   addSlash(str){
-    if(!str){
+    if(!str || !thinkit.isString(str)){
       return str;
     }
     if (str.slice(-1) !== '/') {
@@ -95,7 +95,7 @@ module.exports = class {
    * @param  {[type]} filePath [description]
    * @return {[type]}          [description]
    */
-  async upload(savePath, filePath, headers){
+  async upload(filePath, savePath, headers){
     let defaultHeaders = {
       mkdir: true
     };
@@ -106,7 +106,7 @@ module.exports = class {
     }
     //文件上传
     if (thinkit.isFile(filePath)) {
-      let stream = await think.promisify(fs.rendFile, fs)(filePath);
+      let stream = await thinkit.promisify(fs.readFile, fs)(filePath);
       let filename;
       if (!(/\.\w+$/.test(savePath))) {
         filename = filePath.split('/');
@@ -136,6 +136,50 @@ module.exports = class {
     //普通内容上传
     let response = await this.request(savePath, 'PUT', filePath, defaultHeaders);
     return this.getPicInfo(response);
+  }
+  /**
+   * 文件或者文件夹下载
+   * @param  {[type]} path     [description]
+   * @param  {[type]} savePath [description]
+   * @return {[type]}          [description]
+   */
+  async download(sourcePath = '/', savePath, typeData){
+    if(thinkit.isObject(savePath)){
+      typeData = savePath;
+      savePath = '';
+    }
+    savePath = this.addSlash(savePath);
+    if(!typeData){
+      typeData = await this.getInfo(sourcePath);
+    }
+    //文件夹
+    if (typeData.type === 'folder') {
+      sourcePath = this.addSlash(sourcePath);
+      let dirs = await this.readdir(sourcePath);
+      let promises = dirs.map(item => {
+        let nPath = sourcePath + item.name;
+        if(item.type === 'F'){
+          return this.download(nPath + '/', savePath + item.name + '/');
+        }
+        return this.download(nPath, savePath, {type: 'file'});
+      })
+      return Promise.all(promises);
+    }
+    //单个文件
+    let response = await this.requestAwait(sourcePath, 'GET', '', {}, {encoding: null});
+    if(!savePath){
+      return response.body;
+    }
+    let sourceExt = path.extname(sourcePath);
+    let saveExt = path.extname(savePath);
+    let fileSavePath = savePath;
+    if (sourceExt && sourceExt === saveExt) {
+      thinkit.mkdir(path.dirname(savePath));
+    }else{
+      thinkit.mkdir(savePath);
+      fileSavePath = savePath + path.basename(sourcePath);
+    }
+    return thinkit.promisify(fs.writeFile, fs)(fileSavePath, response.body);
   }
   /**
    * 删除文件或者文件夹
