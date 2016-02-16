@@ -227,9 +227,9 @@ export default class extends think.http.base {
    * @param  {String} templateFile [template filepath]
    * @return {promise}              []
    */
-  fetch(templateFile, data) {
+  fetch(templateFile, data, config) {
     this._baseAssign();
-    return this.view().fetch(templateFile, data);
+    return this.view().fetch(templateFile, data, config);
   }
   /**
    * display template
