@@ -69,6 +69,7 @@ export default class extends think.middleware.base {
       deferred.resolve(null);
     });
     form.on('error', err => {
+      http.req.resume();
       http.res.statusCode = 400;
       http.end();
       //log error
