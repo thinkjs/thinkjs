@@ -292,7 +292,12 @@ export default class {
       if (name === undefined) {
         return this._get;
       }else if (think.isString(name)) {
-        return this._get[name] || '';
+        //may be value is false or 0
+        value = this._get[name];
+        if(value === undefined){
+          value = '';
+        }
+        return value;
       }
       this._get = name;
     }else{
@@ -309,7 +314,12 @@ export default class {
       if (name === undefined) {
         return this._post;
       }else if (think.isString(name)) {
-        return this._post[name] || '';
+        //may be value is false or 0
+        value = this._post[name];
+        if(value === undefined){
+          value = '';
+        }
+        return value;
       }
       this._post = name;
     }else {

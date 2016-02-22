@@ -68,7 +68,7 @@ function getDefaultHttp(data) {
   };
 }
 
-think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + think.sep + 'testApp';
 
 describe('core/http.js', function() {
   it('is EventEmitter instance, false', function(done) {
@@ -789,6 +789,56 @@ describe('core/http.js', function() {
         done();
       };
       http.sendTime('TEST');
+    });
+  });
+  it('get post data, all', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {};
+      var data = http.post();
+      assert.deepEqual(data, {});
+      done();
+    });
+  });
+  it('get post data, name', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 'test'};
+      var data = http.post('name');
+      assert.deepEqual(data, 'test');
+      done();
+    });
+  });
+  it('get post data, 0', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 0};
+      var data = http.post('name');
+      assert.deepEqual(data, 0);
+      done();
+    });
+  });
+  it('get post data, false', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: false};
+      var data = http.post('name');
+      assert.deepEqual(data, false);
+      done();
+    });
+  });
+  it('get post data, undefined', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 0};
+      var data = http.post('name111');
+      assert.deepEqual(data, '');
+      done();
     });
   });
 
