@@ -102,9 +102,9 @@ describe('model/base.js', function(){
         return Promise.resolve({
           insertId: 1000
         });
-      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 897 )"){
+      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 897 ) LIMIT 1"){
         return Promise.resolve([]);
-      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 898 )"){
+      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 898 ) LIMIT 1"){
         return Promise.resolve([{
           id: 898
         }]);
@@ -776,7 +776,7 @@ describe('model/base.js', function(){
   })
   it('find', function(done){
     instance.where({id: 100}).find().then(function(data){
-      assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 )");
+      assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1");
       assert.deepEqual(data, { id: 7565, title: 'title1', cate_id: 1, cate_no: 0 })
       done();
     })

@@ -91,7 +91,10 @@ export default class extends Base {
   async parseOptions(oriOpts, extraOptions){
     let options = think.extend({}, this._options);
     if (think.isObject(oriOpts)) {
-      options = think.extend(options, oriOpts, extraOptions);
+      options = think.extend(options, oriOpts);
+    }
+    if(extraOptions){
+      options = think.extend(options, extraOptions);
     }
     //clear options
     this._options = {};
@@ -109,8 +112,8 @@ export default class extends Base {
       options.table += ' AS ' + options.alias;
     }
 
-    if(!think.isObject(oriOpts)){
-      options = think.extend(options, this.parseWhereOptions(oriOpts, extraOptions));
+    if(oriOpts !== undefined && !think.isObject(oriOpts)){
+      options = think.extend(options, this.parseWhereOptions(oriOpts));
     }
     //check where key
     if(options.where && !think.isEmpty(schema)){
