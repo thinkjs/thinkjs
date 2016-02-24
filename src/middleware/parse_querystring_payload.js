@@ -19,7 +19,7 @@ export default class extends think.middleware.base {
     }
 
     let contentType = http.type();
-    if(contentType.indexOf('application/x-www-form-urlencoded') === -1){
+    if(contentType && contentType.indexOf('application/x-www-form-urlencoded') === -1){
       return;
     }
     

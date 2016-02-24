@@ -74,6 +74,7 @@ describe('middleware/parse_json_payload', function(){
   it('parse_querystring_payload, getPayload, contentType fail', function(done){
     getHttp('', {
       payload: '',
+      type: function(){return 'content'},
       //_post: {name: 'thinkjs'},
       getPayload: function(){
         return Promise.resolve('name=thinkjs1')
@@ -81,6 +82,22 @@ describe('middleware/parse_json_payload', function(){
     }).then(function(http){
       think.middleware('parse_querystring_payload', http).then(function(data){
         assert.deepEqual(http._post, {});
+        done();
+      }).catch(function(err){
+        console.log(err.stack)
+      })
+    })
+  })
+  it('parse_querystring_payload, getPayload, contentType empty', function(done){
+    getHttp('', {
+      payload: '',
+      //_post: {name: 'thinkjs'},
+      getPayload: function(){
+        return Promise.resolve('name=thinkjs1')
+      }
+    }).then(function(http){
+      think.middleware('parse_querystring_payload', http).then(function(data){
+        assert.deepEqual(http._post, {name: 'thinkjs1'});
         done();
       }).catch(function(err){
         console.log(err.stack)
