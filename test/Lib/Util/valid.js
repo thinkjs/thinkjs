@@ -333,6 +333,18 @@ describe('Valid', function(){
     var ret = Valid(data);
     assert.equal(ret.welefen, undefined)
   })
+
+  it('Valid int', function(){
+    var data = {
+      name: 'welefen',
+      value: 123123,
+      valid: 'int',
+      msg: "int is not valid"
+    }
+    var ret = Valid(data);
+    assert.equal(ret.welefen, undefined)
+  })
+
   it('Valid int', function(){
     var data = {
       name: 'welefen',
