@@ -865,7 +865,7 @@ describe('model/base.js', function(){
       done();
     })
   })
-  it('count select, with count, beyond pages', function(done){
+  it('count select, with count, beyond pages 2', function(done){
     instance.where({name: 'test'}).page(300).countSelect(false).then(function(data){
       assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":40,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]})
       done();
@@ -886,11 +886,11 @@ describe('model/base.js', function(){
       'app.appnm as appnm'
     ].join(',')).page(1, 20).count('c.channel_id').then(function(){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT COUNT(c.channel_id) AS think_count FROM think_user AS c LEFT JOIN `think_product.app` AS app ON c.`channel_id`=app.`app_id` LIMIT 1")
+      assert.equal(sql, "SELECT COUNT(c.channel_id) AS think_count FROM think_user AS c LEFT JOIN think_product.app AS `app` ON `c`.`channel_id` = `app`.`app_id` LIMIT 1")
       done();
     })
   })
-   it('countSelect, with join', function(done){
+   it('countSelect, with join 2', function(done){
     instance.alias('c').join({
       table: 'product.app',
       join: 'left',
@@ -905,7 +905,7 @@ describe('model/base.js', function(){
       'app.appnm as appnm'
     ].join(',')).page(1, 20).countSelect().then(function(){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT c.channel_id as id,c.name as name,c.identifier as identifier,app.app_id as app_id,app.app_name as app_name,app.appnm as appnm FROM think_user AS c LEFT JOIN `think_product.app` AS app ON c.`channel_id`=app.`app_id` LIMIT 0,20");
+      assert.equal(sql, "SELECT c.channel_id as id,c.name as name,c.identifier as identifier,app.app_id as app_id,app.app_name as app_name,app.appnm as appnm FROM think_user AS c LEFT JOIN think_product.app AS `app` ON `c`.`channel_id` = `app`.`app_id` LIMIT 0,20");
       done();
     })
   })
