@@ -215,7 +215,8 @@ export default class extends Base {
 
     await this.db().add(parsedData, options, replace);
     let insertId = parsedData[this.pk] = this.db().getLastInsertId();
-    await this.afterAdd(parsedData, options);
+    let copyData = think.extend({}, data, parsedData, {[this.pk]: insertId});
+    await this.afterAdd(copyData, options);
     return insertId;
   }
   /**
@@ -311,7 +312,7 @@ export default class extends Base {
     }
 
     let rows = await this.db().update(parsedData, options);
-    let copyData = think.extend({}, parsedData);
+    let copyData = think.extend({}, data, parsedData);
     await this.afterUpdate(copyData, options);
     return rows;
   }
