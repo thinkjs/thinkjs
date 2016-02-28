@@ -352,9 +352,9 @@ export default class {
         process.exit();
       }
     });
-    // process.on('unhandledRejection', err => {
-    //   think.log(err);
-    // });
+    process.on('unhandledRejection', err => {
+      //think.log(err);
+    });
   }
   /**
    * start
