@@ -421,35 +421,66 @@ export default class extends think.base {
    * @param  {Object} data []
    * @return {}      []
    */
-  beforeAdd(data){
+  beforeAdd(data, options, schema){
     
     //for addMany invoked
     if(think.isArray(data)){
       return data.map(item => {
-        return this.beforeAdd(item);
+        return this.beforeAdd(item, options);
       });
     }
 
     let ret = {};
+    let extRet = {};
+    schema = schema || this.schema;
     //fields in schema
-    for(let field in this.schema){
-      let _default = this.schema[field].default;
+    for(let field in schema){
+      let fieldSchema = schema[field];
+      let _default = fieldSchema.default;
+      //default value is setted
       if(!think.isTrueEmpty(_default)){
         ret[field] = {
           value: data[field],
           default: _default
         };
+      }else{
+        if(this._isSubSchema(fieldSchema)){
+          extRet[field] = this.beforeAdd(data[field] || {}, options, fieldSchema);
+        }
       }
     }
     for(let field in data){
-      if(!ret[field]){
+      if(!ret[field] && !extRet[field]){
         ret[field] = {
           value: data[field]
         };
       }
     }
     ret = Validator.values(ret);
+    if(!think.isEmpty(extRet)){
+      ret = think.extend(ret, extRet);
+    }
     return ret;
+  }
+  /**
+   * check is sub schema
+    // meta: {
+    //   createAt: {
+    //     default: ()=>new Date()
+    //   },
+    //   updateAt: {
+    //     default: ()=>new Date()
+    //   }
+    // }
+   * @param  {Mixed}  schema []
+   * @return {Boolean}        []
+   */
+  _isSubSchema(schema){
+    if(!schema || !think.isObject(schema)){
+      return false;
+    }
+    let keys = Object.keys(schema);
+    return keys.length && keys.every(key => think.isObject(schema[key]));
   }
   /**
    * after add
@@ -472,7 +503,7 @@ export default class extends think.base {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  beforeUpdate(data){
+  beforeUpdate(data, options, schema){
     //check property readonlyFields
     if(!think.isEmpty(this.readonlyFields)){
       let ret = {};
@@ -485,23 +516,44 @@ export default class extends think.base {
     }
 
     let ret = {};
+    let extRet = {};
+    schema = schema || this.schema;
+
     for(let field in data){
-      let schema = this.schema[field];
-      if(!schema || !schema.readonly){
+      let fieldSchema = schema[field];
+      if(!fieldSchema){
         ret[field] = {value: data[field]};
+      }else{
+        if(this._isSubSchema(fieldSchema)){
+          let result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
+          if(!think.isEmpty(result)){
+            extRet[field] = result;
+          }
+        }else if(!fieldSchema.readonly){
+          ret[field] = {value: data[field]};
+        }
       }
     }
-    for(let field in this.schema){
-      let item = this.schema[field];
-      let _default = item.default;
-      if(!think.isTrueEmpty(_default) && !item.readonly && item.update){
+
+    for(let field in schema){
+      let fieldSchema = schema[field];
+      let _default = fieldSchema.default;
+      if(!think.isTrueEmpty(_default) && !fieldSchema.readonly && fieldSchema.update){
         ret[field] = {
           value: data[field],
           default: _default
         };
+      }else if(this._isSubSchema(fieldSchema)){
+        let result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
+        if(!think.isEmpty(result)){
+          extRet[field] = result;
+        }
       }
     }
     ret = Validator.values(ret);
+    if(!think.isEmpty(extRet)){
+      ret = think.extend(ret, extRet);
+    }
     return ret;
   }
   /**

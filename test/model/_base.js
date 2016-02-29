@@ -558,6 +558,192 @@ describe('model/_base.js', function(){
     var data = instance.beforeAdd({username: 'welefen'});
     assert.deepEqual(data, {name: 'welefen', username: 'welefen'});
   })
+   it('beforeAdd, has depth 1', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          default: () => 1
+        },
+        updateAt: {
+          default: () => 2
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen'});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt":1,"updateAt":2}});
+  })
+   it('beforeAdd, has depth 2', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          default: () => 1
+        },
+        updateAt: {
+          default: () => 2
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      createAt: 3
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt":3,"updateAt":2}});
+  })
+    it('beforeAdd, has depth 3', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          default: () => 1
+        },
+        updateAt: {
+          default: () => 2
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      createAt: 3,
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt":3,"updateAt":4}});
+  })
+  it('beforeAdd, has depth 3', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          default: () => 1
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt":1,"updateAt":4}});
+  })
+  it('beforeAdd, has depth 4', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          default: () => 1
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      createAt: 5,
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt":5,"updateAt":4}});
+  })
+  it('beforeAdd, has depth 5', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          
+        },
+        updateAt: {
+
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      createAt: 5,
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt":5,"updateAt":4}});
+  })
+  it('beforeAdd, has depth 6', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          xxx: {
+            default: () => 20
+          }
+        },
+        updateAt: {
+
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt": {xxx: 20},"updateAt":4}});
+  })
+  it('beforeAdd, has depth 7', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      },
+      meta: {
+        createAt: {
+          xxx: {
+            default: () => 20
+          }
+        },
+        updateAt: {
+
+        }
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      createAt: {
+        yyy: 5
+      },
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt": {xxx: 20, yyy: 5},"updateAt":4}});
+  })
+  it('beforeAdd, has depth 8', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      name: {
+        type: 'string',
+        default: function(){return this.username}
+      }
+    }
+    var data = instance.beforeAdd({username: 'welefen', meta: {
+      createAt: {
+        yyy: 5
+      },
+      updateAt: 4
+    }});
+    assert.deepEqual(data, {"name":"welefen","username":"welefen","meta":{"createAt": {yyy: 5},"updateAt":4}});
+  })
    it('beforeUpdate, emtpy', function(){
     var instance = new Base('user', think.config('db'));
     instance.schema = {
@@ -593,7 +779,7 @@ describe('model/_base.js', function(){
     var data = instance.beforeUpdate({name: 0});
     assert.deepEqual(data, {name: 1});
   })
-   it('beforeUpdate, update true, readonly true', function(){
+  it('beforeUpdate, update true, readonly true', function(){
     var instance = new Base('user', think.config('db'));
     instance.schema = {
       name: {
@@ -606,7 +792,7 @@ describe('model/_base.js', function(){
     var data = instance.beforeUpdate({});
     assert.deepEqual(data, {});
   })
-   it('beforeUpdate, readonly true', function(){
+  it('beforeUpdate, readonly true', function(){
     var instance = new Base('user', think.config('db'));
     instance.schema = {
       name: {
@@ -617,7 +803,88 @@ describe('model/_base.js', function(){
     var data = instance.beforeUpdate({name: 'welefen'});
     assert.deepEqual(data, {});
   })
-   it('beforeUpdate, readonlyFields', function(){
+
+  it('beforeUpdate, has depth 1', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      meta: {
+        createAt: {
+          default: () => 111,
+          update: true
+        }
+      }
+    }
+    var data = instance.beforeUpdate({name: 'welefen'});
+    assert.deepEqual(data, { name: 'welefen', meta: { createAt: 111 } });
+  });
+  it('beforeUpdate, has depth 2', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      meta: {
+        createAt: {
+          default: () => 111,
+          readonly: true
+        }
+      }
+    }
+    var data = instance.beforeUpdate({
+      name: 'welefen', 
+      meta: {
+        createAt: 444
+      }
+    });
+    assert.deepEqual(data, { name: 'welefen' });
+  });
+  it('beforeUpdate, has depth 3', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      meta: {
+        createAt: {
+          default: () => 111,
+          readonly: true
+        },
+        updateAt: {
+          default: () => 222,
+          update: true
+        }
+      }
+    }
+    var data = instance.beforeUpdate({
+      name: 'welefen', 
+      meta: {
+        createAt: 444
+      }
+    });
+    assert.deepEqual(data, { name: 'welefen', meta: {updateAt: 222} });
+  });
+
+  it('beforeUpdate, has depth 4', function(){
+    var instance = new Base('user', think.config('db'));
+    instance.schema = {
+      meta: {
+        createAt: {
+          default: () => 111,
+          readonly: true
+        },
+        updateAt: {
+          default: () => 222,
+          update: true
+        }
+      }
+    }
+    var data = instance.beforeUpdate({
+      name: 'welefen', 
+      meta: {
+        createAt: 444,
+        updateAt: 555
+      }
+    });
+    assert.deepEqual(data, { name: 'welefen', meta: {updateAt: 555} });
+  });
+
+
+
+  it('beforeUpdate, readonlyFields', function(){
     var instance = new Base('user', think.config('db'));
     instance.readonlyFields = ['name']
     var data = instance.beforeUpdate({name: 'welefen'});
