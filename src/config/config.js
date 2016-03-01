@@ -28,7 +28,6 @@ let config = {
 
   route_on: true,
 
-  log_pid: false,
   log_request: false,
 
   log_error: true,

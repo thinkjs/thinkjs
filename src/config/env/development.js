@@ -23,7 +23,6 @@ let configs = {
 if(think.cli){
   configs = think.extend(configs, {
     auto_reload: false,
-    log_pid: false,
     process_timeout: 0
   });
 }
