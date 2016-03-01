@@ -30,6 +30,8 @@ let config = {
 
   log_pid: false,
   log_request: false,
+
+  log_error: true,
   
   create_server: undefined,
   output_content: undefined,

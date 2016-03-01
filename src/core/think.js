@@ -953,7 +953,8 @@ think.statusAction = async (status, http, log) => {
   }
   http._error = true;
 
-  if(log){
+  //@TODO move log error to error controller
+  if(log && think.config('log_error') !== false){
     think.log(http.error);
   }
 
