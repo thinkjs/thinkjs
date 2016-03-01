@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
