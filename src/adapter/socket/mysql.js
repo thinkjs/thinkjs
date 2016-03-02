@@ -43,15 +43,13 @@ export default class extends Base {
     let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
     if (this.pool) {
-      return think.await(str, () => {
-        let fn = think.promisify(this.pool.getConnection, this.pool);
-        let promise = fn().catch(err => {
-          this.close();
-          return Promise.reject(err);
-        });
-        let err = new Error(str);
-        return think.error(promise, err);
+      let fn = think.promisify(this.pool.getConnection, this.pool);
+      let promise = fn().catch(err => {
+        this.close();
+        return Promise.reject(err);
       });
+      let err = new Error(str);
+      return think.error(promise, err);
     }
 
     let mysql = await think.npm('mysql');
