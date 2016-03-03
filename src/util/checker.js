@@ -59,11 +59,17 @@ export default {
     }
     let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
     let dependencies = think.extend({}, data.dependencies);
+    //only merge devDependencies in development env
     if(think.env === 'development'){
       dependencies = think.extend(dependencies, data.devDependencies);
     }
+    //package alias
+    let pkgAlias = {
+      'babel-runtime': 'babel-runtime/helpers/inherits'
+    }
     let pkgPath = `${think.ROOT_PATH}${think.sep}node_modules${think.sep}`;
     for(let pkg in dependencies){
+      pkg = pkgAlias[pkg] || pkg;
       if(think.isDir(`${pkgPath}${pkg}`)){
         continue;
       }
