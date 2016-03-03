@@ -572,6 +572,7 @@ think._http = (data = {}) => {
   };
   let empty = () => {};
   let res = {
+    statusCode: 200,
     setTimeout: empty,
     end: data.end || data.close || empty,
     write: data.write || data.send || empty,
