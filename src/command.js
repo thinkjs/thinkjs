@@ -269,7 +269,7 @@ let _copyWwwFiles = () => {
     '<mode>': mode
   });
 
-  let ROOT_PATH = cwd + '/' + projectRootPath + '/www';
+  let ROOT_PATH = projectRootPath + '/www';
   copyFile('nginx.conf', projectRootPath + '/nginx.conf', {
     '<ROOT_PATH>': ROOT_PATH
   });
