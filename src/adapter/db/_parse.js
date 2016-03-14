@@ -512,6 +512,10 @@ export default class extends think.base {
       return '';
     }
     if (think.isString(group)) {
+      //group may be `date_format(create_time,'%Y-%m-%d')`
+      if(group.indexOf('(') !== -1){
+        return ' GROUP BY ' + group;
+      }
       group = group.split(/\s*,\s*/);
     }
     let result = group.map(item => {

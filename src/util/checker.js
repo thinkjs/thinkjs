@@ -66,7 +66,7 @@ export default {
     //package alias
     let pkgAlias = {
       'babel-runtime': 'babel-runtime/helpers/inherits'
-    }
+    };
     let pkgPath = `${think.ROOT_PATH}${think.sep}node_modules${think.sep}`;
     for(let pkg in dependencies){
       pkg = pkgAlias[pkg] || pkg;

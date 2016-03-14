@@ -225,6 +225,11 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseGroup('name');
     assert.equal(data, ' GROUP BY `name`');
   })
+  it('parseGroup, name', function(){
+    var instance = new Parse();
+    var data = instance.parseGroup("date_format(create_time,'%Y-%m-%d')");
+    assert.equal(data, " GROUP BY date_format(create_time,'%Y-%m-%d')");
+  })
   it('parseGroup, name,title', function(){
     var instance = new Parse();
     var data = instance.parseGroup('name, title');
