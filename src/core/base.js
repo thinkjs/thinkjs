@@ -34,6 +34,10 @@ export default class {
     if (this.__before) {
       await think.co(this.__before(this));
     }
+    //check method is exist
+    if(!this[method]){
+      return Promise.reject(new Error(think.locale('METHOD_NOT_EXIST', method)));
+    }
     let result = await think.co(this[method](...data));
     if (this.__after) {
       await think.co(this.__after(this));
