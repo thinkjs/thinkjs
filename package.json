@@ -9,7 +9,7 @@
   "scripts": {
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 20000 --recursive  -R spec test/",
-    "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/",
+    "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/ --source-maps",
     "watch-compile": "npm run compile -- --watch",
     "watch": "npm run watch-compile",
     "prepublish": "npm run compile",

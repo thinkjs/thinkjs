@@ -126,13 +126,19 @@ export default class {
       filename: file,
       retainLines: retainLines,
       presets: ['es2015-loose', 'stage-1'].concat(this.options.presets || []),
-      plugins: ['transform-runtime'].concat(this.options.plugins || [])
+      plugins: ['transform-runtime'].concat(this.options.plugins || []),
+      sourceMaps: true
     });
     if(!logged && this.options.log){
       think.log(`Compile file ${file}`, 'Babel', startTime);
     }
     think.mkdir(path.dirname(`${this.outPath}${think.sep}${file}`));
-    fs.writeFileSync(`${this.outPath}${think.sep}${file}`, data.code);
+    let basename = path.basename(file);
+    let outputContent = data.code + '\n//# sourceMappingURL=' + basename + '.map';
+    fs.writeFileSync(`${this.outPath}${think.sep}${file}`, outputContent);
+    let relativePath = path.relative(this.outPath + think.sep + file, this.srcPath + think.sep + file);
+    data.map.sources[0] = relativePath;
+    fs.writeFileSync(`${this.outPath}${think.sep}${file}.map`, JSON.stringify(data.map));
   }
   /**
    * src file is deleted, but app file also exist
