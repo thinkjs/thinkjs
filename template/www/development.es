@@ -1,3 +1,4 @@
+require('source-map-support').install();
 var thinkjs = require('thinkjs');
 var path = require('path');
 
@@ -13,7 +14,6 @@ var instance = new thinkjs({
 
 //compile src/ to app/
 instance.compile({
-  retainLines: true, 
   log: true
 });
 
