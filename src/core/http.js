@@ -572,12 +572,8 @@ export default class {
         errmsg = errno;
         errno = error.default_errno;
       }
-      // if(!think.isString(errmsg)){
-      //   data = errmsg;
-      //   errmsg = '';
-      // }
       //read errmsg from config/locale/[lang].js
-      if(errmsg === undefined){
+      if(!errmsg){
         errmsg = this.locale(errno) || '';
       }
       obj = {
