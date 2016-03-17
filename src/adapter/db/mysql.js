@@ -36,7 +36,7 @@ export default class extends Base {
         'name': item.Field,
         'type': item.Type,
         'required': item.Null === '',
-        'default': item.Default,
+        //'default': item.Default,
         'primary': item.Key === 'PRI',
         'unique': item.Key === 'UNI',
         'auto_increment': item.Extra.toLowerCase() === 'auto_increment'

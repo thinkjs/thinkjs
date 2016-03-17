@@ -39,7 +39,7 @@ describe('adapter/db/mysql.js', function(){
       return Promise.resolve(data);
     }
     instance.getSchema('user').then(function(data){
-      assert.deepEqual(data, { id:  { name: 'id',    type: 'int(11) unsigned',    required: false,    default: null,    primary: true,    unique: false,    auto_increment: true }, name:  { name: 'name',    type: 'varchar(255)',    required: false,    default: '',    primary: false,    unique: false,    auto_increment: false }, title:  { name: 'title',    type: 'varchar(255)',    required: false,    default: '',    primary: false,    unique: false,    auto_increment: false } })
+      assert.deepEqual(data, { id:  { name: 'id',    type: 'int(11) unsigned',    required: false,     primary: true,    unique: false,    auto_increment: true }, name:  { name: 'name',    type: 'varchar(255)',    required: false,       primary: false,    unique: false,    auto_increment: false }, title:  { name: 'title',    type: 'varchar(255)',    required: false,       primary: false,    unique: false,    auto_increment: false } })
       done();
     })
   })

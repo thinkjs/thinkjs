@@ -76,7 +76,7 @@ describe('adapter/db/sqlite', function(){
       return Promise.resolve([]);
     }
     instance.getSchema('user').then(function(data){
-      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false}})
+      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"primary":false,"auto_increment":false,"unique":false},"pwd":{"name":"pwd","type":"TEXT","required":true,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"primary":false,"auto_increment":false,"unique":false}})
       done();
     })
   })
@@ -100,7 +100,7 @@ describe('adapter/db/sqlite', function(){
       return Promise.resolve([]);
     }
     instance.getSchema('user').then(function(data){
-      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"default":null,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":true},"pwd":{"name":"pwd","type":"TEXT","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"default":null,"primary":false,"auto_increment":false,"unique":false}});
+      assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"primary":false,"auto_increment":false,"unique":true},"pwd":{"name":"pwd","type":"TEXT","required":true,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"primary":false,"auto_increment":false,"unique":false}});
       done();
     })
   })

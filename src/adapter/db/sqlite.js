@@ -51,7 +51,7 @@ export default class extends Base {
         name: item.name,
         type: item.type,
         required: !!item.notnull,
-        default: item.dflt_value,
+        //default: item.dflt_value,
         primary: !!item.pk,
         auto_increment: false,
         unique: !!(!item.pk && indexes[item.name] && indexes[item.name].unique)

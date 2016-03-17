@@ -261,7 +261,7 @@ describe('model/base.js', function(){
   })
   it('getSchema', function(done){
     instance.getSchema().then(function(data){
-      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: null,     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
+      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,    primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,          primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,          primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,          primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
@@ -269,13 +269,13 @@ describe('model/base.js', function(){
     instance.getSchema().then(function(){
       return instance.getSchema();
     }).then(function(data){
-      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false, default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: null,     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
+      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,          primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,          primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,          primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
   it('getSchema, type', function(done){
     return instance.getSchema('think_type').then(function(data){
-      assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,    default: null,    primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false } })
+      assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,        primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,        primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,        primary: false,    unique: false,    auto_increment: false } })
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_type`');
       done();
     })
