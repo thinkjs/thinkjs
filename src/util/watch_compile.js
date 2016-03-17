@@ -185,7 +185,7 @@ export default class {
     let appFiles = think.getFiles(this.outPath, true);
     let changedFiles = this.getSrcDeletedFiles(files, appFiles);
 
-    if(!this.compiledErrorFiles.length){
+    if(think.compileError && !this.compiledErrorFiles.length){
       think.compileError = null;
     }
 
@@ -218,13 +218,15 @@ export default class {
         
         this.compiledMtime[file] = mTime;
 
+        let index = this.compiledErrorFiles.indexOf(file);
         if(ret){
-          let index = this.compiledErrorFiles.indexOf(file);
           if(index > -1){
             this.compiledErrorFiles.splice(index, 1);
           }
         }else{
-          this.compiledErrorFiles.push(file);
+          if(index === -1){
+            this.compiledErrorFiles.push(file);
+          }
         }
       }
     });
