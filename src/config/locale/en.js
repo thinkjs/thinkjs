@@ -36,7 +36,7 @@ export default {
   validate_required: '{name} can not be blank',
   validate_contains: '{name} need contains {args}',
   validate_equals: '{name} need match {args}',
-  validate_different: '{name} nedd not match {args}',
+  validate_different: '{name} need not match {args}',
   validate_after: '{name} need a date that\'s after the {args} (defaults to now)',
   validate_alpha: '{name} need contains only letters (a-zA-Z)',
   validate_alphaDash: '{name} need contains only letters and dashes(a-zA-Z_)',

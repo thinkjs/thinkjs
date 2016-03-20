@@ -758,6 +758,22 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, empty, different', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        username: 'string|length:5,16',
+        password: 'string|length:5,16|different:username'
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
   it('parse rules, string, default, object', function(done){
     getInstance({}, {
       _config: think.config(),

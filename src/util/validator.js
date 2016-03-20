@@ -170,7 +170,7 @@ Validator._requiredWithoutAll = (args, data) => {
  * @return {Boolean}       []
  */
 Validator.contains = (value, str) => {
-  return validator.contains(value, str);
+  return !value || validator.contains(value, str);
 };
 /**
  * check if the string matches the comparison.
@@ -179,7 +179,7 @@ Validator.contains = (value, str) => {
  * @return {Boolean}            []
  */
 Validator.equals = (value, comparison) => {
-  return validator.equals(value, comparison);
+  return !value || validator.equals(value, comparison);
 };
 /**
  * parse equal args
@@ -197,14 +197,14 @@ Validator._equals = (args, data) => {
  * @return {Boolean}            []
  */
 Validator.equalsValue = (value, comparison) => {
-  return validator.equals(value, comparison);
+  return !value || validator.equals(value, comparison);
 };
 /**
  * check if the string not matches the comparison.
  * @type {Boolean}
  */
 Validator.different = (value, comparison) => {
-  return value !== comparison;
+  return !value || value !== comparison;
 };
 /**
  * parse different args
@@ -527,7 +527,7 @@ Validator.int = (value, min, max) => {
  * @return {Boolean}       []
  */
 Validator.min = (value, min) => {
-  return validator.isInt(value, {
+  return !value || validator.isInt(value, {
     min: min | 0
   });
 };
@@ -538,7 +538,7 @@ Validator.min = (value, min) => {
  * @return {Boolean}       []
  */
 Validator.max = (value, max) => {
-  return validator.isInt(value, {
+  return !value || validator.isInt(value, {
     min: 0,
     max: max | 0
   });

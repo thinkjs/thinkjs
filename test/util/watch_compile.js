@@ -76,7 +76,7 @@ describe('watch_compile', function(){
     var instance = new Compile(srcPath, outPath, {retainLines: true});
     var result = instance.compileByBabel('let a = 1', 'a.js');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content, '"use strict";var a = 1;\n//# sourceMappingURL=a.js.map');
+    assert.equal(content, '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
     think.rmdir(outPath).then(done);
   })
   it('compileByBabel, show log', function(done){
@@ -88,7 +88,7 @@ describe('watch_compile', function(){
     var instance = new Compile(srcPath, outPath, {retainLines: true, log: true});
     var result = instance.compileByBabel('let a = 1', 'a.js');
     var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content, '"use strict";var a = 1;\n//# sourceMappingURL=a.js.map');
+    assert.equal(content, '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
     muk.restore();
     think.rmdir(outPath).then(function(){
       done();
@@ -254,7 +254,7 @@ describe('watch_compile', function(){
     fs.writeFileSync(srcPath + think.sep + 'b.js', 'var a =1');
     instance.compile(true);
     var content = fs.readFileSync(outPath + think.sep + 'b.js', 'utf8');
-    assert.equal(content, '"use strict";var a = 1;\n//# sourceMappingURL=b.js.map')
+    assert.equal(content, '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=b.js.map')
     Promise.all([
       think.rmdir(srcPath),
       think.rmdir(outPath)
