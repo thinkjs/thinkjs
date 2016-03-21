@@ -552,6 +552,59 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, different, with clean rules 1', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 30,
+        suredy: 30
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        suredy: 'required|int|different:welefen'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.suredy.length > 0, true);
+      done();
+    })
+  })
+  it('parse rules, different, with clean rules 2', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        suredy: 'requiredWithout:welefen'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.suredy.length > 0, true);
+      done();
+    })
+  })
+  it('parse rules, different, with clean rules 3', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 'wwww',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        suredy: 'requiredWithout:welefen'
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
+
   it('parse rules, after', function(done){
     getInstance({}, {
       _config: think.config(),

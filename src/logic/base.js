@@ -77,6 +77,26 @@ export default class extends think.controller.base {
     return result;
   }
   /**
+   * merge clean rules(only value)
+   * @param  {Object} rules []
+   * @return {Object}       []
+   */
+  _mergeCleanRules(rules){
+    let listData = [this.post(), this.get()];
+    let methods = ['post', 'get'];
+    listData.forEach((item, index) => {
+      for(let key in item){
+        if(!rules[key]){
+          rules[key] = {
+            value: item[key],
+            _method: methods[index]
+          };
+        }
+      }
+    });
+    return rules;
+  }
+  /**
    * validate data
    * this.validate({
    *   welefen: 'required|length:4,20|alpha',
@@ -92,6 +112,8 @@ export default class extends think.controller.base {
       return true;
     }
     rules = this._parseValidateData(rules);
+    rules = this._mergeCleanRules(rules);
+
     let methods = {};
     for(let name in rules){
       methods[name] = rules[name]._method;

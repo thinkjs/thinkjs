@@ -40,7 +40,7 @@ Validator.requiredIf = (value, anotherField, ...values) => {
  */
 Validator._requiredIf = (args, data) => {
   let arg0 = args[0];
-  args[0] = data[arg0].value;
+  args[0] = data[arg0] ? data[arg0].value : '';
   return args;
 };
 /**
@@ -88,7 +88,7 @@ Validator.requiredWith = (value, ...anotherFields) => {
  */
 Validator._requiredWith = (args, data) => {
   return args.map(item => {
-    return data[item].value;
+    return data[item] ? data[item].value : '';
   });
 };
 /**
@@ -188,7 +188,8 @@ Validator.equals = (value, comparison) => {
  * @return {Array}      []
  */
 Validator._equals = (args, data) => {
-  return [data[args[0]].value];
+  let item = data[args[0]];
+  return [item ? item.value : ''];
 };
 /**
  * check if the string matches the comparison.
