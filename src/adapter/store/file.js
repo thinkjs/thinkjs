@@ -4,6 +4,12 @@ import fs from 'fs';
 import path from 'path';
 
 /**
+ * lock files
+ * @type {Object}
+ */
+let lockFiles = {};
+
+/**
  * file store class
  */
 export default class extends think.adapter.base {
@@ -18,7 +24,7 @@ export default class extends think.adapter.base {
     }, config);
 
     if(!this.config.path){
-      throw new Error('path must be defined.');
+      throw new Error('config.path must be set');
     }
 
     if(!think.isDir(this.config.path)){
@@ -26,29 +32,43 @@ export default class extends think.adapter.base {
     }
   }
   /**
+   * get file path
+   * @param  {String} key []
+   * @return {String}     []
+   */
+  getFilePath(key){
+    return this.config.path + path.sep + key;
+  }
+  /**
    * get data
    * @param  {String} key []
-   * @return {Promise}     []
+   * @return {Promise}    []
    */
-  get(key){
-    let filepath = this.config.path + path.sep + key;
-    if(!think.isFile(filepath)){
+  async get(key){
+    let filePath = this.getFilePath(key);
+    if(!think.isFile(filePath)){
       return Promise.resolve();
     }
-    return think.promisify(fs.readFile, fs)(filepath, {encoding: 'utf8'});
+
+    await lockFiles[filePath];
+    return think.promisify(fs.readFile, fs)(filePath, {encoding: 'utf8'});
   }
   /**
    * set file content
    * @param {String} key     []
    * @param {String} content []
    */
-  set(key, content){
-    let filepath = this.config.path + path.sep + key;
-    think.mkdir(path.dirname(filepath));
+  async set(key, content){
+    let filePath = this.getFilePath(key);
+    think.mkdir(path.dirname(filePath));
     let fn = think.promisify(fs.writeFile, fs);
-    return fn(filepath, content).then(() => {
-      think.chmod(filepath);
+
+    let promise = fn(filePath, content).then(() => {
+      think.chmod(filePath);
+      delete lockFiles[filePath];
     });
+    lockFiles[filePath] = promise;
+    return promise;
   }
   /**
    * delete file
@@ -56,7 +76,7 @@ export default class extends think.adapter.base {
    * @return {Promise}     []
    */
   delete(key){
-    let filepath = this.config.path + path.sep + key;
+    let filepath = this.getFilePath(key);
     if(!think.isFile(filepath)){
       return Promise.resolve();
     }
