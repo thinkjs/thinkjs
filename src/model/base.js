@@ -254,7 +254,7 @@ export default class extends Base {
     });
     data = await Promise.all(promises);
     await this.db().addMany(data, options, replace);
-    let insertId = this.db().getLastInsertId() - data.length + 1;
+    let insertId = this.db().getLastInsertId();
     let insertIds = [];
     promises = data.map((item, i) => {
       let id = insertId + i;

@@ -620,7 +620,7 @@ describe('model/base.js', function(){
       name: 'name2',
       title: 'title2'
     }]).then(function(data){
-      assert.deepEqual(data, [ 564, 565 ]);
+      assert.deepEqual(data, [ 565, 566 ]);
       var sql = instance.getLastSql();
       assert.equal(sql, "INSERT INTO `think_user`(`title`) VALUES ('title1'),('title2')");
       done();
@@ -634,7 +634,7 @@ describe('model/base.js', function(){
       name: 'name2',
       title: 'title2'
     }], true).then(function(data){
-      assert.deepEqual(data, [ 342, 343 ]);
+      assert.deepEqual(data, [ 343, 344 ]);
       var sql = instance.getLastSql();
       assert.equal(sql, "REPLACE INTO `think_user`(`title`) VALUES ('title1'),('title2')");
       done();
