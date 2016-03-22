@@ -272,7 +272,8 @@ export default class extends Parse {
    */
   aggregate(table, options){
     return this.collection(table).then(collection => {
-      return collection.aggregate(options);
+      let fn = think.promisify(collection.aggregate, collection);
+      return fn(options);
     });
   }
   /**
