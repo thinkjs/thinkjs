@@ -155,6 +155,10 @@ export default class extends think.model.base {
       
       switch(item.type){
         case think.model.BELONG_TO:
+          opts = think.extend(opts, {
+            key: opts.model.getModelName() + '_id',
+            fKey: 'id' 
+          }, item);
           return this._getBelongsToRelation(data, opts, options);
         case think.model.HAS_MANY:
           return this._getHasManyRelation(data, opts, options);
@@ -188,8 +192,6 @@ export default class extends think.model.base {
    * @return {Promise}         []
    */
   async _getBelongsToRelation(data, mapOpts/*, options*/){
-    mapOpts.key = mapOpts.model.getModelName() + '_id';
-    mapOpts.fKey = await mapOpts.model.getPk();
     let where = this.parseRelationWhere(data, mapOpts);
     let mapData = await mapOpts.model.where(where).select();
     return this.parseRelationData(data, mapData, mapOpts);
