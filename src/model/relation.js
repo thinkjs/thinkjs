@@ -366,11 +366,15 @@ export default class extends think.model.base {
       if (this._relationName !== true && this._relationName.indexOf(opts.name) === -1) {
         return;
       }
-      let mapData = data[opts.name];
-      if (think.isEmpty(mapData) && postType !== 'DELETE' || think.isEmpty(data[opts.key])) {
-        return;
+      if(postType === 'DELETE'){
+        opts.data = data;
+      }else{
+        let mapData = data[opts.name];
+        if (think.isEmpty(mapData)) {
+          return;
+        }
+        opts.data = mapData;
       }
-      opts.data = mapData;
       opts.model = this.model(item.model || key).where(item.where);
       switch(item.type){
         case think.model.BELONG_TO:
