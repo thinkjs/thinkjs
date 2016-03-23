@@ -242,7 +242,7 @@ describe('model/relation.js', function(){
     instance._getBelongsToRelation = function(data, opts, options){
       assert.deepEqual(data, [ { name: 1 } ]);
       delete opts.model;
-      assert.deepEqual(opts, {"name":"cate","type":think.model.BELONG_TO,"key":"id","fKey":"user_id","relation":true})
+      assert.deepEqual(opts, {"name":"cate","type":think.model.BELONG_TO,"key":"cate_id","fKey":"id","relation":true})
       return Promise.resolve();
     }
     instance.getRelation([{name: 1}], {}).then(function(data){
