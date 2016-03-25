@@ -12,5 +12,6 @@ export default {
   sockjs: '0.3.15',
   nunjucks: '2.2.0',
   'socket.io': '1.3.7',
-  pg: '4.4.3'
+  pg: '4.4.3',
+  'source-map-support': '0.4.0'
 };

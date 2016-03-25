@@ -85,6 +85,14 @@ export default class {
     return false;
   }
   /**
+   * get relative path
+   * @param  {String} file []
+   * @return {String}      []
+   */
+  getRelationPath(file){
+    return path.relative(this.outPath + think.sep + file, this.srcPath + think.sep + file);
+  }
+  /**
    * typescript compile
    * @return {} []
    */
@@ -92,13 +100,20 @@ export default class {
     let ts = require('typescript');
     let startTime = Date.now();
     let diagnostics = [];
-    let result = ts.transpile(content, {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES6,
-      experimentalDecorators: true,
-      emitDecoratorMetadata: true,
-      allowSyntheticDefaultImports: true
-    }, file, diagnostics);
+    let output = ts.transpileModule(content, {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES6,
+        experimentalDecorators: true,
+        emitDecoratorMetadata: true,
+        allowSyntheticDefaultImports: true,
+        sourceMap: true
+      },
+      fileName: file,
+      reportDiagnostics: !!diagnostics
+    });
+    ts.addRange(diagnostics, output.diagnostics);
+
     //has error
     if(diagnostics.length){
       let firstDiagnostics = diagnostics[0];
@@ -109,15 +124,23 @@ export default class {
     if(this.options.log){
       think.log(`Compile file ${file}`, 'TypeScript', startTime);
     }
+
     file = this.replaceExtName(file, '.js');
-    this.compileByBabel(result, file, true);
+    let sourceMap = JSON.parse(output.sourceMapText);
+    sourceMap.sources[0] = this.getRelationPath(file);
+    sourceMap.sourcesContent = [content];
+    //file value must be equal sources values
+    sourceMap.file = sourceMap.sources[0];
+    delete sourceMap.sourceRoot;
+    this.compileByBabel(output.outputText, file, true, sourceMap);
   }
   /**
    * babel compile
    * @return {} []
    */
-  compileByBabel(content, file, logged){
+  compileByBabel(content, file, logged, orginSourceMap){
     let startTime = Date.now();
+    let relativePath = this.getRelationPath(file);
     //babel not export default property
     //so can not use `import babel from 'babel-core'`
     let babel = require('babel-core');
@@ -125,18 +148,45 @@ export default class {
       filename: file,
       presets: ['es2015-loose', 'stage-1'].concat(this.options.presets || []),
       plugins: ['transform-runtime'].concat(this.options.plugins || []),
-      sourceMaps: true
+      sourceMaps: true,
+      sourceFileName: relativePath
     });
     if(!logged && this.options.log){
       think.log(`Compile file ${file}`, 'Babel', startTime);
     }
     think.mkdir(path.dirname(`${this.outPath}${think.sep}${file}`));
     let basename = path.basename(file);
-    let outputContent = data.code + '\n//# sourceMappingURL=' + basename + '.map';
-    fs.writeFileSync(`${this.outPath}${think.sep}${file}`, outputContent);
-    let relativePath = path.relative(this.outPath + think.sep + file, this.srcPath + think.sep + file);
-    data.map.sources[0] = relativePath;
-    fs.writeFileSync(`${this.outPath}${think.sep}${file}.map`, JSON.stringify(data.map));
+    let prefix = '//# sourceMappingURL=';
+    if(data.code.indexOf(prefix) === -1){
+      data.code = data.code + '\n' + prefix + basename + '.map';
+    }
+    fs.writeFileSync(`${this.outPath}${think.sep}${file}`, data.code);
+    let sourceMap = data.map;
+    //file value must be equal sources values
+    sourceMap.file = sourceMap.sources[0];
+    if(orginSourceMap){
+      sourceMap = this.mergeSourceMap(orginSourceMap, sourceMap);
+    }
+    fs.writeFileSync(`${this.outPath}${think.sep}${file}.map`, JSON.stringify(sourceMap, undefined, 4));
+  }
+  /**
+   * merge source map
+   * @param  {String} content        []
+   * @param  {Object} orginSourceMap []
+   * @param  {Object} sourceMap      []
+   * @return {}                []
+   */
+  mergeSourceMap(orginSourceMap, sourceMap){
+    let {SourceMapGenerator, SourceMapConsumer} = require('source-map');
+    sourceMap.file = sourceMap.file.replace(/\\/g, '/');
+    sourceMap.sources = sourceMap.sources.map(filePath => {
+      return filePath.replace(/\\/g, '/');
+    });
+    var generator = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(sourceMap));
+    generator.applySourceMap(new SourceMapConsumer(orginSourceMap));
+    sourceMap = JSON.parse(generator.toString());
+
+    return sourceMap;
   }
   /**
    * src file is deleted, but app file also exist

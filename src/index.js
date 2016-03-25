@@ -432,7 +432,22 @@ export default class {
     let instance = new WatchCompile(srcPath, outPath, options, this.compileCallback);
     instance.run();
 
-    think.autoCompile = true; 
+    think.autoCompile = true;
+    
+    this.sourceMapSupport(true);
+  }
+  /**
+   * source map support
+   * @param  {} flag []
+   * @return {}      []
+   */
+  async sourceMapSupport(flag){
+    let support = await think.npm('source-map-support');
+    let options = {
+      environment: 'node',
+      emptyCacheBetweenOperations: flag
+    };
+    return support.install(options);
   }
   /**
    * pre require

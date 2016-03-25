@@ -1,5 +1,3 @@
-require('source-map-support').install();
-
 var thinkjs = require('thinkjs');
 var path = require('path');
 
