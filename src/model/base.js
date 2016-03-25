@@ -454,7 +454,7 @@ export default class extends Base {
       options.limit = 1;
     }
     let data = await this.db().select(options);
-    let multi = field.indexOf(',') > -1;
+    let multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
     if (multi) {
       let fields = field.split(/\s*,\s*/);
       let result = {};
