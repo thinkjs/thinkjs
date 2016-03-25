@@ -9,7 +9,8 @@
   "dependencies": {
     "thinkjs": "2.1.x",
     "babel-runtime": "6.x.x",
-    "source-map-support": "0.4.0"
+    "source-map-support": "0.4.0",
+    "source-map": "0.5.3"
   },
   "devDependencies": {
     "typescript": "next",
