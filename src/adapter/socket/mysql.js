@@ -28,6 +28,12 @@ export default class extends Base {
     }, config);
     this.config.port = this.config.port || 3306;
 
+    //rename encoding to charset
+    if(!this.config.charset && this.config.encoding){
+      this.config.charset = this.config.encoding;
+      delete this.config.encoding;
+    }
+
     this.pool = null;
   }
   /**
