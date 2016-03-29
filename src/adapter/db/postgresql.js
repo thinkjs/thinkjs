@@ -89,4 +89,23 @@ export default class extends Base {
     }
     return ' LIMIT ' + (limit[0] | 0);
   }
+  /**
+   * parse value
+   * @param  {Mixed} value []
+   * @return {Mixed}       []
+   */
+  parseValue(value){
+    if (think.isString(value)) {
+      value = '\'' + this.escapeString(value) + '\'';
+    }else if(think.isArray(value)){
+      if (/^exp$/.test(value[0])) {
+        value = value[1];
+      }else{
+        value = value.map(item => this.parseValue(item));
+      }
+    }else if (value === null) {
+      value = 'null';
+    }
+    return value;
+  }
 }
