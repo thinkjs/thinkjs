@@ -1120,6 +1120,14 @@ describe('model/base.js', function(){
       done();
     })
   })
+  it('distinct with count', function(done){
+    instance.count('distinct name').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT COUNT(distinct name) AS think_count FROM `think_user` LIMIT 1");
+      //assert.equal(data, 1000);
+      done();
+    })
+  })
   it('after', function(){
     muk.restore();
   })
