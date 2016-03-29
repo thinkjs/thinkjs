@@ -648,6 +648,7 @@ think.session = http => {
   }
 
   let sessionCookie = cookie;
+  let newCookie = false;
   //generate session cookie when cookie is not set
   if (!cookie) {
     let options = sessionOptions.cookie || {};
@@ -659,6 +660,7 @@ think.session = http => {
     }
     http._cookie[name] = sessionCookie;
     http.cookie(name, cookie, options);
+    newCookie = true;
   }
 
   let type = sessionOptions.type || 'memory';
@@ -670,7 +672,8 @@ think.session = http => {
   }
   
   let conf = think.parseConfig(sessionOptions, {
-    cookie: sessionCookie
+    cookie: sessionCookie,
+    newCookie: newCookie
   });
   let cls = think.adapter('session', type);
   let session = new cls(conf);

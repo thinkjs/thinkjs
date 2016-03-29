@@ -25,6 +25,7 @@ export default class extends think.adapter.base {
 
     this.timeout = options.timeout;
     this.cookie = options.cookie;
+    this.newCookie = options.newCookie;
     this.path = options.path || path.normalize(os.tmpdir() + path.sep + 'thinkjs');
     this.path_depth = options.path_depth || 1;
 
@@ -52,6 +53,10 @@ export default class extends think.adapter.base {
    * @return {} []
    */
   async getInitData(){
+    //when session cookie is not exist, return direct
+    if(this.newCookie){
+      return {};
+    }
     let filepath = this.getFilepath();
     //ignore error
     let data = await think.await(`session_${this.cookie}`, () => {
