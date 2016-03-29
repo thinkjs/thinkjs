@@ -103,6 +103,8 @@ export default class extends Base {
       }else{
         value = value.map(item => this.parseValue(item));
       }
+    }else if(think.isBoolean(value)){
+      value = value ? 'true' : 'false';
     }else if (value === null) {
       value = 'null';
     }
