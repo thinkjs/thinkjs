@@ -44,7 +44,8 @@ export default class extends think.controller.base {
 
 ## 特性
 
-* 支持使用 ES2015/2016 全部特性来开发项目
+* 支持使用 ES2015+ 全部特性来开发项目
+* 支持断点调试 ES2015+ 项目
 * 支持使用 TypeScript 开发项目
 * 支持多种项目结构和多种项目环境
 * 支持多级 Controller

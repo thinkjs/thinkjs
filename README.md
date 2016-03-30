@@ -42,8 +42,9 @@ With the help of Babel compiling, we can use the ES2015/2016 features boldly, an
 
 ## Features
 
-* Developing projects using all the new features of ES2015/2016.
+* Developing projects using all the new features of ES2015+.
 * Auto compiling & auto hot reload when file changed, no need to restart Node.js server.
+* Supporting debug with ES2015+.
 * Supporting TypeScript.
 * Supporting various project construct forms and environments.
 * Supporting MySQL, MongoDB, PostgreSQL and SQLite databases.
