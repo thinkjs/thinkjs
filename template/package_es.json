@@ -9,7 +9,7 @@
     "watch": "npm run watch-compile"
   },
   "dependencies": {
-    "thinkjs": "2.1.x",
+    "thinkjs": "2.2.x",
     "babel-runtime": "6.x.x",
     "source-map-support": "0.4.0"
   },
