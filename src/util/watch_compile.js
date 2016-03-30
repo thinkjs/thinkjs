@@ -90,7 +90,10 @@ export default class {
    * @return {String}      []
    */
   getRelationPath(file){
-    return path.relative(this.outPath + think.sep + file, this.srcPath + think.sep + file);
+    //use dirname to resolve file path in source-map-support
+    //so must use dirname in here
+    let pPath = path.dirname(this.outPath + think.sep + file);
+    return path.relative(pPath, this.srcPath + think.sep + file);
   }
   /**
    * typescript compile
