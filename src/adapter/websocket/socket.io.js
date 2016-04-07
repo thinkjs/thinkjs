@@ -33,7 +33,39 @@ export default class extends Base {
     }
 
     //get message type
-    let messages = think.extend({}, this.config.messages);
+    //let messages = think.extend({}, this.config.messages);
+    let messages = this.config.messages;
+    if(think.isArray(messages)){
+      messages.forEach(v=>{
+        let sc = (v.namespace)?io.of(v.namespace):io
+        this.registerSocket(sc,v)
+      })
+    }else{
+      let sc = (v.namespace)?io.of(v.namespace):io
+      this.registerSocket(sc,messages)
+    }
+
+  }
+
+  /**
+   * register namespace of socket , and support multi socket connect
+   * eg:
+   * export default {
+    messages:
+        [
+            {
+                namespace:'/payCount',
+                open: 'analysis/erp_pay/open',
+                close: 'analysis/erp_pay/close',
+                day: 'analysis/erp_pay/day',
+                updateFromMq: 'analysis/erp_pay/updateFromMq',
+            }
+        ]
+};
+   * @param io
+   * @param messages
+     */
+  registerSocket(io,messages){
     let msgKeys = Object.keys(messages);
     let open = messages.open;
     delete messages.open;
