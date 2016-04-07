@@ -33,18 +33,16 @@ export default class extends Base {
     }
 
     //get message type
-    //let messages = think.extend({}, this.config.messages);
-    let messages = this.config.messages;
+    let messages = think.extend({}, this.config.messages);
     if(think.isArray(messages)){
-      messages.forEach(v=>{
-        let sc = (v.namespace)?io.of(v.namespace):io
-        this.registerSocket(sc,v)
-      })
-    }else{
-      let sc = (v.namespace)?io.of(v.namespace):io
-      this.registerSocket(sc,messages)
+      messages.forEach(v => {
+        let sc = v.namespace ? io.of(v.namespace) : io;
+        this.registerSocket(sc, v);
+      });
+    }else {
+      let sc = messages && messages.namespace ? io.of(messages.namespace) : io;
+      this.registerSocket(sc, messages);
     }
-
   }
 
   /**
@@ -61,11 +59,11 @@ export default class extends Base {
                 updateFromMq: 'analysis/erp_pay/updateFromMq',
             }
         ]
-};
+    };
    * @param io
    * @param messages
      */
-  registerSocket(io,messages){
+  registerSocket(io, messages){
     let msgKeys = Object.keys(messages);
     let open = messages.open;
     delete messages.open;
