@@ -34,17 +34,11 @@ export default class extends Base {
 
     //get message type
     //let messages = think.extend({}, this.config.messages);
-    let messages = this.config.messages;
-    if(think.isArray(messages)){
-      messages.forEach(v=>{
-        let sc = (v.namespace)?io.of(v.namespace):io
-        this.registerSocket(sc,v)
-      })
-    }else{
+    let messages = think.isArray(this.config.messages)?this.config.messages:[this.config.messages];
+    messages.forEach(v=>{
       let sc = (v.namespace)?io.of(v.namespace):io
-      this.registerSocket(sc,messages)
-    }
-
+      this.registerSocket(sc,v)
+    })
   }
 
   /**
