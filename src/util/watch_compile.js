@@ -274,7 +274,7 @@ export default class {
           if(index > -1){
             this.compiledErrorFiles.splice(index, 1);
           }
-        }else{
+        }else if(ret === false){
           if(index === -1){
             this.compiledErrorFiles.push(file);
           }
