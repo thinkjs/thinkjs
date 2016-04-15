@@ -176,6 +176,7 @@ export default class extends Base {
       this.where({[pk]: data[pk]});
       delete data[pk];
     }
+    data = await this.beforeUpdate(data, options);
     let result = await this.db().update(data, options);
     await this.afterUpdate(data, options);
     return result.result.nModified || 0;
