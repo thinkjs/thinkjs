@@ -28,6 +28,9 @@ import './think_cache.js';
 import './think_data.js';
 
 
+colors.enabled = true;
+
+
 /**
  * global think variable
  * @type {Object}
