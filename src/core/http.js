@@ -83,7 +83,7 @@ export default class {
     this.controller = '';
     this.action = '';
 
-    this.payload = ''; //request payload
+    this.payload = null; //request payload, Buffer
 
     //optimize for homepage request
     if(this.req.url === '/'){
@@ -129,33 +129,37 @@ export default class {
   }
   /**
    * get payload data
-   * @return {Promise} []
+   * @param  {String} encoding [payload data encoding]
+   * @return {}          []
    */
-  getPayload(){
+  getPayload(encoding = 'utf8'){
 
-    if(this.payload){
-      return Promise.resolve(this.payload);
-    }
+    let _getPayload = () => {
+      if(this.payload){
+        return Promise.resolve(this.payload);
+      }
+      if(!this.req.readable){
+        return Promise.resolve(new Buffer(0));
+      }
+      let buffers = [];
+      let deferred = think.defer();
+      this.req.on('data', chunk => {
+        buffers.push(chunk);
+      });
+      this.req.on('end', () => {
+        this.payload = Buffer.concat(buffers);
+        deferred.resolve(this.payload);
+      });
+      this.req.on('error', () => {
+        this.res.statusCode = 400;
+        this.end();
+      });
+      return deferred.promise;
+    };
 
-    //payload data has readed by third middleware
-    if(!this.req.readable){
-      return Promise.resolve('');
-    }
-
-    let buffers = [];
-    let deferred = think.defer();
-    this.req.on('data', chunk => {
-      buffers.push(chunk);
+    return _getPayload().then(buffer => {
+      return encoding === true ? buffer : buffer.toString(encoding);
     });
-    this.req.on('end', () => {
-      this.payload = Buffer.concat(buffers).toString();
-      deferred.resolve(this.payload);
-    });
-    this.req.on('error', () => {
-      this.res.statusCode = 400;
-      this.end();
-    });
-    return deferred.promise;
   }
   /**
    * parse payload from request
