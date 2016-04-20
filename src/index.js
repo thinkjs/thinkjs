@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 
-//rewite promise, bluebird is more faster
+//rewrite promise, bluebird is more faster
 require('babel-runtime/core-js/promise').default = require('bluebird');
 global.Promise = require('bluebird');
 

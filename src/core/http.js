@@ -84,6 +84,7 @@ export default class {
     this.action = '';
 
     this.payload = null; //request payload, Buffer
+    this.tpl_file = ''; //template file path
 
     //optimize for homepage request
     if(this.req.url === '/'){
