@@ -133,7 +133,7 @@ export default class extends Base {
     if(!request.res){
         http = await think.http(url);
     }else{
-        let http = await think.http(request, think.extend({}, request.res));
+        http = await think.http(request, think.extend({}, request.res));
     }
     http.data = data;
     http.socket = socket;
