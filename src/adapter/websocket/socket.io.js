@@ -33,16 +33,15 @@ export default class extends Base {
     }
 
     //get message type
-    //let messages = think.extend({}, this.config.messages);
     let messages = think.isArray(this.config.messages) ? this.config.messages : [this.config.messages];
-    messages.forEach(v => {
-      let sc = v.namespace ? io.of(v.namespace) : io
-      this.registerSocket(sc,v)
-    })
+    messages.forEach((v = {}) => {
+      let sc = v.namespace ? io.of(v.namespace) : io;
+      this.registerSocket(sc, v);
+    });
   }
 
   /**
-   * register namespace of socket , and support multi socket connect
+   * register namespace of socket, and support multi socket connect
    * eg:
    * export default {
     messages:

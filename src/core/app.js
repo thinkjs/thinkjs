@@ -215,7 +215,7 @@ export default class extends think.http.base {
       server = http.createServer(callback);
       server.listen(port, host);
     }
-    think.server = server//暴露server 让更多控件可以使用
+    think.server = server;
     //start websocket
     let websocket = think.parseConfig(think.config('websocket'));
     if(websocket.on){
