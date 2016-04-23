@@ -123,8 +123,13 @@ export default class extends Base {
       url = `/${url}`;
     }
     request.url = url;
-
-    let http = await think.http(request, think.extend({}, request.res));
+    let http;
+    //socket.io c++ client发过来的requet没有res
+    if(!request.res){
+        http = await think.http(url);
+    }else{
+        http = await think.http(request, think.extend({}, request.res));
+    }
     http.data = data;
     http.socket = socket;
     http.io = this.io;
