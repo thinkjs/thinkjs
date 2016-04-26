@@ -17,8 +17,8 @@ export default class extends Base {
 
     //set io adapter, must be a function
     //http://socket.io/docs/using-multiple-nodes/
-    if(this.config.adapter){
-      io.adapter(this.config.adapter());
+    if(this.config.adp){
+      io.adapter(this.config.adp());
     }
 
     //Sets the path v under which engine.io and the static files will be served. Defaults to /socket.io.
