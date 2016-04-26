@@ -48,6 +48,7 @@ export default class extends think.adapter.base {
     //when session cookie is not exist, return direct
     if(this.newCookie){
       this.data = {};
+      await this.model.add({cookie: this.cookie, expire: Date.now() + this.timeout * 1000});
       return this.data;
     }
     //let data = await this.model.where({cookie: this.cookie}).find();
