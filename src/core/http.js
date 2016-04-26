@@ -496,7 +496,7 @@ export default class {
     if (name === undefined) {
       return this._cookie;
     }else if (value === undefined) {
-      return this._cookie[name] || '';
+      return this._cookie[name] || this._sendCookie[name] || '';
     }
     //set cookie
     if (typeof options === 'number') {
