@@ -63,7 +63,10 @@ export default class {
     this._cookie = {};
     this._sendCookie = {};
     this._get = {};
-
+    
+    //store all other properties
+    this._prop = {};
+    
     this._contentTypeIsSend = false; //aleady send content-type header
     this._isResource = false; //is resource request
     this._isEnd = false; //request is end
@@ -104,6 +107,16 @@ export default class {
         this._get = think.extend({}, query);
       } 
     }
+  }
+  /**
+   * get or set property
+   */
+  prop(name, value){
+    if(value === undefined){
+      return this._prop[name];
+    }
+    this._prop[name] = value;
+    return this;
   }
   /**
    * exec
