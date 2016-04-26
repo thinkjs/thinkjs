@@ -13,7 +13,8 @@ let configs = {
   },
   db: {
     log_sql: true,
-    log_connect: true
+    log_connect: true,
+    schema_force_update: true
   },
   post: {
     log_error: true

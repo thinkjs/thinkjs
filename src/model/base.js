@@ -16,10 +16,16 @@ export default class extends Base {
   async getSchema(table){
     table = table || this.getTableName();
     let storeKey = `${this.config.type}_${table}_schema`;
-    let schema = thinkCache(thinkCache.TABLE, storeKey);
-    if(!schema){
+    let schema = {};
+    //force update table schema
+    if(this.config.schema_force_update){
       schema = await this.db().getSchema(table);
-      thinkCache(thinkCache.TABLE, storeKey, schema);
+    }else{
+      schema = thinkCache(thinkCache.TABLE, storeKey);
+      if(!schema){
+        schema = await this.db().getSchema(table);
+        thinkCache(thinkCache.TABLE, storeKey, schema);
+      }
     }
     if(table !== this.getTableName()){
       return schema;
