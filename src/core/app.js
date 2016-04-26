@@ -166,7 +166,7 @@ export default class extends think.http.base {
   execError(err){
     let http = this.http;
     http.error = err;
-    return think.statusAction(500, http, true);
+    return think.statusAction(500, http, true).catch(() => {});
   }
   /**
    * run
