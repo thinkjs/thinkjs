@@ -33,6 +33,11 @@ export default class extends Base {
       this.config.charset = this.config.encoding;
       delete this.config.encoding;
     }
+    //node-mysql2 not support utf8 or utf-8
+    let charset = (this.config.charset || '').toLowerCase();
+    if(charset === 'utf8' || charset === 'utf-8'){
+      this.config.charset = 'UTF8_GENERAL_CI';
+    }
 
     this.pool = null;
   }
@@ -58,7 +63,7 @@ export default class extends Base {
       return think.error(promise, err);
     }
 
-    let mysql = await think.npm('mysql');
+    let mysql = await think.npm('mysql2');
 
     if (config.connectionLimit) {
       this.logConnect(str, 'mysql');
