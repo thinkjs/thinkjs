@@ -272,8 +272,9 @@ export default class extends Base {
    */
   async delete(options){
     options = await this.parseOptions(options);
+    options = await this.beforeDelete(options);
     let rows = await this.db().delete(options);
-    await this.afterDelete(options.where, options);
+    await this.afterDelete(options);
     return rows;
   }
   /**
@@ -362,6 +363,7 @@ export default class extends Base {
    */
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
+    options = await this.beforeFind(options);
     let data = await this.db().select(options);
     return this.afterFind(data[0] || {}, options);
   }
@@ -371,6 +373,7 @@ export default class extends Base {
    */
   async select(options){
     options = await this.parseOptions(options);
+    options = await this.beforeSelect(options);
     let data = await this.db().select(options);
     return this.afterSelect(data, options);
   }

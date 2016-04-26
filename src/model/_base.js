@@ -491,6 +491,12 @@ export default class extends think.base {
     return data;
   }
   /**
+   * before delete
+   */
+  beforeDelete(options){
+    return options;
+  }
+  /**
    * after delete
    * @param  {Mixed} data []
    * @return {}      []
@@ -566,11 +572,23 @@ export default class extends think.base {
     return data;
   }
   /**
+   * before find
+   */
+  beforeFind(options){
+    return options;
+  }
+  /**
    * after find
    * @return {} []
    */
   afterFind(data){
     return data;
+  }
+  /**
+   * before select
+   */
+  beforeSelect(options){
+    return options;
   }
   /**
    * after select

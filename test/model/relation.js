@@ -358,7 +358,7 @@ describe('model/relation.js', function(){
     instance.postRelation = function(type){
       assert.equal(type, 'DELETE')
     }
-    instance.afterDelete();
+    instance.afterDelete({});
   })
   it('afterUpdate', function(){
     var instance = new Relation('user', think.config('db'));

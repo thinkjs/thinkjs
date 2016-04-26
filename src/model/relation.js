@@ -329,8 +329,8 @@ export default class extends think.model.base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  afterDelete(data, options){
-    return this.postRelation('DELETE', data, options);
+  afterDelete(options = {}){
+    return this.postRelation('DELETE', options.where, options);
   }
   /**
    * after update
