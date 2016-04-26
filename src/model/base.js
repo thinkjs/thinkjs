@@ -226,7 +226,7 @@ export default class extends Base {
     return insertId;
   }
   /**
-   * then add
+   * add data when not exist
    * @param  {Object} data       []
    * @param  {Object} where      []
    * @return {}            []
@@ -238,6 +238,18 @@ export default class extends Base {
     }
     let insertId = await this.add(data);
     return {[this.pk]: insertId, type: 'add'};
+  }
+  /**
+   * update data when exist, otherwise add data
+   * @return {id}
+   */
+  async thenUpdate(data, where){
+    let findData = await this.where(where).find();
+    if(think.isEmpty(findData)){
+      return this.add(data);
+    }
+    await this.where(where).update(data);
+    return findData[this.pk];
   }
   /**
    * add multi data
