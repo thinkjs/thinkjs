@@ -110,4 +110,38 @@ export default class extends Base {
     }
     return value;
   }
+  /**
+   * query string
+   * @param  string str
+   * @return promise
+   */
+  query(sql){
+    this.sql = sql;
+    return think.await(sql, () => {
+      return this.socket(sql).query(sql).then(data => {
+        return this.bufferToString(data.rows);
+      });
+    });
+  }
+  /**
+   * execute sql
+   * @param  {String} sql []
+   * @return {}     []
+   */
+  execute(sql){
+    this.sql = sql;
+    let insertInto = 'insert into ';
+    let prefix = sql.slice(0, insertInto.length).toLowerCase();
+    let isInsert = false;
+    if(prefix === insertInto){
+      sql += ' RETURNING id';
+      isInsert = true;
+    }
+    return this.socket(sql).execute(sql).then(data => {
+      if(isInsert){
+        this.lastInsertId = data.rows[0].id;
+      }
+      return data.rowCount || 0;
+    });
+  }
 }

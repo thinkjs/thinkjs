@@ -90,7 +90,7 @@ export default class extends Base {
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
-      return data.rows;
+      return data;
     }).catch(err => {
       //when socket is closed, try it
       if(err.message === 'This socket is closed.'){
