@@ -33,8 +33,9 @@ export default class extends Base {
     let auth = '';
 
     this.mongo = mongo;
+    //connect with auth
     if(this.config.user){
-      auth = `${config.user}:${config.pwd}@`;
+      auth = `${config.user}:${config.password}@`;
     }
     // connection options
     // http://mongodb.github.io/node-mongodb-native/2.0/tutorials/urls/
@@ -42,7 +43,18 @@ export default class extends Base {
     if(config.options){
       options = '?' + querystring.stringify(config.options);
     }
-    let str = `mongodb://${auth}${config.host}:${config.port}/${config.name}${options}`;
+
+    //many hosts
+    let hostStr = '';
+    if(think.isArray(config.host)){
+      hostStr = config.host.map((item, i) => {
+        return item + ':' + (config.port[i] || config.port[0]);
+      }).join(',');
+    }else{
+      hostStr = config.host + ':' + config.port;
+    }
+
+    let str = `mongodb://${auth}${hostStr}/${config.database}${options}`;
 
     return think.await(str, () => {
       let fn = think.promisify(mongo.MongoClient.connect, mongo.MongoClient);

@@ -7,12 +7,34 @@
  */
 export default class extends think.controller.base {
   /**
-   * check auth
-   * @return {Promise} []
+   * get validate method
+   * @return {} []
    */
-  // checkAuth(){
-
-  // }
+  _getValidateItemMethod(itemData){
+    let list = ['get', 'post', 'file'];
+    for(let i = 0, length = list.length; i < length; i++){
+      let item = list[i];
+      if(itemData[list[i]]){
+        delete itemData[item];
+        return item;
+      }
+    }
+    //for rest request
+    let method = this._isRest && this._method;
+    if(method){
+      method = this.get(method);
+    }
+    if(!method){
+      method = this.http.method.toLowerCase();
+    }
+    if(method === 'put' || method === 'patch'){
+      return 'post';
+    }
+    if(list.indexOf(method) > -1){
+      return method;
+    }
+    return 'post';
+  }
   /**
    * parse validate data
    * {
@@ -26,86 +48,53 @@ export default class extends think.controller.base {
    */
   _parseValidateData(data = {}){
     let result = {};
+    let allowTypes = ['boolean', 'int', 'float', 'string', 'array', 'object'];
     for(let name in data){
-      let itemData = {};
-      
-      if(think.isString(data[name])){
-        let rules = data[name].split('|');
-        rules.forEach(item => {
-          item = item.trim();
-          if(!item){
-            return;
-          }
-          let pos = item.indexOf(':');
-          if(pos > -1){
-            let name = item.substr(0, pos);
-            let args = item.substr(pos + 1).trim();
-            if(args[0] === '{' || args[0] === '['){
-              args = [(new Function('', `return ${args}`))()];
-            }else if(name !== 'default'){
-              args = args.split(/\s*,\s*/);
-            }
-            itemData[name] = args;
-          }else{
-            itemData[item] = true;
-          }
-        });
+
+      let itemData = data[name];
+      if(think.isString(itemData)){
+        itemData = think.validate.parse(itemData);
       }else{
-        itemData = data[name];
+        itemData = think.extend({}, itemData);
       }
 
-      let method = this.http.method.toLowerCase();
-      if(itemData.get){
-        method = 'get';
-        delete itemData.get;
-      }else if(itemData.file){
-        method = 'file';
-        delete itemData.file;
+      let method = this._getValidateItemMethod(itemData);
+      if(method === 'file'){
+        itemData.object = true;
       }
-      let value = this[method](name);
+      itemData._method = method;
+      itemData.value = this[method](name);
 
-      if(!value && itemData.default){
-        value = itemData.default;
-      }
-      delete itemData.default;
-
-      if(itemData.int && !itemData.array){
-        value = parseInt(value, 10);
-      }else if(itemData.float && !itemData.array){
-        value = parseFloat(value);
-      }else if(itemData.array){
-        if(!think.isArray(value)){
-          value = think.isString(value) ? value.split(/\s*,\s*/) : [value];
-        }
-        value = value.map(itemValue => {
-          if(itemData.int){
-            return parseInt(itemValue, 10);
-          }else if(itemData.float){
-            return parseFloat(itemValue);
-          }
-          return itemValue;
-        });
-      }else if(itemData.boolean){
-        if(!think.isBoolean(value)){
-          value = ['yes', 'on', '1', 'true'].indexOf(value) > -1;
-        }
-      }else if(itemData.object){
-        if(!think.isObject(value)){
-          try{
-            value = JSON.parse(value);
-          }catch(e){
-            value = '';
-          }
-        }
-      }else{
+      let flag = allowTypes.some(item => {
+        return itemData[item];
+      });
+      if(!flag){
         itemData.string = true;
       }
-      //set value to request
-      this[method](name, value);
-      itemData.value = value;
+      
       result[name] = itemData;
     }
     return result;
+  }
+  /**
+   * merge clean rules(only value)
+   * @param  {Object} rules []
+   * @return {Object}       []
+   */
+  _mergeCleanRules(rules){
+    let listData = [this.post(), this.get()];
+    let methods = ['post', 'get'];
+    listData.forEach((item, index) => {
+      for(let key in item){
+        if(!rules[key]){
+          rules[key] = {
+            value: item[key],
+            _method: methods[index]
+          };
+        }
+      }
+    });
+    return rules;
   }
   /**
    * validate data
@@ -117,17 +106,33 @@ export default class extends think.controller.base {
    * @param  {Object} data      []
    * @return {}           []
    */
-  validate(data) {
+  validate(rules) {
     this._validateInvoked = true;
-    if(think.isEmpty(data)){
+    if(think.isEmpty(rules)){
       return true;
     }
-    data = this._parseValidateData(data);
-    let ret = think.validate(data, this.locale());
+    rules = this._parseValidateData(rules);
+    rules = this._mergeCleanRules(rules);
+
+    let methods = {};
+    for(let name in rules){
+      methods[name] = rules[name]._method;
+      delete rules[name]._method;
+    }
+
+    let ret = think.validate(rules, this.locale());
     if(!think.isEmpty(ret)){
       this.assign('errors', ret);
       return false;
     }
+
+    //set values
+    let values = think.validate.values(rules);
+    for(let name in values){
+      let method = methods[name];
+      this[method](name, values[name]);
+    }
+
     return true;
   }
   /**
@@ -142,12 +147,26 @@ export default class extends think.controller.base {
    * @return {} []
    */
   __after(){
+    let error = this.config('error');
+    
+    //check request method
+    let allowMethods = this.allowMethods;
+    if(!think.isEmpty(allowMethods)){
+      if(think.isString(allowMethods)){
+        allowMethods = allowMethods.split(',');
+      }
+      let method = this.http.method.toLowerCase();
+      if(allowMethods.indexOf(method) === -1){
+        return this.fail(error.validate_errno, this.locale('METHOD_NOT_ALLOWED')); 
+      }
+    }
+
+    //check rules
     if(think.isEmpty(this.rules) || this._validateInvoked){
       return;
     }
     let flag = this.validate(this.rules);
     if(!flag){
-      let error = this.config('error');
       return this.fail(error.validate_errno, this.errors());
     }
   }

@@ -14,12 +14,10 @@ export default class extends think.adapter.base {
    * @return {}             []
    */
   parseConfig(defaultConf, extraConf){
-    let config = think.parseConfig(defaultConf, think.config('view'), extraConf);
+    let config = think.parseConfig(think.extend({}, defaultConf, think.config('view'), extraConf));
     //compatibility with view.options
     if(!think.isEmpty(config.options)){
-      think.log(colors => {
-        return colors.yellow('[DEPRECATED]') + ` view.options is deprecated, use view.adapter.${config.type} instead`;
-      });
+      think.log(`view.options is deprecated, use view.adapter.${config.type} instead`, 'WARNING');
       config = think.extend(config, config.options);
     }
     return config;
@@ -39,17 +37,24 @@ export default class extends think.adapter.base {
    * get template file content
    * @return {} []
    */
-  getContent(file){
-    let mTime = fs.statSync(file).mtime.getTime();
+  async getContent(file){
+    let stat = await think.promisify(fs.stat, fs)(file);
+    let mTime = stat.mtime.getTime();
     let fileCache = thinkCache(thinkCache.VIEW_CONTENT, file);
     if(fileCache && fileCache[0] >= mTime){
       return fileCache[1];
     }
-    let content = fs.readFileSync(file, 'utf8');
-    thinkCache(thinkCache.VIEW_CONTENT, file, [mTime, content]);
-    return content;
-    // let fn = think.promisify(fs.readFile, fs);
-    // return fn(file, 'utf8');
+    return think.await(`template_${file}`, () => {
+      let fn = think.promisify(fs.readFile, fs);
+      return fn(file, 'utf8');
+    }).then(content => {
+      //if content is empty, not cached
+      if(!content){
+        return content;
+      }
+      thinkCache(thinkCache.VIEW_CONTENT, file, [mTime, content]);
+      return content;
+    });
   }
   /**
    * run

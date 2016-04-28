@@ -10,9 +10,9 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Mongo = require('../../../lib/adapter/db/mongo.js');
+var Mongo = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter/db/mongo.js'));
 
 describe('adapter/db/mongo', function(){
   it('get instance', function(){

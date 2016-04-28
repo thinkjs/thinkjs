@@ -11,7 +11,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 var MysqlSocket = think.adapter('socket', 'mysql');
 
@@ -102,8 +102,8 @@ describe('adapter/socket/mysql', function(){
         host: 'localhost',
         port: 3306,
         user: 'root',
-        pwd: '123',
-        name: 'thinkjs'
+        password: '123',
+        database: 'thinkjs'
       };
       var socket = new MysqlSocket(config);
       assert.deepEqual(socket.config, {

@@ -1,6 +1,7 @@
 'use strict';
 
 import Base from './base.js';
+import path from 'path';
 
 /**
  * sqlite socket
@@ -17,9 +18,9 @@ export default class extends Base {
     if(config.path === true){
       config.path = ':memory:';
     }else{
-      config.path = config.path || think.getPath(undefined, think.dirname.runtime) + `/sqlite`;
+      config.path = config.path || think.RUNTIME_PATH + path.sep + 'sqlite';
       think.mkdir(config.path);
-      config.path += `/${config.name}.sqlite`;
+      config.path += `${path.sep}${config.database}.sqlite`;
     }
     this.config = config;
   }

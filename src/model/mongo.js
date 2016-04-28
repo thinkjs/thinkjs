@@ -139,6 +139,18 @@ export default class extends Base {
     return {[this.pk]: insertId, type: 'add'};
   }
   /**
+   * update data when exist, otherwise add data
+   * @return {id}
+   */
+  async thenUpdate(data, where){
+    let findData = await this.where(where).find();
+    if(think.isEmpty(findData)){
+      return this.add(data);
+    }
+    await this.where(where).update(data);
+    return findData[this.pk];
+  }
+  /**
    * add multi data
    * @param {Object} data    []
    * @param {} options []
@@ -161,6 +173,7 @@ export default class extends Base {
    */
   async delete(options){
     options = await this.parseOptions(options);
+    options = await this.beforeDelete(options);
     let data = await this.db().delete(options);
     await this.afterDelete(options);
     return data.result.n || 0;
@@ -176,6 +189,7 @@ export default class extends Base {
       this.where({[pk]: data[pk]});
       delete data[pk];
     }
+    data = await this.beforeUpdate(data, options);
     let result = await this.db().update(data, options);
     await this.afterUpdate(data, options);
     return result.result.nModified || 0;
@@ -202,6 +216,7 @@ export default class extends Base {
    */
   async select(options){
     options = await this.parseOptions(options);
+    options = await this.beforeSelect(options);
     let data = await this.db().select(options);
     return this.afterSelect(data, options);
   }
@@ -254,6 +269,7 @@ export default class extends Base {
    */
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
+    options = await this.beforeFind(options);
     let data = await this.db().select(options);
     return this.afterFind(data[0] || {}, options);
   }

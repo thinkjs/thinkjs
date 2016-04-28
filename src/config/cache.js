@@ -1,5 +1,7 @@
 'use strict';
 
+import path from 'path';
+
 /**
  * cache configs
  */
@@ -8,7 +10,7 @@ export default {
   timeout: 6 * 3600, //6 hours
   adapter: {
     file: {
-      path: think.getPath(undefined, think.dirname.runtime) + '/cache',
+      path: think.RUNTIME_PATH + path.sep + 'cache',
       path_depth: 2,
       file_ext: '.json'
     },

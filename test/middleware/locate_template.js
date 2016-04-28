@@ -6,7 +6,7 @@ var muk = require('muk');
 var _http = require('../_http.js');
 
 function execMiddleware(middleware, config, options, data){
-  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
   var req = think.extend({}, _http.req);
   var res = think.extend({}, _http.res);
   return think.http(req, res).then(function(http){
@@ -29,11 +29,11 @@ describe('middleware/locate_template', function(){
     var instance = new Index();
     instance.load();
   })
-  it('mode_mini, file_depr: /', function(done){
-    think.mode = think.mode_mini;
+  it('mode_normal, file_depr: ' + think.sep, function(done){
+    think.mode = think.mode_normal;
     execMiddleware('locate_template', {
       view: {
-        file_depr: '/',
+        file_depr: think.sep,
         file_ext: '.html'
       }
     }, {
@@ -41,17 +41,17 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/group/detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group' + think.sep + 'detail.html');
       done();
     }).catch(function(err){
       console.log(err.stack)
     })
   })
-  it('mode_mini, file_ext: .txt', function(done){
-    think.mode = think.mode_mini;
+  it('mode_normal, file_ext: .txt', function(done){
+    think.mode = think.mode_normal;
     execMiddleware('locate_template', {
       view: {
-        file_depr: '/',
+        file_depr: think.sep,
         file_ext: '.txt'
       }
     }, {
@@ -59,23 +59,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/group/detail.txt');
-      done();
-    })
-  })
-  it('mode_mini', function(done){
-    think.mode = think.mode_mini;
-    execMiddleware('locate_template', {
-      view: {
-        file_depr: '_',
-        file_ext: '.html'
-      }
-    }, {
-      module: 'home',
-      controller: 'group',
-      action: 'detail'
-    }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group' + think.sep + 'detail.txt');
       done();
     })
   })
@@ -91,7 +75,23 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/view/home/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group_detail.html');
+      done();
+    })
+  })
+  it('mode_normal 2', function(done){
+    think.mode = think.mode_normal;
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.html'
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }).then(function(data){
+      assert.equal(data, think.APP_PATH + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -107,7 +107,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -124,7 +124,7 @@ describe('middleware/locate_template', function(){
       action: 'detail',
       _theme: 'color'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/color/home/view/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'color' + think.sep + 'home' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -145,7 +145,7 @@ describe('middleware/locate_template', function(){
       done();
     })
   })
-  it('mode_module, with theme, has templateFile', function(done){
+  it('mode_module, with theme, has templateFile 2', function(done){
     think.mode = think.mode_module;
     execMiddleware('locate_template', {
       view: {
@@ -181,7 +181,7 @@ describe('middleware/locate_template', function(){
         return 'zh-CN'
       }
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/zh-CN/view/home/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'zh-CN' + think.sep + 'view'  + think.sep + 'group_detail.html');
       done();
     })
   })
@@ -198,12 +198,12 @@ describe('middleware/locate_template', function(){
       action: 'detail',
       _theme: 'color'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/color/view/home/group_detail.html');
+      assert.equal(data, think.APP_PATH + think.sep + 'color' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
-  it('mode mini, with theme', function(done){
-    think.mode = think.mode_mini;
+  it('mode_normal, with theme', function(done){
+    think.mode = think.mode_normal;
     execMiddleware('locate_template', {
       view: {
         file_depr: '_',
@@ -215,31 +215,13 @@ describe('middleware/locate_template', function(){
       action: 'detail',
       _theme: 'color'
     }).then(function(data){
-      assert.equal(data, think.APP_PATH + '/color/view/group_detail.html');
-      done();
-    })
-  })
-  it('mode mini, with rootPath', function(done){
-    think.mode = think.mode_mini;
-    var rootPath = __dirname + '/rootPath';
-    execMiddleware('locate_template', {
-      view: {
-        file_depr: '_',
-        file_ext: '.txt',
-        root_path: rootPath
-      }
-    }, {
-      module: 'home',
-      controller: 'group',
-      action: 'detail'
-    }).then(function(data){
-      assert.equal(data, rootPath + '/group_detail.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'color' + think.sep + 'view' + think.sep + 'group_detail.html');
       done();
     })
   })
   it('mode normal, with rootPath', function(done){
     think.mode = think.mode_normal;
-    var rootPath = __dirname + '/rootPath';
+    var rootPath = __dirname + think.sep + 'rootPath';
     execMiddleware('locate_template', {
       view: {
         file_depr: '_',
@@ -251,13 +233,31 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, rootPath + '/home/group_detail.txt');
+      assert.equal(data, rootPath + think.sep + 'group_detail.txt');
+      done();
+    })
+  })
+  it('mode normal, with rootPath 2', function(done){
+    think.mode = think.mode_normal;
+    var rootPath = __dirname + think.sep + 'rootPath';
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.txt',
+        root_path: rootPath
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }).then(function(data){
+      assert.equal(data, rootPath + think.sep  + 'group_detail.txt');
       done();
     })
   })
   it('mode module, with rootPath', function(done){
     think.mode = think.mode_module;
-    var rootPath = __dirname + '/rootPath';
+    var rootPath = __dirname + think.sep + 'rootPath';
     execMiddleware('locate_template', {
       view: {
         file_depr: '_',
@@ -269,7 +269,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }).then(function(data){
-      assert.equal(data, rootPath + '/home/group_detail.txt');
+      assert.equal(data, rootPath + think.sep + 'home' + think.sep + 'group_detail.txt');
       done();
     })
   })
@@ -285,7 +285,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx').then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/group_xxx.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'group_xxx.txt');
       done();
     })
   })
@@ -301,7 +301,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy').then(function(data){
-      assert.equal(data, think.APP_PATH + '/home/view/xxx_yyy.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'xxx_yyy.txt');
       done();
     })
   })
@@ -317,7 +317,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy/zzz').then(function(data){
-      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.txt');
+      assert.equal(data, think.APP_PATH + think.sep + 'home'  + think.sep + 'view' +think.sep + 'xxx' + think.sep + 'yyy_zzz.txt');
       done();
     })
   })
@@ -333,7 +333,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx/yyy/zzz.hhh').then(function(data){
-      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.hhh');
+      assert.equal(data, think.APP_PATH + think.sep  + 'home'  + think.sep + 'view'+ think.sep + 'xxx' + think.sep + 'yyy_zzz.hhh');
       done();
     })
   })
@@ -349,7 +349,7 @@ describe('middleware/locate_template', function(){
       controller: 'group',
       action: 'detail'
     }, 'xxx:yyy:zzz.hhh').then(function(data){
-      assert.equal(data, think.APP_PATH + '/xxx/view/yyy_zzz.hhh');
+      assert.equal(data, think.APP_PATH + think.sep + 'home'  + think.sep + 'view' + think.sep + 'xxx'  + think.sep + 'yyy_zzz.hhh');
       done();
     })
   })
@@ -366,6 +366,44 @@ describe('middleware/locate_template', function(){
       action: 'detail'
     }, '/xxx/yyy/zzz.hhh').then(function(data){
       assert.equal(data, '/xxx/yyy/zzz.hhh');
+      done();
+    })
+  })
+  it('mode module, change module', function(done){
+    think.mode = think.mode_module;
+    var module = think.module;
+    think.module = ['test'];
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.txt',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }, 'test/yyy/zzz.hhh').then(function(data){
+      assert.equal(data, think.APP_PATH + think.sep + 'test' + think.sep + 'view' + think.sep + 'yyy_zzz.hhh');
+      think.module = module;
+      done();
+    })
+  })
+  it('mode module, change module, controller empty', function(done){
+    think.mode = think.mode_module;
+    var module = think.module;
+    think.module = ['test'];
+    execMiddleware('locate_template', {
+      view: {
+        file_depr: '_',
+        file_ext: '.txt',
+      }
+    }, {
+      module: 'home',
+      controller: 'group',
+      action: 'detail'
+    }, 'test/group').then(function(data){
+      assert.equal(data, think.APP_PATH + think.sep + 'home' + think.sep + 'view' + think.sep + 'test_group.txt');
+      think.module = module;
       done();
     })
   })

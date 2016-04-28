@@ -14,6 +14,9 @@ let config = {
   cluster_on: false,
 
   service_on: true, //Service available
+  logic_on: true, //enable logic
+
+  domain_on: false, //use domain
 
   timeout: 120, //120 seconds
 
@@ -25,8 +28,9 @@ let config = {
 
   route_on: true,
 
-  log_pid: false,
   log_request: false,
+
+  log_error: true,
   
   create_server: undefined,
   output_content: undefined,

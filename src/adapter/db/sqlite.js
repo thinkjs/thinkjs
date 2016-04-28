@@ -27,20 +27,22 @@ export default class extends Base {
    * @param  {String} table [table name]
    * @return {Promise}       []
    */
-  async getFields(table){
+  async getSchema(table){
     let fieldPromise = this.query(`PRAGMA table_info( ${table} )`);
-    let indexPromise = this.query(`PRAGMA INDEX_LIST( ${table} )`).then(async list => {
+    let indexPromise = this.query(`PRAGMA INDEX_LIST( ${table} )`).then(list => {
       let indexes = {};
-      let promises = list.map(async item => {
+      let promises = list.map(item => {
         if(item.unique){
-          let list = await this.query(`PRAGMA index_info( ${item.name} )`);
-          list.forEach(item => {
-            indexes[item.name] = {unique: true};
+          return this.query(`PRAGMA index_info( ${item.name} )`).then(data => {
+            data.forEach(item => {
+              indexes[item.name] = {unique: true};
+            });
           });
         }
       });
-      await Promise.all(promises);
-      return indexes;
+      return Promise.all(promises).then(() => {
+        return indexes;
+      });
     });
     let ret = {};
     let [data, indexes] = await Promise.all([fieldPromise, indexPromise]);
@@ -49,7 +51,7 @@ export default class extends Base {
         name: item.name,
         type: item.type,
         required: !!item.notnull,
-        default: item.dflt_value,
+        //default: item.dflt_value,
         primary: !!item.pk,
         auto_increment: false,
         unique: !!(!item.pk && indexes[item.name] && indexes[item.name].unique)

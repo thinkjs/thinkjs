@@ -7,7 +7,7 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-var Limit = require('../../lib/util/parallel_limit.js');
+var Limit = think.safeRequire(path.resolve(__dirname, '../../lib/util/parallel_limit.js'));
 
 describe('await', function(){
   it('init', function(){

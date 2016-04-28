@@ -8,7 +8,7 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-var Base = require('../../lib/middleware/base.js');
+var Base = think.safeRequire(path.resolve(__dirname, '../../lib/middleware/base.js'));
 
 describe('middleware/base', function(){
   before(function(){

@@ -29,11 +29,17 @@ export default class extends think.middleware.base {
    * run
    * @return {Promise} []
    */
-  async run(){
+  run(){
+    this.cleanPathname();
+
     if (!this.config('route_on')) {
       return this.parsePathname();
     }
-    let rules = await think.route();
+
+    let rules = think.route();
+    if(think.isEmpty(rules)){
+      return this.parsePathname();
+    }
     return this.parse(rules);
   }
   /**
@@ -42,7 +48,6 @@ export default class extends think.middleware.base {
    * @return {}        []
    */
   parse(rules){
-    this.cleanPathname();
     if(think.isArray(rules)){
       return this.parseRules(rules);
     }
@@ -94,6 +99,10 @@ export default class extends think.middleware.base {
    */
   cleanPathname(){
     let pathname = this.http.pathname;
+    if(pathname === '/'){
+      this.http.pathname = '';
+      return;
+    }
     if (pathname[0] === '/') {
       pathname = pathname.slice(1);
     }
@@ -103,40 +112,77 @@ export default class extends think.middleware.base {
     this.http.pathname = pathname;
   }
   /**
+   * get module from pathname
+   * @return {String} []
+   */
+  parseModule(){
+    let defaultModule = think.config('default_module');
+    if(think.mode === think.mode_normal){
+      return defaultModule;
+    }
+    let http = this.http;
+    let pathname = http.pathname;
+    let pos = pathname.indexOf('/');
+    let mod = pos === -1 ? pathname : pathname.substr(0, pos);
+    if(this.module){
+      if(this.module === mod){
+        http.pathname = pathname.substr(mod.length + 1);
+      }else {
+        mod = this.module;
+      }
+    }else if (mod && mod !== think.dirname.common && think.module.indexOf(mod) > -1) {
+      http.pathname = pathname.substr(mod.length + 1);
+    }else{
+      mod = '';
+    }
+    return this.getModule(mod);
+  }
+  /**
+   * get controller from pathname
+   * @return {} []
+   */
+  parseController(module){
+    let subControllers = thinkData.subController[module];
+    let http = this.http;
+    let pathname = http.pathname;
+    if(!pathname){
+      return '';
+    }
+    let pos = pathname.indexOf('/');
+    //search sub controller
+    if(pos > -1 && subControllers){
+      for(let i = 0, length = subControllers.length, item; i < length; i++){
+        item = subControllers[i];
+        if(pathname === item || pathname.indexOf(item + '/') === 0){
+          http.pathname = http.pathname.substr(item.length + 1);
+          return item;
+        }
+      } 
+    }
+    let controller = pos === -1 ? pathname : pathname.substr(0, pos);
+    http.pathname = http.pathname.substr(controller.length + 1);
+    return controller;
+  }
+  /**
    * parse pathname
    * @return {} []
    */
-  async parsePathname(){
-    let pathname = this.http.pathname, http = this.http;
-    if (!pathname) {
+  parsePathname(){
+    let http = this.http;
+    if (!http.pathname) {
       this.http.module = this.getModule();
       this.http.controller = this.getController();
       this.http.action = this.getAction();
       return;
     }
-    let paths = pathname.split('/');
-    let module, controller, action;
-
-    if (think.mode !== think.mode_mini) {
-      module = paths[0].toLowerCase();
-      if(this.module){
-        if(this.module === module){
-          paths.shift();
-        }else{
-          module = this.module;
-        }
-      }else if (module && module !== think.dirname.common && think.module.indexOf(module) > -1) {
-        paths.shift();
-      }else{
-        module = '';
-      }
-    }
-    controller = paths.shift();
-    action = paths.shift();
+    let module = this.parseModule();
+    let controller = this.parseController(module);
+    let paths = http.pathname.split('/');
+    let action = paths.shift();
 
     this.parseExtPath(paths);
 
-    this.http.module = this.getModule(module);
+    this.http.module = module; //module not need check
     this.http.controller = this.getController(controller);
     this.http.action = this.getAction(action);
 
@@ -167,7 +213,7 @@ export default class extends think.middleware.base {
     for(let i = 0, name, length = Math.ceil(paths.length) / 2; i < length; i++){
       name = paths[i * 2];
       if(name){
-        this.http._get[name] = paths[i * 2 + 1] || '';
+        this.http._get[name] = decodeURIComponent(paths[i * 2 + 1] || '');
       }
     }
   }
@@ -180,7 +226,7 @@ export default class extends think.middleware.base {
     let pathname = this.http.pathname.split('/');
     rule = rule.split('/');
     let i = 0, length = rule.length, plength = pathname.length, item, pitem;
-    //if rule lenth is more then pathname, it will be false
+    //if rule lenth is more than pathname, it will be false
     if (length > plength) {
       return false;
     }
@@ -281,7 +327,7 @@ export default class extends think.middleware.base {
    * @return {String}        []
    */
    getModule(module){
-    if (!module || think.mode === think.mode_mini) {
+    if (!module || think.mode === think.mode_normal) {
       return think.config('default_module');
     }
     this.checkLowerCase(module);
@@ -296,7 +342,8 @@ export default class extends think.middleware.base {
     if (!controller) {
       return think.config('default_controller');
     }
-    if (/^\w+$/.test(controller)) {
+    //has / in controller
+    if (/^[\w\/]+$/.test(controller)) {
       this.checkLowerCase(controller);
       return controller.toLowerCase();
     }

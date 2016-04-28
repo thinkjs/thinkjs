@@ -11,7 +11,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + think.sep + 'testApp';
 
 describe('adapter/cache/file.js', function() {
   var instance;
@@ -38,9 +38,9 @@ describe('adapter/cache/file.js', function() {
 
   it('get file path', function() {
     var filepath = instance.getFilepath('maxzhang');
-    assert.equal(filepath, 'c/b/cbc21016fc89ec482594a22e03e02834.json');
+    assert.equal(filepath, 'c' + think.sep + 'b' + think.sep + 'cbc21016fc89ec482594a22e03e02834.json');
     filepath = instance.getFilepath('Max Zhang');
-    assert.equal(filepath, '5/e/5e98a6842702de206202d9ddd0a6bbc2.json');
+    assert.equal(filepath, '5' + think.sep + 'e' + think.sep + '5e98a6842702de206202d9ddd0a6bbc2.json');
   });
 
   it('get empty data', function(done) {
@@ -193,7 +193,7 @@ describe('adapter/cache/file.js', function() {
   });
 
   it('custom data timeout', function(done) {
-    var instance = new FileCache(think.extend(think.config('cache'), { timeout: 0.01 }));
+    var instance = new FileCache(think.extend({}, think.config('cache'), { timeout: 0.01 }));
     instance.set('thinkjs3', 'maxzhang', 10).then(function() {
       setTimeout(function() {
         instance.gc();

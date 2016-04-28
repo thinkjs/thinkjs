@@ -1,20 +1,19 @@
 {
   "name": "thinkjs",
-  "description": "ThinkJS - use full ES6/7 features to develop web applications",
-  "version": "2.0.13",
+  "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
+  "version": "2.2.2",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "mocha --reporter spec --timeout 2000 --recursive test/",
-    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/",
-    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "test": "npm run eslint && npm run test-cov",
+    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 50000 --recursive  -R spec test/",
+    "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/ --source-maps",
     "watch-compile": "npm run compile -- --watch",
     "watch": "npm run watch-compile",
     "prepublish": "npm run compile",
-    "eslint": "eslint src/",
-    "test-all": "npm run eslint; npm run test-cov"
+    "eslint": "eslint src/"
   },
   "bin": {
     "thinkjs": "./bin/index.js"
@@ -25,13 +24,13 @@
   }],
   "main": "lib/index.js",
   "dependencies": {
-    "ejs": "2.3.4",
+    "ejs": "2.4.1",
     "multiparty": "4.1.2",
     "mime": "1.3.4",
-    "mysql": "2.9.0",
-    "thinkit": "3.1.0",
-    "babel-runtime": "5.8.25",
-    "babel-core": "5.8.33",
+    "mysql2": "1.0.0-rc.1",
+    "thinkit": "4.8.0",
+    "babel-runtime": "6.6.1",
+    "bluebird": "3.3.5",
     "co": "4.6.0",
     "colors": "1.1.2",
     "validator": "4.2.0",
@@ -41,7 +40,16 @@
     "mocha": "1.20.1",
     "muk": "0.3.1",
     "istanbul": "0.4.0",
-    "babel": "5.8.23"
+    "babel-cli": "6.7.7",
+    "babel-preset-es2015": "6.6.0",
+    "babel-preset-es2015-loose": "7.0.0",
+    "babel-preset-stage-1": "6.5.0",
+    "babel-plugin-transform-runtime": "6.7.5",
+    "eslint": "2.8.0",
+    "babel-eslint": "6.0.4",
+    "typescript": "next",
+    "babel-core": "6.7.7",
+    "source-map": "0.5.3"
   },
   "keywords": [
     "thinkjs",
@@ -57,7 +65,8 @@
     "await",
     "yield",
     "websocket",
-    "generator-function"
+    "generator-function",
+    "typescript"
   ],
   "repository": {
     "type": "git",

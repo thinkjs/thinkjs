@@ -21,7 +21,7 @@ export default class extends think.adapter.base {
    * @return {Object} []
    */
   getRedisInstance(name){
-    let options = this.parseConfig(think.config('redis'), this.options, {
+    let options = think.parseConfig.call(this.options, think.config('redis'), {
       command: name,
       from: 'cache'
     });
@@ -73,8 +73,8 @@ export default class extends think.adapter.base {
    * @param  {...[type]} data []
    * @return {[type]}         []
    */
-  // wrap(command, name, ...data){
-  //   let instance = this.getRedisInstance(command);
-  //   return instance.wrap(command, this.prefix + name, ...data);
-  // }
+  wrap(command, name, ...data){
+    let instance = this.getRedisInstance(command);
+    return instance.wrap(command, this.prefix + name, ...data);
+  }
 }

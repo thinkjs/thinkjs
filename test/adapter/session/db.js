@@ -13,7 +13,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 var DbSession = think.adapter('session', 'db');
 
@@ -21,7 +21,7 @@ describe('adapter/session/db', function(){
   it('get instance, no options', function(){
     var instance = new DbSession();
     assert.equal(instance.gcType, 'session_db');
-    assert.equal(instance.cookie, undefined);
+    assert.deepEqual(instance.cookie, {length: 32});
   })
   it('get instance', function(){
     var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));

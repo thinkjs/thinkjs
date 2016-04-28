@@ -6,29 +6,34 @@ var fs = require('fs');
 var muk = require('muk');
 
 
-for(var filepath in require.cache){
-  delete require.cache[filepath];
-}
+// for(var filepath in require.cache){
+//   delete require.cache[filepath];
+// }
 var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Base = require('../../lib/model/base.js');
-var mysqlSocket = think.adapter('socket', 'mysql');
+var Base;
 
 describe('model/base.js', function(){
   var instance = null;
-  before(function(){
+  it('before', function(){
+    //console.log('base.js')
+    //console.log(path.resolve(__dirname, '../../lib/model/base.js'));
+
+    Base = think.safeRequire(path.resolve(__dirname, '../../lib/model/base.js'));
+    var mysqlSocket = think.adapter('socket', 'mysql');
     instance = new Base('user', think.config('db'));
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){
+
       if (sql === 'SHOW COLUMNS FROM `think_friend`') {
         var data = [
           {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -36,7 +41,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -44,7 +49,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -52,7 +57,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -60,7 +65,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
           {"Field":"flo","Type":"float(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -71,7 +76,7 @@ describe('model/base.js', function(){
         var data = [
           {"Field":"wid","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":""},
           {"Field":"title","Type":"varchar(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
-          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":"1","Extra":""},
+          {"Field":"cate_id","Type":"tinyint(255)","Null":"NO","Key":"MUL","Default":null,"Extra":""},
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
@@ -97,9 +102,9 @@ describe('model/base.js', function(){
         return Promise.resolve({
           insertId: 1000
         });
-      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 897 )"){
+      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 897 ) LIMIT 1"){
         return Promise.resolve([]);
-      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 898 )"){
+      }else if(sql.trim() === "SELECT * FROM `think_user` WHERE ( `id` = 898 ) LIMIT 1"){
         return Promise.resolve([{
           id: 898
         }]);
@@ -189,7 +194,15 @@ describe('model/base.js', function(){
         return Promise.resolve([{
           think_count: 40000
         }])
+      }else if(sql.trim() === "SELECT COUNT(`id`) AS think_count FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_count: 40000
+        }])
       }else if(sql.trim() === "SELECT SUM(id) AS think_sum FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_sum: 1000
+        }])
+      }else if(sql.trim() === "SELECT SUM(`id`) AS think_sum FROM `think_user` LIMIT 1"){
         return Promise.resolve([{
           think_sum: 1000
         }])
@@ -197,7 +210,16 @@ describe('model/base.js', function(){
         return Promise.resolve([{
           think_min: 1000
         }])
+      }else if(sql.trim() === "SELECT MIN(`id`) AS think_min FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_min: 1000
+        }])
       }else if(sql.trim() === "SELECT MAX(id) AS think_max FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_max: 1000
+        }])
+      }
+      else if(sql.trim() === "SELECT MAX(`id`) AS think_max FROM `think_user` LIMIT 1"){
         return Promise.resolve([{
           think_max: 1000
         }])
@@ -206,6 +228,12 @@ describe('model/base.js', function(){
           think_avg: 1000
         }])
       }
+      else if(sql.trim() === "SELECT AVG(`id`) AS think_avg FROM `think_user` LIMIT 1"){
+        return Promise.resolve([{
+          think_avg: 1000
+        }])
+      }
+      //console.log(sql)
       var data = [
         {"id":7565,"title":"title1","cate_id":1,"cate_no":0},
         {"id":7564,"title":"title2","cate_id":2,"cate_no":977},
@@ -220,38 +248,49 @@ describe('model/base.js', function(){
       return Promise.resolve(data);
     })
   })
-  it('getTableFields', function(done){
-    instance.getTableFields().then(function(data){
-      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
+  it('model, dynamic get module', function(done){
+    var model = think.model;
+    think.model = function(name, options, module){
+      assert.equal(name, 'model');
+      assert.equal(module, '');
+    }
+    var instance = new Base('user', think.config('db'));
+    instance.model('model');
+    think.model = model;
+    done();
+  })
+  it('getSchema', function(done){
+    instance.getSchema().then(function(data){
+      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,    primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,          primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,          primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,          primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
-  it('getTableFields, exist', function(done){
-    instance.getTableFields().then(function(){
-      return instance.getTableFields();
+  it('getSchema, exist', function(done){
+    instance.getSchema().then(function(){
+      return instance.getSchema();
     }).then(function(data){
-      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false, default: null,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,     default: null,     primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,     default: '1',     primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,     default: null,     primary: false,     unique: false, auto_increment: false } })
+      assert.deepEqual(data, { wid:{name: 'wid',type: 'int(11) unsigned',required: false,     primary: false,     unique: false,     auto_increment: false },  title:   { name: 'title',     type: 'varchar(255)',     required: false,          primary: false,     unique: true,     auto_increment: false },  cate_id:   { name: 'cate_id',     type: 'tinyint(255)',     required: false,          primary: false,     unique: false,     auto_increment: false },  cate_no:   { name: 'cate_no',     type: 'int(11)',     required: false,          primary: false,     unique: false, auto_increment: false } })
       done();
     })
   })
-  it('getTableFields, type', function(done){
-    return instance.getTableFields('think_type').then(function(data){
-      assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,    default: null,    primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,    default: '1',    primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,    default: null,    primary: false,    unique: false,    auto_increment: false } })
+  it('getSchema, type', function(done){
+    return instance.getSchema('think_type').then(function(data){
+      assert.deepEqual(data, { wid:  { name: 'wid',    type: 'int(11) unsigned',    required: false,    primary: false,    unique: false,    auto_increment: false }, flo:  { name: 'flo',    type: 'float(255)',    required: false,        primary: false,    unique: true,    auto_increment: false }, is_show:  { name: 'is_show',    type: 'bool',    required: false,        primary: false,    unique: false,    auto_increment: false }, cate_no:  { name: 'cate_no',    type: 'int(11)',    required: false,        primary: false,    unique: false,    auto_increment: false } })
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_type`');
       done();
     })
   })
-  it('getTableFields, change pk', function(done){
+  it('getSchema, change pk', function(done){
     var instance = new Base('tag', think.config('db'))
-    return instance.getTableFields('think_tag').then(function(data){
+    return instance.getSchema('think_tag').then(function(data){
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
       assert.equal(instance.pk, 'wid');
       done();
     })
   })
-  it('getTableFields, change pk, getPk', function(done){
+  it('getSchema, change pk, getPk', function(done){
     var instance = new Base('tag', think.config('db'))
-    return instance.getTableFields('think_tag').then(function(data){
+    return instance.getSchema('think_tag').then(function(data){
       return instance.getPk();
     }).then(function(pk){
       //assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
@@ -288,7 +327,7 @@ describe('model/base.js', function(){
   })
   it('parseType', function(done){
     var instance = new Base('tag', think.config('db'));
-    instance.fields = {
+    instance.schema = {
       id: {type: 'int'},
       bid: {type: 'bigint'},
       cid: {type: 'double'},
@@ -380,6 +419,159 @@ describe('model/base.js', function(){
       done();
     })
   })
+  it('add data, has default', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: 'haha'
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES ('haha','test')");
+      done();
+    })
+  })
+  it('add data, has default null', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: null
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES ('test')");
+      done();
+    })
+  })
+  it('add data, has default empty', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: ''
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES ('test')");
+      done();
+    })
+  })
+  it('add data, has default undefined', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: undefined
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`title`) VALUES ('test')");
+      done();
+    })
+  })
+  it('add data, has default 0', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: 0
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (0,'test')");
+      done();
+    })
+  })
+  it('add data, has default null, value 0', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: null
+      }
+    }
+    instance.add({
+      name: 0,
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (0,'test')");
+      done();
+    })
+  })
+  it('add data, has default empty, value 0', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: ''
+      }
+    }
+    instance.add({
+      name: 0,
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (0,'test')");
+      done();
+    })
+  })
+  it('add data, has default 0, value 1', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: 0
+      }
+    }
+    instance.add({
+      name: 1,
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES (1,'test')");
+      done();
+    })
+  })
+  it('add data, has default function', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: function(){return 'haha'}
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES ('haha','test')");
+      done();
+    })
+  })
+  it('add data, has default function, this', function(done){
+    var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.schema = {
+      name: {
+        default: function(){return this.title + '_name'}
+      }
+    }
+    instance.add({
+      title: 'test'
+    }).then(function(insertId){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "INSERT INTO `think_user` (`name`,`title`) VALUES ('test_name','test')");
+      done();
+    })
+  })
   it('add data, has data', function(done){
     instance.add({
       name: 'welefen',
@@ -428,7 +620,7 @@ describe('model/base.js', function(){
       name: 'name2',
       title: 'title2'
     }]).then(function(data){
-      assert.deepEqual(data, [ 564, 565 ]);
+      assert.deepEqual(data, [ 565, 566 ]);
       var sql = instance.getLastSql();
       assert.equal(sql, "INSERT INTO `think_user`(`title`) VALUES ('title1'),('title2')");
       done();
@@ -442,7 +634,7 @@ describe('model/base.js', function(){
       name: 'name2',
       title: 'title2'
     }], true).then(function(data){
-      assert.deepEqual(data, [ 342, 343 ]);
+      assert.deepEqual(data, [ 343, 344 ]);
       var sql = instance.getLastSql();
       assert.equal(sql, "REPLACE INTO `think_user`(`title`) VALUES ('title1'),('title2')");
       done();
@@ -489,6 +681,8 @@ describe('model/base.js', function(){
       assert.equal(sql, "UPDATE `think_user` SET `title`='title1' WHERE ( `id` = 401 )")
       instance.readonlyFields = [];
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('update, missing where condition', function(done){
@@ -582,7 +776,7 @@ describe('model/base.js', function(){
   })
   it('find', function(done){
     instance.where({id: 100}).find().then(function(data){
-      assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 )");
+      assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1");
       assert.deepEqual(data, { id: 7565, title: 'title1', cate_id: 1, cate_no: 0 })
       done();
     })
@@ -625,6 +819,8 @@ describe('model/base.js', function(){
       var sql = instance.getLastSql();
       assert.equal(sql, "INSERT INTO `think_user` (`wid`,`title`,`cate_id`,`cate_no`) SELECT * FROM `think_tag` WHERE ( `name` = 'test' )")
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     })
   })
   it('select add, instance', function(done){
@@ -669,9 +865,54 @@ describe('model/base.js', function(){
       done();
     })
   })
-  it('count select, with count, beyond pages', function(done){
+  it('count select, with count, beyond pages 2', function(done){
     instance.where({name: 'test'}).page(300).countSelect(false).then(function(data){
       assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":40,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]})
+      done();
+    })
+  })
+  it('count, with join', function(done){
+    instance.alias('c').join({
+      table: 'product.app',
+      join: 'left',
+      as : 'app',
+      on : ['channel_id', 'app_id']
+    }).field([
+      'c.channel_id as id',
+      'c.name as name',
+      'c.identifier as identifier',
+      'app.app_id as app_id',
+      'app.app_name as app_name',
+      'app.appnm as appnm'
+    ].join(',')).page(1, 20).count('c.channel_id').then(function(){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT COUNT(c.channel_id) AS think_count FROM think_user AS c LEFT JOIN think_product.app AS `app` ON `c`.`channel_id` = `app`.`app_id` LIMIT 1")
+      done();
+    })
+  })
+   it('countSelect, with join 2', function(done){
+    instance.alias('c').join({
+      table: 'product.app',
+      join: 'left',
+      as : 'app',
+      on : ['channel_id', 'app_id']
+    }).field([
+      'c.channel_id as id',
+      'c.name as name',
+      'c.identifier as identifier',
+      'app.app_id as app_id',
+      'app.app_name as app_name',
+      'app.appnm as appnm'
+    ].join(',')).page(1, 20).countSelect().then(function(){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT c.channel_id as id,c.name as name,c.identifier as identifier,app.app_id as app_id,app.app_name as app_name,app.appnm as appnm FROM think_user AS c LEFT JOIN think_product.app AS `app` ON `c`.`channel_id` = `app`.`app_id` LIMIT 0,20");
+      done();
+    })
+  })
+   it('count select, with group', function(done){
+    instance.where({name: 'test'}).page(1).group('name').countSelect(false).then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT * FROM `think_user` WHERE ( `name` = 'test' ) GROUP BY `name` LIMIT 0,10")
       done();
     })
   })
@@ -731,8 +972,15 @@ describe('model/base.js', function(){
   it('sum, with field', function(done){
     instance.sum('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT SUM(id) AS think_sum FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT SUM(`id`) AS think_sum FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('sum, with field key', function(done){
+    instance.sum('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT SUM(`key`) AS think_sum FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -747,8 +995,15 @@ describe('model/base.js', function(){
   it('min, with field', function(done){
     instance.min('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT MIN(id) AS think_min FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT MIN(`id`) AS think_min FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('min, with field key', function(done){
+    instance.min('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT MIN(`key`) AS think_min FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -763,8 +1018,15 @@ describe('model/base.js', function(){
   it('max, with field', function(done){
     instance.max('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT MAX(id) AS think_max FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT MAX(`id`) AS think_max FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('max, with field key', function(done){
+    instance.max('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT MAX(`key`) AS think_max FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -779,8 +1041,15 @@ describe('model/base.js', function(){
   it('avg, with field', function(done){
     instance.avg('id').then(function(data){
       var sql = instance.getLastSql();
-      assert.equal(sql, "SELECT AVG(id) AS think_avg FROM `think_user` LIMIT 1");
+      assert.equal(sql, "SELECT AVG(`id`) AS think_avg FROM `think_user` LIMIT 1");
       assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('avg, with field key', function(done){
+    instance.avg('key').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT AVG(`key`) AS think_avg FROM `think_user` LIMIT 1");
       done();
     })
   })
@@ -851,7 +1120,15 @@ describe('model/base.js', function(){
       done();
     })
   })
-  after(function(){
+  it('distinct with count', function(done){
+    instance.count('distinct name').then(function(data){
+      var sql = instance.getLastSql();
+      assert.equal(sql, "SELECT COUNT(distinct name) AS think_count FROM `think_user` LIMIT 1");
+      //assert.equal(data, 1000);
+      done();
+    })
+  })
+  it('after', function(){
     muk.restore();
   })
 })

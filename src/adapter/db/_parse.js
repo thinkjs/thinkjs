@@ -436,14 +436,24 @@ export default class extends think.base {
               joinStr += joinType + table;
             } else {
               table = options.tablePrefix + table;
-              joinStr += joinType + '`' + table + '`';
+              if(table.indexOf('.') === -1){
+                joinStr += joinType + '`' + table + '`';
+              }else{
+                joinStr += joinType + table;
+              }
             }
             if (item.as) {
-              joinStr += ' AS ' + item.as;
+              joinStr += ' AS `' + item.as + '`';
             }
             if (item.on) {
               let mTable = options.alias || options.table;
+              if(mTable.indexOf('.') === -1){
+                mTable = '`' + mTable + '`';
+              }
               let jTable = item.as || table;
+              if(jTable.indexOf('.') === -1){
+                jTable = '`' + jTable + '`';
+              }
               if (think.isObject(item.on)) {
                 let where = [];
                 for(let key in item.on){
@@ -459,7 +469,7 @@ export default class extends think.base {
                   item.on = item.on.split(/\s*,\s*/);
                 }
                 joinStr += ' ON ' + (item.on[0].indexOf('.') > -1 ? item.on[0] : (mTable + '.`' + item.on[0] + '`'));
-                joinStr += '=' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.`' + item.on[1] + '`'));
+                joinStr += ' = ' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.`' + item.on[1] + '`'));
               }
             }
           });
@@ -502,6 +512,10 @@ export default class extends think.base {
       return '';
     }
     if (think.isString(group)) {
+      //group may be `date_format(create_time,'%Y-%m-%d')`
+      if(group.indexOf('(') !== -1){
+        return ' GROUP BY ' + group;
+      }
       group = group.split(/\s*,\s*/);
     }
     let result = group.map(item => {

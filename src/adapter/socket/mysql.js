@@ -14,15 +14,12 @@ export default class extends Base {
    */
   init(config = {}){
     super.init(config);
+    
     //alias password config
-    if (config.pwd) {
-      config.password = config.pwd;
-      delete config.pwd;
-    }
-    if (config.name) {
-      config.database = config.name;
-      delete config.name;
-    }
+    // if (config.pwd) {
+    //   config.password = config.pwd;
+    //   delete config.pwd;
+    // }
     //merge config
     this.config = think.extend({
       host: '127.0.0.1',
@@ -30,6 +27,17 @@ export default class extends Base {
       password: ''
     }, config);
     this.config.port = this.config.port || 3306;
+
+    //rename encoding to charset
+    if(!this.config.charset && this.config.encoding){
+      this.config.charset = this.config.encoding;
+      delete this.config.encoding;
+    }
+    //node-mysql2 not support utf8 or utf-8
+    let charset = (this.config.charset || '').toLowerCase();
+    if(charset === 'utf8' || charset === 'utf-8'){
+      this.config.charset = 'UTF8_GENERAL_CI';
+    }
 
     this.pool = null;
   }
@@ -43,21 +51,19 @@ export default class extends Base {
     }
 
     let config = this.config;
-    let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}`;
+    let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
     if (this.pool) {
-      return think.await(str, () => {
-        let fn = think.promisify(this.pool.getConnection, this.pool);
-        let promise = fn().catch(err => {
-          this.close();
-          return Promise.reject(err);
-        });
-        let err = new Error(str);
-        return think.error(promise, err);
+      let fn = think.promisify(this.pool.getConnection, this.pool);
+      let promise = fn().catch(err => {
+        this.close();
+        return Promise.reject(err);
       });
+      let err = new Error(str);
+      return think.error(promise, err);
     }
 
-    let mysql = await think.npm('mysql');
+    let mysql = await think.npm('mysql2');
 
     if (config.connectionLimit) {
       this.logConnect(str, 'mysql');

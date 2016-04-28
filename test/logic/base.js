@@ -14,13 +14,13 @@ var instance = new Index();
 instance.load();
 
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 
 var _http = require('../_http.js');
 
 function getHttp(config, options){
-  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
   var req = think.extend({}, _http.req);
   var res = think.extend({}, _http.res);
   return think.http(req, res).then(function(http){
@@ -43,7 +43,7 @@ function getInstance(config, options){
 }
 
 describe('logic/base', function(){
-  it('__before is function', function(done){
+  it('validate is function', function(done){
     getInstance().then(function(instance){
       assert.equal(think.isFunction(instance.validate), true);
       done();
@@ -75,7 +75,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: ''
       });
-      assert.deepEqual(data, { welefen: { string: true, value: '' } })
+      assert.deepEqual(data, { welefen: { string: true, value: '',_method: 'get' } })
       done();
     })
   })
@@ -84,7 +84,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required'
       });
-      assert.deepEqual(data, { welefen: { string: true, value: '', required: true } })
+      assert.deepEqual(data, { welefen: { string: true, value: '', required: true,_method: 'get' } })
       done();
     })
   })
@@ -93,7 +93,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|int'
       });
-      assert.deepEqual(JSON.stringify(data), '{"welefen":{"required":true,"int":true,"value":null}}')
+      assert.deepEqual(data, { welefen: { required: true, int: true, value: '',_method: 'get' } })
       done();
     })
   })
@@ -106,7 +106,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|int'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, value: '10',_method: 'get' } })
       done();
     })
   })
@@ -119,7 +119,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|int|min:5'
       });
-      assert.deepEqual(data, { welefen: { required: true, min: [ '5' ], int: true, value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, min: [ '5' ], int: true, value: '10' ,_method: 'get'} })
       done();
     })
   })
@@ -132,7 +132,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|int|min:[1,2,4]'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [[ 1, 2, 4 ]], value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [[ 1, 2, 4 ]], value: '10',_method: 'get' } })
       done();
     })
   })
@@ -145,7 +145,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|int|min: {name: "welefen"}'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: '10',_method: 'get' } })
       done();
     })
   })
@@ -158,7 +158,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: {required: true, int: true, min: {name: 'welefen'}}
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: { name: 'welefen' }, value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: { name: 'welefen' }, value: '10',_method: 'get' } })
       done();
     })
   }) 
@@ -171,7 +171,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|get|int|min: {name: "welefen"}'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: '10',_method: 'get' } })
       done();
     })
   })
@@ -188,7 +188,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|get|int|min: {name: "welefen"}'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 10 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: '10',_method: 'get' } })
       done();
     })
   })
@@ -205,7 +205,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|int|min: {name: "welefen"}'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 20 } })
+      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: '20',_method: 'post' } })
       done();
     })
   })
@@ -215,14 +215,31 @@ describe('logic/base', function(){
         welefen: '10'
       },
       _file: {
-        welefen: '20'
+        welefen: {path: 'filepath'}
       },
       method: 'POST'
     }).then(function(instance){
       var data = instance._parseValidateData({
-        welefen: 'required|file|int|min: {name: "welefen"}'
+        welefen: 'required|file|object'
       });
-      assert.deepEqual(data, { welefen: { required: true, int: true, min: [{ name: 'welefen' }], value: 20 } })
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {path: 'filepath'},_method: 'file' } })
+      done();
+    })
+  })
+  it('parse rules, value from file, method is post 1', function(done){
+    getInstance({}, {
+      _get: {
+        welefen: '10'
+      },
+      _file: {
+        welefen: {path: 'filepath'}
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance._parseValidateData({
+        welefen: 'required|file'
+      });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {path: 'filepath'},_method: 'file' } })
       done();
     })
   })
@@ -239,7 +256,8 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         suredy: 'required|int|min: {name: "welefen"}|default:30'
       });
-      assert.deepEqual(data, { suredy: { required: true, int: true, min: [ {"name":"welefen"} ], value: 30 } })
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"suredy":{"required":true,"int":true,"min":[{"name":"welefen"}],"default":"30","value":"",_method: 'post'}})
       done();
     })
   })
@@ -256,7 +274,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         suredy: 'required|array|default:[30]'
       });
-      assert.deepEqual(data, {"suredy":{"required":true,"array":true,"value":[[30]]}})
+      assert.deepEqual(data, {"suredy":{"required":true,"array":true,"default":[30],"value":"",_method: 'post'}})
       done();
     }).catch(function(err){
       console.log(err.stack)
@@ -272,9 +290,9 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|float|default:30'
       });
-      assert.deepEqual(data, { welefen: { required: true, float: true, value: 10.3 } });
+      assert.deepEqual(data, {"welefen":{"required":true,"float":true,"default":"30","value":"10.3",_method: 'post'}});
       var welefen = instance.post('welefen');
-      assert.equal(welefen, 10.3)
+      assert.equal(welefen, '10.3')
       done();
     })
   })
@@ -288,7 +306,8 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|array'
       });
-      assert.deepEqual(data, { welefen: { required: true, array: true, value: [ '10', '3', '2' ] } });
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"welefen":{"required":true,"array":true,"value":"10,3,2",_method: 'post'}});
       done();
     })
   })
@@ -302,8 +321,9 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|array|int'
       });
-      assert.deepEqual(data, { welefen: { required: true, array: true, int: true, value: [ 10, 3, 2 ] } });
-      assert.deepEqual(instance.post('welefen'), [ 10, 3, 2 ])
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"welefen":{"required":true,"array":true,"int":true,"value":"10,3,2",_method: 'post'}});
+      assert.deepEqual(instance.post('welefen'), '10,3,2')
       done();
     })
   })
@@ -317,7 +337,8 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|array|float'
       });
-      assert.deepEqual(data, { welefen: { required: true, array: true, float: true, value: [ 10, 3, 2.2 ] } });
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"welefen":{"required":true,"array":true,"float":true,"value":"10,3,2.2",_method: 'post'}});
       done();
     })
   })
@@ -331,7 +352,8 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|array|float'
       });
-      assert.deepEqual(data, { welefen: { required: true, array: true, float: true, value: [ 10, 3, 2.2 ] } });
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"welefen":{"required":true,"array":true,"float":true,"value":["10]","3","2.2"],_method: 'post'}});
       done();
     })
   })
@@ -345,7 +367,8 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|array'
       });
-      assert.deepEqual(data, { welefen: { required: true, array: true,  value: [ {}] } });
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"welefen":{"required":true,"array":true,"value":{},_method: 'post'}});
       done();
     })
   })
@@ -359,7 +382,8 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|boolean'
       });
-      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      //console.log(JSON.stringify(data));
+      assert.deepEqual(data, {"welefen":{"required":true,"boolean":true,"value":"yes",_method: 'post'}});
       done();
     })
   })
@@ -373,7 +397,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|boolean'
       });
-      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: 'on' ,_method: 'post'} });
       done();
     })
   })
@@ -387,7 +411,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|boolean'
       });
-      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: '1',_method: 'post' } });
       done();
     })
   })
@@ -401,11 +425,11 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|boolean'
       });
-      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: 'true',_method: 'post' } });
       done();
     })
   })
-    it('parse rules, boolean, true', function(done){
+  it('parse rules, boolean, true', function(done){
     getInstance({}, {
       _post: {
         welefen: 'false'
@@ -415,7 +439,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|boolean'
       });
-      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: false } });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: 'false',_method: 'post' } });
       done();
     })
   })
@@ -429,7 +453,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|boolean'
       });
-      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true } });
+      assert.deepEqual(data, { welefen: { required: true, boolean: true, value: true,_method: 'post' } });
       done();
     })
   })
@@ -443,7 +467,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|object'
       });
-      assert.deepEqual(data, { welefen: { required: true, object: true, value: {} } });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: '{}',_method: 'post' } });
       done();
     })
   })
@@ -457,7 +481,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|object'
       });
-      assert.deepEqual(data, { welefen: { required: true, object: true, value: '' } });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: '{ww}',_method: 'post' } });
       done();
     })
   })
@@ -471,7 +495,7 @@ describe('logic/base', function(){
       var data = instance._parseValidateData({
         welefen: 'required|object'
       });
-      assert.deepEqual(data, { welefen: { required: true, object: true, value: {}} });
+      assert.deepEqual(data, { welefen: { required: true, object: true, value: {},_method: 'post'} });
       done();
     })
   })
@@ -528,6 +552,59 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, different, with clean rules 1', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 30,
+        suredy: 30
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        suredy: 'required|int|different:welefen'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.suredy.length > 0, true);
+      done();
+    })
+  })
+  it('parse rules, different, with clean rules 2', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        suredy: 'requiredWithout:welefen'
+      });
+      assert.deepEqual(data, false);
+      var errors = instance.errors();
+      assert.deepEqual(errors.suredy.length > 0, true);
+      done();
+    })
+  })
+  it('parse rules, different, with clean rules 3', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 'wwww',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        suredy: 'requiredWithout:welefen'
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
+
   it('parse rules, after', function(done){
     getInstance({}, {
       _config: think.config(),
@@ -564,6 +641,54 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, string, required|int', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: 'test',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|int'
+      });
+      assert.deepEqual(data, false);
+      done();
+    })
+  })
+  it('parse rules, string, required|int empty', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|int'
+      });
+      assert.deepEqual(data, false);
+      done();
+    })
+  })
+  it('parse rules, string, required|int number string', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '10',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|int'
+      });
+      assert.deepEqual(data, true);
+      done();
+    })
+  })
   it('parse rules, requiredWithout, empty', function(done){
     getInstance({}, {
       _config: think.config(),
@@ -581,6 +706,60 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, default, int', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|int|default:10'
+      });
+      assert.deepEqual(data, true);
+      var post = instance.post();
+      assert.deepEqual(post, {welefen: 10, suredy: ''})
+      done();
+    })
+  })
+  it('parse rules, default, float', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|float|default:10.2'
+      });
+      assert.deepEqual(data, true);
+      var post = instance.post();
+      assert.deepEqual(post, {welefen: 10.2, suredy: ''})
+      done();
+    })
+  })
+  it('parse rules, default, array, float', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        welefen: '',
+        suredy: ''
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'required|array|float|default:[10.2, 11]'
+      });
+      assert.deepEqual(data, true);
+      var post = instance.post();
+      assert.deepEqual(post, {welefen: [10.2, 11], suredy: ''})
+      done();
+    })
+  })
   it('parse rules, requiredWithout, has one', function(done){
     getInstance({}, {
       _config: think.config(),
@@ -592,7 +771,7 @@ describe('logic/base', function(){
     }).then(function(instance){
       var data = instance.validate({
         welefen: "requiredWithout:suredy|email",
-        suredy: "requiredWithout:welefen|mobile"
+        suredy:  "requiredWithout:welefen|mobile"
       });
       assert.deepEqual(data, true);
       done();
@@ -629,6 +808,22 @@ describe('logic/base', function(){
         suredy: "requiredWithout:welefen|mobile"
       });
       assert.deepEqual(data, false);
+      done();
+    })
+  })
+  it('parse rules, empty, different', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        username: 'string|length:5,16',
+        password: 'string|length:5,16|different:username'
+      });
+      assert.deepEqual(data, true);
       done();
     })
   })
@@ -726,7 +921,7 @@ describe('logic/base', function(){
         assert.equal(data.errno, 1001);
         assert.deepEqual(Object.keys(data.errmsg), ['name', 'value'])
       }
-      instance.__after()
+      instance.__after().catch(function(){})
       done();
     })
   })

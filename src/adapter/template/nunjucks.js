@@ -1,5 +1,6 @@
 'use strict';
 
+import path from 'path';
 import Base from './base.js';
 
 /**
@@ -26,13 +27,23 @@ export default class extends Base {
 
     let env;
     if(options.root_path){
-      env = nunjucks.configure(options.root_path, options);
+      //if templateFile not start with root_path, can not set root_path
+      if(path.isAbsolute(templateFile) && templateFile.indexOf(options.root_path) !== 0){
+        env = nunjucks.configure(options);
+      }else{
+        env = nunjucks.configure(options.root_path, options);
+      }
     }else{
       env = nunjucks.configure(options);
     }
 
+    env.addGlobal('think', think);
+    env.addGlobal('JSON', JSON);
+    env.addGlobal('eval', eval);
+
     this.prerender(options, nunjucks, env);
 
-    return nunjucks.render(templateFile, tVar);
+    let fn = think.promisify(nunjucks.render);
+    return fn(templateFile, tVar);
   }
 }

@@ -140,7 +140,7 @@ export default class extends think.base {
       let result = {};
       for(let key in where){
         let value = where[key];
-        if(key === '_id'){
+        if(key === '_id' && think.isString(value)){
           let validator = think.require('validator');
           if(validator.mongoId(value)){
             let {ObjectID} = think.require('mongodb');

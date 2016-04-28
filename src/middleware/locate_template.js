@@ -21,18 +21,18 @@ export default class extends think.middleware.base {
     
     //support locale
     if(lang){
-      prefix += `/${lang}`;
+      prefix += think.sep + lang;
     }
     //support theme
     if(theme){
-      prefix += `/${theme}`;
+      prefix += think.sep + theme;
     }
 
     //view root path is defined
     if(root_path){
       pathPrefix = path.normalize(root_path);
-      if(think.mode !== think.mode_mini){
-        pathPrefix += prefix + '/' + module;
+      if(think.mode === think.mode_module){
+        pathPrefix += prefix + think.sep + module;
       }
     }else{
       pathPrefix = think.getPath(module, think.dirname.view, prefix);
@@ -61,30 +61,50 @@ export default class extends think.middleware.base {
     let http = this.http;
     let {file_depr, file_ext} = options;
     let pathPrefix = this.getPathPrefix();
-    
+    let controller = http.controller.replace(/\//g, think.sep);
+
+    //if file_depr is /, replace to think.sep, avoid error on windows
+    if(file_depr === '/'){
+      file_depr = think.sep;
+    }
+
     // this.display()
     if (!templateFile) {
-      return path.normalize(pathPrefix + '/' + http.controller + file_depr + http.action + file_ext);
+      return pathPrefix + think.sep + controller + file_depr + http.action + file_ext;
     }
     //replace : to /
     templateFile = templateFile.replace(/\:/g, '/');
+
     // this.display('detail')
     // this.display('index/detail')
     // this.display('admin/index/detail')
     // this.display('admin/index/detail.html')
     let paths = templateFile.split('/');
-    let action = paths.pop();
-    let controller = paths.pop() || http.controller;
-    let module = paths.pop() || http.module;
+    let length = paths.length;
+    let action = paths[length - 1];
 
-    if (module !== http.module) {
+    let module;
+    if(length === 2){
+      controller = paths[0];
+    }else if(length > 2){
+      let index = think.module.indexOf(paths[0]) > -1 ? 1 : 0;
+      if(index){
+        module = paths[0];
+      }
+      let newController = paths.slice(index, length - 1).join(think.sep);
+      if(newController){
+        controller = newController;
+      }
+    }
+
+    if (module && module !== http.module) {
       pathPrefix = this.getPathPrefix(module);
     }
 
-    templateFile = pathPrefix + '/' + controller + file_depr + action;
+    templateFile = pathPrefix + think.sep + controller + file_depr + action;
     if (action.indexOf('.') === -1) {
       templateFile += file_ext;
     }
-    return path.normalize(templateFile);
+    return templateFile;
   }
 }

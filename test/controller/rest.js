@@ -11,13 +11,13 @@ var instance = new Index();
 instance.load();
 
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 
 var _http = require('../_http.js');
 
 function getHttp(config, options){
-  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
   var req = think.extend({}, _http.req);
   var res = think.extend({}, _http.res);
   return think.http(req, res).then(function(http){
@@ -32,7 +32,7 @@ function getHttp(config, options){
     return http;
   })
 }
-var RestController = require('../../lib/controller/rest.js');
+var RestController = think.safeRequire(path.resolve(__dirname, '../../lib/controller/rest.js'));
 
 function getInstance(options){
   return getHttp().then(function(http){
@@ -74,6 +74,43 @@ describe('controller/rest.js', function(){
       assert.equal(instance._isRest, true);
       assert.equal(instance.resource, 'rest');
       assert.equal(instance.id, '')
+      done();
+    })
+  })
+  it('get instance, get resource', function(done){
+    getInstance({
+      pathname: 'rest'
+    }).then(function(instance){
+      instance.__filename = __filename + think.sep + 'test.js';
+      var resource = instance.getResource();
+      assert.equal(resource, 'test');
+      done();
+    })
+  })
+  it('get instance, get id, no id', function(done){
+    getInstance({
+      pathname: 'rest'
+    }).then(function(instance){
+      var id = instance.getId();
+      assert.equal(id, '');
+      done();
+    })
+  })
+  it('get instance, get id,  id', function(done){
+    getInstance({
+      pathname: 'rest/1111'
+    }).then(function(instance){
+      var id = instance.getId();
+      assert.equal(id, '1111');
+      done();
+    })
+  })
+  it('get instance, get id,  id, has -', function(done){
+    getInstance({
+      pathname: 'rest/1111-abc-ddd'
+    }).then(function(instance){
+      var id = instance.getId();
+      assert.equal(id, '1111-abc-ddd');
       done();
     })
   })

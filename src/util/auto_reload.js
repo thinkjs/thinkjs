@@ -14,7 +14,15 @@ const NODE_MODULES = `${path.sep}node_modules${path.sep}`;
 /**
  * auto reload file
  */
-export default class extends think.base {
+export default class {
+  /**
+   * constructor
+   * @param  {Array} args []
+   * @return {}         []
+   */
+  constructor(...args){
+    this.init(...args);
+  }
   /**
    * init
    * @param  {String}   srcPath  [source path]
@@ -32,13 +40,13 @@ export default class extends think.base {
    * @param  {String} file []
    * @return {}      []
    */
-  log(file){
-    //only log app files changed
-    if(file.indexOf(this.srcPath) === 0){
-      file = file.slice(this.srcPath.length);
-      think.log(`reload file ${file}`, 'RELOAD');
-    }
-  }
+  // log(file){
+  //   //only log app files changed
+  //   if(file.indexOf(this.srcPath) === 0){
+  //     file = file.slice(this.srcPath.length);
+  //     think.log(`reload file ${file}`, 'RELOAD');
+  //   }
+  // }
   /**
    * clear file cache, also clear dependents file cache
    * @return {} []
@@ -89,7 +97,7 @@ export default class extends think.base {
    * @return {} []
    */
   checkFileChange(){
-    let filesCount = think.getFiles(this.srcPath).filter(file => {
+    let filesCount = think.getFiles(this.srcPath, true).filter(file => {
       let extname = path.extname(file);
       return extname === '.js';
     }).length;
