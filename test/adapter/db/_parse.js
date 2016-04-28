@@ -10,9 +10,9 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Parse = require('../../../lib/adapter/db/_parse.js');
+var Parse = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter/db/_parse.js'));
 
 describe('adapter/db/_parse.js', function(){
   it('init', function(){
@@ -225,6 +225,11 @@ describe('adapter/db/_parse.js', function(){
     var data = instance.parseGroup('name');
     assert.equal(data, ' GROUP BY `name`');
   })
+  it('parseGroup, name', function(){
+    var instance = new Parse();
+    var data = instance.parseGroup("date_format(create_time,'%Y-%m-%d')");
+    assert.equal(data, " GROUP BY date_format(create_time,'%Y-%m-%d')");
+  })
   it('parseGroup, name,title', function(){
     var instance = new Parse();
     var data = instance.parseGroup('name, title');
@@ -311,7 +316,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' INNER JOIN `cate` AS c ON user.`cate_id`=c.`id`');
+    assert.equal(data, ' INNER JOIN `cate` AS `c` ON `user`.`cate_id` = `c`.`id`');
   })
   it('parseJoin, array, no on', function(){
     var instance = new Parse();
@@ -323,7 +328,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' INNER JOIN `cate` AS c');
+    assert.equal(data, ' INNER JOIN `cate` AS `c`');
   })
   it('parseJoin, array, ignore not object', function(){
     var instance = new Parse();
@@ -335,7 +340,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' INNER JOIN `cate` AS c');
+    assert.equal(data, ' INNER JOIN `cate` AS `c`');
   })
   it('parseJoin, array, multi', function(){
     var instance = new Parse();
@@ -353,7 +358,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN `cate` AS c ON user.`cate_id`=c.`id` LEFT JOIN `group_tag` AS d ON user.`id`=d.`group_id`');
+    assert.equal(data, ' LEFT JOIN `cate` AS `c` ON `user`.`cate_id` = `c`.`id` LEFT JOIN `group_tag` AS `d` ON `user`.`id` = `d`.`group_id`');
   })
   it('parseJoin, array, multi 1', function(){
     var instance = new Parse();
@@ -372,7 +377,8 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN `cate` AS c ON user.`id`=c.`id` LEFT JOIN `group_tag` AS d ON user.`id`=d.`group_id`');
+
+    assert.equal(data, ' LEFT JOIN `cate` AS `c` ON `user`.`id` = `c`.`id` LEFT JOIN `group_tag` AS `d` ON `user`.`id` = `d`.`group_id`');
   })
   it('parseJoin, array, multi 2', function(){
     var instance = new Parse();
@@ -387,7 +393,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id`');
+    assert.equal(data, ' LEFT JOIN `cate` ON `user`.`id` = `cate`.`id` LEFT JOIN `group_tag` ON `user`.`id` = `group_tag`.`group_id`');
   })
   it('parseJoin, array, multi 3', function(){
     var instance = new Parse();
@@ -408,7 +414,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id` LEFT JOIN `tag` ON (user.`id`=tag.`id` AND user.`title`=tag.`name`)');
+    assert.equal(data, ' LEFT JOIN `cate` ON `user`.`id` = `cate`.`id` LEFT JOIN `group_tag` ON `user`.`id` = `group_tag`.`group_id` LEFT JOIN `tag` ON (`user`.`id`=`tag`.`id` AND `user`.`title`=`tag`.`name`)');
   })
   it('parseJoin, array, multi 4, on has table name', function(){
     var instance = new Parse();
@@ -429,7 +435,28 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id` LEFT JOIN `tag` ON (user.`id`=tag.`id` AND user.`title`=tag.name)');
+    assert.equal(data, ' LEFT JOIN `cate` ON `user`.`id` = `cate`.`id` LEFT JOIN `group_tag` ON `user`.`id` = `group_tag`.`group_id` LEFT JOIN `tag` ON (`user`.`id`=`tag`.`id` AND `user`.`title`=tag.name)');
+  })
+  it('parseJoin, array, multi 4, on has table name 1', function(){
+    var instance = new Parse();
+    var data = instance.parseJoin([{
+      cate: {
+        on: 'id, id'
+      },
+      group_tag: {
+        on: ['id', 'group_id']
+      },
+      tag: {
+        on: { 
+          id: 'id',
+          title: '`tag`.`name`'
+        }
+      }
+    }], {
+      tablePrefix: '',
+      table: 'user'
+    });
+    assert.equal(data, ' LEFT JOIN `cate` ON `user`.`id` = `cate`.`id` LEFT JOIN `group_tag` ON `user`.`id` = `group_tag`.`group_id` LEFT JOIN `tag` ON (`user`.`id`=`tag`.`id` AND `user`.`title`=`tag`.`name`)');
   })
   it('parseJoin, array, multi 4', function(){
     var instance = new Parse();
@@ -450,7 +477,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN `cate` ON user.`id`=cate.`id` LEFT JOIN `group_tag` ON user.`id`=group_tag.`group_id` LEFT JOIN `tag` ON (user.`id`=tag.`id` AND u1.title=tag.name)');
+    assert.equal(data, ' LEFT JOIN `cate` ON `user`.`id` = `cate`.`id` LEFT JOIN `group_tag` ON `user`.`id` = `group_tag`.`group_id` LEFT JOIN `tag` ON (`user`.`id`=`tag`.`id` AND u1.title=tag.name)');
   })
   it('parseJoin, array, table is sql', function(){
     var instance = new Parse();
@@ -463,7 +490,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.team_id');
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS `temp` ON `user`.`id` = temp.team_id');
   })
   it('parseJoin, array, table is sql 1', function(){
     var instance = new Parse();
@@ -476,7 +503,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON u.id=temp.team_id');
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS `temp` ON u.id = temp.team_id');
   })
   it('parseJoin, array, table is sql 2', function(){
     var instance = new Parse();
@@ -489,7 +516,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.`team_id`');
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS `temp` ON `user`.`id` = `temp`.`team_id`');
   })
   it('parseJoin, array, table is sql 3', function(){
     var instance = new Parse();
@@ -502,7 +529,7 @@ describe('adapter/db/_parse.js', function(){
       tablePrefix: '',
       table: 'user'
     });
-    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS temp ON user.`id`=temp.`team_id`');
+    assert.equal(data, ' LEFT JOIN (SELECT * FROM test WHERE 1=1) AS `temp` ON `user`.`id` = `temp`.`team_id`');
   })
   it('parseThinkWhere, key is empty, ignore valud', function(){
     var instance = new Parse();
@@ -552,6 +579,11 @@ describe('adapter/db/_parse.js', function(){
     }catch(e){
 
     }
+  })
+  it('parseWhere, string & object', function(){
+    var instance = new Parse();
+    var data = instance.parseWhere({title: 'welefen', _string: 'status=1'});
+    assert.equal(data, ' WHERE ( title = \'welefen\' ) AND ( status=1 )')
   })
   it('parseWhere, null', function(){
     var instance = new Parse();

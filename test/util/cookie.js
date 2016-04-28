@@ -4,7 +4,11 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-var Cookie = require('../../lib/util/cookie.js');
+var Index = require('../../lib/index.js');
+var instance = new Index();
+instance.load();
+
+var Cookie = think.safeRequire(path.resolve(__dirname, '../../lib/util/cookie.js'));
 
 describe('Cookie', function(){
   describe('stringify', function(){
@@ -31,7 +35,7 @@ describe('Cookie', function(){
         expires: 1404608898836
       }), 'welefen=suredy; Expires=Sun, 06 Jul 2014 01:08:18 GMT')
     })
-    it('expires', function(){
+    it('expires 2', function(){
       assert.strictEqual(Cookie.stringify('welefen', 'suredy', {
         expires: new Date(1404608898836)
       }), 'welefen=suredy; Expires=Sun, 06 Jul 2014 01:08:18 GMT')

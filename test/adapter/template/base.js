@@ -10,7 +10,7 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 var baseTemplate = think.adapter('template', 'base');
 
@@ -21,19 +21,15 @@ describe('adapter/template/base.js', function(){
   })
   it('get content success', function(done){
     var instance = new baseTemplate();
-    var data = instance.getContent(__filename);
-    assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
-    done();
+    instance.getContent(__filename).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      done();
+    })
   })
   it('merge config', function(done){
     var instance = new baseTemplate();
-    muk(think, 'log', function(callback){
-      var msg = callback && callback({
-        yellow: function(msg){
-          return msg
-        }
-      });
-      assert.equal(msg.indexOf('[DEPRECATED]') > -1, true);
+    muk(think, 'log', function(msg){
+      assert.equal(msg.indexOf('view.options') > -1, true);
     })
     var data = instance.parseConfig({
       options: {name: 111}
@@ -44,8 +40,9 @@ describe('adapter/template/base.js', function(){
   })
   it('run', function(done){
     var instance = new baseTemplate();
-    var data = instance.run(__filename);
-    assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
-    done();
+    instance.run(__filename).then(function(data){
+      assert.equal(data.indexOf("describe('adapter/template/base.js'") > -1, true);
+      done();
+    });
   })
 })

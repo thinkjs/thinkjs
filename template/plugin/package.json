@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --reporter spec --timeout 5000 --recursive test/",
     "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 5000 --recursive  -R spec test/",
-    "compile": "babel --loose all --optional runtime --stage 0 --modules common src/ --out-dir lib/",
+    "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/ --retain-lines",
     "watch-compile": "npm run compile -- --watch",
     "prepublish": "npm run compile",
     "eslint": "eslint src/"
@@ -14,12 +14,16 @@
   "contributors": [],
   "main": "lib/index.js",
   "dependencies": {
-    "babel-runtime": "5.8.25"
+    "babel-runtime": "6.x.x"
   },
   "devDependencies": {
     "mocha": "1.20.1",
     "istanbul": "0.4.0",
-    "babel": "5.8.23",
+    "babel-cli": "6.x.x",
+    "babel-preset-es2015-loose": "6.x.x",
+    "babel-preset-stage-1": "6.x.x",
+    "babel-plugin-transform-runtime": "6.x.x",
+    "babel-core": "6.x.x",
     "thinkjs": "2.x.x",
     "eslint": "1.8.0",
     "babel-eslint": "4.1.3"

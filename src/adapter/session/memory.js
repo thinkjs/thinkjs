@@ -17,7 +17,7 @@ export default class extends think.adapter.base {
    */
   init(options){
 
-    options = think.parseConfig(options);
+    options = think.parseConfig(think.config('session'), options);
 
     this.timeout = options.timeout;
     //key is session cookie value

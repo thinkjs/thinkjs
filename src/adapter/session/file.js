@@ -21,11 +21,12 @@ export default class extends think.adapter.base {
    */
   init(options){
     
-    options = think.parseConfig(options);
+    options = think.parseConfig(think.config('session'), options);
 
     this.timeout = options.timeout;
     this.cookie = options.cookie;
-    this.path = options.path || path.normalize(os.tmpdir() + '/thinkjs');
+    this.newCookie = options.newCookie;
+    this.path = options.path || path.normalize(os.tmpdir() + path.sep + 'thinkjs');
     this.path_depth = options.path_depth || 1;
 
     this.store = new FileStore({
@@ -34,6 +35,9 @@ export default class extends think.adapter.base {
 
     this.gcType = this.path;
     think.gc(this);
+
+    this.data = null;
+    this.dataEmpty = false;
   }
   /**
    * get stored file path
@@ -41,8 +45,37 @@ export default class extends think.adapter.base {
    */
   getFilepath(){
     let name = this.cookie;
-    let dir = name.slice(0, this.path_depth).split('').join('/');
-    return `${dir}/${name}.json`;
+    let dir = name.slice(0, this.path_depth).split('').join(path.sep);
+    return `${dir}${path.sep}${name}.json`;
+  }
+  /**
+   * get init data
+   * @return {} []
+   */
+  async getInitData(){
+    //when session cookie is not exist, return direct
+    if(this.newCookie){
+      return {};
+    }
+    let filepath = this.getFilepath();
+    //ignore error
+    let data = await think.await(`session_${this.cookie}`, () => {
+      return this.store.get(filepath).catch(() => {});
+    });
+    if(!data){
+      return {};
+    }
+    try{
+      data = JSON.parse(data);
+    }catch(e){
+      return {};
+    }
+    if(Date.now() > data.expire){
+      await this.store.delete(filepath);
+    }else{
+      return data.data || {};
+    }
+    return {};
   }
   /**
    * get session data
@@ -52,35 +85,11 @@ export default class extends think.adapter.base {
     if(this.data){
       return this.data;
     }
-
-    let filepath = this.getFilepath();
-    //ignore error
-    let data = await think.await(`session_${this.cookie}`, () => {
-      return this.store.get(filepath).catch(() => {});
-    });
-
-    //when data is set, return
-    if(this.data){
-      return this.data;
+    let data = await this.getInitData();
+    if(think.isEmpty(data)){
+      this.dataEmpty = true;
     }
-
-    this.data = {};
-    if(!data){
-      return this.data;
-    }
-
-    try{
-      data = JSON.parse(data);
-    }catch(e){
-      return this.data;
-    }
-
-    if(Date.now() > data.expire){
-      await this.store.delete(filepath);
-    }else{
-      this.data = data.data || {};
-    }
-
+    this.data = data;
     return this.data;
   }
   /**
@@ -123,16 +132,19 @@ export default class extends think.adapter.base {
    * flush data to file
    * @return {Promise} []
    */
-  flush(){
+  async flush(){
+    let data = await this.getData();
+    //if data not changed and initial data is empty, then ignore it
+    if(this.dataEmpty && think.isEmpty(data)){
+      return;
+    }
+    let saveData = {
+      data: this.data,
+      expire: Date.now() + this.timeout * 1000,
+      timeout: this.timeout
+    };
     let filepath = this.getFilepath();
-    return this.getData().then(() => {
-      let data = {
-        data: this.data,
-        expire: Date.now() + this.timeout * 1000,
-        timeout: this.timeout
-      };
-      return this.store.set(filepath, JSON.stringify(data));
-    });
+    return this.store.set(filepath, JSON.stringify(saveData));
   }
   /**
    * gc
@@ -142,7 +154,7 @@ export default class extends think.adapter.base {
     let now = Date.now();
     return this.store.list().then(files => {
       files.forEach(file => {
-        let filepath = `${this.path}/${file}`;
+        let filepath = `${this.path}${path.sep}${file}`;
         let content = fs.readFileSync(filepath, 'utf8');
         try{
           let data = JSON.parse(content);

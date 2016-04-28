@@ -2,15 +2,20 @@
  * thinkjs module path config
  * @type {Object}
  */
-let root = think.THINK_LIB_PATH;
+
+import path from 'path';
+
+let {sep} = path;
+let rootPath = think.THINK_LIB_PATH + sep;
+
 export default {
-  base: `${root}/core/base.js`,
-  app: `${root}/core/app.js`,
-  http: `${root}/core/http.js`,
-  view: `${root}/core/view.js`,
-  auth: `${root}/util/auth.js`,
-  cookie: `${root}/util/cookie.js`,
-  validator: `${root}/util/validator.js`,
-  await: `${root}/util/await.js`,
-  parallel_limit: `${root}/util/parallel_limit.js`
+  base: `${rootPath}core${sep}base.js`,
+  app: `${rootPath}core${sep}app.js`,
+  http: `${rootPath}core${sep}http.js`,
+  view: `${rootPath}core${sep}view.js`,
+  // auth: `${rootPath}util${sep}auth.js`,
+  cookie: `${rootPath}util${sep}cookie.js`,
+  validator: `${rootPath}util${sep}validator.js`,
+  await: `${rootPath}util${sep}await.js`,
+  parallel_limit: `${rootPath}util${sep}parallel_limit.js`
 };

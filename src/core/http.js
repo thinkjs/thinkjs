@@ -1,18 +1,24 @@
 'use strict';
 
 import url from 'url';
-import {EventEmitter} from 'events';
 import fs from 'fs';
 import mime from 'mime';
-import util from 'util';
+import cookie from '../util/cookie.js';
 
-let cookie = think.require('cookie');
+const PAYLOAD_METHODS = ['POST', 'PUT', 'PATCH'];
 
 /**
  * wrap for request & response
  * @type {Object}
  */
-export default class extends think.base {
+export default class {
+  /**
+   * constructor
+   * @return {} []
+   */
+  constructor(req, res){
+    this.init(req, res);
+  }
   /**
    * init method
    * @param  {Object} req [request]
@@ -24,37 +30,106 @@ export default class extends think.base {
     this.req = req;
     //response object
     this.res = res;
-    //instance of EventEmitter
-    this.http = new EventEmitter();
 
-    this.http.req = req;
-    this.http.res = res;
     //set http start time
-    this.http.startTime = Date.now();
+    this.startTime = Date.now();
+
+    this.parseRequest();
 
     //set request timeout
     let timeout = think.config('timeout');
     if(timeout){
       res.setTimeout(timeout * 1000, () => {
-        this.http.emit('timeout');
-        this.http.end();
+        this.end();
       });
     }
+  }
+  /**
+   * parse properties
+   * @return {} []
+   */
+  parseRequest(){
+    this.url = this.req.url;
+    this.version = this.req.httpVersion;
+    this.method = this.req.method;
+    this.headers = this.req.headers;
+    this.host = this.headers.host || '';
+    this.hostname = '';
+    this.pathname = '';
+
+    this.query = {};
+    this._file = {};
+    this._post = {};
+    this._cookie = {};
+    this._sendCookie = {};
+    this._get = {};
+    
+    //store all other properties
+    this._prop = {};
+    
+    this._contentTypeIsSend = false; //aleady send content-type header
+    this._isResource = false; //is resource request
+    this._isEnd = false; //request is end
+
+    this._outputContentPromise = [];
+    this._view = null; //view instance
+    this._session = null; //session instance
+    this._lang = ''; //language
+    this._langAsViewPath = false; //language as view path
+    this._config = null; // config
+    this._error = undefined; //error message
+    this._theme = undefined; //theme
+    this.error = null; //error object
+    this._cli = !!think.cli; //cli request
+    
+    this.module = '';
+    this.controller = '';
+    this.action = '';
+
+    this.payload = null; //request payload, Buffer
+    this.tpl_file = ''; //template file path
+
+    //optimize for homepage request
+    if(this.req.url === '/'){
+      this.pathname = '/';
+      let pos = this.host.indexOf(':');
+      this.hostname = pos === -1 ? this.host : this.host.slice(0, pos);
+    }else{
+      let urlInfo = url.parse('//' + this.host + this.req.url, true, true);
+      //can not use decodeURIComponent, pathname may be has encode / chars
+      //decodeURIComponent value after parse route
+      //remove unsafe chars in pathname
+      this.pathname = this.normalizePathname(urlInfo.pathname);
+      this.hostname = urlInfo.hostname;
+      let query = urlInfo.query;
+      if(!think.isEmpty(query)){
+        this.query = query;
+        this._get = think.extend({}, query);
+      } 
+    }
+  }
+  /**
+   * get or set property
+   */
+  prop(name, value){
+    if(value === undefined){
+      return this._prop[name];
+    }
+    this._prop[name] = value;
+    return this;
   }
   /**
    * exec
    * @return Promise            []
    */
   async run(){
-    this.bind();
     
-    await think.hook('request_begin', this.http);
+    await think.hook.exec('request_begin', this);
     //array indexOf is faster than string
-    let methods = ['POST', 'PUT', 'PATCH'];
-    if (methods.indexOf(this.req.method) > -1) {
+    if (PAYLOAD_METHODS.indexOf(this.req.method) > -1) {
       await this.parsePayload();
     }
-    return this.http;
+    return this;
   }
   /**
    * check request has post data
@@ -68,33 +143,37 @@ export default class extends think.base {
   }
   /**
    * get payload data
-   * @return {Promise} []
+   * @param  {String} encoding [payload data encoding]
+   * @return {}          []
    */
-  getPayload(){
+  getPayload(encoding = 'utf8'){
 
-    if(think.isString(this.payload)){
-      return Promise.resolve(this.payload);
-    }
+    let _getPayload = () => {
+      if(this.payload){
+        return Promise.resolve(this.payload);
+      }
+      if(!this.req.readable){
+        return Promise.resolve(new Buffer(0));
+      }
+      let buffers = [];
+      let deferred = think.defer();
+      this.req.on('data', chunk => {
+        buffers.push(chunk);
+      });
+      this.req.on('end', () => {
+        this.payload = Buffer.concat(buffers);
+        deferred.resolve(this.payload);
+      });
+      this.req.on('error', () => {
+        this.res.statusCode = 400;
+        this.end();
+      });
+      return deferred.promise;
+    };
 
-    //payload data has readed by third middleware
-    if(!this.req.readable){
-      return Promise.resolve('');
-    }
-
-    let buffers = [];
-    let deferred = think.defer();
-    this.req.on('data', chunk => {
-      buffers.push(chunk);
+    return _getPayload().then(buffer => {
+      return encoding === true ? buffer : buffer.toString(encoding);
     });
-    this.req.on('end', () => {
-      this.payload = Buffer.concat(buffers).toString();
-      deferred.resolve(this.payload);
-    });
-    this.req.on('error', () => {
-      this.res.statusCode = 400;
-      this.end();
-    });
-    return deferred.promise;
   }
   /**
    * parse payload from request
@@ -102,69 +181,11 @@ export default class extends think.base {
    */
   async parsePayload(){
     if(this.hasPayload()){
-      await think.hook('payload_parse', this.http);
-      await think.hook('payload_validate', this.http);
+      await think.hook('payload_parse', this);
+      await think.hook('payload_validate', this);
     }
   }
-  /**
-   * bind props & methods to http
-   * @return {} []
-   */
-  bind(){
-    let http = this.http;
-    http.url = this.req.url;
-    http.version = this.req.httpVersion;
-    http.method = this.req.method;
-    http.headers = this.req.headers;
-
-    let urlInfo = url.parse('//' + http.headers.host + this.req.url, true, true);
-    let pathname = decodeURIComponent(urlInfo.pathname);
-    http.pathname = this.normalizePathname(pathname);
-    http.query = urlInfo.query;
-    http.host = urlInfo.host;
-    http.hostname = urlInfo.hostname;
-
-    http._file = {};
-    http._post = {};
-    http._cookie = cookie.parse(http.headers.cookie);
-    http._sendCookie = {};
-    http._get = think.extend({}, urlInfo.query);
-    http._type = (http.headers['content-type'] || '').split(';')[0].trim();
-    http._contentTypeIsSend = false;
-
-    http.getPayload = this.getPayload;
-    http.config = this.config;
-    http.referrer = this.referrer;
-    http.userAgent = this.userAgent;
-    http.isGet = this.isGet;
-    http.isPost = this.isPost;
-    http.isAjax = this.isAjax;
-    http.isJsonp = this.isJsonp;
-    http.get = this.get;
-    http.post = this.post;
-    http.param = this.param;
-    http.file = this.file;
-    http.header = this.header;
-    http.status = this.status;
-    http.ip = this.ip;
-    http.lang = this.lang;
-    http.theme = this.theme;
-    http.cookie = this.cookie;
-    http.redirect = this.redirect;
-    http.write = this.write;
-    http.end = this.end;
-    http._end = this._end;
-    http.sendTime = this.sendTime;
-    http.type = this.type;
-    http.success = this.success;
-    http.fail = this.fail;
-    http.jsonp = this.jsonp;
-    http.json = this.json;
-    http.view = this.view;
-    http.expires = this.expires;
-    http.locale = this.locale;
-    http.session = this.session;
-  }
+  
   /**
    * normalize pathname, remove hack chars
    * @param  {String} pathname []
@@ -205,7 +226,7 @@ export default class extends think.base {
    */
   type(contentType, encoding){
     if (!contentType) {
-      return this._type;
+      return (this.headers['content-type'] || '').split(';')[0].trim();
     }
     if (this._contentTypeIsSend) {
       return;
@@ -231,11 +252,11 @@ export default class extends think.base {
    * @return {String}      []
    */
   referrer(host){
-    let referrer = this.headers.referer || this.headers.referrer || '';
-    if (!referrer || !host) {
-      return referrer;
+    let referer = this.headers.referer || this.headers.referrer || '';
+    if (!referer || !host) {
+      return referer;
     }
-    let info = url.parse(referrer);
+    let info = url.parse(referer);
     return info.hostname;
   }
   /**
@@ -251,6 +272,13 @@ export default class extends think.base {
    */
   isPost(){
     return this.method === 'POST';
+  }
+  /**
+   * is cli request
+   * @return {Boolean} []
+   */
+  isCli(){
+    return this._cli;
   }
   /**
    * is ajax request
@@ -282,7 +310,12 @@ export default class extends think.base {
       if (name === undefined) {
         return this._get;
       }else if (think.isString(name)) {
-        return this._get[name] || '';
+        //may be value is false or 0
+        value = this._get[name];
+        if(value === undefined){
+          value = '';
+        }
+        return value;
       }
       this._get = name;
     }else{
@@ -299,7 +332,12 @@ export default class extends think.base {
       if (name === undefined) {
         return this._post;
       }else if (think.isString(name)) {
-        return this._post[name] || '';
+        //may be value is false or 0
+        value = this._post[name];
+        if(value === undefined){
+          value = '';
+        }
+        return value;
       }
       this._post = name;
     }else {
@@ -325,9 +363,9 @@ export default class extends think.base {
   file(name, value){
     if (value === undefined) {
       if (name === undefined) {
-        return this._file;
+        return think.extend({}, this._file);
       }
-      return this._file[name] || {};
+      return think.extend({}, this._file[name]);
     }
     this._file[name] = value;
   }
@@ -373,7 +411,8 @@ export default class extends think.base {
    */
   ip(forward){
     let proxy = think.config('proxy_on') || this.host === this.hostname;
-    let ip;
+    let userIP;
+    let localIP = '127.0.0.1';
     if (proxy) {
       if (forward) {
         return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
@@ -383,26 +422,26 @@ export default class extends think.base {
           }
         });
       }
-      ip = this.headers['x-real-ip'];
+      userIP = this.headers['x-real-ip'];
     }else{
       let connection = this.req.connection;
       let socket = this.req.socket;
-      if (connection && connection.remoteAddress !== '127.0.0.1') {
-        ip = connection.remoteAddress;
-      }else if (socket && socket.remoteAddress !== '127.0.0.1') {
-        ip = socket.remoteAddress;
+      if (connection && connection.remoteAddress !== localIP) {
+        userIP = connection.remoteAddress;
+      }else if (socket && socket.remoteAddress !== localIP) {
+        userIP = socket.remoteAddress;
       }
     }
-    if (!ip) {
-      return '127.0.0.1';
+    if (!userIP) {
+      return localIP;
     }
-    if (ip.indexOf(':') > -1) {
-      ip = ip.split(':').slice(-1)[0];
+    if (userIP.indexOf(':') > -1) {
+      userIP = userIP.split(':').slice(-1)[0];
     }
-    if (!think.isIP(ip)) {
-      return '127.0.0.1';
+    if (!think.isIP(userIP)) {
+      return localIP;
     }
-    return ip;
+    return userIP;
   }
   /**
    * get or set language
@@ -427,7 +466,8 @@ export default class extends think.base {
     }
     //get from header
     lang = this.header('accept-language');
-    this._lang = lang.split(',')[0];
+    //language to lowercase
+    this._lang = (lang.split(',')[0] || '').toLowerCase();
     return this._lang;
   }
   /**
@@ -461,10 +501,15 @@ export default class extends think.base {
       this.header('Set-Cookie', cookies);
       this._sendCookie = {};
       return;
-    }else if (name === undefined) {
+    }
+    //parse cookie
+    if(think.isEmpty(this._cookie) && this.headers.cookie){
+      this._cookie = cookie.parse(this.headers.cookie);
+    }
+    if (name === undefined) {
       return this._cookie;
     }else if (value === undefined) {
-      return this._cookie[name] || '';
+      return this._cookie[name] || this._sendCookie[name] || '';
     }
     //set cookie
     if (typeof options === 'number') {
@@ -545,12 +590,8 @@ export default class extends think.base {
         errmsg = errno;
         errno = error.default_errno;
       }
-      // if(!think.isString(errmsg)){
-      //   data = errmsg;
-      //   errmsg = '';
-      // }
       //read errmsg from config/locale/[lang].js
-      if(errmsg === undefined){
+      if(!errmsg){
         errmsg = this.locale(errno) || '';
       }
       obj = {
@@ -614,19 +655,8 @@ export default class extends think.base {
    * @param  {String} key []
    * @return {String}     []
    */
-  locale(key, ...data){
-    let lang = this.lang();
-    let locales = this.config(think.dirname.locale);
-    let values = locales[lang] || {};
-    let defaultLocales = locales[this.config('locale.default')];
-    if(!key){
-      return think.isEmpty(values) ? defaultLocales : values;
-    }
-    let value = values[key] || defaultLocales[key] || key;
-    if(!think.isString(value)){
-      return value;
-    }
-    return util.format(value, ...data);
+  locale(){
+    return think.locale.apply(this, arguments);
   }
    /**
    * get or set session
@@ -670,12 +700,23 @@ export default class extends think.base {
     }else if (!think.isBuffer(obj)) {
       obj += '';
     }
+    
+    //write after end
+    if(this._isEnd){
+      if(think.isBuffer(obj)){
+        think.log('write after end, content is buffer', 'WARNING');
+      }else{
+        let pos = obj.indexOf('\n');
+        if(pos > -1){
+          obj = obj.slice(0, pos) + '...';
+        }
+        think.log('write after end, content is `' + obj + '`', 'WARNING');
+      }
+      return;
+    }
     let outputConfig = this.config('output_content');
     if (!outputConfig) {
       return this.res.write(obj, encoding);
-    }
-    if (!this._outputContentPromise) {
-      this._outputContentPromise = [];
     }
     let fn = think.co.wrap(outputConfig);
     let promise = fn(obj, encoding, this);
@@ -688,7 +729,20 @@ export default class extends think.base {
   _end(){
     this.cookie(true);
     this.res.end();
-    this.emit('afterEnd', this);
+    
+    process.nextTick(() => {
+      this._afterEnd();
+    });
+  }
+  /**
+   * after end
+   * @return {} []
+   */
+  _afterEnd(){
+    //flush session
+    if(this._session && this._session.flush){
+      this._session.flush();
+    }
 
     //show request info
     if(this.config('log_request') && !this._isResource){
@@ -720,12 +774,12 @@ export default class extends think.base {
     this.write(obj, encoding);
     //set http end flag
     this._isEnd = true;
-    if (!this._outputContentPromise) {
+    if (!this._outputContentPromise.length) {
       return this._end();
     }
 
     return Promise.all(this._outputContentPromise).then(() => {
-      this._outputContentPromise = undefined;
+      this._outputContentPromise = [];
       this._end();
     }).catch(() => {
       this._end();

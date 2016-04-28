@@ -22,8 +22,9 @@ export default class extends think.adapter.base {
    */
   init(options){
     
-    options = think.parseConfig(options);
+    options = think.parseConfig(think.config('session'), options);
     this.cookie = options.cookie;
+    this.newCookie = options.newCookie;
     
     this.timeout = options.timeout;
     this.isChanged = false;
@@ -42,6 +43,12 @@ export default class extends think.adapter.base {
    */
   async getData(){
     if(this.data){
+      return this.data;
+    }
+    //when session cookie is not exist, return direct
+    if(this.newCookie){
+      this.data = {};
+      await this.model.add({cookie: this.cookie, expire: Date.now() + this.timeout * 1000});
       return this.data;
     }
     //let data = await this.model.where({cookie: this.cookie}).find();

@@ -1,21 +1,21 @@
 
-application created by [ThinkJS](http://www.thinkjs.org)
+Application created by [ThinkJS](http://www.thinkjs.org)
 
-## install dependencies
+## Install dependencies
 
 ```
 npm install
 ```
 
-## start server
+## Start server
 
 ```
 npm start
 ```
 
-## deploy with pm2
+## Deploy with pm2
 
-use pm2 to deploy app on production envrioment.
+Use pm2 to deploy app on production enviroment.
 
 ```
 pm2 startOrReload pm2.json

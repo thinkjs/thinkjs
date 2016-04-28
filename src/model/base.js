@@ -9,31 +9,46 @@ import Base from './_base.js';
  */
 export default class extends Base {
   /**
-   * get table fields
+   * get table schema
    * @param  {String} table [table name]
    * @return {}       []
    */
-  async getTableFields(table){
+  async getSchema(table){
     table = table || this.getTableName();
-    let storeKey = `${this.config.type}_${table}_fields`;
-    let fields = thinkCache(thinkCache.TABLE, storeKey);
-    if(!fields){
-      fields = await this.db().getFields(table);
-      thinkCache(thinkCache.TABLE, storeKey, fields);
+    let storeKey = `${this.config.type}_${table}_schema`;
+    let schema = {};
+    //force update table schema
+    if(this.config.schema_force_update){
+      schema = await this.db().getSchema(table);
+    }else{
+      schema = thinkCache(thinkCache.TABLE, storeKey);
+      if(!schema){
+        schema = await this.db().getSchema(table);
+        thinkCache(thinkCache.TABLE, storeKey, schema);
+      }
     }
     if(table !== this.getTableName()){
-      return fields;
+      return schema;
     }
     //get primary key
-    for(let name in fields){
-      if(fields[name].primary){
+    for(let name in schema){
+      if(schema[name].primary){
         this.pk = name;
         break;
       }
     }
-    //merge user set fields config
-    this.fields = think.extend({}, fields, this.fields);
-    return this.fields;
+    //merge user set schema config
+    this.schema = think.extend({}, schema, this.schema);
+    return this.schema;
+  }
+  /**
+   * get table fields
+   * @param  {String} table []
+   * @return {Promise}       []
+   */
+  getTableFields(table){
+    think.log('model.getTableFields is deprecated, use model.getSchema instead.', 'WARNING');
+    return this.getSchema(table);
   }
   /**
    * get unique field
@@ -41,9 +56,9 @@ export default class extends Base {
    * @return {Promise}      []
    */
   async getUniqueField(data){
-    let fields = await this.getTableFields();
-    for(let name in fields){
-      if(fields[name].unique && (!data || data[name])){
+    let schema = await this.getSchema();
+    for(let name in schema){
+      if(schema[name].unique && (!data || data[name])){
         return name;
       }
     }
@@ -63,7 +78,7 @@ export default class extends Base {
     if(this.pk !== 'id'){
       return Promise.resolve(this.pk);
     }
-    return this.getTableFields().then(() => this.pk);
+    return this.getSchema().then(() => this.pk);
   }
   /**
    * build sql
@@ -82,7 +97,10 @@ export default class extends Base {
   async parseOptions(oriOpts, extraOptions){
     let options = think.extend({}, this._options);
     if (think.isObject(oriOpts)) {
-      options = think.extend(options, oriOpts, extraOptions);
+      options = think.extend(options, oriOpts);
+    }
+    if(extraOptions){
+      options = think.extend(options, extraOptions);
     }
     //clear options
     this._options = {};
@@ -92,19 +110,19 @@ export default class extends Base {
     options.tablePrefix = this.getTablePrefix();
     options.model = this.getModelName();
     
-    //get table fields can not use table alias
-    let fields = await this.getTableFields(options.table);
+    //get table schema can not use table alias
+    let schema = await this.getSchema(options.table);
 
     //table alias
     if (options.alias) {
       options.table += ' AS ' + options.alias;
     }
 
-    if(!think.isObject(oriOpts)){
-      options = think.extend(options, this.parseWhereOptions(oriOpts, extraOptions));
+    if(oriOpts !== undefined && !think.isObject(oriOpts)){
+      options = think.extend(options, this.parseWhereOptions(oriOpts));
     }
     //check where key
-    if(options.where && !think.isEmpty(fields)){
+    if(options.where && !think.isEmpty(schema)){
       let keyReg = /^[\w\.\|\&]+$/;
       for(let key in options.where){
         if(!keyReg.test(key)){
@@ -118,13 +136,13 @@ export default class extends Base {
       //reset fieldReverse value
       options.fieldReverse = false;
       let optionsField = options.field;
-      options.field = Object.keys(fields).filter(item => {
+      options.field = Object.keys(schema).filter(item => {
         if(optionsField.indexOf(item) === -1){
           return item;
         }
       });
     }
-    return this.optionsFilter(options, fields);
+    return this.optionsFilter(options, schema);
   }
   /**
    * parse where options
@@ -147,7 +165,7 @@ export default class extends Base {
    * @return {}      []
    */
   parseType(key, value){
-    let fieldType = this.fields[key].type || '';
+    let fieldType = this.schema[key].type || '';
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
       return parseInt(value, 10) || 0;
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
@@ -168,7 +186,7 @@ export default class extends Base {
     for(let key in data){
       let val = data[key];
       //remove data not in fields
-      if (!this.fields[key]) {
+      if (!this.schema[key]) {
         delete data[key];
       }else if(think.isNumber(val) || think.isString(val) || think.isBoolean(val)){
         data[key] = this.parseType(key, val);
@@ -191,21 +209,24 @@ export default class extends Base {
     data = think.extend({}, this._data, data);
     //clear data
     this._data = {};
-    if (think.isEmpty(data)) {
-      let msg = new Error(think.locale('DATA_EMPTY'));
-      return think.reject(msg);
-    }
+    
     options = await this.parseOptions(options);
 
     let parsedData = this.parseData(data);
     parsedData = await this.beforeAdd(parsedData, options);
+    if (think.isEmpty(parsedData)) {
+      let msg = new Error(think.locale('DATA_EMPTY'));
+      return think.reject(msg);
+    }
+
     await this.db().add(parsedData, options, replace);
-    let insertId = data[this.pk] = this.db().getLastInsertId();
-    await this.afterAdd(data, options);
+    let insertId = parsedData[this.pk] = this.db().getLastInsertId();
+    let copyData = think.extend({}, data, parsedData, {[this.pk]: insertId});
+    await this.afterAdd(copyData, options);
     return insertId;
   }
   /**
-   * then add
+   * add data when not exist
    * @param  {Object} data       []
    * @param  {Object} where      []
    * @return {}            []
@@ -217,6 +238,18 @@ export default class extends Base {
     }
     let insertId = await this.add(data);
     return {[this.pk]: insertId, type: 'add'};
+  }
+  /**
+   * update data when exist, otherwise add data
+   * @return {id}
+   */
+  async thenUpdate(data, where){
+    let findData = await this.where(where).find();
+    if(think.isEmpty(findData)){
+      return this.add(data);
+    }
+    await this.where(where).update(data);
+    return findData[this.pk];
   }
   /**
    * add multi data
@@ -239,7 +272,7 @@ export default class extends Base {
     });
     data = await Promise.all(promises);
     await this.db().addMany(data, options, replace);
-    let insertId = this.db().getLastInsertId() - data.length + 1;
+    let insertId = this.db().getLastInsertId();
     let insertIds = [];
     promises = data.map((item, i) => {
       let id = insertId + i;
@@ -257,6 +290,7 @@ export default class extends Base {
    */
   async delete(options){
     options = await this.parseOptions(options);
+    options = await this.beforeDelete(options);
     let rows = await this.db().delete(options);
     await this.afterDelete(options);
     return rows;
@@ -276,17 +310,7 @@ export default class extends Base {
 
     options = await this.parseOptions(options);
 
-    //remove readonly field data
-    this.readonlyFields.forEach(item => {
-      delete data[item];
-    });
-
     let parsedData = this.parseData(data);
-    //check data is empty
-    if (think.isEmpty(parsedData)) {
-      return think.reject(new Error(think.locale('DATA_EMPTY')));
-    }
-    let copyData = think.extend({}, parsedData);
 
     //check where condition
     if(think.isEmpty(options.where)){
@@ -295,13 +319,19 @@ export default class extends Base {
       if(parsedData[pk]){
         options.where = {[pk]: parsedData[pk]};
         delete parsedData[pk];
-      }else {
+      }else{
         return think.reject(new Error(think.locale('MISS_WHERE_CONDITION')));
       }
     }
-    
+
     parsedData = await this.beforeUpdate(parsedData, options);
+    //check data is empty
+    if (think.isEmpty(parsedData)) {
+      return think.reject(new Error(think.locale('DATA_EMPTY')));
+    }
+
     let rows = await this.db().update(parsedData, options);
+    let copyData = think.extend({}, data, parsedData);
     await this.afterUpdate(copyData, options);
     return rows;
   }
@@ -351,6 +381,7 @@ export default class extends Base {
    */
   async find(options){
     options = await this.parseOptions(options, {limit: 1});
+    options = await this.beforeFind(options);
     let data = await this.db().select(options);
     return this.afterFind(data[0] || {}, options);
   }
@@ -360,6 +391,7 @@ export default class extends Base {
    */
   async select(options){
     options = await this.parseOptions(options);
+    options = await this.beforeSelect(options);
     let data = await this.db().select(options);
     return this.afterSelect(data, options);
   }
@@ -370,11 +402,12 @@ export default class extends Base {
    */
   async selectAdd(options){
     let promise = Promise.resolve(options);
-    if (options instanceof module.exports) {
+    let Class = module.exports.default || module.exports;
+    if (options instanceof Class) {
       promise = options.parseOptions();
     }
     let data = await Promise.all([this.parseOptions(), promise]);
-    let fields = data[0].field || Object.keys(this.fields);
+    let fields = data[0].field || Object.keys(this.schema);
     return this.db().selectAdd(fields, data[0].table, data[1]);
   }
   /**
@@ -442,7 +475,7 @@ export default class extends Base {
       options.limit = 1;
     }
     let data = await this.db().select(options);
-    let multi = field.indexOf(',') > -1;
+    let multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
     if (multi) {
       let fields = field.split(/\s*,\s*/);
       let result = {};
@@ -468,12 +501,23 @@ export default class extends Base {
     }
   }
   /**
+   * get quote field
+   * @param  {String} field []
+   * @return {String}       []
+   */
+  async _getQuoteField(field){
+    if(field){
+      return /^\w+$/.test(field) ? '`' + field + '`' : field;
+    }
+    return await this.getPk() || '*';
+  }
+  /**
    * get count
    * @param  {String} field []
    * @return {Promise}       []
    */
   async count(field){
-    field = field || await this.getPk() || '*';
+    field = await this._getQuoteField(field);
     return this.getField('COUNT(' + field + ') AS think_count', true);
   }
   /**
@@ -482,7 +526,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async sum(field){
-    field = field || await this.getPk() || '*';
+    field = await this._getQuoteField(field);
     return this.getField('SUM(' + field + ') AS think_sum', true);
   }
   /**
@@ -491,7 +535,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async min(field){
-    field = field || await this.getPk() || '*';
+    field = await this._getQuoteField(field);
     return this.getField('MIN(' + field + ') AS think_min', true);
   }
   /**
@@ -500,7 +544,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async max(field){
-    field = field || await this.getPk() || '*';
+    field = await this._getQuoteField(field);
     return this.getField('MAX(' + field + ') AS think_max', true);
   }
   /**
@@ -509,7 +553,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async avg(field){
-    field = field || await this.getPk() || '*';
+    field = await this._getQuoteField(field);
     return this.getField('AVG(' + field + ') AS think_avg', true);
   }
   /**
@@ -574,7 +618,7 @@ export default class extends Base {
     let result;
     await this.startTrans();
     try{
-      result = await think.co(fn);
+      result = await think.co(fn());
       await this.commit();
     }catch(e){
       await this.rollback();

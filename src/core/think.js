@@ -6,6 +6,7 @@ import util from 'util';
 import crypto from 'crypto';
 import querystring from 'querystring';
 import child_process from 'child_process';
+import cluster from 'cluster';
 
 import thinkit from 'thinkit';
 import co from 'co';
@@ -13,8 +14,21 @@ import colors from 'colors/safe';
 
 import base from './base.js';
 import httpBase from './http_base.js';
-import {} from './_cache.js';
 import Cookie from '../util/cookie.js';
+import Http from './http.js';
+import Await from '../util/await.js';
+import Validate from './think_validate.js';
+import Middleware from './think_middleware.js';
+import Hook from './think_hook.js';
+import Route from './think_route.js';
+import Config from './think_config.js';
+import Adatper from './think_adapter.js';
+
+import './think_cache.js';
+import './think_data.js';
+
+
+colors.enabled = true;
 
 
 /**
@@ -22,21 +36,11 @@ import Cookie from '../util/cookie.js';
  * @type {Object}
  */
 global.think = Object.create(thinkit);
-
 /**
- * camelCase string
- * @TODO move to thinkit package
- * @param  {String} str []
- * @return {String}     []
+ * path seperator
+ * @type {String}
  */
-think.camelCase = str => {
-  if(str.indexOf('_') > -1){
-    str = str.replace(/_(\w)/g, (a, b) => {
-      return b.toUpperCase();
-    });
-  }
-  return str;
-};
+think.sep = path.sep;
 /**
  * server start time
  * @type {Number}
@@ -75,12 +79,17 @@ think.port = 0;
  * is command line
  * @type {String}
  */
-think.cli = false;
+think.cli = '';
 /**
  * get locale
  * @type {String}
  */
 think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
+/**
+ * is master
+ * @type {Boolean}
+ */
+think.isMaster = cluster.isMaster;
 /**
  * app mode
  * 0x0001: mini
@@ -89,8 +98,6 @@ think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
  * @type {Boolean}
  */
 think.mode = 0x0001;
-//mini mode, no module
-think.mode_mini = 0x0001;
 //normal mode
 think.mode_normal = 0x0002;
 //module mode
@@ -126,36 +133,9 @@ think.module = [];
  */
 think.base = base;
 /**
- * get deferred object
- * @return {Object} []
- */
-think.defer = () => {
-  let deferred = {};
-  deferred.promise = new Promise((resolve, reject) => {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  return deferred;
-};
-/**
- * make callback function to promise
- * @param  {Function} fn       []
- * @param  {Object}   receiver []
- * @return {Promise}            []
- */
-think.promisify = (fn, receiver) => {
-  return (...args) => {
-    return new Promise((resolve, reject) => {
-      fn.apply(receiver, [...args, (err, res) => {
-        return err ? reject(err) : resolve(res);
-      }]);
-    });
-  };
-};
-/**
- * [description]
- * @param  {[type]} err [description]
- * @return {[type]}     [description]
+ * reject promise
+ * @param  {[type]} err []
+ * @return {[type]}     []
  */
 think.reject = (err) => {
   //delay to show error
@@ -175,10 +155,61 @@ think.isHttp = obj => {
 };
 
 /**
+ * validate 
+ * @type {Function}
+ */
+think.validate = Validate;
+
+/**
+ * middleware
+ * @type {Function}
+ */
+think.middleware = Middleware;
+
+/**
+ * hook
+ * @type {Function}
+ */
+think.hook = Hook;
+
+/**
+ * route
+ * @type {Function}
+ */
+think.route = Route;
+
+/**
+ * config
+ * @type {Function}
+ */
+think.config = Config;
+/**
+ * get module config
+ * @param  {String} module []
+ * @return {Object}        []
+ */
+think.getModuleConfig = module => {
+  return think.config(undefined, undefined, module);
+};
+/**
+ * adapter
+ * @type {Function}
+ */
+think.adapter = Adatper;
+
+/**
  * alias co module to think.co
  * @type {Object}
  */
-think.co = co;
+think.co = obj => {
+  //optimize invoke co package
+  if(obj && typeof obj.next === 'function'){
+    return co(obj);
+  }
+  return Promise.resolve(obj);
+};
+think.co.wrap = co.wrap;
+
 /**
  * create class
  * @param {Object} methods [methods and props]
@@ -220,42 +251,52 @@ think.Class = (type, clean) => {
     return Class(superClass, methods);
   };
 };
+
+
 /**
  * look up class
  * @param  {String} type   [class type, model, controller, service]
  * @param  {String} module [module name]
  * @return {String}        []
  */
+let _getClass = (name, type, module, base) => {
+  let clsPath, cls;
+  // find from current module
+  if (module) {
+    clsPath = `${module}/${type}/${name}`;
+    cls = think.require(clsPath, true);
+    if (cls) {
+      return cls;
+    }
+  }
+  // find from common module
+  module = think.mode !== think.mode_module ? think.config('default_module') : think.dirname.common;
+  let list = [
+    `${module}/${type}/${name}`,
+    `${type}_${name}`,
+    base || `${type}_base`
+  ];
+  for(let i = 0, length = list.length; i < length; i++){
+    cls = think.require(list[i], true);
+    if(cls){
+      return cls;
+    }
+  }
+};
+
 think.lookClass = (name, type, module, base) => {
   let names = name.split('/');
-  switch(names.length){
-    // home/controller/base
-    case 3:
-      return think.require(name);
-    // home/base
-    case 2:
-      return think.require(`${names[0]}/${type}/${names[1]}`);
-    // base
-    case 1:
-      let clsPath, cls;
-      // find from current module
-      if (module) {
-        clsPath = `${module}/${type}/${name}`;
-        cls = think.require(clsPath, true);
-        if (cls) {
-          return cls;
-        }
-      }
-      // find from common module
-      module = think.mode !== think.mode_module ? think.config('default_module') : think.dirname.common;
-      let list = [
-        `${module}/${type}/${name}`,
-        `${type}_${name}`,
-        base || `${type}_base`
-      ];
-      list.some(item => cls = think.require(item, true));
-      return cls;
+  let length = names.length;
+  if(length === 1){
+    return _getClass(name, type, module, base);
   }
+  if(length === 2 && (think.module.indexOf(names[0]) > -1 || !module)){
+    return think.require(`${names[0]}/${type}/${names[1]}`);
+  }
+  if(length === 3 && (name.indexOf(`/${type}/`) > -1 || !type || !module)){
+    return think.require(name);
+  }
+  return think.require(`${module}/${type}/${name}`);
 };
 /**
  * get common module path
@@ -264,80 +305,77 @@ think.lookClass = (name, type, module, base) => {
  * @return {String} []
  */
 think.getPath = (module, type = think.dirname.controller, prefix = '') => {
-  switch(think.mode){
-    case think.mode_mini:
-      return `${think.APP_PATH}${prefix}/${type}`;
-    case think.mode_normal:
-      let filepath = `${think.APP_PATH}${prefix}/${type}`;
-      switch(type){
-        case think.dirname.controller:
-        case think.dirname.logic:
-        case think.dirname.service:
-        case think.dirname.view:
-          module = module || think.config('default_module');
-          filepath += '/' + module;
-          break;
-      }
-      return filepath;
-    case think.mode_module:
-      module = module || think.dirname.common;
-      return `${think.APP_PATH}${prefix}/${module}/${type}`;
+  let mod = '';
+  if(think.mode === think.mode_module){
+    mod = (module || think.dirname.common) + think.sep;
   }
+  return `${think.APP_PATH}${prefix}${think.sep}${mod}${type}`;
 };
+
 
 /**
  * require module
  * @param  {String} name []
  * @return {mixed}      []
  */
+let _loadRequire = (name, filepath) => {
+  let obj = think.safeRequire(filepath);
+  if (think.isFunction(obj)) {
+    obj.prototype.__filename = filepath;
+  }
+  if(obj){
+    thinkData.export[name] = obj;
+  }
+  return obj;
+};
 think.require = (name, flag) => {
   if (!think.isString(name)) {
     return name;
   }
   // adapter or middle by register
-  let Cls = thinkCache(thinkCache.ALIAS_EXPORT, name);
+  let Cls = thinkData.export[name];
   if (Cls) {
     return Cls;
   }
 
-  let load = (name, filepath) => {
-    let obj = think.safeRequire(filepath);
-    if (think.isFunction(obj)) {
-      obj.prototype.__filename = filepath;
-    }
-    if(obj){
-      thinkCache(thinkCache.ALIAS_EXPORT, name, obj);
-    }
-    return obj;
-  };
-
-  let filepath = thinkCache(thinkCache.ALIAS, name);
+  let filepath = thinkData.alias[name];
   if (filepath) {
-    return load(name, path.normalize(filepath));
+    return _loadRequire(name, path.normalize(filepath));
   }
   // only check in alias
   if (flag) {
     return null;
   }
   filepath = require.resolve(name);
-  return load(name, filepath);
+  return _loadRequire(name, filepath);
 };
+
+
 /**
  * safe require
  * @param  {String} file []
  * @return {mixed}      []
  */
+let _interopSafeRequire = file => {
+  let obj = require(file);
+  if(obj && obj.__esModule && obj.default){
+    return obj.default;
+  }
+  return obj;
+};
+
 think.safeRequire = file => {
   // absolute file path is not exist
   if (path.isAbsolute(file)) {
+    //no need optimize, only invoked before service start
     if(!think.isFile(file)){
       return null;
     }
     //when file is exist, require direct
-    return require(file);
+    return _interopSafeRequire(file);
   }
   try{
-    return require(file);
+    return _interopSafeRequire(file);
   }catch(err){
     think.log(err);
   }
@@ -349,7 +387,12 @@ think.safeRequire = file => {
  * @param  {} configs []
  * @return {}            []
  */
-think.parseConfig = (...configs) => {
+think.parseConfig = function(...configs) {
+  let onlyMerge = false;
+  if(configs[0] === true){
+    onlyMerge = true;
+    configs = configs.slice(1);
+  }
   configs = configs.map(config => {
     config = think.extend({}, config);
     //check adapter config exist
@@ -364,11 +407,11 @@ think.parseConfig = (...configs) => {
   let config = think.extend({}, ...configs);
 
   //check parser method
-  if(!think.isFunction(config.parser)){
+  if(!think.isFunction(config.parser) || onlyMerge){
     return config;
   }
   
-  let ret = config.parser(config);
+  let ret = config.parser(config, this !== think ? this : {});
   delete config.parser;
   return think.extend(config, ret);
 };
@@ -407,15 +450,8 @@ think.log = (msg, type, showTime) => {
     showTime = '';
   }
 
-  let fn = d => {
-    return ('0' + d).slice(-2);
-  };
 
-  let d = new Date();
-  let date = `${d.getFullYear()}-${fn(d.getMonth() + 1)}-${fn(d.getDate())}`;
-  let time = `${fn(d.getHours())}:${fn(d.getMinutes())}:${fn(d.getSeconds())}`;
-
-  let dateTime = colors.gray(`[${date} ${time}] `);
+  let dateTime = colors.gray(`[${think.datetime()}] `);
   if(showTime === null){
     dateTime = '';
   }
@@ -441,404 +477,22 @@ think.log = (msg, type, showTime) => {
     msg += ' ' + colors.green(`${time}ms`);
   }
   if(type){
-    console.log(dateTime + colors.cyan(`[${type}] `) + msg);
+    if(type === 'WARNING'){
+      console.warn(dateTime + colors.yellow(`[Warning] `) + msg);
+    }
+    else if(type === 'EXIT'){
+      console.error(colors.red('[Error] ' + msg));
+      console.log();
+      process.exit();
+    }
+    else{
+      console.log(dateTime + colors.cyan(`[${type}] `) + msg);
+    }
   }else{
     console.log(dateTime + msg); 
   }
 };
 
-/**
- * get or set config
- * @return {mixed} []
- */
-think.config = (name, value, data) => {
-
-  let flag = false;
-  //get module config
-  if(data && think.isString(data)){
-    data = think.getModuleConfig(data);
-  }else if(!data){
-    flag = true;
-    data = thinkCache(thinkCache.CONFIG);
-  }
-
-  //if set common config, must sync to module config
-  let setConfig = (name, value) => {
-    let configs = [];
-    if(flag){
-      configs = think.module.map(item => think.getModuleConfig(item));
-    }
-    [data, ...configs].forEach(itemData => {
-      if(think.isObject(name)){
-        think.extend(itemData, name);
-      }
-      else if(think.isString(name)){
-        //name = name.toLowerCase();
-        if (name.indexOf('.') === -1) {
-          itemData[name] = value;
-        }else{
-          let names = name.split('.');
-          itemData[names[0]] = itemData[names[0]] || {};
-          itemData[names[0]][names[1]] = value;
-        }
-      }
-
-    });
-  };
-
-  // get all config
-  // think.config();
-  if (name === undefined) {
-    return data;
-  }
-  // merge config
-  // think.config({name: 'welefen'})
-  else if (think.isObject(name) || value !== undefined) {
-    setConfig(name, value);
-  }
-  // set or get config
-  else if(think.isString(name)){
-    //name = name.toLowerCase();
-    //one grade config
-    if (name.indexOf('.') === -1) {
-      return data[name];
-    }
-    name = name.split('.');
-    value = data[name[0]] || {};
-    return value[name[1]];
-  }
-};
-/**
- * get module config
- * @param  {String} module []
- * @return {Object}        []
- */
-think.getModuleConfig = (module = think.dirname.common) => {
-
-  //get module config from cache
-  let moduleConfig = thinkCache(thinkCache.MODULE_CONFIG);
-  if (module in moduleConfig) {
-    return moduleConfig[module];
-  }
-
-  let rootPath;
-  //get sys config
-  if (module === true) {
-    rootPath = `${think.THINK_LIB_PATH}/config`;
-  }else{
-    rootPath = think.getPath(module, think.dirname.config);
-  }
-
-  let fileFilters = ['config', 'route'];
-  let dirFilters = ['env', 'sys'];
-  //load conf
-  let getConfig = configPath => {
-    let config = {};
-    if(!think.isDir(configPath)){
-      return config;
-    }
-    fs.readdirSync(configPath).forEach(item => {
-      if(think.isDir(`${configPath}/${item}`)){
-        if(dirFilters.indexOf(item) === -1){
-          config = think.extend(config, {
-            [item]: getConfig(`${configPath}/${item}`)
-          });
-        }
-        return;
-      }
-      item = item.slice(0, -3);
-      if(item[0] === '_' || fileFilters.indexOf(item) > -1){
-        return;
-      }
-      let conf = think.safeRequire(`${configPath}/${item}.js`);
-      if(conf){
-        config = think.extend(config, {[item]: conf});
-      }
-    });
-    return config;
-  };
-
-  //config.js
-  let config = think.safeRequire(`${rootPath}/config.js`);
-  let envConfig = {}, extraConfig = getConfig(rootPath);
-
-  envConfig = think.safeRequire(`${rootPath}/env/${think.env}.js`);
-  envConfig = think.extend(envConfig, getConfig(`${rootPath}/env/${think.env}`));
-
-  //merge all configs
-  config = think.extend({}, config, extraConfig, envConfig);
-  //merge common configs to module
-  if(module !== true){
-    config = think.extend({}, thinkCache(thinkCache.CONFIG), config);
-  }
-
-  //transform config
-  let transforms = require(`${think.THINK_LIB_PATH}/config/sys/transform.js`);
-  config = think.transformConfig(config, transforms);
-
-  //set config to module cache
-  thinkCache(thinkCache.MODULE_CONFIG, module, config);
-
-  return config;
-};
-/**
- * transform config
- * @param  {Object} config []
- * @return {Object}        []
- */
-think.transformConfig = (config, transforms) => {
-  for(let key in transforms){
-    if (!(key in config)) {
-      continue;
-    }
-    let value = transforms[key];
-    if (think.isFunction(value)) {
-      config[key] = value(config[key], config);
-    }else {
-      config[key] = think.transformConfig(config[key], value);
-    }
-  }
-  return config;
-};
-/**
- * exec hook
- * @param  {String} name []
- * @return {}      []
- */
-think.hook = (...args) => {
-  let [name, http = {}, data] = args;
-  //get hook data
-  if (args.length === 1) {
-    return thinkCache(thinkCache.HOOK, name) || [];
-  }
-  // set hook data
-  // think.hook('test', ['middleware1', 'middleware2'])
-  else if(think.isArray(http)){
-    if(data !== 'append' && data !== 'prepend'){
-      thinkCache(thinkCache.HOOK, name, []);
-    }
-    http.forEach(item => {
-      think.hook(name, item, data);
-    });
-    return;
-  }
-  //remove hook
-  else if(http === null){
-    thinkCache(thinkCache.HOOK, name, []);
-    return;
-  }
-  //set hook data
-  else if (!think.isHttp(http)){
-    // think.hook('test', function or class);
-    if(think.isFunction(http)){
-      let name = 'middleware_' + think.uuid();
-      think.middleware(name, http);
-      http = name;
-    }
-    let hooks = thinkCache(thinkCache.HOOK, name) || [];
-    if(data === 'append'){
-      hooks.push(http);
-    }else if(data === 'prepend'){
-      hooks.unshift(http);
-    }else{
-      hooks = [http];
-    }
-    thinkCache(thinkCache.HOOK, name, hooks);
-    return;
-  }
-
-  //exec hook 
-  let list = thinkCache(thinkCache.HOOK, name) || [];
-  let length = list.length;
-  if (length === 0) {
-    return Promise.resolve(data);
-  }
-  http._middleware = data;
-
-  //exec middleware
-  let execMiddleware = async () => {
-    for(let i = 0; i < length; i++){
-      let data = await think.middleware(list[i], http, http._middleware);
-      if (data !== undefined) {
-        http._middleware = data;
-      }
-    }
-    return http._middleware;
-  };
-
-  return execMiddleware();
-};
-/**
- * create or exec middleware
- * @param  {Function} superClass []
- * @param  {Object} methods      []
- * @return {mixed}            []
- */
-think.middleware = (...args) => {
-  let [superClass, methods, data] = args;
-  let length = args.length;
-  let prefix = 'middleware_';
-
-  let middlwares = thinkCache(thinkCache.MIDDLEWARE);
-  // register functional or class middleware
-  // think.middleware('parsePayLoad', function(){})
-  if (think.isString(superClass) && think.isFunction(methods)) {
-    thinkCache(thinkCache.MIDDLEWARE, superClass, methods);
-    return;
-  }
-  // exec middleware
-  // think.middleware('parsePayLoad', http, data)
-  if (length >= 2 && think.isHttp(methods)) {
-    let name = superClass, http = methods;
-    if (think.isString(name)) {
-      // name is in middleware cache
-      if (name in middlwares) {
-        let fn = middlwares[name];
-        //class middleware must have run method
-        if(think.isFunction(fn.prototype.run)){
-          let instance = new fn(http);
-          return think.co(instance.run(data));
-          //return think.co.wrap(instance.run).bind(instance)(data);
-        }else{
-          return think.co(fn(http, data));
-          //return think.co.wrap(fn)(http, data);
-        }
-      }else{
-        let Cls = think.require(prefix + name, true);
-        if(Cls){
-          let instance = new Cls(http);
-          return think.co(instance.run(data));
-          //return think.co.wrap(instance.run).bind(instance)(data);
-        }
-        let err = new Error(think.locale('MIDDLEWARE_NOT_FOUND', name));
-        return Promise.reject(err);
-      }
-    }
-    else if (think.isFunction(name)){
-      return think.co(name(http, data));
-      //return think.co.wrap(name)(http, data);
-    }
-  }
-  // get middleware
-  // think.middleware('parsePayLoad')
-  if (length === 1 && think.isString(superClass)) {
-    if(superClass in middlwares){
-      return middlwares[superClass];
-    }
-    let cls = think.require(prefix + superClass, true);
-    if (cls) {
-      return cls;
-    }
-    throw new Error(think.locale('MIDDLEWARE_NOT_FOUND', superClass));
-  }
-  let middleware = thinkCache(thinkCache.COLLECTION, 'middleware');
-  if (!middleware) {
-    middleware = think.Class('middleware');
-    thinkCache(thinkCache.COLLECTION, 'middleware', middleware);
-  }
-  // create middleware
-  return middleware(superClass, methods);
-};
-
-/**
- * create, register, call adapter
- * @param  {String} name []
- * @return {void}      []
- */
-think.adapter = (...args) => {
-  let [type, name, fn] = args;
-  let length = args.length, key = 'adapter_';
-  if(length === 3){
-    //register adapter
-    //think.adapter('session', 'redis', function(){})
-    if (think.isFunction(fn)) {
-      key += `${type}_${name}`;
-      thinkCache(thinkCache.ALIAS_EXPORT, key, fn);
-      return;
-    }
-    //create adapter
-    //module.exports = think.adapter('session', 'memory', {})
-    else if(think.isObject(fn)){
-      return think.Class(think.adapter(type, name), fn);
-    }
-  }
-  //type has not _
-  else if(length === 2 && think.isString(type) && type.indexOf('_') === -1){
-    //create adapter
-    //module.exports = think.adapter('session', {})
-    if(think.isObject(name)){
-      return think.Class(think.adapter(type, 'base'), name);
-    }
-    //get adapter
-    //think.adapter('session', 'redis')
-    else if (think.isString(name)) {
-      key += type + '_' + name;
-      let cls = think.require(key, true);
-      if (cls) {
-        return cls;
-      }else{
-        think.loadAdapter(type, name);
-        let cls = think.require(key, true);
-        if(cls){
-          return cls;
-        }
-      }
-      throw new Error(think.locale('ADAPTER_NOT_FOUND', key));
-    }
-  }
-  
-  //create adapter
-  //module.exports = think.adapter({})
-  //module.exports = think.adapter(function(){}, {});
-  let superClass;
-  if (think.isFunction(type)) {
-    superClass = type;
-  }else if (think.isString(type)) {
-    superClass = think.require(type);
-  }
-  //create clean Class
-  if (!superClass) {
-    return think.Class(type);
-  }
-  return think.Class(superClass, name);
-};
-/**
- * load system & comon module adapter
- * @return {} []
- */
-think.loadAdapter = (type, name = 'base') => {
-  let paths = [`${think.THINK_LIB_PATH}/adapter`];
-  
-  //load base adapter
-  think.adapter.base = require(paths[0] + '/base.js');
-
-  //common module adapter
-  let adapterPath = think.getPath(undefined, think.dirname.adapter);
-  if (think.isDir(adapterPath)) {
-    paths.push(adapterPath);
-  }
-  paths.forEach(path => {
-    if(type){
-      let filepath = `${path}/${type}/${name}.js`;
-      if(think.isFile(filepath)){
-        thinkCache(thinkCache.ALIAS, `adapter_${type}_${name}`, filepath);
-      }
-    }else{
-      let dirs = fs.readdirSync(path);
-      dirs.forEach(dir => {
-        if(!think.isDir(`${path}/${dir}`)){
-          return;
-        }
-        think.alias(`adapter_${dir}`, `${path}/${dir}`);
-        //adapter type base class
-        // let cls = think.require(`adapter_${dir}_base`, true);
-        // if(cls){
-        //   think.adapter[dir] = cls;
-        // }
-      });
-    }
-  });
-};
 
 /**
  * load alias
@@ -848,7 +502,7 @@ think.loadAdapter = (type, name = 'base') => {
  */
 think.alias = (type, paths, slash) => {
   if(!type){
-    return thinkCache(thinkCache.ALIAS);
+    return thinkData.alias;
   }
   //regist alias
   if (!think.isArray(paths)) {
@@ -860,73 +514,14 @@ think.alias = (type, paths, slash) => {
       if(file.slice(-3) !== '.js' || file[0] === '_'){
         return;
       }
-      let name = file.slice(0, -3);
+      let name = file.slice(0, -3).replace(/\\/g, '/');//replace \\ to / on windows
       name = type + (slash ? '/' : '_') + name;
-      thinkCache(thinkCache.ALIAS, name, `${path}/${file}`);
+      thinkData.alias[name] = `${path}${think.sep}${file}`;
     });
   });
 };
-/**
- * load route
- * route detail config
- *
- * module.exports = {
- *   admin: {
- *     reg: /^admin/, //module reg
- *     children: [
- *       /^admin\/reg/, 'admin/index/reg'
- *     ]
- *   },
- *   home: {
- *     children: [
- *       
- *     ]
- *   }
- * }
- * 
- * @return {} []
- */
-think.route = routes => {
-  let key = 'route';
-  if(routes === null){
-    thinkCache(thinkCache.COLLECTION, key, null);
-    return;
-  }
-  //set route
-  else if (think.isArray(routes) || think.isObject(routes)) {
-    thinkCache(thinkCache.COLLECTION, key, routes);
-    return;
-  }
-  routes = thinkCache(thinkCache.COLLECTION, key);
-  if (routes) {
-    return routes;
-  }
-  let file = think.getPath(undefined, think.dirname.config) + '/route.js';
-  let config = think.safeRequire(file) || [];
 
-  //route config is funciton
-  //may be is dynamic save in db
-  if (think.isFunction(config)) {
-    return think.await('route', () => {
-      //let fn = think.co.wrap(config);
-      //return fn().then((route = []) => {
-      return think.co(config()).then((route = []) => {
-        thinkCache(thinkCache.COLLECTION, key, route);
-        return route;
-      });
-    });
-  }
-  //get module route config
-  else if(think.isObject(config) && think.mode === think.mode_module){
-    for(let module in config){
-      let filepath = think.getPath(module, think.dirname.config) + '/route.js';
-      let moduleConfig = think.safeRequire(filepath);
-      config[module].children = moduleConfig || [];
-    }
-  }
-  thinkCache(thinkCache.COLLECTION, key, config);
-  return config;
-};
+
 /**
  * regist gc
  * @param  {Object} instance [class instance]
@@ -980,6 +575,7 @@ think._http = (data = {}) => {
   };
   let empty = () => {};
   let res = {
+    statusCode: 200,
     setTimeout: empty,
     end: data.end || data.close || empty,
     write: data.write || data.send || empty,
@@ -996,18 +592,22 @@ think._http = (data = {}) => {
  * @param  {Object} res []
  * @return {Promise}     []
  */
-think.http = (req, res) => {
-  let Http = thinkCache(thinkCache.COLLECTION, 'http');
-  if (!Http) {
-    Http = think.require('http');
-    thinkCache(thinkCache.COLLECTION, 'http', Http);
-  }
+think.http = async (req, res) => {
+  let execFlag = res === true;
   //for cli request
-  if (res === undefined) {
+  if (res === undefined || res === true) {
     ({req, res} = think._http(req));
   }
   let instance = new Http(req, res);
-  return instance.run();
+  let http = await instance.run();
+  if(!execFlag){
+    return http;
+  }
+  //flag to cli request, make isCli detect true
+  http._cli = true; 
+  let App = think.require('app');
+  let appInstance = new App(http);
+  return appInstance.run();
 };
 /**
  * base class for has http property
@@ -1025,6 +625,7 @@ think.uuid = (length = 32) => {
   let str = crypto.randomBytes(Math.ceil(length * 0.75)).toString('base64').slice(0, length);
   return str.replace(/[\+\/]/g, '_');
 };
+
 /**
  * start session
  * @param  {Object} http []
@@ -1036,15 +637,9 @@ think.session = http => {
     return http._session;
   }
 
-  // let Cookie = thinkCache(thinkCache.COLLECTION, 'cookie');
-  // if (!Cookie) {
-  //   Cookie = think.require('cookie');
-  //   thinkCache(thinkCache.COLLECTION, 'cookie', Cookie);
-  // }
-
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
-  let cookie = http._cookie[name];
+  let cookie = http.cookie(name);
   
   //validate cookie sign
   if (cookie && secret) {
@@ -1056,6 +651,7 @@ think.session = http => {
   }
 
   let sessionCookie = cookie;
+  let newCookie = false;
   //generate session cookie when cookie is not set
   if (!cookie) {
     let options = sessionOptions.cookie || {};
@@ -1067,6 +663,7 @@ think.session = http => {
     }
     http._cookie[name] = sessionCookie;
     http.cookie(name, cookie, options);
+    newCookie = true;
   }
 
   let type = sessionOptions.type || 'memory';
@@ -1078,16 +675,18 @@ think.session = http => {
   }
   
   let conf = think.parseConfig(sessionOptions, {
-    cookie: sessionCookie
+    cookie: sessionCookie,
+    newCookie: newCookie
   });
   let cls = think.adapter('session', type);
   let session = new cls(conf);
   http._session = session;
 
   //save session data after request end
-  http.once('afterEnd', () => session.flush && session.flush());
+  //http.once('afterEnd', () => session.flush && session.flush());
   return session;
 };
+
 
 /**
  * create controller sub class
@@ -1108,6 +707,8 @@ think.controller = (superClass, methods, module) => {
   //create sub controller class
   return controller(superClass, methods);
 };
+
+
 /**
  * create logic class
  * @type {Function}
@@ -1127,6 +728,8 @@ think.logic = (superClass, methods, module) => {
   //create sub logic class
   return logic(superClass, methods);
 };
+
+
 /**
  * create model sub class
  * @type {Function}
@@ -1179,7 +782,7 @@ think.service = (superClass, methods, module) => {
  * @param  {Mixed} value [cache value]
  * @return {}       []
  */
-think.cache = async (name, value, options = {}) => {
+think.cache = async (name, value, options) => {
   options = think.extend({}, think.config('cache'), options);
   let Cls = think.adapter('cache', options.type || 'memory');
   let instance = new Cls(options);
@@ -1205,188 +808,94 @@ think.cache = async (name, value, options = {}) => {
   //set cache
   return instance.set(name, value);
 };
+
+
 /**
  * get locale message
+ * can not use arrow function!
  * @param  {String} key  []
  * @param  {String} lang []
  * @return {String}      []
  */
-think.locale = (key, ...data) => {
-  let _default = think.config('locale.default');
-  let lang = think.lang || _default;
-  let config = think.config('locale');
-  let value;
-  if(config[lang] && config[lang][key]){
-    value = config[lang][key];
-  }else if(config[_default][key]){
-    value = config[_default][key];
+think.locale = function(key, ...data) {
+  let lang, locales, defaultLang;
+  if(this === think){
+    defaultLang = think.config('locale.default');
+    lang = think.lang || defaultLang;
+    locales = think.config('locale');
   }else{
-    value = key;
+    defaultLang = this.config('locale.default');
+    lang = this.lang();
+    locales = this.config(think.dirname.locale);
   }
-  var msg = util.format(value, ...data);
-  return msg;
+  let langLocale = locales[lang] || {};
+  let defaultLangLocale = locales[defaultLang] || {};
+  if(!key){
+    return think.isEmpty(langLocale) ? defaultLangLocale : langLocale;
+  }
+  let enLocale = locales.en || {};
+  let value = langLocale[key] || defaultLangLocale[key] || enLocale[key] || key;
+  if(!think.isString(value)){
+    return value;
+  }
+  return util.format(value, ...data);
 };
-/**
- * validate data
- * {
- *   name: {
- *     value: 'test',
- *     required: true,
- *     length: [4, 20],
- *     email: true
- *   },
- *   pwd: {
- *     value: '12345678',
- *     required: true,
- *     length: [6, 20]
- *   }
- *   confirm_pwd: {
- *     value: '12345678',
- *     required: true,
- *     equals: 'pwd'
- *   }
- * }
- * @param  {String | Object}   name     []
- * @param  {Function} callback []
- * @return {}            []
- */
-think.validate = (name, callback) => {
-  let Validator = thinkCache(thinkCache.VALIDATOR);
-  if (think.isEmpty(Validator)) {
-    Validator = think.require('validator');
-    thinkCache(thinkCache.VALIDATOR, Validator);
-  }
-  // register validate callback
-  if (think.isString(name)) {
-    // think.validate('test', function(){})
-    if (think.isFunction(callback)) {
-      thinkCache(thinkCache.VALIDATOR, name, callback);
-      return;
-    }
-    // get validator callback
-    return thinkCache(thinkCache.VALIDATOR, name);
-  }
-  let data = name, msg = {}, msgs = callback || {}, item;
 
-  //get error message
-  let getMsg = (type, name, value, args) => {
-    let key = `validate_${type}`;
-    let keyWithName = `${key}_${name}`;
-    let msg = msgs[keyWithName];
-    if(!msg && think.locale(keyWithName) !== keyWithName){
-      msg = think.locale(keyWithName);
-    }
-    msg = msg || msgs[key];
-    if(!msg && think.locale(key) !== key){
-      msg = think.locale(key);
-    }
-    if(!msg){
-      msg = think.locale('PARAMS_NOT_VALID');
-    }
-    return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
-  };
 
-  //validate item rule
-  let validateRule = (name, type, value, args) => {
-    let fn = Validator[type];
-    if (!think.isFunction(fn)) {
-      throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${type} type`));
-    }
-    if(think.isBoolean(args)){
-      args = [];
-    }else if(!think.isArray(args)){
-      args = [args];
-    }
-    let msgArgs = [...args];
-    let parseArgs = Validator[`_${type}`];
-    //parse args
-    if(think.isFunction(parseArgs)){
-      args = parseArgs(args, data);
-    }
-    let result = fn(value, ...args);
-    if(!result){
-      msg[name] = getMsg(type, name, value, msgArgs);
-    }
-    return result;
-  };
 
-  for(let name in data){
-    item = data[name];
-    for(let vitem in item){
-      if(vitem === 'value'){
-        continue;
-      }
-      //if has array rule, then foreach check value for every rule
-      if('array' in item && vitem !== 'array' && think.isArray(item.value)){
-        let flag = item.value.some(itemValue => {
-          if(!validateRule(name, vitem, itemValue, item[vitem])){
-            return true;
-          }
-        });
-        if(flag){
-          break;
-        }
-      }else{
-        if(!validateRule(name, vitem, item.value, item[vitem])){
-          break;
-        }
-      }
-    }
-  }
-  return msg;
-};
+
 /**
  * await 
  * @param  {String}   key      []
  * @param  {Function} callback []
  * @return {Promise}            []
  */
+let _awaitInstance = new Await();
 think.await = (key, callback) => {
-  let awaitInstance = thinkCache(thinkCache.COLLECTION, 'await_instance');
-  if(!awaitInstance){
-    let Await = think.require('await');
-    awaitInstance = new Await();
-    thinkCache(thinkCache.COLLECTION, 'await_instance', awaitInstance);
-  }
-  return awaitInstance.run(key, callback);
+  return _awaitInstance.run(key, callback);
 };
+
 
 /**
  * install node package
  * @param  {String} pkg [package name]
  * @return {Promise}     []
  */
+let _dynamicInstall = pkg => {
+  let pkgWithVersion = pkg;
+  //get package version
+  if(pkgWithVersion.indexOf('@') === -1){
+    let version = think.config('package')[pkg];
+    if(version){
+      pkgWithVersion += '@' + version;
+    }
+  }else{
+    pkg = pkgWithVersion.split('@')[0];
+  }
+  let cmd = `npm install ${pkgWithVersion} --save`;
+  return think.await(cmd, () => {
+    let deferred = think.defer();
+    think.log(`install package ${pkgWithVersion} start`, 'NPM');
+    child_process.exec(cmd, {
+      cwd: think.ROOT_PATH
+    }, err => {
+      if(err){
+        think.log(new Error(`install package ${pkgWithVersion} error`));
+        deferred.reject(err);
+      }else{
+        think.log(`install package ${pkgWithVersion} finish`, 'NPM');
+        deferred.resolve(think.require(pkg));
+      }
+    });
+    return deferred.promise;
+  });
+};
+
 think.npm = (pkg) => {
   try{
-    return Promise.resolve(think.require(pkg));
+    return Promise.resolve(_interopSafeRequire(pkg));
   } catch(e){
-    let pkgWithVersion = pkg;
-    //get package version
-    if(pkgWithVersion.indexOf('@') === -1){
-      let version = think.config('package')[pkg];
-      if(version){
-        pkgWithVersion += '@' + version;
-      }
-    }else{
-      pkg = pkgWithVersion.split('@')[0];
-    }
-    let cmd = `npm install ${pkgWithVersion} --save`;
-    return think.await(cmd, () => {
-      let deferred = think.defer();
-      think.log(`install package ${pkgWithVersion} start`, 'NPM');
-      child_process.exec(cmd, {
-        cwd: think.ROOT_PATH
-      }, err => {
-        if(err){
-          think.log(new Error(`install package ${pkgWithVersion} error`));
-          deferred.reject(err);
-        }else{
-          think.log(`install package ${pkgWithVersion} finish`, 'NPM');
-          deferred.resolve(think.require(pkg));
-        }
-      });
-      return deferred.promise;
-    });
+    return _dynamicInstall(pkg);
   }
 };
 /**
@@ -1400,9 +909,10 @@ think.error = (err, addon = '') => {
     return err.catch(err => {
       return think.reject(think.error(err, addon));
     });
-  }else if(think.isError(err)){
+  }
+  if(think.isError(err)){
     let message = err.message;
-    let errors = thinkCache(thinkCache.ERROR);
+    let errors = thinkData.error;
     let key, value, reg = /^[A-Z\_]$/;
     for(key in errors){
       let pos = message.indexOf(key);
@@ -1428,9 +938,8 @@ think.error = (err, addon = '') => {
       }
     }
     return err;
-  }else{
-    return new Error(err);
   }
+  return new Error(err);
 };
 /**
  * exec status action
@@ -1438,7 +947,8 @@ think.error = (err, addon = '') => {
  * @param  {Object} http   []
  * @return {}        []
  */
-think.statusAction = async (status = 500, http, log) => {
+think.statusAction = async (status, http, log) => {
+  status = status || 500;
   if(think.isPrevent(http.error)){
     return;
   }
@@ -1450,7 +960,8 @@ think.statusAction = async (status = 500, http, log) => {
   }
   http._error = true;
 
-  if(log){
+  //@TODO move log error to error controller
+  if(log && think.config('log_error') !== false){
     think.log(http.error);
   }
 
@@ -1474,6 +985,25 @@ think.statusAction = async (status = 500, http, log) => {
   await instance.invoke(`_${status}Action`, instance);
   
   return think.prevent();
+};
+
+/**
+ * waterfall
+ * @param  {Array}   dataList []
+ * @param  {Function} callback []
+ * @return {Promise}            []
+ */
+think.waterfall = async (dataList, callback) => {
+  let itemFn = think.isFunction(dataList[0]);
+  let data;
+  for(let i = 0, length = dataList.length; i < length; i++){
+    let ret = itemFn ? dataList[i](callback, data) : callback(dataList[i], data);
+    data = await think.co(ret);
+    if(data === null){
+      return data;
+    }
+  }
+  return data;
 };
 
 /**

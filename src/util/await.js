@@ -9,8 +9,8 @@ export default class {
    * @param  {} args []
    * @return {}         []
    */
-  constructor(...args){
-    this.init(...args);
+  constructor(){
+    this.init();
   }
   /**
    * init

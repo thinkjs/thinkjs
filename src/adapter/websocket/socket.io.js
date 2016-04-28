@@ -17,8 +17,8 @@ export default class extends Base {
 
     //set io adapter, must be a function
     //http://socket.io/docs/using-multiple-nodes/
-    if(this.config.adapter){
-      io.adapter(this.config.adapter());
+    if(this.config.adp){
+      io.adapter(this.config.adp());
     }
 
     //Sets the path v under which engine.io and the static files will be served. Defaults to /socket.io.
@@ -33,7 +33,32 @@ export default class extends Base {
     }
 
     //get message type
-    let messages = think.extend({}, this.config.messages);
+    let messages = think.isArray(this.config.messages) ? this.config.messages : [this.config.messages];
+    messages.forEach((v = {}) => {
+      let sc = v.namespace ? io.of(v.namespace) : io;
+      this.registerSocket(sc, v);
+    });
+  }
+
+  /**
+   * register namespace of socket, and support multi socket connect
+   * eg:
+   * export default {
+    messages:
+        [
+            {
+                namespace:'/payCount',
+                open: 'analysis/erp_pay/open',
+                close: 'analysis/erp_pay/close',
+                day: 'analysis/erp_pay/day',
+                updateFromMq: 'analysis/erp_pay/updateFromMq',
+            }
+        ]
+    };
+   * @param io
+   * @param messages
+     */
+  registerSocket(io, messages){
     let msgKeys = Object.keys(messages);
     let open = messages.open;
     delete messages.open;
@@ -98,8 +123,13 @@ export default class extends Base {
       url = `/${url}`;
     }
     request.url = url;
-
-    let http = await think.http(request, think.extend({}, request.res));
+    let http;
+    //socket.io c++ client发过来的requet没有res
+    if(!request.res){
+        http = await think.http(url);
+    }else{
+        http = await think.http(request, think.extend({}, request.res));
+    }
     http.data = data;
     http.socket = socket;
     http.io = this.io;

@@ -13,14 +13,17 @@ let configs = {
   },
   db: {
     log_sql: true,
-    log_connect: true
+    log_connect: true,
+    schema_force_update: true
+  },
+  post: {
+    log_error: true
   }
 };
 
 if(think.cli){
   configs = think.extend(configs, {
     auto_reload: false,
-    log_pid: false,
     process_timeout: 0
   });
 }

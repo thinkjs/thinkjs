@@ -13,7 +13,7 @@ export default class extends think.adapter.base {
    */
   init(options){
 
-    this.options = think.extend({}, think.config('session'), options);
+    this.options = think.parseConfig(think.config('session'), options);
 
     this.timeout = this.options.timeout;
     this.cookie = this.options.cookie;
@@ -23,7 +23,7 @@ export default class extends think.adapter.base {
    * @return {Object} []
    */
   getRedisInstance(name){
-    let options = this.parseConfig(think.config('redis'), this.options, {
+    let options = think.parseConfig.call(this.options, think.config('redis'), {
       command: name,
       from: 'session'
     });

@@ -43,23 +43,13 @@ describe('index.js', function(){
     var instance = new thinkjs();
     assert.equal(think.cli, '')
   })
-  it('getMode, module', function(){
+  it('getMode, module', function(done){
     var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
+      APP_PATH: __dirname + '/testApp11',
       ROOT_PATH: __dirname
     });
     var mode = instance.getMode();
     assert.equal(mode, think.mode_module);
-  })
-  it('getMode, mini', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mkdir(think.APP_PATH + '/controller');
-    fs.writeFileSync(think.APP_PATH + '/controller/index.js', 'file content');
-    var mode = instance.getMode();
-    assert.equal(mode, think.mode_mini);
     think.rmdir(think.APP_PATH).then(done)
   })
   it('getMode, normal', function(done){
@@ -73,34 +63,25 @@ describe('index.js', function(){
     assert.equal(mode, think.mode_normal);
     think.rmdir(think.APP_PATH).then(done)
   })
-  it('checkNodeVersion, need update', function(){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    muk(process, 'version', '#0.10.0');
-    muk(process, 'exit', function(){
-      muk.restore();
-    })
-    muk(think, 'log', function(){})
-    instance.checkNodeVersion();
-  })
+  // it('checkNodeVersion, need update', function(){
+  //   var instance = new thinkjs({
+  //     APP_PATH: __dirname + '/testApp',
+  //     ROOT_PATH: __dirname
+  //   });
+  //   muk(process, 'version', '#0.10.0');
+  //   muk(process, 'exit', function(){
+  //     muk.restore();
+  //   })
+  //   muk(think, 'log', function(){})
+  //   instance.checkNodeVersion();
+  // })
   it('loadAlias', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',
       ROOT_PATH: __dirname
     });
     instance.loadAlias();
-    var alias = thinkCache(thinkCache.ALIAS);
-    assert.equal(think.isObject(alias), true)
-  })
-  it('loadAlias', function(){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    instance.loadAliasExport();
-    var alias = thinkCache(thinkCache.ALIAS_EXPORT);
+    var alias = thinkData.alias;
     assert.equal(think.isObject(alias), true)
   })
   it('load', function(){
@@ -142,6 +123,7 @@ describe('index.js', function(){
     instance.autoReload = function(){
       flag = true;
     }
+    think.getModuleConfig();
     think.config('auto_reload', true);
     instance.start();
     assert.equal(flag, true);
@@ -162,94 +144,49 @@ describe('index.js', function(){
     muk.restore();
     assert.equal(flag, true);
   })
-  // it('autoReload', function(){
+  // it('checkFileName, path not exist', function(){
   //   var instance = new thinkjs({
   //     APP_PATH: __dirname + '/testApp',
   //     ROOT_PATH: __dirname
   //   });
-  //   muk(global, 'setInterval', function(fn, time){
-  //     fn();
-  //   })
-  //   instance.autoReload();
+  //   instance.checkFileName();
   // })
-  // it('checkAppPath, empty', function(){
+  // it('checkFileName, path not exist 2', function(done){
   //   var instance = new thinkjs({
-  //     ROOT_PATH: __dirname,
   //     APP_PATH: __dirname + '/testApp',
+  //     ROOT_PATH: __dirname
   //   });
-  //   instance.checkAppPath();
-  // })
-  // it('checkAppPath, empty', function(done){
-  //   var instance = new thinkjs({
-  //     ROOT_PATH: __dirname,
-  //     APP_PATH: __dirname + '/testApp',
-  //   });
-  //   think.mkdir(think.APP_PATH)
-  //   instance.checkAppPath();
+  //   think.mkdir(think.APP_PATH + '/controller/');
+  //   fs.writeFileSync(think.APP_PATH + '/controller/a.js', 'www')
+  //   instance.checkFileName();
   //   think.rmdir(think.APP_PATH).then(done)
   // })
-  // it('checkAppPath, has src', function(done){
+  // it('checkFileName, special file', function(done){
   //   var instance = new thinkjs({
   //     APP_PATH: __dirname + '/testApp',
   //     ROOT_PATH: __dirname
   //   });
-  //   think.mkdir(think.ROOT_PATH + '/src');
-  //   var flag = 0;
-  //   muk(think, 'log', function(fn){
-  //     fn({red: function(){}, cyan: function(){}});
-  //     flag++;
-  //   })
-  //   muk(process, 'exit', function(){
-  //     flag++;
-  //   })
-  //   instance.checkAppPath();
-  //   assert.equal(flag, 2);
-  //   muk.restore();
-  //   think.rmdir(think.ROOT_PATH + '/src').then(done);
+  //   think.mkdir(think.APP_PATH + '/controller/');
+  //   fs.writeFileSync(think.APP_PATH + '/controller/a.test', 'www')
+  //   instance.checkFileName();
+  //   think.rmdir(think.APP_PATH).then(done)
   // })
-  it('checkFileName, path not exist', function(){
+  // it('checkFileName, locale file', function(done){
+  //   var instance = new thinkjs({
+  //     APP_PATH: __dirname + '/testApp',
+  //     ROOT_PATH: __dirname
+  //   });
+  //   think.mkdir(think.APP_PATH + '/common/config/locale');
+  //   fs.writeFileSync(think.APP_PATH + '/common/config/locale/zh-CN.js', 'www')
+  //   instance.checkFileName();
+  //   think.rmdir(think.APP_PATH).then(done)
+  // })
+  it('getModule, mode_normal', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',
       ROOT_PATH: __dirname
     });
-    instance.checkFileName();
-  })
-  it('checkFileName, path not exist', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mkdir(think.APP_PATH + '/controller/');
-    fs.writeFileSync(think.APP_PATH + '/controller/a.js', 'www')
-    instance.checkFileName();
-    think.rmdir(think.APP_PATH).then(done)
-  })
-  it('checkFileName, special file', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mkdir(think.APP_PATH + '/controller/');
-    fs.writeFileSync(think.APP_PATH + '/controller/a.test', 'www')
-    instance.checkFileName();
-    think.rmdir(think.APP_PATH).then(done)
-  })
-  it('checkFileName, locale file', function(done){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mkdir(think.APP_PATH + '/common/config/locale');
-    fs.writeFileSync(think.APP_PATH + '/common/config/locale/zh-CN.js', 'www')
-    instance.checkFileName();
-    think.rmdir(think.APP_PATH).then(done)
-  })
-  it('getModule, mini', function(){
-    var instance = new thinkjs({
-      APP_PATH: __dirname + '/testApp',
-      ROOT_PATH: __dirname
-    });
-    think.mode = think.mode_mini;
+    think.mode = think.mode_normal;
     var modules = instance.getModule();
     assert.deepEqual(modules, ['home'])
   })
@@ -260,34 +197,69 @@ describe('index.js', function(){
     });
     think.mode = think.mode_normal;
     var modules = instance.getModule();
-    assert.deepEqual(modules, [])
+    assert.deepEqual(modules, ['home'])
   })
-  it('getModule, normal', function(done){
+  it('clearData', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',
       ROOT_PATH: __dirname
     });
-    think.mode = think.mode_normal;
-    think.mkdir(think.APP_PATH + '/controller/home');
-    think.mkdir(think.APP_PATH + '/controller/admin');
-    var modules = instance.getModule();
-    assert.deepEqual(modules, ['admin', 'home']);
-    think.rmdir(think.APP_PATH).then(done);
+    instance.clearData();
+    instance.load();
   })
-  it('getModule, normal', function(done){
+  it('compile', function(){
     var instance = new thinkjs({
       APP_PATH: __dirname + '/testApp',
       ROOT_PATH: __dirname
     });
-    think.mode = think.mode_normal;
-    think.mkdir(think.APP_PATH + '/controller/home');
-    think.mkdir(think.APP_PATH + '/controller/admin');
-    think.config('deny_module_list', ['home'])
-    var modules = instance.getModule();
-    assert.deepEqual(modules, ['admin']);
-    think.rmdir(think.APP_PATH).then(function(){
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(srcPath, outPath);
+  })
+  it('compile, with options', function(){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(srcPath, outPath, {});
+  })
+  it('compile, srcPath exist', function(done){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    think.mkdir(srcPath)
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(srcPath, outPath);
+    think.rmdir(srcPath).then(function(){
       done();
-      think.config('deny_module_list', [])
+    })
+  })
+  it('compile, srcPath exist, options', function(done){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
     });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile(true);
+    think.rmdir(srcPath).then(function(){
+      done();
+    })
+  })
+  it('compile, srcPath exist, log true', function(done){
+    var instance = new thinkjs({
+      APP_PATH: __dirname + '/testApp',
+      ROOT_PATH: __dirname
+    });
+    var srcPath = __dirname + think.sep + 'compile_src';
+    var outPath = __dirname + think.sep + 'compile_out';
+    instance.compile({log: true});
+    think.rmdir(srcPath).then(function(){
+      done();
+    })
   })
 })

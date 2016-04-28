@@ -13,7 +13,7 @@ var thinkjs = require('../../lib/index.js');
 new thinkjs().load();
 
 
-var Http = require('../../lib/core/http.js');
+var Http = think.safeRequire(path.resolve(__dirname, '../../lib/core/http.js'));
 
 var localeIp = '127.0.0.1';
 function noop(data) {
@@ -68,14 +68,14 @@ function getDefaultHttp(data) {
   };
 }
 
-think.APP_PATH = path.dirname(path.dirname(__dirname)) + '/testApp';
+think.APP_PATH = path.dirname(path.dirname(__dirname)) + think.sep + 'testApp';
 
 describe('core/http.js', function() {
-  it('is EventEmitter instance', function(done) {
+  it('is EventEmitter instance, false', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&48');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      assert.equal(http instanceof EventEmitter, true);
+      assert.equal(http instanceof EventEmitter, false);
       done();
     });
   });
@@ -85,19 +85,104 @@ describe('core/http.js', function() {
     think.config('timeout', 0.01);
     muk(think, 'log', function(){})
     timeoutHttp.res.setTimeout = function(delay, fn) {
+      done();
       setTimeout(fn, delay);
     };
     var instance = new Http(timeoutHttp.req, timeoutHttp.res);
     instance.run();
-    instance.http.on('timeout', function() {
-      timeoutHttp.res.setTimeout = noop;
-      setTimeout(function(){
-        muk.restore();
-        done();
-      }, 20)
+    think.config('timeout', 10);
+  });
+  it('response timeout false', function(done) {
+    var timeoutHttp = getDefaultHttp('/index/index?k=timeout');
+    think.config('timeout', 0);
+    muk(think, 'log', function(){});
+    var flag = false;
+    timeoutHttp.res.setTimeout = function(delay, fn) {
+      flag = true;
+      setTimeout(fn, delay);
+    };
+    var instance = new Http(timeoutHttp.req, timeoutHttp.res);
+    instance.run().then(function(){
+      assert.equal(flag, false)
+      done();
     });
     think.config('timeout', 10);
   });
+
+  it('parse pathname /', function(done) {
+    var defaultHttp = getDefaultHttp('/');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, '/');
+      done();
+    });
+  });
+  it('parse pathname /', function(done) {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        host: 'test.com:1234'
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, '/');
+      assert.deepEqual(http.hostname, 'test.com')
+      done();
+    });
+  });
+  it('parse pathname', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index/name/w%2Fww');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, 'index/index/name/w%2Fww');
+      done();
+    });
+  });
+  it('parse pathname 1', function(done) {
+    var defaultHttp = getDefaultHttp('/index/w%2Fww');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      assert.deepEqual(http.pathname, 'index/w%2Fww');
+      done();
+    });
+  });
+
+  it('hasPayload', function() {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var data = instance.hasPayload();
+    assert.equal(data, false)
+  });
+  it('hasPayload transfer-encoding', function() {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        'transfer-encoding': 'gzip'
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var data = instance.hasPayload();
+    assert.equal(data, true)
+  });
+  it('hasPayload content-length', function() {
+    var defaultHttp = getDefaultHttp({
+      url: '/',
+      headers: {
+        'content-length': 100
+      }
+    });
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var data = instance.hasPayload();
+    assert.equal(data, true)
+  });
+
+
 
   it('GET, query', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&1');
@@ -147,27 +232,35 @@ describe('core/http.js', function() {
 
   it('get type', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&6');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'content-type': 'application/json'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.type(), 'application/json');
       done();
+    }).catch(function(err) {
+      console.log(err.stack)
     });
   });
 
   it('get type, _contentTypeIsSend', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&7');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'content-type': 'text/html'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'content-type': 'text/html'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       http._contentTypeIsSend = true;
       http.type('application/json');
       assert.equal(http.type(), 'text/html');
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     });
   });
 
@@ -199,10 +292,12 @@ describe('core/http.js', function() {
 
   it('get referrer', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&10');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'referrer': 'http://www.thinkjs.org/index?name=maxzhang'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'referrer': 'http://www.thinkjs.org/index?name=maxzhang'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.referrer('www.thinkjs.org'), 'www.thinkjs.org');
       done();
@@ -211,10 +306,12 @@ describe('core/http.js', function() {
 
   it('isAjax 1', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&11');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'x-requested-with': 'XMLHttpRequest'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-requested-with': 'XMLHttpRequest'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.req.method = 'POST';
     instance.run().then(function(http) {
       assert.equal(http.isAjax(), true);
@@ -224,11 +321,13 @@ describe('core/http.js', function() {
 
   it('isAjax 2', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&12');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'x-requested-with': 'XMLHttpRequest'
-    };
-    instance.req.method = 'POST';
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-requested-with': 'XMLHttpRequest'
+      },
+      method: 'POST'
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.isAjax('GET'), false);
       done();
@@ -286,21 +385,30 @@ describe('core/http.js', function() {
 
   it('ip with x-real-ip', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&17');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-real-ip': '10.0.0.1'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     think.config('proxy_on', true);
-    instance.req.headers = {
-      'x-real-ip': '10.0.0.1'
-    };
     instance.run().then(function(http) {
       assert.equal(http.ip(), '10.0.0.1');
       think.config('proxy_on', false);
       done();
+    }).catch(function(err){
+      console.log(err.stack)
     });
   });
 
   it('ip with x-forwarded-for', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&18');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'x-forwarded-for': '10.0.0.1'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     think.config('proxy_on', true);
     instance.req.headers = {
       'x-forwarded-for': '10.0.0.1'
@@ -401,24 +509,46 @@ describe('core/http.js', function() {
       done();
     });
   });
+  it('get file 1', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&24');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._file = {image: {name: 'welefen'}}
+      var data = http.file('image');
+      assert.deepEqual(data, {name: 'welefen'})
+      done();
+    });
+  });
+  it('get file 2', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&24');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._file = {image: {name: 'welefen'}}
+      var data = http.file('image');
+      data.name = 'suredy';
+      assert.deepEqual(http._file, {image: {name: 'welefen'}})
+      done();
+    });
+  });
 
   it('get user agent', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang');
-    var instance = new Http(defaultHttp.req, defaultHttp.res);
-    instance.req.headers = {
-      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2478.0 Safari/537.36'
-    };
+    var req = think.extend({}, defaultHttp.req, {
+      headers: {
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2478.0 Safari/537.36'
+      }
+    })
+    var instance = new Http(req, defaultHttp.res);
     instance.run().then(function(http) {
       assert.equal(http.userAgent(), 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2478.0 Safari/537.36');
       done();
-    });
+    })
   });
 
   it('get empty user agent', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&25');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
-      console.log(http.userAgent());
       assert.equal(http.userAgent(), '');
       done();
     });
@@ -659,6 +789,56 @@ describe('core/http.js', function() {
         done();
       };
       http.sendTime('TEST');
+    });
+  });
+  it('get post data, all', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {};
+      var data = http.post();
+      assert.deepEqual(data, {});
+      done();
+    });
+  });
+  it('get post data, name', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 'test'};
+      var data = http.post('name');
+      assert.deepEqual(data, 'test');
+      done();
+    });
+  });
+  it('get post data, 0', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 0};
+      var data = http.post('name');
+      assert.deepEqual(data, 0);
+      done();
+    });
+  });
+  it('get post data, false', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: false};
+      var data = http.post('name');
+      assert.deepEqual(data, false);
+      done();
+    });
+  });
+  it('get post data, undefined', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 0};
+      var data = http.post('name111');
+      assert.deepEqual(data, '');
+      done();
     });
   });
 

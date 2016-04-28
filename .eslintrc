@@ -7,7 +7,7 @@
   "rules": {
     "strict": [0],
     "eqeqeq": 2,
-    "quotes": [2, "single"],
+    "quotes": [2, "single", {"allowTemplateLiterals": true}],
     "no-underscore-dangle": 0,
     "eol-last": 0,
     "camelcase": 0,
@@ -24,6 +24,7 @@
   },
   "globals": {
     "think": true,
-    "thinkCache": true
+    "thinkCache": true,
+    "thinkData": true
   }
 }

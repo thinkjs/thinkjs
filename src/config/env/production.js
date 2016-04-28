@@ -19,7 +19,6 @@ if(think.cli){
       on: false
     },
     auto_reload: false,
-    log_pid: false,
     process_timeout: 0
   });
 }

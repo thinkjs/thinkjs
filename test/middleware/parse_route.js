@@ -7,13 +7,13 @@ var Index = require('../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
 
 var _http = require('../_http.js');
 
 function getHttp(config, options){
-  think.APP_PATH = path.dirname(__dirname) + '/testApp';
+  think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
   var req = think.extend({}, _http.req);
   var res = think.extend({}, _http.res);
   return think.http(req, res).then(function(http){
@@ -147,6 +147,23 @@ describe('middleware/parse_route', function(){
       route_on: true
     }, {
       pathname: ''
+    }).then(function(http){
+      assert.equal(http.controller, 'index');
+      assert.equal(http.action, 'index');
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, has rules, pathname is /', function(done){
+    muk(think, 'route', function(){
+      return [
+        [/welefen/, 'suredy']
+      ];
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: '/'
     }).then(function(http){
       assert.equal(http.controller, 'index');
       assert.equal(http.action, 'index');
@@ -448,6 +465,54 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
+  it('route_on on, has rules, has method, post, has extra pathname', function(done){
+    muk(think, 'module', ['dddd'])
+    muk(think, 'route', function(){
+      return [
+        [/^welefen/, {
+          get: '/dddd/welefen/get',
+          post: '/dddd/welefen/post'
+        }]
+      ];
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'welefen/name/suredy/value/2222',
+      method: 'POST'
+    }).then(function(http){
+      assert.equal(http.module, 'dddd');
+      assert.equal(http.controller, 'welefen');
+      assert.equal(http.action, 'post');
+      assert.deepEqual(http._get, { test: 'welefen', value: '2222', name: 'suredy' });
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, has rules, has method, post, has extra pathname, decode', function(done){
+    muk(think, 'module', ['dddd'])
+    muk(think, 'route', function(){
+      return [
+        [/^welefen/, {
+          get: '/dddd/welefen/get',
+          post: '/dddd/welefen/post'
+        }]
+      ];
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'welefen/name/suredy/value/w%2Fww',
+      method: 'POST'
+    }).then(function(http){
+      assert.equal(http.module, 'dddd');
+      assert.equal(http.controller, 'welefen');
+      assert.equal(http.action, 'post');
+      assert.deepEqual(http._get, { test: 'welefen', value: 'w/ww', name: 'suredy' });
+      muk.restore();
+      done();
+    })
+  })
   it('route_on on, has rules, has method, delete', function(done){
     muk(think, 'module', ['welefen']);
     muk(think, 'mode', think.mode_module);
@@ -525,7 +590,7 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
-    it('route_on on, rules is object, has reg 2', function(done){
+  it('route_on on, rules is object, has reg 2', function(done){
     muk(think, 'module', ['test']);
     muk(think, 'mode', think.mode_module);
     muk(think, 'route', function(){
@@ -576,9 +641,9 @@ describe('middleware/parse_route', function(){
       done();
     })
   })
-  it('route_on on, rules is object, has reg 3, mode_mini', function(done){
+  it('route_on on, rules is object, has reg 3, mode_normal', function(done){
     muk(think, 'module', ['admin']);
-    muk(think, 'mode', think.mode_mini);
+    muk(think, 'mode', think.mode_normal);
     muk(think, 'route', function(){
       return {
         admin: {
@@ -605,7 +670,7 @@ describe('middleware/parse_route', function(){
 
   it('route_on on, rules is object, has reg 3, action has uppercases', function(done){
     muk(think, 'module', ['admin']);
-    muk(think, 'mode', think.mode_mini);
+    muk(think, 'mode', think.mode_normal);
     muk(think, 'route', function(){
       return {
         admin: {
@@ -757,6 +822,141 @@ describe('middleware/parse_route', function(){
       assert.equal(http.controller, 'welefen');
       assert.equal(http.action, 'list');
       assert.deepEqual(http._get, { test: 'welefen', value: '1111', 'name': 'wwwww'});
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, rules is object, no reg, has sub controller', function(done){
+    muk(think, 'module', ['admin']);
+    muk(think, 'mode', think.mode_module);
+    muk(thinkData, 'subController', {
+      admin: ['welefen/list']
+    })
+    muk(think, 'route', function(){
+      return {
+        admin: {
+          children: [
+            ['admin/test', 'welefen/list/']
+          ]
+        }
+      }
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'admin/test/',
+    }).then(function(http){
+      assert.equal(http.module, 'admin');
+      assert.equal(http.controller, 'welefen/list');
+      assert.equal(http.action, 'index');
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, rules is object, no reg, has sub controller 1', function(done){
+    muk(think, 'module', ['admin']);
+    muk(think, 'mode', think.mode_module);
+    muk(thinkData, 'subController', {
+      admin: ['welefen/list']
+    })
+    muk(think, 'route', function(){
+      return {
+        admin: {
+          children: [
+            ['admin/test', 'welefen/list/haha']
+          ]
+        }
+      }
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'admin/test/',
+    }).then(function(http){
+      assert.equal(http.module, 'admin');
+      assert.equal(http.controller, 'welefen/list');
+      assert.equal(http.action, 'haha');
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, rules is object, no reg, has sub controller 1', function(done){
+    muk(think, 'module', ['admin']);
+    muk(think, 'mode', think.mode_module);
+    muk(thinkData, 'subController', {
+      admin: ['welefen/search', 'welefen/list']
+    })
+    muk(think, 'route', function(){
+      return {
+        admin: {
+          children: [
+            ['admin/test', 'welefen/list/haha']
+          ]
+        }
+      }
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'admin/test/',
+    }).then(function(http){
+      assert.equal(http.module, 'admin');
+      assert.equal(http.controller, 'welefen/list');
+      assert.equal(http.action, 'haha');
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, rules is object, no reg, has sub controller 2, change module', function(done){
+    muk(think, 'module', ['admin', 'blog']);
+    muk(think, 'mode', think.mode_module);
+    muk(thinkData, 'subController', {
+      blog: ['welefen/search', 'welefen/list']
+    })
+    muk(think, 'route', function(){
+      return {
+        blog: {
+          children: [
+            ['admin/test', 'blog/welefen/list/haha']
+          ]
+        }
+      }
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'admin/test/',
+    }).then(function(http){
+      assert.equal(http.module, 'blog');
+      assert.equal(http.controller, 'welefen/list');
+      assert.equal(http.action, 'haha');
+      muk.restore();
+      done();
+    })
+  })
+  it('route_on on, rules is object, no reg, has sub controller 2, mode normal', function(done){
+    muk(think, 'module', ['home']);
+    muk(think, 'mode', think.mode_normal);
+    muk(thinkData, 'subController', {
+      home: ['welefen/search', 'welefen/list']
+    })
+    muk(think, 'route', function(){
+      return {
+        home: {
+          children: [
+            ['admin/test', 'welefen/list/haha']
+          ]
+        }
+      }
+    })
+    execMiddleware('parse_route', {
+      route_on: true
+    }, {
+      pathname: 'admin/test/',
+    }).then(function(http){
+      assert.equal(http.module, 'home');
+      assert.equal(http.controller, 'welefen/list');
+      assert.equal(http.action, 'haha');
       muk.restore();
       done();
     })

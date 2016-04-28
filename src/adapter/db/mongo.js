@@ -53,7 +53,7 @@ export default class extends Parse {
   async add(data, options){
     let collection = await this.collection(options.table);
     let result = await collection.insert(data);
-    this.lastInsertId = data._id;
+    this.lastInsertId = data._id.toString();
     return result;
   }
   /**
@@ -66,7 +66,7 @@ export default class extends Parse {
     let collection = await this.collection(options.table);
     let result = await collection.insert(dataList, options);
     let insertedIds = dataList.map(item => {
-      return item._id;
+      return item._id.toString();
     });
     this.lastInsertId = insertedIds;
     return result;
@@ -272,7 +272,8 @@ export default class extends Parse {
    */
   aggregate(table, options){
     return this.collection(table).then(collection => {
-      return collection.aggregate(options);
+      let fn = think.promisify(collection.aggregate, collection);
+      return fn(options);
     });
   }
   /**

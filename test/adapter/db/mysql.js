@@ -10,9 +10,9 @@ var Index = require('../../../lib/index.js');
 var instance = new Index();
 instance.load();
 
-think.APP_PATH = path.dirname(__dirname) + '/testApp';
+think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
 
-var Mysql = require('../../../lib/adapter/db/mysql.js');
+var Mysql = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter/db/mysql.js'));
 
 
 describe('adapter/db/mysql.js', function(){
@@ -38,8 +38,8 @@ describe('adapter/db/mysql.js', function(){
       var data = [ { Field: 'id',    Type: 'int(11) unsigned',    Null: 'NO',    Key: 'PRI',    Default: null,    Extra: 'auto_increment' },  { Field: 'name',    Type: 'varchar(255)',    Null: 'NO',    Key: '',    Default: '',    Extra: '' },  { Field: 'title',    Type: 'varchar(255)',    Null: 'NO',    Key: '',    Default: '',    Extra: '' }   ];
       return Promise.resolve(data);
     }
-    instance.getFields('user').then(function(data){
-      assert.deepEqual(data, { id:  { name: 'id',    type: 'int(11) unsigned',    required: false,    default: null,    primary: true,    unique: false,    auto_increment: true }, name:  { name: 'name',    type: 'varchar(255)',    required: false,    default: '',    primary: false,    unique: false,    auto_increment: false }, title:  { name: 'title',    type: 'varchar(255)',    required: false,    default: '',    primary: false,    unique: false,    auto_increment: false } })
+    instance.getSchema('user').then(function(data){
+      assert.deepEqual(data, { id:  { name: 'id',    type: 'int(11) unsigned',    required: false,     primary: true,    unique: false,    auto_increment: true }, name:  { name: 'name',    type: 'varchar(255)',    required: false,       primary: false,    unique: false,    auto_increment: false }, title:  { name: 'title',    type: 'varchar(255)',    required: false,       primary: false,    unique: false,    auto_increment: false } })
       done();
     })
   })

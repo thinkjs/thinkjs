@@ -1,5 +1,6 @@
 'use strict';
 
+import Validator from '../core/think_validate.js';
 /**
  * base model class
  */
@@ -18,7 +19,7 @@ export default class extends think.base {
       tablePrefix: undefined, //table prefix
       tableName: '', //table name, without prefix
       /**
-       * fields list
+       * schema
        * {
        *   name: {
        *     type: 'string',
@@ -30,7 +31,7 @@ export default class extends think.base {
        *   }
        * }
        */
-      fields: {}, //table fields
+      schema: {}, //table schema
       /**
        * table indexes
        * {
@@ -39,8 +40,8 @@ export default class extends think.base {
        * }
        * @type {Object}
        */
-      indexes: {},
-      readonlyFields: []// readonly fields
+      indexes: {}
+      //readonlyFields: []// readonly fields
     };
     //if is set in subclass, can't be override
     for(let key in options){
@@ -52,6 +53,28 @@ export default class extends think.base {
     if(think.isObject(name)){
       config = name;
       name = '';
+    }
+
+    config = think.parseConfig(true, config);
+    
+    //change property name `name`
+    if(config.name && !config.database){
+      config.database = config.name;
+      delete config.name;
+      think.log(`db.name is deprecated, use db.database instead`, 'WARNING');
+    }
+
+    if(config.pwd && !config.password){
+      config.password = config.pwd;
+      delete config.pwd;
+      think.log(`db.pwd is deprecated, use db.password instead`, 'WARNING');
+    }
+
+    //check property name `fields`
+    if(!think.isEmpty(this.fields)){
+      this.schema = this.fields;
+      delete this.fields;
+      think.log(`fields property is deprecated, use schema instead`, 'WARNING');
     }
 
     this.config = config;
@@ -75,14 +98,13 @@ export default class extends think.base {
    * @return {Object}         []
    */
   model(name, options, module){
-    if(think.isString(options)){
+    if(think.isString(options) && think.module.indexOf(options) > -1){
       module = options;
       options = {};
     }
-    if(!module){
-      let filename = this.__filename || __filename;
-      let seps = filename.split('/').reverse();
-      module = seps[2];
+    module = module || this.parseModuleFromPath();
+    if(think.isString(options)){
+      options = {type: options};
     }
     options = think.extend({}, this.config, options);
     return think.model(name, options, module);
@@ -115,7 +137,7 @@ export default class extends think.base {
       return this.name;
     }
     let filename = this.__filename || __filename;
-    let last = filename.lastIndexOf('/');
+    let last = filename.lastIndexOf(think.sep);
     this.name = filename.substr(last + 1, filename.length - last - 4);
     return this.name;
   }
@@ -184,7 +206,7 @@ export default class extends think.base {
       page = page[0];
     }
     page = Math.max(parseInt(page) || 1, 1);
-    listRows = Math.max(parseInt(listRows) || 1, 1);
+    listRows = Math.max(parseInt(listRows) || 10, 1);
     this._options.limit = [listRows * (page - 1), listRows];
     return this;
   }
@@ -199,7 +221,11 @@ export default class extends think.base {
     if (think.isString(where)) {
       where = {_string: where};
     }
-    this._options.where = think.extend(this._options.where || {}, where);
+    let options = this._options;
+    if(options.where && think.isString(options.where)){
+      options.where = {_string: options.where};
+    }
+    options.where = think.extend({}, options.where, where);
     return this;
   }
   /**
@@ -395,8 +421,66 @@ export default class extends think.base {
    * @param  {Object} data []
    * @return {}      []
    */
-  beforeAdd(data){
-    return data;
+  beforeAdd(data, options, schema){
+    
+    //for addMany invoked
+    if(think.isArray(data)){
+      return data.map(item => {
+        return this.beforeAdd(item, options);
+      });
+    }
+
+    let ret = {};
+    let extRet = {};
+    schema = schema || this.schema;
+    //fields in schema
+    for(let field in schema){
+      let fieldSchema = schema[field];
+      let _default = fieldSchema.default;
+      //default value is setted
+      if(!think.isTrueEmpty(_default)){
+        ret[field] = {
+          value: data[field],
+          default: _default
+        };
+      }else{
+        if(this._isSubSchema(fieldSchema)){
+          extRet[field] = this.beforeAdd(data[field] || {}, options, fieldSchema);
+        }
+      }
+    }
+    for(let field in data){
+      if(!ret[field] && !extRet[field]){
+        ret[field] = {
+          value: data[field]
+        };
+      }
+    }
+    ret = Validator.values(ret);
+    if(!think.isEmpty(extRet)){
+      ret = think.extend(ret, extRet);
+    }
+    return ret;
+  }
+  /**
+   * check is sub schema
+    // meta: {
+    //   createAt: {
+    //     default: ()=>new Date()
+    //   },
+    //   updateAt: {
+    //     default: ()=>new Date()
+    //   }
+    // }
+   * @param  {Mixed}  schema []
+   * @return {Boolean}        []
+   */
+  _isSubSchema(schema){
+    if(!schema || !think.isObject(schema)){
+      return false;
+    }
+    let keys = Object.keys(schema);
+    return keys.length && keys.every(key => think.isObject(schema[key]));
   }
   /**
    * after add
@@ -405,6 +489,12 @@ export default class extends think.base {
    */
   afterAdd(data){
     return data;
+  }
+  /**
+   * before delete
+   */
+  beforeDelete(options){
+    return options;
   }
   /**
    * after delete
@@ -419,8 +509,58 @@ export default class extends think.base {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  beforeUpdate(data){
-    return data;
+  beforeUpdate(data, options, schema){
+    //check property readonlyFields
+    if(!think.isEmpty(this.readonlyFields)){
+      let ret = {};
+      this.readonlyFields.forEach(item => {
+        ret[item] = {readonly: true};
+      });
+      delete this.readonlyFields;
+      this.schema = think.extend(ret, this.schema);
+      think.log(`readonlyFields property is deprecated, use schema[field].readonly instead`, 'WARNING');
+    }
+
+    let ret = {};
+    let extRet = {};
+    schema = schema || this.schema;
+
+    for(let field in data){
+      let fieldSchema = schema[field];
+      if(!fieldSchema){
+        ret[field] = {value: data[field]};
+      }else{
+        if(this._isSubSchema(fieldSchema)){
+          let result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
+          if(!think.isEmpty(result)){
+            extRet[field] = result;
+          }
+        }else if(!fieldSchema.readonly){
+          ret[field] = {value: data[field]};
+        }
+      }
+    }
+
+    for(let field in schema){
+      let fieldSchema = schema[field];
+      let _default = fieldSchema.default;
+      if(!think.isTrueEmpty(_default) && !fieldSchema.readonly && fieldSchema.update){
+        ret[field] = {
+          value: data[field],
+          default: _default
+        };
+      }else if(this._isSubSchema(fieldSchema)){
+        let result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
+        if(!think.isEmpty(result)){
+          extRet[field] = result;
+        }
+      }
+    }
+    ret = Validator.values(ret);
+    if(!think.isEmpty(extRet)){
+      ret = think.extend(ret, extRet);
+    }
+    return ret;
   }
   /**
    * after update
@@ -432,11 +572,23 @@ export default class extends think.base {
     return data;
   }
   /**
+   * before find
+   */
+  beforeFind(options){
+    return options;
+  }
+  /**
    * after find
    * @return {} []
    */
   afterFind(data){
     return data;
+  }
+  /**
+   * before select
+   */
+  beforeSelect(options){
+    return options;
   }
   /**
    * after select
@@ -463,8 +615,8 @@ export default class extends think.base {
    * @param  {Mixed} options []
    * @return {}         []
    */
-  options(options = {}){
-    if (options === true) {
+  options(options){
+    if (!options) {
       return this._options;
     }
     this._options = options;

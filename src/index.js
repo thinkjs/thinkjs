@@ -2,6 +2,15 @@
 
 import fs from 'fs';
 import path from 'path';
+
+//rewrite promise, bluebird is more faster
+require('babel-runtime/core-js/promise').default = require('bluebird');
+global.Promise = require('bluebird');
+
+import AutoReload from './util/auto_reload.js';
+import WatchCompile from './util/watch_compile.js';
+import Checker from './util/checker.js';
+
 import './core/think.js';
 
 export default class {
@@ -13,6 +22,13 @@ export default class {
   constructor(options = {}){
     //extend options to think
     think.extend(think, this.getPath(), options);
+
+    //normalize path
+    think.APP_PATH = path.normalize(think.APP_PATH);
+    think.ROOT_PATH = path.normalize(think.ROOT_PATH);
+    think.RESOURCE_PATH = path.normalize(think.RESOURCE_PATH);
+    think.RUNTIME_PATH = path.normalize(think.RUNTIME_PATH);
+
     //parse data from process arguments
     let i = 2;
     let argv = process.argv[i];
@@ -40,13 +56,7 @@ export default class {
   getMode(){
     let filepath = `${think.APP_PATH}/${think.dirname.controller}`;
     if (think.isDir(filepath)) {
-      let files = fs.readdirSync(filepath);
-      let flag = files.some(file => {
-        if (think.isDir(`${filepath}/${file}`)) {
-          return true;
-        }
-      });
-      return flag ? think.mode_normal : think.mode_mini;
+      return think.mode_normal;
     }
     return think.mode_module;
   }
@@ -56,12 +66,15 @@ export default class {
    */
   getPath(){
     let filepath = process.argv[1];
-    let ROOT_PATH = path.dirname(filepath);
-    let APP_PATH = `${path.dirname(ROOT_PATH)}/app`;
+    let RESOURCE_PATH = path.dirname(filepath);
+    let ROOT_PATH = path.dirname(RESOURCE_PATH);
+    let APP_PATH = `${ROOT_PATH}${think.sep}app`;
+    let RUNTIME_PATH = ROOT_PATH + think.sep + think.dirname.runtime;
     return {
       APP_PATH,
-      RESOURCE_PATH: ROOT_PATH,
-      ROOT_PATH
+      RESOURCE_PATH,
+      ROOT_PATH,
+      RUNTIME_PATH
     };
   }
   /**
@@ -71,96 +84,18 @@ export default class {
   checkEnv(){
     this.checkNodeVersion();
   }
-  /**
-   * check node version
-   * @return {} []
-   */
-  checkNodeVersion(){
-    let packageFile = `${think.THINK_PATH}/package.json`;
-    let {engines} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
-    let needVersion = engines.node.substr(2);
-
-    let nodeVersion = process.version;
-    if(nodeVersion[0] === 'v'){
-      nodeVersion = nodeVersion.slice(1);
-    }
-
-    if(needVersion > nodeVersion){
-      think.log(colors => {
-        return `${colors.red('[ERROR]')} ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`;
-      });
-      console.log();
-      process.exit();
-    }
-  }
-  /**
-   * check application filename is lower
-   * @return {} []
-   */
-  checkFileName(){
-    let files = think.getFiles(think.APP_PATH);
-    let reg = /\.(js|html|tpl)$/;
-    let uppercaseReg = /[A-Z]+/;
-    let filter = item => {
-      if(!reg.test(item)){
-        return;
-      }
-      //ignore files in config/locale
-      if(item.indexOf(`/${think.dirname.locale}/`) > -1){
-        return;
-      }
-      return true;
-    };
-    files.forEach(item => {
-      if(filter(item) && uppercaseReg.test(item)){
-        think.log(colors => {
-          return colors.yellow(`[WARNING]`) + ` file \`${item}\` has uppercase chars.`;
-        });
-      }
-    });
-  }
-  /**
-   * check dependencies is installed before server start
-   * @return {} []
-   */
-  checkDependencies(){
-    let packageFile = think.ROOT_PATH + '/package.json';
-    if(!think.isFile(packageFile)){
-      return;
-    }
-    let data = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-    let dependencies = data.dependencies;
-    for(let pkg in dependencies){
-      if(think.isDir(`${think.ROOT_PATH}/node_modules/${pkg}`)){
-        continue;
-      }
-      try{
-        require(pkg);
-      }catch(e){
-        think.log(colors => {
-          let msg = colors.red('[ERROR]') + ` package \`${pkg}\` is not installed. `;
-          msg += 'please run `npm install` command before start server.';
-          return msg;
-        }, '', null);
-        console.log();
-        process.exit();
-      }
-    }
-  }
+  
   /**
    * get app module list
    * @return {} []
    */
   getModule(){
     //only have default module in mini mode
-    if (think.mode === think.mode_mini) {
+    if (think.mode === think.mode_normal) {
       think.module = [think.config('default_module')];
       return think.module;
     }
     let modulePath = think.APP_PATH;
-    if (think.mode === think.mode_normal) {
-      modulePath += `/${think.dirname.controller}`;
-    }
     if(!think.isDir(modulePath)){
       return [];
     }
@@ -185,83 +120,20 @@ export default class {
    */
   loadAlias(){
     let aliasPath = `${think.THINK_LIB_PATH}/config/sys/alias.js`;
-    thinkCache(thinkCache.ALIAS, require(aliasPath));
-  }
-  /**
-   * load alias module export
-   * @return {} []
-   */
-  loadAliasExport(){
-    var alias = thinkCache(thinkCache.ALIAS);
-    for(let key in alias){
-      if (thinkCache(thinkCache.ALIAS_EXPORT, key)) {
-        continue;
-      }
-      thinkCache(thinkCache.ALIAS_EXPORT, key, think.require(key));
-    }
+    thinkData.alias = think.safeRequire(aliasPath);
   }
   /**
    * load config
    * @return {} []
    */
   loadConfig(){
-    //sys config
-    let config = think.getModuleConfig(true);
-    //common module config
-    let commonConfig = think.getModuleConfig();
-    let configs = think.extend(config, commonConfig);
-    thinkCache(thinkCache.CONFIG, configs);
-    let modules = this.getModule();
-
+    think.getModuleConfig();
     //load modules config
-    modules.forEach(module => {
+    this.getModule().forEach(module => {
       think.getModuleConfig(module);
     });
   }
-  /**
-   * check module config
-   * @return {} []
-   */
-  checkModuleConfig(){
-    if(think.mode !== think.mode_module){
-      return;
-    }
-    // check module config
-    // some config must be set in common module
-    let keys = [], errorKey = 'error_config_key';
-    let errorConfigKeys = thinkCache(thinkCache.COLLECTION, errorKey);
-    if(think.isEmpty(errorConfigKeys)){
-      thinkCache(thinkCache.COLLECTION, errorKey, []);
-      errorConfigKeys = thinkCache(thinkCache.COLLECTION, errorKey);
-    }
-
-    let checkModuleConfig = module => {
-      if(keys.length === 0){
-        keys = Object.keys(require(`${think.THINK_LIB_PATH}/config/config.js`));
-      }
-      let configFilePath = think.getPath(module, think.dirname.config) + '/config.js';
-      if(!think.isFile(configFilePath)){
-        return;
-      }
-      let config = require(configFilePath);
-      keys.forEach(key => {
-        if(config[key] && errorConfigKeys.indexOf(key) === -1){
-          errorConfigKeys.push(key);
-          think.log(colors => {
-            return colors.red(`config key \`${key}\` can not be set in \`${module}\` module, must be set in \`common\` module`);
-          }, 'CONFIG');
-        }
-      });
-    };
-
-    let modules = this.getModule();
-    //load modules config
-    modules.forEach(module => {
-      if(module !== 'common'){
-        checkModuleConfig(module);
-      }
-    });
-  }
+  
   /**
    * load route
    * @return {} []
@@ -274,7 +146,7 @@ export default class {
    * @return {} []
    */
   loadAdapter(){
-    think.loadAdapter();
+    think.adapter.load();
   }
   /**
    * load middleware
@@ -282,7 +154,7 @@ export default class {
    */
   loadMiddleware(){
     let paths = [
-      `${think.THINK_LIB_PATH}/middleware`,
+      `${think.THINK_LIB_PATH}${think.sep}middleware`,
       `${think.getPath(undefined, think.dirname.middleware)}`
     ];
     think.alias('middleware', paths);
@@ -295,26 +167,13 @@ export default class {
    */
   loadHook(){
     let hookPath = `${think.THINK_LIB_PATH}/config/hook.js`;
-    let hook = think.extend({}, require(hookPath));
+    thinkData.hook = think.extend({}, think.safeRequire(hookPath));
+
     let file = `${think.getPath(undefined, think.dirname.config)}/hook.js`;
     let data = think.extend({}, think.safeRequire(file));
-    let key, value;
-    for(key in data){
-      value = data[key];
-      if (!(key in hook)) {
-        hook[key] = data[key];
-      }else if (value[0] === 'append' || value[0] === 'prepend') {
-        let flag = value.shift();
-        if (flag === 'append') {
-          hook[key] = hook[key].concat(value);
-        }else{
-          hook[key] = value.concat(hook[key]);
-        }
-      }else{
-        hook[key] = value;
-      }
+    for(let key in data){
+      think.hook.set(key, data[key]); 
     }
-    thinkCache(thinkCache.HOOK, hook);
   }
   /**
    * load controller, model, logic, service files
@@ -327,17 +186,47 @@ export default class {
       logic: ['base'],
       service: ['base']
     };
-    for(let type in types){
-      think.alias(type, `${think.THINK_LIB_PATH}/${type}`);
-      types[type].forEach(item => {
-        think[type][item] = think.require(`${type}_${item}`);
+    for(let itemType in types){
+      think.alias(itemType, `${think.THINK_LIB_PATH}${think.sep}${itemType}`);
+      types[itemType].forEach(item => {
+        think[itemType][item] = think.require(`${itemType}_${item}`);
       });
       think.module.forEach(module => {
-        let moduleType = `${module}/${type}`;
-        let filepath = think.getPath(module, think.dirname[type]);
+        let moduleType = `${module}/${itemType}`; //can not use think.sep
+        let filepath = think.getPath(module, think.dirname[itemType]);
         think.alias(moduleType, filepath, true);
       });
     }
+  }
+  /**
+   * load sub controller
+   * @return {} []
+   */
+  loadSubController(){
+    think.module.forEach(module => {
+      let filepath = think.getPath(module, think.dirname.controller);
+      let subControllers = think.getFiles(filepath).filter(item => {
+        if(item.indexOf(think.sep) === -1){
+          return;
+        }
+        if(path.extname(item) !== '.js'){
+          return;
+        }
+        return true;
+      }).map(item => {
+        return item.slice(0, -3).replace(/\\/g, '/');
+      }).sort((a, b) => {
+        let al = a.split('/').length;
+        let bl = b.split('/').length;
+        if(al === bl){
+          return a < b ? 1 : -1;
+        }
+        return al < bl ? 1 : -1;
+      });
+      if(subControllers.length){
+        thinkData.subController[module] = subControllers;
+      }
+    });
   }
   /**
    * load bootstrap
@@ -345,7 +234,7 @@ export default class {
    */
   loadBootstrap(){
     let paths = [
-      `${think.THINK_LIB_PATH}/bootstrap`,
+      `${think.THINK_LIB_PATH}${think.sep}bootstrap`,
       think.getPath(think.dirname.common, think.dirname.bootstrap)
     ];
     paths.forEach(item => {
@@ -355,12 +244,10 @@ export default class {
       let files = fs.readdirSync(item);
 
       //must reload all bootstrap files.
-      //may be register adapter in bootstrap file
       if (think.config('auto_reload')) {
-        var AutoReload = require('./util/auto_reload.js');
-        //AutoReload.rewriteSysModuleLoad();
-        var instance = new AutoReload(item, () => {});
-        instance.clearFilesCache(files.map(file => item + '/' + file));
+        AutoReload.rewriteSysModuleLoad();
+        var instance = new AutoReload(item, ()=>{});
+        instance.clearFilesCache(files.map(file => item + think.sep + file));
       }
 
       files.forEach(file => {
@@ -368,7 +255,7 @@ export default class {
         if(extname !== '.js'){
           return;
         }
-        think.safeRequire(`${item}/${file}`);
+        think.safeRequire(`${item}${think.sep}${file}`);
       });
     });
   }
@@ -384,69 +271,90 @@ export default class {
       if (!think.isDir(filepath)) {
         return;
       }
-      let files = think.getFiles(filepath);
+      let files = think.getFiles(filepath, true);
       files.forEach(file => {
-        let key = path.normalize(`${filepath}/${file}`);
+        let key = `${filepath}${think.sep}${file}`;
         data[key] = true;
       });
     };
     let {root_path} = think.config('view');
     if(root_path){
-      add(root_path);
+      add(path.normalize(root_path));
     }else{
       think.module.forEach(module => {
         add(think.getPath(module, think.dirname.view));
       });
     }
-    thinkCache(thinkCache.TEMPLATE, data);
+    thinkData.template = data;
   }
   /**
    * load system error message
    * @return {} []
    */
   loadError(){
-    let message = require(think.THINK_LIB_PATH + '/config/sys/error.js');
-    thinkCache(thinkCache.ERROR, message);
+    thinkData.error = think.safeRequire(think.THINK_LIB_PATH + `/config/sys/error.js`);
+  }
+  /**
+   * clear all cache for reload
+   * @return {void} []
+   */
+  clearData(){
+    thinkData.alias = {};
+    thinkData.export = {};
+    thinkData.config = {};
+    thinkData.hook = {};
+    thinkData.template = {};
+    thinkData.middleware = {};
+    thinkData.subController = {};
+    thinkData.route = null;
   }
   /**
    * load all config or modules
    * @return {} []
    */
   load(){
-    //clear all cache for reload
-    thinkCache(thinkCache.ALIAS, null);
-    thinkCache(thinkCache.ALIAS_EXPORT, null);
-    thinkCache(thinkCache.MODULE_CONFIG, null);
-    think.route(null);
-
+    
     this.loadConfig();
     this.loadRoute();
     this.loadAlias();
     this.loadAdapter();
     this.loadMiddleware();
     this.loadMVC();
+    this.loadSubController();
     this.loadHook();
     this.loadTemplate();
     this.loadError();
-
     this.loadBootstrap();
 
-    this.checkModuleConfig();
+    Checker.checkModuleConfig();
 
-    //load alias export at last
-    //this.loadAliasExport();
+    think.toFastProperties(thinkData.alias);
+    think.toFastProperties(thinkData.config);
+    think.toFastProperties(thinkData.hook);
+    think.toFastProperties(thinkData.middleware);
+    think.toFastProperties(thinkData.error);
+    think.toFastProperties(thinkData.template);
+    think.toFastProperties(thinkData.subController);
+
+    //console.log(thinkData.alias)
+    //console.log(eval('%HasFastProperties(thinkData.template)'))
   }
   /**
    * capture error
    * @return {} []
    */
   captureError(){
-    process.on('uncaughtException', function(err){
+    process.on('uncaughtException', err => {
       let msg = err.message;
       err = think.error(err, 'port:' + think.config('port'));
       think.log(err);
       if(msg.indexOf(' EADDRINUSE ') > -1){
         process.exit();
+      }
+    });
+    process.on('unhandledRejection', err => {
+      if(think.config('log_unhandled_promise')){
+        think.log(err);
       }
     });
   }
@@ -455,9 +363,10 @@ export default class {
    * @return {} []
    */
   start(){
-    this.checkEnv();
-    this.checkFileName();
-    this.checkDependencies();
+    Checker.checkNodeVersion();
+    Checker.checkFileName();
+    Checker.checkDependencies();
+    
     this.load();
     this.captureError();
     if (think.config('auto_reload')) {
@@ -483,9 +392,9 @@ export default class {
    */
   getReloadInstance(srcPath){
     srcPath = srcPath || think.APP_PATH;
-    let AutoReload = require('./util/auto_reload.js');
     AutoReload.rewriteSysModuleLoad();
     let instance = new AutoReload(srcPath, () => {
+      this.clearData();
       this.load();
     });
     return instance;
@@ -502,39 +411,74 @@ export default class {
       options = {log: true};
       srcPath = '';
     }
-    srcPath = srcPath || `${think.ROOT_PATH}/src`;
+    srcPath = srcPath || `${think.ROOT_PATH}${think.sep}src`;
     outPath = outPath || think.APP_PATH;
 
     if(!think.isDir(srcPath)){
       return;
     }
     let reloadInstance = this.getReloadInstance(outPath);
+    let _getMode = false;
     this.compileCallback = changedFiles => {
+      if(!_getMode){
+        _getMode = true;
+        //get app mode
+        think.mode = this.getMode();
+      }
+
       reloadInstance.clearFilesCache(changedFiles);
     };
 
-    let WatchCompile = require('./util/watch_compile.js');
     let instance = new WatchCompile(srcPath, outPath, options, this.compileCallback);
     instance.run();
 
     think.autoCompile = true;
-    //get app mode
-    think.mode = this.getMode();
+    
+    this.sourceMapSupport(true);
+  }
+  /**
+   * source map support
+   * @param  {} flag []
+   * @return {}      []
+   */
+  async sourceMapSupport(flag){
+    let support = await think.npm('source-map-support');
+    let options = {
+      environment: 'node',
+      emptyCacheBetweenOperations: flag
+    };
+    return support.install(options);
+  }
+  /**
+   * pre require
+   * @return {} []
+   */
+  preload(){
+    let startTime = Date.now();
+    for(let name in thinkData.alias){
+      think.require(thinkData.alias[name]);
+    }
+    think.log('preload packages finished', 'PRELOAD', startTime);
   }
   /**
    * run
    * @return {} []
    */
-  run(){
+  run(preload){
     this.start();
+    if(preload){
+      this.preload();
+    }
     return think.require('app').run();
   }
   /**
    * load, convenient for plugins
    * @return {} []
    */
-  static load(){
-    let instance = new this();
+  static load(options){
+    let instance = new this(options);
     instance.load();
   }
 }
+
+module.exports = exports.default;

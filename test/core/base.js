@@ -3,8 +3,10 @@ var path = require('path');
 var fs = require('fs');
 var muk = require('muk');
 
-var Base = require('../../lib/core/base.js');
 require('../../lib/core/think.js');
+
+var Base = think.safeRequire(path.resolve(__dirname, '../../lib/core/base.js'));
+
 
 var Cls = think.Class(Base, {
   __before: function(){
@@ -103,16 +105,16 @@ describe('core/base.js', function(){
   })
   it('no __before & __after', function(done){
     var instance = new Cls4();
-    instance.invoke('parseFilename', 'getName.js').then(function(data){
-      assert.deepEqual(data.basename, 'getName');
+    instance.invoke('basename', 'getName.js').then(function(data){
+      assert.deepEqual(data, 'getName');
       done();
     }).catch(function(err){
       console.log(err.stack)
     });
   })
-  it('parseFilename', function(){
+  it('basename', function(){
     var instance = new Base();
-    var ret = instance.parseFilename(__filename);
-    assert.equal(ret.basename, 'base')
+    var ret = instance.basename(__filename);
+    assert.equal(ret, 'base')
   })
 })
