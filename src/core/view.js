@@ -121,11 +121,17 @@ export default class extends think.http.base {
       });
     });
     await Promise.all(promises);
-    let content = await this.hook('view_parse', {
+
+    const data4ViewParse = {
       'var': tVar,
       'file': templateFile,
       'config': config
-    });
+    };
+    let content = await this.hook('view_parse', data4ViewParse);
+    if (data4ViewParse === content) {
+      content = '';
+    }
+
     return this.hook('view_filter', content);
   }
 }
