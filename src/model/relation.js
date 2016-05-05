@@ -138,7 +138,7 @@ export default class extends think.model.base {
 
       ['where', 'field', 'order', 'limit', 'page'].forEach(optItem => {
         if(think.isFunction(item[optItem])){
-          modelOpts[optItem] = item[optItem].call(this);
+          modelOpts[optItem] = item[optItem](this);
         }else{
           modelOpts[optItem] = item[optItem];
         }
