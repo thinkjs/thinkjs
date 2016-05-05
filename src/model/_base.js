@@ -184,6 +184,10 @@ export default class extends think.base {
     if (offset === undefined) {
       return this;
     }
+    if(think.isArray(offset)){
+      length = offset[1] || length;
+      offset = offset[0];
+    }
     offset = Math.max(parseInt(offset) || 0, 0);
     if(length){
       length = Math.max(parseInt(length) || 0, 0);
