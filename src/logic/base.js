@@ -63,8 +63,11 @@ export default class extends think.controller.base {
         itemData.object = true;
       }
       itemData._method = method;
-      itemData.value = this[method](name);
-
+      //ignore set itemData.value when aleady has it
+      if(!('value' in itemData)){
+        itemData.value = this[method](name);
+      }
+      
       let flag = allowTypes.some(item => {
         return item in itemData;
       });

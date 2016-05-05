@@ -890,6 +890,45 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('__after, has rules, has value', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      instance.rules = {name: {
+        required: true,
+        value: ''
+      }};
+      var data = instance.__after();
+      assert.equal(instance._validateInvoked, true);
+      data.catch(err => {
+        done();
+      })
+    })
+  })
+  it('__after, has rules, has value 1', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '2014-11-11',
+        suredy: '2014-11-10'
+      },
+      method: 'POST'
+    }).then(function(instance){
+      instance.rules = {name: {
+        required: true,
+        value: 'welefen'
+      }};
+      var data = instance.__after();
+      assert.deepEqual(data, undefined);
+      assert.equal(instance._validateInvoked, true);
+      done();
+    })
+  })
   it('__after, has errors', function(done){
     getInstance({}, {
       _config: think.config(),
