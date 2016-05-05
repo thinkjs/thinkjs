@@ -66,7 +66,7 @@ export default class extends think.controller.base {
       itemData.value = this[method](name);
 
       let flag = allowTypes.some(item => {
-        return itemData[item];
+        return item in itemData;
       });
       if(!flag){
         itemData.string = true;
