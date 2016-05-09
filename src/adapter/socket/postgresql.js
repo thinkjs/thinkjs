@@ -93,7 +93,7 @@ export default class extends Base {
       return data.rows;
     }).catch(err => {
       //when socket is closed, try it
-      if(err.message === 'This socket is closed.'){
+        if(err.code === 'EPIPE'){
         this.close();
         return this.query(sql);
       }
