@@ -361,7 +361,7 @@ export default class extends Base {
    */
   increment(field, step = 1){
     let data = {
-      [field]: ['exp', `${field}+${step}`]
+      [field]: ['exp', `\`${field}\`+${step}`]
     };
     return this.update(data);
   }
@@ -371,7 +371,7 @@ export default class extends Base {
    */
   decrement(field, step = 1){
     let data = {
-      [field]: ['exp', `${field}-${step}`]
+      [field]: ['exp', `\`${field}\`-${step}`]
     };
     return this.update(data);
   }
