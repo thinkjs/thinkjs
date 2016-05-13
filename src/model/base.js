@@ -440,7 +440,7 @@ export default class extends Base {
     }
     options.limit = options.limit || [0, this.config.nums_per_page];
     //add possible 'order' condition when perform pagination select operation
-    option.order=possibleOrder;
+    options.order=possibleOrder;
 
     let numsPerPage = options.limit[1];
     //get page options
