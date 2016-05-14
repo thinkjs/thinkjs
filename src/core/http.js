@@ -693,7 +693,7 @@ export default class {
     if(think.isPromise(obj)){
       //ignore Content-Type header before set
       this._contentTypeIsSend = false;
-      throw new Error('cat not write promise');
+      throw new Error('can not write promise');
     }
     if (think.isArray(obj) || think.isObject(obj)) {
       obj = JSON.stringify(obj);
