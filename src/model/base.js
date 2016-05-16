@@ -109,7 +109,7 @@ export default class extends Base {
 
     options.tablePrefix = this.getTablePrefix();
     options.model = this.getModelName();
-
+    
     //get table schema can not use table alias
     let schema = await this.getSchema(options.table);
 
@@ -146,7 +146,7 @@ export default class extends Base {
   }
   /**
    * parse where options
-   * @return {Object}
+   * @return {Object} 
    */
   parseWhereOptions(options){
     if (think.isNumber(options) || think.isString(options)) {
@@ -209,7 +209,7 @@ export default class extends Base {
     data = think.extend({}, this._data, data);
     //clear data
     this._data = {};
-
+    
     options = await this.parseOptions(options);
 
     let parsedData = this.parseData(data);
@@ -412,9 +412,9 @@ export default class extends Base {
   }
   /**
    * count select
-   * @param  options
-   * @param  pageFlag
-   * @return promise
+   * @param  options  
+   * @param  pageFlag 
+   * @return promise         
    */
   async countSelect(options, pageFlag){
     let count;
@@ -432,15 +432,12 @@ export default class extends Base {
 
     //delete table options avoid error when has alias
     delete options.table;
-    //delete possible 'order' condition when perform count operation
-    let possibleOrder=options.order;
-    delete options.order;
+
     if(!count){
       count = await this.options(options).count(`${table}.${pk}`);
     }
+
     options.limit = options.limit || [0, this.config.nums_per_page];
-    //add possible 'order' condition when perform pagination select operation
-    options.order=possibleOrder;
 
     let numsPerPage = options.limit[1];
     //get page options
@@ -448,7 +445,7 @@ export default class extends Base {
     let totalPage = Math.ceil(count / data.numsPerPage);
 
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
-
+    
     if (think.isBoolean(pageFlag) && data.currentPage > totalPage) {
       if(pageFlag){
         data.currentPage = 1;
@@ -459,7 +456,7 @@ export default class extends Base {
       }
     }
     let result = think.extend({count: count, totalPages: totalPage}, data);
-
+    
     if(options.cache && options.cache.key){
       options.cache.key += '_count';
     }
