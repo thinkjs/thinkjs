@@ -979,7 +979,7 @@ think.statusAction = async (status, http, log) => {
   }
   
   //set http status
-  http.status(status);
+  //http.status(status);
 
   let instance = new cls(http);
   await instance.invoke(`_${status}Action`, instance);
