@@ -433,7 +433,7 @@ export default class extends Base {
     //delete table options avoid error when has alias
     delete options.table;
     //reserve and delete the possible order option
-    let order=options.order;
+    let order = options.order;
     delete options.order;
 
     if(!count){
@@ -442,7 +442,7 @@ export default class extends Base {
 
     options.limit = options.limit || [0, this.config.nums_per_page];
     //recover the deleted possible order
-    options.order=order;
+    options.order = order;
     let numsPerPage = options.limit[1];
     //get page options
     let data = {numsPerPage: numsPerPage};
