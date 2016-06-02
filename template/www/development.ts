@@ -11,7 +11,7 @@ var instance = new thinkjs({
   env: 'development'
 });
 
-//compile src/ to app/
+// Build code from src to app directory.
 instance.compile({
   log: true,
   type: 'ts' //TypeScript
