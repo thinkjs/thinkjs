@@ -11,5 +11,4 @@ var instance = new thinkjs({
   env: 'production'
 });
 
-//preload packages before start server.
 instance.run(true);
