@@ -69,7 +69,17 @@ describe('model/base.js', function(){
           {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
         ];
         return Promise.resolve(data);
-      }else if(sql.indexOf('SHOW COLUMNS ') > -1){
+      }
+      else if (sql === 'SHOW COLUMNS FROM `think_hasid`') {
+        var data = [
+          {"Field":"_id","Type":"int(11) unsigned","Null":"NO","Key":"","Default":null,"Extra":""},
+          {"Field":"flo","Type":"float(255)","Null":"NO","Key":"UNI","Default":null,"Extra":""},
+          {"Field":"is_show","Type":"bool","Null":"NO","Key":"MUL","Default":null,"Extra":""},
+          {"Field":"cate_no","Type":"int(11)","Null":"YES","Key":"","Default":null,"Extra":""},
+        ];
+        return Promise.resolve(data);
+      }
+      else if(sql.indexOf('SHOW COLUMNS ') > -1){
         if(sql.indexOf(' AS ') > -1){
           return Promise.reject(new ERROR('columns has can not as'));
         }
@@ -362,6 +372,14 @@ describe('model/base.js', function(){
       done();
     })
   })
+  it('build sql 2', function(done){
+    var instance = new Base('hasid', think.config('db'));
+    instance.where({_id: 'www'}).field('name,title').group('name').limit(10).buildSql().then(function(sql){
+      assert.equal(sql, "( SELECT `name`,`title` FROM `think_hasid` WHERE ( `_id` = 'www' ) GROUP BY `name` LIMIT 10 )");
+      done();
+    })
+  })
+
   it('parseOptions', function(done){
     instance.parseOptions().then(function(options){
       assert.deepEqual(options, { table: 'think_user', tablePrefix: 'think_', model: 'user' })

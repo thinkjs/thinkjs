@@ -189,7 +189,7 @@ export default class extends think.base {
       val = where[key];
       str = '( ';
       //_string: ''
-      if (key[0] === '_') {
+      if (['_string', '_complex', '_query'].indexOf(key) > -1) {
         str += this.parseThinkWhere(key, val);
       }
       else if (!keySafeRegExp.test(key)) {
