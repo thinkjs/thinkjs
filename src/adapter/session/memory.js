@@ -43,7 +43,7 @@ export default class extends think.adapter.base {
       if(Date.now() > data.expire){
         return this.store.delete(this.cookie);
       }
-      data.expire = Date.now() * this.timeout * 1000;
+      data.expire = Date.now() + this.timeout * 1000;
       let value = data.data;
       if(name){
         return think.clone(value[name]);
