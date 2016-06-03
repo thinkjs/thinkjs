@@ -22,7 +22,6 @@ export default class {
    * @return {}      []
    */
   init(){
-    
   }
   /**
    * invoke method, support __before & __after magic methods
@@ -34,8 +33,8 @@ export default class {
     if (this.__before) {
       await think.co(this.__before(this));
     }
-    //check method is exist
-    if(!this[method]){
+    // Check whether method exists
+    if (!this[method]){
       return Promise.reject(new Error(think.locale('METHOD_NOT_EXIST', method)));
     }
     let result = await think.co(this[method](...data));
@@ -58,23 +57,23 @@ export default class {
    * @return {String}          []
    */
   parseModuleFromPath(filepath = this.__filename){
-    if(!filepath){
+    if (!filepath){
       return '';
     }
-    if(think.mode !== think.mode_module){
+    if (think.mode !== think.mode_module){
       return '';
     }
     let prefix = think.APP_PATH + think.sep;
     let pos = filepath.indexOf(prefix);
-    if(pos === -1){
+    if (pos === -1){
       return '';
     }
     let nextPos = filepath.indexOf(think.sep, pos + prefix.length);
-    if(nextPos === -1){
+    if (nextPos === -1){
       return '';
     }
     let module = filepath.slice(pos + prefix.length, nextPos);
-    if(think.module.indexOf(module) > -1){
+    if (think.module.indexOf(module) > -1){
       return module;
     }
     return '';
