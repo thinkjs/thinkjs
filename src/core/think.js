@@ -738,7 +738,7 @@ think.model = (superClass, methods, module) => {
   let isConfig = !!module;
   if (!isConfig && methods) {
     //check is db configs
-    if ('host' in methods && 'type' in methods) {
+    if ('type' in methods) {
       isConfig = true;
     }
   }
