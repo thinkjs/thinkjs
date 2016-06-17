@@ -60,6 +60,18 @@ export default class extends Base {
     return ret;
   }
   /**
+   * start transaction
+   * @return {Promise} []
+   */
+  startTrans(){
+    if (this.transTimes === 0) {
+      this.transTimes++;
+      return this.execute('BEGIN TRANSACTION');
+    }
+    this.transTimes++;
+    return Promise.resolve();
+  }
+  /**
    * escape string
    * @param  {String} str []
    * @return {String}     []
