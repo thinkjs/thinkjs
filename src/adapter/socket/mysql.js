@@ -102,7 +102,7 @@ export default class extends Base {
    * @param  {String} sql []
    * @return {[type]}     []
    */
-  async query(sql, nestTables){
+  async query(sql, nestTables, times = 1){
     let connection = await this.getConnection();
     let data = {
       sql: sql,
@@ -126,13 +126,16 @@ export default class extends Base {
         think.log(sql, 'SQL', startTime);
       }
       return rows;
-    }).catch(err => {
+    }).catch(async err => {
       if(this.pool && connection.release){
         connection.release();
       }
       //Connection lost: The server closed the connection.
-      if(err.code === 'PROTOCOL_CONNECTION_LOST'){
-        this.close();
+      if(err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE'){
+        await this.close();
+        if(times <= 3){
+          return this.query(sql, nestTables, ++times);
+        }
       }
       
       if (this.config.log_sql) {
@@ -157,9 +160,11 @@ export default class extends Base {
    */
   close(){
     if (this.pool) {
-      this.pool.end(() => this.pool = null);
+      let fn = think.promisify(this.pool.end, this.pool);
+      return fn().then(() => this.pool = null);
     } else if (this.connection) {
-      this.connection.end(() => this.connection = null);
+      let fn = think.promisify(this.connection.end, this.connection);
+      return fn().then(() => this.connection = null);
     }
   }
 }

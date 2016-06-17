@@ -194,8 +194,11 @@ describe('adapter/socket/mysql', function(){
         flag = true;
       }
       socket.query('SELECT * FROM `connention_lost`').catch(function(){
+        console.log('catch')
         assert.equal(flag, true);
         done();
+      }).then(data => {
+        console.log('data', data)
       });
     });
     it('query error', function(done){
@@ -375,8 +378,10 @@ describe('adapter/socket/mysql', function(){
           fn && fn();
         }
       }
-      instance.close();
-      assert.equal(instance.pool, null)
+      instance.close().then(function(){
+        assert.equal(instance.pool, null)
+      });
+      
     })
     it('connection close', function(){
       var instance = new MysqlSocket();
@@ -385,8 +390,10 @@ describe('adapter/socket/mysql', function(){
           fn && fn();
         }
       }
-      instance.close();
-      assert.equal(instance.connection, null)
+      instance.close().then(function(){
+        assert.equal(instance.connection, null)
+      });
+      
     })
     it('empty close', function(){
       var instance = new MysqlSocket();

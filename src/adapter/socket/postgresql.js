@@ -92,13 +92,14 @@ export default class extends Base {
       }
       return data;
     }).catch(err => {
+      this.release();
+
       //when socket is closed, try it
-        if(err.code === 'EPIPE'){
+      if(err.code === 'EPIPE'){
         this.close();
         return this.query(sql);
       }
 
-      this.release();
       if (this.config.log_sql) {
         think.log(sql, 'SQL', startTime);
       }
