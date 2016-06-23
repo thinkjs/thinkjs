@@ -9,7 +9,7 @@
 let getPageUrl = (options, http) => {
   let pageUrl = options.url;
   if(!pageUrl){
-    let prefix = '?';
+    let prefix = (options.prefix || '') + '?';
     let querys = [];
     for(let name in http.query){
       if(name === 'page'){
