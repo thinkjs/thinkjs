@@ -54,7 +54,7 @@ With the help of Babel compiling, we can use the ES2015/2016 features boldly, an
 * Supporting various WebSocket libraries such as socket.io and SockJS.
 * Supporting various Sessions such as Memory, File, Db and Redis.
 * Supporting various Caches such as Memory, File, Redis and Memcache.
-* Supporting various template engines such as ejs, jade, swig and numjucks.
+* Supporting various template engines such as ejs, jade, swig and nunjucks.
 * Supporting AOP, and magic methods such as __before and __after.
 * Supporting multistage Controller.
 * Supporting 400, 404, 500 and 503 error pages.
