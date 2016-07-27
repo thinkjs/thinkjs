@@ -1,4 +1,7 @@
 'use strict';
+
+import { normalize } from 'path';
+
 /**
  * resource check
  * @param  {}            
@@ -14,7 +17,8 @@ export default class extends think.middleware.base {
     if (!this.config('resource_on') || !pathname || pathname === '/') {
       return null;
     }
-    pathname = decodeURIComponent(pathname);
+    pathname = normalize(decodeURIComponent(pathname));
+    console.log(pathname);
     let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
       return null;
