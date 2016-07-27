@@ -18,7 +18,6 @@ export default class extends think.middleware.base {
       return null;
     }
     pathname = normalize(decodeURIComponent(pathname));
-    console.log(pathname);
     let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
       return null;
