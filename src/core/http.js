@@ -197,7 +197,7 @@ export default class {
     while(i < length){
       chr = pathname[i++];
       if(chr === '/' || chr === '\\'){
-        if(value && value[0] !== '.'){
+        if(value && decodeURIComponent(value)[0] !== '.'){
           result.push(value);
         }
         value = '';
@@ -205,7 +205,7 @@ export default class {
         value += chr;
       }
     }
-    if(value && value[0] !== '.'){
+    if(value && decodeURIComponent(value) !== '.'){
       result.push(value);
     }
     return result.join('/');
