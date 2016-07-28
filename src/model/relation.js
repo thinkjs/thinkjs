@@ -155,6 +155,9 @@ export default class extends think.model.base {
       
       switch(item.type){
         case think.model.BELONG_TO:
+          if(item.model) {
+            delete item.model;
+          }
           opts = think.extend(opts, {
             key: opts.model.getModelName() + '_id',
             fKey: 'id' 
