@@ -18,6 +18,8 @@ export default class extends think.middleware.base {
       return null;
     }
     pathname = normalize(decodeURIComponent(pathname));
+    // replace \ to / on windows
+    pathname = pathname.replace(/\\/g, '/');
     let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
       return null;
