@@ -63,7 +63,7 @@ export default class extends Base {
       return think.error(promise, err);
     }
 
-    let mysql = await think.npm('mysql2');
+    let mysql = await think.npm('mysql');
 
     if (config.connectionLimit) {
       this.logConnect(str, 'mysql');
