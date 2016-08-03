@@ -1053,6 +1053,18 @@ describe('core/http.js', function() {
     });
   });
 
+  it('get cookie from set', function(done) {
+    muk(think, 'log', function(){})
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&47');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http.cookie('wwwwww', 'sss');
+      let value = http.cookie('wwwwww');
+      assert.equal(value, 'sss');
+      done();
+    });
+  });
+
 /*
   describe('HTTP POST', function() {
     it('hasPostData false', function(done) {
