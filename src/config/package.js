@@ -4,7 +4,7 @@
  */
 export default {
   redis: '2.3.0',
-  sqlite3: '3.1.1',
+  sqlite3: '3.1.4',
   ejs: '2.3.4',
   jade: '1.11.0',
   mongodb: '2.0.48',

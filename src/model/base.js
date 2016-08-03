@@ -276,6 +276,9 @@ export default class extends Base {
     let insertIds = [];
     promises = data.map((item, i) => {
       let id = insertId + i;
+      if(this.config.type === 'sqlite'){
+        id = insertId - data.length + i + 1;
+      }
       item[this.pk] = id;
       insertIds.push(id);
       return this.afterAdd(item, options);
