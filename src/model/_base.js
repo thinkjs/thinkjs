@@ -124,6 +124,11 @@ export default class extends think.base {
    * @return {Object} []
    */
   db(forceNew = false){
+    // set db
+    if(think.isObject(forceNew)){
+      this._db = forceNew;
+      return this;
+    }
     if (this._db && !forceNew) {
       return this._db;
     }
