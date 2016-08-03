@@ -133,7 +133,10 @@ export default class extends think.controller.base {
     let values = think.validate.values(rules);
     for(let name in values){
       let method = methods[name];
-      this[method](name, values[name]);
+      let value = values[name];
+      if(value !== '' || (typeof value === 'number' && !isNaN(value))){
+        this[method](name, value);
+      }
     }
 
     return true;
