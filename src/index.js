@@ -346,7 +346,7 @@ export default class {
   captureError(){
     process.on('uncaughtException', err => {
       let msg = err.message;
-      err = think.error(err, 'port:' + think.config('port'));
+      err = think.error(err, 'port:' + (think.port || think.config('port')));
       think.log(err);
       if(msg.indexOf(' EADDRINUSE ') > -1){
         process.exit();
