@@ -597,21 +597,27 @@ export default class extends Base {
    * @return {Promise} []
    */
   startTrans(){
-    return this.db().startTrans();
+    return this.db(true).startTrans();
   }
   /**
    * commit transcation
    * @return {Promise} []
    */
-  commit(){
-    return this.db().commit();
+  async commit(){
+    let data = await this.db().commit();
+    this.close();
+    this._db = null;
+    return data;
   }
   /**
    * rollback transaction
    * @return {Promise} []
    */
-  rollback(){
-    return this.db().rollback();
+  async rollback(){
+    let data = await this.db().rollback();
+    this.close();
+    this._db = null;
+    return data;
   }
   /**
    * transaction exec functions

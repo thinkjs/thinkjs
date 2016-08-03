@@ -1,6 +1,9 @@
 'use strict';
 
 import Validator from '../core/think_validate.js';
+
+let forceNewNum = 1;
+
 /**
  * base model class
  */
@@ -120,12 +123,16 @@ export default class extends think.base {
    * get db instance
    * @return {Object} []
    */
-  db(){
-    if (this._db) {
+  db(forceNew = false){
+    if (this._db && !forceNew) {
       return this._db;
     }
     let DB = think.adapter('db', this.config.type || 'mysql');
-    this._db = new DB(this.config);
+    let config = this.config;
+    if(forceNew){
+      config = think.extend({}, config, {forceNewNum: forceNewNum++});
+    }
+    this._db = new DB(config);
     return this._db;
   }
   /**
