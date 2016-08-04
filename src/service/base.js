@@ -20,4 +20,12 @@ export default class extends think.base {
     options = think.extend({}, think.config('db', undefined, module), options);
     return think.model(name, options, module);
   }
+  /**
+   * get service
+   * @return {} []
+   */
+  service(name, module){
+    module = module || this.parseModuleFromPath();
+    return think.service(name, module);
+  }
 }
