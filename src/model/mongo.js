@@ -182,14 +182,20 @@ export default class extends Base {
    * update data
    * @return {Promise} []
    */
-  async update(data, options){
+  async update(data, options, ignoreDefault){
+    if(think.isBoolean(options)){
+      ignoreDefault = options;
+      options = {};
+    }
     options = await this.parseOptions(options);
     let pk = await this.getPk();
     if(data[pk]){
       this.where({[pk]: data[pk]});
       delete data[pk];
     }
-    data = await this.beforeUpdate(data, options);
+    if(ignoreDefault !== true){
+      data = await this.beforeUpdate(data, options);
+    }
     let result = await this.db().update(data, options);
     await this.afterUpdate(data, options);
     return result.result.nModified || 0;
