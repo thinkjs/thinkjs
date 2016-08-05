@@ -346,6 +346,17 @@ describe('model/relation.js', function(){
     }], {fKey: 'user_id', key: 'id', name: 'cate'});
     assert.deepEqual(data, [{"id":10,"name":"thinkjs","cate":{"user_id":10,"title":"title"}}])
   })
+  it('parseRelationData, (issue-417)', function(){
+    var instance = new Relation('user', think.config('db'));
+    var data = instance.parseRelationData([{id: 10, cate: 10, name: 'thinkjs'}], [{
+      user_id: 10,
+      title: 'title'
+    }, {
+      user_id: 11,
+      title: 'title1'
+    }], {fKey: 'user_id', key: 'cate', name: 'cate'});
+    assert.deepEqual(data, [{"id":10,"name":"thinkjs","cate":{"user_id":10,"title":"title"}}])
+  })
   it('afterAdd', function(){
     var instance = new Relation('user', think.config('db'));
     instance.postRelation = function(type){
