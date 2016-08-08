@@ -297,9 +297,11 @@ export default class extends think.model.base {
    */
   parseRelationData(data, mapData, mapOpts, isArrMap){
     if (think.isArray(data)) {
-      data.forEach((item, i) => {
-        data[i][mapOpts.name] = isArrMap ? [] : {};
-      });
+      if (isArrMap) {
+        data.forEach((item, i) => {
+          data[i][mapOpts.name] = [];
+        });
+      }
       mapData.forEach(mapItem => {
         data.forEach((item, i) => {
           if (mapItem[mapOpts.fKey] !== item[mapOpts.key]) {
