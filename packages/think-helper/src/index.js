@@ -6,8 +6,8 @@ const path = require('path');
 const util = require('util');
 const crypto = require('crypto');
 const net = require('net');
+const cluster = require('cluster');
 
-const {sep} = path;
 const toString = Object.prototype.toString;
 const numberReg = /^((\-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
 const htmlMaps = {
@@ -18,6 +18,7 @@ const htmlMaps = {
 };
 const preventError = 'PREVENT_NEXT_PROCESS';
 
+export const {sep} = path;
 export const isArray = Array.isArray;
 export const isBuffer = Buffer.isBuffer;
 export const isDate = util.isDate;
@@ -26,6 +27,8 @@ export const isError = util.isError;
 export const isIP = net.isIP;
 export const isIPv4 = net.isIPv4;
 export const isIPv6 = net.isIPv6;
+export const isMaster = cluster.isMaster;
+
 
 /**
  * make callback function to promise
@@ -279,6 +282,17 @@ export function prevent(){
  */
 export function isPrevent(err){
   return isError(err) && err.message === preventError;
+}
+
+
+/**
+ * get uuid
+ * @param  {Number} length [uid length]
+ * @return {String}        []
+ */
+export function uuid(length = 32){
+  let str = crypto.randomBytes(Math.ceil(length * 0.75)).toString('base64').slice(0, length);
+  return str.replace(/[\+\/]/g, '_');
 }
 
 
