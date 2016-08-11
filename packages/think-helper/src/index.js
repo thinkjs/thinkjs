@@ -16,6 +16,7 @@ const htmlMaps = {
   '"': '&quote;',
   '\'': '&#39;'
 };
+const preventError = 'PREVENT_NEXT_PROCESS';
 
 export const isArray = Array.isArray;
 export const isBuffer = Buffer.isBuffer;
@@ -264,6 +265,20 @@ export function datetime(date, format) {
   return format.replace(/([a-z])\1+/ig, a => {
     return formats[a] || a;
   });
+}
+
+/**
+ * prevent next process
+ */
+export function prevent(){
+  throw new Error(preventError);
+}
+
+/**
+ * is prevent error
+ */
+export function isPrevent(err){
+  return isError(err) && err.message === preventError;
 }
 
 
