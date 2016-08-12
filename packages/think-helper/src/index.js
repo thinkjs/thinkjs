@@ -273,7 +273,10 @@ export function datetime(date, format) {
 /**
  * prevent next process
  */
-export function prevent(){
+export function prevent(ret){
+  if(ret){
+    return new Error(preventError);
+  }
   throw new Error(preventError);
 }
 
