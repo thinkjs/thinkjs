@@ -72,29 +72,26 @@ export default class extends Base {
       return this.getConnection();
     }
 
-    return think.await(str, () => {
-      let deferred = think.defer();
-      this.connection = mysql.createConnection(config);
-      this.connection.connect(err => {
-        
-        this.logConnect(str, 'mysql');
-
-        if (err) {
-          deferred.reject(err);
-          this.close();
-        } else {
-          deferred.resolve(this.connection);
-        }
-      });
-      this.connection.on('error', () => {
-        this.close();
-      });
-      //PROTOCOL_CONNECTION_LOST
-      this.connection.on('end', () => {
-        this.connection = null;
-      });
-      let err = new Error(str);
-      return think.error(deferred.promise, err);
+    return new Promise((resolve, reject)=>{
+        this.connection = mysql.createConnection(config);
+        this.connection.connect(err => {
+        this.logConnect(str+this.connection.threadId, 'mysql');
+            if (err) {
+              reject(err);
+              this.close();
+            } else {
+              resolve(this.connection);
+            }
+        });
+        this.connection.on('error', () => {
+            this.close();
+        });
+        //PROTOCOL_CONNECTION_LOST
+        this.connection.on('end', () => {
+            this.connection = null;
+        });
+        let err = new Error(str);
+        return think.error(err);
     });
   }
   /**
