@@ -93,6 +93,9 @@ export default class extends Base {
       this.connection.on('error', () => {
         this.close();
       });
+      this.connection.on('close', () => {
+        this.close();
+      });
       //PROTOCOL_CONNECTION_LOST
       this.connection.on('end', () => {
         this.connection = null;
