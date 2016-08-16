@@ -72,7 +72,11 @@ export default class extends Base {
       return this.getConnection();
     }
 
-    return think.await(str, () => {
+    let awaitKey = str;
+    if(this.config.forceNewNum){
+      awaitKey += '_' + this.config.forceNewNum;
+    }
+    return think.await(awaitKey, () => {
       let deferred = think.defer();
       this.connection = mysql.createConnection(config);
       this.connection.connect(err => {
