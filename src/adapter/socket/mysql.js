@@ -1,6 +1,7 @@
 'use strict';
 
 import Base from './base.js';
+import mysql from 'mysql';
 
 /**
  * mysql socket class
@@ -45,9 +46,9 @@ export default class extends Base {
    * get connection
    * @return {Promise} [conneciton handle]
    */
-  async getConnection(){
+  getConnection(){
     if (this.connection) {
-      return this.connection;
+      return Promise.resolve(this.connection);
     }
 
     let config = this.config;
@@ -62,8 +63,6 @@ export default class extends Base {
       let err = new Error(str);
       return think.error(promise, err);
     }
-
-    let mysql = await think.npm('mysql');
 
     if (config.connectionLimit) {
       this.logConnect(str, 'mysql');

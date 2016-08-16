@@ -56,29 +56,27 @@ Connection.prototype = {
 
 describe('adapter/socket/mysql', function(){
 
-  var npm, error;
+  var error;
+  var mysql = require('mysql');
+  var createConnection = mysql.createConnection;
+  var createPool = mysql.createPool;
 
   before(function() {
-    npm = think.npm;
-    think.npm = function() {
+    mysql.createConnection = function(config) {
+      return new Connection(config);
+    }
+    mysql.createPool = function(config){
       return {
-        createConnection: function(config) {
-          return new Connection(config);
+        getConnection: function(cb) {
+          if (config.connectionLimit > 99) {
+            cb({ code: 'ERROR' });
+          } else {
+            cb(null, new Connection(config));
+          }
         },
-        createPool: function(config) {
-          return {
-            getConnection: function(cb) {
-              if (config.connectionLimit > 99) {
-                cb({ code: 'ERROR' });
-              } else {
-                cb(null, new Connection(config));
-              }
-            },
-            end: function() {}
-          };
-        }
+        end: function() {}
       };
-    };
+    }
     error = think.error;
     think.error = function(promise) {
       return promise;
@@ -405,8 +403,9 @@ describe('adapter/socket/mysql', function(){
 
 
   after(function(){
-    think.npm = npm;
     think.error = error;
+    mysql.createConnection = createConnection;
+    mysql.createPool = createPool;
   });
 
 });
