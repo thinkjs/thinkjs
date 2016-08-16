@@ -64,6 +64,12 @@ export default class extends Base {
         if(config.log_level){
           mongo.Logger.setLevel(config.log_level);
         }
+        connection.on('error', err => {
+          this.close();
+        });
+        connection.on('close', () => {
+          this.connection = null;
+        });
         this.connection = connection;
         return connection;
       }).catch(err => {
