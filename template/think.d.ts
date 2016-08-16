@@ -1314,7 +1314,7 @@ declare module think {
      * @param  {string}  templateFile []
      * @return {Promise}              []
      */
-    fetch(templateFile: string): Promise;
+    fetch(templateFile: string, data?: any, config?: any): Promise;
     /**
      * display template file
      * @param  {string}         templateFile []
