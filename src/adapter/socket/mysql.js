@@ -16,11 +16,6 @@ export default class extends Base {
   init(config = {}){
     super.init(config);
     
-    //alias password config
-    // if (config.pwd) {
-    //   config.password = config.pwd;
-    //   delete config.pwd;
-    // }
     //merge config
     this.config = think.extend({
       host: '127.0.0.1',
@@ -33,11 +28,6 @@ export default class extends Base {
     if(!this.config.charset && this.config.encoding){
       this.config.charset = this.config.encoding;
       delete this.config.encoding;
-    }
-    //node-mysql2 not support utf8 or utf-8
-    let charset = (this.config.charset || '').toLowerCase();
-    if(charset === 'utf8' || charset === 'utf-8'){
-      this.config.charset = 'UTF8_GENERAL_CI';
     }
 
     this.pool = null;
