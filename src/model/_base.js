@@ -129,7 +129,7 @@ export default class extends think.base {
       this._db = forceNew;
       return this;
     }
-    if (this._db && !forceNew) {
+    if (this._db && !forceNew && !this.config.parser) {
       return this._db;
     }
     let DB = think.adapter('db', this.config.type || 'mysql');
