@@ -219,8 +219,9 @@ export default class extends Base {
       return think.reject(msg);
     }
 
-    await this.db().add(parsedData, options, replace);
-    let insertId = parsedData[this.pk] = this.db().getLastInsertId();
+    let db = this.db();
+    await db.add(parsedData, options, replace);
+    let insertId = parsedData[this.pk] = db.getLastInsertId();
     let copyData = think.extend({}, data, parsedData, {[this.pk]: insertId});
     await this.afterAdd(copyData, options);
     return insertId;
