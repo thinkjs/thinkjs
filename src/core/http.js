@@ -379,7 +379,7 @@ export default class {
     if (name === undefined) {
       return this.headers;
     }else if (value === undefined) {
-      return this.headers[name] || '';
+      return this.headers[name.toLowerCase()] || '';
     }
     //check content type is send
     if (name.toLowerCase() === 'content-type') {
