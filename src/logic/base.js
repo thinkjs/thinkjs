@@ -134,7 +134,7 @@ export default class extends think.controller.base {
     for(let name in values){
       let method = methods[name];
       let value = values[name];
-      if(value !== '' || (typeof value === 'number' && !isNaN(value))){
+      if(value !== '' && (typeof value !== 'number' || !isNaN(value))){
         this[method](name, value);
       }
     }

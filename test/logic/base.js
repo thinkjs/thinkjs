@@ -724,6 +724,24 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('parse rules, default, int 2', function(done){
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        
+      },
+      method: 'POST'
+    }).then(function(instance){
+      var data = instance.validate({
+        welefen: 'int'
+      });
+      assert.deepEqual(data, true);
+      var post = instance.post();
+      assert.deepEqual(post, {})
+      done();
+    })
+  })
+
   it('parse rules, default, float', function(done){
     getInstance({}, {
       _config: think.config(),
@@ -754,8 +772,8 @@ describe('logic/base', function(){
       var data = instance.validate({
         welefen: 'required|array|float|default:[10.2, 11]'
       });
-      assert.deepEqual(data, true);
       var post = instance.post();
+      assert.deepEqual(data, true);
       assert.deepEqual(post, {welefen: [10.2, 11], suredy: ''})
       done();
     })
