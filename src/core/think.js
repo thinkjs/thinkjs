@@ -84,7 +84,7 @@ think.cli = '';
  * get locale
  * @type {String}
  */
-think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-');
+think.lang = (process.env.LANG || '').split('.')[0].replace('_', '-').toLowerCase();
 /**
  * is master
  * @type {Boolean}
