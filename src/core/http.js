@@ -38,8 +38,10 @@ export default class {
 
     //set request timeout
     let timeout = think.config('timeout');
+    this.timeoutTimer = 0;
     if(timeout){
-      res.setTimeout(timeout * 1000, () => {
+      this.timeoutTimer = res.setTimeout(timeout * 1000, () => {
+        think.log('Request timeout');
         this.end();
       });
     }
@@ -509,7 +511,7 @@ export default class {
     if (name === undefined) {
       return this._cookie;
     }else if (value === undefined) {
-      return this._cookie[name] || this._sendCookie[name] && this._sendCookie[name].value  || '';
+      return this._cookie[name] || this._sendCookie[name] && this._sendCookie[name].value || '';
     }
     //set cookie
     if (typeof options === 'number') {
@@ -771,6 +773,10 @@ export default class {
    * @return {} []
    */
   end(obj, encoding){
+    if(this.timeoutTimer){
+      clearTimeout(this.timeoutTimer);
+      this.timeoutTimer = 0;
+    }
     this.write(obj, encoding);
     //set http end flag
     this._isEnd = true;
