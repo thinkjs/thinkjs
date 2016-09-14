@@ -747,7 +747,8 @@ think.model = (superClass, methods, module) => {
     methods = think.extend({}, think.config('db'), methods);
     let base = methods.type === 'mongo' ? 'model_mongo' : '';
     let cls = think.lookClass(superClass, 'model', module, base);
-    return new cls(superClass, methods);
+    let names = superClass.split('/');
+    return new cls(names[names.length - 1], methods);
   }
   let model = thinkCache(thinkCache.COLLECTION, 'model');
   if(!model){
