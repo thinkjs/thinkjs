@@ -27,7 +27,7 @@ export default class extends Base {
       'NOTILIKE': 'NOT ILIKE',
       'ILIKE': 'ILIKE',
       'IN': 'IN',
-      'NOTIN': 'NOT IN'
+      'NOTIN': 'NOT IN',
       'BETWEEN': 'BETWEEN',
       'NOTBETWEEN': 'NOT BETWEEN'
     };
