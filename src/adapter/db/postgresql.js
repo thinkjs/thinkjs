@@ -8,6 +8,32 @@ let PostgreSocket = think.adapter('socket', 'postgresql');
  */
 export default class extends Base {
   /**
+   * init
+   * @return {} []
+   */
+  init(config = {}){
+    this.config = config;
+    //operate
+    this.comparison = {
+      'EQ': '=',
+      'NEQ': '!=',
+      '<>': '!=',
+      'GT': '>',
+      'EGT': '>=',
+      'LT': '<',
+      'ELT': '<=',
+      'NOTLIKE': 'NOT LIKE',
+      'LIKE': 'LIKE',
+      'NOTILIKE': 'NOT ILIKE',
+      'ILIKE': 'ILIKE',
+      'IN': 'IN',
+      'NOTIN': 'NOT IN',
+      'BETWEEN': 'BETWEEN',
+      'NOTBETWEEN': 'NOT BETWEEN'
+    };
+    this.selectSql = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
+  }
+  /**
    * get postgre socket instance
    * @param  {Object} config []
    * @return {}        []
@@ -68,6 +94,145 @@ export default class extends Base {
     }
     this.transTimes++;
     return Promise.resolve();
+  }
+  /**
+  * parse where item
+  * @param  {String} key []
+  * @param  {Mixed} val []
+  * @return {String}     []
+  */
+  parseWhereItem(key, val){
+    // {id: null}
+    if(val === null){
+      return `${key} IS NULL`;
+    }
+    // {id: {'<': 10, '>': 1}}
+    else if (think.isObject(val)) { 
+      let logic = this.getLogic(val);
+      let result = [];
+      for(let opr in val){
+        let nop = opr.toUpperCase();
+        nop = this.comparison[nop] || nop;
+        let parsedValue = this.parseValue(val[opr]);
+        //{id: {IN: [1, 2, 3]}}
+        if(think.isArray(parsedValue)){
+          result.push(`${key} ${nop} (${parsedValue.join(', ')})`);
+        }
+        else if(parsedValue === 'null'){
+          result.push(key + ' ' + (nop === '!=' ? 'IS NOT NULL' : 'IS NULL'));
+        }
+        else{
+          result.push(key + ' ' + nop + ' ' + parsedValue);
+        }
+      }
+      return result.join(' ' + logic + ' ');
+    }
+    // where({id: [1, 2, 3]})
+    else if(think.isArray(val)){
+      let flag = think.isNumber(val[0]) || think.isNumberString(val[0]);
+      if(flag){
+        flag = val.every(item => {
+          return think.isNumber(item) || think.isNumberString(item);
+        });
+        if(flag){
+          return `${key} IN ( ${val.join(', ')} )`;
+        }
+      }
+    }
+    else {
+      return key + ' = ' + this.parseValue(val);
+    }
+
+    let whereStr = '';
+    let data;
+    if (think.isString(val[0])) {
+      let val0 = val[0].toUpperCase();
+      val0 = this.comparison[val0] || val0;
+      // compare
+      if (/^(=|!=|>|>=|<|<=)$/.test(val0)) {
+        if(val[1] === null){
+          whereStr += key + ' ' + (val[0] === '!=' ? 'IS NOT NULL' : 'IS NULL');
+        }else{
+          whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
+        }
+      }
+      // like or not like
+      else if (/^(NOT\s+LIKE|LIKE|NOT\s+ILIKE|ILIKE)$/.test(val0)) { 
+        if (think.isArray(val[1])) {
+          //get like logic, default is OR
+          let likeLogic = this.getLogic(val[2], 'OR');
+          let like = val[1].map(item => key + ' ' + val0 + ' ' + this.parseValue(item)).join(' ' + likeLogic + ' ');
+          whereStr += '(' + like + ')';
+        }else{
+          whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
+        }
+      }
+      // exp
+      else if(val0 === 'EXP'){ 
+        whereStr += '(' + key + ' ' + val[1] + ')';
+      }
+      // in or not in
+      else if(val0 === 'IN' || val0 === 'NOT IN'){
+        if (val[2] === 'exp') {
+          whereStr += key + ' ' + val0 + ' ' + val[1];
+        }else{
+          if (think.isString(val[1])) {
+            val[1] = val[1].split(',');
+          }
+          if (!think.isArray(val[1])) {
+            val[1] = [val[1]];
+          }
+          val[1] = this.parseValue(val[1]);
+          if (val[1].length === 1) {
+            whereStr += key + (val0 === 'IN' ? ' = ' : ' != ') + val[1];
+          }else{
+            whereStr += key + ' ' + val0 + ' (' + val[1].join(',') + ')';
+          }
+        }
+      }
+      //between
+      else if(val0 === 'BETWEEN' || val0 === 'NOT BETWEEN'){
+        data = think.isString(val[1]) ? val[1].split(',') : val[1];
+        if (!think.isArray(data)) {
+          data = [val[1], val[2]];
+        }
+        whereStr += ' (' + key + ' ' + val0 + ' ' + this.parseValue(data[0]);
+        whereStr += ' AND ' + this.parseValue(data[1]) + ')';
+      }else{
+        throw new Error(think.locale('WHERE_CONDITION_INVALID', key, JSON.stringify(val)));
+      }
+    }else{
+
+      let length = val.length;
+      let logic = this.getLogic(val[length - 1], '');
+      if(logic){
+        length--;
+      }else{
+        logic = 'AND';
+      }
+      let result = [];
+      for(let i = 0; i < length; i++){
+        let isArr = think.isArray(val[i]);
+        data = isArr ? val[i][1] : val[i];
+        let exp = ((isArr ? val[i][0] : '') + '').toUpperCase();
+        if (exp === 'EXP') {
+          result.push(`(${key} ${data})`);
+        }else{
+          let op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
+          result.push(`(${key} ${op} ${this.parseValue(data)})`);
+        }
+      }
+      whereStr = result.join(` ${logic} `);
+    }
+    return whereStr;
+  }
+  /**
+   * parse key
+   * @param  {String} key []
+   * @return {String}     []
+   */
+  parseKey(key){
+    return `"${key}"`;
   }
   /**
    * parse limit
