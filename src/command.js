@@ -11,7 +11,7 @@ let templatePath = path.dirname(__dirname) + sep + 'template';
 let projectRootPath = cwd; //project root path
 let modeList = ['normal', 'module'];
 
-think.mode = think.mode_module;
+think.mode = think.mode_normal;
 
 
 /**
@@ -111,7 +111,7 @@ let copyFile = (source, target, replace, showWarning) => {
 
   mkdir(path.dirname(target));
 
-  let es = commander.es || commander.es6;
+  let es5 = commander.es5;
 
   //TypeScript
   if(commander.ts){
@@ -127,7 +127,7 @@ let copyFile = (source, target, replace, showWarning) => {
     }
   }
   //ECMAScript 2015/2016
-  else if(es){
+  else if(!es5){
     let esSource = source.replace(/\.\w+$/, a => {
       return a === '.js' ? '.es' : '_es' + a;
     });
@@ -200,7 +200,7 @@ let parseAppConfig = () => {
   let data = JSON.parse(content);
 
   commander.ts = data.ts;
-  commander.es = data.es || data.es6; //compatible with 2.0.x
+  //commander.es = data.es || data.es6; //compatible with 2.0.x
   think.mode = think['mode_' + data.mode];
 
   think.APP_PATH = getProjectAppPath();
@@ -697,8 +697,7 @@ commander.option('-v, --version', 'output the version number', () => {
 commander.option('-V', 'output the version number', () => {
   displayVersion();
 });
-commander.option('-e, --es', 'use es for project, used in `new` command');
-commander.option('--es6', 'use es for project, used in `new` command');
+commander.option('--es5', 'use es for project, used in `new` command');
 commander.option('-t, --ts', 'use TypeScript for project, used in `new` command');
 commander.option('-T, --test', 'add test dirs when create project, used in `new` command');
 commander.option('-r, --rest', 'create rest controller, used in `controller` command');
@@ -715,7 +714,7 @@ commander.option('-m, --mode <mode>', 'project mode type(normal, module), defaul
 //create project
 commander.command('new <projectPath>').description('create project').action(projectPath => {
   projectRootPath = path.resolve(projectRootPath, projectPath);
-  commander.es = commander.es || commander.es6;
+  //commander.es = commander.es || commander.es6;
   createProject();
 });
 
