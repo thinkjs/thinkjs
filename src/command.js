@@ -69,7 +69,7 @@ let getVersion = () => {
  */
 let getProjectAppPath = () => {
   let path = projectRootPath + think.sep;
-  path += commander.es || commander.ts ? 'src' : 'app';
+  path += !commander.es5 || commander.ts ? 'src' : 'app';
   return path;
 };
 /**
