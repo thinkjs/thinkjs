@@ -17,14 +17,18 @@ export default class extends think.middleware.base {
     if (!this.config('resource_on') || !pathname || pathname === '/') {
       return null;
     }
-    pathname = normalize(decodeURIComponent(pathname));
+    pathname = decodeURIComponent(pathname).replace(/\\/g, '/');
+    pathname = normalize(pathname);
     // replace \ to / on windows
     pathname = pathname.replace(/\\/g, '/');
     let reg = this.config('resource_reg');
     if (!reg.test(pathname)) {
       return null;
     }
-    let file = `${think.RESOURCE_PATH}/${pathname}`;
+    let file = normalize(`${think.RESOURCE_PATH}/${pathname}`);
+    if(file.indexOf(think.RESOURCE_PATH) !== 0){
+      return null;
+    }
     //resource exist
     if (think.isFile(file)) {
       return file;
