@@ -697,7 +697,7 @@ commander.option('-v, --version', 'output the version number', () => {
 commander.option('-V', 'output the version number', () => {
   displayVersion();
 });
-commander.option('--es5', 'use es for project, used in `new` command');
+commander.option('--es5', 'use es5 for project, used in `new` command');
 commander.option('-t, --ts', 'use TypeScript for project, used in `new` command');
 commander.option('-T, --test', 'add test dirs when create project, used in `new` command');
 commander.option('-r, --rest', 'create rest controller, used in `controller` command');
