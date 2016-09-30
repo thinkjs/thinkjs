@@ -232,9 +232,9 @@ export default class extends Base {
    * @return {String}     []
    */
   parseKey(key){
-    if(key.startsWith('"') == false)
+    if(key.startsWith('"') === false)
       key = '"' + key;
-    if(key.endsWith('"') == false)
+    if(key.endsWith('"') === false)
       key = key + '"';
     
     return key;
