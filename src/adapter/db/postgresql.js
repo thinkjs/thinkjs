@@ -226,13 +226,48 @@ export default class extends Base {
     }
     return whereStr;
   }
+  quoteKey(key){
+    if (key === undefined) {
+      return '';
+    }
+    if(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i.test(key)) {
+      return key.replace(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i, "\"$1\"\"$3\"");
+    } else {
+      return `"${key}"`;
+    }
+  }
   /**
    * parse key
    * @param  {String} key []
    * @return {String}     []
    */
   parseKey(key){
-    return `"${key}"`;
+    if (key == undefined) {
+      return '';
+    }
+    key = key.trim();
+    if(think.isEmpty(key)){
+      return '';
+    }
+    if(think.isNumberString(key)){
+      return key;
+    }
+    var isDistinct = false;
+    if(/DISTINCT (.*)/i.test(key)) {
+      isDistinct = true;
+      key = key.replace(/DISTINCT (.*)/i, '$1')
+    }
+    if(/.*\..*/.test(key)) {
+      var k = key.split('.'), j = [];
+      k.forEach( i => {
+        var tmp = this.quoteKey(i.replace(/^[\"]+|[\"]+$/g, ''));
+        j.push(`${tmp}`)
+      } );
+      key = j.join('.')
+    } else {
+      key = this.quoteKey(key.replace(/^[\"]+|[\"]+$/g, ''));
+    }
+    return `${isDistinct ? 'DISTINCT ' : ''}${key}`;
   }
   /**
    * parse limit
