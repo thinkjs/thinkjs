@@ -231,7 +231,7 @@ export default class extends Base {
       return '';
     }
     if(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i.test(key)) {
-      return key.replace(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i, "\"$1\"\"$3\"");
+      return key.replace(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i, '\"$1\"\"$3\"');
     } else {
       return `"${key}"`;
     }
@@ -242,7 +242,7 @@ export default class extends Base {
    * @return {String}     []
    */
   parseKey(key){
-    if (key == undefined) {
+    if (key === undefined) {
       return '';
     }
     key = key.trim();
