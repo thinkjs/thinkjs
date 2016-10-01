@@ -49,7 +49,9 @@ describe('adapter/db/postgresql.js', function(){
           { column_name: 'title', data_type: 'character varying', is_nullable: 'NO' }
         ],
         // Indexes:
-        []
+        [
+          { indexname: 'user_pkey', indexdef: 'CREATE UNIQUE INDEX pkey ON user USING btree (id)' }
+        ]
       ];
 
     instance.query = function(sql){
@@ -60,20 +62,135 @@ describe('adapter/db/postgresql.js', function(){
       return Promise.resolve(expected_data);
     };
 
-    instance.getSchema('user').then(function(data){
-
+    instance.getSchema('user').then(function (data) {
       assert.deepEqual(data, {
-        id:    { name: 'id',    type: 'integer',           required: false, default: '', auto_increment: false },
+        id:    { name: 'id',    type: 'integer',           required: false, default: '', auto_increment: false, "primary":true,"unique":[null] },
         name:  { name: 'name',  type: 'character varying', required: true,  default: '', auto_increment: false },
         title: { name: 'title', type: 'character varying', required: true,  default: '', auto_increment: false }
       });
       done();
     })
   });
-  it('parseKey, empty', function(){
+  it('startTrans', function (done) {
+    var instance = new PostgreSQL();
+
+    instance.transTimes = 0;
+
+    instance.execute = function (sql) {
+      assert.equal(sql, 'BEGIN');
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    };
+
+    instance.startTrans().then(function(data){
+
+      assert.equal(instance.transTimes, 1);
+
+      instance.startTrans().then(function(data){
+
+        assert.equal(instance.transTimes, 2);
+        done();
+      });
+    });
+
+
+  });
+  it('parseWhereItem, (key, null)', function () {
+    var instance = new PostgreSQL();
+
+    assert.equal(instance.parseWhereItem('some_field', null), 'some_field IS NULL');
+  });
+  it('parseWhereItem, complex', function () {
+    var instance = new PostgreSQL(),
+        data1 = { 'in': ['login1', 'login2'] },
+        data2 = { '<': 10, '>': 1 },
+        data3 = { '!=': null },
+        data4 = { '=': null },
+        data5 = [1, 2, 3],
+        data6 = { '>': 1 },
+        data7 = 'asd',
+        data8 = ['BETWEEN', 1, 12],
+        data9 = ['!=', null],
+        data10 = ['>=', 1],
+        data11 = ['LIKE', '%12%'],
+        data12 = ['LIKE', ['%12%', '%13%']],
+        data13 = ['EXP', 'IS NOT NULL'],
+        data14 = ['NOT BETWEEN', 1, 12],
+        data15 = ["IN", [10, 20]],
+        data16 = ["IN", [10]],
+        data17 = ["IN", '(E\'aa\', E\'bb\')', 'exp'],
+        data18 = ["IN", 'a,b,c'],
+        data19 = ["IN", 1],
+        data20 = [["LIKE", '%123%'],["LIKE", '%234%'], "OR"],
+        data21 = [["EXP", 'LIKE E\'%123%\''],["LIKE", '%234%']];
+
+    assert.equal(instance.parseWhereItem('login', data1), "login IN (E'login1', E'login2')");
+    assert.equal(instance.parseWhereItem('id', data2), 'id < 10 AND id > 1');
+    assert.equal(instance.parseWhereItem('id', data3), 'id IS NOT NULL');
+    assert.equal(instance.parseWhereItem('id', data4), 'id IS NULL');
+    assert.equal(instance.parseWhereItem('id', data5), 'id IN ( 1, 2, 3 )');
+    assert.equal(instance.parseWhereItem('id', data6), 'id > 1');
+    assert.equal(instance.parseWhereItem('id', data7), 'id = E\'asd\'');
+    assert.equal(instance.parseWhereItem('id', data8), ' (id BETWEEN 1 AND 12)');
+    assert.equal(instance.parseWhereItem('id', data9), 'id IS NOT NULL');
+    assert.equal(instance.parseWhereItem('id', data10), 'id >= 1');
+    assert.equal(instance.parseWhereItem('id', data11), 'id LIKE E\'%12%\'');
+    assert.equal(instance.parseWhereItem('id', data12), '(id LIKE E\'%12%\' OR id LIKE E\'%13%\')');
+    assert.equal(instance.parseWhereItem('id', data13), '(id IS NOT NULL)');
+    assert.equal(instance.parseWhereItem('id', data14), ' (id NOT BETWEEN 1 AND 12)');
+    assert.equal(instance.parseWhereItem('id', data15), 'id IN (10,20)');
+    assert.equal(instance.parseWhereItem('id', data16), 'id = 10');
+    assert.equal(instance.parseWhereItem('id', data17), "id IN (E'aa', E'bb')");
+    assert.equal(instance.parseWhereItem('id', data18), "id IN (E'a',E'b',E'c')");
+    assert.equal(instance.parseWhereItem('id', data19), 'id = 1');
+    assert.equal(instance.parseWhereItem('id', data20), '(id LIKE E\'%123%\') OR (id LIKE E\'%234%\')');
+    assert.equal(instance.parseWhereItem('id', data21), '(id LIKE E\'%123%\') AND (id LIKE E\'%234%\')');
+  });
+  it('quoteKey, empty', function () {
+    var instance = new PostgreSQL();
+    var data = instance.quoteKey();
+    assert.equal(data, '')
+  });
+  it('quoteKey, normal', function () {
+    var instance = new PostgreSQL();
+    var data = instance.quoteKey(1);
+    assert.equal(data, '1');
+
+    data = instance.quoteKey('1');
+    assert.equal(data, '1');
+
+    data = instance.quoteKey('');
+    assert.equal(data, '');
+
+    data = instance.quoteKey('test');
+    assert.equal(data, '"test"');
+
+  });
+  it('parseKey, undefined', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey();
     assert.equal(data, '')
+  });
+
+  it('parseKey, empty', function(){
+    var instance = new PostgreSQL();
+    var data = instance.parseKey('');
+    assert.equal(data, "")
+  });
+  it('parseKey, special char', function(){
+    var instance = new PostgreSQL();
+    var data = instance.parseKey('te"st');
+    assert.equal(data, "\"te\"\"st\"")
+  });
+  it('parseKey, normal', function(){
+    var instance = new PostgreSQL();
+    var data = instance.parseKey('test');
+    assert.equal(data, "\"test\"");
+
+    data = instance.parseKey('1');
+    assert.equal(data, '1');
+
+    data = instance.parseKey(1);
+    assert.equal(data, '1');
   });
   it('parseKey', function(){
     var instance = new PostgreSQL();
@@ -99,5 +216,12 @@ describe('adapter/db/postgresql.js', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey('DISTINCT table_name.some_field');
     assert.equal(data, "DISTINCT \"table_name\".\"some_field\"")
+  });
+  it('parseLimit', function () {
+    var instance = new PostgreSQL();
+    assert.equal(instance.parseLimit(null), "");
+    assert.equal(instance.parseLimit(1), " LIMIT 1");
+    assert.equal(instance.parseLimit('5,1'), " LIMIT 1 OFFSET 5");
+    assert.equal(instance.parseLimit('5'), " LIMIT 5");
   });
 });

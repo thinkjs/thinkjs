@@ -227,8 +227,11 @@ export default class extends Base {
     return whereStr;
   }
   quoteKey(key){
-    if (key === undefined) {
+    if (key === undefined || think.isEmpty(key)) {
       return '';
+    }
+    if(think.isNumber(key) || think.isNumberString(key)){
+      return key;
     }
     if(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i.test(key)) {
       return key.replace(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i, '\"$1\"\"$3\"');
@@ -245,12 +248,12 @@ export default class extends Base {
     if (key === undefined) {
       return '';
     }
+    if(think.isNumber(key) || think.isNumberString(key)){
+      return key;
+    }
     key = key.trim();
     if(think.isEmpty(key)){
       return '';
-    }
-    if(think.isNumberString(key)){
-      return key;
     }
     var isDistinct = false;
     if(/DISTINCT (.*)/i.test(key)) {
