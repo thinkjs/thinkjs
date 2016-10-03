@@ -251,7 +251,6 @@ describe('adapter/db/postgresql.js', function(){
     var data = instance.parseKey();
     assert.equal(data, '')
   });
-
   it('parseKey, empty', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey('');

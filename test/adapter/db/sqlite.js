@@ -103,5 +103,20 @@ describe('adapter/db/sqlite', function(){
       assert.deepEqual(data, {"id":{"name":"id","type":"INTEGER","required":true,"primary":true,"auto_increment":false,"unique":false},"name":{"name":"name","type":"TEXT","required":true,"primary":false,"auto_increment":false,"unique":true},"pwd":{"name":"pwd","type":"TEXT","required":true,"primary":false,"auto_increment":false,"unique":false},"create_time":{"name":"create_time","type":"INTEGER","required":true,"primary":false,"auto_increment":false,"unique":false}});
       done();
     })
-  })
+  });
+  it('startTrans', function (done) {
+    var instance = new Sqlite();
+    instance.transTimes = 0;
+    instance.execute = function (sql) {
+      assert.equal(sql, 'BEGIN TRANSACTION');
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    };
+    instance.startTrans().then(function(data){
+      assert.equal(instance.transTimes, 1);
+      instance.startTrans().then(function(data){
+        assert.equal(instance.transTimes, 2);
+        done();
+      });
+    });
+  });
 })
