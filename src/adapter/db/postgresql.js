@@ -295,7 +295,7 @@ export default class extends Base {
             regexp = /(.*) (ASC|DESC)/i,
             matches = item.match(regexp);
 
-        if (matches != null) {
+        if (matches !== null) {
           type = ' ' + matches[2];
           item = item.replace(regexp, '$1');
         }
@@ -328,7 +328,7 @@ export default class extends Base {
         if (matches) {
           type = ' ' + matches[1];
         } else if (think.isNumber(type) || think.isNumberString(type)) {
-          type = type == -1 ? ' DESC' : ' ASC';
+          type = parseInt(type) === -1 ? ' DESC' : ' ASC';
         }
 
         if (key.indexOf('.') === -1) {
