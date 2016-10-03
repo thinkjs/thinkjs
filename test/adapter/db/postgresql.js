@@ -224,4 +224,65 @@ describe('adapter/db/postgresql.js', function(){
     assert.equal(instance.parseLimit('5,1'), " LIMIT 1 OFFSET 5");
     assert.equal(instance.parseLimit('5'), " LIMIT 5");
   });
+  it('parseGroup', function () {
+    var instance = new PostgreSQL();
+    var testcases = [
+      {
+        actual: 'name',
+        expect: ' GROUP BY "name"',
+      },
+      {
+        actual: '"table"."field"',
+        expect: ' GROUP BY "table"."field"',
+      },
+      {
+        actual: '"table"."field1", "table"."field2"',
+        expect: ' GROUP BY "table"."field1", "table"."field2"',
+      },
+      {
+        actual: 'name ASC',
+        expect: ' GROUP BY "name" ASC'
+      },
+      {
+        actual: 'name DESC',
+        expect: ' GROUP BY "name" DESC'
+      },
+      {
+        actual: '"name" DESC',
+        expect: ' GROUP BY "name" DESC'
+      },
+      {
+        actual: {'name': 'DESC'},
+        expect: ' GROUP BY "name" DESC'
+      },
+      {
+        actual: {'name': -1},
+        expect: ' GROUP BY "name" DESC'
+      },
+      {
+        actual: {'name': 1, 'id': -1},
+        expect: ' GROUP BY "name" ASC, "id" DESC'
+      },
+      {
+        actual: {'table.name': 1, 'table.id': -1},
+        expect: ' GROUP BY "table"."name" ASC, "table"."id" DESC'
+      },
+      {
+        actual: {'"table"."name"': 1, '"table"."id"': -1},
+        expect: ' GROUP BY "table"."name" ASC, "table"."id" DESC'
+      },
+      {
+        actual: 'name, id',
+        expect: ' GROUP BY "name", "id"'
+      },
+      {
+        actual: '"name", "id"',
+        expect: ' GROUP BY "name", "id"'
+      }
+    ];
+
+    testcases.forEach(item => {
+      assert.equal(instance.parseGroup(item.actual), item.expect);
+    })
+  });
 });

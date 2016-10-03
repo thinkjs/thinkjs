@@ -273,6 +273,80 @@ export default class extends Base {
     return `${isDistinct ? 'DISTINCT ' : ''}${key}`;
   }
   /**
+   * parse group
+   * @param  {String} group []
+   * @return {String}       []
+   */
+  parseGroup(group){
+    if (think.isEmpty(group)) {
+      return '';
+    }
+    if (think.isString(group)) {
+      //group may be `date_format(create_time,'%Y-%m-%d')`
+      if (group.indexOf('(') !== -1) {
+        return ' GROUP BY ' + group;
+      }
+      group = group.split(/\s*,\s*/);
+    }
+    if (think.isArray(group)) {
+      var result = group.map(function (item) {
+        item = item.replace(/[\"]/g, '');
+        var type = '',
+            regexp = /(.*) (ASC|DESC)/i,
+            matches = item.match(regexp);
+
+        if (matches != null) {
+          type = ' ' + matches[2];
+          item = item.replace(regexp, '$1');
+        }
+
+        if (item.indexOf('.') === -1) {
+          return '"' + item + '"' + type;
+        } else {
+          item = item.split('.');
+          return '"' + item[0] + '"."' + item[1] + '"' + type;
+        }
+      });
+
+      return ' GROUP BY ' + result.join(', ');
+      /**
+       * Example: { 'name': 'DESC' } || { 'name': -1 }
+       */
+    } else if (think.isObject(group)) {
+      var result = [];
+
+      for (let key in group) {
+        let type = group[key],
+            matches;
+
+        key = key.replace(/[\"]/g, '');
+
+        if (think.isString(type)) {
+          matches = type.match(/.*(ASC|DESC)/i);
+        }
+
+        if (matches) {
+          type = ' ' + matches[1];
+        } else if (think.isNumber(type) || think.isNumberString(type)) {
+          type = type == -1 ? ' DESC' : ' ASC';
+        }
+
+        if (key.indexOf('.') === -1) {
+          result.push('"' + key + '"' + type);
+        } else {
+          key = key.split('.');
+
+          result.push('"' + key[0] + '"."' + key[1] + '"' + type);
+        }
+      }
+
+      return ' GROUP BY ' + result.join(', ');
+    } else {
+      /** Unknown format: */
+      return '';
+    }
+  }
+  /**
    * parse limit
    * @param  {String} limit []
    * @return {String}       []
