@@ -17,8 +17,10 @@ var PostgreSQL = think.safeRequire(path.resolve(__dirname, '../../../lib/adapter
 
 describe('adapter/db/postgresql.js', function(){
   it('get instance', function(){
-    var instance = new PostgreSQL();
+    var instance = new PostgreSQL(),
+        instance2 = new PostgreSQL({test: 1});
     assert.equal(instance.selectSql, '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%');
+    assert.deepEqual(instance2.config, {test: 1});
   });
   it('socket', function(){
     var instance = new PostgreSQL();
@@ -30,6 +32,82 @@ describe('adapter/db/postgresql.js', function(){
     var socket = instance.socket();
     var socket2 = instance.socket();
     assert.equal(socket, socket2);
+  });
+  it('execute', function (done) {
+    var instance = new PostgreSQL(),
+        testcases = [
+          {
+            sql_actual: "SELECT 1",
+            sql_expect: "SELECT 1",
+            data_actual: { rows: [] },
+            data_expect: 0
+          },
+          {
+            sql_actual: 'INSERT INTO "user" VALUES(1, 2)',
+            sql_expect: 'INSERT INTO "user" VALUES(1, 2) RETURNING id',
+            data_actual: { rows: [ {id: 1} ], rowCount: 1 },
+            data_expect: 1
+          }
+        ],
+        i = 0;
+    instance.socket = sql => {
+      assert.equal(sql, testcases[i].sql_expect);
+
+      return { execute: sql => {
+        assert.equal(sql, testcases[i].sql_expect);
+        let result = Promise.resolve(testcases[i].data_actual);
+        return result;
+      } };
+    };
+
+    instance.execute(testcases[i].sql_actual).then(data => {
+      assert.equal(data, testcases[i].data_expect);
+      i++;
+
+      instance.execute(testcases[i].sql_actual).then(data => {
+        assert.equal(data, testcases[i].data_expect);
+
+        done();
+      });
+    });
+  });
+  it('query', function (done) {
+    var instance = new PostgreSQL(),
+        testcases = [
+          {
+            sql_actual: "SELECT 1",
+            sql_expect: "SELECT 1",
+            data_actual: { rows: [] },
+            data_expect: 0
+          },
+          {
+            sql_actual: 'INSERT INTO "user" VALUES(1, 2)',
+            sql_expect: 'INSERT INTO "user" VALUES(1, 2)',
+            data_actual: { rows: [ { id: 1 } ], rowCount: 1 },
+            data_expect: [ { id: 1 } ]
+          }
+        ],
+        i = 0;
+    instance.socket = sql => {
+      assert.equal(sql, testcases[i].sql_expect);
+
+      return { query: sql => {
+        assert.equal(sql, testcases[i].sql_expect);
+        let result = Promise.resolve(testcases[i].data_actual);
+        return result;
+      } };
+    };
+
+    instance.query(testcases[i].sql_actual).then(data => {
+      assert.equal(data, testcases[i].data_expect);
+      i++;
+
+      instance.query(testcases[i].sql_actual).then(data => {
+        assert.deepEqual(data, testcases[i].data_expect);
+
+        done();
+      });
+    });
   });
   it('get fields', function(done){
     var instance = new PostgreSQL();
@@ -121,7 +199,8 @@ describe('adapter/db/postgresql.js', function(){
         data18 = ["IN", 'a,b,c'],
         data19 = ["IN", 1],
         data20 = [["LIKE", '%123%'],["LIKE", '%234%'], "OR"],
-        data21 = [["EXP", 'LIKE E\'%123%\''],["LIKE", '%234%']];
+        data21 = [["EXP", 'LIKE E\'%123%\''],["LIKE", '%234%']],
+        data22 = ['NOT_BETWEEN', 1, 12];
 
     assert.equal(instance.parseWhereItem('login', data1), "login IN (E'login1', E'login2')");
     assert.equal(instance.parseWhereItem('id', data2), 'id < 10 AND id > 1');
@@ -144,6 +223,8 @@ describe('adapter/db/postgresql.js', function(){
     assert.equal(instance.parseWhereItem('id', data19), 'id = 1');
     assert.equal(instance.parseWhereItem('id', data20), '(id LIKE E\'%123%\') OR (id LIKE E\'%234%\')');
     assert.equal(instance.parseWhereItem('id', data21), '(id LIKE E\'%123%\') AND (id LIKE E\'%234%\')');
+    // Check exception:
+    assert.throws(() => { return instance.parseWhereItem('id', data22); }, null, null);
   });
   it('quoteKey, empty', function () {
     var instance = new PostgreSQL();
@@ -224,9 +305,47 @@ describe('adapter/db/postgresql.js', function(){
     assert.equal(instance.parseLimit('5,1'), " LIMIT 1 OFFSET 5");
     assert.equal(instance.parseLimit('5'), " LIMIT 5");
   });
+  it('parseValue', function () {
+    var instance = new PostgreSQL();
+
+    var testcases = [
+      {
+        actual: ['exp', 1],
+        expect: '1'
+      },
+      {
+        actual: null,
+        expect: 'null'
+      },
+      {
+        actual: true,
+        expect: 'true'
+      },
+      {
+        actual: false,
+        expect: 'false'
+      }
+    ];
+
+    testcases.forEach(item => {
+      assert.equal(instance.parseValue(item.actual), item.expect);
+    });
+  });
   it('parseGroup', function () {
     var instance = new PostgreSQL();
     var testcases = [
+      {
+        actual: '',
+        expect: '',
+      },
+      {
+        actual: undefined,
+        expect: ''
+      },
+      {
+        actual: '("id", "name")',
+        expect: ' GROUP BY ("id", "name")',
+      },
       {
         actual: 'name',
         expect: ' GROUP BY "name"',

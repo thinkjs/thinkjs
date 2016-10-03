@@ -343,7 +343,6 @@ export default class extends Base {
       return ' GROUP BY ' + result.join(', ');
     } else {
       /** Unknown format: */
-      return '';
     }
   }
   /**
