@@ -55,7 +55,7 @@ describe('adapter/db/postgresql.js', function(){
 
       return { execute: function (sql) {
         assert.equal(sql, testcases[i].sql_expect);
-        let result = Promise.resolve(testcases[i].data_actual);
+        var result = Promise.resolve(testcases[i].data_actual);
         return result;
       } };
     };
@@ -91,7 +91,7 @@ describe('adapter/db/postgresql.js', function(){
 
       return { query: function (sql) {
         assert.equal(sql, testcases[i].sql_expect);
-        let result = Promise.resolve(testcases[i].data_actual);
+        var result = Promise.resolve(testcases[i].data_actual);
         return result;
       } };
     };

@@ -1059,7 +1059,7 @@ describe('core/http.js', function() {
     var instance = new Http(defaultHttp.req, defaultHttp.res);
     instance.run().then(function(http) {
       http.cookie('wwwwww', 'sss');
-      let value = http.cookie('wwwwww');
+      var value = http.cookie('wwwwww');
       assert.equal(value, 'sss');
       done();
     });
