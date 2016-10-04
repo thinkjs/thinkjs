@@ -10,6 +10,9 @@ instance.load();
 var Compile = think.safeRequire(path.resolve(__dirname, '../../lib/util/watch_compile.js'));
 
 describe('watch_compile', function(){
+  before(function (done) {
+    think.npm('source-map@0.5.3').then(() => done());
+  });
   it('compile, src not exist', function(){
     Compile.compile(__dirname + think.sep + 'compile_src', __dirname + think.sep + 'compile_output' );
   })
@@ -26,14 +29,12 @@ describe('watch_compile', function(){
     var srcPath = __dirname + think.sep + 'compile_src';
     var outPath = __dirname + think.sep + 'compile_output';
     var instance = new Compile(srcPath, outPath);
-    think.npm('source-map@0.5.3').then(function(){
-      var result = instance.compileByTypeScript('let a = 1', 'a.ts');
-      var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-      assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
-      think.rmdir(outPath).then(function(){
-        done();
-      });
-    })
+    var result = instance.compileByTypeScript('let a = 1', 'a.ts');
+    var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
+    assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
+    think.rmdir(outPath).then(function(){
+      done();
+    });
   })
   it('compileByTypeScript, has error', function(){
     var srcPath = __dirname + think.sep + 'compile_src';
@@ -50,15 +51,13 @@ describe('watch_compile', function(){
     var srcPath = __dirname + think.sep + 'compile_src';
     var outPath = __dirname + think.sep + 'compile_output';
     var instance = new Compile(srcPath, outPath, {log: true});
-    think.npm('source-map@0.5.3').then(function(){
-      var result = instance.compileByTypeScript('let a = 1', 'a.ts');
-      var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-      assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
-      muk.restore();
-      think.rmdir(outPath).then(function(){
-        done();
-      });
-    })
+    var result = instance.compileByTypeScript('let a = 1', 'a.ts');
+    var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
+    assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
+    muk.restore();
+    think.rmdir(outPath).then(function(){
+      done();
+    });
   })
   it('compileByBabel', function(done){
     var srcPath = __dirname + think.sep + 'compile_src';
