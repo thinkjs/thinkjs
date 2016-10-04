@@ -10,9 +10,6 @@ instance.load();
 var Compile = think.safeRequire(path.resolve(__dirname, '../../lib/util/watch_compile.js'));
 
 describe('watch_compile', function(){
-  before(function (done) {
-    think.npm('source-map@0.5.3').then(() => done());
-  });
   it('compile, src not exist', function(){
     Compile.compile(__dirname + think.sep + 'compile_src', __dirname + think.sep + 'compile_output' );
   })

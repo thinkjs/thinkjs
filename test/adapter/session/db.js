@@ -104,7 +104,7 @@ describe('adapter/session/db', function(){
   it('get data, newCookie', function(done){
     var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     instance.model = {
-      add: () => Promise.resolve()
+      add: function () { return Promise.resolve() }
     };
     instance.newCookie = true;
     instance.get().then(function(data){

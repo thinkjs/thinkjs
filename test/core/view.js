@@ -13,8 +13,8 @@ var View = think.safeRequire(path.resolve(__dirname, '../../lib/core/view.js')),
     instance = new View();
 
 describe('core/view', function() {
-    before(() => {
-        instance.fetch = instance.render = think.prevent = () => Promise.resolve('my-content');
+    before(function () {
+        instance.fetch = instance.render = think.prevent = function () { return Promise.resolve('my-content') };
     });
     it('assign', function () {
         assert.deepEqual(instance.assign(), {});
@@ -24,24 +24,24 @@ describe('core/view', function() {
     });
     it('display', function (done) {
         // templateFile, charset, contentType, config
-        instance.display('test-file', {}, 'text/html', {}).then((data) => {
+        instance.display('test-file', {}, 'text/html', {}).then(function (data) {
             assert.equal(data, 'my-content');
-            instance.display('test-file', null, {}, {}).then((data) => {
+            instance.display('test-file', null, {}, {}).then(function (data) {
                 assert.equal(data, 'my-content');
                 done();
             });
         });
     });
     it('display, throw Exception', function (done) {
-        instance.fetch = () => { throw new Error(arguments) };
-        think.prevent = think.statusAction = () => 'throws error';
+        instance.fetch = function () { throw new Error(arguments) };
+        think.prevent = think.statusAction = function () { return 'throws error' };
         // templateFile, charset, contentType, config
-        instance.display('test-file', {}, 'text/html', {}).then((data) => {
+        instance.display('test-file', {}, 'text/html', {}).then(function (data) {
             assert.equal(data, 'throws error');
             done();
         });
     });
-    after(() => {
+    after(function () {
         // Restore prevent:
         think.prevent = old_prevent;
         // Restore statusAction:

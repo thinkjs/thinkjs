@@ -10,5 +10,6 @@ build: off
 test_script:
   - node --version
   - npm --version
+  - npm install source-map@0.5.3
   - npm run test
 version: "{build}"

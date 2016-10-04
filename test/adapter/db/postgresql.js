@@ -50,23 +50,21 @@ describe('adapter/db/postgresql.js', function(){
           }
         ],
         i = 0;
-    instance.socket = sql => {
+    instance.socket = function (sql) {
       assert.equal(sql, testcases[i].sql_expect);
 
-      return { execute: sql => {
+      return { execute: function (sql) {
         assert.equal(sql, testcases[i].sql_expect);
         let result = Promise.resolve(testcases[i].data_actual);
         return result;
       } };
     };
 
-    instance.execute(testcases[i].sql_actual).then(data => {
+    instance.execute(testcases[i].sql_actual).then(function (data) {
       assert.equal(data, testcases[i].data_expect);
       i++;
-
-      instance.execute(testcases[i].sql_actual).then(data => {
+      instance.execute(testcases[i].sql_actual).then(function (data) {
         assert.equal(data, testcases[i].data_expect);
-
         done();
       });
     });
@@ -88,21 +86,21 @@ describe('adapter/db/postgresql.js', function(){
           }
         ],
         i = 0;
-    instance.socket = sql => {
+    instance.socket = function (sql) {
       assert.equal(sql, testcases[i].sql_expect);
 
-      return { query: sql => {
+      return { query: function (sql) {
         assert.equal(sql, testcases[i].sql_expect);
         let result = Promise.resolve(testcases[i].data_actual);
         return result;
       } };
     };
 
-    instance.query(testcases[i].sql_actual).then(data => {
+    instance.query(testcases[i].sql_actual).then(function (data) {
       assert.equal(data, testcases[i].data_expect);
       i++;
 
-      instance.query(testcases[i].sql_actual).then(data => {
+      instance.query(testcases[i].sql_actual).then(function (data) {
         assert.deepEqual(data, testcases[i].data_expect);
 
         done();
@@ -224,7 +222,7 @@ describe('adapter/db/postgresql.js', function(){
     assert.equal(instance.parseWhereItem('id', data20), '(id LIKE E\'%123%\') OR (id LIKE E\'%234%\')');
     assert.equal(instance.parseWhereItem('id', data21), '(id LIKE E\'%123%\') AND (id LIKE E\'%234%\')');
     // Check exception:
-    assert.throws(() => { return instance.parseWhereItem('id', data22); }, null, null);
+    assert.throws(function () { return instance.parseWhereItem('id', data22); }, null, null);
   });
   it('quoteKey, empty', function () {
     var instance = new PostgreSQL();
@@ -326,7 +324,7 @@ describe('adapter/db/postgresql.js', function(){
       }
     ];
 
-    testcases.forEach(item => {
+    testcases.forEach(function (item) {
       assert.equal(instance.parseValue(item.actual), item.expect);
     });
   });
@@ -399,7 +397,7 @@ describe('adapter/db/postgresql.js', function(){
       }
     ];
 
-    testcases.forEach(item => {
+    testcases.forEach(function (item) {
       assert.equal(instance.parseGroup(item.actual), item.expect);
     })
   });
