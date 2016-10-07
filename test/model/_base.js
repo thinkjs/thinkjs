@@ -567,10 +567,10 @@ describe('model/_base.js', function(){
       },
       meta: {
         createAt: {
-          default: () => 1
+          default: function () { return 1 }
         },
         updateAt: {
-          default: () => 2
+          default: function () { return 2 }
         }
       }
     }
@@ -586,10 +586,10 @@ describe('model/_base.js', function(){
       },
       meta: {
         createAt: {
-          default: () => 1
+          default: function () { return 1 }
         },
         updateAt: {
-          default: () => 2
+          default: function () { return 2 }
         }
       }
     }
@@ -607,10 +607,10 @@ describe('model/_base.js', function(){
       },
       meta: {
         createAt: {
-          default: () => 1
+          default: function () { return 1 }
         },
         updateAt: {
-          default: () => 2
+          default: function () { return 2 }
         }
       }
     }
@@ -629,7 +629,7 @@ describe('model/_base.js', function(){
       },
       meta: {
         createAt: {
-          default: () => 1
+          default: function () { return 1 }
         }
       }
     }
@@ -647,7 +647,7 @@ describe('model/_base.js', function(){
       },
       meta: {
         createAt: {
-          default: () => 1
+          default: function () { return 1 }
         }
       }
     }
@@ -689,7 +689,7 @@ describe('model/_base.js', function(){
       meta: {
         createAt: {
           xxx: {
-            default: () => 20
+            default: function () { return 20 }
           }
         },
         updateAt: {
@@ -712,7 +712,7 @@ describe('model/_base.js', function(){
       meta: {
         createAt: {
           xxx: {
-            default: () => 20
+            default: function () { return 20 }
           }
         },
         updateAt: {
@@ -809,7 +809,7 @@ describe('model/_base.js', function(){
     instance.schema = {
       meta: {
         createAt: {
-          default: () => 111,
+          default: function () { return 111 },
           update: true
         }
       }
@@ -822,7 +822,7 @@ describe('model/_base.js', function(){
     instance.schema = {
       meta: {
         createAt: {
-          default: () => 111,
+          default: function () { return 111 },
           readonly: true
         }
       }
@@ -840,11 +840,11 @@ describe('model/_base.js', function(){
     instance.schema = {
       meta: {
         createAt: {
-          default: () => 111,
+          default: function () { return 111 },
           readonly: true
         },
         updateAt: {
-          default: () => 222,
+          default: function () { return 222 },
           update: true
         }
       }
@@ -863,11 +863,11 @@ describe('model/_base.js', function(){
     instance.schema = {
       meta: {
         createAt: {
-          default: () => 111,
+          default: function () { return 111 },
           readonly: true
         },
         updateAt: {
-          default: () => 222,
+          default: function () { return 222 },
           update: true
         }
       }

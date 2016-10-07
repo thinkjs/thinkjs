@@ -101,6 +101,17 @@ describe('adapter/session/db', function(){
       done();
     })
   })
+  it('get data, newCookie', function(done){
+    var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
+    instance.model = {
+      add: function () { return Promise.resolve() }
+    };
+    instance.newCookie = true;
+    instance.get().then(function(data){
+      assert.deepEqual(data, {});
+      done();
+    })
+  });
   it('get data, all', function(done){
     var instance = new DbSession(think.extend({}, think.config('session'), {cookie: 'welefen'}));
     instance.getData = function(){

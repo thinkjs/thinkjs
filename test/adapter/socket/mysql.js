@@ -192,10 +192,10 @@ describe('adapter/socket/mysql', function(){
         flag = true;
       }
       socket.query('SELECT * FROM `connention_lost`').catch(function(){
-        console.log('catch')
+        console.log('catch');
         assert.equal(flag, true);
         done();
-      }).then(data => {
+      }).then(function (data) {
         console.log('data', data)
       });
     });

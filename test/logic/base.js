@@ -923,7 +923,7 @@ describe('logic/base', function(){
       }};
       var data = instance.__after();
       assert.equal(instance._validateInvoked, true);
-      data.catch(err => {
+      data.catch(function () {
         done();
       })
     })
