@@ -10,7 +10,7 @@ export default {
   database: '',
   user: '',
   password: '',
-  prefix: 'think_',
+  prefix: '',
   encoding: 'utf8',
   nums_per_page: 10,
   log_sql: false,
