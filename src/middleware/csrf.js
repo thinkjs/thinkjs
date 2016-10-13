@@ -28,7 +28,7 @@ export default class extends think.middleware.base {
       let value = await session.get(csrf.session_name);
       let formValue = this.http[isPost ? 'post' : 'param'](csrf.form_name);
       if(!formValue){
-        formValue = this.header('x-' + csrf.form_name);
+        formValue = this.http.header('x-' + csrf.form_name);
       }
       if (!value || formValue !== value) {
         return this.http.fail(csrf.errno, csrf.errmsg);
