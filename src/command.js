@@ -11,7 +11,7 @@ let templatePath = path.dirname(__dirname) + sep + 'template';
 let projectRootPath = cwd; //project root path
 let modeList = ['normal', 'module'];
 
-think.mode = think.mode_normal;
+think.mode = think.mode_module;
 
 
 /**
