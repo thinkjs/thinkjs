@@ -2252,15 +2252,17 @@ describe('core/think.js', function(){
   it('think.model get model instance', function(){
     var instance = think.model('test', {
       host: '127.0.0.1',
-      type: 'mysql'
-    })
+      type: 'mysql',
+      prefix: 'think_'
+    });
     assert.equal(instance.tablePrefix, 'think_');
   })
   it('think.model get model instance, mongo', function(){
     var instance = think.model('test', {
       host: '127.0.0.1',
-      type: 'mongo'
-    })
+      type: 'mongo',
+      prefix: 'think_'
+    });
     assert.equal(instance.tablePrefix, 'think_');
   })
 

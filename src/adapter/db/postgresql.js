@@ -233,6 +233,9 @@ export default class extends Base {
     if(think.isNumber(key) || think.isNumberString(key)){
       return key;
     }
+    if (/^.*\(.*\)$/.test(key)) {
+      return key;
+    }
     if(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i.test(key)) {
       return key.replace(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i, '\"$1\"\"$3\"');
     } else {
@@ -254,6 +257,9 @@ export default class extends Base {
     key = key.trim();
     if(think.isEmpty(key)){
       return '';
+    }
+    if (/^.*\(.*\)$/.test(key)) {
+      return key;
     }
     var isDistinct = false;
     if(/DISTINCT (.*)/i.test(key)) {
