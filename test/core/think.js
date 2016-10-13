@@ -2254,14 +2254,14 @@ describe('core/think.js', function(){
       host: '127.0.0.1',
       type: 'mysql'
     })
-    assert.equal(instance.tablePrefix, 'think_');
+    assert.equal(instance.tablePrefix, undefined);
   })
   it('think.model get model instance, mongo', function(){
     var instance = think.model('test', {
       host: '127.0.0.1',
       type: 'mongo'
     })
-    assert.equal(instance.tablePrefix, 'think_');
+    assert.equal(instance.tablePrefix, undefined);
   })
 
   it('think.controller get sub controller', function(){

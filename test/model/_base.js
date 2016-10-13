@@ -108,7 +108,7 @@ describe('model/_base.js', function(){
   it('getTablePrefix', function(){
     var instance = new Base('', think.config('db'));
     var data = instance.getTablePrefix();
-    assert.equal(data, 'think_');
+    assert.equal(data, '');
   })
   it('getTablePrefix', function(){
     var instance = new Base('', think.config('db'));
@@ -130,13 +130,13 @@ describe('model/_base.js', function(){
   it('getTableName', function(){
     var instance = new Base('user', think.config('db'));
     var data = instance.getTableName();
-    assert.equal(data, 'think_user')
+    assert.equal(data, 'user')
   })
   it('getTableName, has table name', function(){
     var instance = new Base('user', think.config('db'));
     instance.tableName = 'test'
     var data = instance.getTableName();
-    assert.equal(data, 'think_test')
+    assert.equal(data, 'test')
   })
   it('cache, return this', function(){
     var instance = new Base('user', think.config('db'));
@@ -300,7 +300,7 @@ describe('model/_base.js', function(){
   it('table', function(){
     var instance = new Base('user', think.config('db'));
     var data = instance.table('user');
-    assert.equal(instance._options.table, 'think_user');
+    assert.equal(instance._options.table, 'user');
   })
   it('table, has prefix', function(){
     var instance = new Base('user', think.config('db'));

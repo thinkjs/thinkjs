@@ -380,7 +380,9 @@ describe('model/relation.js', function(){
   })
   it('getRelationTableName', function(){
     var instance = new Relation('post', think.config('db'));
+    instance.tablePrefix = 'think_';
     var model = new Relation('cate', think.config('db'));
+    model.tablePrefix = 'think_';
     var table = instance.getRelationTableName(model);
     assert.equal(table, 'think_post_cate')
   })
@@ -441,7 +443,9 @@ describe('model/relation.js', function(){
   })
   it('_getManyToManyRelation', function(done){
     var instance = new Relation('post', think.config('db'));
+    instance.tablePrefix = 'think_';
     var model = new Relation('cate', think.config('db'));
+    model.tablePrefix = 'think_';
     model.getPk = function(){
       return 'id';
     }
@@ -472,6 +476,8 @@ describe('model/relation.js', function(){
   it('_getManyToManyRelation, has table name', function(done){
     var instance = new Relation('post', think.config('db'));
     var model = new Relation('cate', think.config('db'));
+    instance.tablePrefix = 'think_';
+    model.tablePrefix = 'think_';
     model.getPk = function(){
       return 'id';
     }
@@ -503,6 +509,8 @@ describe('model/relation.js', function(){
   it('_getManyToManyRelation, has table name & prefix', function(done){
     var instance = new Relation('post', think.config('db'));
     var model = new Relation('cate', think.config('db'));
+    instance.tablePrefix = 'think_';
+    model.tablePrefix = 'think_';
     model.getPk = function(){
       return 'id';
     }
@@ -534,6 +542,8 @@ describe('model/relation.js', function(){
   it('_getManyToManyRelation, has where', function(done){
     var instance = new Relation('post', think.config('db'));
     var model = new Relation('cate', think.config('db'));
+    instance.tablePrefix = 'think_';
+    model.tablePrefix = 'think_';
     model.getPk = function(){
       return 'id';
     }

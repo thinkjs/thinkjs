@@ -25,7 +25,8 @@ describe('model/base.js', function(){
 
     Base = think.safeRequire(path.resolve(__dirname, '../../lib/model/base.js'));
     var mysqlSocket = think.adapter('socket', 'mysql');
-    instance = new Base('user', think.config('db'));
+    var config = think.extend({}, think.config('db'), {prefix: 'think_'});
+    instance = new Base('user', config);
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){
 
@@ -291,7 +292,8 @@ describe('model/base.js', function(){
     })
   })
   it('getSchema, change pk', function(done){
-    var instance = new Base('tag', think.config('db'))
+    var instance = new Base('tag', think.config('db'));
+    instance.tablePrefix = 'think_';
     return instance.getSchema('think_tag').then(function(data){
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
       assert.equal(instance.pk, 'wid');
@@ -299,7 +301,8 @@ describe('model/base.js', function(){
     })
   })
   it('getSchema, change pk, getPk', function(done){
-    var instance = new Base('tag', think.config('db'))
+    var instance = new Base('tag', think.config('db'));
+    instance.tablePrefix = 'think_';
     return instance.getSchema('think_tag').then(function(data){
       return instance.getPk();
     }).then(function(pk){
@@ -311,7 +314,8 @@ describe('model/base.js', function(){
     })
   })
   it('getUniqueField', function(done){
-    var instance = new Base('tag', think.config('db'))
+    var instance = new Base('tag', think.config('db'));
+    instance.tablePrefix = 'think_';
     return instance.getUniqueField().then(function(data){
       assert.equal(data, 'title');
       done();
@@ -319,6 +323,7 @@ describe('model/base.js', function(){
   })
   it('getUniqueField, with data', function(done){
     var instance = new Base('tag', think.config('db'))
+    instance.tablePrefix = 'think_';
     return instance.getUniqueField({
       title: 'welefen'
     }).then(function(data){
@@ -328,6 +333,7 @@ describe('model/base.js', function(){
   })
   it('getUniqueField, with data, not match', function(done){
     var instance = new Base('tag', think.config('db'))
+    instance.tablePrefix = 'think_';
     return instance.getUniqueField({
       title111: 'welefen'
     }).then(function(data){
@@ -337,6 +343,7 @@ describe('model/base.js', function(){
   })
   it('parseType', function(done){
     var instance = new Base('tag', think.config('db'));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       id: {type: 'int'},
       bid: {type: 'bigint'},
@@ -374,6 +381,7 @@ describe('model/base.js', function(){
   })
   it('build sql 2', function(done){
     var instance = new Base('hasid', think.config('db'));
+    instance.tablePrefix = 'think_';
     instance.where({_id: 'www'}).field('name,title').group('name').limit(10).buildSql().then(function(sql){
       assert.equal(sql, "( SELECT `name`,`title` FROM `think_hasid` WHERE ( `_id` = 'www' ) GROUP BY `name` LIMIT 10 )");
       done();
@@ -423,6 +431,7 @@ describe('model/base.js', function(){
   })
   it('alias can not in show columns', function(done){
     var instance = new Base('user222', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.alias('a').select().then(function(data){
       done();
     })
@@ -439,6 +448,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: 'haha'
@@ -454,6 +464,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default null', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: null
@@ -469,6 +480,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default empty', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: ''
@@ -484,6 +496,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default undefined', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: undefined
@@ -499,6 +512,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default 0', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: 0
@@ -514,6 +528,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default null, value 0', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: null
@@ -530,6 +545,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default empty, value 0', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: ''
@@ -546,6 +562,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default 0, value 1', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: 0
@@ -562,6 +579,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default function', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: function(){return 'haha'}
@@ -577,6 +595,7 @@ describe('model/base.js', function(){
   })
   it('add data, has default function, this', function(done){
     var instance = new Base('user', think.extend({}, think.config('db'), {test: 111}));
+    instance.tablePrefix = 'think_';
     instance.schema = {
       name: {
         default: function(){return this.title + '_name'}
@@ -712,6 +731,7 @@ describe('model/base.js', function(){
   })
   it('update, where condition from data', function(done){
     var instance = new Base('cate', think.config('db'));
+    instance.tablePrefix = 'think_';
     instance.update({
       id: 102,
       name: 'name1',
@@ -732,6 +752,7 @@ describe('model/base.js', function(){
   })
   it('update many', function(done){
     var instance = new Base('cate', think.config('db'));
+    instance.tablePrefix = 'think_';
     instance.updateMany([{
       id: 105,
       name: 'name1',
@@ -745,6 +766,7 @@ describe('model/base.js', function(){
   })
   it('update many 2', function(done){
     var instance = new Base('cate', think.config('db'));
+    instance.tablePrefix = 'think_';
     instance.updateMany([{
       id: 100,
       name: 'name1',
@@ -843,6 +865,7 @@ describe('model/base.js', function(){
   })
   it('select add, instance', function(done){
     var instance1 = new Base('tag', think.config('db'));
+    instance1.tablePrefix = 'think_';
     instance1.where({name: 'test'});
     instance.selectAdd(instance1).then(function(data){
       var sql = instance.getLastSql();
