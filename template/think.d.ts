@@ -1520,6 +1520,8 @@ declare module think {
      * @type {think_model_mongo}
      */
     mongo: think_model_mongo;
+
+    relation: think_model_relation;
   }
 
   interface think_model_base {
@@ -1528,6 +1530,10 @@ declare module think {
 
   interface think_model_mongo {
     new(name?: string, config?: EmptyObject): think_model_mongo_instance;
+  }
+
+  interface think_model_relation {
+    new(name?: string, config?: EmptyObject): think_model_relation_instance;
   }
 
   interface think_model_$base_instance extends think_base {
@@ -1609,7 +1615,7 @@ declare module think {
      * @param  {EmptyObject} options []
      * @return {Promise}             []
      */
-    buildSql(options?:EmptyObject): Promise;
+    buildSql(options?:EmptyObject, noParentheses?:boolean): Promise;
     /**
      * parse options
      * @param  {EmptyObject} opt1 []
@@ -1794,6 +1800,12 @@ declare module think {
      * @return {Promise}     []
      */
     transaction(fn: Function): Promise;
+  }
+
+  interface think_model_relation_instance extends think_model_base_instance {
+    relation: EmptyObject;
+    _relationName: boolean;
+    setRelation(name?: any, value?: any): think_model_relation_instance;
   }
 
   interface think_model_mongo_instance extends think_model_$base_instance {
