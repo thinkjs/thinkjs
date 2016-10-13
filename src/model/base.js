@@ -85,9 +85,13 @@ export default class extends Base {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  async buildSql(options){
+  async buildSql(options, noParentheses){
     options = await this.parseOptions(options);
-    return '( ' + this.db().buildSelectSql(options).trim() + ' )';
+    let sql = this.db().buildSelectSql(options).trim();
+    if(noParentheses){
+      return sql;
+    }
+    return '( ' + sql + ' )';
   }
   /**
    * parse options
@@ -166,6 +170,9 @@ export default class extends Base {
    */
   parseType(key, value){
     let fieldType = this.schema[key].type || '';
+    if(fieldType.indexOf('enum') > -1 || fieldType.indexOf('set') > -1){
+      return value;
+    }
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
       return parseInt(value, 10) || 0;
     }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){

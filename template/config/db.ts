@@ -14,7 +14,7 @@ export default {
       database: '',
       user: '',
       password: '',
-      prefix: 'think_',
+      prefix: '',
       encoding: 'utf8'
     },
     mongo: {

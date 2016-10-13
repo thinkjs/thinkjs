@@ -2256,7 +2256,7 @@ describe('core/think.js', function(){
       prefix: 'think_'
     });
     assert.equal(instance.tablePrefix, 'think_');
-  })
+  });
   it('think.model get model instance, mongo', function(){
     var instance = think.model('test', {
       host: '127.0.0.1',
@@ -2264,7 +2264,7 @@ describe('core/think.js', function(){
       prefix: 'think_'
     });
     assert.equal(instance.tablePrefix, 'think_');
-  })
+  });
 
   it('think.controller get sub controller', function(){
     var instance = think.controller({}, {}, 'common');

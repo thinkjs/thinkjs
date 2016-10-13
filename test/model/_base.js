@@ -302,9 +302,8 @@ describe('model/_base.js', function(){
   })
   it('table', function(){
     var instance = new Base('user', think.config('db'));
-    instance.tablePrefix = 'think_';
     var data = instance.table('user');
-    assert.equal(instance._options.table, 'think_user');
+    assert.equal(instance._options.table, 'user');
   })
   it('table, has prefix', function(){
     var instance = new Base('user', think.config('db'));

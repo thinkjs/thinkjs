@@ -22,8 +22,8 @@ describe('model/base.js', function(){
 
     Base = think.safeRequire(path.resolve(__dirname, '../../lib/model/base.js'));
     var mysqlSocket = think.adapter('socket', 'mysql');
-    instance = new Base('user', think.config('db'));
-    instance.tablePrefix = 'think_';
+    var config = think.extend({}, think.config('db'), {prefix: 'think_'});
+    instance = new Base('user', config);
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){
 
@@ -301,7 +301,7 @@ describe('model/base.js', function(){
   it('getSchema, change pk, getPk', function(done){
     var instance = new Base('tag', think.config('db'));
     instance.tablePrefix = 'think_';
-    return instance.getSchema('think_tag').then(function(){
+    return instance.getSchema('think_tag').then(function(data){
       return instance.getPk();
     }).then(function(pk){
       //assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
@@ -348,7 +348,7 @@ describe('model/base.js', function(){
       bool: {type: 'bool'},
       name: {type: 'string'},
       name1: {}
-    }
+    };
     data1 = instance.parseType('id', 10);
     assert.equal(data1, 10);
     data1 = instance.parseType('id');
