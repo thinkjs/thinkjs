@@ -294,7 +294,7 @@ describe('model/base.js', function(){
   it('getSchema, change pk', function(done){
     var instance = new Base('tag', think.config('db'));
     instance.tablePrefix = 'think_';
-    return instance.getSchema('think_tag').then(function(data){
+    return instance.getSchema('think_tag').then(function(){
       assert.equal(instance.getLastSql(), 'SHOW COLUMNS FROM `think_tag`');
       assert.equal(instance.pk, 'wid');
       done();
@@ -322,7 +322,7 @@ describe('model/base.js', function(){
     })
   })
   it('getUniqueField, with data', function(done){
-    var instance = new Base('tag', think.config('db'))
+    var instance = new Base('tag', think.config('db'));
     instance.tablePrefix = 'think_';
     return instance.getUniqueField({
       title: 'welefen'
@@ -332,7 +332,7 @@ describe('model/base.js', function(){
     })
   })
   it('getUniqueField, with data, not match', function(done){
-    var instance = new Base('tag', think.config('db'))
+    var instance = new Base('tag', think.config('db'));
     instance.tablePrefix = 'think_';
     return instance.getUniqueField({
       title111: 'welefen'
@@ -342,7 +342,7 @@ describe('model/base.js', function(){
     })
   })
   it('parseType', function(done){
-    var instance = new Base('tag', think.config('db'));
+    var instance = new Base('tag', think.config('db')), data1;
     instance.tablePrefix = 'think_';
     instance.schema = {
       id: {type: 'int'},
@@ -352,24 +352,24 @@ describe('model/base.js', function(){
       bool: {type: 'bool'},
       name: {type: 'string'},
       name1: {}
-    }
-    var data1 = instance.parseType('id', 10);
+    };
+    data1 = instance.parseType('id', 10);
     assert.equal(data1, 10);
-    var data1 = instance.parseType('id');
+    data1 = instance.parseType('id');
     assert.equal(data1, 0);
-    var data1 = instance.parseType('bid', 10);
+    data1 = instance.parseType('bid', 10);
     assert.equal(data1, 10);
-    var data1 = instance.parseType('cid', 10.5);
+    data1 = instance.parseType('cid', 10.5);
     assert.equal(data1, 10.5);
-    var data1 = instance.parseType('cid');
+    data1 = instance.parseType('cid');
     assert.equal(data1, 0.0);
-    var data1 = instance.parseType('did', 10);
+    data1 = instance.parseType('did', 10);
     assert.equal(data1, 10);
-    var data1 = instance.parseType('bool', 10);
+    data1 = instance.parseType('bool', 10);
     assert.equal(data1, true);
-    var data1 = instance.parseType('name', 'www');
+    data1 = instance.parseType('name', 'www');
     assert.equal(data1, 'www');
-    var data1 = instance.parseType('name1', 'www');
+    data1 = instance.parseType('name1', 'www');
     assert.equal(data1, 'www');
     done();
   })
@@ -432,7 +432,7 @@ describe('model/base.js', function(){
   it('alias can not in show columns', function(done){
     var instance = new Base('user222', think.extend({}, think.config('db'), {test: 111}));
     instance.tablePrefix = 'think_';
-    instance.alias('a').select().then(function(data){
+    instance.alias('a').select().then(function(){
       done();
     })
   })

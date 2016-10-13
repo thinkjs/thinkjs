@@ -2252,17 +2252,19 @@ describe('core/think.js', function(){
   it('think.model get model instance', function(){
     var instance = think.model('test', {
       host: '127.0.0.1',
-      type: 'mysql'
-    })
-    assert.equal(instance.tablePrefix, undefined);
-  })
+      type: 'mysql',
+      prefix: 'think_'
+    });
+    assert.equal(instance.tablePrefix, 'think_');
+  });
   it('think.model get model instance, mongo', function(){
     var instance = think.model('test', {
       host: '127.0.0.1',
-      type: 'mongo'
-    })
-    assert.equal(instance.tablePrefix, undefined);
-  })
+      type: 'mongo',
+      prefix: 'think_'
+    });
+    assert.equal(instance.tablePrefix, 'think_');
+  });
 
   it('think.controller get sub controller', function(){
     var instance = think.controller({}, {}, 'common');

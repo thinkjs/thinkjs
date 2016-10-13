@@ -114,9 +114,7 @@ describe('middleware/check_csrf', function() {
       };
     }).then(function() {
       done();
-    }).catch(function(err){
-      console.log(err)
-    })
+    }).catch(function(err) { done(err); });
   });
    it('csrf on, other method', function(done) {
     think.config('csrf.on', true);

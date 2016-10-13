@@ -93,7 +93,7 @@ describe('model/mongo.js', function(){
   it('parseOptions, emtpy', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(value, options){}
+    instance._createIndexes = function(value, options){};
     instance.parseOptions().then(function(options){
       assert.deepEqual(options, { table: 'think_user', tablePrefix: 'think_', model: 'user' })
       done();
@@ -136,7 +136,7 @@ describe('model/mongo.js', function(){
   it('add', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         add: function(data, options){
@@ -161,26 +161,26 @@ describe('model/mongo.js', function(){
         id: 100,
         name: 1
       }
-    }
+    };
     instance.thenAdd({name: 1, value: 1}, {name: 1}).then(function(data){
       assert.deepEqual(data, { id: 100, type: 'exist' });
       done();
     })
-  })
+  });
   it('thenAdd, exist', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
     instance.find = function(){
       return {};
-    }
+    };
     instance.add = function(){
       return 111;
-    }
+    };
     instance.thenAdd({name: 1, value: 1}, {name: 1}).then(function(data){
       assert.deepEqual(data, { id: 111, type: 'add' });
       done();
     })
-  })
+  });
   it('addMany, data is not array', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
@@ -198,7 +198,7 @@ describe('model/mongo.js', function(){
   it('addMany', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         addMany: function(data, options){
@@ -239,7 +239,7 @@ describe('model/mongo.js', function(){
   it('delete, no default', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         delete: function(options){
@@ -260,7 +260,7 @@ describe('model/mongo.js', function(){
   it('update, rows 0', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         update: function(data, options){
@@ -281,7 +281,7 @@ describe('model/mongo.js', function(){
   it('update, rows 0', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         update: function(data, options){
@@ -298,22 +298,22 @@ describe('model/mongo.js', function(){
       assert.equal(rows, 100)
       done();
     })
-  })
+  });
   it('updateMany, not array', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.updateMany({name: 'thinkjs', _id: '100'}).catch(function(err){
       done();
     })
-  })
+  });
   it('updateMany, not array', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.update = function(){
       return 10;
-    }
+    };
     instance.updateMany([{name: 'thinkjs', _id: '100'}, {name: 'welefen'}]).then(function(rows){
       assert.equal(rows, 20)
       done();
@@ -322,7 +322,7 @@ describe('model/mongo.js', function(){
   it('select', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         select: function(){
@@ -353,7 +353,7 @@ describe('model/mongo.js', function(){
   it('countSelect, true', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.count = function(){
       return 111;
     }
@@ -547,7 +547,7 @@ describe('model/mongo.js', function(){
   it('sum', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         sum: function(options){
@@ -562,7 +562,7 @@ describe('model/mongo.js', function(){
   it('aggregate', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         aggregate: function(table, options){
@@ -578,7 +578,7 @@ describe('model/mongo.js', function(){
   it('mapReduce', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.collection = function(){
       return Promise.resolve({
         mapReduce: function(fn){
@@ -593,7 +593,7 @@ describe('model/mongo.js', function(){
   it('createIndex', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.db = function(){
       return {
         ensureIndex: function(table, indexes){
@@ -610,19 +610,19 @@ describe('model/mongo.js', function(){
   it('getIndexes', function(done){
     var instance = new Mongo('user', think.config('db'));
     instance.tablePrefix = 'think_';
-    instance._createIndexes = function(){}
+    instance._createIndexes = function(){};
     instance.collection = function(){
       return Promise.resolve({
         indexes: function(){
           return Promise.resolve([{}])
         }
       })
-    }
+    };
     instance.getIndexes({}).then(function(data){
-      assert.deepEqual(data, [{}])
+      assert.deepEqual(data, [{}]);
       done();
     })
   })
 
 
-})
+});
