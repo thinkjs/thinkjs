@@ -264,15 +264,15 @@ export default class extends Base {
     var isDistinct = false;
     if(/DISTINCT (.*)/i.test(key)) {
       isDistinct = true;
-      key = key.replace(/DISTINCT (.*)/i, '$1')
+      key = key.replace(/DISTINCT (.*)/i, '$1');
     }
     if(/.*\..*/.test(key)) {
       var k = key.split('.'), j = [];
       k.forEach( i => {
         var tmp = this.quoteKey(i.replace(/^[\"]+|[\"]+$/g, ''));
-        j.push(`${tmp}`)
+        j.push(`${tmp}`);
       } );
-      key = j.join('.')
+      key = j.join('.');
     } else {
       key = this.quoteKey(key.replace(/^[\"]+|[\"]+$/g, ''));
     }
@@ -294,8 +294,10 @@ export default class extends Base {
       }
       group = group.split(/\s*,\s*/);
     }
+    var result;
+
     if (think.isArray(group)) {
-      var result = group.map(function (item) {
+      result = group.map(function (item) {
         item = item.replace(/[\"]/g, '');
         var type = '',
             regexp = /(.*) (ASC|DESC)/i,
@@ -319,7 +321,7 @@ export default class extends Base {
        * Example: { 'name': 'DESC' } || { 'name': -1 }
        */
     } else if (think.isObject(group)) {
-      var result = [];
+      result = [];
 
       for (let key in group) {
         let type = group[key],
