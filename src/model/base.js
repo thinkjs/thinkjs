@@ -85,9 +85,13 @@ export default class extends Base {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  async buildSql(options){
+  async buildSql(options, noParentheses){
     options = await this.parseOptions(options);
-    return '( ' + this.db().buildSelectSql(options).trim() + ' )';
+    let sql = this.db().buildSelectSql(options).trim();
+    if(noParentheses){
+      return sql;
+    }
+    return '( ' + sql + ' )';
   }
   /**
    * parse options
