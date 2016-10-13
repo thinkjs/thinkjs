@@ -244,6 +244,11 @@ describe('adapter/db/postgresql.js', function(){
     assert.equal(data, '"test"');
 
   });
+  it('quoteKey, function', function () {
+    var instance = new PostgreSQL();
+    var data = instance.quoteKey('some_func(table_name.some_field)');
+    assert.equal(data, 'some_func(table_name.some_field)')
+  });
   it('parseKey, undefined', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey();
@@ -294,6 +299,11 @@ describe('adapter/db/postgresql.js', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey('DISTINCT table_name.some_field');
     assert.equal(data, "DISTINCT \"table_name\".\"some_field\"")
+  });
+  it('parseKey, function', function () {
+    var instance = new PostgreSQL();
+    var data = instance.parseKey('some_func(table_name.some_field)');
+    assert.equal(data, 'some_func(table_name.some_field)')
   });
   it('parseLimit', function () {
     var instance = new PostgreSQL();
