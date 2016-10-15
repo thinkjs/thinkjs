@@ -310,6 +310,11 @@ describe('adapter/db/postgresql.js', function(){
     var data = instance.parseKey('some_func(table_name.some_field)');
     assert.equal(data, 'some_func(table_name.some_field)')
   });
+  it('parseKey, function with AS', function () {
+    var instance = new PostgreSQL();
+    var data = instance.parseKey('some_func("table_name"."some_field") AS "some_value"');
+    assert.equal(data, 'some_func("table_name"."some_field") AS "some_value"')
+  });
   it('parseLimit', function () {
     var instance = new PostgreSQL();
     assert.equal(instance.parseLimit(null), "");
