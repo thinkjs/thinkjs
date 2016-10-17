@@ -249,6 +249,11 @@ describe('adapter/db/postgresql.js', function(){
     var data = instance.quoteKey('some_func(table_name.some_field)');
     assert.equal(data, 'some_func(table_name.some_field)')
   });
+  it('quoteKey, function with AS', function () {
+    var instance = new PostgreSQL();
+    var data = instance.quoteKey('some_func("table_name"."some_field") AS "some_value"');
+    assert.equal(data, 'some_func("table_name"."some_field") AS "some_value"')
+  });
   it('parseKey, undefined', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey();
@@ -257,12 +262,12 @@ describe('adapter/db/postgresql.js', function(){
   it('parseKey, empty', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey('');
-    assert.equal(data, "")
+    assert.equal(data, '')
   });
   it('parseKey, special char', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey('te"st');
-    assert.equal(data, "\"te\"\"st\"")
+    assert.equal(data, '\"te\"\"st\"')
   });
   it('parseKey, normal', function(){
     var instance = new PostgreSQL();
@@ -304,6 +309,11 @@ describe('adapter/db/postgresql.js', function(){
     var instance = new PostgreSQL();
     var data = instance.parseKey('some_func(table_name.some_field)');
     assert.equal(data, 'some_func(table_name.some_field)')
+  });
+  it('parseKey, function with AS', function () {
+    var instance = new PostgreSQL();
+    var data = instance.parseKey('some_func("table_name"."some_field") AS "some_value"');
+    assert.equal(data, 'some_func("table_name"."some_field") AS "some_value"')
   });
   it('parseLimit', function () {
     var instance = new PostgreSQL();

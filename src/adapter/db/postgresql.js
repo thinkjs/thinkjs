@@ -233,7 +233,7 @@ export default class extends Base {
     if(think.isNumber(key) || think.isNumberString(key)){
       return key;
     }
-    if (/^.*\(.*\)$/.test(key)) {
+    if (/.*\(.*\)/.test(key)) {
       return key;
     }
     if(/(.*[a-z0-9]+)(\")([a-z0-9]+.*)/i.test(key)) {
@@ -258,7 +258,8 @@ export default class extends Base {
     if(think.isEmpty(key)){
       return '';
     }
-    if (/^.*\(.*\)$/.test(key)) {
+    // EXAMPLE: 'user_age(birthday)' or 'user_age(birthday) AS age' 
+    if (/.*\(.*\)/.test(key)) {
       return key;
     }
     var isDistinct = false;
