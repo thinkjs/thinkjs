@@ -124,11 +124,11 @@ module.exports = class {
     if (thinkit.isDir(filePath)) { 
       savePath = this.addSlash(savePath);
       filePath = this.addSlash(filePath);
-      let files = think.promisify(fs.readdir, fs)(filePath);
+      let files = await thinkit.promisify(fs.readdir, fs)(filePath);
       let promises = files.map(item => {
         let nFilePath = filePath + item;
         if(thinkit.isFile(nFilePath) || thinkit.isDir(nFilePath)){
-          return this.upload(savePath + item, nFilePath);
+          return this.upload(nFilePath, savePath + item);
         }
       });
       return Promise.all(promises);
