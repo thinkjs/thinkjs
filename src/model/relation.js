@@ -162,6 +162,7 @@ export default class extends think.model.base {
             key: opts.model.getModelName() + '_id',
             fKey: 'id' 
           }, item);
+          opts.model = model; //get ref back
           return this._getBelongsToRelation(data, opts, options);
         case think.model.HAS_MANY:
           return this._getHasManyRelation(data, opts, options);
