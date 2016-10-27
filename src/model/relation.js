@@ -480,13 +480,7 @@ export default class extends think.model.base {
     let model = mapOpts.model;
     await model.getSchema();
     let rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
-    let relationModel;
-    let relationTableName = mapOpts.rModel;
-    if(relationTableName){
-      relationModel = this.model(relationTableName);
-    }else{
-      relationModel = this.getRelationModel(model);
-    }
+    let relationModel = mapOpts.rModel?this.model(mapOpts.rModel):this.getRelationModel(model);
 
     let type = mapOpts.postType;
     if (type === 'DELETE' || type === 'UPDATE') {
