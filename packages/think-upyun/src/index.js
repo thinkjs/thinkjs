@@ -196,9 +196,15 @@ module.exports = class {
       if(item.type === 'F'){
         return this.rm(nPath);
       }
+      if(nPath === '/'){
+        return;
+      }
       return this.requestAwait(nPath, 'DELETE');
     });
     await Promise.all(promises);
+    if(filePath === '/'){
+      return;
+    }
     return this.requestAwait(filePath, 'DELETE');
   }
   /**
