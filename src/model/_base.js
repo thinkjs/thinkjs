@@ -134,6 +134,9 @@ export default class extends think.base {
     }
     let DB = think.adapter('db', this.config.type || 'mysql');
     let config = this.config;
+    if(forceNewNum > (Number.MAX_SAFE_INTEGER - 1)){
+      forceNewNum = 1;
+    }
     if(forceNew){
       config = think.extend({}, config, {forceNewNum: forceNewNum++});
     }
