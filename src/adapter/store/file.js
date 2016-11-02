@@ -4,12 +4,6 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * lock files
- * @type {Object}
- */
-let lockFiles = {};
-
-/**
  * file store class
  */
 export default class extends think.adapter.base {
@@ -44,14 +38,18 @@ export default class extends think.adapter.base {
    * @param  {String} key []
    * @return {Promise}    []
    */
-  async get(key){
+  get(key, times = 1){
     let filePath = this.getFilePath(key);
-    if(!think.isFile(filePath)){
+    if(times === 1 && !think.isFile(filePath)){
       return Promise.resolve();
     }
-
-    await lockFiles[filePath];
-    return think.promisify(fs.readFile, fs)(filePath, {encoding: 'utf8'});
+    // try 3 times when can not get file content
+    return think.promisify(fs.readFile, fs)(filePath, {encoding: 'utf8'}).then(content => {
+      if(!content && times <= 3){
+        return this.get(key, times + 1);
+      }
+      return content;
+    });
   }
   /**
    * set file content
@@ -63,12 +61,9 @@ export default class extends think.adapter.base {
     think.mkdir(path.dirname(filePath));
     let fn = think.promisify(fs.writeFile, fs);
 
-    let promise = fn(filePath, content).then(() => {
+    return fn(filePath, content).then(() => {
       think.chmod(filePath);
-      delete lockFiles[filePath];
     });
-    lockFiles[filePath] = promise;
-    return promise;
   }
   /**
    * delete file
