@@ -21,7 +21,7 @@ export default class extends Base {
     let swig = await think.npm('swig');
 
     swig.setDefaults(options);
-    this.prerender(config, swig);
+    this.prerender(options, swig);
 
     let tpl = swig.compileFile(templateFile);
     return tpl(tVar);
