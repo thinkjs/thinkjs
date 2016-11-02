@@ -279,8 +279,9 @@ export default class extends Base {
       return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
-    await this.db().addMany(data, options, replace);
-    let insertId = this.db().getLastInsertId();
+    let db = this.db();
+    await db.addMany(data, options, replace);
+    let insertId = db.getLastInsertId();
     let insertIds = [];
     promises = data.map((item, i) => {
       let id = insertId + i;
