@@ -17,7 +17,11 @@ export default class extends think.middleware.base {
     if (!this.config('resource_on') || !pathname || pathname === '/') {
       return null;
     }
-    pathname = decodeURIComponent(pathname).replace(/\\/g, '/');
+    try{
+      pathname = decodeURIComponent(pathname).replace(/\\/g, '/');
+    }catch(e){
+      return null;
+    }
     pathname = normalize(pathname);
     // replace \ to / on windows
     pathname = pathname.replace(/\\/g, '/');
