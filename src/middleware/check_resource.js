@@ -17,6 +17,7 @@ export default class extends think.middleware.base {
     if (!this.config('resource_on') || !pathname || pathname === '/') {
       return null;
     }
+    // pathname maybe not valid, then throw an `URI malformed` error
     try{
       pathname = decodeURIComponent(pathname).replace(/\\/g, '/');
     }catch(e){
