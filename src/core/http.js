@@ -41,8 +41,10 @@ export default class {
     this.timeoutTimer = 0;
     if(timeout){
       this.timeoutTimer = res.setTimeout(timeout * 1000, () => {
-        think.log('Request timeout');
-        this.end();
+        let err = new Error('request timeout');
+        err.code = 'REQUEST_TIMEOUT';
+        this.error = err;
+        return think.statusAction(500, this);
       });
     }
   }
@@ -773,6 +775,9 @@ export default class {
    * @return {} []
    */
   end(obj, encoding){
+    if(this._isEnd){
+      return;
+    }
     if(this.timeoutTimer){
       clearTimeout(this.timeoutTimer);
       this.timeoutTimer = 0;
