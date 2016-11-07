@@ -97,7 +97,7 @@ export default class extends Base {
         return fn(`SET NAMES ${config.charset}`).then(() => connection);
       }
       return connection;
-    })
+    });
   }
   /**
    * query sql
