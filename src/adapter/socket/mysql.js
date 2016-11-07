@@ -91,7 +91,13 @@ export default class extends Base {
       });
       let err = new Error(str);
       return think.error(deferred.promise, err);
-    });
+    }).then(connection => {
+      if(config.setNames){
+        let fn = think.promisify(connection.query, connection);
+        return fn(`SET NAMES ${config.charset}`).then(() => connection);
+      }
+      return connection;
+    })
   }
   /**
    * query sql
