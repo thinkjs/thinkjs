@@ -807,7 +807,7 @@ think.cache = async (name, value, options) => {
     return data;
   }
   //set cache
-  return instance.set(name, value);
+  return instance.set(name, value,options.timeout);
 };
 
 
