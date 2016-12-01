@@ -36,6 +36,10 @@ export default class extends think.middleware.base {
     }
     //resource exist
     if (think.isFile(file)) {
+      let cors = this.config('resource_cors');
+      if(cors){
+        this.http.header('Access-Control-Allow-Origin', typeof cors === 'string' ? cors : '*');
+      }
       return file;
     }else{
       return true;
