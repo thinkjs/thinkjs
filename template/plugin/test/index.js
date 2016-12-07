@@ -8,12 +8,12 @@ var instance = new thinkjs();
 instance.load();
 
 
-var Class = require('../lib/index.js');
+var Class = require('../lib/index.js').default;
 
 
 // var getHttp = function(options){
 //   var req = new http.IncomingMessage();
-//   req.headers = { 
+//   req.headers = {
 //     'host': 'www.thinkjs.org',
 //     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 //     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit',
