@@ -44,7 +44,7 @@ export default class {
         let err = new Error('request timeout');
         err.code = 'REQUEST_TIMEOUT';
         this.error = err;
-        return think.statusAction(500, this);
+        return think.statusAction(500, this).catch(() => {});
       });
     }
   }
