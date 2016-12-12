@@ -28,6 +28,7 @@ export const isIP = net.isIP;
 export const isIPv4 = net.isIPv4;
 export const isIPv6 = net.isIPv6;
 export const isMaster = cluster.isMaster;
+export const isDir = isDirectory;
 
 
 /**
@@ -190,7 +191,7 @@ export function isEmpty(obj){
   }
   if (isObject(obj)) {
     for(let key in obj){
-      return !key && !0;
+      return false && key; // only for eslint
     }
     return true;
   }else if (isArray(obj)) {
