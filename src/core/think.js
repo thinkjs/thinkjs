@@ -133,6 +133,15 @@ think.module = [];
  */
 think.base = base;
 /**
+ * snakeCase string
+ * @param str
+ */
+think.snakeCase = (str) => {
+  return str.replace(/([^A-Z])([A-Z])/g, function ($0, $1, $2) {
+    return $1 + "_" + $2.toLowerCase();
+  });
+};
+/**
  * reject promise
  * @param  {[type]} err []
  * @return {[type]}     []
@@ -807,7 +816,7 @@ think.cache = async (name, value, options) => {
     return data;
   }
   //set cache
-  return instance.set(name, value);
+  return instance.set(name, value, options.timeout);
 };
 
 
