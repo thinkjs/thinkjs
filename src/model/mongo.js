@@ -286,7 +286,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async increment(field, step = 1){
-    let options = await this.parseOptions(options);
+    let options = await this.parseOptions();
     return this.db().update({
       $inc: {
         [field]: step
@@ -302,7 +302,7 @@ export default class extends Base {
    * @return {Promise}       []
    */
   async decrement(field, step = 1){
-    let options = await this.parseOptions(options);
+    let options = await this.parseOptions();
     return this.db().update({
       $inc: {
         [field]: 0 - step

@@ -260,6 +260,8 @@ let _copyWwwFiles = () => {
   let name = commander.test ? 'package_test' : 'package';
   copyFile(name + '.json', projectRootPath + '/package.json');
 
+  copyFile('.babelrc', projectRootPath + '/.babelrc');
+
   let mode = 'normal';
   if(think.mode === think.mode_module){
     mode = 'module';

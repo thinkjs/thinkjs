@@ -353,6 +353,9 @@ export default class {
       }
     });
     process.on('unhandledRejection', err => {
+      if(think.isPrevent(err)){
+        return;
+      }
       if(think.config('log_unhandled_promise')){
         think.log(err);
       }
