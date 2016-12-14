@@ -163,9 +163,11 @@ export default class extends Base {
 	    // 把where也修改了
         let where = options.where;
         options.where = {};
-        let keyArray = Object.keys(where);
-        for (let key of keyArray) {
-          options.where[think.snakeCase(key)] = where[key];
+        if(!think.isEmpty(where)){
+          let keyArray = Object.keys(where);
+          for (let key of keyArray) {
+            options.where[think.snakeCase(key)] = where[key];
+          }
         }
 	  }
 
