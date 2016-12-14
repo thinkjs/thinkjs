@@ -149,8 +149,8 @@ export default class {
     let babel = require('babel-core');
     let data = babel.transform(content, {
       filename: file,
-      presets: ['es2015-loose', 'stage-1'].concat(this.options.presets || []),
-      plugins: ['transform-runtime'].concat(this.options.plugins || []),
+      presets: [].concat(this.options.presets || ['es2015-loose', 'stage-1']),
+      plugins: [].concat(this.options.plugins || ['transform-runtime']),
       sourceMaps: true,
       sourceFileName: relativePath
     });
@@ -266,7 +266,7 @@ export default class {
         if(ret){
           changedFiles.push(outFile);
         }
-        
+
         this.compiledMtime[file] = mTime;
 
         let index = this.compiledErrorFiles.indexOf(file);
