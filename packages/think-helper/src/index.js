@@ -1,5 +1,3 @@
-'use strict';
-
 // system module not use import
 const fs = require('fs');
 const path = require('path');
@@ -8,14 +6,12 @@ const crypto = require('crypto');
 const net = require('net');
 const cluster = require('cluster');
 
+const fs_rmdir = promisify(fs.rmdir, fs);
+const fs_unlink = promisify(fs.unlink, fs);
+const fs_readdir = promisify(fs.readdir, fs);
+
 const toString = Object.prototype.toString;
 const numberReg = /^((\-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
-const htmlMaps = {
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quote;',
-  '\'': '&#39;'
-};
 const preventError = 'PREVENT_NEXT_PROCESS';
 
 export const {sep} = path;
@@ -29,6 +25,7 @@ export const isIPv4 = net.isIPv4;
 export const isIPv6 = net.isIPv6;
 export const isMaster = cluster.isMaster;
 export const isDir = isDirectory;
+
 
 
 /**
@@ -237,7 +234,16 @@ export function md5(str){
  */
 export function escapeHtml(str){
   return (str + '').replace(/[<>'"]/g, a => {
-    return htmlMaps[a];
+    switch(a){
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quote;';
+      case '\'':
+        return '&#39;';
+    }
   });
 }
 
@@ -386,20 +392,17 @@ export function rmdir(p, reserve){
   if (!isDirectory(p)) {
     return Promise.resolve();
   }
-  const readdir = promisify(fs.readdir, fs);
-  return readdir(p).then(files => {
+  return fs_readdir(p).then(files => {
     let promises = files.map(item => {
       let filepath = path.normalize(p + sep + item);
       if(isDirectory(filepath)){
         return rmdir(filepath, false);
       }
-      const unlink = promisify(fs.unlink, fs);
-      return unlink(filepath);
+      return fs_unlink(filepath);
     });
     return Promise.all(promises).then(() => {
       if(!reserve){
-        const rmdir = promisify(fs.rmdir, fs);
-        return rmdir(p);
+        return fs_rmdir(p);
       }
     });
   });
