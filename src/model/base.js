@@ -100,9 +100,9 @@ export default class extends Base {
    * 解析options
    * @param oriOpts 源options
    * @param extraOptions 附加options
-   * @param flag 为了防止add、update数据时做一次无谓的循环而做的一个控制(默认true)
+   * @param flag 如果是add、update方法一定要判断是否需要转驼峰(默认false)
    */
-  async parseOptions(oriOpts, extraOptions, flag = true){
+  async parseOptions(oriOpts, extraOptions, flag = false){
     let options = think.extend({}, this._options);
     if (think.isObject(oriOpts)) {
       options = think.extend(options, oriOpts);
@@ -140,27 +140,27 @@ export default class extends Base {
       }
     }
 
-    // 是否使用驼峰式
-    let camelCase = config.camel_case || false;
-	  if(camelCase){
-	    // 修改thinkjs的model，把field全部转为驼峰式
-	    if(flag){
-          if(think.isEmpty(options.field)){
-            options.field = [];
-            let keyArray = Object.keys(schema);
-            for (let key of keyArray) {
-              options.field.push(util.format('`%s` AS `%s`', key, think.camelCase(key)));
-            }
-          } else {
-            let fields = options.field;
-            options.field = [];
-            for (let field of fields) {
-              options.field.push(util.format('`%s` AS `%s`', field, think.camelCase(field)));
-            }
+    // 如果是add、update方法一定要判断是否需要转驼峰
+    if(flag){
+      // 是否使用驼峰式
+      let camelCase = config.camel_case || false;
+      if(camelCase){
+        if(think.isEmpty(options.field)){
+          options.field = [];
+          let keyArray = Object.keys(schema);
+          for (let key of keyArray) {
+            options.field.push(util.format('`%s` AS `%s`', key, think.camelCase(key)));
           }
-	    }
+        } else {
+          // 因为要转驼峰式，所以select * 的话就把每一个字段都转一次
+          let fields = options.field;
+          options.field = [];
+          for (let field of fields) {
+            options.field.push(util.format('`%s` AS `%s`', field, think.camelCase(field)));
+          }
+        }
 
-	    // 把where也修改了
+        // 如果where有条件的话把where也修改了
         let where = options.where;
         options.where = {};
         if(!think.isEmpty(where)){
@@ -169,7 +169,8 @@ export default class extends Base {
             options.where[think.snakeCase(key)] = where[key];
           }
         }
-	  }
+      }
+    }
 
     //field reverse
     if(options.field && options.fieldReverse){
@@ -263,7 +264,7 @@ export default class extends Base {
     //clear data
     this._data = {};
 
-    options = await this.parseOptions(options,{},false);
+    options = await this.parseOptions(options, {}, true);
 
     let parsedData = this.parseData(data);
     parsedData = await this.beforeAdd(parsedData, options);
@@ -319,7 +320,7 @@ export default class extends Base {
       replace = true;
       options = {};
     }
-    options = await this.parseOptions(options,{},false);
+    options = await this.parseOptions(options, {}, true);
     let promises = data.map(item => {
       item = this.parseData(item);
       return this.beforeAdd(item, options);
@@ -366,7 +367,7 @@ export default class extends Base {
     //clear data
     this._data = {};
 
-    options = await this.parseOptions(options,{},false);
+    options = await this.parseOptions(options, {}, true);
 
     let parsedData = this.parseData(data);
 

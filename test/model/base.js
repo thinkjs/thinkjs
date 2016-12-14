@@ -375,7 +375,7 @@ describe('model/base.js', function(){
   })
   it('build sql', function(done){
     instance.where('id=1').field('name,title').group('name').limit(10).buildSql().then(function(sql){
-      assert.equal(sql, '( SELECT `name`,`title` FROM `think_user` WHERE ( id=1 ) GROUP BY `name` LIMIT 10 )')
+      assert.equal(sql, '( SELECT `name`,`title` FROM `think_user` WHERE ( id=1 ) GROUP BY `name` LIMIT 10 )');
       done();
     })
   })
