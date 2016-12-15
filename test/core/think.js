@@ -175,6 +175,10 @@ describe('core/think.js', function(){
     assert.equal(think.isHttp({}), false);
     assert.equal(think.isHttp({req: {}, res: {}}), true);
   })
+  it('think.snakeCase', function(){
+    assert.equal(think.snakeCase('snakeCase'), 'snake_case');
+    assert.equal(think.snakeCase('snake_case'), 'snake_case');
+  })
   it('think.co is function', function(){
     assert.equal(typeof think.co, 'function');
     assert.equal(typeof think.co.wrap, 'function');

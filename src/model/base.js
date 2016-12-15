@@ -1,7 +1,10 @@
 'use strict';
 
+const config = think.config('db');
 import util from 'util';
 import Base from './_base.js';
+
+
 
 /**
  * model base class
@@ -94,11 +97,12 @@ export default class extends Base {
     return '( ' + sql + ' )';
   }
   /**
-   * parse options
-   * @param  {Object} options []
-   * @return promise         []
+   * 解析options
+   * @param oriOpts 源options
+   * @param extraOptions 附加options
+   * @param flag 如果是add、update方法一定要判断是否需要转驼峰(默认false)
    */
-  async parseOptions(oriOpts, extraOptions){
+  async parseOptions(oriOpts, extraOptions, flag = false){
     let options = think.extend({}, this._options);
     if (think.isObject(oriOpts)) {
       options = think.extend(options, oriOpts);
@@ -135,6 +139,39 @@ export default class extends Base {
         }
       }
     }
+
+    // 如果是add、update方法一定要判断是否需要转驼峰
+    if(flag){
+      // 是否使用驼峰式
+      let camelCase = config.camel_case || false;
+      if(camelCase){
+        if(think.isEmpty(options.field)){
+          options.field = [];
+          let keyArray = Object.keys(schema);
+          for (let key of keyArray) {
+            options.field.push(util.format('`%s` AS `%s`', key, think.camelCase(key)));
+          }
+        } else {
+          // 因为要转驼峰式，所以select * 的话就把每一个字段都转一次
+          let fields = options.field;
+          options.field = [];
+          for (let field of fields) {
+            options.field.push(util.format('`%s` AS `%s`', field, think.camelCase(field)));
+          }
+        }
+
+        // 如果where有条件的话把where也修改了
+        let where = options.where;
+        options.where = {};
+        if(!think.isEmpty(where)){
+          let keyArray = Object.keys(where);
+          for (let key of keyArray) {
+            options.where[think.snakeCase(key)] = where[key];
+          }
+        }
+      }
+    }
+
     //field reverse
     if(options.field && options.fieldReverse){
       //reset fieldReverse value
@@ -188,6 +225,16 @@ export default class extends Base {
    * @return {}      []
    */
   parseData(data){
+  	//如果使用驼峰式，在这里转为下划线
+	  let camelCase = config.camel_case || false;
+	  if(camelCase){
+	  	let tmpData = data;
+		  data={};
+		  let keyArray = Object.keys(tmpData);
+		  for (let key of keyArray) {
+			  data[think.snakeCase(key)] = tmpData[key];
+		  }
+	  }
     //deep clone data
     data = think.extend({}, data);
     for(let key in data){
@@ -217,7 +264,7 @@ export default class extends Base {
     //clear data
     this._data = {};
 
-    options = await this.parseOptions(options);
+    options = await this.parseOptions(options, {}, true);
 
     let parsedData = this.parseData(data);
     parsedData = await this.beforeAdd(parsedData, options);
@@ -273,7 +320,7 @@ export default class extends Base {
       replace = true;
       options = {};
     }
-    options = await this.parseOptions(options);
+    options = await this.parseOptions(options, {}, true);
     let promises = data.map(item => {
       item = this.parseData(item);
       return this.beforeAdd(item, options);
@@ -320,7 +367,7 @@ export default class extends Base {
     //clear data
     this._data = {};
 
-    options = await this.parseOptions(options);
+    options = await this.parseOptions(options, {}, true);
 
     let parsedData = this.parseData(data);
 
