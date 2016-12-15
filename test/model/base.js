@@ -821,6 +821,18 @@ describe('model/base.js', function(){
       done();
     })
   })
+  it('find, camelCase 1', function(done){
+    instance.field("blog_name,blog_title,createTime").where({groupId: 100}).find().then(function(data){
+      assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) LIMIT 1");
+      done();
+    })
+  })
+  it('find, camelCase 2', function(done){
+    instance.field("blog_name,blog_title,createTime").where({group_id: 100}).find().then(function(data){
+      assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) LIMIT 1");
+      done();
+    })
+  })
   it('select', function(done){
     instance.where({id: 100}).limit(1).select().then(function(data){
       assert.equal(instance.getLastSql(), "SELECT * FROM `think_user` WHERE ( `id` = 100 ) LIMIT 1");
@@ -838,7 +850,7 @@ describe('model/base.js', function(){
   })
   it('select, order has keyword 1', function(done){
     instance.where({id: 100}).limit(1).order('INSTR( topicTitle, "ha" ) > 0 DESC').select().then(function(data){
-      //console.log(instance.getLastSql())
+      console.log(instance.getLastSql())
       assert.equal(instance.getLastSql(), 'SELECT * FROM `think_user` WHERE ( `id` = 100 ) ORDER BY INSTR( topicTitle, "ha" ) > 0 DESC LIMIT 1');
       //assert.deepEqual(data, [{ id: 7565, title: 'title1', cate_id: 1, cate_no: 0 }])
       done();
@@ -847,6 +859,22 @@ describe('model/base.js', function(){
   it('select, field has keyword', function(done){
     instance.field("id, instr('30,35,31,',id+',') as d").where({id: 100}).limit(1).order('count(id)').select().then(function(data){
       assert.equal(instance.getLastSql(), "SELECT id, instr('30,35,31,',id+',') as d FROM `think_user` WHERE ( `id` = 100 ) ORDER BY count(id) LIMIT 1");
+      //assert.deepEqual(data, [{ id: 7565, title: 'title1', cate_id: 1, cate_no: 0 }])
+      done();
+    })
+  })
+  it('select, camelCase 1', function(done){
+    instance.field("blog_name,blog_title,createTime").where({groupId: 100}).limit(1).order('count(id)').select().then(function(data){
+	  console.log(instance.getLastSql());
+      assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) ORDER BY count(id) LIMIT 1");
+      //assert.deepEqual(data, [{ id: 7565, title: 'title1', cate_id: 1, cate_no: 0 }])
+      done();
+    })
+  })
+  it('select, camelCase 2', function(done){
+    instance.field("blog_name,blog_title,createTime").where({group_id: 100}).limit(1).order('count(id)').select().then(function(data){
+	  console.log(instance.getLastSql());
+      assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) ORDER BY count(id) LIMIT 1");
       //assert.deepEqual(data, [{ id: 7565, title: 'title1', cate_id: 1, cate_no: 0 }])
       done();
     })
