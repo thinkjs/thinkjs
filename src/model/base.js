@@ -225,16 +225,16 @@ export default class extends Base {
    * @return {}      []
    */
   parseData(data){
-  	//如果使用驼峰式，在这里转为下划线
-	  let camelCase = config.camel_case || false;
-	  if(camelCase){
-	  	let tmpData = data;
-		  data={};
-		  let keyArray = Object.keys(tmpData);
-		  for (let key of keyArray) {
-			  data[think.snakeCase(key)] = tmpData[key];
-		  }
-	  }
+    //如果使用驼峰式，在这里转为下划线
+    let camelCase = config.camel_case || false;
+    if(camelCase){
+      let tmpData = think.extend({}, data);
+      data = {};
+      let keyArray = Object.keys(tmpData);
+      for (let key of keyArray) {
+        data[think.snakeCase(key)] = tmpData[key];
+      }
+    }
     //deep clone data
     data = think.extend({}, data);
     for(let key in data){
