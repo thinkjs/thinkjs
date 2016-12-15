@@ -13,7 +13,9 @@ var instance = new thinkjs({
 
 // Build code from src to app directory.
 instance.compile({
-  log: true
+	log: true,
+	presets: [],
+	plugins: []
 });
 
 instance.run();
