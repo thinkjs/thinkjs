@@ -100,9 +100,8 @@ export default class extends Base {
    * 解析options
    * @param oriOpts 源options
    * @param extraOptions 附加options
-   * @param flag 为了防止add、update数据时做一次无谓的循环而做的一个控制(默认true)
    */
-  async parseOptions(oriOpts, extraOptions, flag = true){
+  async parseOptions(oriOpts, extraOptions){
     let options = think.extend({}, this._options);
     if (think.isObject(oriOpts)) {
       options = think.extend(options, oriOpts);
@@ -140,37 +139,6 @@ export default class extends Base {
       }
     }
 
-    // 是否使用驼峰式
-    let camelCase = config.camel_case || false;
-	  if(camelCase){
-	    // 修改thinkjs的model，把field全部转为驼峰式
-	    if(flag){
-          if(think.isEmpty(options.field)){
-            options.field = [];
-            let keyArray = Object.keys(schema);
-            for (let key of keyArray) {
-              options.field.push(util.format('`%s` AS `%s`', key, think.camelCase(key)));
-            }
-          } else {
-            let fields = options.field;
-            options.field = [];
-            for (let field of fields) {
-              options.field.push(util.format('`%s` AS `%s`', field, think.camelCase(field)));
-            }
-          }
-	    }
-
-	    // 把where也修改了
-        let where = options.where;
-        options.where = {};
-        if(!think.isEmpty(where)){
-          let keyArray = Object.keys(where);
-          for (let key of keyArray) {
-            options.where[think.snakeCase(key)] = where[key];
-          }
-        }
-	  }
-
     //field reverse
     if(options.field && options.fieldReverse){
       //reset fieldReverse value
@@ -178,10 +146,40 @@ export default class extends Base {
       let optionsField = options.field;
       options.field = Object.keys(schema).filter(item => {
         if(optionsField.indexOf(item) === -1){
-          return item;
+            return item;
         }
       });
     }
+
+    // 是否使用驼峰式
+    let camelCase = config.camel_case || false;
+    if(camelCase){
+      // 修改thinkjs的model，把field全部转为驼峰式
+      if(think.isEmpty(options.field)){
+        options.field = [];
+        let keyArray = Object.keys(schema);
+        for (let key of keyArray) {
+          options.field.push(util.format('`%s` AS `%s`', key, think.camelCase(key)));
+        }
+      } else {
+        let fields = options.field;
+        options.field = [];
+        for (let field of fields) {
+          options.field.push(util.format('`%s` AS `%s`', field, think.camelCase(field)));
+        }
+      }
+
+      // 把where也修改了
+      let where = options.where;
+      options.where = {};
+      if(!think.isEmpty(where)){
+        let keyArray = Object.keys(where);
+        for (let key of keyArray) {
+          options.where[think.snakeCase(key)] = where[key];
+        }
+      }
+    }
+
     return this.optionsFilter(options, schema);
   }
   /**
@@ -225,15 +223,16 @@ export default class extends Base {
    */
   parseData(data){
   	//如果使用驼峰式，在这里转为下划线
-	  let camelCase = config.camel_case || false;
-	  if(camelCase){
-	  	let tmpData = data;
-		  data={};
-		  let keyArray = Object.keys(tmpData);
-		  for (let key of keyArray) {
-			  data[think.snakeCase(key)] = tmpData[key];
-		  }
-	  }
+    let camelCase = config.camel_case || false;
+    if(camelCase){
+      let tmpData = data;
+      data = {};
+      let keyArray = Object.keys(tmpData);
+      for (let key of keyArray) {
+        data[think.snakeCase(key)] = tmpData[key];
+      }
+    }
+
     //deep clone data
     data = think.extend({}, data);
     for(let key in data){
@@ -263,7 +262,7 @@ export default class extends Base {
     //clear data
     this._data = {};
 
-    options = await this.parseOptions(options,{},false);
+    options = await this.parseOptions(options);
 
     let parsedData = this.parseData(data);
     parsedData = await this.beforeAdd(parsedData, options);
@@ -319,7 +318,7 @@ export default class extends Base {
       replace = true;
       options = {};
     }
-    options = await this.parseOptions(options,{},false);
+    options = await this.parseOptions(options);
     let promises = data.map(item => {
       item = this.parseData(item);
       return this.beforeAdd(item, options);
@@ -366,7 +365,7 @@ export default class extends Base {
     //clear data
     this._data = {};
 
-    options = await this.parseOptions(options,{},false);
+    options = await this.parseOptions(options);
 
     let parsedData = this.parseData(data);
 
@@ -473,7 +472,8 @@ export default class extends Base {
       promise = options.parseOptions();
     }
     let data = await Promise.all([this.parseOptions(), promise]);
-    let fields = data[0].field || Object.keys(this.schema);
+	let camelCase = config.camel_case || false;//如果使用了驼峰式，在这里要还原原来的fields
+    let fields = camelCase ? Object.keys(this.schema) : (data[0].field || Object.keys(this.schema));
     return this.db().selectAdd(fields, data[0].table, data[1]);
   }
   /**
