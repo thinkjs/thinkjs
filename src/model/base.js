@@ -439,7 +439,7 @@ export default class extends Base {
    * @return Promise
    */
   async find(options){
-    options = await this.parseOptions(options, {limit: 1});
+    options = await this.parseOptions(options, {limit: 1}, true);
     options = await this.beforeFind(options);
     let data = await this.db().select(options);
     return this.afterFind(data[0] || {}, options);
@@ -449,7 +449,7 @@ export default class extends Base {
    * @return Promise
    */
   async select(options){
-    options = await this.parseOptions(options);
+    options = await this.parseOptions(options, {}, true);
     options = await this.beforeSelect(options);
     let data = await this.db().select(options);
     return this.afterSelect(data, options);
