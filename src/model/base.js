@@ -140,6 +140,18 @@ export default class extends Base {
       }
     }
 
+    //field reverse
+    if(options.field && options.fieldReverse){
+      //reset fieldReverse value
+      options.fieldReverse = false;
+      let optionsField = options.field;
+      options.field = Object.keys(schema).filter(item => {
+        if(optionsField.indexOf(item) === -1){
+          return item;
+        }
+      });
+    }
+
     // 如果是add、update方法一定要判断是否需要转驼峰
     if(flag){
       // 是否使用驼峰式
@@ -171,18 +183,7 @@ export default class extends Base {
         }
       }
     }
-
-    //field reverse
-    if(options.field && options.fieldReverse){
-      //reset fieldReverse value
-      options.fieldReverse = false;
-      let optionsField = options.field;
-      options.field = Object.keys(schema).filter(item => {
-        if(optionsField.indexOf(item) === -1){
-          return item;
-        }
-      });
-    }
+    
     return this.optionsFilter(options, schema);
   }
   /**
