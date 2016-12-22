@@ -30,7 +30,8 @@ export default class extends think.middleware.base {
    * @return {Promise} []
    */
   run(){
-    this.cleanPathname();
+    // cleanPathname
+    this.http.pathname = this.http.pathname.replace(/^\/|\/$/g,'');
 
     if (!this.config('route_on')) {
       return this.parsePathname();
@@ -92,24 +93,6 @@ export default class extends think.middleware.base {
       }
     }
     return this.parsePathname();
-  }
-  /**
-   * remove / start | end of pathname
-   * @return {} []
-   */
-  cleanPathname(){
-    let pathname = this.http.pathname;
-    if(pathname === '/'){
-      this.http.pathname = '';
-      return;
-    }
-    if (pathname[0] === '/') {
-      pathname = pathname.slice(1);
-    }
-    if (pathname.slice(-1) === '/') {
-      pathname = pathname.slice(0, -1);
-    }
-    this.http.pathname = pathname;
   }
   /**
    * get module from pathname
