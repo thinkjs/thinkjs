@@ -31,7 +31,7 @@ export default class extends think.middleware.base {
    */
   run(){
     // cleanPathname
-    this.http.pathname = this.http.pathname.replace(/^\/|\/$/g,'');
+    this.http.pathname = this.http.pathname.replace(/^\/|\/$/g, '');
 
     if (!this.config('route_on')) {
       return this.parsePathname();
