@@ -81,7 +81,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/welefen/thinkjs"
+    "url": "https://github.com/75team/thinkjs"
   },
   "engines": {
     "node": ">=0.12.0"
@@ -89,6 +89,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/welefen/thinkjs/issues"
+    "url": "https://github.com/75team/thinkjs/issues"
   }
 }
