@@ -349,7 +349,7 @@ export default class extends Base {
    * @return {Promise}         []
    */
   async delete(options){
-    options = await this.parseOptions(options);
+    options = await this.parseOptions(options, {}, true);
     options = await this.beforeDelete(options);
     let rows = await this.db().delete(options);
     await this.afterDelete(options);
