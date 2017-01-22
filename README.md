@@ -72,7 +72,7 @@ npm install -g thinkjs
 ## Create Application
 
 ```sh
-thinkjs new demo --es
+thinkjs new demo
 ```
 
 ## Install dependencies
