@@ -73,7 +73,7 @@ npm install -g thinkjs
 ## 创建项目
 
 ```sh
-thinkjs new demo --es
+thinkjs new demo
 ```
 
 ## 安装依赖
