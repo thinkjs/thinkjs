@@ -4,8 +4,6 @@ const config = think.config('db');
 import util from 'util';
 import Base from './_base.js';
 
-
-
 /**
  * model base class
  * @type {Class}
