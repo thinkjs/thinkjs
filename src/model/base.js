@@ -97,10 +97,10 @@ export default class extends Base {
     return '( ' + sql + ' )';
   }
   /**
-   * 解析options
-   * @param oriOpts 源options
-   * @param extraOptions 附加options
-   * @param flag 如果是add、update方法一定要判断是否需要转驼峰(默认false)
+   * parse options
+   * @param oriOpts options
+   * @param extraOptions 
+   * @param flag 
    */
   async parseOptions(oriOpts, extraOptions, flag = false){
     let options = think.extend({}, this._options);
@@ -152,9 +152,8 @@ export default class extends Base {
       });
     }
 
-    // 如果是add、update方法一定要判断是否需要转驼峰
+
     if(flag){
-      // 是否使用驼峰式
       let camelCase = config.camel_case || false;
       if(camelCase){
         if(think.isEmpty(options.field)){
@@ -164,7 +163,7 @@ export default class extends Base {
             options.field.push(util.format('`%s` AS `%s`', key, think.camelCase(key)));
           }
         } else {
-          // 因为要转驼峰式，所以select * 的话就把每一个字段都转一次
+          // make field camelCase
           let fields = options.field;
           options.field = [];
           for (let field of fields) {
@@ -172,7 +171,7 @@ export default class extends Base {
           }
         }
 
-        // 如果where有条件的话把where也修改了
+        // make field camelCase in where condition
         let where = options.where;
         options.where = {};
         if(!think.isEmpty(where)){
@@ -226,8 +225,7 @@ export default class extends Base {
    * @return {}      []
    */
   parseData(data){
-    //如果使用驼峰式，在这里转为下划线
-    let camelCase = config.camel_case || false;
+    let camelCase = config.camel_case;
     if(camelCase){
       let tmpData = think.extend({}, data);
       data = {};
