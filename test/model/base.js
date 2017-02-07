@@ -685,8 +685,8 @@ describe('model/base.js', function(){
       name: 'welefen',
       title: 'test'
     }).then(function(data){
-      assert.deepEqual(data, { id: 7565, type: 'exist' })
-      //assert.deepEqual(data, { id: 100, type: 'add' })
+      //assert.deepEqual(data, { id: 7565, type: 'exist' })
+      assert.deepEqual(data, { id: 100, type: 'add' })
       done();
     })
   })
@@ -695,7 +695,7 @@ describe('model/base.js', function(){
       name: 'welefen',
       title: 'test'
     }).then(function(data){
-      assert.deepEqual(data, { id: 7565, type: 'exist' })
+      assert.deepEqual(data, { id: 898, type: 'exist' })
       //assert.deepEqual(data, { id: 898, type: 'exist' })
       done();
     })
@@ -886,7 +886,7 @@ describe('model/base.js', function(){
       if(config.camel_case) {
         assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) LIMIT 1");
       } else {
-	    assert.equal(instance.getLastSql(), "SELECT blog_name,blog_title,createTime FROM `think_user` WHERE ( `groupId` = 100 ) LIMIT 1");
+	    assert.equal(instance.getLastSql(), "SELECT `blog_name`,`blog_title`,`createTime` FROM `think_user` WHERE ( `groupId` = 100 ) LIMIT 1");
       }
       done();
     })
@@ -897,7 +897,7 @@ describe('model/base.js', function(){
       if(config.camel_case) {
         assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) LIMIT 1");
       } else {
-	      assert.equal(instance.getLastSql(), "SELECT blog_name,blog_title,createTime FROM `think_user` WHERE ( `group_id` = 100 ) LIMIT 1");
+	      assert.equal(instance.getLastSql(), "SELECT `blog_name`,`blog_title`,`createTime` FROM `think_user` WHERE ( `group_id` = 100 ) LIMIT 1");
       }
       done();
     })
@@ -955,7 +955,7 @@ describe('model/base.js', function(){
       if(config.camel_case) {
         assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) ORDER BY count(id) LIMIT 1");
       }else{
-	      assert.equal(instance.getLastSql(), "SELECT blog_name,blog_title,createTime FROM `think_user` WHERE ( `groupId` = 100 ) ORDER BY count(id) LIMIT 1");
+	      assert.equal(instance.getLastSql(), "SELECT `blog_name`,`blog_title`,`createTime` FROM `think_user` WHERE ( `groupId` = 100 ) ORDER BY count(id) LIMIT 1");
       }
       done();
     })
@@ -966,7 +966,7 @@ describe('model/base.js', function(){
       if(config.camel_case) {
         assert.equal(instance.getLastSql(), "SELECT `blog_name` AS `blogName`,`blog_title` AS `blogTitle`,`createTime` AS `createTime` FROM `think_user` WHERE ( `group_id` = 100 ) ORDER BY count(id) LIMIT 1");
       } else {
-	    assert.equal(instance.getLastSql(), "SELECT blog_name,blog_title,createTime FROM `think_user` WHERE ( `group_id` = 100 ) ORDER BY count(id) LIMIT 1");
+	    assert.equal(instance.getLastSql(), "SELECT `blog_name`,`blog_title`,`createTime` FROM `think_user` WHERE ( `group_id` = 100 ) ORDER BY count(id) LIMIT 1");
       }
       done();
     })
@@ -1051,7 +1051,8 @@ describe('model/base.js', function(){
       if(config.camel_case){
           //assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cateId":1,"cateNo":0},{"id":7564,"title":"title2","cateId":2,"cateNo":977},{"id":7563,"title":"title3","cateId":7,"cateNo":281},{"id":7562,"title":"title4","cateId":6,"cateNo":242},{"id":7561,"title":"title5","cateId":3,"cateNo":896},{"id":7560,"title":"title6","cateId":3,"cateNo":897},{"id":7559,"title":"title7","cateId":3,"cateNo":898},{"id":7558,"title":"title8","cateId":17,"cateNo":151},{"id":7557,"title":"title9","cateId":17,"cateNo":152}]});
       } else {
-          assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]});
+          //console.log(JSON.stringify(data))
+          assert.deepEqual(data, {"count":399,"totalPages":40,"numsPerPage":10,"currentPage":1,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]});
       }
       done();
     })
@@ -1062,7 +1063,7 @@ describe('model/base.js', function(){
       if(config.camel_case){
           //assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cateId":1,"cateNo":0},{"id":7564,"title":"title2","cateId":2,"cateNo":977},{"id":7563,"title":"title3","cateId":7,"cateNo":281},{"id":7562,"title":"title4","cateId":6,"cateNo":242},{"id":7561,"title":"title5","cateId":3,"cateNo":896},{"id":7560,"title":"title6","cateId":3,"cateNo":897},{"id":7559,"title":"title7","cateId":3,"cateNo":898},{"id":7558,"title":"title8","cateId":17,"cateNo":151},{"id":7557,"title":"title9","cateId":17,"cateNo":152}]});
       } else {
-          assert.deepEqual(data, {"count":399,"totalPages":40,"currentPage":3,"numsPerPage":10,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]});
+          assert.deepEqual(data, {"count":399,"totalPages":40,"numsPerPage":10,"currentPage":40,"data":[{"id":7565,"title":"title1","cate_id":1,"cate_no":0},{"id":7564,"title":"title2","cate_id":2,"cate_no":977},{"id":7563,"title":"title3","cate_id":7,"cate_no":281},{"id":7562,"title":"title4","cate_id":6,"cate_no":242},{"id":7561,"title":"title5","cate_id":3,"cate_no":896},{"id":7560,"title":"title6","cate_id":3,"cate_no":897},{"id":7559,"title":"title7","cate_id":3,"cate_no":898},{"id":7558,"title":"title8","cate_id":17,"cate_no":151},{"id":7557,"title":"title9","cate_id":17,"cate_no":152}]});
       }
       done();
     })
@@ -1122,28 +1123,28 @@ describe('model/base.js', function(){
   })
   it('get field', function(done){
     instance.where({name: 'welefen'}).getField('title').then(function(data){
-      console.log(data);
+      //console.log(data);
       assert.deepEqual(data, [ 'title1', 'title2' ]);
       done();
     })
   })
   it('get field, with limit', function(done){
     instance.where({name: 'welefen'}).getField('title', 1).then(function(data){
-	    console.log(data);
+	    //console.log(data);
       assert.deepEqual(data, [ 'title1' ]);
       done();
     })
   })
   it('get field, with true', function(done){
     instance.where({name: 'welefen'}).getField('title', true).then(function(data){
-	    console.log(data);
+	    //console.log(data);
       assert.deepEqual(data, 'title1');
       done();
     })
   })
   it('get field, with mutil', function(done){
     instance.where({name: 'welefen'}).getField('title,cate_no', true).then(function(data){
-	    console.log(data);
+	    //console.log(data);
       assert.deepEqual(data, { title: 'title1', cate_no: 1000 });
       done();
     })

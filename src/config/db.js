@@ -15,7 +15,7 @@ export default {
   nums_per_page: 10,
   log_sql: false,
   log_connect: true,
-  camel_case: true,
+  camel_case: false,
   cache: {
     on: true,
     type: '',
