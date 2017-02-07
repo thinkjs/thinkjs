@@ -59,7 +59,7 @@
     "babel-core": "^6.20.0",
     "babel-eslint": "^6.0.4",
     "eslint": "2.8.0",
-    "typescript": "^2.0.3",
+    "typescript": "2.0.3",
     "source-map": "0.5.3"
   },
   "keywords": [
