@@ -3,11 +3,11 @@
 -----
 
 [![NPM version](https://img.shields.io/npm/v/thinkjs.svg?style=flat-square)](http://badge.fury.io/js/thinkjs)
-[![travis-ci](https://img.shields.io/travis/75team/thinkjs.svg?style=flat-square)](https://travis-ci.org/75team/thinkjs)
-[![Coverage Status](https://img.shields.io/coveralls/75team/thinkjs.svg?style=flat-square)](https://coveralls.io/github/75team/thinkjs)
-[![Dependency Status](https://david-dm.org/75team/thinkjs.svg)](https://david-dm.org/75team/thinkjs)
+[![travis-ci](https://img.shields.io/travis/thinkjs/thinkjs.svg?style=flat-square)](https://travis-ci.org/thinkjs/thinkjs)
+[![Coverage Status](https://img.shields.io/coveralls/thinkjs/thinkjs.svg?style=flat-square)](https://coveralls.io/github/thinkjs/thinkjs)
+[![Dependency Status](https://david-dm.org/thinkjs/thinkjs.svg)](https://david-dm.org/thinkjs/thinkjs)
 
-[简体中文文档](https://github.com/75team/thinkjs/blob/master/README_zh-CN.md)
+[简体中文文档](https://github.com/thinkjs/thinkjs/blob/master/README_zh-CN.md)
 
 
 ## Introduction 
@@ -117,4 +117,4 @@ You can go <https://github.com/thinkjs-team/thinkjs-performance-test> to clone a
 
 ## License
 
-[MIT](https://github.com/75team/thinkjs/blob/master/LICENSE)
+[MIT](https://github.com/thinkjs/thinkjs/blob/master/LICENSE)
