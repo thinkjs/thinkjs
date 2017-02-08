@@ -109,7 +109,7 @@ Evaluate whether a good framework, on the one hand to see the support of the fun
 
 All we can see is that there has just little distance in ThinkJS and Express, Koa. ThinkJS and Sails.js both suits large projects, but ThinkJS has higher performance than Sails.js.
 
-You can go <https://github.com/thinkjs-team/thinkjs-performance-test> to clone all testing code and run in local. If you use `ab` testing tool, you shoud know it is instability on Mac.
+You can go <https://github.com/thinkjs/thinkjs-performance-test> to clone all testing code and run in local. If you use `ab` testing tool, you shoud know it is instability on Mac.
 
 ## Documentation
 
