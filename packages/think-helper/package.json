@@ -8,15 +8,19 @@
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
-    "report": "nyc --reporter=html npm test"
+    "coverage": "nyc report --reporter=html"
   },
   "ava": {
-    "require": ["babel-core/register"]
+    "require": [
+      "babel-core/register"
+    ]
   },
-  "contributors": [{
+  "contributors": [
+    {
       "name": "welefen",
       "email": "welefen@gmail.com"
-  }],
+    }
+  ],
   "main": "index.js",
   "dependencies": {
     "core-util-is": "^1.0.2",
@@ -24,6 +28,7 @@
   },
   "devDependencies": {
     "ava": "^0.14.0",
+    "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
     "eslint": "2.8.0",
     "nyc": "^7.0.0"
