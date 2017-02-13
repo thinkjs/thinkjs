@@ -597,7 +597,7 @@ export default class extends think.base {
         return this['parse' + ucfirst](options[type] || '', options);
       }
       return a;
-    }).replace(/\s__([A-Z_-]+)__\s/g, (a, b) => {
+    }).replace(/\s__([A-Z_-]+)__\s?/g, (a, b) => {
       return ' `' + this.config.prefix + b.toLowerCase() + '` ';
     });
   }
