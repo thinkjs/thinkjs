@@ -1,11 +1,6 @@
 import test from 'ava';
 import {
-  isBuffer,
-  isArray,
   isFunction,
-  isObject,
-  isString,
-  isRegExp,
   isExist,
   isFile,
   isDirectory,
@@ -15,69 +10,13 @@ import {
   defer,
   md5,
   mkdir
-} from '../lib/index.js';
+} from '../index.js';
 import fs from 'fs';
 
-test('isBuffer', t => {
-  t.is(isBuffer('www'), false)
-})
-
-test('isBuffer 2', t => {
-  t.is(isBuffer(new Buffer('www')), true)
-})
-
-test('isArray', t => {
-  t.is(isArray('www'), false);
-})
-
-test('isArray 2', t => {
-  t.is(isArray([]), true);
-})
-
-test('isFunction', t => {
-  t.is(isFunction('www'), false)
-})
-
-test('isFunction 2', t => {
-  t.is(isFunction(function(){}), true)
-})
-
-test('isFunction 3', t => {
-  t.is(isFunction(class {}), true)
-})
-
-test('isObject', t => {
-  t.is(isObject(class {}), false)
-})
-
-test('isObject 2', t => {
-  t.is(isObject({}), true)
-})
-
-test('isObject 3', t => {
-  t.is(isObject(null), false)
-})
-
-test('isString', t => {
-  t.is(isString(null), false)
-})
-
-test('isString 2', t => {
-  t.is(isString('www'), true)
-})
-
-test('isRegExp', t => {
-  t.is(isRegExp('www'), false)
-})
-
-test('isRegExp 2', t => {
-  t.is(isRegExp(/\w+/), true)
-})
 
 test('isExist', t => {
   t.is(isExist('/www/fasdfasfasdfa'), false)
 })
-
 
 test('isExist 2', t => {
   t.is(isExist(__filename), true)
@@ -106,8 +45,6 @@ test('isDirectory', t => {
 test('isDirectory 2', t => {
   t.is(isDirectory(__dirname), true)
 })
-
-
 
 test('extend 1', t => {
   let data = extend({}, {name: 'test'});
@@ -151,17 +88,6 @@ test('extend 7', t => {
   t.deepEqual(data, {name: 'welefen', name2: 'suredy'});
 })
 
-
-
-test('getFiles', t => {
-  let files = getFiles('/wwwfasdf');
-  t.deepEqual(files, [])
-})
-
-test('getFiles 2', t => {
-  let files = getFiles(__dirname);
-  t.deepEqual(files, ['index.js'])
-})
 
 
 test('promisify', async (t) => {
