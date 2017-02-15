@@ -6,7 +6,7 @@ In particular, You can use `think-await` to avoid duplicate requests for a remot
 
 ## Syntax
 
-```
+```js
 think.await(key, callback)
 ```
 
