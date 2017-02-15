@@ -53,7 +53,7 @@ function compileByBabel(srcPath, outPath, content, file, options = {}){
   });
 
   if(!alreadyLogged && shouldLog){
-    helper.log(`Compile file ${file}`, 'Babel', startTime);
+    think.log(`Compile file ${file}`, 'Babel', startTime);
   }
   helper.mkdir(path.dirname(`${outPath}${path.sep}${file}`));
 
@@ -106,10 +106,10 @@ function compileFile(srcPath, outPath, options) {
         changedFiles.push(outFile);
         compiledMtime[file] = mTime;
       }catch(e){
-        helper.log(colors => {
+        think.log(colors => {
           return colors.red(`compile file ${file} error`);
         }, 'COMPILE');
-        helper.log(e);
+        think.log(e);
         e.message = 'Compile Error: ' + e.message;
         if(index === -1){
           compiledErrorFiles.push(file);
