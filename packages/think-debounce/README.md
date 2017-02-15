@@ -18,7 +18,7 @@ thinkAwait(key, callback)
 
 Take reading a local file for an example:
 
-```
+```js
 import thinkAwait from 'think-await';
 import fs from 'fs';
 
