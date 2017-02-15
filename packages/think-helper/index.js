@@ -177,6 +177,18 @@ function md5(str){
 exports.md5 = md5;
 
 /**
+ * get timeout Promise
+ * @param  {Number} time []
+ * @return {[type]}      []
+ */
+function timeout(time = 1000){
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, time);
+  });
+}
+exports.timeout = timeout;
+
+/**
  * escape html
  */
 function escapeHtml(str){
