@@ -1,8 +1,68 @@
 const babel = require('babel-core');
-const helper = require('think-helper');
+// const helper = require('think-helper');
 const fs = require('fs');
 const path = require('path');
 const {SourceMapGenerator, SourceMapConsumer} = require('source-map');
+const helper = {
+  isFile: function(p) {
+    try{
+      return fs.statSync(p).isFile();
+    }catch(e){}
+    return false;
+  },
+  mkdir: function(p, mode) {
+    mode = mode || '0777';
+    if (fs.existsSync(p)) {
+      chmod(p, mode);
+      return true;
+    }
+    let pp = path.dirname(p);
+    if (fs.existsSync(pp)) {
+      fs.mkdirSync(p, mode);
+    }else{
+      mkdir(pp, mode);
+      mkdir(p, mode);
+    }
+    return true;
+  },
+  isString: function(obj) {
+    return toString.call(obj) === '[object String]';
+  },
+  getFiles: function(dir, prefix, filter) {
+    dir = path.normalize(dir);
+
+    if (!fs.existsSync(dir)) {
+      console.log('dd', dir);
+      return [];
+    }
+    if(!helper.isString(prefix)){
+      filter = prefix;
+      prefix = '';
+    }
+    if(filter === true){
+      filter = item => {
+        return item[0] !== '.';
+      };
+    }
+    prefix = prefix || '';
+    let files = fs.readdirSync(dir);
+    let result = [];
+    files.forEach(item => {
+      let stat = fs.statSync(dir + path.sep + item);
+      if (stat.isFile()) {
+        if(!filter || filter(item)){
+          result.push(prefix + item);
+        }
+      }else if(stat.isDirectory()){
+        if(!filter || filter(item, true)){
+          let cFiles = getFiles(dir + sep + item, prefix + item + sep, filter);
+          result = result.concat(cFiles);
+        }
+      }
+    });
+    return result;
+  }
+}
 
 /**
  * get relative path
@@ -51,12 +111,11 @@ function compileByBabel(srcPath, outPath, content, file, options = {}){
     sourceMaps: true,
     sourceFileName: relativePath
   });
-
   if(!alreadyLogged && shouldLog){
-    think.log(`Compile file ${file}`, 'Babel', startTime);
+    //think.log(`Compile file ${file}`, 'Babel', startTime);
+    console.log(`Compile file ${file}`, 'Babel', startTime);
   }
   helper.mkdir(path.dirname(`${outPath}${path.sep}${file}`));
-
   let basename = path.basename(file);
   let prefix = '//# sourceMappingURL=';
   if(data.code.indexOf(prefix) === -1){
@@ -78,18 +137,20 @@ function compileByBabel(srcPath, outPath, content, file, options = {}){
  * @param  {[type]} options []
  * @return {}               []
  */
-function compileFile(srcPath, outPath, options) {
+function babelCompile(srcPath, outPath, options) {
   let compiledMtime = {};
   let compiledErrorFiles = [];
+  let changedFiles = [];
   srcPath = path.normalize(srcPath);
   outPath = path.normalize(outPath);
   let files = helper.getFiles(srcPath, true);
 
   files.forEach(file => {
+    let filePath = `${srcPath}${path.sep}${file}`;
+    let content = fs.readFileSync(filePath, 'utf8');
     let extname = path.extname(file);
     let mTime = fs.statSync(`${srcPath}${path.sep}${file}`).mtime.getTime();
     let outFile = `${outPath}${path.sep}${file}`;
-
     if(helper.isFile(outFile)){
       let outmTime = fs.statSync(outFile).mtime.getTime();
       if(outmTime >= mTime){
@@ -106,19 +167,23 @@ function compileFile(srcPath, outPath, options) {
         changedFiles.push(outFile);
         compiledMtime[file] = mTime;
       }catch(e){
-        think.log(colors => {
+        // think.log(colors => {
+        //   return colors.red(`compile file ${file} error`);
+        // }, 'COMPILE');
+        // think.log(e);
+        console.log(colors => {
           return colors.red(`compile file ${file} error`);
-        }, 'COMPILE');
-        think.log(e);
+        }, 'BABELCOMPILE');
+        console.log(e);
         e.message = 'Compile Error: ' + e.message;
         if(index === -1){
           compiledErrorFiles.push(file);
         }
       }
     }
-  });
+  })
 }
 
 module.exports = {
-  compileFile: compileFile
+  babelCompile: babelCompile
 }
