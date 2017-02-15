@@ -7,11 +7,12 @@ In particular, You can use `think-await` to avoid duplicate requests for a remot
 ## Syntax
 
 ```
-think.await(key, callback)
+thinkAwait(key, callback)
 ```
 
 - key {String} the identity of the operation.
 - callback {Function} the function which contains the operation and returns a Promise object.
+- return {Object} a Promise object.
 
 ## Usage
 
@@ -39,5 +40,7 @@ let readMyFileCallback = () => {
 let promise1 = thinkAwait(awaitKey, readMyFileCallback);
 let promise2 = thinkAwait(awaitKey, readMyFileCallback);
 
-console.log(readTimes); // 1
+return Promise.all([promise1, promise2]).then(values => {
+  console.log(readTimes); // 1
+});
 ```
