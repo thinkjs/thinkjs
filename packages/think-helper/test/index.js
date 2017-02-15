@@ -9,7 +9,16 @@ import {
   promisify,
   defer,
   md5,
-  mkdir
+  mkdir,
+  rmdir,
+  chmod,
+  uuid,
+  datetime,
+  escapeHtml,
+  isEmpty,
+  isNumberString,
+  camelCase,
+  aaa
 } from '../index.js';
 import fs from 'fs';
 
@@ -88,6 +97,21 @@ test('extend 7', t => {
   t.deepEqual(data, {name: 'welefen', name2: 'suredy'});
 })
 
+test('extend 8', t => {
+  let data = extend({}, {name:[4,5]});
+  t.deepEqual(data, {name:[4,5]});
+})
+
+test('extend 9', t => {
+  let data = extend({},'',{name:'sgy'});
+  t.deepEqual(data, {name:'sgy'});
+})
+
+test('extend 10', t => {
+  let data = extend({name:'sgy'},{name:'sgy'});
+  t.deepEqual(data, {name:'sgy'});
+})
+
 
 
 test('promisify', async (t) => {
@@ -134,3 +158,84 @@ test('mkdir 3', t => {
   fs.rmdirSync('welefen44/suredy')
   fs.rmdirSync('welefen44')
 })
+
+test('mkdir 4', async(t) => {
+  mkdir('songguangyu78');
+  t.is(mkdir('songguangyu78/smart','9527'), false);
+  await rmdir('songguangyu78');
+})
+
+test('mkdir 5', async(t) => {
+  t.is(mkdir('songguangyu79/smart','9527'), false);
+  await rmdir('songguangyu79');
+})
+
+
+test('rmdir', async (t) => {
+  mkdir('songguangyu75');
+  t.is(isDirectory('songguangyu75'), true);
+  await rmdir('songguangyu75');
+  t.is(isDirectory('songguangyu75'), false);
+})
+
+test('rmdir 1', async (t) => {
+  mkdir('songguangyu76');
+  fs.writeFileSync('songguangyu76/abc.js',"123");
+  mkdir('songguangyu76/xiaoming');
+  t.is(isDirectory('songguangyu76'), true);
+  await rmdir('songguangyu76');
+  t.is(isDirectory('songguangyu76'), false);
+})
+
+test('rmdir 2', async (t) => {
+  mkdir('songguangyu77');
+  fs.rmdirSync('songguangyu77');
+  chmod('songguangyu77');
+  await rmdir('songguangyu77');
+})
+
+test('uuid', t => {
+  uuid('v1');
+  uuid();
+})
+
+test('datetime', t => {
+  datetime();
+  datetime('123');
+})
+
+test('escapeHtml', t => {
+  escapeHtml("<div width='200'></div>");
+})
+test('escapeHtml 1', t => {
+  escapeHtml('<div width="200"></div>');
+})
+test('isEmpty', t => {
+  t.is(isEmpty({}), true);
+  t.is(isEmpty(NaN), true);
+  t.is(isEmpty(1), false);
+  t.is(isEmpty('sgy'), false);
+  t.is(isEmpty(false), true);
+  t.is(isEmpty(null), true);
+  t.is(isEmpty(undefined), true);
+  t.is(isEmpty(''), true);
+  t.is(isEmpty({"a":1}), false);
+  var date = new Date();
+  t.is(isEmpty(date), false);
+  var func = function() {}
+  t.is(isEmpty(func), false);
+  t.is(isEmpty([]), true);
+  t.is(isEmpty(new Error('errror')), false);
+  t.is(isEmpty(/test/), false);
+})
+test('isNumberString', t => {
+  t.is(isNumberString(''), false);
+  t.is(isNumberString('111d111'), false);
+  t.is(isNumberString('111111'), true);
+})
+
+test('camelCase', t => {
+  t.deepEqual(camelCase('index_test'), 'indexTest');
+})
+
+

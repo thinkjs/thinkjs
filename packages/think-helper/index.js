@@ -61,11 +61,11 @@ function extend(target = {}, ...args) {
       if (src && src === copy) {
         continue;
       }
-      if(exports.isObject(copy)){
-        target[name] = extend(src && exports.isObject(src) ? src : {}, copy);
-      }else if(exports.isArray(copy)){
+      if(exports.isArray(copy)){
         target[name] = extend([], copy);
-      }else{
+      }else if(exports.isObject(copy)){
+        target[name] = extend(src && exports.isObject(src) ? src : {}, copy);
+      } else{
         target[name] = copy;
       }
     }
@@ -98,7 +98,7 @@ exports.camelCase = camelCase;
 function isNumberString(obj){
   if(!obj){
     return false;
-  }
+  } 
   return numberReg.test(obj);
 }
 exports.isNumberString = isNumberString;
@@ -130,11 +130,12 @@ function isEmpty(obj){
   if(isTrueEmpty(obj)){
     return true;
   }
-  if (exports.isObject(obj)) {
-    for(let key in obj){
-      return false && key; // only for eslint
-    }
-    return true;
+  if(exports.isRegExp(obj)) {
+      return false;
+  }else if(exports.isDate(obj)) {
+      return false;
+  }else if(exports.isError(obj)) {
+      return false;
   }else if (exports.isArray(obj)) {
     return obj.length === 0;
   }else if (exports.isString(obj)) {
@@ -143,6 +144,11 @@ function isEmpty(obj){
     return obj === 0;
   }else if (exports.isBoolean(obj)) {
     return !obj;
+  } else if (exports.isObject(obj)) {
+    for(let key in obj){
+      return false && key; // only for eslint
+    }
+    return true;
   }
   return false;
 }
@@ -208,6 +214,11 @@ function datetime(date, format) {
   if(date && exports.isString(date)){
     date = new Date(Date.parse(date));
   }
+
+  if(!exports.isDate(date)) {
+    return false;
+  }
+
   let d = date || new Date();
 
   format = format || 'YYYY-MM-DD HH:mm:ss';
@@ -246,15 +257,14 @@ exports.uuid = function(version){
  */
 function isExist(dir) {
   dir = path.normalize(dir);
-  if (fs.accessSync) {
-    try {
-      fs.accessSync(dir, fs.R_OK);
-      return true;
-    } catch (e) {
-      return false;
-    }
+
+  try {
+    fs.accessSync(dir, fs.R_OK);
+    return true;
+  } catch (e) {
+    return false;
   }
-  return fs.existsSync(dir);
+
 }
 
 exports.isExist = isExist;
@@ -308,6 +318,7 @@ function mkdir(dir, mode = '0777') {
   let pp = path.dirname(dir);
   if (isExist(pp)) {
     try {
+      console.log(dir);
       fs.mkdirSync(dir, mode);
       return true;
     } catch (e) {
