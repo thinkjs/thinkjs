@@ -211,7 +211,7 @@ function datetime(date, format) {
     return ('0' + d).slice(-2);
   };
 
-  if(date && exports.isString(date)){
+  if(date && exports.isString(date) && Date.parse(date)){
     date = new Date(Date.parse(date));
   }
 
@@ -302,7 +302,7 @@ exports.isDirectory = isDirectory;
  */
 function chmod(p, mode = '0777'){
   if (!isExist(p)) {
-    return true;
+    return false;
   }
   return fs.chmodSync(p, mode);
 }
@@ -318,7 +318,6 @@ function mkdir(dir, mode = '0777') {
   let pp = path.dirname(dir);
   if (isExist(pp)) {
     try {
-      console.log(dir);
       fs.mkdirSync(dir, mode);
       return true;
     } catch (e) {

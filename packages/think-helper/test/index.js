@@ -18,7 +18,9 @@ import {
   isEmpty,
   isNumberString,
   camelCase,
-  aaa
+  getdirFiles,
+  isTrueEmpty,
+  isIP
 } from '../index.js';
 import fs from 'fs';
 
@@ -195,8 +197,10 @@ test('rmdir 2', async (t) => {
 })
 
 test('uuid', t => {
-  uuid('v1');
-  uuid();
+  var uuid1 = uuid('v1');
+  t.is(uuid1.length>1, true);
+  var uuid2 = uuid();
+  t.is(uuid2.length>1, true);
 })
 
 test('datetime', t => {
@@ -204,11 +208,17 @@ test('datetime', t => {
   datetime('123');
 })
 
+test('datetime 1', t => {
+  datetime('','YYYY-MM-DD');
+  datetime('2017-12-12','YYYY-MM-DD');
+})
+
+
 test('escapeHtml', t => {
-  escapeHtml("<div width='200'></div>");
+  t.deepEqual(escapeHtml("<div width='200'></div>"), '&lt;div width=&#39;200&#39;&gt;&lt;/div&gt;');  
 })
 test('escapeHtml 1', t => {
-  escapeHtml('<div width="200"></div>');
+  t.deepEqual(escapeHtml(('<div width="200"></div>')), '&lt;div width=&quote;200&quote;&gt;&lt;/div&gt;');  
 })
 test('isEmpty', t => {
   t.is(isEmpty({}), true);
@@ -238,4 +248,27 @@ test('camelCase', t => {
   t.deepEqual(camelCase('index_test'), 'indexTest');
 })
 
+test('getdirFiles', t => {
+  mkdir('songguangyu79');
+  mkdir('songguangyu79/songguangyu80');
+  fs.writeFileSync('songguangyu79/abc.js',"123");
+  fs.writeFileSync('songguangyu79/songguangyu80/abc.js',"123");
+  getdirFiles('songguangyu79');
+  getdirFiles('songguangyu80');
+  rmdir('songguangyu79');
+})
+
+test('isTrueEmpty', t => {
+  t.deepEqual(isTrueEmpty(null), true);
+})
+
+test('chmod', t => {
+  mkdir('songguangyu81');
+  chmod('songguangyu81','0777');
+  t.is(chmod('songguangyu82','0777'), false);
+})
+
+test('isIP', t => {
+  t.deepEqual(isIP('127.0.0.1') === 4, true);
+})
 
