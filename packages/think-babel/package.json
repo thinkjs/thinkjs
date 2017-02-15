@@ -1,0 +1,33 @@
+{
+  "name": "think-babel",
+  "version": "1.0.0",
+  "description": "Use Babel transpile ES6+ code to ES5",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc ava --verbose",
+    "eslint": "eslint index.js"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wd4blue/think-babel.git"
+  },
+  "keywords": [
+    "think-babel"
+  ],
+  "author": "lushijie1218@126.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wd4blue/think-babel/issues"
+  },
+  "homepage": "https://github.com/wd4blue/think-babel#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-core": "~6.23.1",
+    "nyc": "~10.1.2"
+  }
+}
