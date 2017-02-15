@@ -40,6 +40,7 @@ function compileFileByBabel(srcPath, outPath, file, newExt, options = {}){
       options = newExt;
       newExt = '.js';
     }
+    newExt = newExt || '.js';
 
     srcPath = path.normalize(srcPath);
     outPath = path.normalize(outPath);
