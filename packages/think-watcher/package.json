@@ -1,0 +1,47 @@
+{
+  "name": "think-watcher",
+  "description": "watch file changed",
+  "version": "3.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=html"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "debug": "^2.6.1"
+  },
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "eslint": "2.8.0",
+    "nyc": "^7.0.0"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-watcher"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-watcher/issues"
+  }
+}
