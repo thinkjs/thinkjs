@@ -4,7 +4,7 @@
   "description": "Use Babel transpile ES6+ code to ES5",
   "main": "index.js",
   "scripts": {
-    "test": "node test/index.js",
+    "test": "nyc ava test/index.js",
     "eslint": "eslint index.js"
   },
   "ava": {
