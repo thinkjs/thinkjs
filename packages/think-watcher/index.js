@@ -38,7 +38,7 @@ const defaultOptions = {
  * build options
  * @type {Function}
  */
-const buildOptions = options = {} => {
+const buildOptions = (options = {}) => {
   if(helper.isString(options)){
     options = {srcPath: options};
   }
