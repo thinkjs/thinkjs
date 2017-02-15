@@ -419,7 +419,7 @@ export default class {
     let localIP = '127.0.0.1';
     if (proxy) {
       if (forward) {
-        return (this.headers['x-forwarded-for'] || '').split(',').filter(item => {
+        return (this.headers['x-forwarded-for'] || '').split(/\,[\s]*/).filter(item => {
           item = item.trim();
           if (think.isIP(item)) {
             return item;
