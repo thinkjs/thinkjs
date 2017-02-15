@@ -38,3 +38,6 @@ jspm_packages
 
 # test output
 test/out
+
+# MAC
+.DS_Store
