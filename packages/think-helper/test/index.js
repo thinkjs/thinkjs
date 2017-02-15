@@ -266,6 +266,7 @@ test('chmod', t => {
   mkdir('songguangyu81');
   chmod('songguangyu81','0777');
   t.is(chmod('songguangyu82','0777'), false);
+  rmdir('songguangyu81');
 })
 
 test('isIP', t => {
