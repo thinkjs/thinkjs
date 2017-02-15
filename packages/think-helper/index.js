@@ -328,7 +328,7 @@ exports.mkdir = mkdir;
  * @param  {} prefix []
  * @return {}        []
  */
-function getdirFiles(dir, prefix = '') => {
+function getdirFiles(dir, prefix = ''){
   dir = path.normalize(dir);
   if (!fs.existsSync(dir)) {
     return [];
