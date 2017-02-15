@@ -10,8 +10,8 @@ In particular, You can use `think-await` to avoid duplicate requests for a remot
 thinkAwait(key, callback)
 ```
 
-- key {String} the identity of the operation.
-- callback {Function} the function which contains the operation and returns a Promise object.
+- `key` {String} the identity of the operation.
+- `callback` {Function} the function which contains the operation and returns a Promise object.
 - return {Object} a Promise object.
 
 ## Usage

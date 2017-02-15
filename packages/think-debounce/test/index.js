@@ -34,7 +34,7 @@ test('await 1', t => {
   let readTimes = 0;
 
   const filePath = '../nonexistence'; // read a nonexistent file
-  const awaitKey = 'readMyFile1'; // Don't use the same key in different tests!
+  const awaitKey = 'readMyFile1'; // Don't use the same key in different test cases!
   const readFileCallback = () => {
     return new Promise((resolve, reject) => {
       readTimes ++;
