@@ -334,6 +334,34 @@ function mkdir(dir, mode = '0777') {
 exports.mkdir = mkdir;
 
 /**
+ * get files in path
+ * @param  {} dir    []
+ * @param  {} prefix []
+ * @return {}        []
+ */
+function getdirFiles(dir, prefix = ''){
+  dir = path.normalize(dir);
+  if (!fs.existsSync(dir)) {
+    return [];
+  }
+  let files = fs.readdirSync(dir);
+  let result = [];
+  files.forEach(item => {
+    let currentDir = path.join(dir, item);
+    let stat = fs.statSync(currentDir);
+    if (stat.isFile()) {
+      result.push(path.join(prefix, item));
+    }else if(stat.isDirectory()){
+      let cFiles = getdirFiles(currentDir, path.join(prefix, item));
+      result = result.concat(cFiles);
+    }
+  });
+  return result;
+};
+
+exports.getdirFiles = getdirFiles;
+
+/**
  * remove dir aync
  * @param  {String} p       [path]
  * @param  {Bollean} reserve []
