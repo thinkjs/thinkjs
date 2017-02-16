@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-16 18:15:37
+* @Last Modified time: 2017-02-16 19:23:08
 */
 import test from 'ava'
 import helper from 'think-helper'
@@ -25,8 +25,8 @@ test.serial('compileFileByTypescript-1', t => {
     file: 'b/test.ts',
     typescriptOptions: {
       compilerOptions:{
-        module: ts.ModuleKind.CommonJS,
-        target: ts.ScriptTarget.ES6,
+        module: 'commonjs',
+        target: 'es5',
         experimentalDecorators: true,
         emitDecoratorMetadata: true,
         allowSyntheticDefaultImports: true,
@@ -47,8 +47,8 @@ test.serial('compileFileByTypescript-2', t => {
     file: 'b/test.ts',
     typescriptOptions: {
       compilerOptions:{
-        module: ts.ModuleKind.CommonJS,
-        target: ts.ScriptTarget.ES6,
+        module: 'commonjs',
+        target: 'es5',
         experimentalDecorators: true,
         emitDecoratorMetadata: true,
         allowSyntheticDefaultImports: true,
@@ -63,19 +63,19 @@ test.serial('compileFileByTypescript-2', t => {
 
 test.serial('compileFileByTypescript-3', t => {
   let out = compileFileByTypescript({
-   srcPath: './test/src/a',
-   outPath: './test/out',
-   file: 'b/test.ts',
-   typescriptOptions: {
-     compilerOptions:{
-       module: ts.ModuleKind.CommonJS,
-       target: ts.ScriptTarget.ES6,
-       experimentalDecorators: true,
-       emitDecoratorMetadata: true,
-       allowSyntheticDefaultImports: true,
-       sourceMap: true
-     }
-   }
+    srcPath: './test/src/a',
+    outPath: './test/out',
+    file: 'b/test.ts',
+    typescriptOptions: {
+      compilerOptions:{
+         module: 'commonjs',
+         target: 'es5',
+         experimentalDecorators: true,
+         emitDecoratorMetadata: true,
+         allowSyntheticDefaultImports: true,
+         sourceMap: true
+      }
+    }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js'));
   let outMapFile = helper.isFile(path.join(__dirname, 'out/b/test.js.map'));
