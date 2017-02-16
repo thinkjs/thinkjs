@@ -1,0 +1,15 @@
+{
+    "version": 3,
+    "sources": [
+        "../src/es6.js"
+    ],
+    "names": [
+        "map",
+        "n"
+    ],
+    "mappings": ";;AAAA;;;;;;;AAOA,CAAC,CAAD,EAAG,CAAH,EAAK,CAAL,EAAQA,GAAR,CAAY;AAAA,SAAKC,IAAI,CAAT;AAAA,CAAZ",
+    "file": "../src/es6.js",
+    "sourcesContent": [
+        "/*\n* @Author: lushijie\n* @Date:   2017-02-15 10:22:00\n* @Last Modified by:   lushijie\n* @Last Modified time: 2017-02-15 10:22:21\n*/\n\n[1,2,3].map(n => n + 1);\n"
+    ]
+}
