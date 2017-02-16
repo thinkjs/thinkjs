@@ -29,7 +29,7 @@ function compileFileByBabel(options){
     data = babelCore.transform(content, babelOptions);
   }
   catch(e) {
-    return e.message;
+    return e;
   }
 
   // write es5 code file
