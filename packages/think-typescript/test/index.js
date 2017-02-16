@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-16 19:32:12
+* @Last Modified time: 2017-02-16 20:28:59
 */
 import test from 'ava'
 import helper from 'think-helper'
@@ -122,6 +122,6 @@ test.serial('compileFileByTypescript-5', t => {
       }
     }
   });
-  out = !helper.isBoolean(out);
+  out = helper.isError(out);
   t.true(out);
 });

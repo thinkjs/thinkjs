@@ -1,4 +1,3 @@
-const babelCore = require('babel-core')
 const helper = require('think-helper')
 const fs = require('fs')
 const path = require('path')
@@ -22,13 +21,13 @@ function compileFileByTypescript(options) {
     data = ts.transpileModule(content, typescriptOptions);
   }
   catch(e) {
-    return e.message;
+    return e;
   }
 
   //has error
   if(data.diagnostics.length){
     let firstDiagnostics = data.diagnostics[0];
-    return `${firstDiagnostics.messageText} File: ${firstDiagnostics.file} Start: ${firstDiagnostics.start}` ;
+    return new Error(`${firstDiagnostics.messageText} File: ${firstDiagnostics.file} Start: ${firstDiagnostics.start}`);
   }
 
   // write js file
@@ -38,7 +37,7 @@ function compileFileByTypescript(options) {
   fs.writeFileSync(outFile, data.outputText);
 
   // write map file
-  if(typescriptOptions.compilerOptions.sourceMap) {
+  if(typescriptOptions && typescriptOptions.compilerOptions && typescriptOptions.compilerOptions.sourceMap) {
     let sourceMap = JSON.parse(data.sourceMapText);
     sourceMap.file = sourceMap.sources[0] = relativePath;
     fs.writeFileSync(outFile + '.map', JSON.stringify(sourceMap, undefined, 4));
