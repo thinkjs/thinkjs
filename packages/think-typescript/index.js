@@ -22,16 +22,13 @@ function compileFileByTypescript(options) {
     data = ts.transpileModule(content, typescriptOptions);
   }
   catch(e) {
-    throw new Error(e.message);
+    return e.message;
   }
 
   //has error
   if(data.diagnostics.length){
     let firstDiagnostics = data.diagnostics[0];
-    let errMsg = `${firstDiagnostics.messageText}`;
-    firstDiagnostics.file && (errMsg += `File: ${firstDiagnostics.file}`);
-    firstDiagnostics.start && (errMsg += `Start: ${firstDiagnostics.start}`);
-    throw new Error(errMsg);
+    return `${firstDiagnostics.messageText} File: ${firstDiagnostics.file} Start: ${firstDiagnostics.start}` ;
   }
 
   // write js file
