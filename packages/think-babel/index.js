@@ -8,7 +8,7 @@ const path = require('path')
  * @param  {Object} options
  * @return {Boolean}
  */
-function compileFileByBabel(options = {}){
+function compileFileByBabel(options){
   let {srcPath, outPath, file, babelOptions, ext = '.js'} = options;
   srcPath = path.normalize(srcPath);
   outPath = path.normalize(outPath);
