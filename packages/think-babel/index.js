@@ -36,7 +36,7 @@ function compileFileByBabel(options = {}){
   let outFile = path.join(outPath, file);
   outFile = outFile.replace(/\.\w+$/, ext);
   helper.mkdir(path.dirname(outFile));
-  let basename = path.basename(file);
+  let basename = path.basename(file).replace(/\.\w+$/, ext);
   let prefix = '//# sourceMappingURL=';
   if(data.code.indexOf(prefix) === -1 && babelOptions.sourceMaps){
     data.code = data.code + '\n' + prefix + basename + '.map';
