@@ -2,7 +2,7 @@
 `think-helper` is a toolkit of thinkjs.
 ## Syntax
 
-```
+```js
 import helper from 'think-helper';
 ```
 
