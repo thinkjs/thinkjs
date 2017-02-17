@@ -2,14 +2,14 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-16 20:28:59
+* @Last Modified time: 2017-02-17 10:59:55
 */
-import test from 'ava'
-import helper from 'think-helper'
-import compileFileByTypescript from '../index'
-import path from 'path'
-import fs from 'fs'
-import ts from 'typescript'
+import test from 'ava';
+import helper from 'think-helper';
+import compileFileByTypescript from '../index';
+import path from 'path';
+import fs from 'fs';
+import ts from 'typescript';
 
 test.serial.cb.beforeEach(t => {
   let outPath = path.join(__dirname, 'out');
