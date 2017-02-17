@@ -1,7 +1,7 @@
-const babelCore = require('babel-core')
-const helper = require('think-helper')
-const fs = require('fs')
-const path = require('path')
+const babelCore = require('babel-core');
+const helper = require('think-helper');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * compile es6+ file to es5
@@ -10,12 +10,10 @@ const path = require('path')
  */
 function compileFileByBabel(options){
   let {srcPath, outPath, file, babelOptions, ext = '.js'} = options;
-  srcPath = path.normalize(srcPath);
-  outPath = path.normalize(outPath);
   let filePath = path.join(srcPath, file);
-  let pPath = path.dirname(outPath + path.sep + file);
+  let pPath = path.dirname(path.join(outPath, file));
   let content = fs.readFileSync(filePath, 'utf8');
-  let relativePath = path.relative(pPath, srcPath + path.sep + file);
+  let relativePath = path.relative(pPath, path.join(srcPath, file));
 
   // babel options
   babelOptions = Object.assign({
@@ -27,14 +25,12 @@ function compileFileByBabel(options){
   let data;
   try {
     data = babelCore.transform(content, babelOptions);
-  }
-  catch(e) {
+  }catch(e) {
     return e;
   }
 
   // write es5 code file
-  let outFile = path.join(outPath, file);
-  outFile = outFile.replace(/\.\w+$/, ext);
+  let outFile = path.join(outPath, file).replace(/\.\w+$/, ext);
   helper.mkdir(path.dirname(outFile));
   let basename = path.basename(file).replace(/\.\w+$/, ext);
   let prefix = '//# sourceMappingURL=';
