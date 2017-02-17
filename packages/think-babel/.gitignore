@@ -41,3 +41,6 @@ test/out
 
 # MAC
 .DS_Store
+
+# Sublime config
+.editorconfig
