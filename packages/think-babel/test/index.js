@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-17 10:39:04
+* @Last Modified time: 2017-02-17 10:46:01
 */
 import test from 'ava'
 import helper from 'think-helper'
@@ -79,6 +79,5 @@ test.serial('compileFileByBabel-4', t => {
 
   var originData = fs.readFileSync(testFilePath, 'utf8').replace(new RegExp(wrongSyntax), '');
   fs.writeFileSync(testFilePath, originData);
-
   t.true(helper.isError(out));
 });
