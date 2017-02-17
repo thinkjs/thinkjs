@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-16 20:39:08
+* @Last Modified time: 2017-02-17 10:18:34
 */
 import test from 'ava'
 import helper from 'think-helper'
@@ -23,6 +23,7 @@ test.serial('compileFileByBabel-1', t => {
     outPath: './test/out',
     file: 'b/test.es',
     babelOptions: {
+      presets: ['es2015'],
       sourceMaps: true
     },
     ext: '.js',
@@ -38,6 +39,7 @@ test.serial('compileFileByBabel-2', t => {
     outPath: './test/out',
     file: 'b/test.es',
     babelOptions: {
+      presets: ['es2015'],
       sourceMaps: true
     }
   });
@@ -52,6 +54,7 @@ test.serial('compileFileByBabel-3', t => {
     outPath: './test/out',
     file: 'b/test.es',
     babelOptions: {
+      presets: ['es2015'],
       sourceMaps: false
     }
   });
