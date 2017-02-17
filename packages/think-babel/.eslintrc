@@ -2,7 +2,7 @@
   "parser": "babel-eslint",
   "env": {
     "node": true,
-    "es6": true 
+    "es6": true
   },
   "rules": {
     "strict": [0],
@@ -20,13 +20,13 @@
     "no-process-exit": 0,
     "no-empty": 0,
     "yoda": 0,
-    "no-const-assign": "warn", 
+    "no-const-assign": "warn",
     "no-new-func": 0,
     "no-labels": 0,
     "no-this-before-super": "warn",
-    "no-undef": "warn",  
-    "no-unreachable": "warn", 
-    "no-unused-vars": "warn", 
-    "valid-typeof": "warn" 
+    "no-undef": "warn",
+    "no-unreachable": "warn",
+    "no-unused-vars": "warn",
+    "valid-typeof": "warn"
   }
 }
