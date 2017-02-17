@@ -15,12 +15,7 @@ function compileFileByTypescript(options) {
   }, typescriptOptions);
 
   let content = fs.readFileSync(filePath, 'utf8');
-  let data;
-  try {
-    data = ts.transpileModule(content, typescriptOptions);
-  }catch(e) {
-    return e;
-  }
+  let data = ts.transpileModule(content, typescriptOptions);
 
   //has error
   if(data.diagnostics && data.diagnostics.length){

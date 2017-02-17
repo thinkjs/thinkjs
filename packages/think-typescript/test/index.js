@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-17 10:59:55
+* @Last Modified time: 2017-02-17 11:09:10
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -113,7 +113,7 @@ test.serial('compileFileByTypescript-5', t => {
     file: 'b/test.ts',
     typescriptOptions: {
       compilerOptions:{
-         module: 'wrong',
+         module: 'wrong config',
          target: 'es5',
          experimentalDecorators: true,
          emitDecoratorMetadata: true,
