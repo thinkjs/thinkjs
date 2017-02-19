@@ -188,7 +188,7 @@ exports.md5 = md5;
  * @return {[type]}      []
  */
 function timeout(time = 1000){
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(resolve, time);
   });
 }

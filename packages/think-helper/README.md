@@ -1,14 +1,17 @@
 # think-helper
-`think-helper` is a toolkit of thinkjs.
-## Syntax
+[![Build Status](https://travis-ci.org/thinkjs/think-helper.svg?branch=master)](https://travis-ci.org/thinkjs/think-helper)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-helper/badge.svg)](https://coveralls.io/github/thinkjs/think-helper)
 
+`think-helper` defines a set of helper functions for Thinkjs.
+## Installation
+
+Using npm:
+
+```js
+npm install think-helper
 ```
-import helper from 'think-helper';
-```
 
-## Usage
-
-Take reading a local file for an example:
+In Nodejs:
 
 ```js
 import helper from 'think-helper';
