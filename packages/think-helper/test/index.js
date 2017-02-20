@@ -20,7 +20,8 @@ import {
   camelCase,
   getdirFiles,
   isTrueEmpty,
-  isIP
+  isIP,
+  timeout
 } from '../index.js';
 import fs from 'fs';
 
@@ -273,3 +274,8 @@ test('isIP', t => {
   t.deepEqual(isIP('127.0.0.1') === 4, true);
 })
 
+test('timeout', t => {
+  timeout(1000).then(()=>{
+    t.pass('success');
+  })
+})
