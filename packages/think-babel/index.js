@@ -8,7 +8,7 @@ const path = require('path');
  * @param  {Object} options
  * @return {Boolean}
  */
-function compileFileByBabel(options){
+function thinkBabel(options){
   let {srcPath, outPath, file, babelOptions, ext = '.js'} = options;
   let filePath = path.join(srcPath, file);
   let pPath = path.dirname(path.join(outPath, file));
@@ -48,4 +48,4 @@ function compileFileByBabel(options){
   return true;
 }
 
-module.exports = compileFileByBabel;
+module.exports = thinkBabel;

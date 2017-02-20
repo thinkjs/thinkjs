@@ -2,11 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-17 10:46:01
+* @Last Modified time: 2017-02-20 18:30:22
 */
 import test from 'ava'
 import helper from 'think-helper'
-import compileFileByBabel from '../index'
+import thinkBabel from '../index'
 import path from 'path'
 import fs from 'fs'
 
@@ -17,8 +17,8 @@ test.serial.cb.beforeEach(t => {
   });
 });
 
-test.serial('compileFileByBabel-1', t => {
-  let out = compileFileByBabel({
+test.serial('thinkBabel-1', t => {
+  let out = thinkBabel({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es',
@@ -33,8 +33,8 @@ test.serial('compileFileByBabel-1', t => {
   t.true(out && outFile && outMapFile);
 });
 
-test.serial('compileFileByBabel-2', t => {
-  let out = compileFileByBabel({
+test.serial('thinkBabel-2', t => {
+  let out = thinkBabel({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es',
@@ -48,8 +48,8 @@ test.serial('compileFileByBabel-2', t => {
   t.true(out && outFile && outMapFile);
 });
 
-test.serial('compileFileByBabel-3', t => {
-  let out = compileFileByBabel({
+test.serial('thinkBabel-3', t => {
+  let out = thinkBabel({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es',
@@ -64,10 +64,10 @@ test.serial('compileFileByBabel-3', t => {
 });
 
 let wrongSyntax = 'wrong syntax';
-test.serial('compileFileByBabel-4', t => {
+test.serial('thinkBabel-4', t => {
   let testFilePath = path.join(__dirname, './src/a/b/test.es');
   fs.appendFileSync(testFilePath, wrongSyntax);
-  let out = compileFileByBabel({
+  let out = thinkBabel({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es',
