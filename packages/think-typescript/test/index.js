@@ -2,11 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-17 11:09:10
+* @Last Modified time: 2017-02-20 18:28:38
 */
 import test from 'ava';
 import helper from 'think-helper';
-import compileFileByTypescript from '../index';
+import thinkTypescript from '../index';
 import path from 'path';
 import fs from 'fs';
 import ts from 'typescript';
@@ -18,8 +18,8 @@ test.serial.cb.beforeEach(t => {
   });
 });
 
-test.serial('compileFileByTypescript-1', t => {
-  let out = compileFileByTypescript({
+test.serial('thinkTypescript-1', t => {
+  let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',
@@ -40,8 +40,8 @@ test.serial('compileFileByTypescript-1', t => {
   t.true(out && outFile && outMapFile);
 });
 
-test.serial('compileFileByTypescript-2', t => {
-  let out = compileFileByTypescript({
+test.serial('thinkTypescript-2', t => {
+  let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',
@@ -62,8 +62,8 @@ test.serial('compileFileByTypescript-2', t => {
 });
 
 
-test.serial('compileFileByTypescript-3', t => {
-  let out = compileFileByTypescript({
+test.serial('thinkTypescript-3', t => {
+  let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',
@@ -85,8 +85,8 @@ test.serial('compileFileByTypescript-3', t => {
 });
 
 
-test.serial('compileFileByTypescript-4', t => {
-  let out = compileFileByTypescript({
+test.serial('thinkTypescript-4', t => {
+  let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',
@@ -106,8 +106,8 @@ test.serial('compileFileByTypescript-4', t => {
   t.true(out && outFile && outMapFile);
 });
 
-test.serial('compileFileByTypescript-5', t => {
-  let out = compileFileByTypescript({
+test.serial('thinkTypescript-5', t => {
+  let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const ts = require('typescript');
 
-function compileFileByTypescript(options) {
+function thinkTypescript(options) {
   let {srcPath, outPath, file, typescriptOptions, ext = '.js'} = options;
   let filePath = path.join(srcPath, file);
   let pPath = path.dirname(path.join(outPath, file));
@@ -37,4 +37,4 @@ function compileFileByTypescript(options) {
   return true;
 }
 
-module.exports = compileFileByTypescript;
+module.exports = thinkTypescript;
