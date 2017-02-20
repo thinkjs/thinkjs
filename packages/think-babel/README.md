@@ -22,7 +22,7 @@ thinkBabel({
 - `srcPath`      {String} the file source path.
 - `outPath`      {String} the directory for output file.
 - `file`         {String} the file path in the 'srcPath'.
-- `babelOptions` {String} the babel options.
+- `babelOptions` {Object} the babel options.
 - [`ext`]        {String} the new file extension,default `.js`
 
 ## Usage

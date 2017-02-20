@@ -1,7 +1,7 @@
 {
   "name": "think-babel",
-  "version": "1.0.0",
-  "description": "Use Babel transpile ES6+ code to ES5",
+  "version": "1.0.1",
+  "description": "Use Babel transpile ES6+ file to ES5",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
