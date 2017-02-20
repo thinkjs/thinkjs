@@ -8,7 +8,7 @@
 ## Syntax
 
 ```
-import thinkBabel from 'think-babel;
+import thinkBabel from 'think-babel';
 thinkBabel({
   srcPath,
   outPath,
