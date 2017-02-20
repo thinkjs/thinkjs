@@ -3,6 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-helper/badge.svg)](https://coveralls.io/github/thinkjs/think-helper)
 
 `think-helper` defines a set of helper functions for ThinkJS.
+
 ## Installation
 
 Using npm:
