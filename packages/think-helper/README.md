@@ -12,7 +12,7 @@ Using npm:
 npm install think-helper
 ```
 
-In Nodejs:
+In Node.js:
 
 ```js
 import helper from 'think-helper';
