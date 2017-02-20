@@ -2,3 +2,4 @@ node_modules/
 coverage/
 test/
 .nyc_output
+coverage.lcov
