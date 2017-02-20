@@ -30,7 +30,7 @@ thinkBabel({
 Transform a ES6+ file to ES5:
 
 ```js
-import thinkBabel from 'think-babel;
+import thinkBabel from 'think-babel';
 
 thinkBabel({
   srcPath: './test/src/a',
