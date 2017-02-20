@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
-    "coverage": "./node_modules/nyc/bin/nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "ava": {
     "files": [
