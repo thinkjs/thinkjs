@@ -11,7 +11,7 @@
 ## Syntax
 
 ```
-import thinkTypescript from 'think-typescript;
+import thinkTypescript from 'think-typescript';
 thinkTypescript({
   srcPath,
   outPath,

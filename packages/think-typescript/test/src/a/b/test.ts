@@ -21,4 +21,5 @@ function greeter(person : Person) {
     return "Hello, " + person.firstName + " " + person.lastName;
 }
 
+var a == 123;
 var user = new Student("Jane", "M.", "User");
