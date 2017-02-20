@@ -5,7 +5,7 @@
 [![NPM version](https://img.shields.io/npm/v/thinkjs.svg?style=flat-square)](http://badge.fury.io/js/thinkjs)
 [![travis-ci](https://img.shields.io/travis/75team/thinkjs.svg?style=flat-square)](https://travis-ci.org/75team/thinkjs)
 [![Coverage Status](https://img.shields.io/coveralls/75team/thinkjs.svg?style=flat-square)](https://coveralls.io/github/75team/thinkjs)
-[![Dependency Status](https://david-dm.org/75team/thinkjs.svg)](https://david-dm.org/75team/thinkjs)
+[![Dependency Status](https://img.shields.io/david/thinkjs/thinkjs.svg?style=flat-square)](https://david-dm.org/75team/thinkjs)
 
 
 ## 介绍
