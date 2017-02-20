@@ -102,27 +102,22 @@ export default class {
   compileByTypeScript(content, file){
     let ts = require('typescript');
     let startTime = Date.now();
-    let diagnostics = [];
     let output = ts.transpileModule(content, {
       compilerOptions: {
         module: ts.ModuleKind.CommonJS,
-        target: ts.ScriptTarget.ES6,
+        target: 'es6',
         experimentalDecorators: true,
         emitDecoratorMetadata: true,
         allowSyntheticDefaultImports: true,
         sourceMap: true
       },
       fileName: file,
-      reportDiagnostics: !!diagnostics
+      reportDiagnostics: true
     });
-    ts.addRange(diagnostics, output.diagnostics);
-
     //has error
-    if(diagnostics.length){
-      let firstDiagnostics = diagnostics[0];
-      let {line, character} = firstDiagnostics.file.getLineAndCharacterOfPosition(firstDiagnostics.start);
-      let message = ts.flattenDiagnosticMessageText(firstDiagnostics.messageText, '\n');
-      throw new Error(`${message} on Line ${line + 1}, Character ${character}`);
+    if(output.diagnostics && output.diagnostics.length){
+      let firstDiagnostics = output.diagnostics[0];
+      throw new Error(`${firstDiagnostics.messageText}`);
     }
     if(this.options.log){
       think.log(`Compile file ${file}`, 'TypeScript', startTime);
