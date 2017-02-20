@@ -8,7 +8,7 @@
 
 Using npm:
 
-```js
+```sh
 npm install think-helper
 ```
 
