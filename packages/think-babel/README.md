@@ -7,7 +7,7 @@
 
 ## Syntax
 
-```
+```js
 import thinkBabel from 'think-babel';
 thinkBabel({
   srcPath,
