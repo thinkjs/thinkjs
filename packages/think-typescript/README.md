@@ -25,8 +25,8 @@ thinkTypescript({
 - `srcPath`           {String} the file source path.
 - `outPath`           {String} the directory for output file.
 - `file`              {String} the file path in the 'srcPath'.
-- `typescriptOptions` {Object} the typescript options,default `{fileName: file, reportDiagnostics: true, compilerOptions: {module: 'commonjs', target: 'es5', sourceMap: true}}`.
-- [`ext`]             {String} the new file extension,default `.js`.
+- `[typescriptOptions]` {Object} the typescript options,default `{fileName: file, reportDiagnostics: true, compilerOptions: {module: 'commonjs', target: 'es5', sourceMap: true}}`.
+- `[ext]`             {String} the new file extension,default `.js`.
 
 ## Usage
 
