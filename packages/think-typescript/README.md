@@ -25,8 +25,8 @@ thinkTypescript({
 - `srcPath`           {String} the file source path.
 - `outPath`           {String} the directory for output file.
 - `file`              {String} the file path in the 'srcPath'.
-- `typescriptOptions` {Object} the typescript options.
-- [`ext`]             {String} the new file extension,default `.js`
+- `typescriptOptions` {Object} the typescript options,default `{fileName: file, reportDiagnostics: true, compilerOptions: {module: 'commonjs', target: 'es5', sourceMap: true}}`.
+- [`ext`]             {String} the new file extension,default `.js`.
 
 ## Usage
 
@@ -36,19 +36,9 @@ Compile typescript file:
 import thinkTypescript from 'think-typescript';
 
 thinkTypescript({
-    srcPath: './test/src/a',
-    outPath: './test/out',
-    file: 'b/test.ts',
-    typescriptOptions: {
-      compilerOptions:{
-        module: 'commonjs',
-        target: 'es5',
-        experimentalDecorators: true,
-        emitDecoratorMetadata: true,
-        allowSyntheticDefaultImports: true,
-        sourceMap: true
-      }
-    }
-  });
+  srcPath: './test/src/a',
+  outPath: './test/out',
+  file: 'b/test.ts'
+});
 
 ```
