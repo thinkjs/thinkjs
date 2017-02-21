@@ -18,8 +18,10 @@ function thinkBabel(options){
   // babel options
   babelOptions = Object.assign({
     filename: file,
-    sourceFileName: relativePath
-  }, babelOptions);
+    sourceFileName: relativePath,
+    presets: ['es2015'],
+    sourceMaps: true
+  },babelOptions);
 
   // babel transform
   let data;
