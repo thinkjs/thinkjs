@@ -2,6 +2,7 @@ const helper = require('think-helper');
 const fs = require('fs');
 const path = require('path');
 const ts = require('typescript');
+const lineColumn = require('line-column');
 
 function thinkTypescript(options) {
   let {srcPath, outPath, file, typescriptOptions, ext = '.js'} = options;
@@ -11,16 +12,27 @@ function thinkTypescript(options) {
 
   // typescript compile options
   typescriptOptions = Object.assign({
-    fileName: file
+    fileName: file,
+    reportDiagnostics: true,
+    compilerOptions: {
+      module: 'commonjs',
+      target: 'es5',
+      sourceMap: true
+    }
   }, typescriptOptions);
 
   let content = fs.readFileSync(filePath, 'utf8');
   let data = ts.transpileModule(content, typescriptOptions);
 
-  //has error
+  // error handle
   if(data.diagnostics && data.diagnostics.length){
     let firstDiagnostics = data.diagnostics[0];
-    return new Error(`${firstDiagnostics.messageText} File: ${firstDiagnostics.file} Start: ${firstDiagnostics.start}`);
+    if(firstDiagnostics.file && firstDiagnostics.start) {
+      let errPos = lineColumn(firstDiagnostics.file.text, firstDiagnostics.start);
+      return new Error(`${firstDiagnostics.messageText} File: ${path.join(srcPath, firstDiagnostics.file.path)} Line: ${errPos.line} Column: ${errPos.col}`);
+    }else {
+      return new Error(`${firstDiagnostics.messageText}`);
+    }
   }
 
   // write js file
