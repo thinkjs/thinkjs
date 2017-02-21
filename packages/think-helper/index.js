@@ -375,7 +375,7 @@ exports.getdirFiles = getdirFiles;
 /**
  * remove dir aync
  * @param  {String} p       [path]
- * @param  {Bollean} reserve []
+ * @param  {Boolean} reserve []
  * @return {Promise}         []
  */
 function rmdir(p, reserve){

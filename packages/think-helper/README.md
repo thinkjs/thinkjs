@@ -21,3 +21,31 @@ import helper from 'think-helper';
 let md5 = helper.md5('');
 
 ```
+
+Apis:
+
+api | param | Description
+---|---|---
+`isIP` |  | check IP
+`isIPv4`   |  | check IPv4
+`isIPv6`   |  | check IPv6
+`isMaster`   | |cluster.isMaster 
+`promisify`   |  `function`{function}<br>`receiver`{object}<br>`return` Promise  | make callback function to promise
+| `extend`   | `target`{object\|array}<br> `args`{Object\|Array}<br>`return`{Object} | extend object
+| `camelCase`   | `str`{string}<br>`return`{String} | make indexAction to index_action
+| `isNumberString`   | `str`{string} <br> `return`{Boolean} | check object is number string
+| `isTrueEmpty`   | `obj`{mixed} <br> `return`{Boolean}| truely
+| `isEmpty`   | `obj`{object}  <br> `return`{Boolean}| check object is mepty
+| `defer`   | `return` defer | get deferred object
+| `md5`   | `str`{string} <br> `return`{string} | get content md5
+| `timeout`   | `time`{Number} <br> `return` Promise | get timeout Promise
+| `escapeHtml`   | `str`{String}<br> `return` {string} | escape html
+| `datetime`   | `date`{Date\|String}<br>`format`{String}<br>`return`{String} | get datetime
+| `uuid`   | `version`{String} v1 or v4 | generate uuid
+| `isExist`   | `dir`{String} | check path is exist
+| `isFile`   | `filePath`{String} | check filepath is file
+| `isDirectory`   | `filePath`{String}  | check path is directory
+| `chmod`   | `path`{String}<br> `mode`{String}  | change path mode
+| `mkdir`   | `dir`{String}<br> `mode`{String} | make dir
+| `getdirFiles`   | `dir`{String}<br> `prefix`{String} | get files in path
+| `rmdir`   | `path`{String}<br> `reserve`{Boolean}<br>`return`{Promise} | remove dir aync

@@ -3,8 +3,8 @@
   "description": "Helper for ThinkJS",
   "version": "1.0.0",
   "author": {
-    "name": "welefen",
-    "email": "welefen@gmail.com"
+    "name": "songguangyu",
+    "email": "522963130@qq.com"
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
@@ -17,8 +17,8 @@
   },
   "contributors": [
     {
-      "name": "welefen",
-      "email": "welefen@gmail.com"
+      "name": "songguangyu",
+      "email": "522963130@qq.com"
     }
   ],
   "main": "index.js",
