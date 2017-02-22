@@ -112,6 +112,7 @@ function loader(appPath, isMultiModule){
      *    }
      * }
      */
+    debug('load module router');
     for(let name in commonRouter){
       assert(commonRouter[name].match, `common/config/router: ${name}.match must be set`);
       let moduleRouterFile = path.join(appPath, name, 'config/router.js');

@@ -2,7 +2,12 @@ const helper = require('think-helper');
 const path = require('path');
 const config = require('./loader/config.js');
 const bootstrap = require('./loader/bootstrap.js');
+const view = require('./loader/view.js');
+const middleware = require('./loader/middleware.js');
+const router = require('./loader/router.js');
 const common = require('./loader/common.js');
+
+
 /**
  * Loader
  */
@@ -10,8 +15,9 @@ class Loader {
   /**
    * constructor
    */
-  constructor(appPath){
+  constructor(appPath, thinkPath){
     this.appPath = appPath;
+    this.thinkPath = thinkPath;
     this.isMultiModule = false;
     let dir = path.join(appPath, 'common/config');
     if(helper.isDirectory(dir)){
@@ -21,8 +27,8 @@ class Loader {
   /**
    * load config
    */
-  loadConfig(){
-    return config(this.appPath, this.isMultiModule);
+  loadConfig(env){
+    return config(this.appPath, this.isMultiModule, this.thinkPath, env);
   }
   /**
    * load bootstrap
@@ -53,6 +59,24 @@ class Loader {
    */
   loadService(){
     return common(this.appPath, this.isMultiModule, 'service');
+  }
+  /**
+   * load view
+   */
+  loadView(viewPath){
+    return view(viewPath);
+  }
+  /**
+   * load middleware
+   */
+  loadMiddleware(){
+    return middleware(this.appPath, this.isMultiModule, this.thinkPath);
+  }
+  /**
+   * load router
+   */
+  loadRouter(){
+    return router(this.appPath, this.isMultiModule);
   }
   /**
    * load use defined file

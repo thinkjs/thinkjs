@@ -1,7 +1,13 @@
 const helper = require('think-helper');
+const path = require('path');
 
-function Loader(appPath, isMultiModule){
-  
+function loader(appPath, isMultiModule, thinkPath, env){
+  const thinkConfig = require(path.join(thinkPath, 'lib/config/config.js'));
+  if(isMultiModule){
+    
+  }else{
+    
+  }
 }
 
-module.exports = Loader;
+module.exports = loader;
