@@ -7,7 +7,7 @@ const path = require('path');
 function loadBoostrap(appPath, isMultiModule){
   let bootstrapPath = '';
   if(isMultiModule){
-    bootstrapPath = path.join(appPath, 'common', 'bootstrap');
+    bootstrapPath = path.join(appPath, 'common/bootstrap');
   }else{
     bootstrapPath = path.join(appPath, 'bootstrap');
   }
