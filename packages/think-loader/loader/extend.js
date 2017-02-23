@@ -22,14 +22,33 @@ function loader(appPath, isMultiModule, thinkPath){
     extend = extend.concat(require(filepath));
   }
   let ret = {};
+  function assign(type, ext){
+    if(!ret[type]){
+      ret[type] = {};
+    }
+    ret[type] = Object.assign(ret[type], ext);
+  }
+  //system extend
+  allowExtends.forEach(type => {
+    let filepath = path.join(thinkPath, `lib/extend/${type}.js`);
+    if(!helper.isFile(filepath)){
+      return;
+    }
+    assign(type, require(filepath));
+  });
   extend.forEach(item => {
     for(let type in item){
       assert(allowExtends.indexOf(type) > -1, `extend type=${type} not allowed, allow types: ${allowExtends.join(', ')}`);
-      if(!ret[type]){
-        ret[type] = {};
-      }
-      ret[type] = Object.assign(ret[type], item[type]);
+      assign(type, item[type]);
     }
+  });
+  //application extend
+  allowExtends.forEach(type => {
+    let filepath = path.join(appPath, isMultiModule ? `common/extend/${type}.js` : `extend/${type}.js`);
+    if(!helper.isFile(filepath)){
+      return;
+    }
+    assign(type, require(filepath));
   });
   return ret;
 }
