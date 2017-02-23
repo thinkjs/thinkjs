@@ -14,10 +14,10 @@ const allowExtends = ['think', 'context', 'request', 'response', 'controller', '
  *  modelExtend,
  * ]
  */
-function loader(appPath, isMultiModule, thinkPath){
+function loader(appPath, thinkPath, modules){
   const thinkFilePath = path.join(thinkPath, 'lib/config/extend.js');
   let extend = require(thinkFilePath);
-  const filepath = path.join(appPath, isMultiModule ? 'common/config/extend.js' : 'config/extend.js');
+  const filepath = path.join(appPath, modules.length ? 'common/config/extend.js' : 'config/extend.js');
   if(helper.isFile(filepath)){
     extend = extend.concat(require(filepath));
   }
@@ -44,7 +44,7 @@ function loader(appPath, isMultiModule, thinkPath){
   });
   //application extend
   allowExtends.forEach(type => {
-    let filepath = path.join(appPath, isMultiModule ? `common/extend/${type}.js` : `extend/${type}.js`);
+    let filepath = path.join(appPath, modules.length ? `common/extend/${type}.js` : `extend/${type}.js`);
     if(!helper.isFile(filepath)){
       return;
     }

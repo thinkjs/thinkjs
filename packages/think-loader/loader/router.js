@@ -89,8 +89,8 @@ const formatRouter = router => {
  * route loader
  * @return {Promise}
  */
-function loader(appPath, isMultiModule){
-  if(isMultiModule){
+function loader(appPath, modules){
+  if(modules.length){
     let commonRouterFile = path.join(appPath, 'common/config/router.js');
     if(!helper.isFile(commonRouterFile)){
       return [];

@@ -75,15 +75,15 @@ function loadMiddlewareFiles(appPath, isMultiModule, thinkPath){
   return middlewares;
 }
 
-function loader(appPath, isMultiModule, thinkPath){
+function loader(appPath, thinkPath, modules){
   let filepath = '';
-  if(isMultiModule){
+  if(modules.length){
     filepath = path.join(appPath, 'common/config/middleware.js');
   }else{
     filepath = path.join(appPath, 'config/middleware.js');
   }
   const middlewares = require(filepath);
-  return parseMiddleware(middlewares, loadMiddlewareFiles(appPath, isMultiModule, thinkPath));
+  return parseMiddleware(middlewares, loadMiddlewareFiles(appPath, modules.length, thinkPath));
 }
 
 module.exports = loader;

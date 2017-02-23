@@ -4,9 +4,9 @@ const path = require('path');
 /**
  * load bootstrap files
  */
-function loadBoostrap(appPath, isMultiModule){
+function loadBoostrap(appPath, modules){
   let bootstrapPath = '';
-  if(isMultiModule){
+  if(modules.length){
     bootstrapPath = path.join(appPath, 'common/bootstrap');
   }else{
     bootstrapPath = path.join(appPath, 'bootstrap');

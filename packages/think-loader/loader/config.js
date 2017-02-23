@@ -1,8 +1,6 @@
 const helper = require('think-helper');
 const path = require('path');
 const assert = require('assert');
-const fs = require('fs');
-
 /**
  * load config
  * src/config/config.js
@@ -107,12 +105,11 @@ const formatAdapter = (config, adapterPath) => {
  * src/config/adapter.js
  * src/config/adapter.[env].js
  */
-module.exports = function loader(appPath, isMultiModule, thinkPath, env){
+module.exports = function loader(appPath, thinkPath, env, modules){
   const thinkConfig = require(path.join(thinkPath, 'config/config.js'));
-  if(isMultiModule){
-     let dirs = fs.readdirSync(appPath);
+  if(modules.length){
      let config = {};
-     dirs.forEach(dir => {
+     modules.forEach(dir => {
        if(dir === 'common'){
          return;
        }

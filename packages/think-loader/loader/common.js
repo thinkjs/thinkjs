@@ -1,6 +1,5 @@
 const helper = require('think-helper');
 const path = require('path');
-const fs = require('fs');
 
 function loadFiles(dir){
   let files = helper.getdirFiles(dir).filter(file => {
@@ -14,17 +13,13 @@ function loadFiles(dir){
   return cache;
 }
 
-function loader(appPath, isMultiModule, type){
-  if(isMultiModule){
-    let dirs = fs.readdirSync(appPath);
+function loader(appPath, type, modules){
+  if(modules.length){
     let cache = {};
-    dirs.forEach(item => {
-      let stat = fs.statSync(path.join(appPath, item));
-      if(stat.isDirectory()){
-        let itemCache = loadFiles(path.join(appPath, item, type));
-        for(let name in itemCache){
-          cache[path.join(item, name)] = itemCache[name];
-        }
+    modules.forEach(item => {
+      let itemCache = loadFiles(path.join(appPath, item, type));
+      for(let name in itemCache){
+        cache[path.join(item, name)] = itemCache[name];
       }
     });
     return cache;
