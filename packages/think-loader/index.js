@@ -83,7 +83,7 @@ class Loader {
    * load extend
    */
   loadExtend(){
-    return extend(this.appPath);
+    return extend(this.appPath, this.isMultiModule, this.thinkPath);
   }
   /**
    * load use defined file
