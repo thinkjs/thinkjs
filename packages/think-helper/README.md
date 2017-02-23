@@ -30,21 +30,21 @@ api | param | Description
 `isIPv4`   |  | check IPv4
 `isIPv6`   |  | check IPv6
 `isMaster`   | |cluster.isMaster 
-`isArray`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Array
-`isBoolean`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Boolean
-`isNull`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an null
-`isNullOrUndefined`   | `arg`{mix}<br>`return`{Promise} | check if a variable is null or undefined
-`isNumber`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Number
-`isString`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an String
-`isSymbol`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Symbol
-`isUndefined`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an undefined
-`isRegExp`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an RegExp
-`isObject`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Object
-`isDate`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Date
-`isError`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Error
-`isFunction`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Function
-`isPrimitive`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Primitive
-`isBuffer`   | `arg`{mix}<br>`return`{Promise} | check if a variable is an Buffer
+`isArray`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Array
+`isBoolean`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Boolean
+`isNull`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an null
+`isNullOrUndefined`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is null or undefined
+`isNumber`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Number
+`isString`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an String
+`isSymbol`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Symbol
+`isUndefined`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an undefined
+`isRegExp`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an RegExp
+`isObject`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Object
+`isDate`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Date
+`isError`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Error
+`isFunction`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Function
+`isPrimitive`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Primitive
+`isBuffer`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Buffer
 `promisify`   |  `function`{function}<br>`receiver`{object}<br>`return` Promise  | make callback function to promise
 `extend`   | `target`{object\|array}<br> `args`{Object\|Array}<br>`return`{Object} | extend object
 `camelCase`   | `str`{string}<br>`return`{String} | make indexAction to index_action
