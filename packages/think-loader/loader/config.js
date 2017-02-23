@@ -58,8 +58,10 @@ const formatAdapter = config => {
         if(type === 'type'){
           continue;
         }
-        //merge common field to item
-        config[name][type] = helper.extend({}, common, config[name][type]);
+        if(helper.isObject(config[name][type])){
+          //merge common field to item
+          config[name][type] = helper.extend({}, common, config[name][type]);
+        }
       }
     }
   }
