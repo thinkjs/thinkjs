@@ -94,6 +94,7 @@ const formatAdapter = (config, adapterPath) => {
         assert(name in appAdapters && appAdapters[name][item.handle], `can not find ${name}.${type}.handle`);
         item.handle = appAdapters[type][item.handle];
       }
+      config[name][type] = item;
     }
   }
   return config;
