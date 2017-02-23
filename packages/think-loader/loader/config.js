@@ -71,7 +71,8 @@ const loadAdapterFiles = adapterPath => {
 const formatAdapter = (config, adapterPath) => {
   let appAdapters = loadAdapterFiles(adapterPath);
   for(let name in config){
-    assert(config[name].type, `adapter config must have type field, name is ${name}`);
+    assert(helper.isObject(config[name]), `adapter.${name} must be an object`);
+    assert(config[name].type, `adapter.${name} config must have type field`);
     if(!config[name].common){
       continue;
     }
