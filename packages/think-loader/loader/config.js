@@ -36,15 +36,15 @@ const loadAdapter = (configPath, env) => {
 
 /**
  * {
- *    db: {
- *        type: 'xxx',
- *        common: {
+ *   db: {
+ *      type: 'xxx',
+ *      common: {
  *          
- *        },
- *        xxx: {
+ *      },
+ *      xxx: {
  *          
- *        }
- *    }
+ *      }
+ *   }
  * }
  * format adapter config, merge common field to item
  */

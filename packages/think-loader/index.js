@@ -5,6 +5,7 @@ const bootstrap = require('./loader/bootstrap.js');
 const view = require('./loader/view.js');
 const middleware = require('./loader/middleware.js');
 const router = require('./loader/router.js');
+const extend = require('./loader/extend.js');
 const common = require('./loader/common.js');
 
 
@@ -77,6 +78,12 @@ class Loader {
    */
   loadRouter(){
     return router(this.appPath, this.isMultiModule);
+  }
+  /**
+   * load extend
+   */
+  loadExtend(){
+    return extend(this.appPath);
   }
   /**
    * load use defined file
