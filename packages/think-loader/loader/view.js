@@ -4,4 +4,4 @@ function loader(viewPath){
   return helper.getdirFiles(viewPath);
 }
 
-module.exports = loader;
+module.exports = {load: loader};

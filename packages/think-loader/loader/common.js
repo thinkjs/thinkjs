@@ -34,4 +34,4 @@ function loader(appPath, isMultiModule, type){
   }
 }
 
-module.exports = loader;
+module.exports = {load: loader, loadFiles: loadFiles};

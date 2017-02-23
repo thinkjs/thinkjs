@@ -15,9 +15,9 @@ function loadBoostrap(appPath, isMultiModule){
   let files = helper.getdirFiles(bootstrapPath).filter(file => {
     return /\.js$/.test(file);
   });
-  files.forEach(file => {
-    require(path.join(bootstrapPath, file));
+  return files.map(file => {
+    return require(path.join(bootstrapPath, file));
   });
 }
 
-module.exports = loadBoostrap;
+module.exports = {load: loadBoostrap};

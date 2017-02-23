@@ -55,7 +55,7 @@ methods.forEach(method => {
  * [
  *  [/\w/, 'home/index', 'get']
  * ]
- * 
+ *
  *  => [{
  *  match: /\w/,
  *  path: 'home/index',
@@ -134,4 +134,4 @@ function loader(appPath, isMultiModule){
   }
 }
 
-module.exports = loader;
+module.exports = {load: loader};

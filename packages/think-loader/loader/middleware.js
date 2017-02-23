@@ -5,7 +5,7 @@ const assert = require('assert');
 /**
  * middleware rules(appPath/middleware.js):
  * module.exports = [
- *  'clean_pathname', 
+ *  'clean_pathname',
  * {
  *    handle: denyIp,
  *    options: {},
@@ -86,4 +86,4 @@ function loader(appPath, isMultiModule, thinkPath){
   return parseMiddleware(middlewares, loadMiddlewareFiles(appPath, isMultiModule, thinkPath));
 }
 
-module.exports = loader;
+module.exports = {load: loader};

@@ -39,10 +39,10 @@ const loadAdapter = (configPath, env) => {
  *    db: {
  *        type: 'xxx',
  *        common: {
- *          
+ *
  *        },
  *        xxx: {
- *          
+ *
  *        }
  *    }
  * }
@@ -73,29 +73,31 @@ const formatAdapter = config => {
  * src/config/adapter.js
  * src/config/adapter.[env].js
  */
-module.exports = function loader(appPath, isMultiModule, thinkPath, env){
-  const thinkConfig = require(path.join(thinkPath, 'config/config.js'));
-  if(isMultiModule){
-     let dirs = fs.readdirSync(appPath);
-     let config = {};
-     dirs.forEach(dir => {
-       if(dir === 'common'){
-         return;
-       }
-       //merge common & module config
-       let paths = [
-         path.join(appPath, 'common'),
-         path.join(appPath, dir)
-       ];
-       let config = loadConfig(paths, env);
-       let adapter = loadAdapter(paths, env);
-       config[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapter));
-     });
-     return config;
-  }else{
-    let configPath = path.join(appPath, 'config');
-    let config = loadConfig([configPath], env);
-    let adapter = loadAdapter([configPath], env);
-    return helper.extend({}, thinkConfig, config, formatAdapter(adapter));
+module.exports = {
+  load(appPath, isMultiModule, thinkPath, env){
+    const thinkConfig = require(path.join(thinkPath, 'config/config.js'));
+    if(isMultiModule){
+       let dirs = fs.readdirSync(appPath);
+       let config = {};
+       dirs.forEach(dir => {
+         if(dir === 'common'){
+           return;
+         }
+         //merge common & module config
+         let paths = [
+           path.join(appPath, 'common'),
+           path.join(appPath, dir)
+         ];
+         let config = loadConfig(paths, env);
+         let adapter = loadAdapter(paths, env);
+         config[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapter));
+       });
+       return config;
+    }else{
+      let configPath = path.join(appPath, 'config');
+      let config = loadConfig([configPath], env);
+      let adapter = loadAdapter([configPath], env);
+      return helper.extend({}, thinkConfig, config, formatAdapter(adapter));
+    }
   }
 };

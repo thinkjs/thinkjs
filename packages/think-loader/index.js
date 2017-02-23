@@ -28,61 +28,61 @@ class Loader {
    * load config
    */
   loadConfig(env){
-    return config(this.appPath, this.isMultiModule, this.thinkPath, env);
+    return config.load(this.appPath, this.isMultiModule, this.thinkPath, env);
   }
   /**
    * load bootstrap
    */
   loadBootstrap(){
-    return bootstrap(this.appPath, this.isMultiModule);
+    return bootstrap.load(this.appPath, this.isMultiModule);
   }
   /**
    * load controller
    */
   loadController(){
-    return common(this.appPath, this.isMultiModule, 'controller');
+    return common.load(this.appPath, this.isMultiModule, 'controller');
   }
   /**
    * load logic
    */
   loadLogic(){
-    return common(this.appPath, this.isMultiModule, 'logic');
+    return common.load(this.appPath, this.isMultiModule, 'logic');
   }
   /**
    * load model
    */
   loadModel(){
-    return common(this.appPath, this.isMultiModule, 'model');
+    return common.load(this.appPath, this.isMultiModule, 'model');
   }
   /**
    * load service
    */
   loadService(){
-    return common(this.appPath, this.isMultiModule, 'service');
+    return common.load(this.appPath, this.isMultiModule, 'service');
   }
   /**
    * load view
    */
   loadView(viewPath){
-    return view(viewPath);
+    return view.load(viewPath);
   }
   /**
    * load middleware
    */
   loadMiddleware(){
-    return middleware(this.appPath, this.isMultiModule, this.thinkPath);
+    return middleware.load(this.appPath, this.isMultiModule, this.thinkPath);
   }
   /**
    * load router
    */
   loadRouter(){
-    return router(this.appPath, this.isMultiModule);
+    return router.load(this.appPath, this.isMultiModule);
   }
   /**
    * load use defined file
    */
   loadCommon(name){
-    return common(this.appPath, this.isMultiModule, name);
+    return common.load(this.appPath, this.isMultiModule, name);
   }
 }
 
