@@ -1,7 +1,7 @@
 # think-await
-[![Build Status](https://travis-ci.org/thinkjs/think-await.svg?branch=master)](https://travis-ci.org/thinkjs/think-await)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-await/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-await?branch=master)
-[![npm](https://img.shields.io/badge/npm-1.0.2-blue.svg)](https://www.npmjs.com/package/think-await)
+[![Build Status](https://img.shields.io/travis/thinkjs/think-await/master.svg?style=flat-square)](https://travis-ci.org/thinkjs/think-await)
+[![Coverage Status](https://img.shields.io/coveralls/thinkjs/think-await/master.svg?style=flat-square)](https://coveralls.io/github/thinkjs/think-await?branch=master)
+[![npm](https://img.shields.io/npm/v/think-await.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/think-await)
 
 `think-await` runs a time-consuming operation. The operation may be called several times concurrently, but within `think-await`, it will only be run once before it's finished.
 
