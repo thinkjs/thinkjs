@@ -155,7 +155,7 @@ module.exports = (options, cb) => {
         cb(item);
       });
     }
-    setTimeout(detectFiles, options.interval || 200);
+    setTimeout(detectFiles, options.interval || 100);
   };
 
   detectFiles();
