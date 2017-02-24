@@ -1,0 +1,24 @@
+{
+  "name": "think-logger",
+  "version": "0.0.1",
+  "description": "logger for ThinkJS 3.x",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-logger.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "logger",
+    "log4js"
+  ],
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-logger/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-logger#readme"
+}
