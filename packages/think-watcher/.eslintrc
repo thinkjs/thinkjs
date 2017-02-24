@@ -2,7 +2,8 @@
   "parser": "babel-eslint",
   "env": {
     "node": true,
-    "mocha": true
+    "mocha": true,
+    "es6": true // es6 envoriment
   },
   "rules": {
     "strict": [0],
@@ -20,8 +21,13 @@
     "no-process-exit": 0,
     "no-empty": 0,
     "yoda": 0,
-    "no-cond-assign": 0,
+    "no-const-assign": "warn",  // more rule
     "no-new-func": 0,
-    "no-labels": 0
+    "no-labels": 0,
+    "no-this-before-super": "warn", // more rule
+    "no-undef": "warn",  // more rule
+    "no-unreachable": "warn", // more rule
+    "no-unused-vars": "warn", // more rule 
+    "valid-typeof": "warn" // more rule
   }
 }
