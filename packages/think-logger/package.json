@@ -4,7 +4,9 @@
   "description": "logger for ThinkJS 3.x",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "babel src/ --out-dir lib/ --presets=think-node",
+    "test": "npm run eslint && npm run test-cov",
+    "eslint": "eslint ./"
   },
   "repository": {
     "type": "git",
@@ -23,5 +25,13 @@
   "homepage": "https://github.com/thinkjs/think-logger#readme",
   "dependencies": {
     "log4js": "^1.1.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.23.1",
+    "babel-eslint": "^7.1.1",
+    "babel-preset-think-node": "0.0.8",
+    "eslint": "^3.16.1",
+    "nyc": "^10.1.2"
   }
 }
