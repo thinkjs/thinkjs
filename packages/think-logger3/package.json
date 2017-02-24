@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/thinkjs/think-logger/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-logger#readme"
+  "homepage": "https://github.com/thinkjs/think-logger#readme",
+  "dependencies": {
+    "log4js": "^1.1.0"
+  }
 }
