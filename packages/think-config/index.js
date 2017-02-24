@@ -21,12 +21,14 @@ class Config {
     }
     config = config || this.config;
     if(name.indexOf('.') === -1){
-      return config[name] || '';
+      return config[name];
     }
-    name.split('.').some(item => {
+    name = name.split('.');
+    let length = name.length;
+    name.some((item, index) => {
       config = config[item];
-      if(!helper.isObject(config)){
-        config = '';
+      if(index !== length - 1 && !helper.isObject(config)){
+        config = undefined;
         return true;
       }
     });
