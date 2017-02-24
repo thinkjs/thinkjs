@@ -1,0 +1,15 @@
+{
+  "name1": {
+    "required": true,
+    "int": true,
+    "default": 0,
+    "value": "123"
+  },
+  "name2": {
+    "required": true,
+    "url": true,
+    "default": 0,
+    "value": "http://www.baidu.com"
+  }
+}
+
