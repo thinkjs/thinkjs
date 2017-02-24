@@ -113,6 +113,9 @@ function loader(appPath, thinkPath, modules){
   }else{
     filepath = path.join(appPath, 'config/middleware.js');
   }
+  if(!helper.isFile(filepath)){
+    return [];
+  }
   const middlewares = require(filepath);
   return parseMiddleware(middlewares, loadMiddlewareFiles(appPath, modules.length, thinkPath));
 }

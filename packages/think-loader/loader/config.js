@@ -106,7 +106,7 @@ const formatAdapter = (config, adapterPath) => {
  * src/config/adapter.[env].js
  */
 module.exports = function loader(appPath, thinkPath, env, modules){
-  const thinkConfig = require(path.join(thinkPath, 'config/config.js'));
+  const thinkConfig = require(path.join(thinkPath, 'lib/config/config.js'));
   if(modules.length){
      let config = {};
      modules.forEach(dir => {
