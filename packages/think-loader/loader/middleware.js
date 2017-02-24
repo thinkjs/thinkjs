@@ -3,6 +3,21 @@ const helper = require('think-helper');
 const assert = require('assert');
 
 /**
+ * check url matched
+ */
+function checkMatched(match, ctx){
+  if(helper.isString(match)){
+    return ctx.path.indexOf(match) === 0;
+  }
+  if(helper.isRegExp(match)){
+    return match.test(ctx.path);
+  }
+  if(helper.isFunction(match)){
+    return match(ctx);
+  }
+  throw new Error('match must be a String/RegExp/Function');
+}
+/**
  * middleware rules(appPath/middleware.js):
  * module.exports = [
  *  'clean_pathname', 
@@ -41,8 +56,24 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
     }
     assert(helper.isFunction(item.handle), 'handle must be a function');
     item.handle = item.handle(item.options || {});
+    // handle also be a function
+    assert(helper.isFunction(item.handle), 'handle must be a function');
     return item;
-  });
+  }).map(item => {
+    if(!item.match && !item.ignore){
+      return item.handle;
+    }
+    // has match or ignore
+    return (ctx, next) => {
+      if(item.match && !checkMatched(item.match.ctx)){
+        return next();
+      }
+      if(item.ignore && checkMatched(item.ignore, ctx)){
+        return next();
+      }
+      return item.handle(ctx, next);
+    }
+  })
 }
 
 /**
