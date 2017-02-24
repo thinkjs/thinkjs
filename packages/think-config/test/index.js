@@ -1,5 +1,5 @@
 import test from 'ava';
-import Config from '../index.js';
+import {Config} from '../index.js';
 
 
 test('config init', t => {

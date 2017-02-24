@@ -59,4 +59,26 @@ class Config {
   }
 }
 
-module.exports = Config;
+function getConfigFn(configs, isMultiModule){
+  let configInstances = {};
+  if(isMultiModule){
+    for(let name in configs){
+      configInstances[name] = new Config(configs[name]);
+    }
+  }else{
+    configInstances.common = new Config(configs);
+  }
+  return (name, value, m) => {
+    let conf = configInstances.common;
+    if(isMultiModule){
+      conf = configInstances[m];
+    }
+    if(value === undefined){
+      return conf.get(name);
+    }
+    conf.set(name, value);
+  }
+}
+
+exports.Config = Config;
+exports.getConfigFn = getConfigFn;
