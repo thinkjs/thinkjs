@@ -110,14 +110,11 @@ module.exports = function loader(appPath, thinkPath, env, modules){
   if(modules.length){
      let config = {};
      modules.forEach(dir => {
-       if(dir === 'common'){
-         return;
-       }
+       let paths = [path.join(appPath, 'common')];
        //merge common & module config
-       let paths = [
-         path.join(appPath, 'common'),
-         path.join(appPath, dir)
-       ];
+       if(dir !== 'common'){
+         paths.push(path.join(appPath, dir));
+       }
        let config = loadConfig(paths, env);
        let adapter = loadAdapter(paths, env);
        let adapterPath = path.join(appPath, 'common/adapter');
