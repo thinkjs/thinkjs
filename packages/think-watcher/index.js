@@ -16,8 +16,8 @@ let lastMtime = {};
  */
 const defaultOptions = {
   allowExts: ['js', 'es', 'ts'],
-  filter: file => {
-    let seps = file.split(path.sep);
+  filter: (fileInfo, options) => {
+    let seps = fileInfo.file.split(path.sep);
     //filter hidden file
     let flag = seps.some(item => {
       if(item[0] === '.'){
@@ -27,8 +27,8 @@ const defaultOptions = {
     if(flag){
       return false;
     }
-    let ext = path.extname(file).slice(1);
-    if(this.allowExts.indexOf(ext) === -1){
+    let ext = path.extname(fileInfo.file).slice(1);
+    if(options.allowExts.indexOf(ext) === -1){
       return false;
     }
     return true;
@@ -100,12 +100,12 @@ const getChangedFiles = options => {
   options.srcPath.forEach((srcPath, index) => {
     let diffPath = options.diffPath[index];
     let srcFiles = helper.getdirFiles(srcPath).filter(file => {
-      return options.filter({path: srcPath, file});
+      return options.filter({path: srcPath, file}, options);
     });
     let diffFiles = [];
     if(diffPath){
       diffFiles = helper.getdirFiles(diffPath).filter(file => {
-        return options.filter({path: diffPath, file});
+        return options.filter({path: diffPath, file}, options);
       });
       removeDeletedFiles(srcFiles, diffFiles, diffPath);
     }
