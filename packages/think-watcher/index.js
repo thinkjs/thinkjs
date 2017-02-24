@@ -149,7 +149,7 @@ module.exports = (options, cb) => {
 
   const detectFiles = () => {
     let changedFiles = getChangedFiles(options);
-    if(changedFiles){
+    if(changedFiles.length){
       changedFiles.forEach(item => {
         debug(`file changed: path=${item.path}, file=${item.file}`);
         cb(item);
