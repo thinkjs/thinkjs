@@ -36,7 +36,8 @@
   "dependencies": {
     "bluebird": "3.3.5",
     "debug": "^2.6.1",
-    "koa": "^2.0.0-alpha.8"
+    "koa": "^2.0.0-alpha.8",
+    "think-await": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.0",
