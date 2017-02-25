@@ -2,11 +2,12 @@
   "name": "think-logger",
   "version": "0.0.1",
   "description": "logger for ThinkJS 3.x",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "compile": "babel src/ --out-dir lib/ --presets=think-node",
     "test": "npm run eslint && npm run test-cov",
-    "eslint": "eslint ./"
+    "test-cov": "nyc ava test/",
+    "eslint": "eslint ./src"
   },
   "repository": {
     "type": "git",
