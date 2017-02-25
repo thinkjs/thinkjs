@@ -8,25 +8,24 @@ const path = require('path');
  * @param  {Object} options
  * @return {Boolean}
  */
-function thinkBabel(options){
-  let {srcPath, outPath, file, babelOptions, ext = '.js'} = options;
+function babelTranspile(config){
+  let {srcPath, outPath, file, options, ext = '.js'} = config;
   let filePath = path.join(srcPath, file);
   let pPath = path.dirname(path.join(outPath, file));
   let content = fs.readFileSync(filePath, 'utf8');
   let relativePath = path.relative(pPath, path.join(srcPath, file));
 
   // babel options
-  babelOptions = Object.assign({
+  options = Object.assign({
     filename: file,
     sourceFileName: relativePath,
-    presets: ['es2015'],
     sourceMaps: true
-  },babelOptions);
+  }, options);
 
   // babel transform
   let data;
   try {
-    data = babelCore.transform(content, babelOptions);
+    data = babelCore.transform(content, options);
   }catch(e) {
     return e;
   }
@@ -36,13 +35,13 @@ function thinkBabel(options){
   helper.mkdir(path.dirname(outFile));
   let basename = path.basename(file).replace(/\.\w+$/, ext);
   let prefix = '//# sourceMappingURL=';
-  if(data.code.indexOf(prefix) === -1 && babelOptions.sourceMaps){
+  if(data.code.indexOf(prefix) === -1 && options.sourceMaps){
     data.code = data.code + '\n' + prefix + basename + '.map';
   }
   fs.writeFileSync(outFile, data.code);
 
   // write souremap file
-  if(babelOptions.sourceMaps) {
+  if(options.sourceMaps) {
     let sourceMap = data.map;
     sourceMap.file = sourceMap.sources[0];
     fs.writeFileSync(outFile + '.map', JSON.stringify(sourceMap, undefined, 4));
@@ -50,4 +49,4 @@ function thinkBabel(options){
   return true;
 }
 
-module.exports = thinkBabel;
+module.exports = babelTranspile;

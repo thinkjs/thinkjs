@@ -17,11 +17,28 @@ test.serial.cb.beforeEach(t => {
   });
 });
 
-test.serial('thinkBabel-1', t => {
+
+test.serial('thinkBabel-orginal', t => {
   let out = thinkBabel({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es'
+  });
+  let outFile = path.join(__dirname, 'out/b/test.js');
+  let content = fs.readFileSync(outFile, 'utf8');
+  t.true(content.indexOf('map(n => n + 1)') > -1);
+  t.true(out);
+});
+
+
+test.serial('thinkBabel-1', t => {
+  let out = thinkBabel({
+    srcPath: './test/src/a',
+    outPath: './test/out',
+    file: 'b/test.es',
+    options: {
+      presets: ['es2015']
+    }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js'));
   let outMapFile = helper.isFile(path.join(__dirname, 'out/b/test.js.map'));
@@ -33,8 +50,9 @@ test.serial('thinkBabel-2', t => {
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es',
-    babelOptions: {
-      sourceMaps: false
+    options: {
+      sourceMaps: false,
+      presets: ['es2015']
     }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js'));
@@ -48,7 +66,10 @@ test.serial('thinkBabel-3', t => {
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.es',
-    ext: '.js2'
+    ext: '.js2',
+    options: {
+      presets: ['es2015']
+    }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js2'));
   let outMapFile = helper.isFile(path.join(__dirname, 'out/b/test.js2.map'));
@@ -63,7 +84,10 @@ test.serial('thinkBabel-4', t => {
   let out = thinkBabel({
     srcPath: './test/src/a',
     outPath: './test/out',
-    file: 'b/test.es'
+    file: 'b/test.es',
+    options: {
+      presets: ['es2015']
+    }
   });
 
   var originData = fs.readFileSync(testFilePath, 'utf8').replace(wrongSyntax, '');
