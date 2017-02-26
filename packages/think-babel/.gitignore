@@ -45,5 +45,4 @@ test/out
 # Sublime config
 .editorconfig
 
-
 coverage.lcov
