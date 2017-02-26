@@ -1,7 +1,7 @@
 # think-babel
 [![Build Status](https://travis-ci.org/thinkjs/think-babel.svg?branch=master)](https://travis-ci.org/thinkjs/think-babel)
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-babel/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-babel?branch=master)
-[![npm](https://img.shields.io/badge/npm-1.0.2-blue.svg)](https://www.npmjs.com/package/think-babel)
+[![npm](https://img.shields.io/badge/npm-1.0.3-blue.svg)](https://www.npmjs.com/package/think-babel)
 
 `think-babel` transpile ES6+ file to ES5
 
