@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-21 11:59:35
+* @Last Modified time: 2017-02-26 14:08:52
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -18,7 +18,7 @@ test.serial.cb.beforeEach(t => {
   });
 });
 
-test.serial('thinkTypescript-1', t => {
+test.serial('thinkTypescript-original', t => {
   let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
@@ -29,12 +29,12 @@ test.serial('thinkTypescript-1', t => {
   t.true(out && outFile && outMapFile);
 });
 
-test.serial('thinkTypescript-2', t => {
+test.serial('thinkTypescript-1', t => {
   let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',
-    typescriptOptions: {
+    options: {
       compilerOptions:{
         sourceMap: false
       }
@@ -46,7 +46,7 @@ test.serial('thinkTypescript-2', t => {
 });
 
 
-test.serial('thinkTypescript-3', t => {
+test.serial('thinkTypescript-2', t => {
   let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
@@ -59,12 +59,12 @@ test.serial('thinkTypescript-3', t => {
 });
 
 
-test.serial('thinkTypescript-4', t => {
+test.serial('thinkTypescript-3', t => {
   let out = thinkTypescript({
     srcPath: './test/src/a',
     outPath: './test/out',
     file: 'b/test.ts',
-    typescriptOptions: {
+    options: {
       compilerOptions:{
          module: 'wrong config'
       }
@@ -76,7 +76,7 @@ test.serial('thinkTypescript-4', t => {
 
 
 let wrongSyntax = 'var a == (123;';
-test.serial('thinkTypescript-5', t => {
+test.serial('thinkTypescript-4', t => {
   let testFilePath = path.join(__dirname, './src/a/b/test.ts');
   fs.appendFileSync(testFilePath, wrongSyntax);
   let out = thinkTypescript({

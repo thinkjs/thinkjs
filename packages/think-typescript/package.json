@@ -1,18 +1,16 @@
 {
   "name": "think-typescript",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Use TypeScript transpile ts to js",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "report": "nyc ava test/index.js && nyc report --reporter=html"
   },
   "ava": {
     "files": [
       "test/*.js"
-    ],
-    "require": [
-      "babel-core/register"
     ]
   },
   "repository": {
@@ -46,7 +44,6 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "babel-core": "~6.23.1",
     "line-column": "~1.0.2",
     "think-helper": "~1.0.0",
     "typescript": "~2.1.6"

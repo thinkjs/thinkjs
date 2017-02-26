@@ -4,14 +4,14 @@ const path = require('path');
 const ts = require('typescript');
 const lineColumn = require('line-column');
 
-function thinkTypescript(options) {
-  let {srcPath, outPath, file, typescriptOptions, ext = '.js'} = options;
+function typescriptTranspile(config) {
+  let {srcPath, outPath, file, options, ext = '.js'} = config;
   let filePath = path.join(srcPath, file);
   let pPath = path.dirname(path.join(outPath, file));
   let relativePath = path.relative(pPath, path.join(srcPath, file));
 
   // typescript compile options
-  typescriptOptions = Object.assign({
+  options = Object.assign({
     fileName: file,
     reportDiagnostics: true,
     compilerOptions: {
@@ -19,10 +19,10 @@ function thinkTypescript(options) {
       target: 'es5',
       sourceMap: true
     }
-  }, typescriptOptions);
+  }, options);
 
   let content = fs.readFileSync(filePath, 'utf8');
-  let data = ts.transpileModule(content, typescriptOptions);
+  let data = ts.transpileModule(content, options);
 
   // error handle
   if(data.diagnostics && data.diagnostics.length){
@@ -41,7 +41,7 @@ function thinkTypescript(options) {
   fs.writeFileSync(outFile, data.outputText);
 
   // write map file
-  if(typescriptOptions && typescriptOptions.compilerOptions && typescriptOptions.compilerOptions.sourceMap) {
+  if(options && options.compilerOptions && options.compilerOptions.sourceMap) {
     let sourceMap = JSON.parse(data.sourceMapText);
     sourceMap.file = sourceMap.sources[0] = relativePath;
     fs.writeFileSync(outFile + '.map', JSON.stringify(sourceMap, undefined, 4));
@@ -49,4 +49,4 @@ function thinkTypescript(options) {
   return true;
 }
 
-module.exports = thinkTypescript;
+module.exports = typescriptTranspile;
