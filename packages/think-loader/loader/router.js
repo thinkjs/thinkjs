@@ -44,7 +44,8 @@ const Router = class {
  *  @name get|put|post|patch|delete
  */
 methods.forEach(method => {
-  Router.prototype[method] = (match, path) => {
+  // can not use arrow function in here!
+  Router.prototype[method] = function(match, path){
     this.rules.push({match, path, method: method});
     return this;
   }
