@@ -147,6 +147,9 @@ module.exports = (options, cb) => {
   assert(helper.isFunction(cb), 'callback must be a function');
   options = buildOptions(options);
 
+  debug(`srcPath: ${options.srcPath}`);
+  debug(`diffPath: ${options.diffPath}`);
+
   const detectFiles = () => {
     let changedFiles = getChangedFiles(options);
     if(changedFiles.length){
