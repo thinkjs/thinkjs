@@ -5,12 +5,22 @@ function loadFiles(dir){
   let files = helper.getdirFiles(dir).filter(file => {
     return /\.js$/.test(file);
   });
-  let cache = {};
-  files.forEach(file => {
-    let name = file.replace(/\.js$/, '');
-    cache[name] = require(path.join(dir, file));
+  let cache = files.map(file => {
+    let name = file.replace(/\\/g, '/').replace(/\.js$/, '');
+    return {name, export: require(path.join(dir, file))}
+  }).sort((a, b) => {
+    let al = a.name.split('/').length;
+    let bl = b.name.split('/').length;
+    if(al === bl){
+      return a.name < b.name ? 1 : -1;
+    }
+    return al < bl ? 1 : -1;
   });
-  return cache;
+  let ret = {};
+  for(let name in cache){
+    ret[cache[name].name] = cache[name].export;
+  }
+  return ret;
 }
 
 function loader(appPath, type, modules){
