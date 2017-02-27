@@ -1,6 +1,8 @@
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
+const interopRequire = require('../util.js').interopRequire;
+
 
 const allowExtends = ['think', 'context', 'request', 'response', 'controller', 'logic'];
 /**
@@ -16,10 +18,10 @@ const allowExtends = ['think', 'context', 'request', 'response', 'controller', '
  */
 function loader(appPath, thinkPath, modules){
   const thinkFilePath = path.join(thinkPath, 'lib/config/extend.js');
-  let extend = require(thinkFilePath);
+  let extend = interopRequire(thinkFilePath);
   const filepath = path.join(appPath, modules.length ? 'common/config/extend.js' : 'config/extend.js');
   if(helper.isFile(filepath)){
-    extend = extend.concat(require(filepath));
+    extend = extend.concat(interopRequire(filepath));
   }
   let ret = {};
   function assign(type, ext){
@@ -34,7 +36,7 @@ function loader(appPath, thinkPath, modules){
     if(!helper.isFile(filepath)){
       return;
     }
-    assign(type, require(filepath));
+    assign(type, interopRequire(filepath));
   });
   extend.forEach(item => {
     for(let type in item){
@@ -48,7 +50,7 @@ function loader(appPath, thinkPath, modules){
     if(!helper.isFile(filepath)){
       return;
     }
-    assign(type, require(filepath));
+    assign(type, interopRequire(filepath));
   });
   return ret;
 }

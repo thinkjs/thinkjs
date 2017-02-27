@@ -1,5 +1,6 @@
 const helper = require('think-helper');
 const path = require('path');
+const interopRequire = require('../util.js').interopRequire;
 
 function loadFiles(dir){
   let files = helper.getdirFiles(dir).filter(file => {
@@ -8,7 +9,7 @@ function loadFiles(dir){
   let cache = files.map(file => {
     // replace \\ to / in windows
     let name = file.replace(/\\/g, '/').replace(/\.js$/, '');
-    return {name, export: require(path.join(dir, file))}
+    return {name, export: interopRequire(path.join(dir, file))}
   }).sort((a, b) => {
     let al = a.name.split('/').length;
     let bl = b.name.split('/').length;

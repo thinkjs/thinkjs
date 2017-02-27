@@ -1,6 +1,8 @@
 const helper = require('think-helper');
 const path = require('path');
 const assert = require('assert');
+const interopRequire = require('../util.js').interopRequire;
+
 /**
  * load config
  * src/config/config.js
@@ -11,13 +13,13 @@ const loadConfig = (configPaths, env, name = 'config') => {
   configPaths.forEach(configPath => {
     let filepath = path.join(configPath, `${name}.js`);
     if(helper.isFile(filepath)){
-      config = helper.extend(config, require(filepath));
+      config = helper.extend(config, interopRequire(filepath));
     }
   });
   configPaths.forEach(configPath => {
     let envFilepath = path.join(configPath, `${name}.${env}.js`);
     if(helper.isFile(envFilepath)){
-      config = helper.extend(config, require(envFilepath));
+      config = helper.extend(config, interopRequire(envFilepath));
     }
   });
   return config;
@@ -48,7 +50,7 @@ const loadAdapterFiles = adapterPath => {
     if(!ret[item[0]]){
       ret[item[0]] = {};
     }
-    ret[item[0]][item[1]] = require(path.join(adapterPath, file));
+    ret[item[0]][item[1]] = interopRequire(path.join(adapterPath, file));
   });
   return ret;
 }
@@ -106,7 +108,7 @@ const formatAdapter = (config, adapterPath) => {
  * src/config/adapter.[env].js
  */
 module.exports = function loader(appPath, thinkPath, env, modules){
-  const thinkConfig = require(path.join(thinkPath, 'lib/config/config.js'));
+  const thinkConfig = interopRequire(path.join(thinkPath, 'lib/config/config.js'));
   if(modules.length){
      let config = {};
      modules.forEach(dir => {

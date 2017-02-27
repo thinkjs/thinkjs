@@ -3,6 +3,8 @@ const debug = require('debug')('think-loader@router');
 const methods = require('methods');
 const path = require('path');
 const assert = require('assert');
+const interopRequire = require('../util.js').interopRequire;
+
 
 /**
  * Router class
@@ -96,7 +98,7 @@ function loader(appPath, modules){
     if(!helper.isFile(commonRouterFile)){
       return [];
     }
-    let commonRouter = require(commonRouterFile);
+    let commonRouter = interopRequire(commonRouterFile);
     if(helper.isFunction(commonRouter) || helper.isArray(commonRouter)){
       debug('common/config/router is an array or a function');
       return formatRouter(commonRouter);
@@ -120,7 +122,7 @@ function loader(appPath, modules){
       if(!helper.isFile(moduleRouterFile)){
         continue;
       }
-      let moduleRouter = require(moduleRouterFile);
+      let moduleRouter = interopRequire(moduleRouterFile);
       commonRouter[name].rules = formatRouter(moduleRouter);
     }
     return commonRouter;
@@ -129,7 +131,7 @@ function loader(appPath, modules){
     if(!helper.isFile(routerFile)){
       return [];
     }
-    let router = require(routerFile);
+    let router = interopRequire(routerFile);
     assert(helper.isFunction(router) || helper.isArray(router), 'config/router must be an array or a function');
     return formatRouter(router);
   }

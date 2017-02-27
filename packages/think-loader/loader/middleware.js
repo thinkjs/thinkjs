@@ -1,6 +1,8 @@
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
+const interopRequire = require('../util.js').interopRequire;
+
 
 /**
  * check url matched
@@ -89,7 +91,7 @@ function getMiddlewareFiles(middlewarePath){
     }
     let match = file.match(/(\w+)\.\w+$/);
     if(match && match[1]){
-      ret[match[1]] = require(path.join(middlewarePath, file));
+      ret[match[1]] = interopRequire(path.join(middlewarePath, file));
     }
   });
   return ret;
@@ -116,7 +118,7 @@ function loader(appPath, thinkPath, modules){
   if(!helper.isFile(filepath)){
     return [];
   }
-  const middlewares = require(filepath);
+  const middlewares = interopRequire(filepath);
   return parseMiddleware(middlewares, loadMiddlewareFiles(appPath, modules.length, thinkPath));
 }
 
