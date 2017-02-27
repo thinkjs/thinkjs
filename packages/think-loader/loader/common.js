@@ -6,6 +6,7 @@ function loadFiles(dir){
     return /\.js$/.test(file);
   });
   let cache = files.map(file => {
+    // replace \\ to / in windows
     let name = file.replace(/\\/g, '/').replace(/\.js$/, '');
     return {name, export: require(path.join(dir, file))}
   }).sort((a, b) => {
