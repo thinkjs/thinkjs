@@ -2,152 +2,103 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-22 11:23:08
+* @Last Modified time: 2017-02-28 20:22:20
 */
 const Validator = require('./rules.js');
 const thinkHelper = require('think-helper');
-const util = require('util');
-const ERRMSG = require('./error.js');
+const preDefinedErrors = require('./errors.js');
 
-//get error message
-let _getValidateErrorMsg = (type, name, value, args, msgs) => {
-  let key = `validate_${type}`;
-  let keyWithName = `${key}_${name}`;
-  let msg = msgs[keyWithName];
-  // if(!msg && think.locale(keyWithName) !== keyWithName){
-  //   msg = think.locale(keyWithName);
-  // }
-  if(!msg && ERRMSG[keyWithName] !== keyWithName){
-    msg = ERRMSG[keyWithName];
-  }
-  msg = msg || msgs[key];
-  // if(!msg && think.locale(key) !== key){
-  //   msg = think.locale(key);
-  // }
-  if(!msg && ERRMSG[key] !== key){
-    msg = ERRMSG[key];
-  }
-  // msg = msg || think.locale('PARAMS_NOT_VALID');
-  msg = msg || ERRMSG['PARAMS_NOT_VALID'];
-  // return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
-  return msg.replace('{name}', name).replace('{value}', value).replace('{args}', args.join(','));
-  //return 'ERROR MSG';
-};
+// the method names for required
+const requiredRuleNames = [
+  'required',
+  'requiredIf',
+  'requiredNotIf',
+  'requiredWith',
+  'requiredWithAll',
+  'requiredWithOut',
+  'requiredWithOutAll'
+];
 
-let _getValidateRuleFnAndArgs = (type, args, rules) => {
-  let fn = Validator[type];
-  if (!thinkHelper.isFunction(fn)) {
-    // throw new Error(think.locale('CONFIG_NOT_FUNCTION', `${type} type`));
-    throw new Error(util.format('config `%s` is not a function', `${type} type`));
+/**
+ * get error message for rule
+ * @param  {String} rule            [description]
+ * @param  {String} pname        [description]
+ * @param  {Array|Object|Number|String|Boolean} parsedRuleOptions [description]
+ * @param  {String} errmsg          [description]
+ * @return {String}                 [description]
+ */
+function _getErrorMessage(rname, pname, parsedRuleOptions, errmsg) {
+  if(errmsg) {
+    return errmsg;
   }
-  if(thinkHelper.isBoolean(args)){
-    args = [];
-  }else if(!thinkHelper.isArray(args)){
-    args = [args];
+
+  let key = `validate_${rname}`;
+  errmsg = preDefinedErrors[key] || 'PARAM_VALID_FAILED';
+
+  if(thinkHelper.isArray(parsedRuleOptions)) {
+    return errmsg.replace('{name}', pname)
+      .replace('{args}', parsedRuleOptions.join(','));
+  } else if(thinkHelper.isObject(parsedRuleOptions)) {
+    return errmsg.replace('{name}', pname)
+      .replace('{args}', JSON.stringify(parsedRuleOptions));
+  }else {
+    return errmsg.replace('{name}', pname)
+      .replace('{args}', parsedRuleOptions);
   }
-  let parseArgs = Validator[`_${type}`];
-  //parse args
-  if(thinkHelper.isFunction(parseArgs)){
-    args = parseArgs(args, rules);
-  }
-  return {fn, args};
 };
 
 /**
- * get all rule values, for default function to get value
- * @param  {Object} rules []
- * @return {Object}       []
+ * parse the rule's arguments
+ * @param  {String} rname        []
+ * @param  {Array|Boolean|Object|String|Int} roptions []
+ * @param  {Object} requestData []
+ * @return {Array|Boolean|Object|String|Int}             []
  */
-let _getRuleValues = rules => {
-  let ret = {};
-  for(let name in rules){
-    ret[name] = rules[name].value;
+function _parseRuleOptions(rname, roptions, requestData) {
+  let parseFn = Validator[`_${rname}`];
+  if(thinkHelper.isFunction(parseFn)){
+    roptions = parseFn(roptions, requestData);
   }
-  return ret;
+  return roptions;
 };
 
 /**
- * to boolean
- * @param  {Mixed} value []
- * @return {Boolean}       []
+ * convert the param output style for int,float
+ * @param  {Object} pitem [description]
+ * @return {[type]}      [description]
  */
-let _toBoolean = value => {
-  return ['yes', 'on', '1', 'true', true].indexOf(value) > -1;
-};
+function _convertParamItemValue(pitem) {
+  pitem = thinkHelper.extend({}, pitem);
+  if(pitem.int) {
+    return parseInt(pitem.value);
+  }else if(pitem.float || pitem.numeric) {
+    return parseFloat(pitem.value);
+  }
+  return pitem.value;
+}
 
 /**
- * parse value
- * @param  {Mixed} value []
- * @param  {Object} item  []
- * @return {Mixed}       []
+ * check if the param's value is required
+ * @param  {[type]}  pitem        [description]
+ * @param  {Object}  requestData [description]
+ * @return {Boolean}             [description]
  */
-let _parseValue = (value, item) => {
-  if(item.int || item.type === 'int'){
-    return parseInt(value);
-  }else if(item.float || item.type === 'float'){
-    return parseFloat(value);
-  }else if(item.boolean || item.type === 'boolean'){
-    return _toBoolean(value);
-  }
-  return value;
-};
-/**
- * get item value
- * @param  {Object} item   []
- * @param  {Object} values []
- * @return {Mixed}        []
- */
-let _getItemValue = (item, values, parse) => {
-  //get item value
-  //avoid default is undefined, but check type is string
-  let itemValue = item.value;
-  //trim value
-  if(item.trim && itemValue && itemValue.trim){
-    itemValue = itemValue.trim();
-  }
-  let _default = item.default;
-  if(!itemValue && !thinkHelper.isTrueEmpty(_default)){
-    itemValue = item.default;
-  }
-  if(thinkHelper.isFunction(itemValue)){
-    itemValue = itemValue.call(values);
-  }
-
-  //make data to array when type is array
-  if(item.value && item.array && !thinkHelper.isArray(item.value)){
-    if(thinkHelper.isString(itemValue)){
-      try{
-        itemValue = JSON.parse(itemValue);
-      }catch(e){
-        itemValue = itemValue.split(/\s*,\s*/);
-      }
-    }else{
-      itemValue = [itemValue];
+function _isValueRequired(pitem, requestData) {
+  let isRequired = false;
+  let vtype;
+  for(var i = 0; i <= requiredRuleNames.length; i++) {
+    vtype = requiredRuleNames[i];
+    if(pitem[vtype]) {
+      let fn = Validator[vtype];
+      let afterParsedArgs = _parseRuleOptions(vtype, pitem[vtype], requestData);
+      if(fn(pitem.value, afterParsedArgs)) {
+        isRequired = true;
+        break;
+      };
     }
   }
-  //make data to object when type is object
-  else if(item.value && item.object && thinkHelper.isString(itemValue)){
-    try{
-      itemValue = JSON.parse(itemValue);
-    }catch(e){}
-  }
-  else if(item.boolean){
-    itemValue = _toBoolean(itemValue);
-  }
-
-  //parse value
-  if(parse){
-    if(item.array){
-      itemValue = itemValue.map(it => {
-        return _parseValue(it, item);
-      });
-    }else{
-      itemValue = _parseValue(itemValue, item);
-    }
-  }
-
-  return itemValue;
-};
+  return isRequired;
+}
 
 
 let Validate = (name, callback) => {
@@ -160,99 +111,96 @@ let Validate = (name, callback) => {
     // get validator callback
     return Validator[name];
   }
-  return Validate.exec(name, callback);
+  let pitems = name, requestData = callback;
+  return Validate.exec(pitems, requestData);
 };
 
-
-/**
- * get new values for rules
- * @param  {Object} rules []
- * @return {Object}       []
- */
-Validate.values = rules => {
-  let ret = {};
-  let values = _getRuleValues(rules);
-  for(let name in rules){
-    let itemValue = _getItemValue(rules[name], values, true);
-    ret[name] = itemValue;
-  }
-  return ret;
-};
-
-/**
- * parse string rule to object
- * @param  {String} rule []
- * @return {Object}      []
- */
-Validate.parse = rule => {
-  let rules = rule.split('|');
-  let ret = {};
-  rules.forEach(item => {
-    item = item.trim();
-    if(!item){
-      return;
-    }
-    let pos = item.indexOf(':');
-    if(pos > -1){
-      let name = item.substr(0, pos);
-      let args = item.substr(pos + 1).trim();
-      if(args[0] === '{' || args[0] === '['){
-        let value = (new Function('', `return ${args}`))();
-        args = name === 'default' ? value : [value];
-      }else if(name !== 'default'){
-        args = args.split(/\s*,\s*/);
-      }
-      ret[name] = args;
-    }else{
-      ret[item] = true;
-    }
-  });
-  return ret;
-};
 
 /**
  * exec validate
- * @param  {Object} rules []
- * @param  {Object} msgs  []
- * @return {Object}       []
+ * @param  {Object} pitems []
+ * @return {Object}            []
  */
-Validate.exec = (rules, msgs = {}) => {
+Validate.exec = (pitems, requestData = {}) => {
   let ret = {};
-  let values = _getRuleValues(rules);
 
-  for(let name in rules){
-    let item = rules[name];
-    let itemValue = _getItemValue(item, values);
-    for(let vtype in item){
-      if(vtype === 'value' || vtype === 'default' || vtype === 'trim'){
-        continue;
+  outerLoop:
+  for(let pname in pitems){
+
+    let pitem = pitems[pname];
+    pitem.value = requestData[pname];
+
+    // set default
+    if(typeof(pitem.value) === 'undefined' && !thinkHelper.isTrueEmpty(pitem.default)){
+      pitem.value = pitem.default;
+    }
+
+    // trim pitem value if trim is true
+    if(pitem.trim && pitem.value && pitem.value.trim){
+      pitem.value = pitem.value.trim();
+    }
+
+    // set defalut ret for response
+    if(typeof pitem.value !== 'undefined') {
+      ret[pname] = pitem.value;
+    }
+
+    let isRequired = _isValueRequired(pitem, requestData);
+    if(isRequired && thinkHelper.isTrueEmpty(pitem.value)) {
+      let rname = 'required';
+      let parsedOptions = _parseRuleOptions(rname, pitem[rname], requestData);
+      let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem.errmsg);
+      ret = {
+        _valid: false,
+        name: pname,
+        rule: rname,
+        value: pitem.value,
+        errmsg: errmsg
       }
-      //if has array rule, then foreach check value for every rule
-      if(item.array && vtype !== 'array' && thinkHelper.isArray(itemValue)){
-        let flag = itemValue.some(ivalue => {
-          let {fn, args} = _getValidateRuleFnAndArgs(vtype, item[vtype], rules);
-          let result = fn(ivalue, ...args);
-          if(!result){
-            let msg = _getValidateErrorMsg(vtype, name, ivalue, args, msgs);
-            ret[name] = msg;
-            return true;
-          }
-        });
-        if(flag){
-          break;
-        }
-      }else{
-        let {fn, args} = _getValidateRuleFnAndArgs(vtype, item[vtype], rules);
-        let result = fn(itemValue, ...args);
-        if(!result){
-          let msg = _getValidateErrorMsg(vtype, name, itemValue, args, msgs);
-          ret[name] = msg;
-          break;
-        }
+      return ret;
+    }else {
+      if(thinkHelper.isTrueEmpty(pitem.value)) {
+        continue outerLoop;
       }
     }
-  }
+
+    for(let rname in pitem){
+      // the skipedRule types for the item
+      const skipedRuleNames = ['value', 'default', 'trim', 'errmsg'].concat(requiredRuleNames);
+
+      // skip the attr don't need valid
+      if(skipedRuleNames.indexOf(rname) >= 0) {
+        continue;
+      }
+
+      // check if the valid method is exsit
+      let fn = Validator[rname];
+      if (!thinkHelper.isFunction(fn)) {
+        throw new Error(rname + ' valid method is not been configed');
+      }
+
+      // parse arguments
+      let parsedOptions = _parseRuleOptions(rname, pitem[rname], requestData);
+      let result = fn(pitem.value, parsedOptions);
+      if(!result){
+        let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem.errmsg);
+        ret = {
+          _valid: false,
+          name: pname,
+          rule: rname,
+          value: pitem.value,
+          errmsg: errmsg
+        }
+        break outerLoop;
+      }else {
+        let convertValue = _convertParamItemValue(pitem);
+        ret[pname] = convertValue;
+      }
+    } // end inner for
+
+  } // end outer for
   return ret;
 };
+
 
 module.exports = Validate;
