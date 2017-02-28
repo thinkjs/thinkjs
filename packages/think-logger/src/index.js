@@ -1,10 +1,9 @@
 const assert = require('assert');
 
 class Logger {
-  constructor({handle, ...config}) {
-    // if( !this instanceof Logger ) {
-    //   return new Logger({handle, ...config});
-    // }
+  constructor(config) {
+    let handle = config.handle;
+    delete config.handle;
     
     this._logger = new handle(config);
     ['debug', 'info', 'warn', 'error'].forEach(level => {
