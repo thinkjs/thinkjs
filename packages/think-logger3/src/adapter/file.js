@@ -4,10 +4,20 @@ const Base = require('./base');
 class FileLogger extends Base {
   constructor(config) {
     super(config);
-    
+
+    let level = "ALL";
+    if(config.level) {
+      level = config.level.toUpperCase();
+      delete level;
+    }    
+
     config = Object.assign({
       appenders: [
-        {type: 'file', filename: config.filename}
+        {
+          level,
+          type: 'file', 
+          filename: config.filename
+        }
       ]
     }, config);
     log4js.configure(config);

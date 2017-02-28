@@ -5,9 +5,15 @@ class ConsoleLogger extends Base {
   constructor(config) {
     super(config);
 
+    let level = 'ALL';
+    if(config.level) {
+      level = config.level.toUpperCase();
+      delete level;
+    }
+
     config = Object.assign({
       appenders: [
-        {type: 'console'}
+        {type: 'console', level}
       ]
     }, config);
     log4js.configure(config);
