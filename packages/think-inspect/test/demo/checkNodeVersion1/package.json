@@ -1,0 +1,7 @@
+{
+  "name": "check-node-version1",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=7.0.0"
+  }
+}
