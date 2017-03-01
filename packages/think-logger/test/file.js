@@ -1,9 +1,9 @@
 const fs = require('fs');
 const test = require('ava');
 const log4js = require('log4js');
-const Logger = require('../src');
+const Logger = require('../lib');
 const process = require('process');
-const Adapter = require('../src/adapter/file');
+const Adapter = Logger.File;
 
 for(let func of ['debug', 'info', 'warn', 'error']) {
   const filename = `${__dirname}/test-${func}.log`;
