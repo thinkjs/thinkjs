@@ -1,4 +1,7 @@
 const assert = require('assert');
+const ConsoleAdapter = require('./adapter/console');
+const FileAdapter = require('./adapter/file');
+const DateFileAdapter = requrie('./adapter/file');
 
 class Logger {
   constructor(config) {
@@ -25,4 +28,7 @@ class Logger {
   }
 }
 
+Logger.Console = ConsoleAdapter;
+Logger.File = FileAdapter;
+Logger.DateFile = DateFileAdapter;
 module.exports = Logger;
