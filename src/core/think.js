@@ -839,13 +839,13 @@ think.locale = function(key, ...data) {
     locales = this.config(think.dirname.locale);
   }
   let langLocale = locales[lang] || {};
-  let countryLangLocale = locales[lang.split('-')[0]] || {};
+  let backupLangLocale = locales[lang.split('-')[0]] || {};
   let defaultLangLocale = locales[defaultLang] || {};
   if(!key){
     return think.isEmpty(langLocale) ? defaultLangLocale : langLocale;
   }
   let enLocale = locales.en || {};
-  let value = langLocale[key] || countryLangLocale[key] || defaultLangLocale[key] || enLocale[key] || key;
+  let value = langLocale[key] || backupLangLocale[key] || defaultLangLocale[key] || enLocale[key] || key;
   if(!think.isString(value)){
     return value;
   }
