@@ -8,7 +8,7 @@ class ConsoleLogger extends Base {
     let level = 'ALL';
     if(config.level) {
       level = config.level.toUpperCase();
-      delete level;
+      delete config.level;
     }
 
     config = Object.assign({
