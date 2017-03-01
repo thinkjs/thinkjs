@@ -1,13 +1,11 @@
-const log4js = require('log4js');
 const Base = require('./base');
-const cluster = require('cluster');
 
-class FileLogger extends Base {
+module.exports = class FileLogger extends Base {
   constructor(config) {
     super(config);
 
     let {level, filename, maxLogSize, backups, layouts, ...lConfig} = config;
-    level = level.toUpperCase() || "ALL";
+    level = level ? level.toUpperCase() : 'ALL';
 
     //combine config for file appender, common config for log4js
     config = Object.assign({
@@ -18,9 +16,6 @@ class FileLogger extends Base {
     //check cluster mode
     config = this.isCluster(config);
 
-    log4js.configure(config);
-    this._logger = log4js.getLogger();
+    this._logger = this.getLogger(config);
   }
-}
-
-module.exports = FileLogger;
+};
