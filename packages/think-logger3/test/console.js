@@ -1,7 +1,7 @@
 const test = require('ava');
-const Logger = require('../src');
+const Logger = require('../lib');
 const process = require('process');
-const Adapter = require('../src/adapter/console');
+const Adapter = Logger.Console;
 
 test.before('console logger', () => {
   global.server_log = '';

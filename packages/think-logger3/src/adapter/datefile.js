@@ -1,6 +1,6 @@
 const Base = require('./base');
 
-module.exports = class DateFileLogger extends FileLogger {
+module.exports = class DateFileLogger extends Base {
   constructor(config) {
     super(config);
 

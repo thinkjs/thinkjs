@@ -2,7 +2,7 @@
   "name": "think-logger",
   "version": "0.0.1",
   "description": "logger for ThinkJS 3.x",
-  "main": "./src",
+  "main": "./lib",
   "scripts": {
     "compile": "babel src/ --out-dir lib/ --presets=think-node",
     "test": "npm run eslint && npm run test-cov",
