@@ -16,7 +16,7 @@
       "babel-core/register"
     ],
      "exclude": [
-      "test/demo"
+      "demo"
     ]
   },
   "nyc": {
