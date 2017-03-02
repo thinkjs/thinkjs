@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 10:26:55
+* @Last Modified time: 2017-03-02 19:03:13
 */
 'use strict';
 const thinkHelper = require('think-helper');
@@ -13,7 +13,7 @@ const preDefinedErrors = require('./errors.js');
 
 let Validator = {}
 
-Validator.ERR = preDefinedErrors;
+Validator.errors = preDefinedErrors;
 
 /**
  * check value is set
@@ -177,6 +177,7 @@ Validator.contains = (value, seed) => {
   value = validator.toString(value);
   return validator.contains(value, seed);
 };
+
 
 /**
  * parse equal rule comparison
@@ -613,11 +614,12 @@ Validator.int = (value, options) => {
  * @param  {int} min []
  * @return {Boolean}       []
  */
-Validator.min = (value, min) => {
-  return validator.isInt(value, {
-    min: min | 0
-  });
-};
+// Validator.minInt = (value, min) => {
+//   value = validator.toString(value);
+//   return validator.isInt(value, {
+//     min: min | 0
+//   });
+// };
 
 /**
  * check if the string less than max value
@@ -625,12 +627,13 @@ Validator.min = (value, min) => {
  * @param  {int} max []
  * @return {Boolean}       []
  */
-Validator.max = (value, max) => {
-  return validator.isInt(value, {
-    min: 0,
-    max: max | 0
-  });
-};
+// Validator.maxInt = (value, max) => {
+//   value = validator.toString(value);
+//   return validator.isInt(value, {
+//     min: 0,
+//     max: max | 0
+//   });
+// };
 
 /**
  * check if the string's length falls in a range.
@@ -798,6 +801,52 @@ Validator.endWith = (value, str) => {
 };
 
 /**
+ * check value is string value
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.string = value => {
+  return thinkHelper.isString(value);
+};
+
+/**
+ * check value is array value
+ * @param  {Array} value []
+ * @return {Boolean}       []
+ */
+Validator.array = value => {
+  return thinkHelper.isArray(value);
+};
+
+/**
+ * check value is true
+ * @param  {Boolean} value []
+ * @return {Boolean}       []
+ */
+Validator.boolean = value => {
+  return thinkHelper.isBoolean(value);
+};
+
+/**
+ * check value is object
+ * @param  {Object} value []
+ * @return {Boolean}       []
+ */
+Validator.object = value => {
+  return thinkHelper.isObject(value);
+};
+
+/**
+ * check value with regexp
+ * @param  {Mixed} value []
+ * @param  {RegExp} reg   []
+ * @return {Boolean}       []
+ */
+Validator.regexp = (value, reg) => {
+  return reg.test(value);
+};
+
+/**
  * check if the string is an ISSN
  * @param  {String} value [description]
  * @param  {Object|true} value [description]
@@ -864,49 +913,15 @@ Validator.dataURI = value => {
 };
 
 /**
- * check value is string value
- * @param  {String} value []
- * @return {Boolean}       []
+ * check if the string contains a mixture of full and half-width chars.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
  */
-Validator.string = value => {
-  return thinkHelper.isString(value);
+Validator.variableWidth = value => {
+  value = validator.toString(value);
+  return validator.isVariableWidth(value);
 };
 
-/**
- * check value is array value
- * @param  {Array} value []
- * @return {Boolean}       []
- */
-Validator.array = value => {
-  return thinkHelper.isArray(value);
-};
 
-/**
- * check value is true
- * @param  {Boolean} value []
- * @return {Boolean}       []
- */
-Validator.boolean = value => {
-  return thinkHelper.isBoolean(value);
-};
-
-/**
- * check value is object
- * @param  {Object} value []
- * @return {Boolean}       []
- */
-Validator.object = value => {
-  return thinkHelper.isObject(value);
-};
-
-/**
- * check value with regexp
- * @param  {Mixed} value []
- * @param  {RegExp} reg   []
- * @return {Boolean}       []
- */
-Validator.regexp = (value, reg) => {
-  return reg.test(value);
-};
 
 module.exports = Validator;

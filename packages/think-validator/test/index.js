@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 10:23:55
+* @Last Modified time: 2017-03-02 18:43:12
 */
 import test from 'ava';
 import thinkHelper from 'think-helper';
@@ -725,31 +725,31 @@ test('rule-int', t => {
   t.true(ret._valid === false);
 });
 
-test('rule-min', t => {
-  let rules = {
-    param: {
-      min: 100
-    }
-  }
-  let requestData = {
-    param: '16',
-  }
-  let ret = thinkValidate(rules, requestData);
-  t.true(ret._valid === false);
-});
+// test('rule-min', t => {
+//   let rules = {
+//     param: {
+//       minInt: 100
+//     }
+//   }
+//   let requestData = {
+//     param: '16',
+//   }
+//   let ret = thinkValidate(rules, requestData);
+//   t.true(ret._valid === false);
+// });
 
-test('rule-max', t => {
-  let rules = {
-    param: {
-      max: 123
-    }
-  }
-  let requestData = {
-    param: '123456',
-  }
-  let ret = thinkValidate(rules, requestData);
-  t.true(ret._valid === false);
-});
+// test('rule-max', t => {
+//   let rules = {
+//     param: {
+//       maxInt: 123
+//     }
+//   }
+//   let requestData = {
+//     param: '123456',
+//   }
+//   let ret = thinkValidate(rules, requestData);
+//   t.true(ret._valid === false);
+// });
 
 
 test('rule-length', t => {

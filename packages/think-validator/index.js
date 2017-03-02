@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 10:28:02
+* @Last Modified time: 2017-03-02 19:04:41
 */
 const Validator = require('./rules.js');
 const thinkHelper = require('think-helper');
@@ -26,24 +26,15 @@ const requiredRuleNames = [
  * @param  {String} errmsg          [description]
  * @return {String}                 [description]
  */
-function _getErrorMessage(rname, pname, parsedRuleOptions, errmsg) {
-  if(errmsg) {
-    return errmsg;
+function _getErrorMessage(rname, pname, parsedRuleOptions, pitem) {
+  if(pitem.errmsg) {
+    return pitem.errmsg;
   }
-
-  let key = `validate_${rname}`;
-  errmsg = Validator.ERR[key] || 'PARAM_VALID_FAILED';
-
-  if(thinkHelper.isArray(parsedRuleOptions)) {
-    return errmsg.replace('{name}', pname)
-      .replace('{args}', parsedRuleOptions.join(','));
-  } else if(thinkHelper.isObject(parsedRuleOptions)) {
-    return errmsg.replace('{name}', pname)
-      .replace('{args}', JSON.stringify(parsedRuleOptions));
-  }else {
-    return errmsg.replace('{name}', pname)
-      .replace('{args}', parsedRuleOptions);
-  }
+  let ruleOptions = pitem[rname];
+  let errmsg = Validator.errors['validate_' + rname];
+  return errmsg.replace('{name}', pname)
+               .replace('{parsedOptions}', JSON.stringify(parsedRuleOptions))
+               .replace('{options}', JSON.stringify(ruleOptions));
 };
 
 /**
@@ -100,27 +91,50 @@ function _isValueRequired(pitem, requestData) {
 }
 
 
-let Validate = (name, callback) => {
-  // register validate callback
-  if (thinkHelper.isString(name)) {
-    if (thinkHelper.isFunction(callback)) {
-      Validator[name] = callback;
-      return;
-    }
-    // get validator callback
-    return Validator[name];
-  }
-  let pitems = name, requestData = callback;
-  return Validate.exec(pitems, requestData);
+let thinkValidate = (rname, callback, errmsg) => {
+  // // register validate callback
+  // if (thinkHelper.isString(rname)) {
+  //   if (thinkHelper.isFunction(callback)) {
+  //     Validator[rname] = callback;
+  //     Validator.ERR['validate_' + rname] = errmsg || (rname + 'rule valid failed');
+  //     return;
+  //   }
+  //   // get validator callback
+  //   return Validator[rname];
+  // }
+
+  if(thinkHelper.isObject(rname)) {
+    let pitems = rname, requestData = callback;
+    return thinkValidate.exec(pitems, requestData);
+  };
 };
 
+/**
+ * add Validate method
+ * @param  {String}   rname    [description]
+ * @param  {Function} callback [description]
+ * @param  {String}   errmsg   [description]
+ */
+thinkValidate.add = (rname, callback, errmsg) => {
+  Validator[rname] = callback;
+  Validator.ERR['validate_' + rname] = errmsg || (rname + 'rule valid failed');
+}
+
+/**
+ * get Validate method
+ * @param  {String} rname [description]
+ * @return {Function}       [description]
+ */
+thinkValidate.get = rname => {
+  return Validator[rname];
+}
 
 /**
  * exec validate
  * @param  {Object} pitems []
  * @return {Object}            []
  */
-Validate.exec = (pitems, requestData = {}) => {
+thinkValidate.exec = (pitems, requestData = {}) => {
   let ret = {};
 
   outerLoop:
@@ -148,7 +162,7 @@ Validate.exec = (pitems, requestData = {}) => {
     if(isRequired && thinkHelper.isTrueEmpty(pitem.value)) {
       let rname = 'required';
       let parsedOptions = _parseRuleOptions(rname, pitem[rname], requestData);
-      let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem.errmsg);
+      let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem);
       ret = {
         _valid: false,
         name: pname,
@@ -183,7 +197,7 @@ Validate.exec = (pitems, requestData = {}) => {
 
       let result = fn(pitem.value, parsedOptions);
       if(!result){
-        let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem.errmsg);
+        let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem);
         ret = {
           _valid: false,
           name: pname,
@@ -203,4 +217,16 @@ Validate.exec = (pitems, requestData = {}) => {
 };
 
 
-module.exports = Validate;
+// let rules = {
+//   param: {
+//     contains: 'xxx'
+//   }
+// }
+// let requestData = {
+//   param: 'lushijie'
+// }
+// let ret = thinkValidate(rules, requestData);
+
+// console.log(ret);
+
+module.exports = thinkValidate;
