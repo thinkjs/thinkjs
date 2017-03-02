@@ -1,9 +1,9 @@
 # think-logger
 
-[![npm](https://img.shields.io/npm/v/think-looger.svg?style=flat-square)]()
-[![Travis](https://img.shields.io/travis/thinkjs/think-logger.svg?style=flat-square)]()
-[![Coveralls](https://img.shields.io/coveralls/thinkjs/think-logger.svg?style=flat-square)]()
-[![David](https://img.shields.io/david/strongloop/think-logger.svg?style=flat-square)]()
+[![npm](https://img.shields.io/npm/v/think-logger3.svg?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/thinkjs/think-logger3.svg?style=flat-square)]()
+[![Coveralls](https://img.shields.io/coveralls/thinkjs/think-logger3.svg?style=flat-square)]()
+[![David](https://img.shields.io/david/strongloop/think-logger3.svg?style=flat-square)]()
 
 ThinkJS3.x log module
 
