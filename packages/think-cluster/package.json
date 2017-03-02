@@ -1,0 +1,42 @@
+{
+  "name": "think-cluster",
+  "description": "Cluster manage for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint lib/ && nyc ava test/",
+    "coverage": "nyc report --reporter=html"
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.0",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "eslint": "2.8.0",
+    "nyc": "^7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-cluster"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-cluster/issues"
+  }
+}
