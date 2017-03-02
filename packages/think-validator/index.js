@@ -2,11 +2,10 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 10:23:29
+* @Last Modified time: 2017-03-02 10:28:02
 */
 const Validator = require('./rules.js');
 const thinkHelper = require('think-helper');
-const preDefinedErrors = require('./errors.js');
 
 // the method names for required
 const requiredRuleNames = [
@@ -33,7 +32,7 @@ function _getErrorMessage(rname, pname, parsedRuleOptions, errmsg) {
   }
 
   let key = `validate_${rname}`;
-  errmsg = preDefinedErrors[key] || 'PARAM_VALID_FAILED';
+  errmsg = Validator.ERR[key] || 'PARAM_VALID_FAILED';
 
   if(thinkHelper.isArray(parsedRuleOptions)) {
     return errmsg.replace('{name}', pname)

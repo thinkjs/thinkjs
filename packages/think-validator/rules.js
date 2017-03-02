@@ -2,14 +2,18 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 10:22:24
+* @Last Modified time: 2017-03-02 10:26:55
 */
 'use strict';
 const thinkHelper = require('think-helper');
 //https://github.com/chriso/validator.js
 const validator = require('validator');
 
+const preDefinedErrors = require('./errors.js');
+
 let Validator = {}
+
+Validator.ERR = preDefinedErrors;
 
 /**
  * check value is set
