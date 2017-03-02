@@ -2,10 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 19:04:41
+* @Last Modified time: 2017-03-02 19:18:57
 */
 const Validator = require('./rules.js');
 const thinkHelper = require('think-helper');
+
+let thinkValidate = {};
 
 // the method names for required
 const requiredRuleNames = [
@@ -91,7 +93,7 @@ function _isValueRequired(pitem, requestData) {
 }
 
 
-let thinkValidate = (rname, callback, errmsg) => {
+//let thinkValidate = (rname, callback, errmsg) => {
   // // register validate callback
   // if (thinkHelper.isString(rname)) {
   //   if (thinkHelper.isFunction(callback)) {
@@ -103,11 +105,11 @@ let thinkValidate = (rname, callback, errmsg) => {
   //   return Validator[rname];
   // }
 
-  if(thinkHelper.isObject(rname)) {
-    let pitems = rname, requestData = callback;
-    return thinkValidate.exec(pitems, requestData);
-  };
-};
+  // if(thinkHelper.isObject(rname)) {
+  //   let pitems = rname, requestData = callback;
+  //   return thinkValidate.exec(pitems, requestData);
+  // };
+//};
 
 /**
  * add Validate method
@@ -125,9 +127,9 @@ thinkValidate.add = (rname, callback, errmsg) => {
  * @param  {String} rname [description]
  * @return {Function}       [description]
  */
-thinkValidate.get = rname => {
-  return Validator[rname];
-}
+// thinkValidate.get = rname => {
+//   return Validator[rname];
+// }
 
 /**
  * exec validate
@@ -216,17 +218,5 @@ thinkValidate.exec = (pitems, requestData = {}) => {
   return ret;
 };
 
-
-// let rules = {
-//   param: {
-//     contains: 'xxx'
-//   }
-// }
-// let requestData = {
-//   param: 'lushijie'
-// }
-// let ret = thinkValidate(rules, requestData);
-
-// console.log(ret);
 
 module.exports = thinkValidate;

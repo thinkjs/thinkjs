@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 18:43:12
+* @Last Modified time: 2017-03-02 19:18:25
 */
 import test from 'ava';
 import thinkHelper from 'think-helper';
@@ -14,7 +14,7 @@ test('rule-required', t => {
       required: true
     }
   }
-  let ret = thinkValidate(rules, {});
+  let ret = thinkValidate.exec(rules, {});
   t.true(ret._valid === false);
 });
 
@@ -27,9 +27,23 @@ test('rule-requiredIf', t => {
   let requestData = {
     name: 'lushijie'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
+
+test('rule-requiredIf-false', t => {
+  let rules = {
+    param: {
+      requiredIf: ['name', 'lushijie', 'tom']
+    }
+  }
+  let requestData = {
+    name: 'XXX'
+  }
+  let ret = thinkValidate.exec(rules, requestData);
+  t.true(typeof ret._valid === 'undefined');
+});
+
 
 test('rule-requiredIf-noParam', t => {
   let rules = {
@@ -37,7 +51,7 @@ test('rule-requiredIf-noParam', t => {
       requiredIf: ['lushijie', '', 'tom']
     }
   }
-  let ret = thinkValidate(rules, {});
+  let ret = thinkValidate.exec(rules, {});
   t.true(ret._valid === false);
 });
 
@@ -51,7 +65,7 @@ test('rule-requiredNotIf', t => {
   let requestData = {
     name: 'lily'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -64,7 +78,7 @@ test('rule-requiredWith', t => {
   let requestData = {
     name: 'lily'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -78,7 +92,7 @@ test('rule-requiredWithAll', t => {
     name: 'lily',
     email: 'lushijie@126.com'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -91,7 +105,7 @@ test('rule-requiredWithOut', t => {
   let requestData = {
     name: 'lily'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -101,7 +115,7 @@ test('rule-requiredWithOutAll', t => {
       requiredWithOutAll: ['name', 'email']
     }
   }
-  let ret = thinkValidate(rules, {});
+  let ret = thinkValidate.exec(rules, {});
   t.true(ret._valid === false);
 });
 
@@ -115,7 +129,7 @@ test('rule-contains', t => {
   let requestData = {
     param: 'lushijie'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -129,7 +143,7 @@ test('rule-equals', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -143,7 +157,7 @@ test('rule-equals-item', t => {
     param: 'lushijie',
     abc: 'xiaoming'
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -156,7 +170,7 @@ test('rule-different', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -169,7 +183,7 @@ test('rule-before', t => {
   let requestData = {
     param: '2099-12-12',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -182,7 +196,7 @@ test('rule-before-date', t => {
   let requestData = {
     param: '2099-12-12',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -195,7 +209,7 @@ test('rule-after', t => {
   let requestData = {
     param: '1990-12-12',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -208,7 +222,7 @@ test('rule-after-date', t => {
   let requestData = {
     param: '1990-12-12',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -221,7 +235,7 @@ test('rule-alpha', t => {
   let requestData = {
     param: '123A',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -234,7 +248,7 @@ test('rule-alpha-locale', t => {
   let requestData = {
     param: '123A',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -247,7 +261,7 @@ test('rule-alphaDash', t => {
   let requestData = {
     param: '123A',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -260,7 +274,7 @@ test('rule-alphaDash-locale', t => {
   let requestData = {
     param: '123A',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -273,7 +287,7 @@ test('rule-alphaNumeric', t => {
   let requestData = {
     param: '123A@',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -286,7 +300,7 @@ test('rule-alphaNumeric-locale', t => {
   let requestData = {
     param: '123A@',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -299,7 +313,7 @@ test('rule-alphaNumericDash', t => {
   let requestData = {
     param: '123A@',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -312,7 +326,7 @@ test('rule-alphaNumericDash-locale', t => {
   let requestData = {
     param: '123A@',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -326,7 +340,7 @@ test('rule-ascii', t => {
   let requestData = {
     param: '123A中国',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -339,7 +353,7 @@ test('rule-base64', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -352,7 +366,7 @@ test('rule-byteLength-default', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret.param === '123456');
 });
 
@@ -365,7 +379,7 @@ test('rule-byteLength', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -378,7 +392,7 @@ test('rule-creditCard', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -391,7 +405,7 @@ test('rule-currency', t => {
   let requestData = {
     param: 'abc',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -404,7 +418,7 @@ test('rule-currency-options', t => {
   let requestData = {
     param: '￥123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -417,7 +431,7 @@ test('rule-date', t => {
   let requestData = {
     param: '2011-13-01',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -430,7 +444,7 @@ test('rule-date-true', t => {
   let requestData = {
     param: '2011-12-01',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret.param === '2011-12-01');
 });
 
@@ -443,7 +457,7 @@ test('rule-decimal', t => {
   let requestData = {
     param: 'abc',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -457,7 +471,7 @@ test('rule-divisibleBy', t => {
   let requestData = {
     param: '123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -470,7 +484,7 @@ test('rule-email', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -483,7 +497,7 @@ test('rule-email-options', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -496,7 +510,7 @@ test('rule-fqdn', t => {
   let requestData = {
     param: 'www',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -509,7 +523,7 @@ test('rule-fqdn-options', t => {
   let requestData = {
     param: 'www',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -522,7 +536,7 @@ test('rule-float', t => {
   let requestData = {
     param: 'www',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -535,7 +549,7 @@ test('rule-float-options', t => {
   let requestData = {
     param: '12.00',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -548,7 +562,7 @@ test('rule-fullWidth', t => {
   let requestData = {
     param: 'www',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -561,7 +575,7 @@ test('rule-halfWidth', t => {
   let requestData = {
     param: '中国',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -574,7 +588,7 @@ test('rule-hexColor', t => {
   let requestData = {
     param: '3444',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -587,7 +601,7 @@ test('rule-hex', t => {
   let requestData = {
     param: '-12',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -601,7 +615,7 @@ test('rule-ip', t => {
   let requestData = {
     param: '127.0.0.256',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -615,7 +629,7 @@ test('rule-ip4', t => {
   let requestData = {
     param: '2031:0000:1F1F:0000:0000:0100:11A0:ADD',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -629,7 +643,7 @@ test('rule-ip6', t => {
   let requestData = {
     param: '127.0.0.1',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -642,7 +656,7 @@ test('rule-isbn', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -655,7 +669,7 @@ test('rule-isin', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -668,7 +682,7 @@ test('rule-iso8601', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -682,7 +696,7 @@ test('rule-in', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -695,7 +709,7 @@ test('rule-notIn', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -708,7 +722,7 @@ test('rule-int-options', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -721,7 +735,7 @@ test('rule-int', t => {
   let requestData = {
     param: '1234.56',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -734,7 +748,7 @@ test('rule-int', t => {
 //   let requestData = {
 //     param: '16',
 //   }
-//   let ret = thinkValidate(rules, requestData);
+//   let ret = thinkValidate.exec(rules, requestData);
 //   t.true(ret._valid === false);
 // });
 
@@ -747,7 +761,7 @@ test('rule-int', t => {
 //   let requestData = {
 //     param: '123456',
 //   }
-//   let ret = thinkValidate(rules, requestData);
+//   let ret = thinkValidate.exec(rules, requestData);
 //   t.true(ret._valid === false);
 // });
 
@@ -761,7 +775,7 @@ test('rule-length', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret.param === '123456');
 });
 
@@ -774,7 +788,7 @@ test('rule-length-options', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -787,7 +801,7 @@ test('rule-minLength', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -801,7 +815,7 @@ test('rule-maxLength', t => {
   let requestData = {
     param: '123456',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -814,7 +828,7 @@ test('rule-lowercase', t => {
   let requestData = {
     param: 'Abc',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -827,7 +841,7 @@ test('rule-uppercase', t => {
   let requestData = {
     param: 'Abc',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -841,7 +855,7 @@ test('rule-mobile', t => {
   let requestData = {
     param: '1326920XXXX',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -854,7 +868,7 @@ test('rule-mobile-locale', t => {
   let requestData = {
     param: '1326920888X',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -867,7 +881,7 @@ test('rule-mongoId', t => {
   let requestData = {
     param: '1326920',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -880,7 +894,7 @@ test('rule-multibyte', t => {
   let requestData = {
     param: 'ABC',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -893,7 +907,7 @@ test('rule-url', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -906,7 +920,7 @@ test('rule-url-options', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -919,7 +933,7 @@ test('rule-order', t => {
   let requestData = {
     param: 'name not DESC',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -932,7 +946,7 @@ test('rule-field', t => {
   let requestData = {
     param: 'name and title',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -945,7 +959,7 @@ test('rule-image', t => {
   let requestData = {
     param: 'a.js',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -958,7 +972,7 @@ test('rule-image-options', t => {
   let requestData = {
     param: {originalFilename: 'a.js'},
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -971,7 +985,7 @@ test('rule-startWith', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -984,7 +998,7 @@ test('rule-endWith', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -997,7 +1011,7 @@ test('rule-issn', t => {
   let requestData = {
     param: '123123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1010,7 +1024,7 @@ test('rule-issn-options', t => {
   let requestData = {
     param: '123123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1024,7 +1038,7 @@ test('rule-uuid', t => {
   let requestData = {
     param: '123123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1037,7 +1051,7 @@ test('rule-md5', t => {
   let requestData = {
     param: '123123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1050,7 +1064,7 @@ test('rule-macAddress', t => {
   let requestData = {
     param: '123123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1063,7 +1077,7 @@ test('rule-numeric', t => {
   let requestData = {
     param: 'abc',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1076,7 +1090,7 @@ test('rule-dataURI', t => {
   let requestData = {
     param: 'abc',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1090,7 +1104,75 @@ test('rule-regexp', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
+  t.true(ret._valid === false);
+});
+
+
+test('rule-variableWidth', t => {
+  let rules = {
+    param: {
+      variableWidth: true
+    }
+  }
+  let requestData = {
+    param: 'lushijie',
+  }
+  let ret = thinkValidate.exec(rules, requestData);
+  t.true(ret._valid === false);
+});
+
+test('rule-boolean', t => {
+  let rules = {
+    param: {
+      boolean: true
+    }
+  }
+  let requestData = {
+    param: '123',
+  }
+  let ret = thinkValidate.exec(rules, requestData);
+  t.true(ret._valid === false);
+});
+
+test('rule-string', t => {
+  let rules = {
+    param: {
+      string: true
+    }
+  }
+  let requestData = {
+    param: 123,
+  }
+  let ret = thinkValidate.exec(rules, requestData);
+  t.true(ret._valid === false);
+});
+
+
+test('rule-array', t => {
+  let rules = {
+    param: {
+      array: true
+    }
+  }
+  let requestData = {
+    param: '123',
+  }
+  let ret = thinkValidate.exec(rules, requestData);
+  t.true(ret._valid === false);
+});
+
+
+test('rule-object', t => {
+  let rules = {
+    param: {
+      object: true
+    }
+  }
+  let requestData = {
+    param: 'lushijie',
+  }
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret._valid === false);
 });
 
@@ -1110,7 +1192,7 @@ test('rule-notExist', t => {
   let requestData = {
     param: 'lushijie',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(thinkHelper.isError(ret));
 });
 
@@ -1122,7 +1204,7 @@ test('rule-ip-default-trim', t => {
       trim: true
     }
   }
-  let ret = thinkValidate(rules);
+  let ret = thinkValidate.exec(rules);
   t.true(ret.param === '127.0.0.1');
 });
 
@@ -1133,7 +1215,7 @@ test('rule-ip-required', t => {
       required: false
     }
   }
-  let ret = thinkValidate(rules);
+  let ret = thinkValidate.exec(rules);
   t.true(ret._valid === undefined && ret.param === undefined);
 });
 
@@ -1148,7 +1230,7 @@ test('rule-int-msg', t => {
     param: 'lushijie',
   }
 
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret.errmsg === rules.param.errmsg);
 });
 
@@ -1162,7 +1244,7 @@ test('rule-int-convert', t => {
   let requestData = {
     param: '123',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret.param === 123);
 });
 
@@ -1175,7 +1257,7 @@ test('rule-float-convert', t => {
   let requestData = {
     param: '123.12',
   }
-  let ret = thinkValidate(rules, requestData);
+  let ret = thinkValidate.exec(rules, requestData);
   t.true(ret.param === 123.12);
 });
 
