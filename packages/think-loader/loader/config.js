@@ -1,70 +1,11 @@
 const helper = require('think-helper');
 const path = require('path');
-const assert = require('assert');
 const fs = require('fs');
+const loadConfig = require('./config-load-config');
+const loadAdapter = require('./config-load-adapter');
+const formatAdapter = require('./config-format-adapter');
 
-/**
- * load config
- * src/config/config.js
- * src/config/config.[env].js
- */
-const loadConfig = (configPaths, env, name = 'config') => {
-  let config = {};
-  configPaths.forEach(configPath => {
-    let filepath = path.join(configPath, `${name}.js`);
-    if(helper.isFile(filepath)){
-      config = helper.extend(config, require(filepath));
-    }
-  });
-  configPaths.forEach(configPath => {
-    let envFilepath = path.join(configPath, `${name}.${env}.js`);
-    if(helper.isFile(envFilepath)){
-      config = helper.extend(config, require(envFilepath));
-    }
-  });
-  return config;
-}
-
-/**
- * load adapter
- * src/config/adapter.js
- * src/config/adapter.[env].js
- */
-const loadAdapter = (configPath, env) => {
-  return loadConfig(configPath, env, 'adapter');
-}
-
-/**
- * {
- *    db: {
- *        type: 'xxx',
- *        common: {
- *
- *        },
- *        xxx: {
- *
- *        }
- *    }
- * }
- * format adapter config, merge common field to item
- */
-const formatAdapter = config => {
-  for(let name in config){
-    assert(config[name].type, `adapter config must have type field, name is ${name}`);
-    if(config[name].common){
-      let common = config[name].common;
-      delete config[name].common;
-      for(let type in config[name]){
-        if(type === 'type'){
-          continue;
-        }
-        //merge common field to item
-        config[name][type] = helper.extend({}, common, config[name][type]);
-      }
-    }
-  }
-  return config;
-}
+const THINK_CONFIG_PATH = 'config/config.js';
 
 /**
  * load config files
@@ -75,10 +16,10 @@ const formatAdapter = config => {
  */
 module.exports = {
   load(appPath, isMultiModule, thinkPath, env){
-    const thinkConfig = require(path.join(thinkPath, 'config/config.js'));
+    const thinkConfig = require(path.join(thinkPath, THINK_CONFIG_PATH));
     if(isMultiModule){
        let dirs = fs.readdirSync(appPath);
-       let config = {};
+       let result = {};
        dirs.forEach(dir => {
          if(dir === 'common'){
            return;
@@ -90,9 +31,9 @@ module.exports = {
          ];
          let config = loadConfig(paths, env);
          let adapter = loadAdapter(paths, env);
-         config[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapter));
+         result[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapter));
        });
-       return config;
+       return result;
     }else{
       let configPath = path.join(appPath, 'config');
       let config = loadConfig([configPath], env);

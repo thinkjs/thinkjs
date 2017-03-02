@@ -35,10 +35,7 @@ test('common.loadFiles', t=>{
   t.is(cache.b.__name, 'bjs');
 });
 
-
-
 test('common.load when isMultiModule is true', t=>{
-
   // mock fs
   const fs = require('fs');
   fs.readdirSync= function(p){
@@ -64,6 +61,19 @@ test('common.load when isMultiModule is true', t=>{
 
   t.is(cache[path.join('user', 'a')].__name, 'ajs');
   t.is(cache[path.join('user', 'b')].__name, 'bjs');
+});
+
+test('common.load when isMultiModule is false', t=>{
+  // mock fs
+  const dir = path.join('apppath', 'type');
+  mockModule(dir);
+  mockHelper(t, dir);
+  const common = require('../loader/common');
+
+  var cache = common.load('apppath', false, 'type');
+
+  t.is(cache.a.__name, 'ajs');
+  t.is(cache.b.__name, 'bjs');
 });
 
 

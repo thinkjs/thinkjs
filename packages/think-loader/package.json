@@ -7,8 +7,9 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test-complete": "eslint index.js && nyc ava test/",
-    "test": "ava test/",
+    "test-complete": "npm run eslint && nyc ava test/",
+    "test": "ava test/config.js",
+    "eslint": "./node_modules/.bin/eslint index.js loader/",
     "coverage": "nyc report --reporter=html"
   },
   "ava": {
