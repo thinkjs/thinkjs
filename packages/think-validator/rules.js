@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-28 15:07:39
+* @Last Modified time: 2017-03-02 10:22:24
 */
 'use strict';
 const thinkHelper = require('think-helper');
@@ -67,7 +67,7 @@ Validator._requiredNotIf = (options, requestData) => {
 Validator.requiredNotIf = (value, options) => {
   let first = options[0];
   let others = options.slice(1);
-  return others.indexOf(first) === -1;
+  return (others.indexOf(first) === -1);
 };
 
 /**
@@ -356,7 +356,7 @@ Validator.base64 = value => {
 Validator.byteLength = (value, options) => {
   value = validator.toString(value);
   if(options === true) {
-    return validator.isByteLength(value);
+    return validator.isByteLength(value, {min: 0, max: undefined});
   }else {
     return validator.isByteLength(value, options);
   }
@@ -388,13 +388,15 @@ Validator.currency = (value, options) => {
 };
 
 /**
- * check if the string is a data uri format.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
+ * check is string date format
+ * @param  {String} value []
+ * @return {Boolean}       []
  */
-Validator.dataURI = value => {
-  value = validator.toString(value);
-  return validator.isDataURI(value);
+Validator.date = value => {
+  if(isNaN(Date.parse(value))){
+    return false;
+  }
+  return true;
 };
 
 /**
@@ -406,6 +408,7 @@ Validator.decimal = value => {
   value = validator.toString(value);
   return validator.isDecimal(value);
 };
+
 
 /**
  * check if the string is a number that's divisible by another.
@@ -431,16 +434,6 @@ Validator.email = (value, options) => {
   }else {
     return validator.isEmail(value, options);
   }
-};
-
-/**
- * check if the string has a length of zero.
- * @param  {String} value   [description]
- * @return {Boolean}         [description]
- */
-Validator.empty = value => {
-  value = validator.toString(value);
-  return isEmpty.isEmpty(value);
 };
 
 /**
@@ -554,21 +547,6 @@ Validator.isbn = value => {
 };
 
 /**
- * check if the string is an ISSN
- * @param  {String} value [description]
- * @param  {Object|true} value [description]
- * @return {Boolean}       [description]
- */
-Validator.issn = (value, options) => {
-  value = validator.toString(value);
-  if(options === true) {
-    return validator.isISSN(value);
-  }else {
-    return validator.isISSN(value, options);
-  }
-};
-
-/**
  * check if the string is an ISIN (stock/security identifier).
  * @param  {String} value [description]
  * @return {Boolean}       [description]
@@ -619,219 +597,10 @@ Validator.notIn = (value, options) => {
 Validator.int = (value, options) => {
   value = validator.toString(value);
   if(options === true) {
-    return validator.isInt(value);
+    return validator.isInt(value, {min: 0});
   }else {
     return validator.isInt(value, options);
   }
-};
-
-/**
- *  check if the string is valid JSON (note: uses JSON.parse).
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.json = value => {
-  value = validator.toString(value);
-  return validator.isJSON(value);
-};
-
-/**
- * check if the string's length falls in a range.
- * @param  {String} value   [description]
- * @param  {Object|true} options [description]
- * @return {Boolean}         [description]
- */
-Validator.length = (value, options) => {
-  value = validator.toString(value);
-  if(options === true) {
-    return validator.isLength(value);
-  }else {
-    return validator.isLength(value, options);
-  }
-};
-
-/**
- * check if the string's length is max than min
- * @param  {String} value []
- * @param  {Int} min   []
- * @return {Boolean}       []
- */
-Validator.minLength = (value, min) => {
-  return validator.isLength(value, min | 0);
-};
-
-/**
- * check is the string's length is min than max
- * @param  {String} value []
- * @param  {Int} max   []
- * @return {Boolean}       []
- */
-Validator.maxLength = (value, max) => {
-  return validator.isLength(value, 0, max | 0);
-};
-
-
-/**
- * check if the string is lowercase.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.lowercase = (value) => {
-  value = validator.toString(value);
-  return validator.isLowercase(value);
-};
-
-/**
- * check if the string is macaddress.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.macAddress = value => {
-  value = validator.toString(value);
-  return validator.isMACAddress(value);
-};
-
-/**
- * check if the string is md5.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.md5 = value => {
-  value = validator.toString(value);
-  return validator.isMD5(value);
-};
-
-/**
- * check if the string is a mobile phone number
- * @param  {String} value  [description]
- * @param  {String} locale [description]
- * @return {Boolean}        [description]
- */
-Validator.mobilePhone = (value, locale) => {
-  value = validator.toString(value);
-  if(locale === true) {
-    return validator.isMobilePhone(value, 'zh-CN');
-  }else {
-    return validator.isMobilePhone(value, locale);
-  }
-};
-
-/**
- * check if the string is a valid hex-encoded representation of a MongoDB ObjectId.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.mongoId = value => {
-  value = validator.toString(value);
-  return validator.isMongoId(value);
-};
-
-/**
- * check if the string contains one or more multibyte chars.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.multibyte = value => {
-  value = validator.toString(value);
-  return validator.isMultibyte(value);
-};
-
-/**
- * check if the string contains only numbers.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.numeric = value => {
-  value = validator.toString(value);
-  return validator.isNumeric(value);
-};
-
-/**
- * check if the string contains any surrogate pairs chars.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.surrogatePair = (value) => {
-  value = validator.toString(value);
-  return validator.isSurrogatePair(value);
-};
-
-/**
- * check if the string is an URL.
- * @param  {String} value   [description]
- * @param  {Object|true} options [description]
- * @return {Boolean}         [description]
- */
-Validator.url = (value, options) => {
-  value = validator.toString(value);
-  if(options === true) {
-    return validator.isURL(value);
-  }else {
-    return validator.isURL(value, options);
-  }
-};
-
-/**
- * check if the string is a UUID (version 3, 4 or 5).
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.uuid = value => {
-  value = validator.toString(value);
-  return validator.isUUID(value, 3) || validator.isUUID(value, 4) || validator.isUUID(value, 5);
-};
-
-
-/**
- * check if the string is uppercase.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.uppercase = value => {
-  value = validator.toString(value);
-  return validator.isUppercase(value);
-};
-
-/**
- * check if the string contains a mixture of full and half-width chars.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-Validator.variableWidth = value => {
-  value = validator.toString(value);
-  return validator.isVariableWidth(value);
-};
-
-/**
- * check is string date format
- * @param  {String} value []
- * @return {Boolean}       []
- */
-Validator.date = value => {
-  if(thinkHelper.isNaN(Date.parse(value))){
-    return false;
-  }
-  return true;
-};
-
-/**
- * check is string start with str
- * @param  {String} value []
- * @param  {String} str   []
- * @return {Boolean}       []
- */
-Validator.startWith = (value, str) => {
-  return value.indexOf(str) === 0;
-};
-
-/**
- * check is string end with str
- * @param  {String} value []
- * @param  {String} str   []
- * @return {Boolean}       []
- */
-Validator.endWith = (value, str) => {
-  return value.lastIndexOf(str) === (value.length - str.length);
 };
 
 /**
@@ -857,6 +626,237 @@ Validator.max = (value, max) => {
     min: 0,
     max: max | 0
   });
+};
+
+/**
+ * check if the string's length falls in a range.
+ * @param  {String} value   [description]
+ * @param  {Object|true} options [description]
+ * @return {Boolean}         [description]
+ */
+Validator.length = (value, options) => {
+  value = validator.toString(value);
+  if(options === true) {
+    return validator.isLength(value, {min: 0, max: undefined});
+  }else {
+    return validator.isLength(value, options);
+  }
+};
+
+/**
+ * check if the string's length is max than min
+ * @param  {String} value []
+ * @param  {Int} min   []
+ * @return {Boolean}       []
+ */
+Validator.minLength = (value, min) => {
+  value = validator.toString(value);
+  return validator.isLength(value, {min: min | 0, max: undefined});
+};
+
+/**
+ * check is the string's length is min than max
+ * @param  {String} value []
+ * @param  {Int} max   []
+ * @return {Boolean}       []
+ */
+Validator.maxLength = (value, max) => {
+  value = validator.toString(value);
+  return validator.isLength(value, {min: 0, max: max | undefined});
+};
+
+
+/**
+ * check if the string is lowercase.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.lowercase = (value) => {
+  value = validator.toString(value);
+  return validator.isLowercase(value);
+};
+
+/**
+ * check if the string is uppercase.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.uppercase = value => {
+  value = validator.toString(value);
+  return validator.isUppercase(value);
+};
+
+/**
+ * check if the string is a mobile phone number
+ * @param  {String} value  [description]
+ * @param  {String} locale [description]
+ * @return {Boolean}        [description]
+ */
+Validator.mobile = (value, locale) => {
+  value = validator.toString(value);
+  if(locale === true) {
+    return validator.isMobilePhone(value, 'zh-CN');
+  }else {
+    return validator.isMobilePhone(value, locale);
+  }
+};
+
+/**
+ * check if the string is a valid hex-encoded representation of a MongoDB ObjectId.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.mongoId = value => {
+  value = validator.toString(value);
+  return validator.isMongoId(value);
+};
+
+
+/**
+ * check if the string contains one or more multibyte chars.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.multibyte = value => {
+  value = validator.toString(value);
+  return validator.isMultibyte(value);
+};
+
+
+/**
+ * check if the string is an URL.
+ * @param  {String} value   [description]
+ * @param  {Object|true} options [description]
+ * @return {Boolean}         [description]
+ */
+Validator.url = (value, options) => {
+  value = validator.toString(value);
+  if(options === true) {
+    return validator.isURL(value);
+  }else {
+    return validator.isURL(value, options);
+  }
+};
+
+/**
+ * check is sql order string
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.order = value => {
+  return value.split(/\s*,\s*/).every(item => {
+    return /^\w+\s+(?:ASC|DESC)$/i.test(item);
+  });
+};
+
+/**
+ * check is sql field string
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.field = value => {
+  return value.split(/\s*,\s*/).every(item => {
+    return item === '*' || /^\w+$/.test(item);
+  });
+};
+
+
+/**
+ * check is image file
+ * @param  {String} value []
+ * @return {Boolean}       []
+ */
+Validator.image = value => {
+  if(thinkHelper.isObject(value)){
+    value = value.originalFilename;
+  }
+  return /\.(?:jpeg|jpg|png|bmp|gif|svg)$/i.test(value);
+};
+
+/**
+ * check is string start with str
+ * @param  {String} value []
+ * @param  {String} str   []
+ * @return {Boolean}       []
+ */
+Validator.startWith = (value, str) => {
+  return value.indexOf(str) === 0;
+};
+
+/**
+ * check is string end with str
+ * @param  {String} value []
+ * @param  {String} str   []
+ * @return {Boolean}       []
+ */
+Validator.endWith = (value, str) => {
+  return value.lastIndexOf(str) === (value.length - str.length);
+};
+
+/**
+ * check if the string is an ISSN
+ * @param  {String} value [description]
+ * @param  {Object|true} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.issn = (value, options) => {
+  value = validator.toString(value);
+  if(options === true) {
+    return validator.isISSN(value);
+  }else {
+    return validator.isISSN(value, options);
+  }
+};
+
+/**
+ * check if the string is a UUID (version 3, 4 or 5).
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.uuid = value => {
+  value = validator.toString(value);
+  return validator.isUUID(value, 3) || validator.isUUID(value, 4) || validator.isUUID(value, 5);
+};
+
+/**
+ * check if the string is md5.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.md5 = value => {
+  value = validator.toString(value);
+  return validator.isMD5(value);
+};
+
+
+/**
+ * check if the string is macaddress.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.macAddress = value => {
+  value = validator.toString(value);
+  return validator.isMACAddress(value);
+};
+
+/**
+ * check if the string contains only numbers.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.numeric = value => {
+  value = validator.toString(value);
+  return validator.isNumeric(value);
+};
+
+/**
+ * check if the string is a data uri format.
+ * @param  {String} value [description]
+ * @return {Boolean}       [description]
+ */
+Validator.dataURI = value => {
+  value = validator.toString(value);
+  return validator.isDataURI(value);
 };
 
 /**
@@ -896,26 +896,13 @@ Validator.object = value => {
 };
 
 /**
- * check is image file
- * @param  {String} value []
+ * check value with regexp
+ * @param  {Mixed} value []
+ * @param  {RegExp} reg   []
  * @return {Boolean}       []
  */
-Validator.image = value => {
-  if(thinkHelper.isObject(value)){
-    value = value.originalFilename;
-  }
-  return /\.(?:jpeg|jpg|png|bmp|gif|svg)$/i.test(value);
-};
-
-/**
- * check is sql order string
- * @param  {String} value []
- * @return {Boolean}       []
- */
-Validator.order = value => {
-  return value.split(/\s*,\s*/).every(item => {
-    return /^\w+\s+(?:ASC|DESC)$/i.test(item);
-  });
+Validator.regexp = (value, reg) => {
+  return reg.test(value);
 };
 
 module.exports = Validator;

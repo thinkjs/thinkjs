@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-28 20:22:20
+* @Last Modified time: 2017-03-02 10:23:29
 */
 const Validator = require('./rules.js');
 const thinkHelper = require('think-helper');
@@ -176,11 +176,12 @@ Validate.exec = (pitems, requestData = {}) => {
       // check if the valid method is exsit
       let fn = Validator[rname];
       if (!thinkHelper.isFunction(fn)) {
-        throw new Error(rname + ' valid method is not been configed');
+        return new Error(rname + ' valid method is not been configed');
       }
 
-      // parse arguments
+      // parse rule's options
       let parsedOptions = _parseRuleOptions(rname, pitem[rname], requestData);
+
       let result = fn(pitem.value, parsedOptions);
       if(!result){
         let errmsg = _getErrorMessage(rname, pname, parsedOptions, pitem.errmsg);
