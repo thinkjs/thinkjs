@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const config = require('./loader/config.js');
 const bootstrap = require('./loader/bootstrap.js');
-const view = require('./loader/view.js');
 const middleware = require('./loader/middleware.js');
 const router = require('./loader/router.js');
 const extend = require('./loader/extend.js');
@@ -64,12 +63,6 @@ class Loader {
    */
   loadService(){
     return common(this.appPath, 'service', this.modules);
-  }
-  /**
-   * load view
-   */
-  loadView(viewPath){
-    return view(viewPath);
   }
   /**
    * load middleware

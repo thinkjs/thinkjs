@@ -67,7 +67,7 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
     }
     // has match or ignore
     return (ctx, next) => {
-      if(item.match && !checkMatched(item.match.ctx)){
+      if(item.match && !checkMatched(item.match, ctx)){
         return next();
       }
       if(item.ignore && checkMatched(item.ignore, ctx)){

@@ -4,7 +4,7 @@ const path = require('path');
 /**
  * load bootstrap files
  */
-function loadBoostrap(appPath, modules){
+function loadBootstrap(appPath, modules){
   let bootstrapPath = '';
   if(modules.length){
     bootstrapPath = path.join(appPath, 'common/bootstrap');
@@ -20,4 +20,4 @@ function loadBoostrap(appPath, modules){
   });
 }
 
-module.exports = loadBoostrap;
+module.exports = loadBootstrap;
