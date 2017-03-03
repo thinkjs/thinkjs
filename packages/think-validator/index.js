@@ -2,9 +2,9 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-03 11:17:25
+* @Last Modified time: 2017-03-03 11:49:41
 */
-const _validator = require('./rules.js');
+const validator = require('./rules.js');
 const helper = require('think-helper');
 
 
@@ -23,8 +23,8 @@ class Validator {
     this.skipedValidNames = ['value', 'default', 'trim'].concat(this.requiredValidNames);
   }
 
-  _getErrorMessage(rule, ruleName, validName,  parsedValidArgs, msgs) {
-    let errMsg = _validator.errors[validName];
+  _getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs) {
+    let errMsg = validator.errors[validName];
     if(helper.isObject(msgs)) {
       let msgsRuleName = msgs[ruleName];
 
@@ -52,14 +52,14 @@ class Validator {
   }
 
   _parseRuleArgs(validName, ruleArgs) {
-    let pfn = _validator['_' + validName];
+    let pfn = validator['_' + validName];
     if(helper.isFunction(pfn)){
       ruleArgs = pfn(ruleArgs, this.ctx);
     }
     return ruleArgs;
   }
 
-  _convertParamItemValue(rule, ruleName) {
+  _convertParamItemValue(ruleName, rule) {
     if(rule.int || rule.float || rule.numeric) {
        this.ctx[ruleName] = parseFloat(rule.value);
     }
@@ -70,7 +70,7 @@ class Validator {
     for(var i = 0; i <= this.requiredValidNames.length; i++) {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
-        let fn = _validator[validName];
+        let fn = validator[validName];
         let parsedValidArgs = this._parseRuleArgs(validName, rule[validName], this.ctx);
         if(fn(rule.value, parsedValidArgs)) {
           isRequired = true;
@@ -82,7 +82,7 @@ class Validator {
   }
 
   add(validName, callback) {
-    _validator[validName] = callback;
+    validator[validName] = callback;
   }
 
   validate(rules, msgs) {
@@ -119,7 +119,7 @@ class Validator {
       if(isRequired && helper.isTrueEmpty(rule.value)) {
         let validName = 'required';
         let parsedValidArgs = this._parseRuleArgs(validName, rule[validName]);
-        let errMsg = this._getErrorMessage(rule, ruleName, validName, parsedValidArgs, msgs);
+        let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
         ret[ruleName] = errMsg;
         continue;
       }else if(!isRequired && helper.isTrueEmpty(rule.value)){
@@ -133,7 +133,7 @@ class Validator {
         }
 
         // check if the valid method is exsit
-        let fn = _validator[validName];
+        let fn = validator[validName];
         if (!helper.isFunction(fn)) {
           throw new Error(validName + ' valid method is not been configed');
         }
@@ -142,11 +142,11 @@ class Validator {
         let result = fn(rule.value, parsedValidArgs);
 
         if(!result){
-          let errMsg = this._getErrorMessage(rule, ruleName, validName, parsedValidArgs, msgs);
+          let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
           ret[ruleName] = errMsg;
           break outerLoop;
         }else {
-          this._convertParamItemValue(rule, ruleName);
+          this._convertParamItemValue(ruleName, rule);
         }
       }
 
@@ -157,8 +157,16 @@ class Validator {
   }
 }
 
+module.exports = Validator;
+
+
+
+
+
+
+
 let ctx = {
-  name: '123.00'
+  name: '123'
 };
 
 let rules2 = {
@@ -173,6 +181,3 @@ let msgs2 = {
 }
 const instance = new Validator(ctx);
 let resp = instance.validate(rules2, msgs2);
-
-
-module.exports = Validator;
