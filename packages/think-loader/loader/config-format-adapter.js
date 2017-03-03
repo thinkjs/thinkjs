@@ -20,7 +20,7 @@ const formatAdapter = config => {
     assert(config[name].type, `adapter config must have type field, name is ${name}`);
     if(config[name].common){
       let common = config[name].common;
-      assert(typeof(common) === 'object', `adapter config's common field should be object type, name is ${name}`);
+      assert(helper.isObject(common), `adapter config's common field should be object type, name is ${name}`);
       delete config[name].common;
       for(let type in config[name]){
         if(type === 'type'){
