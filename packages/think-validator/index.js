@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-03 20:12:12
+* @Last Modified time: 2017-03-03 21:08:41
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -25,7 +25,6 @@ class Validator {
 
   _getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs) {
     //ruleName = ruleName.replace(/_array_\d/, '');
-
     let errMsg = validator.errors[validName];
     if(helper.isObject(msgs)) {
       let msgsRuleName = msgs[ruleName];
@@ -68,6 +67,12 @@ class Validator {
       return;
     }
 
+    if(ruleName.indexOf('_object_') && (rule.int || rule.float || rule.numeric)) {
+      let parsedRuleName = ruleName.split('_object_');
+      this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+      return;
+    }
+
     if(rule.int || rule.float || rule.numeric) {
        this.ctx[ruleName] = parseFloat(rule.value);
     }
@@ -91,7 +96,7 @@ class Validator {
 
   _preTreatRules(rules) {
     rules = helper.extend({}, rules);
-    let isNest = false;
+    let childRules = {};
 
     for(let ruleName in rules) {
       let rule = rules[ruleName];
@@ -120,33 +125,27 @@ class Validator {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
-      let ruleValue = rule.value;
-
-      // array children
-      if(rule.array && rule.children) {
+      // object & array children
+      if(rule.children) {
+        let ruleValue = rule.value;
         let ruleChildren = rules[ruleName].children;
         delete rules[ruleName];
-        isNest = true;
 
-        for(let i = 0; i < ruleValue.length; i++) {
-          let tmpRuleName = ruleName + '_array_' + i;
-          rules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[i]});
+        if(rule.array) {
+          for(let i = 0; i < ruleValue.length; i++) {
+            let tmpRuleName = ruleName + '_array_' + i;
+            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[i]});
+          }
+        }else if(rule.object) {
+          for(let key in ruleValue) {
+            let tmpRuleName = ruleName + '_object_' + key;
+            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[key]});
+          }
         }
       }
 
-      // object children
-      if(rule.object && rule.children) {
-        let ruleChildren = rules[ruleName].children;
-        delete rules[ruleName];
-        isNest = true;
-
-        for(let key in ruleValue) {
-          let tmpRuleName = ruleName + '_object_' + key;
-          rules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[key]});
-        }
-      }
     }
-    return ({isNest, rules});
+    return ({childRules, rules});
   }
 
   add(validName, callback) {
@@ -158,14 +157,17 @@ class Validator {
 
     let parsedResult = this._preTreatRules(rules);
     let parsedRules = parsedResult.rules;
+    let parsedChildRules = {};
 
     // pretreat for array/object child
-    if(parsedResult.isNest) {
-      parsedRules = this._preTreatRules(parsedRules).rules;
+    if(Object.keys(parsedResult.childRules).length > 0) {
+      parsedChildRules = this._preTreatRules(parsedResult.childRules).rules;
     }
 
-    console.log('rules-->', parsedRules, '\n');
-
+    //console.log('parsedRules', parsedRules);
+    //console.log('parsedChildRules', parsedChildRules);
+    parsedRules = helper.extend({}, parsedRules, parsedChildRules);
+    //console.log('last parsedRules', parsedRules, '\n');
 
     outerLoop:
     for(let ruleName in parsedRules){
@@ -215,11 +217,6 @@ class Validator {
 }
 
 module.exports = Validator;
-
-
-
-
-
 
 
 // let ctx = {
