@@ -265,15 +265,21 @@ exports.uuid = function(version){
 /**
  * parse adapter config
  */
-exports.parseAdapterConfig = config => {
+exports.parseAdapterConfig = (config, extConfig) => {
   assert(exports.isString(config.type), 'config.type required');
-  let conf = config[config.type] || {};
-  //merge common config
-  if(config.common){
-    assert(exports.isObject(config.common), 'config.common must be object');
-    conf = exports.extend({}, config.common, conf);
+  if(extConfig){
+    //only change type
+    if(exports.isString(extConfig)){
+      extConfig = {type: extConfig};
+    }
+    //only add some configs
+    if(!extConfig.type){
+      extConfig = {[config.type]: extConfig};
+    }
   }
-  return conf;
+  //merge config
+  config = exports.extend({}, config, extConfig);
+  return config[config.type] || {};
 }
 
 
