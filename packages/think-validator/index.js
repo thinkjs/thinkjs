@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-03 11:06:32
+* @Last Modified time: 2017-03-03 11:17:25
 */
 const _validator = require('./rules.js');
 const helper = require('think-helper');
@@ -67,7 +67,6 @@ class Validator {
 
   _checkValueRequired(rule) {
     let isRequired = false;
-    //let validName;
     for(var i = 0; i <= this.requiredValidNames.length; i++) {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
@@ -80,6 +79,10 @@ class Validator {
       }
     }
     return isRequired;
+  }
+
+  add(validName, callback) {
+    _validator[validName] = callback;
   }
 
   validate(rules, msgs) {
@@ -145,9 +148,9 @@ class Validator {
         }else {
           this._convertParamItemValue(rule, ruleName);
         }
-      } // end inner for
+      }
 
-    } // end outer for
+    }
     console.log('resp-->', ret);
     console.log('ctx-->', this.ctx)
     return ret;
