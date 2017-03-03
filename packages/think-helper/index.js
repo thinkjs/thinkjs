@@ -5,6 +5,7 @@ const net = require('net');
 const cluster = require('cluster');
 const is = require('core-util-is');
 const uuid = require('uuid');
+const assert = require('assert');
 
 const fs_rmdir = promisify(fs.rmdir, fs);
 const fs_unlink = promisify(fs.unlink, fs);
@@ -261,6 +262,19 @@ exports.uuid = function(version){
   return uuid.v4();
 }
 
+/**
+ * parse adapter config
+ */
+exports.parseAdapterConfig = config => {
+  assert(exports.isString(config.type), 'config.type required');
+  let conf = config[config.type] || {};
+  //merge common config
+  if(config.common){
+    assert(exports.isObject(config.common), 'config.common must be object');
+    conf = exports.extend({}, config.common, conf);
+  }
+  return conf;
+}
 
 
 
