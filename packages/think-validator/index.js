@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-03 10:43:30
+* @Last Modified time: 2017-03-03 11:06:32
 */
 const _validator = require('./rules.js');
 const helper = require('think-helper');
@@ -20,20 +20,35 @@ class Validator {
       'requiredWithOut',
       'requiredWithOutAll'
     ];
-    this.skipedValidNames = ['value', 'default', 'trim', 'errmsg'].concat(this.requiredValidNames);
+    this.skipedValidNames = ['value', 'default', 'trim'].concat(this.requiredValidNames);
   }
 
-  _getErrorMessage(rule, ruleName, validName,  parsedValidArgs) {
-    // if(rule.errmsg) {
-    //   return rule.errmsg;
-    // }
-    //let ruleName = Object.keys(rule)[0];
-    let validArgs = rule[validName];
-    let errmsg = _validator.errors['validate_' + validName];
-    return errmsg.replace('{name}', ruleName)
-                 .replace('{parsedOptions}', JSON.stringify(parsedValidArgs))
-                 .replace('{options}', JSON.stringify(validArgs));
+  _getErrorMessage(rule, ruleName, validName,  parsedValidArgs, msgs) {
+    let errMsg = _validator.errors[validName];
+    if(helper.isObject(msgs)) {
+      let msgsRuleName = msgs[ruleName];
 
+      if(msgsRuleName && helper.isString(msgsRuleName)) {
+        errMsg = msgsRuleName;
+      }
+
+      if(msgsRuleName && helper.isObject(msgsRuleName) && helper.isString(msgsRuleName[validName])) {
+        errMsg = msgsRuleName[validName];
+      }
+
+      if(msgs[ruleName + '_' + validName] && helper.isString(msgs[ruleName + '_' + validName])) {
+        errMsg = msgs[ruleName + '_' + validName]
+      }
+    }
+
+    if(!errMsg) {
+      return ruleName + ' valid failed';
+    }
+
+    let validArgs = rule[ruleName];
+    return errMsg.replace('{name}', ruleName)
+                 .replace('{args}', JSON.stringify(validArgs))
+                 .replace('{pargs}', JSON.stringify(parsedValidArgs));
   }
 
   _parseRuleArgs(validName, ruleArgs) {
@@ -86,9 +101,14 @@ class Validator {
         rule.value = rule.value.trim();
       }
 
-      // 数组
+      // array convert in enter
       if(rule.array && !helper.isArray(rule.value)) {
         rule.value = [rule.value]
+      }
+
+      // boolean convert in enter
+      if(rule.boolean) {
+        rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
       // required check
@@ -96,15 +116,15 @@ class Validator {
       if(isRequired && helper.isTrueEmpty(rule.value)) {
         let validName = 'required';
         let parsedValidArgs = this._parseRuleArgs(validName, rule[validName]);
-        let errMsg = this._getErrorMessage(rule, ruleName, validName, parsedValidArgs);
+        let errMsg = this._getErrorMessage(rule, ruleName, validName, parsedValidArgs, msgs);
         ret[ruleName] = errMsg;
-        continue outerLoop;
+        continue;
       }else if(!isRequired && helper.isTrueEmpty(rule.value)){
-        continue outerLoop;
+        continue;
       }
 
+      // valid method check
       for(let validName in rule){
-        // skip the attr don't need valid
         if(this.skipedValidNames.indexOf(validName) >= 0) {
           continue;
         }
@@ -119,7 +139,7 @@ class Validator {
         let result = fn(rule.value, parsedValidArgs);
 
         if(!result){
-          let errMsg = this._getErrorMessage(rule, ruleName, validName, parsedValidArgs);
+          let errMsg = this._getErrorMessage(rule, ruleName, validName, parsedValidArgs, msgs);
           ret[ruleName] = errMsg;
           break outerLoop;
         }else {
