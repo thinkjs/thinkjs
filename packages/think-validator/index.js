@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-03 16:33:50
+* @Last Modified time: 2017-03-03 20:12:12
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -24,6 +24,8 @@ class Validator {
   }
 
   _getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs) {
+    //ruleName = ruleName.replace(/_array_\d/, '');
+
     let errMsg = validator.errors[validName];
     if(helper.isObject(msgs)) {
       let msgsRuleName = msgs[ruleName];
@@ -88,17 +90,15 @@ class Validator {
   }
 
   _preTreatRules(rules) {
-
+    rules = helper.extend({}, rules);
     let isNest = false;
 
     for(let ruleName in rules) {
-
-      // if(ruleName === '_children') {
-      //   continue;
-      // }
-
       let rule = rules[ruleName];
-      rule.value = this.ctx[ruleName];
+
+      if(!rule.value) {
+        rule.value = this.ctx[ruleName];
+      }
 
       // set default
       if(typeof(rule.value) === 'undefined' && !helper.isTrueEmpty(rule.default)){
@@ -120,28 +120,31 @@ class Validator {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
-      //console.log('--------',rule.children);
-
+      let ruleValue = rule.value;
 
       // array children
       if(rule.array && rule.children) {
-        let ruleValue = rule.value;
         let ruleChildren = rules[ruleName].children;
         delete rules[ruleName];
         isNest = true;
-        //if(helper.isObject(rule.children)) {
-          for(let i = 0; i < ruleValue.length; i++) {
-            let tmpRuleName = ruleName + '_array_'+ i;
-            rules[tmpRuleName] = helper.extend({}, ruleChildren);
-            rules[tmpRuleName].value = ruleValue[i];
-          }
-        //}
+
+        for(let i = 0; i < ruleValue.length; i++) {
+          let tmpRuleName = ruleName + '_array_' + i;
+          rules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[i]});
+        }
       }
 
       // object children
-      // if(rule.object && rule.children) {
-      //   for(let key in rule.value)
-      // }
+      if(rule.object && rule.children) {
+        let ruleChildren = rules[ruleName].children;
+        delete rules[ruleName];
+        isNest = true;
+
+        for(let key in ruleValue) {
+          let tmpRuleName = ruleName + '_object_' + key;
+          rules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[key]});
+        }
+      }
     }
     return ({isNest, rules});
   }
@@ -153,18 +156,15 @@ class Validator {
   validate(rules, msgs) {
     let ret = {};
 
-    let parsedResult = this._preTreatRules(helper.extend({}, rules));
+    let parsedResult = this._preTreatRules(rules);
     let parsedRules = parsedResult.rules;
-
-    console.log('数组转化之后的rules-->', parsedRules);
-    //return;
 
     // pretreat for array/object child
     if(parsedResult.isNest) {
-      parsedRules = this._preTreatRules(helper.extend({}, parsedRules.rules));
+      parsedRules = this._preTreatRules(parsedRules).rules;
     }
 
-    console.log('再次转化之后', parsedRules.rules);
+    console.log('rules-->', parsedRules, '\n');
 
 
     outerLoop:
@@ -201,15 +201,15 @@ class Validator {
         if(!result){
           let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
           ret[ruleName] = errMsg;
-          break outerLoop;
+          continue outerLoop;
         }else {
           this._convertParamItemValue(ruleName, rule);
         }
       }
 
     }
-    // console.log('resp-->', ret);
-    // console.log('ctx-->', this.ctx)
+    console.log('resp-->', ret, '\n');
+    console.log('ctx-->', this.ctx, '\n')
     return ret;
   }
 }
@@ -241,13 +241,38 @@ module.exports = Validator;
 
 
 
+// let ctx = {
+//   name: ['123', '12 ', '666 ']
+// };
+
+// let rules2 = {
+//   name: {
+//     array: true,
+//     children: {
+//       int: true,
+//       default: 12,
+//       trim: true
+//     }
+//   }
+// }
+
+// let msgs2 = {
+//   int: 'int valid failed'
+// }
+// const instance = new Validator(ctx);
+// let resp = instance.validate(rules2, msgs2);
+
+
 let ctx = {
-  name: ['123', 'ds   ', '666']
+  name: {
+    a: 123,
+    b: '3245     '
+  }
 };
 
 let rules2 = {
   name: {
-    array: true,
+    object: true,
     children: {
       int: true,
       default: 12,
