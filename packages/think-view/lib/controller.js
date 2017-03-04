@@ -35,8 +35,16 @@ module.exports = {
       file = '';
     }
     config = helper.parseAdapterConfig(this.config('view'), config);
-    return this._getViewInstance().render(file, config).then(content => {
+    return this._getViewInstance().render(file, config);
+  },
+  /**
+   * display view file 
+   * @param {String} file 
+   * @param {Object} config 
+   */
+  display(file, config){
+    return this.render(file, config).then(content => {
       this.ctx.body = content;
-    });
+    })
   }
 }

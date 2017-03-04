@@ -58,7 +58,20 @@ render file
 module.exports = class extends think.Controller {
   async indexAction(){
     //render file index_index.html
-    await this.render();
+    let content = await this.render();
+  }
+}
+```
+
+### display
+
+display view file
+
+```js
+module.exports = class extends think.Controller {
+  async indexAction(){
+    //render file index_index.html
+    await this.display();
   }
 }
 ```
