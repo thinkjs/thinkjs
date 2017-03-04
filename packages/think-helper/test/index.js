@@ -5,7 +5,6 @@ import {
   isFile,
   isDirectory,
   extend, 
-  getFiles,
   promisify,
   defer,
   md5,
@@ -183,7 +182,7 @@ test('rmdir', async (t) => {
 
 test('rmdir 1', async (t) => {
   mkdir('songguangyu76');
-  fs.writeFileSync('songguangyu76/abc.js',"123");
+  fs.writeFileSync('songguangyu76/abc.js', '123');
   mkdir('songguangyu76/xiaoming');
   t.is(isDirectory('songguangyu76'), true);
   await rmdir('songguangyu76');
@@ -199,9 +198,9 @@ test('rmdir 2', async (t) => {
 
 test('uuid', t => {
   var uuid1 = uuid('v1');
-  t.is(uuid1.length>1, true);
+  t.is(uuid1.length > 1, true);
   var uuid2 = uuid();
-  t.is(uuid2.length>1, true);
+  t.is(uuid2.length > 1, true);
 })
 
 test('datetime', t => {
@@ -216,7 +215,7 @@ test('datetime 1', t => {
 
 
 test('escapeHtml', t => {
-  t.deepEqual(escapeHtml("<div width='200'></div>"), '&lt;div width=&#39;200&#39;&gt;&lt;/div&gt;');  
+  t.deepEqual(escapeHtml('<div width=\'200\'></div>'), '&lt;div width=&#39;200&#39;&gt;&lt;/div&gt;');  
 })
 test('escapeHtml 1', t => {
   t.deepEqual(escapeHtml(('<div width="200"></div>')), '&lt;div width=&quote;200&quote;&gt;&lt;/div&gt;');  
@@ -230,7 +229,7 @@ test('isEmpty', t => {
   t.is(isEmpty(null), true);
   t.is(isEmpty(undefined), true);
   t.is(isEmpty(''), true);
-  t.is(isEmpty({"a":1}), false);
+  t.is(isEmpty({'a': 1}), false);
   var date = new Date();
   t.is(isEmpty(date), false);
   var func = function() {}
@@ -252,8 +251,8 @@ test('camelCase', t => {
 test('getdirFiles', t => {
   mkdir('songguangyu79');
   mkdir('songguangyu79/songguangyu80');
-  fs.writeFileSync('songguangyu79/abc.js',"123");
-  fs.writeFileSync('songguangyu79/songguangyu80/abc.js',"123");
+  fs.writeFileSync('songguangyu79/abc.js', '123');
+  fs.writeFileSync('songguangyu79/songguangyu80/abc.js', '123');
   getdirFiles('songguangyu79');
   getdirFiles('songguangyu80');
   rmdir('songguangyu79');
