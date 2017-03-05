@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-05 11:27:19
+* @Last Modified time: 2017-03-05 16:59:51
 */
 'use strict';
 const helper = require('think-helper');
@@ -359,18 +359,13 @@ Validator.base64 = value => {
 /**
  * check if the string's length (in bytes) falls in a range.
  * @param  {String} value []
- * @param  {Object|true} options []
+ * @param  {Object} options []
  * @return {Boolean}       []
  */
 Validator.byteLength = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'byteLength\'s options should be object or true');
-
+  assert(helper.isObject(options), 'byteLength\'s options should be object');
   value = validator.toString(value);
-  if(options === true) {
-    return validator.isByteLength(value, {min: 0, max: undefined});
-  }else {
-    return validator.isByteLength(value, options);
-  }
+  return validator.isByteLength(value, {min: options.min | 0, max: options.max});
 };
 
 /**
@@ -616,38 +611,11 @@ Validator.int = (value, options) => {
   assert((helper.isObject(options) || options === true), 'int\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
-    return validator.isInt(value, {min: 0});
+    return validator.isInt(value);
   }else {
     return validator.isInt(value, options);
   }
 };
-
-/**
- * check if the string greater than min value
- * @param  {String} value []
- * @param  {int} min []
- * @return {Boolean}       []
- */
-// Validator.minInt = (value, min) => {
-//   value = validator.toString(value);
-//   return validator.isInt(value, {
-//     min: min | 0
-//   });
-// };
-
-/**
- * check if the string less than max value
- * @param  {String} value []
- * @param  {int} max []
- * @return {Boolean}       []
- */
-// Validator.maxInt = (value, max) => {
-//   value = validator.toString(value);
-//   return validator.isInt(value, {
-//     min: 0,
-//     max: max | 0
-//   });
-// };
 
 /**
  * check if the string's length falls in a range.
@@ -656,37 +624,10 @@ Validator.int = (value, options) => {
  * @return {Boolean}         [description]
  */
 Validator.length = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'length\'s options should be object or true');
+  assert(helper.isObject(options), 'length\'s options should be object');
   value = validator.toString(value);
-  if(options === true) {
-    return validator.isLength(value, {min: 0, max: undefined});
-  }else {
-    return validator.isLength(value, options);
-  }
+  return validator.isLength(value, {min: options.min | 0, max: options.max});
 };
-
-/**
- * check if the string's length is max than min
- * @param  {String} value []
- * @param  {Int} min   []
- * @return {Boolean}       []
- */
-// Validator.minLength = (value, min) => {
-//   value = validator.toString(value);
-//   return validator.isLength(value, {min: min | 0, max: undefined});
-// };
-
-/**
- * check is the string's length is min than max
- * @param  {String} value []
- * @param  {Int} max   []
- * @return {Boolean}       []
- */
-// Validator.maxLength = (value, max) => {
-//   value = validator.toString(value);
-//   return validator.isLength(value, {min: 0, max: max | undefined});
-// };
-
 
 /**
  * check if the string is lowercase.
