@@ -64,6 +64,7 @@ class Loader {
   loadService(){
     return common(this.appPath, 'service', this.modules);
   }
+
   /**
    * load middleware
    */
