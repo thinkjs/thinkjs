@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-05 10:55:41
+* @Last Modified time: 2017-03-05 11:27:19
 */
 'use strict';
 const helper = require('think-helper');
@@ -671,10 +671,10 @@ Validator.length = (value, options) => {
  * @param  {Int} min   []
  * @return {Boolean}       []
  */
-Validator.minLength = (value, min) => {
-  value = validator.toString(value);
-  return validator.isLength(value, {min: min | 0, max: undefined});
-};
+// Validator.minLength = (value, min) => {
+//   value = validator.toString(value);
+//   return validator.isLength(value, {min: min | 0, max: undefined});
+// };
 
 /**
  * check is the string's length is min than max
@@ -682,10 +682,10 @@ Validator.minLength = (value, min) => {
  * @param  {Int} max   []
  * @return {Boolean}       []
  */
-Validator.maxLength = (value, max) => {
-  value = validator.toString(value);
-  return validator.isLength(value, {min: 0, max: max | undefined});
-};
+// Validator.maxLength = (value, max) => {
+//   value = validator.toString(value);
+//   return validator.isLength(value, {min: 0, max: max | undefined});
+// };
 
 
 /**
@@ -693,7 +693,7 @@ Validator.maxLength = (value, max) => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.lowercase = (value) => {
+Validator.lowercase = value => {
   value = validator.toString(value);
   return validator.isLowercase(value);
 };
