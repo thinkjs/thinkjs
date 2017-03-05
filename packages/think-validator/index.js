@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-03 21:08:41
+* @Last Modified time: 2017-03-05 10:34:17
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -24,28 +24,52 @@ class Validator {
   }
 
   _getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs) {
-    //ruleName = ruleName.replace(/_array_\d/, '');
     let errMsg = validator.errors[validName];
     if(helper.isObject(msgs)) {
-      let msgsRuleName = msgs[ruleName];
+      // int: 'error'
+      errMsg = msgs[validName] ? msgs[validName] : '';
 
-      if(msgsRuleName && helper.isString(msgsRuleName)) {
-        errMsg = msgsRuleName;
+      let msgs_RuleName = msgs[ruleName];
+
+      // name: 'error'
+      if(msgs_RuleName && helper.isString(msgs_RuleName)) {
+        errMsg = msgs_RuleName;
       }
 
-      if(msgsRuleName && helper.isObject(msgsRuleName) && helper.isString(msgsRuleName[validName])) {
-        errMsg = msgsRuleName[validName];
+      // name: {int: 'error'}
+      if(msgs_RuleName && helper.isObject(msgs_RuleName) && helper.isString(msgs_RuleName[validName])) {
+        errMsg = msgs_RuleName[validName];
       }
 
-      if(msgs[ruleName + '_' + validName] && helper.isString(msgs[ruleName + '_' + validName])) {
-        errMsg = msgs[ruleName + '_' + validName]
+
+      // name: {name1,name2: 'error'}
+      // name: {name1,name2: {int: 'error'}}
+      if(ruleName.indexOf('_object_') > -1) {
+        let parsedRuleName = ruleName.split('_object_');
+        ruleName = parsedResult[0];
+        let msgs_RuleName = msgs[ruleName];
+        let subRuleName = parsedResult[1];
+        if(msgs_RuleName) {
+          for(let i in msgs_RuleName) {
+            if(i.split(',').indexOf(subRuleName) > -1){
+              if(helper.isObject(msgs_RuleName[i])){
+                errMsg = msgs_RuleName[subRuleName][validName];
+              }else {
+                errMsg = msgs_RuleName[subRuleName]
+              }
+            }
+          }
+        }
       }
+
     }
 
     if(!errMsg) {
       return ruleName + ' valid failed';
     }
 
+    // ruleName validName validArgs parsedValidArgs
+    // itemValue = _convertParamItemValue(ruleName, rule)
     let validArgs = rule[ruleName];
     return errMsg.replace('{name}', ruleName)
                  .replace('{args}', JSON.stringify(validArgs))
@@ -61,20 +85,19 @@ class Validator {
   }
 
   _convertParamItemValue(ruleName, rule) {
-    if(ruleName.indexOf('_array_') > -1 && (rule.int || rule.float || rule.numeric)) {
-      let parsedRuleName = ruleName.split('_array_');
-      this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
-      return;
-    }
-
-    if(ruleName.indexOf('_object_') && (rule.int || rule.float || rule.numeric)) {
-      let parsedRuleName = ruleName.split('_object_');
-      this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
-      return;
-    }
-
     if(rule.int || rule.float || rule.numeric) {
-       this.ctx[ruleName] = parseFloat(rule.value);
+      if(ruleName.indexOf('_array_') > -1) {
+        let parsedRuleName = ruleName.split('_array_');
+        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+      }
+      else if (ruleName.indexOf('_object_') > -1) {
+        let parsedRuleName = ruleName.split('_object_');
+        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+      }
+      else {
+        this.ctx[ruleName] = parseFloat(rule.value);
+      }
+      return parseFloat(rule.value);
     }
   }
 
@@ -101,6 +124,7 @@ class Validator {
     for(let ruleName in rules) {
       let rule = rules[ruleName];
 
+      // array & object children with value, skip this operator
       if(!rule.value) {
         rule.value = this.ctx[ruleName];
       }
@@ -125,6 +149,9 @@ class Validator {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
+      // write back to ctx
+      this.ctx[ruleName] = rule.value;
+
       // object & array children
       if(rule.children) {
         let ruleValue = rule.value;
@@ -148,9 +175,9 @@ class Validator {
     return ({childRules, rules});
   }
 
-  add(validName, callback) {
-    validator[validName] = callback;
-  }
+  // add(validName, callback) {
+  //   validator[validName] = callback;
+  // }
 
   validate(rules, msgs) {
     let ret = {};
@@ -210,8 +237,8 @@ class Validator {
       }
 
     }
-    console.log('resp-->', ret, '\n');
-    console.log('ctx-->', this.ctx, '\n')
+    console.log('resp err-->', ret, '\n');
+    console.log('ctx transform-->', this.ctx, '\n')
     return ret;
   }
 }
@@ -223,7 +250,7 @@ module.exports = Validator;
 //   name: '123'
 // };
 
-// let rules2 = {
+// let rules = {
 //   name: {
 //     int: true,
 //     required: true
@@ -234,7 +261,7 @@ module.exports = Validator;
 //   int: 'int valid failed'
 // }
 // const instance = new Validator(ctx);
-// let resp = instance.validate(rules2, msgs2);
+// let resp = instance.validate(rules, msgs2);
 
 
 
@@ -242,7 +269,7 @@ module.exports = Validator;
 //   name: ['123', '12 ', '666 ']
 // };
 
-// let rules2 = {
+// let rules = {
 //   name: {
 //     array: true,
 //     children: {
@@ -257,29 +284,48 @@ module.exports = Validator;
 //   int: 'int valid failed'
 // }
 // const instance = new Validator(ctx);
-// let resp = instance.validate(rules2, msgs2);
+// let resp = instance.validate(rules, msgs2);
+
+
+// let ctx = {
+//   name: {
+//     a: 123,
+//     b: '3245     '
+//   }
+// };
+
+// let rules = {
+//   name: {
+//     object: true,
+//     children: {
+//       int: true,
+//       default: 12,
+//       trim: true
+//     }
+//   }
+// }
+
+// let msgs2 = {
+//   int: 'int valid failed'
+// }
+// const instance = new Validator(ctx);
+// let resp = instance.validate(rules, msgs2);
 
 
 let ctx = {
-  name: {
-    a: 123,
-    b: '3245     '
-  }
+  name: '123ddd   '
 };
 
-let rules2 = {
+let rules = {
   name: {
-    object: true,
-    children: {
-      int: true,
-      default: 12,
-      trim: true
-    }
+    string: true,
+    trim: true
   }
 }
 
 let msgs2 = {
   int: 'int valid failed'
 }
+
 const instance = new Validator(ctx);
-let resp = instance.validate(rules2, msgs2);
+let resp = instance.validate(rules, msgs2);
