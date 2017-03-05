@@ -2,18 +2,16 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-02 19:03:13
+* @Last Modified time: 2017-03-05 10:55:41
 */
 'use strict';
-const thinkHelper = require('think-helper');
-//https://github.com/chriso/validator.js
+const helper = require('think-helper');
 const validator = require('validator');
-
-const preDefinedErrors = require('./errors.js');
+const errors = require('./errors.js');
+const assert = require('assert');
 
 let Validator = {}
-
-Validator.errors = preDefinedErrors;
+Validator.errors = errors;
 
 /**
  * check value is set
@@ -28,15 +26,16 @@ Validator.required = (value, options) => {
 /**
  * parse requiredIf rule options
  * @param  {Array}  options []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}  []
  */
-Validator._requiredIf = (options, requestData) => {
+Validator._requiredIf = (options, ctx) => {
+  assert(helper.isArray(options), 'requiredIf\'s options should be array');
   options = options.slice();
 
   // just parse the first param
   let arg0 = options[0];
-  options[0] = (requestData[arg0] ? requestData[arg0] : '');
+  options[0] = (ctx[arg0] ? ctx[arg0] : '');
   return options;
 };
 
@@ -55,11 +54,12 @@ Validator.requiredIf = (value, options) => {
 /**
  * parse requiredNotIf rule options
  * @param  {Array} options      []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}      []
  */
-Validator._requiredNotIf = (options, requestData) => {
-  return Validator._requiredIf(options, requestData);
+Validator._requiredNotIf = (options, ctx) => {
+  assert(helper.isArray(options), 'requiredNotIf\'s options should be array');
+  return Validator._requiredIf(options, ctx);
 };
 
 /**
@@ -77,15 +77,16 @@ Validator.requiredNotIf = (value, options) => {
 /**
  * parse required rule options
  * @param  {Array}  options []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}      []
  */
-Validator._requiredWith = (options, requestData) => {
+Validator._requiredWith = (options, ctx) => {
+  assert(helper.isArray(options), 'requiredWith\'s options should be array');
   options = options.slice();
 
   // parsed all the param
   return options.map(item => {
-    return requestData[item] ? requestData[item] : '';
+    return ctx[item] ? ctx[item] : '';
   });
 };
 
@@ -97,18 +98,19 @@ Validator._requiredWith = (options, requestData) => {
  */
 Validator.requiredWith = (value, options) => {
   return options.some(item => {
-    return !thinkHelper.isEmpty(item);
+    return !helper.isEmpty(item);
   });
 };
 
 /**
  * parse requiredWithAll rule options
  * @param  {Array}  options []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}      []
  */
-Validator._requiredWithAll = (options, requestData) => {
-  return Validator._requiredWith(options, requestData);
+Validator._requiredWithAll = (options, ctx) => {
+  assert(helper.isArray(options), 'requiredWithAll\'s options should be array');
+  return Validator._requiredWith(options, ctx);
 };
 
 /**
@@ -119,18 +121,19 @@ Validator._requiredWithAll = (options, requestData) => {
  */
 Validator.requiredWithAll = (value, options) => {
   return options.every(item => {
-    return !thinkHelper.isEmpty(item);
+    return !helper.isEmpty(item);
   });
 };
 
 /**
  * parse requiredWithOut rule options
  * @param  {Array} options []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}      []
  */
-Validator._requiredWithOut = (options, requestData) => {
-  return Validator._requiredWith(options, requestData);
+Validator._requiredWithOut = (options, ctx) => {
+  assert(helper.isArray(options), 'requiredWithOut\'s options should be array');
+  return Validator._requiredWith(options, ctx);
 };
 
 /**
@@ -141,18 +144,19 @@ Validator._requiredWithOut = (options, requestData) => {
  */
 Validator.requiredWithOut = (value, options) => {
   return options.some(item => {
-    return thinkHelper.isEmpty(item);
+    return helper.isEmpty(item);
   });
 };
 
 /**
  * parse requiredWithOutAll rule options
  * @param  {Array} options []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}      []
  */
-Validator._requiredWithOutAll = (options, requestData) => {
-  return Validator._requiredWith(options, requestData);
+Validator._requiredWithOutAll = (options, ctx) => {
+  assert(helper.isArray(options), 'requiredWithOutAll\'s options should be array');
+  return Validator._requiredWith(options, ctx);
 };
 
 /**
@@ -163,7 +167,7 @@ Validator._requiredWithOutAll = (options, requestData) => {
  */
 Validator.requiredWithOutAll = (value, options) => {
   return options.every(item => {
-    return thinkHelper.isEmpty(item);
+    return helper.isEmpty(item);
   });
 };
 
@@ -182,11 +186,11 @@ Validator.contains = (value, seed) => {
 /**
  * parse equal rule comparison
  * @param  {String} comparison []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {String}      []
  */
-Validator._equals = (comparison, requestData) => {
-  let item = requestData[comparison];
+Validator._equals = (comparison, ctx) => {
+  let item = ctx[comparison];
   return item ? item : comparison;
 };
 
@@ -204,11 +208,11 @@ Validator.equals = (value, comparison) => {
 /**
  * parse different rule comparison
  * @param  {Array}  comparison []
- * @param  {Object} requestData []
+ * @param  {Object} ctx []
  * @return {Array}  []
  */
-Validator._different = (comparison, requestData) => {
-  return Validator._equals(comparison, requestData);
+Validator._different = (comparison, ctx) => {
+  return Validator._equals(comparison, ctx);
 };
 
 /**
@@ -359,6 +363,8 @@ Validator.base64 = value => {
  * @return {Boolean}       []
  */
 Validator.byteLength = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'byteLength\'s options should be object or true');
+
   value = validator.toString(value);
   if(options === true) {
     return validator.isByteLength(value, {min: 0, max: undefined});
@@ -384,6 +390,7 @@ Validator.creditCard = value => {
  * @return {Boolean}         []
  */
 Validator.currency = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'currency\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isCurrency(value);
@@ -433,6 +440,7 @@ Validator.divisibleBy = (value, number) => {
  * @return {Boolean}         [description]
  */
 Validator.email = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'email\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isEmail(value);
@@ -448,6 +456,7 @@ Validator.email = (value, options) => {
  * @return {Boolean}         [description]
  */
 Validator.fqdn = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'fqdn\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isFQDN(value);
@@ -463,6 +472,7 @@ Validator.fqdn = (value, options) => {
  * @return {Boolean}         [description]
  */
 Validator.float = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'float\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isFloat(value);
@@ -496,7 +506,7 @@ Validator.halfWidth = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.hexColor = (value) => {
+Validator.hexColor = value => {
   value = validator.toString(value);
   return validator.isHexColor(value);
 };
@@ -578,6 +588,7 @@ Validator.iso8601 = value => {
  * @return {Boolean}       [description]
  */
 Validator.in = (value, options) => {
+  assert(helper.isArray(options), 'in\'s options should be array');
   value = validator.toString(value);
   return validator.isIn(value, options);
 };
@@ -589,6 +600,8 @@ Validator.in = (value, options) => {
  * @return {Boolean}       [description]
  */
 Validator.notIn = (value, options) => {
+  assert(helper.isArray(options), 'notIn\'s options should be array');
+
   value = validator.toString(value);
   return !validator.isIn(value, options);
 };
@@ -600,6 +613,7 @@ Validator.notIn = (value, options) => {
  * @return {Boolean}         [description]
  */
 Validator.int = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'int\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isInt(value, {min: 0});
@@ -642,6 +656,7 @@ Validator.int = (value, options) => {
  * @return {Boolean}         [description]
  */
 Validator.length = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'length\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isLength(value, {min: 0, max: undefined});
@@ -737,6 +752,8 @@ Validator.multibyte = value => {
  * @return {Boolean}         [description]
  */
 Validator.url = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'url\'s options should be object or true');
+
   value = validator.toString(value);
   if(options === true) {
     return validator.isURL(value);
@@ -774,7 +791,7 @@ Validator.field = value => {
  * @return {Boolean}       []
  */
 Validator.image = value => {
-  if(thinkHelper.isObject(value)){
+  if(helper.isObject(value)){
     value = value.originalFilename;
   }
   return /\.(?:jpeg|jpg|png|bmp|gif|svg)$/i.test(value);
@@ -806,7 +823,7 @@ Validator.endWith = (value, str) => {
  * @return {Boolean}       []
  */
 Validator.string = value => {
-  return thinkHelper.isString(value);
+  return helper.isString(value);
 };
 
 /**
@@ -815,7 +832,7 @@ Validator.string = value => {
  * @return {Boolean}       []
  */
 Validator.array = value => {
-  return thinkHelper.isArray(value);
+  return helper.isArray(value);
 };
 
 /**
@@ -824,7 +841,7 @@ Validator.array = value => {
  * @return {Boolean}       []
  */
 Validator.boolean = value => {
-  return thinkHelper.isBoolean(value);
+  return helper.isBoolean(value);
 };
 
 /**
@@ -833,7 +850,7 @@ Validator.boolean = value => {
  * @return {Boolean}       []
  */
 Validator.object = value => {
-  return thinkHelper.isObject(value);
+  return helper.isObject(value);
 };
 
 /**
@@ -853,6 +870,7 @@ Validator.regexp = (value, reg) => {
  * @return {Boolean}       [description]
  */
 Validator.issn = (value, options) => {
+  assert((helper.isObject(options) || options === true), 'issn\'s options should be object or true');
   value = validator.toString(value);
   if(options === true) {
     return validator.isISSN(value);
