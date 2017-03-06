@@ -137,4 +137,4 @@ function loader(appPath, modules){
   }
 }
 
-module.exports = {load: loader};
+module.exports = loader;

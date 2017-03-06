@@ -1,4 +1,4 @@
-const loadConfigByName = require('./config-load-config-by-name');
+const loadConfigByName = require('./config_load_config_by_name');
 /**
  * load config
  * src/config/config.js

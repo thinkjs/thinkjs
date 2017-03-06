@@ -30,10 +30,10 @@ const loadAdapterFiles = adapterPath => {
  *   db: {
  *      type: 'xxx',
  *      common: {
- *          
+ *
  *      },
  *      xxx: {
- *          
+ *
  *      }
  *   }
  * }

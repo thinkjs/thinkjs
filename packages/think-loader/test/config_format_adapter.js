@@ -15,7 +15,7 @@ function mockAssert() {
 }
 
 function getFormatAdapter() {
-  return require('../loader/config-format-adapter');
+  return require('../loader/config_format_adapter');
 }
 
 test('formatAdapter will assert adapter config must have type field', t=>{

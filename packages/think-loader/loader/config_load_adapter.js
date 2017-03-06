@@ -1,4 +1,4 @@
-const loadConfig = require('./config-load-config');
+const loadConfig = require('./config_load_config');
 
 /**
  * load adapter

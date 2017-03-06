@@ -10,12 +10,12 @@ function mockDeps() {
     mock(path.join('appPath', 'common/config/middleware.js'), {value: 'MultiModuleMiddlewares'});
     mock(path.join('appPath', 'config/middleware.js'), {value: 'Middlewares'});
 
-    mock('../loader/middleware-load-files', function(a, b, c) {
+    mock('../loader/middleware_load_files', function(a, b, c) {
       depsCalledParams.push(a, b, c);
       return 'loadMiddlewareFiles call result';
     });
 
-    mock('../loader/middleware-parse', function(e, f) {
+    mock('../loader/middleware_parse', function(e, f) {
       depsCalledParams.push(e, f);
       return 'parseMiddleware call result';
     });

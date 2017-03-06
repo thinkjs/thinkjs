@@ -1,15 +1,12 @@
 const helper = require('think-helper');
 const assert = require('assert');
-
+var pathToRegexp = require('path-to-regexp')
 /**
  * check url matched
  */
 function checkMatched(match, ctx){
-  if(helper.isString(match)){
-    return ctx.path.indexOf(match) === 0;
-  }
-  if(helper.isRegExp(match)){
-    return match.test(ctx.path);
+  if(helper.isString(match) || helper.isRegExp(match)){
+    return pathToRegExp(match).test(ctx.path);
   }
   if(helper.isFunction(match)){
     return match(ctx);
@@ -19,7 +16,7 @@ function checkMatched(match, ctx){
 /**
  * middleware rules(appPath/middleware.js):
  * module.exports = [
- *  'clean_pathname', 
+ *  'clean_pathname',
  * {
  *    handle: denyIp,
  *    options: {},
@@ -56,7 +53,7 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
     assert(helper.isFunction(item.handle), 'handle must be a function');
     item.handle = item.handle(item.options || {});
     // handle also be a function
-    assert(helper.isFunction(item.handle), 'handle must be a function');
+    assert(helper.isFunction(item.handle), 'handle must return a function');
     return item;
   }).map(item => {
     if(!item.match && !item.ignore){
