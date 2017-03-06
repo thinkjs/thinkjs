@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-06 09:13:49
+* @Last Modified time: 2017-03-06 10:08:36
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -22,6 +22,24 @@ class Validator {
       'requiredWithOutAll'
     ];
     this.skippedValidNames = ['value', 'default', 'trim'].concat(this.requiredValidNames);
+  }
+
+  /**
+   * format ruleName nested array and object
+   * @param  {String} ruleName [description]
+   * @return {String}          [description]
+   */
+  _formatRuleName(ruleName) {
+    let newRuleName = ruleName;
+    if(newRuleName.indexOf(ARRAY_SP) > -1) {
+      let tmpRuleName = newRuleName.split(ARRAY_SP);
+      newRuleName = tmpRuleName[0] + '[' + tmpRuleName[1]+ ']';
+    }
+    if(newRuleName.indexOf(OBJECT_SP) > -1) {
+      let tmpRuleName = newRuleName.split(OBJECT_SP);
+      newRuleName = tmpRuleName[0] + '.' + tmpRuleName[1];
+    }
+    return newRuleName;
   }
 
   /**
@@ -71,20 +89,29 @@ class Validator {
       }
     }
 
+    // format error message rule name
+    let newRuleName = this._formatRuleName(ruleName);
+
     // set defalut error message
     if(!errMsg) {
-      return ruleName + ' valid failed';
+      return newRuleName + ' valid failed';
     }
 
     // ruleName validName validArgs parsedValidArgs
     // itemValue = _convertParamItemValue(ruleName, rule)
     let validArgs = rule[ruleName];
-    return errMsg.replace('{name}', ruleName)
+    return errMsg.replace('{name}', newRuleName)
                  .replace('{args}', JSON.stringify(validArgs))
                  .replace('{pargs}', JSON.stringify(parsedValidArgs));
   }
 
-  _parseRuleArgs(validName, ruleArgs) {
+  /**
+   * parse valid args by _validName method
+   * @param  {String} validName [description]
+   * @param  {} ruleArgs  [description]
+   * @return {}           [description]
+   */
+  _parseValidArgs(validName, ruleArgs) {
     let pfn = validator['_' + validName];
     if(helper.isFunction(pfn)){
       // this.ctx in this method is only read
@@ -128,7 +155,7 @@ class Validator {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
         let fn = validator[validName];
-        let parsedValidArgs = this._parseRuleArgs(validName, rule[validName]);
+        let parsedValidArgs = this._parseValidArgs(validName, rule[validName]);
         if(fn(rule.value, parsedValidArgs)) {
           isRequired = true;
           break;
@@ -182,7 +209,7 @@ class Validator {
         this.ctx[ruleName] = rule.value;
       }
 
-      // array & object children
+      // array & object children split and give the value
       if(rule.children) {
         let ruleValue = rule.value;
         let ruleChildren = rules[ruleName].children;
@@ -205,6 +232,12 @@ class Validator {
     return ({childRules, rules});
   }
 
+  /**
+   * add custom valid method
+   * @param {String}   validName [description]
+   * @param {Function} callback  [description]
+   * @param {String}   msg       [description]
+   */
   add(validName, callback, msg) {
     validator[validName] = callback;
     validator.errors[validName] = msg;
@@ -241,7 +274,7 @@ class Validator {
       let isRequired = this._checkValueRequired(rule);
       if(isRequired && helper.isTrueEmpty(rule.value)) {
         let validName = 'required';
-        let parsedValidArgs = this._parseRuleArgs(validName, rule[validName]);
+        let parsedValidArgs = this._parseValidArgs(validName, rule[validName]);
         let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
         ret[ruleName] = errMsg;
         continue;
@@ -262,19 +295,21 @@ class Validator {
         }
 
         // get parsed valid options
-        let parsedValidArgs = this._parseRuleArgs(validName, rule[validName]);
+        let parsedValidArgs = this._parseValidArgs(validName, rule[validName]);
 
         let result = fn(rule.value, parsedValidArgs);
         if(!result){
           let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
-          ret[ruleName] = errMsg;
+
+          // format error message's rule name
+          let newRuleName = this._formatRuleName(ruleName);
+          ret[newRuleName] = errMsg;
           continue outerLoop;
         }else {
           this._convertParamItemValue(ruleName, rule);
         }
       }
     }
-
     // console.log('resp err-->', ret, '\n');
     // console.log('ctx transform-->', this.ctx, '\n')
     return ret;

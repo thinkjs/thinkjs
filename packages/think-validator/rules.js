@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-05 16:59:51
+* @Last Modified time: 2017-03-06 09:57:16
 */
 'use strict';
 const helper = require('think-helper');
@@ -171,6 +171,16 @@ Validator.requiredWithOutAll = (value, options) => {
   });
 };
 
+/**
+ * parse contains rule seed
+ * @param  {String} seed [description]
+ * @param  {Object} ctx  [description]
+ * @return {String}      [description]
+ */
+Validator._contains = (seed, ctx) => {
+  let item = ctx[seed];
+  return item ? item : seed;
+}
 /**
  * check if the string contains the seed.
  * @param  {String} value []

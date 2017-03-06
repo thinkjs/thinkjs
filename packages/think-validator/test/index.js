@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-05 17:51:16
+* @Last Modified time: 2017-03-06 10:00:22
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -135,6 +135,21 @@ test('rule-contains', t => {
   }
   let ctx = {
     param: 'lushijie'
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-contains-parse', t => {
+  let rules = {
+    param: {
+      contains: 'abc'
+    }
+  }
+  let ctx = {
+    param: 'lushijie',
+    abc: '6666'
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
@@ -1369,10 +1384,10 @@ test('rule-name-custom-message', t => {
       required: 'param2 must required'
     },
     param3: {
-      'a,b': 'wrong',
-      c: 'wrong c',
+      'a,b': 'this is wrong for a,b',
+      c: 'this is wrong for c',
       d: {
-        int: 'this wrong d'
+        int: 'this wrong for d'
       }
     }
   }
@@ -1381,9 +1396,9 @@ test('rule-name-custom-message', t => {
   t.true(
     ret.param === msgs.param &&
     ret.param2 === msgs.param2.required &&
-    ret.param3_object_a === msgs.param3['a,b'] &&
-    ret.param3_object_c === msgs.param3.c &&
-    ret.param3_object_d === msgs.param3.d.int
+    ret['param3.a'] === msgs.param3['a,b'] &&
+    ret['param3.c'] === msgs.param3.c &&
+    ret['param3.d'] === msgs.param3.d.int
   );
 });
 
@@ -1407,7 +1422,28 @@ test('rule-object-message', t => {
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules, msgs);
-  t.true(ret.param3_object_a === 'param3 valid failed');
+  t.true(ret['param3.a'] === 'param3 valid failed');
+});
+
+test('rule-array-message', t => {
+  let rules = {
+    param3: {
+      array: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = {
+    param3: ['1a']
+  }
+
+  let msgs = {
+    int: 'wrong valid'
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret['param3[0]'] === msgs.int);
 });
 
 test('rule-name-no-message', t => {
@@ -1442,9 +1478,3 @@ test('rule-add-method', t => {
   let ret = instance.validate(rules);
   t.true(ret.param === wrongMsg)
 });
-
-
-
-
-
-
