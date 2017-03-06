@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-06 09:57:16
+* @Last Modified time: 2017-03-06 11:56:06
 */
 'use strict';
 const helper = require('think-helper');
@@ -252,6 +252,7 @@ Validator._before = (comparison) => {
                   now.getSeconds();
     return nowTime;
   }
+  assert(Validator.date(comparison), 'comparison should be date');
   return comparison;
 };
 
@@ -811,6 +812,7 @@ Validator.object = value => {
  * @return {Boolean}       []
  */
 Validator.regexp = (value, reg) => {
+  assert(helper.isRegExp(reg), 'argument should be regexp');
   return reg.test(value);
 };
 
