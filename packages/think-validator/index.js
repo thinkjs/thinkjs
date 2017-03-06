@@ -2,10 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-05 17:34:41
+* @Last Modified time: 2017-03-06 09:13:49
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
+const ARRAY_SP = '_array_', OBJECT_SP = '_object_';
 
 
 class Validator {
@@ -20,7 +21,7 @@ class Validator {
       'requiredWithOut',
       'requiredWithOutAll'
     ];
-    this.skipedValidNames = ['value', 'default', 'trim'].concat(this.requiredValidNames);
+    this.skippedValidNames = ['value', 'default', 'trim'].concat(this.requiredValidNames);
   }
 
   /**
@@ -39,7 +40,6 @@ class Validator {
       errMsg = msgs[validName];
 
       let msgs_RuleName = msgs[ruleName];
-
       // name: 'error'
       if(msgs_RuleName && helper.isString(msgs_RuleName)) {
         errMsg = msgs_RuleName;
@@ -52,8 +52,8 @@ class Validator {
 
       // name: {name1,name2: 'error'}
       // name: {name1,name2: {int: 'error'}}
-      if(ruleName.indexOf('_object_') > -1) {
-        let parsedResult = ruleName.split('_object_');
+      if(ruleName.indexOf(OBJECT_SP) > -1) {
+        let parsedResult = ruleName.split(OBJECT_SP);
         ruleName = parsedResult[0];
         let msgs_RuleName = msgs[ruleName];
         let subRuleName = parsedResult[1];
@@ -101,12 +101,12 @@ class Validator {
    */
   _convertParamItemValue(ruleName, rule) {
     if(rule.int || rule.float || rule.numeric) {
-      if(ruleName.indexOf('_array_') > -1) {
-        let parsedRuleName = ruleName.split('_array_');
+      if(ruleName.indexOf(ARRAY_SP) > -1) {
+        let parsedRuleName = ruleName.split(ARRAY_SP);
         this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
-      else if (ruleName.indexOf('_object_') > -1) {
-        let parsedRuleName = ruleName.split('_object_');
+      else if (ruleName.indexOf(OBJECT_SP) > -1) {
+        let parsedRuleName = ruleName.split(OBJECT_SP);
         this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else {
@@ -177,8 +177,8 @@ class Validator {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
-      // write back to ctx
-      if(typeof rule.value !== 'undefined'){
+      // write back to ctx, nested children don't need
+      if(typeof rule.value !== 'undefined' && ruleName.indexOf(ARRAY_SP) === -1 & ruleName.indexOf(OBJECT_SP) === -1){
         this.ctx[ruleName] = rule.value;
       }
 
@@ -190,12 +190,12 @@ class Validator {
 
         if(rule.array) {
           for(let i = 0; i < ruleValue.length; i++) {
-            let tmpRuleName = ruleName + '_array_' + i;
+            let tmpRuleName = ruleName + ARRAY_SP + i;
             childRules[tmpRuleName] = Object.assign({}, ruleChildren, {value: ruleValue[i]});
           }
         }else {
           for(let key in ruleValue) {
-            let tmpRuleName = ruleName + '_object_' + key;
+            let tmpRuleName = ruleName + OBJECT_SP + key;
             childRules[tmpRuleName] = Object.assign({}, ruleChildren, {value: ruleValue[key]});
           }
         }
@@ -251,7 +251,7 @@ class Validator {
 
       // valid check
       for(let validName in rule){
-        if(this.skipedValidNames.indexOf(validName) >= 0) {
+        if(this.skippedValidNames.indexOf(validName) >= 0) {
           continue;
         }
 
@@ -273,15 +273,8 @@ class Validator {
           this._convertParamItemValue(ruleName, rule);
         }
       }
-
     }
 
-    // delete nested children in ctx
-    for(let key in this.ctx) {
-      if(key.indexOf('_object_') > -1 || key.indexOf('_array_') > -1) {
-        delete this.ctx[key];
-      }
-    }
     // console.log('resp err-->', ret, '\n');
     // console.log('ctx transform-->', this.ctx, '\n')
     return ret;
