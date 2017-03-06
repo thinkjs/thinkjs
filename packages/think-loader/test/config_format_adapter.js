@@ -25,19 +25,21 @@ test('formatAdapter will assert adapter config must have type field', t=>{
     name1: {type: 'I have a type'},
     name2: {/*I don't have a type*/}
   });
-  t.is(assertCallParams[0], 'I have a type');
-  t.is(assertCallParams[2], undefined);
-  t.is(assertCallParams[3], `adapter.name1 must be an object`);
+  t.is(assertCallParams[0], true);
+  t.is(!!assertCallParams[2], true);
+  t.is(assertCallParams[4], true);
+  t.is(!!assertCallParams[6], false);
+  t.is(assertCallParams[7], `adapter.name2 must have type field`);
 });
 
 test('formatAdapter will assert common field be an object', t=>{
   var assertCallParams = mockAssert();
   var formatAdapter = getFormatAdapter();
   formatAdapter({
-    name1: {type: 'I have a type', common: true}
+    name1: {type: 'I have a type', common: 'sdklfjdk'}
   });
-  t.is(assertCallParams[2], false);
-  t.is(assertCallParams[3], 'adapter.name1.common must be an object');
+  t.is(assertCallParams[4], false);
+  t.is(assertCallParams[5], 'adapter.name1.common must be an object');
 });
 
 test('formatAdapter will return the same instance if pass {}', t=>{
@@ -75,7 +77,7 @@ test('formatAdapter will merge common field to item,(also will ignore type field
         handle: 'xxx',
       },
       yyy: {
-        handle: 'yyy'
+        handle: 'yyy',
         a: 2
       }
     }
@@ -88,14 +90,14 @@ test('formatAdapter will merge common field to item,(also will ignore type field
     },
     session: {
       xxx: function() {},
-      yyy: function() {},
+      yyy: function() {}
     }
   };
   var formatConfig = getFormatAdapter();
-  var fc = formatConfig(config);
+  var fc = formatConfig(config, adapter);
 
   t.is(fc.db.type, 'xxx');
-  t.is(fc.session.type, 'session');
+  t.is(fc.session.type, 'yyy');
 
   t.is(fc.db.common, undefined);
   t.is(fc.session.common, undefined);

@@ -18,7 +18,7 @@ const assert = require('assert');
 const formatAdapter = (config, appAdapters) => {
   for(let name in config){
     assert(helper.isObject(config[name]), `adapter.${name} must be an object`);
-    assert(config[name].type, `adapter.${name} config must have type field`);
+    assert(config[name].type, `adapter.${name} must have type field`);
     if(!config[name].common){
       continue;
     }
@@ -38,7 +38,7 @@ const formatAdapter = (config, appAdapters) => {
       //convert string handle to class
       if(item.handle && helper.isString(item.handle)){
         assert(name in appAdapters && appAdapters[name][item.handle], `can not find ${name}.${type}.handle`);
-        item.handle = appAdapters[type][item.handle];
+        item.handle = appAdapters[name][item.handle];
       }
       config[name][type] = item;
     }
