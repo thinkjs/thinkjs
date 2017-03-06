@@ -8,7 +8,7 @@ function createLoader(modules = 'modules') {
   return loader;
 }
 
-test('loadConfig will pass the right params and return',t=>{    
+test('loadConfig will pass the right params and return',t=>{
   mock('../loader/config.js', function(a,b,c,d) {
     t.is(a, 'apppath');
     t.is(b, 'thinkpath');
@@ -16,7 +16,7 @@ test('loadConfig will pass the right params and return',t=>{
     t.is(d, 'modules');
     return 'config';
   });
-  
+
   var loader = createLoader();
   t.is(loader.loadConfig('env'), 'config');
 });
@@ -35,7 +35,7 @@ test('loadBootstrap will pass the right params and return',t=>{
 
 
 function testCommon(method, name, para) {
-  return t=>{ 
+  return t=>{
     mock('../loader/common.js', function(a,b,c) {
       t.is(a, 'apppath');
       t.is(b, name);
@@ -62,7 +62,7 @@ test('loadService will pass the right params and return', testCommon('loadServic
 test('loadCommon will pass the right params and return', testCommon('loadCommon', 'some name', 'some name'));
 
 test('loadMiddleware will pass the right params and return',t=>{
-  mock('../loader/middleware.js', function(a,b,c) {
+  mock('../loader/middleware/loader.js', function(a,b,c) {
     t.is(a, 'apppath');
     t.is(b, 'thinkpath');
     t.is(c, 'modules');

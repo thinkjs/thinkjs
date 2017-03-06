@@ -25,16 +25,6 @@ test.beforeEach(t => {
     // This runs after each test and other test hooks, even if they failed
 });
 
-test('common.loadFiles', t=>{
-  const loadFiles = require('../loader/common').loadFiles;
-  const dir = 'dir';
-  mockModule(dir);
-  mockHelper(t, dir);
-  var cache = loadFiles(dir);
-  t.is(cache.a.__name, 'ajs');
-  t.is(cache.b.__name, 'bjs');
-});
-
 test('common.load when isMultiModule is true', t=>{
   // mock fs
   const fs = require('fs');
@@ -57,7 +47,7 @@ test('common.load when isMultiModule is true', t=>{
   mockHelper(t, dir);
   const common = require('../loader/common');
 
-  var cache = common.load('apppath', true, 'type');
+  var cache = common('apppath', true, 'type');
 
   t.is(cache[path.join('user', 'a')].__name, 'ajs');
   t.is(cache[path.join('user', 'b')].__name, 'bjs');
@@ -70,7 +60,7 @@ test('common.load when isMultiModule is false', t=>{
   mockHelper(t, dir);
   const common = require('../loader/common');
 
-  var cache = common.load('apppath', false, 'type');
+  var cache = common('apppath', false, 'type');
 
   t.is(cache.a.__name, 'ajs');
   t.is(cache.b.__name, 'bjs');

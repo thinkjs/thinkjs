@@ -8,6 +8,10 @@ function mockHelper(t, dir) {
   }
 }
 
+function createInstance() {
+  return require('../../loader/middleware/get_files');
+}
+
 function mockModule(dir) {
   const mock = require('mock-require');
   const ajs = path.join(dir, 'a.js');
@@ -22,7 +26,7 @@ test('getMiddlewareFiles', t=>{
   mockHelper(t, 'middlewarePath');
   mockModule('middlewarePath');
 
-  const getMiddlewareFiles = require('../loader/middleware_get_files');
+  const getMiddlewareFiles = createInstance();
   const result = getMiddlewareFiles('middlewarePath');
   t.deepEqual(result, {
     a: 1,

@@ -7,10 +7,12 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test-complete": "npm run eslint && nyc ava test/",
-    "test": "ava test/config*",
+    "test": "ava test/",
+    "nyc": "nyc ava test/",
     "eslint": "eslint util.js index.js loader/",
-    "coverage": "nyc report --reporter=html"
+    "test-complete": "npm run eslint && npm run test",
+    "coverage": "nyc report --reporter=html",
+    "prepublish": "npm run test-complete"
   },
   "ava": {
     "require": [
@@ -24,6 +26,10 @@
     }
   ],
   "main": "index.js",
+  "files": [
+    "index.js",
+    "loader"
+  ],
   "dependencies": {
     "debug": "^2.6.1",
     "methods": "^1.1.2",

@@ -6,10 +6,7 @@ var pathToRegexp = require('path-to-regexp');
  */
 function createRegexp(match){
   if(match) {
-    if(helper.isString(match) || helper.isRegExp(match) || helper.isArray(match)){
-      return pathToRegexp(match);
-    }
-    throw new Error('match must be a String/RegExp/Array');
+    return pathToRegexp(match);
   }
 }
 /**
@@ -23,7 +20,6 @@ function createRegexp(match){
  *    match: '',
  *    ignore: ''
  * },
- * [handle, options, enable, match, ignore]
  * ]
  */
 function parseMiddleware(middlewares = [], middlewarePkg = {}){

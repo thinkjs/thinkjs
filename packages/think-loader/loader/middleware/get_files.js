@@ -1,6 +1,6 @@
 const path = require('path');
 const helper = require('think-helper');
-const interopRequire = require('./util.js').interopRequire;
+const interopRequire = require('../util.js').interopRequire;
 /**
  * get middlewares in middleware path
  * * [THINKJS_LIB_PATH]/lib/middleware

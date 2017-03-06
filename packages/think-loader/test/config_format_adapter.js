@@ -63,7 +63,6 @@ test('formatAdapter will merge common field to item,(also will ignore type field
         b: 3
       },
       yyy: {
-        handle: 'yyy',
         b: 4, // a = 1, b = 4, d = 33
       }
     },
@@ -74,10 +73,8 @@ test('formatAdapter will merge common field to item,(also will ignore type field
         d: 33
       },
       xxx: {
-        handle: 'xxx',
       },
       yyy: {
-        handle: 'yyy',
         a: 2
       }
     }
@@ -85,12 +82,7 @@ test('formatAdapter will merge common field to item,(also will ignore type field
 
   var adapter = {
     db: {
-      xxx: function() {},
-      yyy: function() {}
-    },
-    session: {
-      xxx: function() {},
-      yyy: function() {}
+      xxx: function() {}
     }
   };
   var formatConfig = getFormatAdapter();
@@ -104,7 +96,7 @@ test('formatAdapter will merge common field to item,(also will ignore type field
 
   var {db, session} = fc;
 
-  t.deepEqual(db.xxx, {a:2, b:3, d:33});
+  t.deepEqual(db.xxx, {a:2, b:3, d:33, handle: adapter.db.xxx});
   t.deepEqual(db.yyy, {a:1, b:4, d:33});
 
   t.deepEqual(session.xxx, {a:1, d:33});

@@ -1,5 +1,5 @@
 const path = require('path');
-const getMiddlewareFiles = require('./middleware_get_files');
+const getMiddlewareFiles = require('./get_files');
 
 
 /**
