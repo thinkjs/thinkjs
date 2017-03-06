@@ -2,16 +2,16 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-06 10:08:36
+* @Last Modified time: 2017-03-06 11:44:14
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
 const ARRAY_SP = '_array_', OBJECT_SP = '_object_';
-
+const METHOD_GET = 'get';
 
 class Validator {
   constructor(ctx) {
-    this.ctx = ctx;
+    this.ctx = ctx || {};
     this.requiredValidNames = [
       'required',
       'requiredIf',
@@ -21,7 +21,7 @@ class Validator {
       'requiredWithOut',
       'requiredWithOutAll'
     ];
-    this.skippedValidNames = ['value', 'default', 'trim'].concat(this.requiredValidNames);
+    this.skippedValidNames = ['value', 'default', 'trim', 'method'].concat(this.requiredValidNames);
   }
 
   /**
@@ -111,11 +111,13 @@ class Validator {
    * @param  {} ruleArgs  [description]
    * @return {}           [description]
    */
-  _parseValidArgs(validName, ruleArgs) {
+  _parseValidArgs(validName, rule) {
+    let method = rule.method || this.ctx.method;
+    let ruleArgs = rule[validName];
     let pfn = validator['_' + validName];
     if(helper.isFunction(pfn)){
       // this.ctx in this method is only read
-      ruleArgs = pfn(ruleArgs, Object.assign({}, this.ctx));
+      ruleArgs = pfn(ruleArgs, Object.assign({}, this.ctx[method]));
     }
     return ruleArgs;
   }
@@ -127,17 +129,18 @@ class Validator {
    * @return {}          [description]
    */
   _convertParamItemValue(ruleName, rule) {
+    let method = rule.method || this.ctx.method || METHOD_GET;
     if(rule.int || rule.float || rule.numeric) {
       if(ruleName.indexOf(ARRAY_SP) > -1) {
         let parsedRuleName = ruleName.split(ARRAY_SP);
-        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        this.ctx[method][parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else if (ruleName.indexOf(OBJECT_SP) > -1) {
         let parsedRuleName = ruleName.split(OBJECT_SP);
-        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        this.ctx[method][parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else {
-        this.ctx[ruleName] = parseFloat(rule.value);
+        this.ctx[method][ruleName] = parseFloat(rule.value);
       }
       return parseFloat(rule.value);
     }
@@ -155,7 +158,7 @@ class Validator {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
         let fn = validator[validName];
-        let parsedValidArgs = this._parseValidArgs(validName, rule[validName]);
+        let parsedValidArgs = this._parseValidArgs(validName, rule);
         if(fn(rule.value, parsedValidArgs)) {
           isRequired = true;
           break;
@@ -178,10 +181,12 @@ class Validator {
 
     for(let ruleName in rules) {
       let rule = rules[ruleName];
+      let method = rule.method || this.ctx.method || METHOD_GET;
 
       // array & object children with value, skip this operator
-      if(!rule.value) {
-        rule.value = this.ctx[ruleName];
+      if(!rule.value && this.ctx[method]) {
+        // rule.value = this.ctx[ruleName];
+        rule.value = this.ctx[method][ruleName];
       }
 
       // set default
@@ -206,7 +211,8 @@ class Validator {
 
       // write back to ctx, nested children don't need
       if(typeof rule.value !== 'undefined' && ruleName.indexOf(ARRAY_SP) === -1 & ruleName.indexOf(OBJECT_SP) === -1){
-        this.ctx[ruleName] = rule.value;
+        this.ctx[method] = this.ctx[method] || {};
+        this.ctx[method][ruleName] = rule.value;
       }
 
       // array & object children split and give the value
@@ -274,7 +280,7 @@ class Validator {
       let isRequired = this._checkValueRequired(rule);
       if(isRequired && helper.isTrueEmpty(rule.value)) {
         let validName = 'required';
-        let parsedValidArgs = this._parseValidArgs(validName, rule[validName]);
+        let parsedValidArgs = this._parseValidArgs(validName, rule);
         let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
         ret[ruleName] = errMsg;
         continue;
@@ -295,7 +301,7 @@ class Validator {
         }
 
         // get parsed valid options
-        let parsedValidArgs = this._parseValidArgs(validName, rule[validName]);
+        let parsedValidArgs = this._parseValidArgs(validName, rule);
 
         let result = fn(rule.value, parsedValidArgs);
         if(!result){
@@ -310,8 +316,8 @@ class Validator {
         }
       }
     }
-    // console.log('resp err-->', ret, '\n');
-    // console.log('ctx transform-->', this.ctx, '\n')
+    //console.log('resp err-->', ret, '\n');
+    //console.log('ctx transform-->', this.ctx, '\n')
     return ret;
   }
 }
