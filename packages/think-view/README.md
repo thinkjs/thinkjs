@@ -14,19 +14,20 @@ config file `src/config/extend.js`:
 const view = require('think-view');
 module.exports = [
   view
-]
+];
 ```
 
 config `view` in `src/config/adapter.js`:
 
 ```js
 const nunjucks = require('think-view-nunjucks');
+const path = require('path');
 exports.view = {
   type: 'nunjucks',
   common: {
-    viewPath: '',
+    viewPath: path.join(think.ROOT_PATH, 'view'),
     extname: '.html',
-    sep: '_'
+    sep: '_' //seperator between controller and action
   },
   nunjucks: {
     handle: nunjucks
