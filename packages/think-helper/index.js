@@ -12,16 +12,23 @@ const fs_unlink = promisify(fs.unlink, fs);
 const fs_readdir = promisify(fs.readdir, fs);
 
 const numberReg = /^((\-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
+const toString = Object.prototype.toString;
 
 exports.isIP = net.isIP;
 exports.isIPv4 = net.isIPv4;
 exports.isIPv6 = net.isIPv6;
 exports.isMaster = cluster.isMaster;
 
-
 for(let name in is){
   exports[name] = is[name];
 }
+
+/**
+ * override isObject method in `core-util-is` module
+ */
+exports.isObject = obj => {
+  return toString.call(obj) === '[object Object]';
+};
 
 /**
  * make callback function to promise
