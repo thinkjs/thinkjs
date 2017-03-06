@@ -61,7 +61,7 @@ class View {
     assert(config.viewPath && helper.isString(config.viewPath), 'config.viewPath required');
     assert(config.sep, 'config.sep required');
     assert(config.extname, 'config.extname required');
-    assert(helper.isFunciton(config.handle), 'config.handle required');
+    assert(helper.isFunciton(config.handle), 'config.handle must be a function');
     file = this.parseFilePath(file, config);
     const handle = config.handle;
     delete config.handle;
