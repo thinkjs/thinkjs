@@ -15,7 +15,7 @@ function mockAssert() {
 }
 
 function getParse() {
-  return require('../loader/middleware-parse');
+  return require('../loader/middleware_parse');
 }
 
 test.beforeEach(t => {

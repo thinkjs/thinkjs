@@ -1,5 +1,5 @@
 const test = require('ava');
-const util = require('../util.js');
+const util = require('../loader/util.js');
 const mock = require('mock-require');
 
 const interopRequire = util.interopRequire;

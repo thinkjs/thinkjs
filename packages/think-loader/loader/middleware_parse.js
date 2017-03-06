@@ -1,17 +1,16 @@
 const helper = require('think-helper');
 const assert = require('assert');
-var pathToRegexp = require('path-to-regexp')
+var pathToRegexp = require('path-to-regexp');
 /**
  * check url matched
  */
-function checkMatched(match, ctx){
-  if(helper.isString(match) || helper.isRegExp(match)){
-    return pathToRegExp(match).test(ctx.path);
+function createRegexp(match){
+  if(match) {
+    if(helper.isString(match) || helper.isRegExp(match) || helper.isArray(match)){
+      return pathToRegexp(match);
+    }
+    throw new Error('match must be a String/RegExp/Array');
   }
-  if(helper.isFunction(match)){
-    return match(ctx);
-  }
-  throw new Error('match must be a String/RegExp/Function');
 }
 /**
  * middleware rules(appPath/middleware.js):
@@ -32,17 +31,6 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
     if(helper.isString(item)){
       return {handle: item};
     }
-    //need support Array type? convert Array to object
-    if(helper.isArray(item)){
-      let data = {}, index = 0;
-      data.handle = item[index++];
-      ['options', 'enable', 'match', 'ignore'].forEach(it => {
-        if(item[index] !== undefined){
-          data[it] = item[index++];
-        }
-      });
-      return data;
-    }
     return item;
   }).filter(item => {
     return !('enable' in item) || item.enable;
@@ -59,12 +47,17 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
     if(!item.match && !item.ignore){
       return item.handle;
     }
+
+    // create regexp here for better performance
+    var matchRegexp = createRegexp(item.match);
+    var ignoreRegexp = createRegexp(item.ignore);
+
     // has match or ignore
     return (ctx, next) => {
-      if(item.match && !checkMatched(item.match, ctx)){
+      if(matchRegexp && !matchRegexp.test(ctx.path)){
         return next();
       }
-      if(item.ignore && checkMatched(item.ignore, ctx)){
+      if(ignoreRegexp && ignoreRegexp.test(ctx.path)){
         return next();
       }
       return item.handle(ctx, next);

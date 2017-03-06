@@ -1,6 +1,6 @@
 const test = require('ava');
 
-test('config-load-adapter will call load_config_by_name with right params', t=>{
+test('config_load_adapter will call load_config_by_name with right params', t=>{
   const mock = require('mock-require');
   mock('../loader/config_load_config_by_name', function(a, b, c){
     a[b+c] = 'value';
@@ -12,7 +12,7 @@ test('config-load-adapter will call load_config_by_name with right params', t=>{
   });
 });
 
-test('config-load-adapter will call load_config_by_name with right params default name = "config"', t=>{
+test('config_load_adapter will call load_config_by_name with right params default name = "config"', t=>{
   const mock = require('mock-require');
   mock('../loader/config_load_config_by_name', function(a, b, c){
     a[b+c] = 'value';

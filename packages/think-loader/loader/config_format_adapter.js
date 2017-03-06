@@ -1,29 +1,5 @@
 const helper = require('think-helper');
 const assert = require('assert');
-const path = require('path');
-const interopRequire = require('../util.js').interopRequire;
-
-/**
- * load apdater in application
- * src/adapter/session/file.js
- * src/adapter/session/db.js
- */
-const loadAdapterFiles = adapterPath => {
-  let files = helper.getdirFiles(adapterPath);
-  let ret = {};
-  files.forEach(file => {
-    let item = file.replace(/\.\w+$/, '').split(path.sep);
-    if(!item[0] || !item[1]){
-      return;
-    }
-    if(!ret[item[0]]){
-      ret[item[0]] = {};
-    }
-    ret[item[0]][item[1]] = interopRequire(path.join(adapterPath, file));
-  });
-  return ret;
-}
-
 
 /**
  * {
@@ -39,8 +15,7 @@ const loadAdapterFiles = adapterPath => {
  * }
  * format adapter config, merge common field to item
  */
-const formatAdapter = (config, adapterPath) => {
-  let appAdapters = loadAdapterFiles(adapterPath);
+const formatAdapter = (config, appAdapters) => {
   for(let name in config){
     assert(helper.isObject(config[name]), `adapter.${name} must be an object`);
     assert(config[name].type, `adapter.${name} config must have type field`);

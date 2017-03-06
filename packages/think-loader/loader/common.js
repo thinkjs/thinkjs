@@ -1,6 +1,6 @@
 const helper = require('think-helper');
 const path = require('path');
-const interopRequire = require('../util.js').interopRequire;
+const interopRequire = require('./util.js').interopRequire;
 
 function loadFiles(dir){
   let files = helper.getdirFiles(dir).filter(file => {

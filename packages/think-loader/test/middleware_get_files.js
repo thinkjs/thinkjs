@@ -22,7 +22,7 @@ test('getMiddlewareFiles', t=>{
   mockHelper(t, 'middlewarePath');
   mockModule('middlewarePath');
 
-  const getMiddlewareFiles = require('../loader/middleware-get-files');
+  const getMiddlewareFiles = require('../loader/middleware_get_files');
   const result = getMiddlewareFiles('middlewarePath');
   t.deepEqual(result, {
     a: 1,

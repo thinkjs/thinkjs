@@ -3,7 +3,7 @@ const debug = require('debug')('think-loader@router');
 const methods = require('methods');
 const path = require('path');
 const assert = require('assert');
-const interopRequire = require('../util.js').interopRequire;
+const interopRequire = require('./util.js').interopRequire;
 
 
 /**
@@ -73,18 +73,9 @@ const formatRouter = router => {
       return routerInstance.rules;
     }
     return router; //may be a promise
-  }else if(helper.isArray(router)){
-    return router.map(rule => {
-      if(helper.isArray(rule)){
-        return {
-          match: rule[0],
-          path: rule[1],
-          method: (rule[2] || '').toLowerCase()
-        }
-      }
-      return rule;
-    });
   }
+
+  router.method = (router.method || '').toLowerCase();
   return router;
 }
 

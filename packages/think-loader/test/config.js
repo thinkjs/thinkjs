@@ -6,15 +6,15 @@ var depsCalledParams;
 function mockDeps() {
   if(!depsCalledParams) {
     depsCalledParams = []
-    mock('../loader/config-load-config', function(a, b) {
+    mock('../loader/config_load_config', function(a, b) {
       depsCalledParams.push(a, b);
       return {a: 'this will overwrite thinkconfig', b: 2, c: 3};
     });
-    mock('../loader/config-load-adapter', function(c, d) {
+    mock('../loader/config_load_adapter', function(c, d) {
       depsCalledParams.push(c, d);
       return 'adapter call result';
     });
-    mock('../loader/config-format-adapter', function(e) {
+    mock('../loader/config_format_adapter', function(e) {
       depsCalledParams.push(e);
       return {adapter: 'adapter'}
     });
@@ -25,19 +25,14 @@ function mockDeps() {
   return depsCalledParams;
 }
 
-function mockThinkConfig() {
-  mock(path.join('thinkPath', 'config/config.js'), {
-    thinkConfig: 'value of thinkConfig',
-    a: 1 // will be overwrite
-  });
-}
-
-function mockFsReaddirSync(t) {
-  const fs = require('fs');
-  fs.readdirSync = function(appPath) {
-    t.is(appPath, 'appPath');
-    return ['dir1', 'common']; // common will be ignore
-  }
+function mockThinkConfig(t) {
+  mock('../loader/util.js', {interopRequire(p){
+    t.is(p, path.join('thinkPath', 'lib/config/config.js'));
+    return {
+      thinkConfig: 'value of thinkConfig',
+      a: 1 // will be overwrite
+    };
+  }})
 }
 
 function getConfig() {
@@ -52,11 +47,10 @@ test.beforeEach(t => {
 
 test('load config isMultiModule === true', t=>{
   const depsCalledParams = mockDeps();
-  mockThinkConfig();
-  mockFsReaddirSync(t);
+  mockThinkConfig(t);
 
-  const config = getConfig();
-  var result = config.load('appPath', true, 'thinkPath', 'env');
+  const loadConfig = getConfig();
+  var result = loadConfig('appPath', 'thinkPath', 'env', ['dir1', 'common']);
 
   let paths = [
     path.join('appPath', 'common'),
@@ -78,11 +72,9 @@ test('load config isMultiModule === true', t=>{
 test('load config isMultiModule === false', t=>{
   const depsCalledParams = mockDeps();
   mockThinkConfig();
-  mockFsReaddirSync('appPath', t);
 
-
-  const config = getConfig();
-  const result = config.load('appPath', false, 'thinkPath', 'env');
+  const loadConfig = getConfig();
+  const result = loadConfig('appPath', 'thinkPath', 'env', []);
 
   let paths = [path.join('appPath', 'config')];
   t.deepEqual(depsCalledParams, [

@@ -1,9 +1,9 @@
 const helper = require('think-helper');
 const path = require('path');
-const interopRequire = require('../util.js').interopRequire;
-const loadConfig = require('./config-load-config');
-const loadAdapter = require('./config-load-adapter');
-const formatAdapter = require('./config-format-adapter');
+const interopRequire = require('./util.js').interopRequire;
+const loadConfig = require('./config_load_config');
+const loadAdapter = require('./config_load_adapter');
+const formatAdapter = require('./config_format_adapter');
 
 
 /**
@@ -16,7 +16,7 @@ const formatAdapter = require('./config-format-adapter');
 module.exports = function loader(appPath, thinkPath, env, modules){
   const thinkConfig = interopRequire(path.join(thinkPath, 'lib/config/config.js'));
   if(modules.length){
-     let config = {};
+     let result = {};
      modules.forEach(dir => {
        let paths = [path.join(appPath, 'common')];
        //merge common & module config
@@ -24,16 +24,17 @@ module.exports = function loader(appPath, thinkPath, env, modules){
          paths.push(path.join(appPath, dir));
        }
        let config = loadConfig(paths, env);
-       let adapter = loadAdapter(paths, env);
-       let adapterPath = path.join(appPath, 'common/adapter');
-       config[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapter, adapterPath));
+       let adapterConfig = loadConfig(paths, env, 'adapter');
+       let adapter = loadAdapter(path.join(appPath, 'common/adapter'));
+       result[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapterConfig, adapter));
      });
-     return config;
+     return result;
   }else{
-    let configPath = path.join(appPath, 'config');
-    let config = loadConfig([configPath], env);
-    let adapter = loadAdapter([configPath], env);
-    let adapterPath = path.join(appPath, 'adapter');
-    return helper.extend({}, thinkConfig, config, formatAdapter(adapter, adapterPath));
+
+    let configPath = [path.join(appPath, 'config')];
+    let config = loadConfig(configPath, env);
+    let adapterConfig = loadConfig(configPath, env, 'adapter');
+    let adapter = loadAdapter(path.join(appPath, 'adapter'));
+    return helper.extend({}, thinkConfig, config, formatAdapter(adapterConfig, adapter));
   }
 };

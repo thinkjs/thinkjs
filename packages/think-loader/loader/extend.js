@@ -1,7 +1,7 @@
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
-const interopRequire = require('../util.js').interopRequire;
+const interopRequire = require('./util.js').interopRequire;
 
 
 const allowExtends = ['think', 'context', 'request', 'response', 'controller', 'logic'];
