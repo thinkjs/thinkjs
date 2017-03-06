@@ -32,11 +32,12 @@
       "email": "quguangyu@gmail.com"
     }
   ],
-  "main": "lib/index.js",
+  "main": "lib/application.js",
   "dependencies": {
     "bluebird": "3.3.5",
     "debug": "^2.6.1",
     "koa": "^2.0.0-alpha.8",
+    "koa-bodyparser": "^3.2.0",
     "think-await": "^1.0.2"
   },
   "devDependencies": {
