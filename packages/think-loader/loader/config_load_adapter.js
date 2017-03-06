@@ -12,7 +12,7 @@ const loadAdapter = adapterPath => {
   let ret = {};
   files.forEach(file => {
     let item = file.replace(/\.\w+$/, '').split(path.sep);
-    if(!item[0] || !item[1]){
+    if(item.length !== 2 || !item[0] || !item[1]){
       return;
     }
     if(!ret[item[0]]){

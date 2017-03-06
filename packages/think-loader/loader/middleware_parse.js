@@ -54,10 +54,8 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
 
     // has match or ignore
     return (ctx, next) => {
-      if(matchRegexp && !matchRegexp.test(ctx.path)){
-        return next();
-      }
-      if(ignoreRegexp && ignoreRegexp.test(ctx.path)){
+      if( (matchRegexp && !matchRegexp.test(ctx.path) ||
+          (ignoreRegexp && ignoreRegexp.test(ctx.path)) ) {
         return next();
       }
       return item.handle(ctx, next);

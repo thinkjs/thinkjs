@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test-complete": "npm run eslint && nyc ava test/",
-    "test": "ava test/bootstrap.js text/common.js test/config.js",
+    "test": "ava test/config*",
     "eslint": "eslint util.js index.js loader/",
     "coverage": "nyc report --reporter=html"
   },

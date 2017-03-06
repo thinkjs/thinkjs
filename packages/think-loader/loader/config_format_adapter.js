@@ -23,7 +23,7 @@ const formatAdapter = (config, appAdapters) => {
       continue;
     }
     let common = config[name].common;
-    assert(helper.isObject(common), `${name}.common must be an object`);
+    assert(helper.isObject(common), `adapter.${name}.common must be an object`);
     delete config[name].common;
     for(let type in config[name]){
       if(type === 'type'){

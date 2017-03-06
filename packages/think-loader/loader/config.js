@@ -16,21 +16,23 @@ const formatAdapter = require('./config_format_adapter');
 module.exports = function loader(appPath, thinkPath, env, modules){
   const thinkConfig = interopRequire(path.join(thinkPath, 'lib/config/config.js'));
   if(modules.length){
-     let result = {};
-     modules.forEach(dir => {
-       let paths = [path.join(appPath, 'common')];
-       //merge common & module config
-       if(dir !== 'common'){
-         paths.push(path.join(appPath, dir));
-       }
-       let config = loadConfig(paths, env);
-       let adapterConfig = loadConfig(paths, env, 'adapter');
-       let adapter = loadAdapter(path.join(appPath, 'common/adapter'));
-       result[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapterConfig, adapter));
-     });
+    let result = {};
+    modules.forEach(dir => {
+      //merge common & module config
+      let paths = [
+        path.join(appPath, 'common')
+      ];
+
+      if(dir !== 'common'){
+        paths.push(path.join(appPath, dir));
+      }
+      let config = loadConfig(paths, env);
+      let adapterConfig = loadConfig(paths, env, 'adapter');
+      let adapter = loadAdapter(path.join(appPath, 'common/adapter'));
+      result[dir] = helper.extend({}, thinkConfig, config, formatAdapter(adapterConfig, adapter));
+    });
      return result;
   }else{
-
     let configPath = [path.join(appPath, 'config')];
     let config = loadConfig(configPath, env);
     let adapterConfig = loadConfig(configPath, env, 'adapter');

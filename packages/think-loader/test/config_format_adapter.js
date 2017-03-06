@@ -26,9 +26,8 @@ test('formatAdapter will assert adapter config must have type field', t=>{
     name2: {/*I don't have a type*/}
   });
   t.is(assertCallParams[0], 'I have a type');
-  t.is(assertCallParams[1], 'adapter config must have type field, name is name1');
   t.is(assertCallParams[2], undefined);
-  t.is(assertCallParams[3], 'adapter config must have type field, name is name2');
+  t.is(assertCallParams[3], `adapter.name1 must be an object`);
 });
 
 test('formatAdapter will assert common field be an object', t=>{
@@ -37,10 +36,8 @@ test('formatAdapter will assert common field be an object', t=>{
   formatAdapter({
     name1: {type: 'I have a type', common: true}
   });
-  t.is(assertCallParams[0], 'I have a type');
-  t.is(assertCallParams[1], 'adapter config must have type field, name is name1');
   t.is(assertCallParams[2], false);
-  t.is(assertCallParams[3], 'adapter config\'s common field should be object type, name is name1');
+  t.is(assertCallParams[3], 'adapter.name1.common must be an object');
 });
 
 test('formatAdapter will return the same instance if pass {}', t=>{
@@ -59,37 +56,55 @@ test('formatAdapter will merge common field to item,(also will ignore type field
         d: 33
       },
       xxx: {
+        handle: 'xxx',
         a: 2, // a = 2, b = 3, d = 33
         b: 3
       },
       yyy: {
+        handle: 'yyy',
         b: 4, // a = 1, b = 4, d = 33
       }
     },
-    controller: {
-      type: 'controller',
+    session: {
+      type: 'yyy',
       common: {
         a: 1,
         d: 33
       },
-      xxx: {},
-      yyy: {a: 2}
+      xxx: {
+        handle: 'xxx',
+      },
+      yyy: {
+        handle: 'yyy'
+        a: 2
+      }
+    }
+  };
+
+  var adapter = {
+    db: {
+      xxx: function() {},
+      yyy: function() {}
+    },
+    session: {
+      xxx: function() {},
+      yyy: function() {},
     }
   };
   var formatConfig = getFormatAdapter();
   var fc = formatConfig(config);
 
   t.is(fc.db.type, 'xxx');
-  t.is(fc.controller.type, 'controller');
+  t.is(fc.session.type, 'session');
 
   t.is(fc.db.common, undefined);
-  t.is(fc.controller.common, undefined);
+  t.is(fc.session.common, undefined);
 
-  var {db, controller} = fc;
+  var {db, session} = fc;
 
   t.deepEqual(db.xxx, {a:2, b:3, d:33});
   t.deepEqual(db.yyy, {a:1, b:4, d:33});
 
-  t.deepEqual(controller.xxx, {a:1, d:33});
-  t.deepEqual(controller.yyy, {a:2, d:33});
+  t.deepEqual(session.xxx, {a:1, d:33});
+  t.deepEqual(session.yyy, {a:2, d:33});
 });

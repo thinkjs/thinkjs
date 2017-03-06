@@ -5,17 +5,20 @@ const path = require('path');
 var depsCalledParams;
 function mockDeps() {
   if(!depsCalledParams) {
-    depsCalledParams = []
-    mock('../loader/config_load_config', function(a, b) {
-      depsCalledParams.push(a, b);
+    depsCalledParams = [];
+    mock('../loader/config_load_config', function(a, b, c) {
+      depsCalledParams.push(a, b, c);
+      if(c === 'adapter') {
+        return 'load adapter config result';
+      }
       return {a: 'this will overwrite thinkconfig', b: 2, c: 3};
     });
-    mock('../loader/config_load_adapter', function(c, d) {
-      depsCalledParams.push(c, d);
-      return 'adapter call result';
+    mock('../loader/config_load_adapter', function(c) {
+      depsCalledParams.push(c);
+      return 'load adapter result';
     });
-    mock('../loader/config_format_adapter', function(e) {
-      depsCalledParams.push(e);
+    mock('../loader/config_format_adapter', function(e, f) {
+      depsCalledParams.push(e, f);
       return {adapter: 'adapter'}
     });
   } else {
@@ -39,14 +42,8 @@ function getConfig() {
   return require('../loader/config');
 }
 
-test.beforeEach(t => {
-    const fs = require('fs');
-    fs.___readdirSync = fs.readdirSync;
-    // This runs after each test and other test hooks, even if they failed
-});
-
 test('load config isMultiModule === true', t=>{
-  const depsCalledParams = mockDeps();
+  let depsCalledParams = mockDeps();
   mockThinkConfig(t);
 
   const loadConfig = getConfig();
@@ -56,31 +53,47 @@ test('load config isMultiModule === true', t=>{
     path.join('appPath', 'common'),
     path.join('appPath', 'dir1')
   ];
+
+  let paths2 = [
+    path.join('appPath', 'common')
+  ];
+
   t.deepEqual(depsCalledParams, [
-    paths, 'env',  // loadConfig has been called with {paths, 'env'}
-    paths, 'env',  // loadAdapter has been called with {paths, 'env'}
-    'adapter call result' // formatAdapter has been called with 'adapter call result'
+    paths, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
+    paths, 'env', 'adapter',  // loadConfig adapter
+    path.join('appPath', 'common/adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
+    'load adapter config result', 'load adapter result', // formatAdapter has been called with 'adapter call result'
+
+    paths2, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
+    paths2, 'env', 'adapter',  // loadConfig adapter
+    path.join('appPath', 'common/adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
+    'load adapter config result', 'load adapter result' // formatAdapter has been called with 'adapter call result'
   ]);
 
-  t.deepEqual(result.dir1, {
+  const expect = {
     thinkConfig: 'value of thinkConfig',
     a: 'this will overwrite thinkconfig', b: 2, c: 3,
     adapter: 'adapter'
-  });
+  }
+
+  t.deepEqual(result.dir1, expect);
+
+  t.deepEqual(result.common, expect);
 });
 
 test('load config isMultiModule === false', t=>{
-  const depsCalledParams = mockDeps();
-  mockThinkConfig();
+  let depsCalledParams = mockDeps();
+  mockThinkConfig(t);
 
   const loadConfig = getConfig();
   const result = loadConfig('appPath', 'thinkPath', 'env', []);
 
   let paths = [path.join('appPath', 'config')];
   t.deepEqual(depsCalledParams, [
-    paths, 'env',  // loadConfig has been called with {paths, 'env'}
-    paths, 'env',  // loadAdapter has been called with {paths, 'env'}
-    'adapter call result' // formatAdapter has been called with 'adapter call result'
+    paths, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
+    paths, 'env', 'adapter',  // loadConfig adapter
+    path.join('appPath', 'adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
+    'load adapter config result', 'load adapter result' // formatAdapter has been called with 'adapter call result'
   ]);
 
   t.deepEqual(result, {
@@ -90,7 +103,3 @@ test('load config isMultiModule === false', t=>{
   });
 });
 
-test.afterEach.always(t => {
-  const fs = require('fs');
-  fs.readdirSync =fs.___readdirSync;
-});
