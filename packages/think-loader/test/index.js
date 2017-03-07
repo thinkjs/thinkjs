@@ -36,11 +36,13 @@ test('loadBootstrap will pass the right params and return',t=>{
 
 function testCommon(method, name, para) {
   return t=>{
-    mock('../loader/common.js', function(a,b,c) {
-      t.is(a, 'apppath');
-      t.is(b, name);
-      t.is(c, 'modules')
-      return name;
+    mock('../loader/common.js', {
+      load(a,b,c) {
+        t.is(a, 'apppath');
+        t.is(b, name);
+        t.is(c, 'modules')
+        return name;
+      }
     });
     var loader = createLoader();
     if(para) {

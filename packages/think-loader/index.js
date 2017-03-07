@@ -44,25 +44,25 @@ class Loader {
    * load controller
    */
   loadController(){
-    return common(this.appPath, 'controller', this.modules);
+    return common.load(this.appPath, 'controller', this.modules);
   }
   /**
    * load logic
    */
   loadLogic(){
-    return common(this.appPath, 'logic', this.modules);
+    return common.load(this.appPath, 'logic', this.modules);
   }
   /**
    * load model
    */
   loadModel(){
-    return common(this.appPath, 'model', this.modules);
+    return common.load(this.appPath, 'model', this.modules);
   }
   /**
    * load service
    */
   loadService(){
-    return common(this.appPath, 'service', this.modules);
+    return common.load(this.appPath, 'service', this.modules);
   }
 
   /**
@@ -81,13 +81,13 @@ class Loader {
    * load extend
    */
   loadExtend(){
-    return extend(this.appPath, this.thinkPath, this.modules);
+    return extend.load(this.appPath, this.thinkPath, this.modules);
   }
   /**
    * load use defined file
    */
   loadCommon(name){
-    return common(this.appPath, name, this.modules);
+    return common.load(this.appPath, name, this.modules);
   }
 }
 

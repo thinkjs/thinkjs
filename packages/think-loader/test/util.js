@@ -17,36 +17,36 @@ test('obj is not a string, __esModule=true', t=>{
 
 test('obj is string, not safe require, module not found', t=>{
     t.throws(()=>{
-      var result = interopRequire('./a', false);
+      var result = interopRequire('../a', false);
     }, Error);
 });
 
 test('obj is string, not safe require', t=>{
     mock('../a', {__esModule: false, a: 1});
-    var result = interopRequire('./a', false);
+    var result = interopRequire('../a', false);
     t.deepEqual(result, {__esModule: false, a: 1});
 });
 
 
 test('obj is string, not safe require, __esModule=true', t=>{
     mock('../a', {__esModule: true, default: 'default'});
-    var result = interopRequire('./a', false);
+    var result = interopRequire('../a', false);
     t.deepEqual(result, 'default');
 });
 
 test('obj is string, safe require module not found', t=>{
-    var result = interopRequire('./a-not-found', true);
+    var result = interopRequire('../a-not-found', true);
     t.deepEqual(result, null);
 });
 
 test('obj is string, safe require', t=>{
     mock('../a', {__esModule: false, a: 1});
-    var result = interopRequire('./a', true);
+    var result = interopRequire('../a', true);
     t.deepEqual(result, {__esModule: false, a: 1});
 });
 
 test('obj is string, safe require, __esModule=true', t=>{
     mock('../a', {__esModule: true, default: 'default'});
-    var result = interopRequire('./a', true);
+    var result = interopRequire('../a', true);
     t.deepEqual(result, 'default');
 });
