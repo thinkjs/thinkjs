@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-06 11:56:06
+* @Last Modified time: 2017-03-07 10:51:48
 */
 'use strict';
 const helper = require('think-helper');
@@ -290,46 +290,31 @@ Validator.after = (value, comparison) => {
 /**
  * check if the string contains only letters (a-zA-Z).
  * @param  {String} value []
- * @param  {String|true} locale default:en-US
  * @return {Boolean}       []
  */
-Validator.alpha = (value, locale) => {
+Validator.alpha = value => {
   value = validator.toString(value);
-  if(locale === true) {
-    return validator.isAlpha(value);
-  }else {
-    return validator.isAlpha(value, locale);
-  }
+  return validator.isAlpha(value);
 };
 
 /**
  * check if the string contains letters (a-zA-Z_).
  * @param  {String} value []
- * @param  {String|true} locale default:en-US
  * @return {Boolean}       []
  */
-Validator.alphaDash = (value, locale) => {
+Validator.alphaDash = value => {
   value = validator.toString(value);
-  if(locale === true) {
-    return validator.isAlpha(value) || (value === '_');
-  }else {
-    return validator.isAlpha(value, locale) || (value === '_');
-  }
+  return /^[A-Z_]+$/i.test(value)
 };
 
 /**
  * check if the string contains only letters and numbers.
  * @param  {String} value []
- * @param  {String|true} locale default:en-US
  * @return {Boolean}       []
  */
-Validator.alphaNumeric = (value, locale) => {
+Validator.alphaNumeric = value => {
   value = validator.toString(value);
-  if(locale === true) {
-    return validator.isAlphanumeric(value);
-  }else {
-    return validator.isAlphanumeric(value, locale);
-  }
+  return validator.isAlphanumeric(value);
 };
 
 /**
@@ -338,13 +323,9 @@ Validator.alphaNumeric = (value, locale) => {
  * @param  {String|true} locale default:en-US
  * @return {Boolean}       []
  */
-Validator.alphaNumericDash = (value, locale) => {
+Validator.alphaNumericDash = value => {
   value = validator.toString(value);
-  if(locale === true) {
-    return validator.isAlphanumeric(value) || (value === '_');
-  }else {
-    return validator.isAlphanumeric(value, locale) || (value === '_');
-  }
+  return /^\w+$/i.test(value);
 };
 
 /**
@@ -574,7 +555,7 @@ Validator.isbn = value => {
  */
 Validator.isin = value => {
   value = validator.toString(value);
-  return validator.isIn(value);
+  return validator.isISIN(value);
 };
 
 /**

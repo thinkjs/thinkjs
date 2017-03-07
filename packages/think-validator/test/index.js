@@ -2,14 +2,15 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-06 11:45:16
+* @Last Modified time: 2017-03-07 11:07:23
 */
 import test from 'ava';
 import helper from 'think-helper';
 import Validator from '../index.js';
 const METHODS = {GET: 'get', POST: 'post', FILE: 'file'};
 
-test('rule-required', t => {
+// required case
+test('rule-required required', t => {
   let rules = {
     param: {
       required: true
@@ -20,7 +21,18 @@ test('rule-required', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-requiredIf', t => {
+test('rule-required not required', t => {
+  let rules = {
+    param: {
+      required: false
+    }
+  }
+  let instance = new Validator({});
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredIf required', t => {
   let rules = {
     param: {
       requiredIf: ['name', 'lushijie', 'tom']
@@ -37,7 +49,7 @@ test('rule-requiredIf', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-requiredIf-false', t => {
+test('rule-requiredIf not required', t => {
   let rules = {
     param: {
       requiredIf: ['name2', 'lushijie', 'tom']
@@ -54,7 +66,7 @@ test('rule-requiredIf-false', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-requiredIf-noParam', t => {
+test('rule-requiredIf without ctx required', t => {
   let rules = {
     param: {
       requiredIf: ['lushijie', '', 'tom']
@@ -66,7 +78,7 @@ test('rule-requiredIf-noParam', t => {
 });
 
 
-test('rule-requiredNotIf', t => {
+test('rule-requiredNotIf required', t => {
   let rules = {
     param: {
       requiredNotIf: ['name', 'lushijie', 'tom']
@@ -83,7 +95,24 @@ test('rule-requiredNotIf', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-requiredWith', t => {
+test('rule-requiredNotIf not required', t => {
+  let rules = {
+    param: {
+      requiredNotIf: ['name', 'lushijie', 'tom']
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      name: 'lushijie'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWith required', t => {
   let rules = {
     param: {
       requiredWith: ['name', 'email']
@@ -100,7 +129,19 @@ test('rule-requiredWith', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-requiredWithAll', t => {
+test('rule-requiredWith not required', t => {
+  let rules = {
+    param: {
+      requiredWith: ['name', 'email']
+    }
+  }
+  let instance = new Validator({});
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+
+test('rule-requiredWithAll required', t => {
   let rules = {
     param: {
       requiredWithAll: ['name', 'email']
@@ -118,7 +159,24 @@ test('rule-requiredWithAll', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-requiredWithOut', t => {
+test('rule-requiredWithAll not required', t => {
+  let rules = {
+    param: {
+      requiredWithAll: ['name', 'email']
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      email: 'lushijie@126.com'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWithOut required', t => {
   let rules = {
     param: {
       requiredWithOut: ['name', 'email']
@@ -135,7 +193,25 @@ test('rule-requiredWithOut', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-requiredWithOutAll', t => {
+test('rule-requiredWithOut not required', t => {
+  let rules = {
+    param: {
+      requiredWithOut: ['name', 'email']
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      name: 'lily',
+      email: 'lushijie@126.com'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWithOutAll required', t => {
   let rules = {
     param: {
       requiredWithOutAll: ['name', 'email']
@@ -146,7 +222,26 @@ test('rule-requiredWithOutAll', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-contains', t => {
+test('rule-requiredWithOutAll not required', t => {
+  let rules = {
+    param: {
+      requiredWithOutAll: ['name', 'email']
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      name: 'lily',
+      email: 'lushijie@126.com'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+// rules case
+test('rule-contains failure', t => {
   let rules = {
     param: {
       contains: 'xxx'
@@ -163,7 +258,24 @@ test('rule-contains', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-contains-parse', t => {
+test('rule-contains success', t => {
+  let rules = {
+    param: {
+      contains: 'xxx'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'sssxxxdd'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-contains parse failure', t => {
   let rules = {
     param: {
       contains: 'abc'
@@ -181,8 +293,25 @@ test('rule-contains-parse', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
+test('rule-contains parse success', t => {
+  let rules = {
+    param: {
+      contains: 'abc'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'lushijie',
+      abc: 'shi'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
 
-test('rule-equals', t => {
+test('rule-equals failure', t => {
   let rules = {
     param: {
       equals: 'xxx'
@@ -199,7 +328,24 @@ test('rule-equals', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-equals-ctx', t => {
+test('rule-equals success', t => {
+  let rules = {
+    param: {
+      equals: 'lushijie'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'lushijie'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-equals parse failure', t => {
   let rules = {
     param: {
       equals: 'abc'
@@ -217,7 +363,25 @@ test('rule-equals-ctx', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-different', t => {
+test('rule-equals parse success', t => {
+  let rules = {
+    param: {
+      equals: 'abc'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'lushijie',
+      abc: 'lushijie'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-different failure', t => {
   let rules = {
     param: {
       different: 'lushijie'
@@ -234,7 +398,24 @@ test('rule-different', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-before', t => {
+test('rule-different success', t => {
+  let rules = {
+    param: {
+      different: 'lushijie'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'shijie',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-before failure', t => {
   let rules = {
     param: {
       before: true
@@ -243,7 +424,7 @@ test('rule-before', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '2099-12-12',
+      param: '2099-12-12 12:00:00',
     }
   }
   let instance = new Validator(ctx);
@@ -251,7 +432,24 @@ test('rule-before', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-before-date', t => {
+test('rule-before success', t => {
+  let rules = {
+    param: {
+      before: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2001-12-12 12:00:00',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-before date argument failure', t => {
   let rules = {
     param: {
       before: '2011-12-12'
@@ -268,7 +466,24 @@ test('rule-before-date', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-after', t => {
+test('rule-before date argument success', t => {
+  let rules = {
+    param: {
+      before: '2011-12-12'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2000-12-12',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-after failure', t => {
   let rules = {
     param: {
       after: true
@@ -277,7 +492,7 @@ test('rule-after', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '1990-12-12'
+      param: '1990-12-12 12:00:00'
     }
   }
   let instance = new Validator(ctx);
@@ -285,7 +500,24 @@ test('rule-after', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-after-date', t => {
+test('rule-after success', t => {
+  let rules = {
+    param: {
+      after: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2099-12-12 01:00:00'
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-after date argument failure', t => {
   let rules = {
     param: {
       after: '2099-12-12'
@@ -302,7 +534,24 @@ test('rule-after-date', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-alpha', t => {
+test('rule-after date argument success', t => {
+  let rules = {
+    param: {
+      after: '1970-12-12'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '1990-12-12',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-alpha failure', t => {
   let rules = {
     param: {
       alpha: true
@@ -319,24 +568,25 @@ test('rule-alpha', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-alpha-locale', t => {
+test('rule-alpha success', t => {
   let rules = {
     param: {
-      alpha: 'en-US'
+      alpha: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123A',
+      param: 'abcABC',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-alphaDash', t => {
+
+test('rule-alphaDash failure', t => {
   let rules = {
     param: {
       alphaDash: true
@@ -353,24 +603,24 @@ test('rule-alphaDash', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-alphaDash-locale', t => {
+test('rule-alphaDash success', t => {
   let rules = {
     param: {
-      alphaDash: 'en-US'
+      alphaDash: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123A',
+      param: 'Ab_',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-alphaNumeric', t => {
+test('rule-alphaNumeric failure', t => {
   let rules = {
     param: {
       alphaNumeric: true
@@ -379,7 +629,7 @@ test('rule-alphaNumeric', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123A@',
+      param: '123Ad_',
     }
   }
   let instance = new Validator(ctx);
@@ -387,24 +637,24 @@ test('rule-alphaNumeric', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-alphaNumeric-locale', t => {
+test('rule-alphaNumeric success', t => {
   let rules = {
     param: {
-      alphaNumeric: 'en-US'
+      alphaNumeric: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123A@',
+      param: '123ABCabc',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-alphaNumericDash', t => {
+test('rule-alphaNumericDash failure', t => {
   let rules = {
     param: {
       alphaNumericDash: true
@@ -413,7 +663,7 @@ test('rule-alphaNumericDash', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123A@',
+      param: '123A@_sdfF',
     }
   }
   let instance = new Validator(ctx);
@@ -421,25 +671,24 @@ test('rule-alphaNumericDash', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-alphaNumericDash-locale', t => {
+test('rule-alphaNumericDash success', t => {
   let rules = {
     param: {
-      alphaNumericDash: 'en-US'
+      alphaNumericDash: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123A@',
+      param: 'aA1sdf_ASDF',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-
-test('rule-ascii', t => {
+test('rule-ascii failure', t => {
   let rules = {
     param: {
       ascii: true
@@ -456,7 +705,41 @@ test('rule-ascii', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-base64', t => {
+test('rule-ascii failure', t => {
+  let rules = {
+    param: {
+      ascii: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'welefNn￥wer_we1$212',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-ascii success', t => {
+  let rules = {
+    param: {
+      ascii: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'welefNnwer_we1$212',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-base64 failure', t => {
   let rules = {
     param: {
       base64: true
@@ -465,7 +748,7 @@ test('rule-base64', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123456',
+      param: (new Buffer('fasdfasdfw23$$$')).toString('utf8'),
     }
   }
   let instance = new Validator(ctx);
@@ -473,7 +756,24 @@ test('rule-base64', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-byteLength', t => {
+test('rule-base64 success', t => {
+  let rules = {
+    param: {
+      base64: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: (new Buffer('welefen')).toString('base64'),
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-byteLength failure', t => {
   let rules = {
     param: {
       byteLength: {min: 0, max: 4}
@@ -488,6 +788,23 @@ test('rule-byteLength', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-byteLength success', t => {
+  let rules = {
+    param: {
+      byteLength: {min: 0, max: 10}
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '123456',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule-byteLength-max-only', t => {
@@ -507,24 +824,7 @@ test('rule-byteLength-max-only', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-byteLength', t => {
-  let rules = {
-    param: {
-      byteLength: {min: 0, max: 3}
-    }
-  }
-  let ctx = {
-    method: METHODS.GET,
-    [METHODS.GET]: {
-      param: '123456',
-    }
-  }
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
-});
-
-test('rule-creditCard', t => {
+test('rule-creditCard failure', t => {
   let rules = {
     param: {
       creditCard: true
@@ -541,27 +841,27 @@ test('rule-creditCard', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-currency', t => {
+test('rule-creditCard success', t => {
   let rules = {
     param: {
-      currency: true
+      creditCard: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'abc',
+      param: '378260516568353',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-currency-options', t => {
+test('rule-currency failure', t => {
   let rules = {
     param: {
-      currency: {symbol: '$'}
+      currency: true
     }
   }
   let ctx = {
@@ -575,7 +875,41 @@ test('rule-currency-options', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-date', t => {
+test('rule-currency success', t => {
+  let rules = {
+    param: {
+      currency: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '$123',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-currency options success', t => {
+  let rules = {
+    param: {
+      currency: {symbol: '￥'}
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '￥123',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-date failure', t => {
   let rules = {
     param: {
       date: true
@@ -592,7 +926,7 @@ test('rule-date', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-date-true', t => {
+test('rule-date success', t => {
   let rules = {
     param: {
       date: true
@@ -601,7 +935,7 @@ test('rule-date-true', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '2011-12-01',
+      param: '2011-11-01 12:00:32',
     }
   }
   let instance = new Validator(ctx);
@@ -609,7 +943,7 @@ test('rule-date-true', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-decimal', t => {
+test('rule-decimal failure', t => {
   let rules = {
     param: {
       decimal: true
@@ -618,7 +952,7 @@ test('rule-decimal', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'abc',
+      param: 'x',
     }
   }
   let instance = new Validator(ctx);
@@ -626,7 +960,41 @@ test('rule-decimal', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-divisibleBy', t => {
+test('rule-decimal success1', t => {
+  let rules = {
+    param: {
+      decimal: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '.1',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-decimal success2', t => {
+  let rules = {
+    param: {
+      decimal: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '0.01',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-divisibleBy failure', t => {
   let rules = {
     param: {
       divisibleBy: 4
@@ -643,7 +1011,24 @@ test('rule-divisibleBy', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-email', t => {
+test('rule-divisibleBy success', t => {
+  let rules = {
+    param: {
+      divisibleBy: 2
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '10',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-email failure', t => {
   let rules = {
     param: {
       email: true
@@ -660,24 +1045,41 @@ test('rule-email', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-email-options', t => {
+test('rule-email success', t => {
   let rules = {
     param: {
-      email: {'require_display_name': false}
+      email: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'lushijie',
+      param: 'lushijie@126.com',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-fqdn', t => {
+test('rule-email options success', t => {
+  let rules = {
+    param: {
+      email: { allow_utf8_local_part: false }
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '"foo\\@bar"@example.com',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn failure', t => {
   let rules = {
     param: {
       fqdn: true
@@ -694,24 +1096,75 @@ test('rule-fqdn', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-fqdn-options', t => {
+test('rule-fqdn success1', t => {
   let rules = {
     param: {
-      fqdn: {require_tld: true}
+      fqdn: true
     }
   }
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'www',
+      param: 'gmail.com',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-float', t => {
+test('rule-fqdn success2', t => {
+  let rules = {
+    param: {
+      fqdn: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'www.gmail.com',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn success3', t => {
+  let rules = {
+    param: {
+      fqdn: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'ww-w.gmail.com',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn options success', t => {
+  let rules = {
+    param: {
+      fqdn: { allow_trailing_dot: true }
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'example.com.',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float failure', t => {
   let rules = {
     param: {
       float: true
@@ -720,7 +1173,7 @@ test('rule-float', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'www',
+      param: 'abc',
     }
   }
   let instance = new Validator(ctx);
@@ -728,7 +1181,58 @@ test('rule-float', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-float-options', t => {
+test('rule-float success1', t => {
+  let rules = {
+    param: {
+      float: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '12.45',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float success2', t => {
+  let rules = {
+    param: {
+      float: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '125',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float success3', t => {
+  let rules = {
+    param: {
+      float: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: NaN,
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float options failure', t => {
   let rules = {
     param: {
       float: {min:0, max:9.55}
@@ -745,7 +1249,24 @@ test('rule-float-options', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-fullWidth', t => {
+test('rule-float options success', t => {
+  let rules = {
+    param: {
+      float: {min:0, max:9.55}
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '8.00',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fullWidth failure', t => {
   let rules = {
     param: {
       fullWidth: true
@@ -760,6 +1281,57 @@ test('rule-fullWidth', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-fullWidth success1', t => {
+  let rules = {
+    param: {
+      fullWidth: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '￥',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fullWidth success2', t => {
+  let rules = {
+    param: {
+      fullWidth: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '￥$$$',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fullWidth success3', t => {
+  let rules = {
+    param: {
+      fullWidth: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '￥$$',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule-halfWidth', t => {
@@ -779,7 +1351,7 @@ test('rule-halfWidth', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-hexColor', t => {
+test('rule-hexColor failure', t => {
   let rules = {
     param: {
       hexColor: true
@@ -796,7 +1368,41 @@ test('rule-hexColor', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-hex', t => {
+test('rule-hexColor success1', t => {
+  let rules = {
+    param: {
+      hexColor: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '#fff',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-hexColor success2', t => {
+  let rules = {
+    param: {
+      hexColor: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '#998323',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-hex success', t => {
   let rules = {
     param: {
       hex: true
@@ -805,15 +1411,15 @@ test('rule-hex', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '-12',
+      param: 'a0a',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-ip', t => {
+test('rule-ip failure', t => {
   let rules = {
     param: {
       ip: true
@@ -830,7 +1436,41 @@ test('rule-ip', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-ip4', t => {
+test('rule-ip success1', t => {
+  let rules = {
+    param: {
+      ip: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '127.0.0.255',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip success2', t => {
+  let rules = {
+    param: {
+      ip: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2031:0000:1F1F:0000:0000:0100:11A0:ADD',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip4 failure', t => {
   let rules = {
     param: {
       ip4: true
@@ -847,7 +1487,24 @@ test('rule-ip4', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-ip6', t => {
+test('rule-ip4 success', t => {
+  let rules = {
+    param: {
+      ip4: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '127.0.0.1',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip6 failure', t => {
   let rules = {
     param: {
       ip6: true
@@ -864,7 +1521,24 @@ test('rule-ip6', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-isbn', t => {
+test('rule-ip6 success', t => {
+  let rules = {
+    param: {
+      ip6: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2031:0000:1F1F:0000:0000:0100:11A0:ADD',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-isbn failure', t => {
   let rules = {
     param: {
       isbn: true
@@ -881,7 +1555,24 @@ test('rule-isbn', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-isin', t => {
+test('rule-isbn success', t => {
+  let rules = {
+    param: {
+      isbn: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '9787540471644',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-isin failure', t => {
   let rules = {
     param: {
       isin: true
@@ -898,7 +1589,24 @@ test('rule-isin', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-iso8601', t => {
+test('rule-isin success', t => {
+  let rules = {
+    param: {
+      isin: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'DE000BAY0017',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-iso8601 failure', t => {
   let rules = {
     param: {
       iso8601: true
@@ -915,8 +1623,24 @@ test('rule-iso8601', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
+test('rule-iso8601 success', t => {
+  let rules = {
+    param: {
+      iso8601: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2011-02-11',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
 
-test('rule-in', t => {
+test('rule-in failure', t => {
   let rules = {
     param: {
       in: ['lushijie','1234560']
@@ -933,7 +1657,24 @@ test('rule-in', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-notIn', t => {
+test('rule-in success', t => {
+  let rules = {
+    param: {
+      in: ['lushijie','1234560']
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'lushijie',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-notIn failure', t => {
   let rules = {
     param: {
       notIn: ['lushijie','123456']
@@ -950,7 +1691,24 @@ test('rule-notIn', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-int', t => {
+test('rule-notIn success', t => {
+  let rules = {
+    param: {
+      notIn: ['lushijie','123456']
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'avc',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-int failure', t => {
   let rules = {
     param: {
       int: true
@@ -967,7 +1725,24 @@ test('rule-int', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-int-options', t => {
+test('rule-int success', t => {
+  let rules = {
+    param: {
+      int: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '12456',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-int options failure', t => {
   let rules = {
     param: {
       int: {min: 0, max: 10}
@@ -984,7 +1759,24 @@ test('rule-int-options', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-length-options', t => {
+test('rule-int options success', t => {
+  let rules = {
+    param: {
+      int: {min: 0, max: 10}
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '6',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-length options failure', t => {
   let rules = {
     param: {
       length: {min: 0, max: 4}
@@ -999,6 +1791,23 @@ test('rule-length-options', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-length options success', t => {
+  let rules = {
+    param: {
+      length: {min: 0, max: 10}
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '123456',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule-length-max-only', t => {
@@ -1053,7 +1862,7 @@ test('rule-lowercase', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-uppercase', t => {
+test('rule-uppercase failure', t => {
   let rules = {
     param: {
       uppercase: true
@@ -1070,8 +1879,25 @@ test('rule-uppercase', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
+test('rule-uppercase success', t => {
+  let rules = {
+    param: {
+      uppercase: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '$$$$$￥',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
 
-test('rule-mobile', t => {
+
+test('rule-mobile failure', t => {
   let rules = {
     param: {
       mobile: true
@@ -1086,6 +1912,23 @@ test('rule-mobile', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-mobile success', t => {
+  let rules = {
+    param: {
+      mobile: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '13269207867',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule-mobile-locale', t => {
@@ -1122,7 +1965,7 @@ test('rule-mongoId', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-multibyte', t => {
+test('rule-multibyte failure', t => {
   let rules = {
     param: {
       multibyte: true
@@ -1139,7 +1982,24 @@ test('rule-multibyte', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-url', t => {
+test('rule-multibyte success', t => {
+  let rules = {
+    param: {
+      multibyte: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '$$$$$￥',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-url failure', t => {
   let rules = {
     param: {
       url: true
@@ -1156,7 +2016,41 @@ test('rule-url', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-url-options', t => {
+test('rule-url success2', t => {
+  let rules = {
+    param: {
+      url: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'https://github.com/lushijie',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-url success2', t => {
+  let rules = {
+    param: {
+      url: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-url options success', t => {
   let rules = {
     param: {
       url: {protocols: ['http','https','ftp']}
@@ -1165,15 +2059,15 @@ test('rule-url-options', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'lushijie',
+      param: 'https://github.com/lushijie',
     }
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-order', t => {
+test('rule-order failure', t => {
   let rules = {
     param: {
       order: true
@@ -1182,7 +2076,7 @@ test('rule-order', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'name not DESC',
+      param: 'name|DESC',
     }
   }
   let instance = new Validator(ctx);
@@ -1190,7 +2084,41 @@ test('rule-order', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-field', t => {
+test('rule-order success1', t => {
+  let rules = {
+    param: {
+      order: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'name ASC, id DESC',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-order success2', t => {
+  let rules = {
+    param: {
+      order: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-field success1', t => {
   let rules = {
     param: {
       field: true
@@ -1205,6 +2133,57 @@ test('rule-field', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-field success2', t => {
+  let rules = {
+    param: {
+      field: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-field success3', t => {
+  let rules = {
+    param: {
+      field: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '*',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-field success4', t => {
+  let rules = {
+    param: {
+      field: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'name, *',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule-image', t => {
@@ -1241,7 +2220,7 @@ test('rule-image-options', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-startWith', t => {
+test('rule-startWith failure', t => {
   let rules = {
     param: {
       startWith: 'shijie'
@@ -1258,7 +2237,24 @@ test('rule-startWith', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-endWith', t => {
+test('rule-startWith success', t => {
+  let rules = {
+    param: {
+      startWith: 'shijie'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'shijiesdf',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-endWith failure', t => {
   let rules = {
     param: {
       endWith: 'lu'
@@ -1275,7 +2271,24 @@ test('rule-endWith', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-issn', t => {
+test('rule-endWith success', t => {
+  let rules = {
+    param: {
+      endWith: 'jie'
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'lushijie',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-issn failure', t => {
   let rules = {
     param: {
       issn: true
@@ -1290,6 +2303,23 @@ test('rule-issn', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-issn success', t => {
+  let rules = {
+    param: {
+      issn: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '2434-561X',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule-issn-options', t => {
@@ -1310,7 +2340,7 @@ test('rule-issn-options', t => {
 });
 
 
-test('rule-uuid', t => {
+test('rule-uuid failure', t => {
   let rules = {
     param: {
       uuid: true
@@ -1327,7 +2357,24 @@ test('rule-uuid', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-md5', t => {
+test('rule-uuid success', t => {
+  let rules = {
+    param: {
+      uuid: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'A987FBC9-4BED-3078-CF07-9141BA07C9F3',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-md5 failure', t => {
   let rules = {
     param: {
       md5: true
@@ -1344,7 +2391,24 @@ test('rule-md5', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-macAddress', t => {
+test('rule-md5 success', t => {
+  let rules = {
+    param: {
+      md5: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'd94f3f016ae679c3008de268209132f2',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-macAddress failure', t => {
   let rules = {
     param: {
       macAddress: true
@@ -1353,7 +2417,7 @@ test('rule-macAddress', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: '123123',
+      param: '1:2:3:4:5:6',
     }
   }
   let instance = new Validator(ctx);
@@ -1361,7 +2425,24 @@ test('rule-macAddress', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-numeric', t => {
+test('rule-macAddress success', t => {
+  let rules = {
+    param: {
+      macAddress: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '01:02:03:04:05:ab',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-numeric failure', t => {
   let rules = {
     param: {
       numeric: true
@@ -1370,7 +2451,7 @@ test('rule-numeric', t => {
   let ctx = {
     method: METHODS.GET,
     [METHODS.GET]: {
-      param: 'abc',
+      param: '1.123',
     }
   }
   let instance = new Validator(ctx);
@@ -1378,7 +2459,24 @@ test('rule-numeric', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-dataURI', t => {
+test('rule-numeric success', t => {
+  let rules = {
+    param: {
+      numeric: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '123',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-dataURI failure', t => {
   let rules = {
     param: {
       dataURI: true
@@ -1393,6 +2491,23 @@ test('rule-dataURI', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-dataURI success', t => {
+  let rules = {
+    param: {
+      dataURI: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 
@@ -1414,7 +2529,7 @@ test('rule-regexp', t => {
 });
 
 
-test('rule-variableWidth', t => {
+test('rule-variableWidth failure', t => {
   let rules = {
     param: {
       variableWidth: true
@@ -1429,6 +2544,23 @@ test('rule-variableWidth', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-variableWidth success', t => {
+  let rules = {
+    param: {
+      variableWidth: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '$$$$$￥w',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 // auto convert
@@ -1449,7 +2581,7 @@ test('rule-boolean', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-string', t => {
+test('rule-string failure', t => {
   let rules = {
     param: {
       string: true
@@ -1464,6 +2596,23 @@ test('rule-string', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-string success', t => {
+  let rules = {
+    param: {
+      string: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: '123',
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
 // auto convert
@@ -1485,7 +2634,7 @@ test('rule-array', t => {
 });
 
 
-test('rule-object', t => {
+test('rule-object failure', t => {
   let rules = {
     param: {
       object: true
@@ -1501,6 +2650,24 @@ test('rule-object', t => {
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length > 0);
 });
+
+test('rule-object success', t => {
+  let rules = {
+    param: {
+      object: true
+    }
+  }
+  let ctx = {
+    method: METHODS.GET,
+    [METHODS.GET]: {
+      param: {a: 123},
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
 
 test('rule-no-exist', t => {
   let rules = {
