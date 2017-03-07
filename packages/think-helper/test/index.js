@@ -20,7 +20,8 @@ import {
   getdirFiles,
   isTrueEmpty,
   isIP,
-  timeout
+  timeout,
+  parseAdapterConfig
 } from '../index.js';
 import fs from 'fs';
 
@@ -277,4 +278,28 @@ test('timeout', t => {
   timeout(1000).then(()=>{
     t.pass('success');
   })
+})
+
+test("parseAdapterConfig",t=>{
+  let config = {
+    type: 'nunjucks',
+    common: {
+      viewPath: 'thinkjs',
+      extname: '.html',
+      sep: '_' //seperator between controller and action
+    },
+    nunjucks: {
+      handle: "nunjucks"
+    },
+    ejs: {
+      handle: "ejs"
+    }
+  }
+  let extConfig = "ejs";
+  let extConfig2 = {
+    handle: "ejs"
+  };
+  t.deepEqual(parseAdapterConfig(config).handle, "nunjucks");
+  t.deepEqual(parseAdapterConfig(config, extConfig).handle, "ejs");
+  t.deepEqual(parseAdapterConfig(config, extConfig2).handle, "ejs");
 })
