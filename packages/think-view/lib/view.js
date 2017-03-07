@@ -43,7 +43,7 @@ class View {
       assert(this.ctx.action, 'ctx.action required');
       file = path.join(this.ctx.module, this.ctx.controller + config.sep + this.ctx.action);
     }
-    const extRegExp = /\.\w$/;
+    const extRegExp = /\.\w+$/;
     if(!extRegExp.test(file)){
       file = file + config.extname;
     }
