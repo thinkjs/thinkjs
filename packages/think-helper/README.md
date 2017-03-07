@@ -63,6 +63,6 @@ API | Param | Description
 `chmod`   | `path`{String}<br> `mode`{String}  | change path mode
 `mkdir`   | `dir`{String}<br> `mode`{String} | make dir
 `getdirFiles`   | `dir`{String}<br> `prefix`{String} | get files in path
-`rmdir`   | `path`{String}<br> `reserve`{Boolean}<br>`return`{Promise} | remove dir aync
+`rmdir`   | `path`{String}<br> `reserve`{Boolean}<br>`return`{Promise} | remove dir async
 
 

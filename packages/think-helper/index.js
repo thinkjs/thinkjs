@@ -5,22 +5,30 @@ const net = require('net');
 const cluster = require('cluster');
 const is = require('core-util-is');
 const uuid = require('uuid');
+const assert = require('assert');
 
 const fs_rmdir = promisify(fs.rmdir, fs);
 const fs_unlink = promisify(fs.unlink, fs);
 const fs_readdir = promisify(fs.readdir, fs);
 
 const numberReg = /^((\-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
+const toString = Object.prototype.toString;
 
 exports.isIP = net.isIP;
 exports.isIPv4 = net.isIPv4;
 exports.isIPv6 = net.isIPv6;
 exports.isMaster = cluster.isMaster;
 
-
 for(let name in is){
   exports[name] = is[name];
 }
+
+/**
+ * override isObject method in `core-util-is` module
+ */
+exports.isObject = obj => {
+  return toString.call(obj) === '[object Object]';
+};
 
 /**
  * make callback function to promise
@@ -261,6 +269,25 @@ exports.uuid = function(version){
   return uuid.v4();
 }
 
+/**
+ * parse adapter config
+ */
+exports.parseAdapterConfig = (config, extConfig) => {
+  assert(exports.isString(config.type), 'config.type required');
+  if(extConfig){
+    //only change type
+    if(exports.isString(extConfig)){
+      extConfig = {type: extConfig};
+    }
+    //only add some configs
+    if(!extConfig.type){
+      extConfig = {[config.type]: extConfig};
+    }
+  }
+  //merge config
+  config = exports.extend({}, config, extConfig);
+  return config[config.type] || {};
+}
 
 
 
