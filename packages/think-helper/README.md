@@ -22,9 +22,9 @@ let md5 = helper.md5('');
 
 ```
 
-Apis:
+APIs:
 
-api | param | Description
+API | Param | Description
 ---|---|---
 `isIP` |  | check IP
 `isIPv4`   |  | check IPv4
