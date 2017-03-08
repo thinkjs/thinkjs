@@ -8,3 +8,4 @@ coverage
 lib/
 demo/
 .vscode
+.nyc_output
