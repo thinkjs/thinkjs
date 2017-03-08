@@ -11,20 +11,8 @@ class Logger {
     this._logger = new handle(config);
     ['debug', 'info', 'warn', 'error'].forEach(level => {
       assert(this._logger[level], `adapter function ${level} not exist!`);
-      this[level] = (...args) => {
-        this._beforeLog(...args);
-        this._logger[level](...args);
-        this._afterLog(...args);
-      }
+      this[level] = this._logger[level].bind(this);
     });
-  }
-
-  _beforeLog() {
-
-  }
-
-  _afterLog() {
-
   }
 }
 
