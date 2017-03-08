@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-07 10:51:48
+* @Last Modified time: 2017-03-08 11:13:12
 */
 'use strict';
 const helper = require('think-helper');
@@ -35,7 +35,7 @@ Validator._requiredIf = (options, ctx) => {
 
   // just parse the first param
   let arg0 = options[0];
-  options[0] = (ctx[arg0] ? ctx[arg0] : '');
+  options[0] = !helper.isTrueEmpty(ctx[arg0]) ? ctx[arg0] : '';
   return options;
 };
 
@@ -86,7 +86,7 @@ Validator._requiredWith = (options, ctx) => {
 
   // parsed all the param
   return options.map(item => {
-    return ctx[item] ? ctx[item] : '';
+    return !helper.isTrueEmpty(ctx[item]) ? ctx[item] : '';
   });
 };
 
@@ -98,7 +98,7 @@ Validator._requiredWith = (options, ctx) => {
  */
 Validator.requiredWith = (value, options) => {
   return options.some(item => {
-    return !helper.isEmpty(item);
+    return !helper.isTrueEmpty(item);
   });
 };
 
@@ -121,7 +121,7 @@ Validator._requiredWithAll = (options, ctx) => {
  */
 Validator.requiredWithAll = (value, options) => {
   return options.every(item => {
-    return !helper.isEmpty(item);
+    return !helper.isTrueEmpty(item);
   });
 };
 
@@ -144,7 +144,7 @@ Validator._requiredWithOut = (options, ctx) => {
  */
 Validator.requiredWithOut = (value, options) => {
   return options.some(item => {
-    return helper.isEmpty(item);
+    return helper.isTrueEmpty(item);
   });
 };
 
@@ -167,7 +167,7 @@ Validator._requiredWithOutAll = (options, ctx) => {
  */
 Validator.requiredWithOutAll = (value, options) => {
   return options.every(item => {
-    return helper.isEmpty(item);
+    return helper.isTrueEmpty(item);
   });
 };
 
@@ -179,7 +179,7 @@ Validator.requiredWithOutAll = (value, options) => {
  */
 Validator._contains = (seed, ctx) => {
   let item = ctx[seed];
-  return item ? item : seed;
+  return !helper.isTrueEmpty(item) ? item : seed;
 }
 /**
  * check if the string contains the seed.
@@ -201,7 +201,7 @@ Validator.contains = (value, seed) => {
  */
 Validator._equals = (comparison, ctx) => {
   let item = ctx[comparison];
-  return item ? item : comparison;
+  return !helper.isTrueEmpty(item) ? item : comparison;
 };
 
 /**
