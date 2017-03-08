@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-06 11:44:14
+* @Last Modified time: 2017-03-08 16:49:23
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -22,6 +22,7 @@ class Validator {
       'requiredWithOutAll'
     ];
     this.skippedValidNames = ['value', 'default', 'trim', 'method'].concat(this.requiredValidNames);
+    this.basicType = ['int', 'string', 'float', 'array', 'object', 'boolean'];
   }
 
   /**
@@ -29,7 +30,7 @@ class Validator {
    * @param  {String} ruleName [description]
    * @return {String}          [description]
    */
-  _formatRuleName(ruleName) {
+  _formatNestedRuleName(ruleName) {
     let newRuleName = ruleName;
     if(newRuleName.indexOf(ARRAY_SP) > -1) {
       let tmpRuleName = newRuleName.split(ARRAY_SP);
@@ -47,9 +48,9 @@ class Validator {
    * @param  {String} ruleName        [description]
    * @param  {Object} rule            [description]
    * @param  {String} validName       [description]
-   * @param  {} parsedValidArgs [description]
+   * @param  {Mixed} parsedValidArgs [description]
    * @param  {Object} msgs            [description]
-   * @return {}                 [description]
+   * @return {String}                 [description]
    */
   _getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs) {
     let errMsg = validator.errors[validName];
@@ -90,17 +91,17 @@ class Validator {
     }
 
     // format error message rule name
-    let newRuleName = this._formatRuleName(ruleName);
+    let originRuleName = this._formatNestedRuleName(ruleName);
 
     // set defalut error message
     if(!errMsg) {
-      return newRuleName + ' valid failed';
+      return originRuleName + ' valid failed';
     }
 
     // ruleName validName validArgs parsedValidArgs
-    // itemValue = _convertParamItemValue(ruleName, rule)
+    // itemValue = _convertParamValue(ruleName, rule)
     let validArgs = rule[ruleName];
-    return errMsg.replace('{name}', newRuleName)
+    return errMsg.replace('{name}', originRuleName)
                  .replace('{args}', JSON.stringify(validArgs))
                  .replace('{pargs}', JSON.stringify(parsedValidArgs));
   }
@@ -108,8 +109,8 @@ class Validator {
   /**
    * parse valid args by _validName method
    * @param  {String} validName [description]
-   * @param  {} ruleArgs  [description]
-   * @return {}           [description]
+   * @param  {Mixed} ruleArgs  [description]
+   * @return {Mixed}           [description]
    */
   _parseValidArgs(validName, rule) {
     let method = rule.method || this.ctx.method;
@@ -126,9 +127,9 @@ class Validator {
    * convert value by value type
    * @param  {String} ruleName [description]
    * @param  {Object} rule     [description]
-   * @return {}          [description]
+   * @return {Mixed}          [description]
    */
-  _convertParamItemValue(ruleName, rule) {
+  _convertParamValue(ruleName, rule) {
     let method = rule.method || this.ctx.method || METHOD_GET;
     if(rule.int || rule.float || rule.numeric) {
       if(ruleName.indexOf(ARRAY_SP) > -1) {
@@ -152,7 +153,7 @@ class Validator {
    * @param  {Object} rule [description]
    * @return {Boolean}      [description]
    */
-  _checkValueRequired(rule) {
+  _checkRequired(rule) {
     let isRequired = false;
     for(let i = 0; i <= this.requiredValidNames.length; i++) {
       let validName = this.requiredValidNames[i];
@@ -182,6 +183,16 @@ class Validator {
     for(let ruleName in rules) {
       let rule = rules[ruleName];
       let method = rule.method || this.ctx.method || METHOD_GET;
+
+      // basic type check
+      let containTypeNum = this.basicType.reduce((acc, val) => {
+        val = rule[val] ? 1 : 0;
+        return acc + val;
+      }, 0);
+
+      if(containTypeNum > 1) {
+        throw new Error('Any rule can\'t contains one more basic type, the param you are validing is ' + ruleName);
+      }
 
       // array & object children with value, skip this operator
       if(!rule.value && this.ctx[method]) {
@@ -235,6 +246,7 @@ class Validator {
       }
 
     }
+
     return ({childRules, rules});
   }
 
@@ -257,27 +269,20 @@ class Validator {
    */
   validate(rules, msgs) {
     let ret = {};
-
     let parsedResult = this._preTreatRules(rules);
     let parsedRules = parsedResult.rules;
-    // console.log('parsedRules', parsedRules);
-
     let parsedChildRules = {};
     if(Object.keys(parsedResult.childRules).length > 0) {
-      // pretreat for array/object child
       parsedChildRules = this._preTreatRules(parsedResult.childRules).rules;
-      // console.log('parsedChildRules', parsedChildRules);
     }
-
     parsedRules = Object.assign({}, parsedRules, parsedChildRules);
-    // console.log('last parsedRules', parsedRules, '\n');
 
     outerLoop:
     for(let ruleName in parsedRules){
       let rule = parsedRules[ruleName];
 
       // required check
-      let isRequired = this._checkValueRequired(rule);
+      let isRequired = this._checkRequired(rule);
       if(isRequired && helper.isTrueEmpty(rule.value)) {
         let validName = 'required';
         let parsedValidArgs = this._parseValidArgs(validName, rule);
@@ -308,16 +313,15 @@ class Validator {
           let errMsg = this._getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs);
 
           // format error message's rule name
-          let newRuleName = this._formatRuleName(ruleName);
+          let newRuleName = this._formatNestedRuleName(ruleName);
           ret[newRuleName] = errMsg;
           continue outerLoop;
         }else {
-          this._convertParamItemValue(ruleName, rule);
+          this._convertParamValue(ruleName, rule);
         }
       }
     }
-    //console.log('resp err-->', ret, '\n');
-    //console.log('ctx transform-->', this.ctx, '\n')
+
     return ret;
   }
 }

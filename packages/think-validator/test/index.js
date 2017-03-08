@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-07 11:07:23
+* @Last Modified time: 2017-03-08 16:44:52
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -74,7 +74,7 @@ test('rule-requiredIf without ctx required', t => {
   }
   let instance = new Validator({});
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
+  t.true(Object.keys(ret).length === 0);
 });
 
 
@@ -2908,4 +2908,19 @@ test('rule-add-method', t => {
   }, wrongMsg);
   let ret = instance.validate(rules);
   t.true(ret.param === wrongMsg)
+});
+
+test('rule one-more-basic type', t => {
+  let rules = {
+    param: {
+      int: true,
+      float: true
+    }
+  }
+  let instance = new Validator({});
+  try {
+    let ret = instance.validate(rules);
+  }catch(e) {
+    t.pass();
+  }
 });
