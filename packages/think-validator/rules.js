@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-08 11:13:12
+* @Last Modified time: 2017-03-08 15:29:30
 */
 'use strict';
 const helper = require('think-helper');
@@ -35,7 +35,7 @@ Validator._requiredIf = (options, ctx) => {
 
   // just parse the first param
   let arg0 = options[0];
-  options[0] = !helper.isTrueEmpty(ctx[arg0]) ? ctx[arg0] : '';
+  options[0] = !helper.isTrueEmpty(ctx[arg0]) ? ctx[arg0] : arg0;
   return options;
 };
 
