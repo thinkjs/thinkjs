@@ -38,10 +38,10 @@ logger.debug('Hello World');
 There has four log function you can use:
 
  ```js
- logger.info('info log');
- logger.debug('debug log');
- logger.warn('warn log');
- logger.error('error log');
+logger.info('info log');
+logger.debug('debug log');
+logger.warn('warn log');
+logger.error('error log');
  ```
 
 ## Other Adapters
