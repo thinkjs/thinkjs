@@ -204,13 +204,13 @@ export default class extends Base {
    * @return {}      []
    */
   parseType(key, value){
-    let fieldType = this.schema[key].type || '';
+    let fieldType = (this.schema[key].type || '').toLowerCase();
     if(fieldType.indexOf('enum') > -1 || fieldType.indexOf('set') > -1){
       return value;
     }
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
       return parseInt(value, 10) || 0;
-    }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1){
+    }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1 || fieldType.indexOf('decimal') > -1){
       return parseFloat(value) || 0.0;
     }else if(fieldType.indexOf('bool') > -1){
       return !!value;
