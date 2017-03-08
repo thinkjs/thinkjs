@@ -64,5 +64,6 @@ API | Param | Description
 `mkdir`   | `dir`{String}<br> `mode`{String} | make dir
 `getdirFiles`   | `dir`{String}<br> `prefix`{String} | get files in path
 `rmdir`   | `path`{String}<br> `reserve`{Boolean}<br>`return`{Promise} | remove dir async
+`parseAdapterConfig` | `config`{Object}<br> `extConfig`{Object\|String} | parse adapterconfig
 
 
