@@ -38,7 +38,11 @@
     "debug": "^2.6.1",
     "koa": "^2.0.0-alpha.8",
     "koa-bodyparser": "^3.2.0",
-    "think-await": "^1.0.2"
+    "think-helper": "^1.0.0",
+    "think-logger": "^1.0.4",
+    "think-config": "^1.0.0",
+    "think-loader": "^1.0.0",
+    "think-cluster": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^0.18.0",
