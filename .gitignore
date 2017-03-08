@@ -8,3 +8,4 @@ coverage
 lib/
 demo/
 .vscode
+.idea

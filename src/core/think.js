@@ -11,6 +11,7 @@ import cluster from 'cluster';
 import thinkit from 'thinkit';
 import co from 'co';
 import colors from 'colors/safe';
+import log4js from 'log4js';
 
 import base from './base.js';
 import httpBase from './http_base.js';
@@ -60,6 +61,7 @@ think.dirname = {
   view: 'view',
   middleware: 'middleware',
   runtime: 'runtime',
+  log: 'log',
   common: 'common',
   bootstrap: 'bootstrap',
   locale: 'locale'
@@ -164,7 +166,7 @@ think.isHttp = obj => {
 };
 
 /**
- * validate 
+ * validate
  * @type {Function}
  */
 think.validate = Validate;
@@ -412,14 +414,14 @@ think.parseConfig = function(...configs) {
     }
     return config;
   });
-  
+
   let config = think.extend({}, ...configs);
 
   //check parser method
   if(!think.isFunction(config.parser) || onlyMerge){
     return config;
   }
-  
+
   let ret = config.parser(config, this !== think ? this : {});
   delete config.parser;
   return think.extend(config, ret);
@@ -442,6 +444,62 @@ think.prevent = () => {
 think.isPrevent = err => {
   return think.isError(err) && err.message === preventMessage;
 };
+
+/**
+ * create log file
+ * @param msg
+ * @param log_level
+ * @param type
+ * @private
+ */
+let _log = (msg, log_level = 'info', type = 'ThinkJS') => {
+  let date      = new Date();
+  let log_path  = `${think.dirname.log}/${date.toLocaleDateString()}/`;
+  let file_name = `${type.toLocaleLowerCase()}.log`;
+
+  if (type === 'ThinkJS') {
+    file_name = `${log_level}.log`;
+  }
+
+  log4js.configure({
+    appenders: [
+      {
+        type    : 'file',
+        filename: log_path + file_name,
+        category: type
+      }
+    ]
+  });
+
+  let logger = log4js.getLogger(type);
+
+  log_level = log_level.toLocaleLowerCase();
+  logger.setLevel(log_level);
+
+  switch (log_level) {
+    case 'trace':
+      logger.trace(msg);
+      break;
+    case 'debug':
+      logger.debug(msg);
+      break;
+    case 'info':
+      logger.info(msg);
+      break;
+    case 'warn':
+      logger.warn(msg);
+      break;
+    case 'error':
+      logger.error(msg);
+      break;
+    case 'fatal':
+      logger.fatal(msg);
+      break;
+    default:
+      logger.error(msg);
+  }
+};
+
 /**
  * log
  * @TODO
@@ -472,6 +530,7 @@ think.log = (msg, type, showTime) => {
     }
     thinkCache(thinkCache.COLLECTION, 'prev_error', msg);
     console.error(dateTime + colors.red('[Error] ') + msg.stack);
+    _log(msg.stack, 'error');
     return;
   }else if(think.isFunction(msg)){
     msg = msg(colors);
@@ -488,17 +547,21 @@ think.log = (msg, type, showTime) => {
   if(type){
     if(type === 'WARNING'){
       console.warn(dateTime + colors.yellow(`[Warning] `) + msg);
+      _log(msg, 'warn');
     }
     else if(type === 'EXIT'){
       console.error(colors.red('[Error] ' + msg));
+      _log(msg,'fatal');
       console.log();
       process.exit();
     }
     else{
       console.log(dateTime + colors.cyan(`[${type}] `) + msg);
+      _log(msg, 'info', type);
     }
   }else{
-    console.log(dateTime + msg); 
+    console.log(dateTime + msg);
+    _log(msg, 'info');
   }
 };
 
@@ -613,7 +676,7 @@ think.http = async (req, res) => {
     return http;
   }
   //flag to cli request, make isCli detect true
-  http._cli = true; 
+  http._cli = true;
   let App = think.require('app');
   let appInstance = new App(http);
   return appInstance.run();
@@ -649,7 +712,7 @@ think.session = http => {
   let sessionOptions = think.config('session');
   let {name, secret} = sessionOptions;
   let cookie = http.cookie(name);
-  
+
   //validate cookie sign
   if (cookie && secret) {
     cookie = Cookie.unsign(cookie, secret);
@@ -682,7 +745,7 @@ think.session = http => {
       think.log('in cluster mode, session can\'t use memory for storage, convert to File');
     }
   }
-  
+
   let conf = think.parseConfig(sessionOptions, {
     cookie: sessionCookie,
     newCookie: newCookie
@@ -799,11 +862,11 @@ think.cache = async (name, value, options) => {
   // get cache
   if(value === undefined){
     return instance.get(name);
-  } 
+  }
   //delete cache
   else if(value === null){
     return instance.delete(name);
-  } 
+  }
   //get cache waiting for function
   else if(think.isFunction(value)){
     let data = await instance.get(name);
@@ -855,7 +918,7 @@ think.locale = function(key, ...data) {
 
 
 /**
- * await 
+ * await
  * @param  {String}   key      []
  * @param  {Function} callback []
  * @return {Promise}            []
@@ -981,19 +1044,19 @@ think.statusAction = async (status, http, log) => {
   }
 
   let cls = think.require(name, true);
-  
+
   //error controller not found
   if(!cls){
     http.error = new Error(think.locale('CONTROLLER_NOT_FOUND', name, http.url));
     return think.statusAction(status, http, log);
   }
-  
+
   //set http status
   //http.status(status);
 
   let instance = new cls(http);
   await instance.invoke(`_${status}Action`, instance);
-  
+
   return think.prevent();
 };
 
@@ -1038,7 +1101,7 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   if(think.isNumber(options)){
     options = {limit: options};
   }
-  
+
   let flag = !think.isArray(data) || options.array;
   if(!flag){
     key = '';

@@ -28,6 +28,7 @@ export default class {
     think.ROOT_PATH = path.normalize(think.ROOT_PATH);
     think.RESOURCE_PATH = path.normalize(think.RESOURCE_PATH);
     think.RUNTIME_PATH = path.normalize(think.RUNTIME_PATH);
+    think.LOG_PATH = path.normalize(think.LOG_PATH);
 
     //parse data from process arguments
     let i = 2;
@@ -70,11 +71,13 @@ export default class {
     let ROOT_PATH = path.dirname(RESOURCE_PATH);
     let APP_PATH = `${ROOT_PATH}${think.sep}app`;
     let RUNTIME_PATH = ROOT_PATH + think.sep + think.dirname.runtime;
+    let LOG_PATH = ROOT_PATH + think.sep + think.dirname.log;
     return {
       APP_PATH,
       RESOURCE_PATH,
       ROOT_PATH,
-      RUNTIME_PATH
+      RUNTIME_PATH,
+      LOG_PATH
     };
   }
   /**
