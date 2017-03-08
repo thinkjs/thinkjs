@@ -7,7 +7,8 @@
     "compile": "babel src/ --out-dir lib/",
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
-    "eslint": "eslint ./src"
+    "eslint": "eslint ./src",
+    "prepublish": "npm run compile && npm test"
   },
   "repository": {
     "type": "git",
