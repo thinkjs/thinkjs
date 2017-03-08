@@ -53,79 +53,74 @@ methods.forEach(method => {
   }
 });
 
-/**
- * format rules
- * [
- *  [/\w/, 'home/index', 'get']
- * ]
- *
- *  => [{
- *  match: /\w/,
- *  path: 'home/index',
- *  method: 'get'
- * }]
- */
-const formatRouter = router => {
-  if(helper.isFunction(router)){
-    let routerInstance = new Router();
-    router = router(routerInstance);
-    if(routerInstance.rules.length){
+const RouterLoader = {
+  Router: Router,
+  /**
+   * format rules
+   *  => [{
+   *  match: /\w/,
+   *  path: 'home/index',
+   *  method: 'get'
+   *  statusCode: ?
+   * }]
+   */
+  formatRouter(router){
+    if(helper.isFunction(router)){
+      let routerInstance = new RouterLoader.Router();
+      router(routerInstance);
       return routerInstance.rules;
     }
-    return router; //may be a promise
-  }
+    return router;
+  },
 
-  router.method = (router.method || '').toLowerCase();
-  return router;
-}
-
-/**
- * route loader
- * @return {Promise}
- */
-function loader(appPath, modules){
-  if(modules.length){
-    let commonRouterFile = path.join(appPath, 'common/config/router.js');
-    if(!helper.isFile(commonRouterFile)){
-      return [];
-    }
-    let commonRouter = interopRequire(commonRouterFile);
-    if(helper.isFunction(commonRouter) || helper.isArray(commonRouter)){
-      debug('common/config/router is an array or a function');
-      return formatRouter(commonRouter);
-    }
-    /**
-     * rule = {
-     *    home: {
-     *      match: '',
-     *      rules: []
-     *    },
-     *    admin: {
-     *      match: '',
-     *      rules: []
-     *    }
-     * }
-     */
-    debug('load module router');
-    for(let name in commonRouter){
-      assert(commonRouter[name].match, `common/config/router: ${name}.match must be set`);
-      let moduleRouterFile = path.join(appPath, name, 'config/router.js');
-      if(!helper.isFile(moduleRouterFile)){
-        continue;
+  /**
+   * route loader
+   */
+  load(appPath, modules){
+    const formatRouter = RouterLoader.formatRouter;
+    if(modules.length){
+      let commonRouterFile = path.join(appPath, 'common/config/router.js');
+      if(!helper.isFile(commonRouterFile)){
+        return [];
       }
-      let moduleRouter = interopRequire(moduleRouterFile);
-      commonRouter[name].rules = formatRouter(moduleRouter);
+      let commonRouter = interopRequire(commonRouterFile);
+      if(helper.isFunction(commonRouter) || helper.isArray(commonRouter)){
+        debug('common/config/router is an array or a function');
+        return formatRouter(commonRouter);
+      }
+      /**
+       * rule = {
+       *    home: {
+       *      match: '',
+       *      rules: []
+       *    },
+       *    admin: {
+       *      match: '',
+       *      rules: []
+       *    }
+       * }
+       */
+      debug('load module router');
+      for(let name in commonRouter){
+        assert(commonRouter[name].match, `common/config/router: ${name}.match must be set`);
+        let moduleRouterFile = path.join(appPath, name, 'config/router.js');
+        if(!helper.isFile(moduleRouterFile)){
+          continue;
+        }
+        let moduleRouter = interopRequire(moduleRouterFile);
+        commonRouter[name].rules = formatRouter(moduleRouter);
+      }
+      return commonRouter;
+    }else{
+      let routerFile = path.join(appPath, 'config/router.js');
+      if(!helper.isFile(routerFile)){
+        return [];
+      }
+      let router = interopRequire(routerFile);
+      assert(helper.isFunction(router) || helper.isArray(router), 'config/router must be an array or a function');
+      return formatRouter(router);
     }
-    return commonRouter;
-  }else{
-    let routerFile = path.join(appPath, 'config/router.js');
-    if(!helper.isFile(routerFile)){
-      return [];
-    }
-    let router = interopRequire(routerFile);
-    assert(helper.isFunction(router) || helper.isArray(router), 'config/router must be an array or a function');
-    return formatRouter(router);
   }
 }
 
-module.exports = loader;
+module.exports = RouterLoader;

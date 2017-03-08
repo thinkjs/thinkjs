@@ -75,7 +75,7 @@ class Loader {
    * load router
    */
   loadRouter(){
-    return router(this.appPath, this.modules);
+    return router.load(this.appPath, this.modules);
   }
   /**
    * load extend

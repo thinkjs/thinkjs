@@ -75,10 +75,11 @@ test('loadMiddleware will pass the right params and return',t=>{
 });
 
 test('loadRouter will pass the right params and return',t=>{
-  mock('../loader/router.js', function(a,b) {
-    t.is(a, 'apppath');
-    t.is(b, 'modules');
-    return 'router';
+  mock('../loader/router.js', {load: function(a,b) {
+      t.is(a, 'apppath');
+      t.is(b, 'modules');
+      return 'router';
+    }
   });
   var loader = createLoader();
   t.is(loader.loadRouter(), 'router');

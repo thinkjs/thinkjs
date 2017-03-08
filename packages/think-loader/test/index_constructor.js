@@ -1,5 +1,5 @@
-import test from 'ava';
-import Loader from '../index.js';
+const test = require('ava');
+const Loader = require('../index.js');
 
 test.beforeEach(t => {
     const fs = require('fs');
