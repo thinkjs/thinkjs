@@ -46,7 +46,16 @@ module.exports = class {
     }
 
     if( cluster.isMaster ) {
-      return {type: 'clustered', appenders: config};
+      let {appenders, ...lConfig} = config;
+      return {
+        ...lConfig,
+        appenders: [
+          {
+            type: 'clustered',
+            appenders
+          }
+        ]
+      }
     }
 
     //worker log4js config

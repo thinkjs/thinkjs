@@ -1,5 +1,5 @@
 const test = require('ava');
-const Logger = require('../lib');
+const Logger = require('../src');
 const process = require('process');
 const Adapter = Logger.Console;
 

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const test = require('ava');
 const log4js = require('log4js');
-const Logger = require('../lib');
+const Logger = require('../src');
 const process = require('process');
 const Adapter = Logger.File;
 
