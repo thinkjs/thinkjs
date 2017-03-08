@@ -15,10 +15,9 @@ ThinkJS3.x log module
 ## How To Use
 
   ```js
-    const Logger = require('think-logger');
-    
-    let logger = new Logger();
-    logger.debug('Hello World');
+ const Logger = require('think-logger');
+ let logger = new Logger();
+ logger.debug('Hello World');
   ```
     
 
@@ -27,23 +26,22 @@ ThinkJS3.x log module
 If you want to log file, you can use file adapter like this:
 
 ```js
-    const Logger = require('think-logger');
-
-    let logger = new Logger({
-      handle: Logger.File,
-      filename: __dirname + '/test.log'
-    });
-    logger.debug('Hello World');
+const Logger = require('think-logger');
+let logger = new Logger({
+   handle: Logger.File,
+   filename: __dirname + '/test.log'
+});
+logger.debug('Hello World');
 ```
 
 
 There has four log function you can use:
 
  ```js
-    logger.info('info log');
-    logger.debug('debug log');
-    logger.warn('warn log');
-    logger.error('error log');
+ logger.info('info log');
+ logger.debug('debug log');
+ logger.warn('warn log');
+ logger.error('error log');
  ```
 
 ## Other Adapters
