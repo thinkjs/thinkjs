@@ -1,7 +1,7 @@
 # think-validator
 [![Build Status](https://travis-ci.org/thinkjs/think-validator.svg?branch=master)](https://travis-ci.org/thinkjs/think-validator)
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-validator/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-validator?branch=master)
-[![npm](https://img.shields.io/badge/npm-1.0.1-blue.svg)](https://www.npmjs.com/package/think-validator)
+[![npm](https://img.shields.io/badge/npm-1.0.2-blue.svg)](https://www.npmjs.com/package/think-validator)
 
 
 
