@@ -9,7 +9,7 @@ ThinkJS3.x log module
 
 ## Installation
 
-    npm install think-logger
+    npm install think-logger3
 
 
 ## How To Use
