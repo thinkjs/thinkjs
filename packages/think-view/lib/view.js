@@ -35,19 +35,24 @@ class View {
   }
   /**
    * parse file path
-   * @param {String} file 
+   * @param {String} file
+   * @param {Object} config
    */
-  parseFilePath(file, config){
-    if(!file){
+  parseFilePath(file, config = {}) {
+    if (!file || !helper.isString(file)) {
+      assert(this.ctx.module, 'ctx.module required');
       assert(this.ctx.controller, 'ctx.controller required');
       assert(this.ctx.action, 'ctx.action required');
+      assert(config.sep, 'config.sep required');
       file = path.join(this.ctx.module, this.ctx.controller + config.sep + this.ctx.action);
     }
     const extRegExp = /\.\w+$/;
-    if(!extRegExp.test(file)){
+    if (!extRegExp.test(file)) {
+      assert(config.extname, 'config.extname required');
       file = file + config.extname;
     }
-    if(!path.isAbsolute(file)){
+    if (!path.isAbsolute(file)) {
+      assert(config.viewPath && helper.isString(config.viewPath), 'config.viewPath required');
       file = path.join(config.viewPath, file);
     }
     return file;
