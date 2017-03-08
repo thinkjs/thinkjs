@@ -461,7 +461,7 @@ export default class {
     for(let name in thinkData.alias){
       think.require(thinkData.alias[name]);
     }
-    think.log('preload packages finished', 'PRELOAD', startTime);
+    //think.log('preload packages finished', 'PRELOAD', startTime);
   }
   /**
    * run
