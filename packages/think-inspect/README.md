@@ -17,19 +17,27 @@ npm install think-inspect
 In Node.js:
 
 ```js
-import thinkInspect from 'think-inspect';
+import Inspector from 'think-inspect';
+...
 
-thinkInspect.checkNodeVersion({
-  THINK_PATH: 'test/demo/checkNodeVersion'
-}, (errmsg, type)=> {
-  console.log(errmsg);
+const inspector = new Inspector({
+  THINK_PATH: '/somepath/thinkjs',
+  APP_PATH: '/somepath/app_path',
+  ROOT_PATH: '/somepath/root_path',
+  env: 'development',
+  locale: 'locale'
+  logger: thinkLoggerInstance
 });
+inspector.checkNodeVersion();
+inspector.checkFileName();
+inspector.checkDependencies();
+
 ```
 
 ## APIs
 
 | API                 | Param                                    | Description                              |
 | ------------------- | ---------------------------------------- | ---------------------------------------- |
-| `checkNodeVersion`  | `config`: {Object}<br>`callback`: {Function} | check if node version meets the requirement in package.json |
-| `checkFileName`     | `config`: {Object}<br>`callback`: {Function} | check if filenames in application are in lowercase |
-| `checkDependencies` | `config`: {Object}<br>`callback`: {Function} | check dependencies are installed before server starts |
+| `checkNodeVersion`  |  | check if node version meets the requirement in package.json |
+| `checkFileName`     |  | check if filenames in application are in lowercase |
+| `checkDependencies` |  | check dependencies are installed before server starts |
