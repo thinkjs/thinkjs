@@ -24,7 +24,7 @@
   "main": "index.js",
   "dependencies": {
     "debug": "^2.6.1",
-    "think-helper": "^3.0.0"
+    "think-helper": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^0.14.0",
