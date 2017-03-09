@@ -4,7 +4,7 @@
   "description": "Validator for ThinkJS",
   "main": "index.js",
   "scripts": {
-    "test": "nyc ava test/index.js",
+    "test": "eslint index.js && nyc ava test/index.js",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "report": "nyc ava test/index.js && nyc report --reporter=html"
   },
