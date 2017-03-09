@@ -9,7 +9,7 @@ const defaultOptions = {
   logger: console.error.bind(console),
   onUncaughtException: () => {},
   onUnhandledRejection: () => {},
-  killTimeout: 10 * 1000 //10s
+  processKillTimeout: 10 * 1000 //10s
 };
 
 /**
@@ -21,7 +21,12 @@ module.exports = class Graceful {
    * @param {Object} options 
    */
   constructor(options){
-    this.options = Object.assign({}, defaultOptions, options);
+    this.options = options || {};
+    for(let key in defaultOptions){
+      if(!this.options[key]){
+        this.options[key] = defaultOptions[key];
+      }
+    }
   }
   /**
    * fork worker
@@ -50,7 +55,7 @@ module.exports = class Graceful {
     });
     const logger = this.options.logger;
 
-    const killTimeout = this.options.killTimeout;
+    const killTimeout = this.options.processKillTimeout;
     if(killTimeout){
       const timer = setTimeout(() => {
         logger(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
@@ -102,13 +107,33 @@ module.exports = class Graceful {
     });
   }
   /**
-   * SIGINT
+   * capture SIGINT
    */
-  sigint(){
+  captureSigint(){
     process.on('SIGINT', () => {
       this.options.logger(`process recieve SIGINT, pid:${process.pid}`);
       this.disconnectWorker();
     });
+  }
+  /**
+   * capture reload signal
+   */
+  captureReloadSignal(){
+    if(cluster.isMaster){
+      const signal = this.options.reloadSignal;
+      process.on(signal, () => {
+        for(let id in cluster.workers){
+          let worker = cluster.workers[id];
+          worker.send('think-reload-signal');
+        }
+      });
+    }else{
+      process.on('message', msg => {
+        if(msg === 'think-reload-signal'){
+          this.disconnectWorker(true);
+        }
+      });
+    }
   }
   /**
    * for master
@@ -120,6 +145,9 @@ module.exports = class Graceful {
     while(index++ < workers){
       this.forkWorker();
     }
+    if(this.options.reloadSignal){
+      this.captureReloadSignal();
+    }
   }
   /**
    * for worker
@@ -129,8 +157,9 @@ module.exports = class Graceful {
     assert(this.options.server, 'options.server required');
     this.uncaughtException();
     this.unhandledRejection();
-    if(this.options.sigint){
-      this.sigint();
+    if(this.options.captureSigint){
+      this.captureSigint();
     }
+    this.captureReloadSignal();
   }
 }
