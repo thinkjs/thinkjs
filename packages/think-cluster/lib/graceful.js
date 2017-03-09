@@ -2,11 +2,13 @@ const assert = require('assert');
 const cluster = require('cluster');
 const cpus = require('os').cpus().length;
 
+const KEEP_ALIVE = Symbol('think@graceful:keepalive');
 /**
  * default options
  */
 const defaultOptions = {
   logger: console.error.bind(console),
+  disableKeepAlive: false, //disabled connect keep alive
   onUncaughtException: () => {},
   onUnhandledRejection: () => {},
   processKillTimeout: 10 * 1000 //10s
@@ -41,10 +43,11 @@ module.exports = class Graceful {
     });
   }
   /**
-   * disconnect worker
-   * @param {Boolean} sendSignal 
+   * disable keep alive
    */
-  disconnectWorker(sendSignal){
+  disableKeepAlive(){
+    if(this[KEEP_ALIVE]) return;
+    this[KEEP_ALIVE] = true;
     const server = this.options.server;
     server.on('request', (req, res) => {
       req.shouldKeepAlive = false;
@@ -53,6 +56,14 @@ module.exports = class Graceful {
         res.setHeader('Connection', 'close');
       }
     });
+  }
+  /**
+   * disconnect worker
+   * @param {Boolean} sendSignal 
+   */
+  disconnectWorker(sendSignal){
+    this.disableKeepAlive();
+
     const logger = this.options.logger;
 
     const killTimeout = this.options.processKillTimeout;
@@ -74,6 +85,7 @@ module.exports = class Graceful {
       worker.send('think-graceful-disconnect');
     }
     
+    const server = this.options.server;
     logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
     server.close(() => {
       logger(`server closed, pid: ${process.pid}`);
@@ -150,6 +162,18 @@ module.exports = class Graceful {
     }
   }
   /**
+   * force reload all workers, in development env
+   */
+  forceReloadWorkers(){
+    assert(cluster.isMaster, 'only invoke in master process');
+    for(let id in cluster.workers){
+      let worker = cluster.workers[id];
+      worker.disconnect();
+      worker.kill();
+      this.forkWorker();
+    }
+  }
+  /**
    * for worker
    */
   worker(){
@@ -159,6 +183,9 @@ module.exports = class Graceful {
     this.unhandledRejection();
     if(this.options.captureSigint){
       this.captureSigint();
+    }
+    if(this.options.disableKeepAlive){
+      this.disableKeepAlive();
     }
     this.captureReloadSignal();
   }
