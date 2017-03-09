@@ -8,6 +8,10 @@ const formatAdapter = require('./config_format_adapter');
 
 /**
  * load config files
+ * 
+ * thinkPath/lib/config/config.js
+ * thinkPath/lib/config/adapter.js
+ * 
  * src/config/config.js
  * src/config/config.[env].js
  * src/config/adapter.js
@@ -35,8 +39,9 @@ module.exports = function loader(appPath, thinkPath, env, modules){
   }else{
     let configPath = [path.join(appPath, 'config')];
     let config = loadConfig(configPath, env);
+    let thinkAdapterConfig = loadConfig([path.join(thinkPath, 'lib/config')], env, 'adapter');
     let adapterConfig = loadConfig(configPath, env, 'adapter');
     let adapter = loadAdapter(path.join(appPath, 'adapter'));
-    return helper.extend({}, thinkConfig, config, formatAdapter(adapterConfig, adapter));
+    return helper.extend({}, thinkConfig, config, thinkAdapterConfig, formatAdapter(adapterConfig, adapter));
   }
 };
