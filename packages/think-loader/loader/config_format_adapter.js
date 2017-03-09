@@ -18,6 +18,10 @@ const assert = require('assert');
 const formatAdapter = (config, appAdapters) => {
   for(let name in config){
     assert(helper.isObject(config[name]), `adapter.${name} must be an object`);
+    //ignore adapter when is emtpy, only has key
+    if(helper.isEmpty(config[name])){
+      continue;
+    }
     assert(config[name].type, `adapter.${name} must have type field`);
     if(!config[name].common){
       continue;
