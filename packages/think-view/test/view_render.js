@@ -11,11 +11,13 @@ class Nunjucks {
     this.viewData = viewData;
     this.config = config;
   }
-  run(){
+
+  run() {
 
   }
 }
-function getConfig(){
+
+function getConfig() {
   return {
     sep: '/',
     extname: '.html',
@@ -23,6 +25,13 @@ function getConfig(){
     handle: Nunjucks
   }
 }
+
+function mockAssert(assertCallParams = []) {
+  mock('assert', (type, desc) => {
+    assertCallParams.push(type, desc);
+  });
+}
+
 const ctx = {
   module: 'admin',
   controller: 'user',
@@ -44,4 +53,24 @@ test('render function -- delete config.handle', t => {
   let config = getConfig();
   view.render(file,config);
   t.is(config.handle,undefined);
+});
+
+test('render function -- empty config', t => {
+  let assertCallParams = [];
+  mockAssert(assertCallParams);
+  const View = getView();
+  const view = new View(ctx);
+  const file = 'index.html';
+  t.throws(() => {
+    view.render(file);
+  }, Error);
+  t.deepEqual(
+    assertCallParams,
+    [
+      false,
+      'config.handle must be a function',
+      undefined,
+      'config.viewPath required'
+    ]
+  );
 });

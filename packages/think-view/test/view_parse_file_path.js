@@ -37,13 +37,6 @@ test('parseFilePath function -- path without extension name', t => {
   t.is(file, 'www/static/index.html');
 });
 
-test('parseFilePath function -- Object path', t => {
-  const View = getView();
-  const view = new View(ctx);
-  let file = view.parseFilePath({}, config);
-  t.is(file, 'www/static/admin/user/index.html');
-});
-
 test('parseFilePath function -- undefined path', t => {
   const View = getView();
   const view = new View(ctx);
@@ -85,6 +78,7 @@ test('parseFilePath function -- ctx.module undefined', t => {
     ]
   );
 });
+
 test('parseFilePath function -- ctx.controller undefined', t => {
   let assertCallParams = [];
   mockAssert(assertCallParams);
@@ -113,6 +107,7 @@ test('parseFilePath function -- ctx.controller undefined', t => {
     ]
   );
 });
+
 test('parseFilePath function -- ctx.action undefined', t => {
   let assertCallParams = [];
   mockAssert(assertCallParams);
@@ -141,6 +136,7 @@ test('parseFilePath function -- ctx.action undefined', t => {
     ]
   );
 });
+
 test('parseFilePath function -- ctx.action undefined', t => {
   let assertCallParams = [];
   mockAssert(assertCallParams);
@@ -166,5 +162,34 @@ test('parseFilePath function -- ctx.action undefined', t => {
       'config.extname required',
       true,
       'config.viewPath required' ]
+  );
+});
+
+test('parseFilePath function -- empty config ', t => {
+  let assertCallParams = [];
+  mockAssert(assertCallParams);
+  const View = getView();
+  const view = new View(ctx);
+  let file = undefined;
+  t.throws(() => {
+    file = view.parseFilePath(file);
+  }, Error);
+  console.log(assertCallParams);
+  t.deepEqual(
+    assertCallParams,
+    [
+      'admin',
+      'ctx.module required',
+      'user',
+      'ctx.controller required',
+      'index',
+      'ctx.action required',
+      undefined,
+      'config.sep required',
+      undefined,
+      'config.extname required',
+      undefined,
+      'config.viewPath required'
+    ]
   );
 });
