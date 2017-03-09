@@ -2,80 +2,135 @@ const assert = require('assert');
 const cluster = require('cluster');
 const cpus = require('os').cpus().length;
 
+/**
+ * default options
+ */
 const defaultOptions = {
-  logger: console,
-  onError: () => {},
-  killTimeout: 30 * 1000
+  logger: console.error.bind(console),
+  onUncaughtException: () => {},
+  onUnhandledRejection: () => {},
+  killTimeout: 10 * 1000 //10s
 };
-/**
- * disconnect worker
- */
-const disconnectWorker = options => {
-  const server = options.server;
-  server.on('request', (req, res) => {
-    req.shouldKeepAlive = false;
-    res.shouldKeepAlive = false;
-    if (!res.headersSent) {
-      res.setHeader('Connection', 'close');
-    }
-  });
-  const logger = options.logger;
 
-  const killTimeout = options.killTimeout;
-  if(killTimeout){
-    const timer = setTimeout(() => {
-      logger.error(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
-      process.exit(1);
-    }, killTimeout);
-    timer.unref();
+/**
+ * Graceful class
+ */
+module.exports = class Graceful {
+  /**
+   * 
+   * @param {Object} options 
+   */
+  constructor(options){
+    this.options = Object.assign({}, defaultOptions, options);
   }
-  
-  const worker = cluster.worker;
-  worker.on('disconnect', () => {
-    logger.error(`process exit by disconnect event, pid: ${process.pid}`);
-    process.exit(0);
-  });
+  /**
+   * fork worker
+   */
+  forkWorker(){
+    const worker = cluster.fork();
+    worker.on('message', message => {
+      if(message === 'think-graceful-disconnect'){
+        this.options.logger(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
+        this.forkWorker();
+      }
+    });
+  }
+  /**
+   * disconnect worker
+   * @param {Boolean} sendSignal 
+   */
+  disconnectWorker(sendSignal){
+    const server = this.options.server;
+    server.on('request', (req, res) => {
+      req.shouldKeepAlive = false;
+      res.shouldKeepAlive = false;
+      if (!res.headersSent) {
+        res.setHeader('Connection', 'close');
+      }
+    });
+    const logger = this.options.logger;
 
-  worker.send('think-graceful-disconnect');
-  logger.error(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
-  server.close(() => {
-    logger.error(`server closed, pid: ${process.pid}`);
-    worker.disconnect();
-  });
-}
-
-/**
- * fork worker
- */
-const forkWorker = options => {
-  const worker = cluster.fork();
-  worker.on('message', message => {
-    if(message === 'think-graceful-disconnect'){
-      options.logger.error(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
-      forkWorker(options);
+    const killTimeout = this.options.killTimeout;
+    if(killTimeout){
+      const timer = setTimeout(() => {
+        logger(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
+        process.exit(1);
+      }, killTimeout);
+      timer.unref();
     }
-  });
-}
+    
+    const worker = cluster.worker;
+    worker.on('disconnect', () => {
+      logger(`process exit by disconnect event, pid: ${process.pid}`);
+      process.exit(0);
+    });
 
-module.exports = (options = {}) => {
-  options = Object.assign({}, defaultOptions, options);
-  if(cluster.isMaster){
-    let workers = options.workers || cpus;
-    let index = 0;
-    while(index++ < workers){
-      forkWorker(options);
+    if(sendSignal){
+      worker.send('think-graceful-disconnect');
     }
-  }else{
-    assert(options.server, 'options.server required');
+    
+    logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
+    server.close(() => {
+      logger(`server closed, pid: ${process.pid}`);
+      worker.disconnect();
+    });
+  }
+  /**
+   * uncaughtException
+   */
+  uncaughtException(){
     let errTimes = 0;
     process.on('uncaughtException', err => {
       errTimes++;
-      options.onError(err);
-      options.logger.error(`uncaughtException, times: ${errTimes}, pid: ${process.pid}`)
-      options.logger.error(err.stack);
+      this.options.onUncaughtException(err);
+      this.options.logger(`uncaughtException, times: ${errTimes}, pid: ${process.pid}`);
+      this.options.logger(err.stack);
       if(errTimes === 1){
-        disconnectWorker(options);
+        this.disconnectWorker(true);
       }
     });
+  }
+  /**
+   * unhandledRejection
+   */
+  unhandledRejection(){
+    let rejectTimes = 0;
+    process.on('unhandledRejection', err => {
+      rejectTimes++;
+      this.options.onUnhandledRejection(err);
+      this.options.logger(`unhandledRejection, times: ${rejectTimes}, pid: ${process.pid}`);
+    });
+  }
+  /**
+   * SIGINT
+   */
+  sigint(){
+    process.on('SIGINT', () => {
+      this.options.logger(`process recieve SIGINT, pid:${process.pid}`);
+      this.disconnectWorker();
+    });
+  }
+  /**
+   * for master
+   */
+  master(){
+    assert(cluster.isMaster, 'only invoke in master process');
+    let workers = this.options.workers || cpus;
+    let index = 0;
+    while(index++ < workers){
+      this.forkWorker();
+    }
+  }
+  /**
+   * for worker
+   */
+  worker(){
+    assert(cluster.isWorker, 'only invoke in worker process');
+    assert(this.options.server, 'options.server required');
+    this.uncaughtException();
+    this.unhandledRejection();
+    if(this.options.sigint){
+      this.sigint();
+    }
   }
 }
