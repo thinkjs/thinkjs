@@ -13,10 +13,6 @@ const config = {
   viewPath: 'www/static'
 };
 
-test.beforeEach(t => {
-  mockAssert();
-});
-
 function getView() {
   return mock.reRequire('../lib/view');
 }
@@ -75,7 +71,6 @@ test('parseFilePath function -- ctx.module undefined', t => {
   t.throws(() => {
     file = view.parseFilePath(file, config);
   }, Error);
-  t.is(file, undefined);
   t.deepEqual(
     assertCallParams,
     [
@@ -88,5 +83,88 @@ test('parseFilePath function -- ctx.module undefined', t => {
       '/',
       'config.sep required'
     ]
+  );
+});
+test('parseFilePath function -- ctx.controller undefined', t => {
+  let assertCallParams = [];
+  mockAssert(assertCallParams);
+  const View = getView();
+  const errCtx = {
+    module: 'user',
+    action: 'index'
+  };
+  const view = new View(errCtx);
+  let file = undefined;
+  view.parseFilePath(file, config);
+  t.deepEqual(
+    assertCallParams,
+    [ 'user',
+      'ctx.module required',
+      undefined,
+      'ctx.controller required',
+      'index',
+      'ctx.action required',
+      '/',
+      'config.sep required',
+      '.html',
+      'config.extname required',
+      true,
+      'config.viewPath required'
+    ]
+  );
+});
+test('parseFilePath function -- ctx.action undefined', t => {
+  let assertCallParams = [];
+  mockAssert(assertCallParams);
+  const View = getView();
+  const errCtx = {
+    module: 'user',
+    controller: 'index'
+  };
+  const view = new View(errCtx);
+  let file = undefined;
+  view.parseFilePath(file, config);
+  t.deepEqual(
+    assertCallParams,
+    [ 'user',
+      'ctx.module required',
+      'index',
+      'ctx.controller required',
+      undefined,
+      'ctx.action required',
+      '/',
+      'config.sep required',
+      '.html',
+      'config.extname required',
+      true,
+      'config.viewPath required'
+    ]
+  );
+});
+test('parseFilePath function -- ctx.action undefined', t => {
+  let assertCallParams = [];
+  mockAssert(assertCallParams);
+  const View = getView();
+  const errConf = {
+    extname: '.html',
+    viewPath: 'www/static'
+  };
+  const view = new View(ctx);
+  let file = undefined;
+  view.parseFilePath(file, errConf);
+  t.deepEqual(
+    assertCallParams,
+    [ 'admin',
+      'ctx.module required',
+      'user',
+      'ctx.controller required',
+      'index',
+      'ctx.action required',
+      undefined,
+      'config.sep required',
+      '.html',
+      'config.extname required',
+      true,
+      'config.viewPath required' ]
   );
 });
