@@ -39,7 +39,7 @@ class View {
    * @param {Object} config
    */
   parseFilePath(file, config = {}) {
-    if (!file || !helper.isString(file)) {
+    if (!file) {
       assert(this.ctx.module, 'ctx.module required');
       assert(this.ctx.controller, 'ctx.controller required');
       assert(this.ctx.action, 'ctx.action required');
@@ -63,9 +63,6 @@ class View {
    * @param {Object} config 
    */
   render(file, config = {}){
-    assert(config.viewPath && helper.isString(config.viewPath), 'config.viewPath required');
-    assert(config.sep, 'config.sep required');
-    assert(config.extname, 'config.extname required');
     assert(helper.isFunction(config.handle), 'config.handle must be a function');
     file = this.parseFilePath(file, config);
     const handle = config.handle;
