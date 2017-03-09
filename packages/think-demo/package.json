@@ -18,9 +18,12 @@
   "contributors": [],
   "main": "index.js",
   "dependencies": {
+    "babel-preset-think-node": "0.0.8",
     "node-notifier": "^5.0.2",
     "think-babel": "^1.0.3",
+    "think-logger": "^1.0.0",
     "think-view": "^1.0.0",
+    "think-watcher": "^3.0.0",
     "thinkjs": "^3.0.0"
   },
   "devDependencies": {},
