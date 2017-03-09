@@ -14,6 +14,6 @@ npm install think-pm2
 const pm2 = require('think-pm2');
 //use pm2 to manage node process
 const inPM2 = pm2.inPM2; 
-//est "exec_mode" = "cluster" in pm2 config
+//set "exec_mode" = "cluster" in pm2 config
 const isClusterMode = pm2.isClusterMode; 
 ```
