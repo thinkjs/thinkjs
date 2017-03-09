@@ -2,17 +2,16 @@ const Helper = require('think-helper');
 const fs = require('fs');
 const path = require('path');
 
-let logger = null;
 const Inspector = class {
   constructor(config) {
     this.config = config;
-    logger = config.logger;
   }
   /**
    * check if node version meets the requirement of ThinkJS.
    */
   checkNodeVersion() {
     const config = this.config;
+    const logger = config.logger;
     let packageFile = path.join(config.THINK_PATH, 'package.json');
 
 
@@ -38,8 +37,8 @@ const Inspector = class {
    * exclude: filenames with `/locale/`.
    */
   checkFileName() {
-
     const config = this.config;
+    const logger = config.logger;
     let files = Helper.getdirFiles(config.APP_PATH);
     const excludePath = `${path.sep}${config.locale}${path.sep}`;
     const excludeReg = new RegExp(excludePath);
@@ -58,6 +57,7 @@ const Inspector = class {
     */
   checkDependencies() {
     const config = this.config;
+    const logger = config.logger;
     let packageFile = path.join(config.ROOT_PATH, 'package.json');
     if(!Helper.isFile(packageFile)){
       return;
