@@ -7,7 +7,7 @@ const pm2KeyList = [
   'PM2_JSON_PROCESSING'
 ];
 const inPM2 = pm2KeyList.some(item => {
-  return env[item];
+  return !!env[item];
 });
 const clusterMode = env.exec_mode === 'cluster_mode';
 
