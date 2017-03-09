@@ -1,0 +1,39 @@
+{
+  "name": "think-demo",
+  "description": "Helper for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [],
+  "main": "index.js",
+  "dependencies": {
+    "node-notifier": "^5.0.2",
+    "think-babel": "^1.0.3",
+    "think-view": "^1.0.0",
+    "thinkjs": "^3.0.0"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-demo"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-demo/issues"
+  }
+}
