@@ -4,8 +4,6 @@
 
 ## adapters
 
-### view
-
-* [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks)
+* [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) use nunjucks to render view files
 
 ## extends
