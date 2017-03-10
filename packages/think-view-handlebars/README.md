@@ -35,7 +35,40 @@ const defaultOptions = {
   throwOnUndefined: false
 };
 ```
+change options:
+
+```js
+exports.view = {
+  type: 'nunjucks',
+  nunjucks: {
+    handle: nunjucks,
+    tags: {
+      blockStart: '<%',
+      blockEnd: '%>',
+      variableStart: '<$',
+      variableEnd: '$>',
+      commentStart: '<#',
+      commentEnd: '#>'
+    },
+    beforeRender: (config, nunjucks, env) => {}
+  }
+}
+```
+you can find all nunjucks support options by https://mozilla.github.io/nunjucks/api.html#configure
 
 ### beforeRender
 
+you can use `beforeRender` method to set some env:
 
+```js
+exports.view = {
+  type: 'nunjucks',
+  nunjucks: {
+    handle: nunjucks,
+    beforeRender: (config, nunjucks, env) => {
+      env.addGlobal('think', think);
+      env.addGlobal('JSON', JSON);
+    }
+  }
+}
+```
