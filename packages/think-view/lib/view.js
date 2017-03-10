@@ -12,6 +12,7 @@ class View {
    */
   constructor(ctx){
     this.ctx = ctx;
+    this.viewData = {};
   }
   /**
    * 
@@ -40,7 +41,6 @@ class View {
    */
   parseFilePath(file, config = {}) {
     if (!file) {
-      assert(this.ctx.module, 'ctx.module required');
       assert(this.ctx.controller, 'ctx.controller required');
       assert(this.ctx.action, 'ctx.action required');
       assert(config.sep, 'config.sep required');
