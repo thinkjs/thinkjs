@@ -1,6 +1,6 @@
 # think-template-handlebars
 
-handlebars template adapter for ThinkJS `2.x`
+handlebars template adapter for `ThinkJS 2.x`
 
 ## Install
 
