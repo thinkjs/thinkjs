@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-10 15:33:46
+* @Last Modified time: 2017-03-10 19:11:59
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -20,19 +20,20 @@ class Nunjucks {
   constructor(templateFile, viewData, config) {
     this.templateFile = templateFile;
     this.viewData = viewData;
-    this.config = helper.extend(defaultOptions, config);
+    this.config = helper.extend({}, defaultOptions, config);
   }
   run(){
-    let env;
+    let env, viewPath = this.config.viewPath;
+    assert(viewPath && helper.isString(viewPath), 'config.viewPath required');
 
-    if(path.isAbsolute(this.templateFile) && this.templateFile.indexOf(this.config.viewPath) !== 0 ){
+    if(path.isAbsolute(this.templateFile) && this.templateFile.indexOf(viewPath) !== 0 ){
       env = nunjucks.configure(this.config);
     }else{
-      assert(this.config.viewPath && helper.isString(this.config.viewPath), 'config.viewPath required');
-      env = nunjucks.configure(this.config.viewPath, this.config);
+      env = nunjucks.configure(viewPath, this.config);
     }
 
-    if(helper.isFunction(this.config.beforeRender)){
+    if(this.config.beforeRender){
+      assert(helper.isFunction(this.config.beforeRender), 'beforeRender must be function');
       this.config.beforeRender(this.config, nunjucks, env);
     }
 
