@@ -34,11 +34,11 @@ class Nunjucks {
 
     if(this.config.beforeRender){
       assert(helper.isFunction(this.config.beforeRender), 'config.beforeRender must be a function');
-      this.config.beforeRender(this.config, nunjucks, env);
+      this.config.beforeRender(env, nunjucks, this.config);
     }
 
     return new Promise((resolve, reject) => {
-      nunjucks.render(this.templateFile, this.viewData, (err, res) => {
+      env.render(this.templateFile, this.viewData, (err, res) => {
         return err ? reject(err) : resolve(res);
       });
     });
