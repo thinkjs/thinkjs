@@ -22,7 +22,7 @@ function createRegexp(match){
  * },
  * ]
  */
-function parseMiddleware(middlewares = [], middlewarePkg = {}){
+function parseMiddleware(middlewares = [], middlewarePkg = {}, app){
   return middlewares.map(item => {
     if(helper.isString(item)){
       return {handle: item};
@@ -35,7 +35,7 @@ function parseMiddleware(middlewares = [], middlewarePkg = {}){
       item.handle = middlewarePkg[item.handle];
     }
     assert(helper.isFunction(item.handle), 'handle must be a function');
-    item.handle = item.handle(item.options || {});
+    item.handle = item.handle(item.options || {}, app);
     // handle also be a function
     assert(helper.isFunction(item.handle), 'handle must return a function');
     return item;

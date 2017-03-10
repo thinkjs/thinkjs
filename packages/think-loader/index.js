@@ -68,8 +68,8 @@ class Loader {
   /**
    * load middleware
    */
-  loadMiddleware(){
-    return middleware(this.appPath, this.thinkPath, this.modules);
+  loadMiddleware(app){
+    return middleware(this.appPath, this.thinkPath, this.modules, app);
   }
   /**
    * load router
