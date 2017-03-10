@@ -1,10 +1,9 @@
 # think-typescript
 
-
 # think-typescript
 [![Build Status](https://travis-ci.org/thinkjs/think-typescript.svg?branch=master)](https://travis-ci.org/thinkjs/think-typescript)
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-typescript/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-typescript?branch=master)
-[![npm](https://img.shields.io/badge/npm-1.0.2-blue.svg)](https://www.npmjs.com/package/think-typescript)
+[![npm](https://img.shields.io/npm/v/think-typescript.svg?style=flat-square)](https://www.npmjs.com/package/think-typescript)
 
 `think-typescript` compile typescript file
 
