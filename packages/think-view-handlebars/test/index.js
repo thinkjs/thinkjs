@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-10 15:35:22
+* @Last Modified time: 2017-03-10 15:54:09
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -52,5 +52,13 @@ test.serial('nunjucks beforeRender', async t => {
   t.is(ret, resp2);
 });
 
+test.serial('nunjucks reject', async t => {
+  let nunjucks = new Nunjucks('/Users/lushijie/github/think-view-nunjucks/test/views/error.njk', {title: 'thinkjs'}, {});
+  try {
+    let ret = await nunjucks.run();
+  }catch(e) {
+    t.pass();
+  }
+});
 
 
