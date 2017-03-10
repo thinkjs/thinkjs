@@ -174,7 +174,6 @@ test('parseFilePath function -- empty config ', t => {
   t.throws(() => {
     file = view.parseFilePath(file);
   }, Error);
-  console.log(assertCallParams);
   t.deepEqual(
     assertCallParams,
     [
