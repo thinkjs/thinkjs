@@ -78,7 +78,7 @@
       - [dataURI: [true]](#datauri--true)
       - [variableWidth: [true]](#variablewidth--true)
 
-### Useage
+### Usage
 
 ```js
 import Validator from 'think-validator';
@@ -95,7 +95,7 @@ If valid ok, the `ret` is {}, else `ret` is output like {param1: 'error message'
 
 
 ### Add Custom Valid Method
-```
+```js
 let instance = new Validator(ctx);
 instance.add('custom-valid', function(value, options) {
   return value === 'thinkjs';
@@ -109,7 +109,7 @@ let ret = instance.validate(rules);
 You can parse the rule's arguments with ctx before validation.
 Just like this to add parse function for custom-valid:
 
-```
+```js
 let instance = new Validator(ctx);
 instance.add('_custom-valid', function(arg, ctx) {
   return newarg
@@ -120,7 +120,7 @@ instance.add('_custom-valid', function(arg, ctx) {
 ### Param Validation Config
 
 Validation rules is written in json like this:
-```
+```js
 let rules = {
   id: {
     int: true,
@@ -153,7 +153,7 @@ Nested validation will valid the item in array or in object. But it only support
 
 #### Nested array valid, eg
 
-```
+```js
 let rules = {
   array: true,
   children: {
@@ -166,7 +166,7 @@ let rules = {
 
 #### Nested object valid, eg
 
-```
+```js
 let rules = {
   object: true,
   children: {
@@ -179,7 +179,7 @@ let rules = {
 
 ### Custom Error Message
 
-```
+```js
 let rules = {
   id: {
     int: true
