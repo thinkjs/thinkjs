@@ -22,7 +22,7 @@ class Nunjucks {
     this.viewData = viewData;
     this.config = helper.extend({}, defaultOptions, config);
   }
-  run(){
+  render(){
     let env, viewPath = this.config.viewPath;
     assert(viewPath && helper.isString(viewPath), 'config.viewPath required');
 
