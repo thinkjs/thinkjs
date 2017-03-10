@@ -1,7 +1,7 @@
 # think-view
 [![Build Status](https://travis-ci.org/thinkjs/think-view.svg?branch=master)](https://travis-ci.org/thinkjs/think-view)
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-view/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-view?branch=master)
-[![npm](https://img.shields.io/badge/npm-1.0.2-blue.svg)](https://www.npmjs.com/package/think-view)
+[![npm](https://img.shields.io/npm/v/think-view.svg?style=flat-square)](https://www.npmjs.com/package/think-view)
 
 ## Install
 
