@@ -67,8 +67,6 @@ test('parseFilePath function -- ctx.module undefined', t => {
   t.deepEqual(
     assertCallParams,
     [
-      undefined,
-      'ctx.module required',
       'user',
       'ctx.controller required',
       'index',
@@ -92,8 +90,7 @@ test('parseFilePath function -- ctx.controller undefined', t => {
   view.parseFilePath(file, config);
   t.deepEqual(
     assertCallParams,
-    [ 'user',
-      'ctx.module required',
+    [ 
       undefined,
       'ctx.controller required',
       'index',
@@ -121,8 +118,7 @@ test('parseFilePath function -- ctx.action undefined', t => {
   view.parseFilePath(file, config);
   t.deepEqual(
     assertCallParams,
-    [ 'user',
-      'ctx.module required',
+    [ 
       'index',
       'ctx.controller required',
       undefined,
@@ -150,8 +146,7 @@ test('parseFilePath function -- ctx.action undefined', t => {
   view.parseFilePath(file, errConf);
   t.deepEqual(
     assertCallParams,
-    [ 'admin',
-      'ctx.module required',
+    [ 
       'user',
       'ctx.controller required',
       'index',
@@ -177,8 +172,6 @@ test('parseFilePath function -- empty config ', t => {
   t.deepEqual(
     assertCallParams,
     [
-      'admin',
-      'ctx.module required',
       'user',
       'ctx.controller required',
       'index',
