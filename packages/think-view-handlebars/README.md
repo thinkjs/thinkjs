@@ -20,7 +20,7 @@ exports.view = {
   type: 'nunjucks',
   nunjucks: {
     handle: nunjucks,
-    beforeRender: (config, nunjucks, env) => {}
+    beforeRender: (env, nunjucks, config) => {}
   }
 }
 ```
@@ -50,7 +50,7 @@ exports.view = {
       commentStart: '<#',
       commentEnd: '#>'
     },
-    beforeRender: (config, nunjucks, env) => {}
+    beforeRender: (env, nunjucks, config) => {}
   }
 }
 ```
@@ -65,10 +65,11 @@ exports.view = {
   type: 'nunjucks',
   nunjucks: {
     handle: nunjucks,
-    beforeRender: (config, nunjucks, env) => {
+    beforeRender: (env, nunjucks, config) => {
       env.addGlobal('think', think);
       env.addGlobal('JSON', JSON);
     }
   }
 }
 ```
+you can find all APIs in `env` by https://mozilla.github.io/nunjucks/api.html#environment
