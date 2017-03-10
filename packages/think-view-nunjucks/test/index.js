@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-10 19:14:25
+* @Last Modified time: 2017-03-10 20:34:25
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -31,32 +31,32 @@ const viewPath = path.join(__dirname, 'views');
 // test case
 test.serial('nunjucks absolute path', async t => {
   let nunjucks = new Nunjucks('/Users/lushijie/github/think-view-nunjucks/test/views/home.njk', {title: 'thinkjs'}, {viewPath: viewPath});
-  let ret = await nunjucks.run();
+  let ret = await nunjucks.render();
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks not in absolute path', async t => {
   let nunjucks = new Nunjucks('/Users/lushijie/github/think-view-nunjucks/test/views/home.njk', {title: 'thinkjs'}, {viewPath: '/User/name'});
-  let ret = await nunjucks.run();
+  let ret = await nunjucks.render();
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks releative path', async t => {
   let nunjucks = new Nunjucks('./home.njk', {title: 'thinkjs'}, {viewPath: viewPath});
-  let ret = await nunjucks.run();
+  let ret = await nunjucks.render();
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks beforeRender', async t => {
   let nunjucks = new Nunjucks('./admin.njk', {title: 'thinkjs'}, {
     viewPath: path.join(__dirname, 'views'),
-    beforeRender: function(config, nunjucks, env) {
+    beforeRender: function(env, nunjucks, config) {
       env.addFilter('shorten', function(str) {
         return str.slice(0, 5);
       });
     }
   });
-  let ret = await nunjucks.run();
+  let ret = await nunjucks.render();
   t.is(ret, resp2);
 });
 
