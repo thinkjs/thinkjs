@@ -41,6 +41,8 @@ class View {
    */
   parseFilePath(file, config = {}) {
     if (!file) {
+      //can not assert ctx.module, ctx.module may be empty
+
       assert(this.ctx.controller, 'ctx.controller required');
       assert(this.ctx.action, 'ctx.action required');
       assert(config.sep, 'config.sep required');
