@@ -12,7 +12,7 @@ class Nunjucks {
     this.config = config;
   }
 
-  run() {
+  render() {
 
   }
 }

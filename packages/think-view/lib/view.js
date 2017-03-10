@@ -68,7 +68,7 @@ class View {
     const handle = config.handle;
     delete config.handle;
     const instance = new handle(file, this.viewData, config);
-    return Promise.resolve(instance.run());
+    return Promise.resolve(instance.render());
   }
 }
 module.exports = View;
