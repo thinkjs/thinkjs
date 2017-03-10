@@ -1,5 +1,7 @@
 # think-awesome
 
+awesome projects for `ThinkJS 3.x`
+
 ## middlewares
 
 ## adapters
