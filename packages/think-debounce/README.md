@@ -9,9 +9,9 @@ In particular, You can use `think-await` to avoid duplicate requests for a remot
 
 ## Syntax
 
-```
+```js
 import thinkAwait from 'think-await';
-thinkAwait(key, callback)
+thinkAwait(key, callback);
 ```
 
 - `key` {String} the identity of the operation.
