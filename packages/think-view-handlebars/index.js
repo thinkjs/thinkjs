@@ -2,11 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-10 14:06:49
+* @Last Modified time: 2017-03-10 15:33:46
 */
 const helper = require('think-helper');
 const path = require('path');
 const nunjucks = require('nunjucks');
+const assert = require('assert');
 
 const defaultOptions = {
   autoescape: true,
@@ -21,18 +22,14 @@ class Nunjucks {
     this.viewData = viewData;
     this.config = helper.extend(defaultOptions, config);
   }
-
   run(){
     let env;
 
-    if(this.config.viewPath){
-      if(path.isAbsolute(this.templateFile) && this.templateFile.indexOf(this.config.viewPath) !== 0 ){
-        env = nunjucks.configure(this.config);
-      }else{
-        env = nunjucks.configure(this.config.viewPath, this.config);
-      }
-    }else{
+    if(path.isAbsolute(this.templateFile) && this.templateFile.indexOf(this.config.viewPath) !== 0 ){
       env = nunjucks.configure(this.config);
+    }else{
+      assert(this.config.viewPath && helper.isString(this.config.viewPath), 'config.viewPath required');
+      env = nunjucks.configure(this.config.viewPath, this.config);
     }
 
     if(helper.isFunction(this.config.beforeRender)){
