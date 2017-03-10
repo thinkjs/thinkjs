@@ -2,10 +2,10 @@ export default class extends think.Controller {
   __before(){
     //console.log('__before')
   }
-  indexAction(){
-    console.log(this.render)
+  async indexAction(){
+    this.assign('title', 'test')
     //console.log('indexAction')
-    this.ctx.body = 'testwwww';
+    await this.display();
   }
   __after(){
     //console.log('__after')
