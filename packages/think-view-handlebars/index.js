@@ -33,7 +33,7 @@ class Nunjucks {
     }
 
     if(this.config.beforeRender){
-      assert(helper.isFunction(this.config.beforeRender), 'beforeRender must be function');
+      assert(helper.isFunction(this.config.beforeRender), 'config.beforeRender must be a function');
       this.config.beforeRender(this.config, nunjucks, env);
     }
 
