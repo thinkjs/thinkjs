@@ -2,47 +2,64 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-10 19:11:59
+* @Last Modified time: 2017-03-11 11:31:31
 */
 const helper = require('think-helper');
 const path = require('path');
-const nunjucks = require('nunjucks');
+const handlebars = require('handlebars');
+const fs = require('fs');
 const assert = require('assert');
 
-const defaultOptions = {
-  autoescape: true,
-  watch: false,
-  noCache: false,
-  throwOnUndefined: false
-};
 
-class Nunjucks {
-  constructor(templateFile, viewData, config) {
-    this.templateFile = templateFile;
-    this.viewData = viewData;
-    this.config = helper.extend({}, defaultOptions, config);
-  }
-  render(){
-    let env, viewPath = this.config.viewPath;
-    assert(viewPath && helper.isString(viewPath), 'config.viewPath required');
-
-    if(path.isAbsolute(this.templateFile) && this.templateFile.indexOf(viewPath) !== 0 ){
-      env = nunjucks.configure(this.config);
-    }else{
-      env = nunjucks.configure(viewPath, this.config);
+class Handlebars {
+    constructor(templateFile, viewData, config) {
+      this.templateFile = templateFile;
+      this.viewData = viewData;
+      this.config = config;
     }
 
-    if(this.config.beforeRender){
-      assert(helper.isFunction(this.config.beforeRender), 'config.beforeRender must be a function');
-      this.config.beforeRender(env, nunjucks, this.config);
-    }
-
-    return new Promise((resolve, reject) => {
-      env.render(this.templateFile, this.viewData, (err, res) => {
-        return err ? reject(err) : resolve(res);
+    _getContent(templateFile, viewPath) {
+      if(!path.isAbsolute(templateFile)){
+        templateFile = path.join(viewPath, templateFile);
+      }
+      return new Promise((resolve, reject) => {
+        fs.readFile(templateFile, 'utf8', (err, data) => {
+          err ? reject(err) : resolve(data);
+        });
       });
-    });
-  }
+    }
+
+    render() {
+      if(this.config.beforeRender){
+        assert(helper.isFunction(this.config.beforeRender), 'config.beforeRender must be a function');
+        this.config.beforeRender(handlebars, this.config);
+      }
+      return new Promise((resolve, reject) => {
+        this._getContent(this.templateFile, this.config.viewPath).then((data) => {
+          let output = handlebars.compile(data, this.config)(this.viewData);
+          resolve(output);
+        }, (err) => {
+          reject(err);
+        });
+      });
+    }
 }
 
-module.exports = Nunjucks;
+
+
+let context = {
+  'title': 123,
+  'body': 'Hello World',
+  'students':[
+    {'name' : 'John', 'passingYear' : 2013},
+    {'name' : 'Doe' , 'passingYear' : 2016}
+  ]
+};
+let viewPath = path.join(__dirname, 'test/views');
+let hdb = new Handlebars('test.tpl', context, {viewPath: viewPath})
+
+hdb.render().then(function(data) {
+  console.log(data);
+});
+
+module.exports = Handlebars;

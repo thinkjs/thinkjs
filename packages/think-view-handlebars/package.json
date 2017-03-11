@@ -1,7 +1,7 @@
 {
-  "name": "think-view-nunjucks",
-  "version": "1.0.2",
-  "description": "think-view-nunjucks for ThinkJS",
+  "name": "think-view-handlebars",
+  "version": "1.0.0",
+  "description": "think-view-handlebars for ThinkJS",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
@@ -14,10 +14,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-view-nunjucks.git"
+    "url": "git+https://github.com/thinkjs/think-view-handlebars.git"
   },
   "keywords": [
-    "think-view-nunjucks"
+    "think-view-handlebars"
   ],
   "author": {
     "name": "lushijie",
@@ -31,18 +31,21 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-view-nunjucks/issues"
+    "url": "https://github.com/thinkjs/think-view-handlebars/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-view-nunjucks#readme",
+  "homepage": "https://github.com/thinkjs/think-view-handlebars#readme",
   "devDependencies": {
     "ava": "~0.18.1",
+    "babel-cli": "~6.23.0",
     "babel-eslint": "~7.1.1",
+    "babel-preset-latest": "~6.22.0",
     "coveralls": "~2.11.16",
     "eslint": "~3.15.0",
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "nunjucks": "~3.0.0",
+    "babel-preset-think-node": "0.0.8",
+    "handlebars": "~4.0.6",
     "think-helper": "~1.0.0"
   }
 }
