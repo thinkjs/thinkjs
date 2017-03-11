@@ -14,20 +14,15 @@ const defaultOptions = {
     let seps = fileInfo.file.split(path.sep);
     //filter hidden file
     let flag = seps.some(item => {
-      if(item[0] === '.'){
-        return true;
-      }
+      return item[0] === '.';
     });
     if(flag){
       return false;
     }
     let ext = path.extname(fileInfo.file).slice(1);
-    if(options.allowExts.indexOf(ext) === -1){
-      return false;
-    }
-    return true;
+    return options.allowExts.indexOf(ext) !== -1;
   }
-}
+};
 
 /**
  * watcher class
@@ -124,9 +119,9 @@ class Watcher {
   }
   /**
    * remove files in srcPath when is deleted in diffPath
-   * @param {Array} srcFiles 
-   * @param {Array} diffFiles 
-   * @param {String} diffPath 
+   * @param {Array} srcFiles
+   * @param {Array} diffFiles
+   * @param {String} diffPath
    */
   removeDeletedFiles(srcFiles, diffFiles, diffPath) {
     let srcFilesWithoutExt = srcFiles.map(file => {
@@ -144,7 +139,7 @@ class Watcher {
   }
   /**
    * remove file extname
-   * @param {String} file 
+   * @param {String} file
    */
   removeFileExtName(file){
     return file.replace(/\.\w+$/, '');
