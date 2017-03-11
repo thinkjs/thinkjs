@@ -4,6 +4,8 @@ awesome projects for `ThinkJS 3.x`
 
 ## middlewares
 
+* [think-router](https://github.com/thinkjs/think-router) Router Parser
+
 ## adapters
 
 * [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) use nunjucks to render view files
