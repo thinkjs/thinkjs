@@ -16,5 +16,3 @@ awesome projects for `ThinkJS 3.x`
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. **already built in framework!**
 
 ## projects by ThinkJS
-* [爆米兔](http://www.baomitu.com/) ThinkJS 2.x
-* [声享](http://ppt.baomitu.com/) ThinkJS 2.x
