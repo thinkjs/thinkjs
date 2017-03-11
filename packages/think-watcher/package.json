@@ -27,10 +27,12 @@
     "think-helper": "^1.0.0"
   },
   "devDependencies": {
-    "ava": "^0.14.0",
+    "ava": "^0.18.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
+    "coveralls": "^2.12.0",
     "eslint": "2.8.0",
+    "mock-require": "^2.0.1",
     "nyc": "^7.0.0"
   },
   "keywords": [],
