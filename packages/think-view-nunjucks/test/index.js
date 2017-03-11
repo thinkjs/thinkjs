@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-11 13:07:49
+* @Last Modified time: 2017-03-11 13:11:22
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -30,13 +30,13 @@ const viewPath = path.join(__dirname, 'views');
 
 // test case
 test.serial('nunjucks absolute path', async t => {
-  let nunjucks = new Nunjucks('/Users/lushijie/github/think-view-nunjucks/test/views/home.njk', {title: 'thinkjs'}, {viewPath: viewPath});
+  let nunjucks = new Nunjucks('./home.njk', {title: 'thinkjs'}, {viewPath: viewPath});
   let ret = await nunjucks.render();
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks not in absolute path', async t => {
-  let nunjucks = new Nunjucks('/Users/lushijie/github/think-view-nunjucks/test/views/home.njk', {title: 'thinkjs'}, {viewPath: '/User/name'});
+  let nunjucks = new Nunjucks(path.join(viewPath, 'home.njk'), {title: 'thinkjs'}, {viewPath: '/User/lushijie/home/'});
   let ret = await nunjucks.render();
   t.is(ret, resp1);
 });
