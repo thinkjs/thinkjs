@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-10 19:11:59
+* @Last Modified time: 2017-03-11 13:05:03
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -41,7 +41,7 @@ class Nunjucks {
       env.render(this.templateFile, this.viewData, (err, res) => {
         return err ? reject(err) : resolve(res);
       });
-    });
+    })
   }
 }
 

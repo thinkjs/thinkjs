@@ -12,7 +12,7 @@ npm install think-view-nunjucks
 
 ## How to Usage
 
-edit config file `src/config/adapter.js`, add options: 
+edit config file `src/config/adapter.js`, add options:
 
 ```js
 const nunjucks = require('think-view-nunjucks');
