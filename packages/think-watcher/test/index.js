@@ -106,4 +106,45 @@ test('buildOptions function -- empty string options', t => {
   )
 });
 
+test('buildOptions function -- Array srcPath,string diffPath,undefined filter,undefined allowExts', t => {
+  const Watcher = getWatcher();
+  let options = {
+    srcPath: ['watchFiles1','watchFiles2'],
+    diffPath: 'diffFiles'
+  };
+  let watcher = new Watcher(options, defaultCallback);
+  t.deepEqual(watcher.options.srcPath, ['watchFiles1','watchFiles2']);
+  t.deepEqual(watcher.options.diffPath, ['diffFiles']);
+  t.deepEqual(watcher.options.allowExts, defaultOptions.allowExts);
+  t.deepEqual(helper.isFunction(watcher.options.filter), true);
+});
 
+test('defaultOptions.filter function -- hidden file', t => {
+  const Watcher = getWatcher();
+  let watcher = new Watcher('watchFiles',defaultCallback);
+  let fileInfo = {
+    file: '/foo/bar/.baz/qux'
+  };
+  let result = watcher.options.filter(fileInfo);
+  t.is(result,false);
+});
+
+test('defaultOptions.filter function -- valid extend name', t => {
+  const Watcher = getWatcher();
+  let watcher = new Watcher('watchFiles',defaultCallback);
+  let fileInfo = {
+    file: '/foo/bar/baz/qux/a.js'
+  };
+  let result = watcher.options.filter(fileInfo,watcher.options);
+  t.is(result,true);
+});
+
+test('defaultOptions.filter function -- invalid extend name', t => {
+  const Watcher = getWatcher();
+  let watcher = new Watcher('watchFiles',defaultCallback);
+  let fileInfo = {
+    file: '/foo/bar/baz/qux/a.jsx'
+  };
+  let result = watcher.options.filter(fileInfo,watcher.options);
+  t.is(result,false);
+});
