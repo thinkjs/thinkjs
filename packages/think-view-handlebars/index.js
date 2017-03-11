@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-11 11:31:31
+* @Last Modified time: 2017-03-11 12:03:25
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -10,12 +10,18 @@ const handlebars = require('handlebars');
 const fs = require('fs');
 const assert = require('assert');
 
+const defaultOptions = {
+  compat: true,
+  strict: false,
+  preventIndent: true,
+  ignoreStandalone: true,
+};
 
 class Handlebars {
     constructor(templateFile, viewData, config) {
       this.templateFile = templateFile;
       this.viewData = viewData;
-      this.config = config;
+      this.config = helper.extend({}, defaultOptions, config);
     }
 
     _getContent(templateFile, viewPath) {
@@ -44,22 +50,5 @@ class Handlebars {
       });
     }
 }
-
-
-
-let context = {
-  'title': 123,
-  'body': 'Hello World',
-  'students':[
-    {'name' : 'John', 'passingYear' : 2013},
-    {'name' : 'Doe' , 'passingYear' : 2016}
-  ]
-};
-let viewPath = path.join(__dirname, 'test/views');
-let hdb = new Handlebars('test.tpl', context, {viewPath: viewPath})
-
-hdb.render().then(function(data) {
-  console.log(data);
-});
 
 module.exports = Handlebars;

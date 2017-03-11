@@ -15,12 +15,12 @@ npm install think-view-handlebars
 edit config file `src/config/adapter.js`, add options:
 
 ```js
-const nunjucks = require('think-view-handlebars');
+const handlebars = require('think-view-handlebars');
 exports.view = {
-  type: 'nunjucks',
-  nunjucks: {
-    handle: nunjucks,
-    beforeRender: (env, nunjucks, config) => {}
+  type: 'handlebars',
+  handlebars: {
+    handle: handlebars,
+    beforeRender: (handlebars, config) => {}
   }
 }
 ```
@@ -29,47 +29,44 @@ exports.view = {
 
 ```js
 const defaultOptions = {
-  autoescape: true,
-  watch: false,
-  noCache: false,
-  throwOnUndefined: false
+  compat: true,
+  strict: false,
+  preventIndent: true,
+  ignoreStandalone: true,
 };
 ```
+
 change options:
 
 ```js
 exports.view = {
-  type: 'nunjucks',
-  nunjucks: {
-    handle: nunjucks,
-    tags: {
-      blockStart: '<%',
-      blockEnd: '%>',
-      variableStart: '<$',
-      variableEnd: '$>',
-      commentStart: '<#',
-      commentEnd: '#>'
-    },
-    beforeRender: (env, nunjucks, config) => {}
+  type: 'handlebars',
+  handlebars: {
+    handle: handlebars,
+    strict: true,
+    beforeRender: (handlebars, config) => {}
   }
 }
 ```
-you can find all nunjucks support options by https://mozilla.github.io/nunjucks/api.html#configure
+you can find all handlebars support options by http://handlebarsjs.com/reference.html
 
 ### beforeRender
 
-you can use `beforeRender` method to set some env:
-
 ```js
 exports.view = {
-  type: 'nunjucks',
-  nunjucks: {
-    handle: nunjucks,
-    beforeRender: (env, nunjucks, config) => {
-      env.addGlobal('think', think);
-      env.addGlobal('JSON', JSON);
+  type: 'handlebars',
+  handlebars: {
+    handle: handlebars,
+    beforeRender: (handlebars, config) => {
+      handlebars.registerHelper("studyStatus", function(passingYear) {
+         if(passingYear < 2017) {
+            return "passed";
+         } else {
+            return "not passed";
+         }
+      })
     }
   }
 }
 ```
-you can find all APIs in `env` by https://mozilla.github.io/nunjucks/api.html#environment
+you can find all APIs in http://handlebarsjs.com/reference.html
