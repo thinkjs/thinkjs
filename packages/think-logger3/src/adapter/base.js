@@ -41,24 +41,31 @@ module.exports = class {
    * use clustered type if in cluster mode
    */
   isCluster(config) {
-    if( !Object.keys(cluster.workers).length ) {
-      return config;
-    }
+    let {appenders, ...lConfig} = config;
 
-    if( cluster.isMaster ) {
-      let {appenders, ...lConfig} = config;
+    if( cluster.isWorker ) {
+      //worker log4js config
       return {
         ...lConfig,
         appenders: [
-          {
-            type: 'clustered',
-            appenders
-          }
+          {type: 'clustered'}
         ]
-      }
+      };
     }
 
-    //worker log4js config
-    return {type: 'clustered'};
+    //Master process
+    if( !Object.keys(cluster.workers).length ) {
+      return config;
+    }
+    
+    return {
+      ...lConfig,
+      appenders: [
+        {
+          type: 'clustered',
+          appenders
+        }
+      ]
+    };
   }
 };
