@@ -4,7 +4,8 @@ module.exports = class FileLogger extends Base {
   constructor(config) {
     super(config);
 
-    let {level, filename, maxLogSize, backups, absolute, layouts, ...lConfig} = config;
+    let lConfig = Object.assign({}, config);
+    let {level, filename, maxLogSize, backups, absolute, layouts} = config;
     level = level ? level.toUpperCase() : 'ALL';
 
     //combine config for file appender, common config for log4js

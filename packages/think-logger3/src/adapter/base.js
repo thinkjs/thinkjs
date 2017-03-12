@@ -41,16 +41,17 @@ module.exports = class {
    * use clustered type if in cluster mode
    */
   isCluster(config) {
-    let {appenders, ...lConfig} = config;
+    let lConfig = Object.assign({}, config);
+    let appenders = config.appenders;
+    delete lConfig.appenders;
 
     if( cluster.isWorker ) {
       //worker log4js config
-      return {
-        ...lConfig,
+      return Object.assign({
         appenders: [
           {type: 'clustered'}
         ]
-      };
+      }, lConfig);
     }
 
     //Master process
@@ -58,14 +59,13 @@ module.exports = class {
       return config;
     }
     
-    return {
-      ...lConfig,
+    return Object.assign({
       appenders: [
         {
           type: 'clustered',
           appenders
         }
       ]
-    };
+    }, lConfig);
   }
 };
