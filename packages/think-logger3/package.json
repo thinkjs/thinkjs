@@ -2,13 +2,12 @@
   "name": "think-logger3",
   "version": "0.0.5",
   "description": "logger for ThinkJS 3.x",
-  "main": "./lib",
+  "main": "./src",
   "scripts": {
-    "compile": "babel src/ --out-dir lib/",
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
     "eslint": "eslint ./src",
-    "prepublish": "npm run compile && npm test"
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
@@ -30,20 +29,8 @@
   },
   "devDependencies": {
     "ava": "^0.18.2",
-    "babel-core": "^6.23.1",
-    "babel-eslint": "^7.1.1",
-    "babel-preset-think-node": "0.0.8",
     "eslint": "^3.16.1",
-    "muk-require": "^1.0.0",
-    "nyc": "^10.1.2"
-  },
-  "babel": {
-    "presets": [
-      "think-node"
-    ]
-  },
-  "ava": {
-    "require": "babel-register",
-    "babel": "inherit"
+    "nyc": "^10.1.2",
+    "sandboxed-module": "^2.0.3"
   }
 }
