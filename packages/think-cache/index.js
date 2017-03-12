@@ -4,13 +4,13 @@ const thinkAwait = require('think-await');
 
 /**
  * cache manage
- * can not be define a arrow function, because has `this` in it.
+ * can not be defined a arrow function, because has `this` in it.
  * @param {String} name 
  * @param {undefined|null|Function|Mixed} value 
  * @param {String|Object} config 
  */
 function cacheManage(name, value, config){
-  assert(helper.isString(name), 'cache.name must be a string when value is null');
+  assert(name && helper.isString(name), 'cache.name must be a string');
   config = helper.parseAdapterConfig(this.config('cache'), config);
   const handle = config.handle;
   assert(helper.isFunction(handle), 'cache.handle must be a function');
