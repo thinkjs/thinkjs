@@ -78,6 +78,7 @@ class Watcher {
     let changedFiles = [];
     const options = this.options;
     options.srcPath.forEach((srcPath, index) => {
+      assert(path.isAbsolute(srcPath), 'srcPath must be an absolute path');
       let diffPath = options.diffPath[index];
       let srcFiles = helper.getdirFiles(srcPath).filter(file => {
         return options.filter({path: srcPath, file}, options);
