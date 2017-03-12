@@ -4,7 +4,8 @@ module.exports = class GelfLogger extends Base {
   constructor(config) {
     super(config);
 
-    let {host, hostname, port, facility, ...lConfig} = config;
+    let lConfig = Object.assign({}, lConfig);
+    let {host, hostname, port, facility} = lConfig;
     config = Object.assign({
       appenders: [{type: 'gelf', host, hostname, port, facility}]
     }, lConfig);

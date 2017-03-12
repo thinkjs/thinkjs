@@ -4,7 +4,8 @@ module.exports = class DateFileLogger extends Base {
   constructor(config) {
     super(config);
 
-    let {level, filename, pattern, alwaysIncludePattern, absolute, layouts, ...lConfig} = config;
+    let lConfig = Object.assign({}, config);
+    let {level, filename, pattern, alwaysIncludePattern, absolute, layouts} = lConfig;
     level = level ? level.toUpperCase() : 'ALL';
 
     //combine config for date file appender, common config for log4js
