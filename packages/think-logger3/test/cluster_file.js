@@ -1,82 +1,76 @@
+const fs = require('fs');
 const test = require('ava');
-// const path = require('path');
-// const muk = require('muk-require');
+const path = require('path');
+const Logger = require('../src');
+const sandbox = require('sandboxed-module');
+const LoggingEvent = require('log4js/lib/logger').LoggingEvent;
 
-// test('cluster file logger in master', () => {
-//   const loggingEvents = [];
-//   let onChildProcessForked;
-//   let onMasterReceiveChildMessage;
-//   const fakeWorker = {
-//     on(event, callback) {
-//       onMasterReceiveChildMessage = callback;
-//     },
-//     process: {
-//       pid: 123
-//     },
-//     id: 'workerid'
-//   };
-//   const fakeCluster = {
-//     on(event, callback) {
-//       registeredClusterEvents.push(event);
-//       onChildProcessForked = () => fakeWorker;
-//     },
-//     isMaster: true,
-//     isWorker: false,
-//     workers: [
-//       fakeWorker
-//     ]
-//   };
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+const filename = path.join(__dirname, 'test_cluster.log');
 
-//   onChildProcessForked(fakeWorker);
-//   const Base = muk('../src/adapter/base', {cluster: fakeCluster});
-//   const FileAdapter = muk('../src/adapter/file', {'./base': Base});
-//   const Logger = muk('../src', {'./adapter/file': FileAdapter});
-//   new Logger({
-//     handle: FileAdapter,
-//     filename: path.join(__dirname, 'test.log')
-//   });
-//    // Fork workers.
-//     for (var i = 0; i < 4; i++) {
-//         var worker = cluster.fork();
-//         logger.info("forked: " + i);
-//     }
+test.before('cluster file logger', () => {
+  try {
+    fs.statSync(filename);
+    fs.unlinkSync(filename);
+  } catch(e) {
 
-// })
+  } finally {
+    fs.writeFileSync(filename, '', {encoding: 'utf-8'});
+  }  
+});
 
+test('cluster file logger in master', async t => {
+  const fakeWorker = {
+    on(event, callback) {
+      if(event === 'message') {
+        const simulatedLoggingEvent = new LoggingEvent(null, 'Info', ['hello world from worker']);
+        callback({
+          type: '::log-message',
+          event: JSON.stringify(simulatedLoggingEvent)
+        });
+      }
+    },
+    process: {
+      pid: 123
+    },
+    id: 'workerid',
+    isMaster: false,
+    isWorker: true
+  };
 
-// test.before('cluster file logger', () => {
-//   const registeredClusterEvents = [];
-  
-//   const fakeCluster = {
-//     on(event, callback) {
-//       registeredClusterEvents.push(event);
-//       onChildProcessForked = callback;
-//     },
-//     isMaster: true,
-//     isWorker: false
-//   };
+  const fakeMaster = {
+    on(event, callback) {
+      if(event === 'fork') {
+        callback(fakeWorker);
+      }
+    },
+    isMaster: true,
+    isWorker: false,
+    workers: {
+      '1': fakeWorker
+    }
+  };
 
-//   const appenderMmodule = sandbox.require('../src', {
-//     requires: {
-//       cluster: fakeCluster
-//     }
-//   });
+  const MasterFileAdapter = sandbox.require('../src/adapter/file', {
+    requires: {
+      cluster: fakeMaster,
+    }
+  });
+  const WorkerFileAdapter = sandbox.require('../src/adapter/file', {
+    requires: {
+      cluster: fakeWorker
+    }
+  });
+  let masterLogger = new Logger({
+    handle: MasterFileAdapter,
+    filename
+  });
+  let workerLogger = new Logger({handle: WorkerFileAdapter});
 
-//   onChildProcessForked(fakeWorker);
+  masterLogger.info('hello world from master');
+  await sleep(500);
 
-//   try {
-//     fs.statSync(filename);
-//     fs.unlinkSync(filename);
-//   } catch(e) {
-
-//   } finally {
-//     fs.writeFileSync(filename, '', {encoding: 'utf-8'});
-//   }  
-// })
-// test('cluster file logger', t => {
-//   new Logger({
-//     handle: Adapter,
-//     filename
-//   });
-// });
-test.todo('cluster file logger');
+  let text = fs.readFileSync(filename, {encoding: 'utf-8'});
+  t.true(text.includes('hello world from worker'));
+  fs.unlinkSync(filename);
+});
