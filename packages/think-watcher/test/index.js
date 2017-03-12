@@ -1,7 +1,7 @@
 const test = require('ava');
 const mock = require('mock-require');
 const helper = require('think-helper');
-
+const path = require('path');
 const defaultOptions = {
   allowExts: ['js', 'es', 'ts'],
   filter: (fileInfo, options) => {
@@ -36,6 +36,14 @@ function mockAssert(assertCallParams = []) {
 const defaultCallback = () => {
 
 };
+
+// param option fields:
+// const options = {
+//   srcPath,    // array , string
+//   diffPath,   // array , string
+//   filter,     // function
+//   allowExts,  // array   **?
+// };
 
 test('constructor function -- cb not a function', t => {
   let assertCallParams = [];
@@ -133,7 +141,7 @@ test('defaultOptions.filter function -- valid extend name', t => {
   const Watcher = getWatcher();
   let watcher = new Watcher('watchFiles',defaultCallback);
   let fileInfo = {
-    file: '/foo/bar/baz/qux/a.js'
+    file: '/foo/bar/baz/qux/admin1.js'
   };
   let result = watcher.options.filter(fileInfo,watcher.options);
   t.is(result,true);
@@ -148,3 +156,92 @@ test('defaultOptions.filter function -- invalid extend name', t => {
   let result = watcher.options.filter(fileInfo,watcher.options);
   t.is(result,false);
 });
+
+test('getChangedFiles function -- srcPath must be an absolute path', t => {
+  let assertCallParams = [];
+  mockAssert(assertCallParams);
+  const Watcher = getWatcher();
+  let options = {
+    srcPath: ['./admin']
+  };
+  let watcher = new Watcher(options, defaultCallback);
+  watcher.getChangedFiles();
+  t.deepEqual(assertCallParams,
+    [
+      true,
+      'callback must be a function',
+      ['./admin'],
+      'srcPath can not be blank',
+      false,
+      'srcPath must be an absolute path'
+    ]
+  );
+});
+
+test('getChangedFiles function -- empty diffPath', t => {
+  const Watcher = getWatcher();
+  let [admin, home] = [path.resolve(__dirname, 'admin'), path.resolve(__dirname, 'home')];
+  let options = {
+    srcPath: [admin, home]
+  };
+  let watcher = new Watcher(options, defaultCallback);
+  let watchFiles = watcher.getChangedFiles();
+  t.deepEqual(
+    watchFiles,
+    [
+      {
+        path: admin,
+        file: 'admin1.js'
+      },
+      {
+        path: admin,
+        file: 'admin2.js'
+      },
+      {
+        path: home,
+        file: 'home1.js'
+      },
+      {
+        path: home,
+        file: 'home2.js'
+      }
+    ]
+  )
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
