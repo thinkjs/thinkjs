@@ -40,6 +40,11 @@ export default class extends think.middleware.base {
       if(cors){
         this.http.header('Access-Control-Allow-Origin', typeof cors === 'string' ? cors : '*');
       }
+      // extend resource headers
+      const resourceHeaders = this.config('resource_headers') || {};
+      for (let header in resourceHeaders) {
+        this.http.header(header, resourceHeaders[header]);
+      }
       return file;
     }else{
       return true;
