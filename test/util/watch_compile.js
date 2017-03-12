@@ -22,17 +22,17 @@ describe('watch_compile', function(){
     var instance = new Compile(srcPath, outPath);
     assert.deepEqual(instance.allowFileExt, ['.js', '.ts'])
   })
-  it('compileByTypeScript', function(done){
-    var srcPath = __dirname + think.sep + 'compile_src';
-    var outPath = __dirname + think.sep + 'compile_output';
-    var instance = new Compile(srcPath, outPath);
-    var result = instance.compileByTypeScript('let a = 1', 'a.ts');
-    var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
-    think.rmdir(outPath).then(function(){
-      done();
-    });
-  })
+  // it('compileByTypeScript', function(done){
+  //   var srcPath = __dirname + think.sep + 'compile_src';
+  //   var outPath = __dirname + think.sep + 'compile_output';
+  //   var instance = new Compile(srcPath, outPath);
+  //   var result = instance.compileByTypeScript('let a = 1', 'a.ts');
+  //   var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
+  //   assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
+  //   think.rmdir(outPath).then(function(){
+  //     done();
+  //   });
+  // })
   it('compileByTypeScript, has error', function(){
     var srcPath = __dirname + think.sep + 'compile_src';
     var outPath = __dirname + think.sep + 'compile_output';
@@ -44,18 +44,18 @@ describe('watch_compile', function(){
 
     }
   })
-   it('compileByTypeScript, show log', function(done){
-    var srcPath = __dirname + think.sep + 'compile_src';
-    var outPath = __dirname + think.sep + 'compile_output';
-    var instance = new Compile(srcPath, outPath, {log: true});
-    var result = instance.compileByTypeScript('let a = 1', 'a.ts');
-    var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
-    assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
-    muk.restore();
-    think.rmdir(outPath).then(function(){
-      done();
-    });
-  })
+  //  it('compileByTypeScript, show log', function(done){
+  //   var srcPath = __dirname + think.sep + 'compile_src';
+  //   var outPath = __dirname + think.sep + 'compile_output';
+  //   var instance = new Compile(srcPath, outPath, {log: true});
+  //   var result = instance.compileByTypeScript('let a = 1', 'a.ts');
+  //   var content = fs.readFileSync(outPath + think.sep + 'a.js', 'utf8');
+  //   assert.equal(content.trim(), '"use strict";\n\nvar a = 1;\n//# sourceMappingURL=a.js.map');
+  //   muk.restore();
+  //   think.rmdir(outPath).then(function(){
+  //     done();
+  //   });
+  // })
   it('compileByBabel', function(done){
     var srcPath = __dirname + think.sep + 'compile_src';
     var outPath = __dirname + think.sep + 'compile_output';
