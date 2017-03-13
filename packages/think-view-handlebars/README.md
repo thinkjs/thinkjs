@@ -20,7 +20,9 @@ exports.view = {
   type: 'handlebars',
   handlebars: {
     handle: handlebars,
-    beforeRender: (handlebars, config) => {}
+    beforeRender: (handlebars, config) => {
+      // todo
+    }
   }
 }
 ```
@@ -33,6 +35,7 @@ const defaultOptions = {
   strict: false,
   preventIndent: true,
   ignoreStandalone: true,
+  cache: false
 };
 ```
 
@@ -44,11 +47,13 @@ exports.view = {
   handlebars: {
     handle: handlebars,
     strict: true,
-    beforeRender: (handlebars, config) => {}
+    beforeRender: (handlebars, config) => {
+      // todo
+    }
   }
 }
 ```
-you can find all handlebars support options by http://handlebarsjs.com/reference.html
+you can find all handlebars's support options at http://handlebarsjs.com/reference.html
 
 ### beforeRender
 
@@ -69,4 +74,4 @@ exports.view = {
   }
 }
 ```
-you can find all APIs in http://handlebarsjs.com/reference.html
+you can find all APIs at http://handlebarsjs.com/reference.html
