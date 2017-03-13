@@ -1,4 +1,5 @@
 const test = require('ava');
+const path = require('path');
 
 function mockHelper(isFile) {
   const helper = require('think-helper');
@@ -7,7 +8,12 @@ function mockHelper(isFile) {
     return isFile;
   }
 }
-const path = require('path');
+
+function getInstance() {
+  const config = require('../loader/config');
+  return new config();
+}
+
 function mockFiles() {
   const mock = require('mock-require');
   mock(path.join('path1', 'config'), {a: 1});
@@ -19,10 +25,9 @@ test('foreach configPaths load all file and merge into config object', t=>{
   var isFile = true;
   mockFiles();
   mockHelper(isFile);
-  const loadConfigByName = require('../loader/config_load_config_by_name');
+  const instance = getInstance();
   var config = {};
-
-  loadConfigByName(config, ['path1', 'path2', 'path3'], 'config');
+  instance.loadConfigByName(config, ['path1', 'path2', 'path3'], 'config');
 
   t.deepEqual(config, {a:1, b:2, c:3});
 });
@@ -31,10 +36,10 @@ test('if isFile === false, load nothing', t=>{
   var isFile = false;
   mockFiles();
   mockHelper(isFile);
-  const loadConfigByName = require('../loader/config_load_config_by_name');
+  const instance = getInstance();
   var config = {};
 
-  loadConfigByName(config, ['path1', 'path2', 'path3'], 'config');
+  instance.loadConfigByName(config, ['path1', 'path2', 'path3'], 'config');
 
   t.deepEqual(config, {});
 });

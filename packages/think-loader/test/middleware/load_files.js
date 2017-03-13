@@ -1,29 +1,24 @@
 const test = require('ava');
 const path = require('path');
 var callGetMidFilesParams;
-function mockModule() {
-  if(!callGetMidFilesParams) {
-    callGetMidFilesParams = [];
-    const mock = require('mock-require');
-    mock('../../loader/middleware/get_files', function(a) {
-      callGetMidFilesParams.push(a);
-      return {[callGetMidFilesParams.length]: 'value'};
-    });
-  } else {
-    callGetMidFilesParams.length = 0;
-  }
+function mockGetFiles(instance) {
+  callGetMidFilesParams = [];
+  instance.getFiles = function(a) {
+    callGetMidFilesParams.push(a);
+    return {[callGetMidFilesParams.length]: 'value'};
+  };
   return callGetMidFilesParams;
 }
 
 function getInstance() {
-  return require('../../loader/middleware/load_files');
+  const middleware = require('../../loader/middleware');
+  return new middleware();
 }
 
-test('getMiddlewareFiles isMultiModule === true', t=>{
-  const params = mockModule();
-
-  const loadMiddlewareFiles = getInstance();
-  const result = loadMiddlewareFiles('appPath', true, 'thinkPath');
+test('loadFiles isMultiModule === true', t=>{
+  const middleware = getInstance();
+  const params = mockGetFiles(middleware);
+  const result = middleware.loadFiles('appPath', true, 'thinkPath');
   t.deepEqual(params, [
     path.join('thinkPath', 'lib/middleware'),
     path.join('appPath', 'common/middleware')
@@ -35,11 +30,10 @@ test('getMiddlewareFiles isMultiModule === true', t=>{
   });
 });
 
-test('getMiddlewareFiles isMultiModule === false', t=>{
-  const params = mockModule();
-
-  const loadMiddlewareFiles = getInstance();
-  const result = loadMiddlewareFiles('appPath', false, 'thinkPath');
+test('loadFiles isMultiModule === false', t=>{
+  const middleware = getInstance();
+  const params = mockGetFiles(middleware);
+  const result = middleware.loadFiles('appPath', false, 'thinkPath');
   t.deepEqual(params, [
     path.join('thinkPath', 'lib/middleware'),
     path.join('appPath', 'middleware')

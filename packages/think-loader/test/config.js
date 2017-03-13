@@ -3,27 +3,24 @@ const mock = require('mock-require');
 const path = require('path');
 
 var depsCalledParams;
-function mockDeps() {
-  if(!depsCalledParams) {
-    depsCalledParams = [];
-    mock('../loader/config_load_config', function(a, b, c) {
-      depsCalledParams.push(a, b, c);
-      if(c === 'adapter') {
-        return 'load adapter config result';
-      }
-      return {a: 'this will overwrite thinkconfig', b: 2, c: 3};
-    });
-    mock('../loader/config_load_adapter', function(c) {
-      depsCalledParams.push(c);
-      return 'load adapter result';
-    });
-    mock('../loader/config_format_adapter', function(e, f) {
-      depsCalledParams.push(e, f);
-      return {adapter: 'adapter'}
-    });
-  } else {
-    depsCalledParams.length = 0;
-  }
+function mockDeps(instance) {
+  var depsCalledParams = [];
+  instance.loadConfig = function(a, b, c) {
+    depsCalledParams.push(a, b, c);
+    if(c === 'adapter') {
+      return {type: 'load adapter'};
+    }
+    return {a: 'this will overwrite thinkconfig', b: 2, c: 3};
+  };
+  instance.loadAdapter = function(c) {
+    depsCalledParams.push(c);
+    return 'load adapter result';
+  };
+
+  instance.formatAdapter =  function(e, f) {
+    depsCalledParams.push(e, f);
+    return {adapter: 'adapter'}
+  };
 
   return depsCalledParams;
 }
@@ -39,15 +36,16 @@ function mockThinkConfig(t) {
 }
 
 function getConfig() {
-  return require('../loader/config');
+  const config = mock.reRequire('../loader/config');
+  return new config();
 }
 
 test('load config isMultiModule === true', t=>{
-  let depsCalledParams = mockDeps();
   mockThinkConfig(t);
 
-  const loadConfig = getConfig();
-  var result = loadConfig('appPath', 'thinkPath', 'env', ['dir1', 'common']);
+  const instance = getConfig();
+  let depsCalledParams = mockDeps(instance);
+  var result = instance.load('appPath', 'thinkPath', 'env', ['dir1', 'common']);
 
   let paths = [
     path.join('appPath', 'common'),
@@ -62,12 +60,12 @@ test('load config isMultiModule === true', t=>{
     paths, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
     paths, 'env', 'adapter',  // loadConfig adapter
     path.join('appPath', 'common/adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
-    'load adapter config result', 'load adapter result', // formatAdapter has been called with 'adapter call result'
+    {type: 'load adapter'}, 'load adapter result', // formatAdapter has been called with 'adapter call result'
 
     paths2, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
     paths2, 'env', 'adapter',  // loadConfig adapter
     path.join('appPath', 'common/adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
-    'load adapter config result', 'load adapter result' // formatAdapter has been called with 'adapter call result'
+    {type: 'load adapter'}, 'load adapter result' // formatAdapter has been called with 'adapter call result'
   ]);
 
   const expect = {
@@ -82,21 +80,23 @@ test('load config isMultiModule === true', t=>{
 });
 
 test('load config isMultiModule === false', t=>{
-  let depsCalledParams = mockDeps();
   mockThinkConfig(t);
 
-  const loadConfig = getConfig();
-  const result = loadConfig('appPath', 'thinkPath', 'env', []);
+  const instance = getConfig();
+  let depsCalledParams = mockDeps(instance);
+  const result = instance.load('appPath', 'thinkPath', 'env', []);
 
   let paths = [path.join('appPath', 'config')];
   t.deepEqual(depsCalledParams, [
     paths, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
+    [path.join('thinkPath', 'lib/config')], 'env', 'adapter',  // loadConfig thinkAdapterConfig
     paths, 'env', 'adapter',  // loadConfig adapter
     path.join('appPath', 'adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
-    'load adapter config result', 'load adapter result' // formatAdapter has been called with 'adapter call result'
+    {type: 'load adapter'}, 'load adapter result' // formatAdapter has been called with 'adapter call result'
   ]);
 
   t.deepEqual(result, {
+    type: 'load adapter',
     thinkConfig: 'value of thinkConfig',
     a: 'this will overwrite thinkconfig', b: 2, c: 3,
     adapter: 'adapter'

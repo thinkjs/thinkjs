@@ -18,8 +18,8 @@ test('config_load_adapter will load adapter and build cache', t=>{
     ];
   }
 
-  const loadAdapter = require('../loader/config_load_adapter');
-  var result = loadAdapter('adapterPath');
+  const instance = require('../loader/config');
+  var result = (new instance()).loadAdapter('adapterPath');
   t.deepEqual(result, {
     session: {b: {b: 2}}
   });

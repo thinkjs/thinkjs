@@ -12,45 +12,43 @@ function mockHelper(isFile) {
   return params;
 }
 
-var depsCalledParams;
-function mockDeps() {
-  if(!depsCalledParams) {
-    depsCalledParams = [];
-    mock('../../loader/util.js', {interopRequire(p){
-      if(path.join('appPath', 'common/config/middleware.js') === p) {
-        return {value: 'MultiModuleMiddlewares'};
-      } else if(path.join('appPath', 'config/middleware.js') === p) {
-        return {value: 'Middlewares'}
-      }
-    }});
+function mockDeps(instance) {
 
-    mock('../../loader/middleware/load_files', function(a, b, c) {
-      depsCalledParams.push(a, b, c);
-      return 'loadMiddlewareFiles call result';
-    });
+  var depsCalledParams = [];
 
-    mock('../../loader/middleware/parse', function(e, f) {
-      depsCalledParams.push(e, f);
-      return 'parseMiddleware call result';
-    });
-  } else {
-    depsCalledParams.length = 0;
+  instance.interopRequire = function(p){
+    if(path.join('appPath', 'common/config/middleware.js') === p) {
+      return {value: 'MultiModuleMiddlewares'};
+    } else if(path.join('appPath', 'config/middleware.js') === p) {
+      return {value: 'Middlewares'}
+    }
+  };
+
+  instance.loadFiles = function(a, b, c) {
+    depsCalledParams.push(a, b, c);
+    return 'loadFiles call result';
+  };
+
+  instance.parse = function(e, f, g) {
+    depsCalledParams.push(e, f, g);
+    return 'parse call result';
   }
 
   return depsCalledParams;
 }
 
 function createInstance() {
-  return require('../../loader/middleware/loader');
+  const middleware = mock.reRequire('../../loader/middleware');
+  return new middleware();
 }
 
 function createTest1(isFile, modules, path) {
   return t=>{
     var isFileParams = mockHelper(isFile);
-    const params = mockDeps();
-    const loadMiddleware = createInstance();
+    const instance = createInstance();
+    const params = mockDeps(instance);
 
-    const result = loadMiddleware('appPath', 'thinkPath', modules);
+    const result = instance.load('appPath', 'thinkPath', modules, 'app');
 
     t.deepEqual(isFileParams, [path]);
     t.deepEqual(params, []);
@@ -67,30 +65,30 @@ test('return [] when no middleware.js, isMultiModule = false',
 
 test('load middleware isMultiModule === true', t=>{
   mockHelper(true);
-  const params = mockDeps();
-  const loadMiddleware = createInstance();
+  const instance = createInstance();
+  const params = mockDeps(instance);
 
-  const result = loadMiddleware('appPath', 'thinkPath', ['admin']);
+  const result = instance.load('appPath', 'thinkPath', ['admin'], 'app');
 
   t.deepEqual(params, [
     'appPath', 1, 'thinkPath',
-    {value: 'MultiModuleMiddlewares'}, 'loadMiddlewareFiles call result'
+    {value: 'MultiModuleMiddlewares'}, 'loadFiles call result', 'app'
   ]);
 
-  t.is(result, 'parseMiddleware call result');
+  t.is(result, 'parse call result');
 });
 
 test('load middleware isMultiModule === false', t=>{
   mockHelper(true);
-  const params = mockDeps();
-  const loadMiddleware = createInstance();
+  const instance = createInstance();
+  const params = mockDeps(instance);
 
-  const result = loadMiddleware('appPath', 'thinkPath', []);
+  const result = instance.load('appPath', 'thinkPath', [], 'app');
 
   t.deepEqual(params, [
     'appPath', 0, 'thinkPath',
-    {value: 'Middlewares'}, 'loadMiddlewareFiles call result'
+    {value: 'Middlewares'}, 'loadFiles call result', 'app'
   ]);
 
-  t.is(result, 'parseMiddleware call result');
+  t.is(result, 'parse call result');
 });

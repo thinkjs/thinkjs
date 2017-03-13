@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const config = require('./loader/config.js');
 const bootstrap = require('./loader/bootstrap.js');
-const middleware = require('./loader/middleware/loader.js');
+const middleware = require('./loader/middleware.js');
 const router = require('./loader/router.js');
 const extend = require('./loader/extend.js');
 const common = require('./loader/common.js');
@@ -32,7 +32,7 @@ class Loader {
    * load config
    */
   loadConfig(env){
-    return config(this.appPath, this.thinkPath, env, this.modules);
+    return (new config()).load(this.appPath, this.thinkPath, env, this.modules);
   }
   /**
    * load bootstrap
@@ -69,7 +69,7 @@ class Loader {
    * load middleware
    */
   loadMiddleware(app){
-    return middleware(this.appPath, this.thinkPath, this.modules, app);
+    return (new middleware()).load(this.appPath, this.thinkPath, this.modules, app);
   }
   /**
    * load router

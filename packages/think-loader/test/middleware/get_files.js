@@ -9,7 +9,8 @@ function mockHelper(t, dir) {
 }
 
 function createInstance() {
-  return require('../../loader/middleware/get_files');
+  var Middleware = require('../../loader/middleware');
+  return new Middleware();
 }
 
 function mockModule(dir) {
@@ -22,12 +23,12 @@ function mockModule(dir) {
   mock(ces, 3);
 }
 
-test('getMiddlewareFiles', t=>{
+test('getFiles', t=>{
   mockHelper(t, 'middlewarePath');
   mockModule('middlewarePath');
 
-  const getMiddlewareFiles = createInstance();
-  const result = getMiddlewareFiles('middlewarePath');
+  const middleware = createInstance();
+  const result = middleware.getFiles('middlewarePath');
   t.deepEqual(result, {
     a: 1,
     b: 2,

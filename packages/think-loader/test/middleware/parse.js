@@ -14,19 +14,15 @@ function mockAssert() {
   return assertCallParams;
 }
 
-function getParse() {
-  return mock.reRequire('../../loader/middleware/parse');
+function getInstance() {
+  const middleware = mock.reRequire('../../loader/middleware');
+  return new middleware();
 }
-
-test.beforeEach(t => {
-  mockAssert();
-});
-
 test('middleware of type string', t=>{
-  const parse = getParse();
+  const instance = getInstance();
 
   const handle = ()=>{};
-  var result = parse(['handler'], {handler(){
+  var result = instance.parse(['handler'], {handler(){
     return handle;
   }});
 
@@ -35,11 +31,11 @@ test('middleware of type string', t=>{
 
 test('assert middleware is a function', t=>{
   var assertCallParams = mockAssert();
-  const parse = getParse();
+  const instance = getInstance();
 
   const handle = ()=>{};
   t.throws(()=>{
-    parse(['handler'], {handler: {}});
+    instance.parse(['handler'], {handler: {}});
   }, Error)
 
   t.deepEqual(assertCallParams, [false, 'handle must be a function']);
@@ -47,20 +43,18 @@ test('assert middleware is a function', t=>{
 
 test('assert middleware must return a function', t=>{
   var assertCallParams = mockAssert();
-  const parse = getParse();
+  const instance = getInstance();
 
   const handle = ()=>{};
-  parse(['handler'], {handler:
-    ()=>{}});
+  instance.parse(['handler'], {handler: ()=>{}});
   t.deepEqual(assertCallParams, [true, 'handle must be a function', false, 'handle must return a function']);
 });
 
 test('middleware will be filter when !!enable is false', t=>{
-  const parse = getParse();
-
+  const instance = getInstance();
   const handle1 = ()=>{};
   const handle2 = ()=>{};
-  const result = parse([
+  const result = instance.parse([
     {
       handle: 'handler1',
       options: 'options not filter2'  // not filter
@@ -85,12 +79,12 @@ test('middleware will be filter when !!enable is false', t=>{
 });
 
 test('middleware will pass options', t=>{
-  const parse = getParse();
+  const instance = getInstance();
 
   const handle1 = ()=>{};
   const handle2 = ()=>{};
   var params = [];
-  const result = parse([
+  const result = instance.parse([
     {
       handle: 'handler1',
       options: 'options not filter2'  // not filter
@@ -115,7 +109,7 @@ test('middleware will pass options', t=>{
 });
 
 test('middleware set match and ignore', t=>{
-  const parse = getParse();
+  const instance = getInstance();
 
   const params = [];
   const handle = (ctx, next)=>{
@@ -123,7 +117,7 @@ test('middleware set match and ignore', t=>{
     next();
     return 'result';
   };
-  var middlewares = parse([
+  var middlewares = instance.parse([
     {
       handle: 'handler',
       options: 'options',
@@ -170,10 +164,10 @@ test('middleware will call path-to-regexp with right params', t=>{
   mock('path-to-regexp', function(a) {
     params.push(a)
   });
-  const parse = getParse();
+  const instance = getInstance();
 
   const handle = ()=>{};
-  var middlewares = parse([
+  var middlewares = instance.parse([
     {
       handle: 'handler',
       options: 'options',

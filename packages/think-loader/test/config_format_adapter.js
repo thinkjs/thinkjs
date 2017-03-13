@@ -14,28 +14,30 @@ function mockAssert() {
   return assertCallParams;
 }
 
-function getFormatAdapter() {
-  return require('../loader/config_format_adapter');
+function getInstance() {
+  const config = require('../loader/config');
+  return new config();
 }
 
 test('formatAdapter will assert adapter config must have type field', t=>{
   var assertCallParams = mockAssert();
-  var formatAdapter = getFormatAdapter();
-  formatAdapter({
+  const instance = getInstance();
+
+  instance.formatAdapter({
     name1: {type: 'I have a type'},
-    name2: {/*I don't have a type*/}
+    name2: {/*I don't have a type, wil be ignore*/}
   });
   t.is(assertCallParams[0], true);
-  t.is(!!assertCallParams[2], true);
+  t.is(assertCallParams[2], 'I have a type');
   t.is(assertCallParams[4], true);
   t.is(!!assertCallParams[6], false);
-  t.is(assertCallParams[7], `adapter.name2 must have type field`);
 });
 
 test('formatAdapter will assert common field be an object', t=>{
   var assertCallParams = mockAssert();
-  var formatAdapter = getFormatAdapter();
-  formatAdapter({
+  const instance = getInstance();
+
+  instance.formatAdapter({
     name1: {type: 'I have a type', common: 'sdklfjdk'}
   });
   t.is(assertCallParams[4], false);
@@ -44,7 +46,8 @@ test('formatAdapter will assert common field be an object', t=>{
 
 test('formatAdapter will return the same instance if pass {}', t=>{
   var config = {};
-  var formatConfig = getFormatAdapter()(config);
+  var instance = getInstance();
+  var formatConfig = instance.formatAdapter(config);
   t.is(config, formatConfig);
 });
 
@@ -85,8 +88,8 @@ test('formatAdapter will merge common field to item,(also will ignore type field
       xxx: function() {}
     }
   };
-  var formatConfig = getFormatAdapter();
-  var fc = formatConfig(config, adapter);
+  const instance = getInstance();
+  var fc = instance.formatAdapter(config, adapter);
 
   t.is(fc.db.type, 'xxx');
   t.is(fc.session.type, 'yyy');
