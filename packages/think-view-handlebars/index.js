@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 10:32:09
+* @Last Modified time: 2017-03-13 18:04:43
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -36,7 +36,7 @@ class Handlebars {
       this.viewFile = viewFile;
       this.viewData = viewData;
       this.config = helper.extend({}, defaultOptions, config);
-      this.cacheData = {};
+      this.cacheFn = {};
     }
 
     /**
@@ -67,15 +67,16 @@ class Handlebars {
         absolutePath = path.join(viewPath, absolutePath);
       }
 
-      if(this.config.cache && this.cacheData[absolutePath]) {
-        return Promise.resolve(this.cacheData[absolutePath]);
+      if(this.config.cache && this.cacheFn[absolutePath]) {
+        return Promise.resolve(this.cacheFn[absolutePath](this.viewData));
       }
 
       return new Promise((resolve, reject) => {
         this._getContent(absolutePath).then((data) => {
-          let output = handlebars.compile(data, this.config)(this.viewData);
+          let compileFn = handlebars.compile(data, this.config);
+          let output = compileFn(this.viewData);
           if(this.config.cache) {
-            this.cacheData[absolutePath] = output;
+            this.cacheFn[absolutePath] = compileFn;
           }
           resolve(output);
         }, (err) => {
