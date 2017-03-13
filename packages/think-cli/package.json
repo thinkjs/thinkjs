@@ -1,0 +1,51 @@
+{
+  "name": "think-cli",
+  "description": "command line interface for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "songguangyu",
+    "email": "522963130@qq.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "songguangyu",
+      "email": "522963130@qq.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.0",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "codecov": "^1.0.1",
+    "coveralls": "^2.11.16",
+    "eslint": "2.8.0",
+    "nyc": "^7.1.0"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-cli"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-cli/issues"
+  }
+}
