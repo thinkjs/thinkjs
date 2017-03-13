@@ -3,7 +3,16 @@ const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
 
-class config {
+/**
+ * load config
+ */
+class Config {
+  /**
+   * load config and merge
+   * @param {Object} config 
+   * @param {Array} configPaths 
+   * @param {String} name 
+   */
   loadConfigByName(config, configPaths, name){
     configPaths.forEach(configPath => {
       let filepath = path.join(configPath, name);
@@ -136,4 +145,4 @@ class config {
   }
 }
 
-module.exports = config;
+module.exports = Config;
