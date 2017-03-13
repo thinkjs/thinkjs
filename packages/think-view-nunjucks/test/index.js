@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-11 13:11:22
+* @Last Modified time: 2017-03-13 14:30:22
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -16,57 +16,56 @@ const defaultOptions = {
   watch: false,
   noCache: false,
   throwOnUndefined: false
-}
-njk.configure(path.join(__dirname, 'views'), defaultOptions);
-let resp1 = njk.render('home.njk', {title: 'thinkjs'});
-
-var env = new njk.Environment(new njk.FileSystemLoader(path.join(__dirname, 'views')), defaultOptions);
-env.addFilter('shorten', function(str) {
+};
+let shortenFn = str =>{
   return str.slice(0, 5);
-});
-let resp2 = env.render('admin.njk', {title: 'thinkjs'});
-
+};
 const viewPath = path.join(__dirname, 'views');
+const viewData = {title: 'thinkjs'};
+njk.configure(path.join(__dirname, 'views'), defaultOptions);
+let resp1 = njk.render('home.njk', viewData);
 
-// test case
 test.serial('nunjucks absolute path', async t => {
-  let nunjucks = new Nunjucks('./home.njk', {title: 'thinkjs'}, {viewPath: viewPath});
+  let nunjucks = new Nunjucks('./home.njk', viewData, {viewPath: viewPath});
   let ret = await nunjucks.render();
+
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks not in absolute path', async t => {
-  let nunjucks = new Nunjucks(path.join(viewPath, 'home.njk'), {title: 'thinkjs'}, {viewPath: '/User/lushijie/home/'});
+  let nunjucks = new Nunjucks(path.join(viewPath, 'home.njk'), viewData, {viewPath: '/User/lushijie/home/'});
   let ret = await nunjucks.render();
+
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks releative path', async t => {
-  let nunjucks = new Nunjucks('./home.njk', {title: 'thinkjs'}, {viewPath: viewPath});
+  let nunjucks = new Nunjucks('./home.njk', viewData, {viewPath: viewPath});
   let ret = await nunjucks.render();
+
   t.is(ret, resp1);
 });
 
 test.serial('nunjucks beforeRender', async t => {
-  let nunjucks = new Nunjucks('./admin.njk', {title: 'thinkjs'}, {
+  let nunjucks = new Nunjucks('./admin.njk', viewData, {
     viewPath: path.join(__dirname, 'views'),
     beforeRender: function(env, nunjucks, config) {
-      env.addFilter('shorten', function(str) {
-        return str.slice(0, 5);
-      });
+      env.addFilter('shorten', shortenFn);
     }
   });
   let ret = await nunjucks.render();
+  var env = new njk.Environment(new njk.FileSystemLoader(path.join(__dirname, 'views')), defaultOptions);
+  env.addFilter('shorten', shortenFn);
+  let resp2 = env.render('admin.njk', viewData);
+
   t.is(ret, resp2);
 });
 
-test.serial('nunjucks reject', async t => {
-  let nunjucks = new Nunjucks('./error.njk', {title: 'thinkjs'}, {viewPath: viewPath});
+test.serial('nunjucks file not found cause reject', async t => {
+  let nunjucks = new Nunjucks('./error.njk', viewData, {viewPath: viewPath});
   try {
     let ret = await nunjucks.render();
   }catch(e) {
     t.pass();
   }
 });
-
-

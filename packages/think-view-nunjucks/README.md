@@ -54,7 +54,7 @@ exports.view = {
   }
 }
 ```
-you can find all nunjucks support options by https://mozilla.github.io/nunjucks/api.html#configure
+you can find all nunjucks support options at https://mozilla.github.io/nunjucks/api.html#configure
 
 ### beforeRender
 
@@ -72,4 +72,4 @@ exports.view = {
   }
 }
 ```
-you can find all APIs in `env` by https://mozilla.github.io/nunjucks/api.html#environment
+you can find all APIs in `env` at https://mozilla.github.io/nunjucks/api.html#environment
