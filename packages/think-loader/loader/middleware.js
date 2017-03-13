@@ -2,7 +2,7 @@ const path = require('path');
 const helper = require('think-helper');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
-var pathToRegexp = require('path-to-regexp');
+const pathToRegexp = require('path-to-regexp');
 
 class Middleware {
   interopRequire(path) {
