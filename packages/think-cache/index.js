@@ -9,7 +9,7 @@ const thinkAwait = require('think-await');
  * @param {undefined|null|Function|Mixed} value 
  * @param {String|Object} config 
  */
-function cacheManage(name, value, config){
+function thinkCache(name, value, config){
   assert(name && helper.isString(name), 'cache.name must be a string');
   config = helper.parseAdapterConfig(this.config('cache'), config);
   const handle = config.handle;
@@ -53,12 +53,12 @@ function cacheManage(name, value, config){
  */
 module.exports = {
   controller: {
-    cache: cacheManage
+    cache: thinkCache
   },
   context: {
-    cache: cacheManage
+    cache: thinkCache
   },
   think: {
-    cache: cacheManage
+    cache: thinkCache
   }
 }
