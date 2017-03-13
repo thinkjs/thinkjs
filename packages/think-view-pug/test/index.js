@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-13 10:55:10
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 13:53:56
+* @Last Modified time: 2017-03-13 14:56:32
 */
 
 import test from 'ava';
@@ -12,25 +12,26 @@ import fs from 'fs';
 import pugOrigin from 'pug';
 import Pug from '../index.js';
 
-// test case
-test.serial('pug render', async t => {
-  let options = {
-    cache: false,
-    debug: false
-  };
+let defaultOptions = {
+  cache: false,
+  debug: false
+};
+let viewBasePath = path.join(__dirname, 'views');
+let viewData = {name: 'thinkjs'};
 
-  let viewData = {name: 'Thinkjs'};
-  let originOut = pugOrigin.renderFile(path.join(__dirname, '/views/home.jade'), helper.extend({}, options, viewData));
-  let pugInst = new Pug('home.jade', viewData, {viewPath: path.join(__dirname, '/views')});
+
+test.serial('pug render', async t => {
+  let config = helper.extend({}, defaultOptions, viewData, {viewPath: viewBasePath});
+  let originOut = pugOrigin.renderFile(path.join(__dirname, '/views/home.jade'), config);
+  let pugInst = new Pug('home.jade', viewData, config);
 
   t.is(originOut, await pugInst.render());
 });
 
 test.serial('pug render err when file is not exsit', async t => {
-  let viewData = {name: 'Thinkjs'};
-
+  let config = helper.extend({}, defaultOptions, viewData, {viewPath: viewBasePath});
   try {
-    let pugInst = new Pug('noExit.jade', viewData, {viewPath: path.join(__dirname, '/views')});
+    let pugInst = new Pug('noExit.jade', viewData, config);
     await pugInst.render()
   }
   catch(e) {
@@ -39,10 +40,9 @@ test.serial('pug render err when file is not exsit', async t => {
 });
 
 test.serial('pug render with absolute path', async t => {
-  let viewData = {name: 'Thinkjs'};
-
+  let config = helper.extend({}, defaultOptions, viewData, {viewPath: viewBasePath});
   try {
-    let pugInst = new Pug(path.join(__dirname, '/views/home.jade'), viewData, {viewPath: path.join(__dirname, '/views')});
+    let pugInst = new Pug(path.join(__dirname, '/views/home.jade'), viewData, config);
     await pugInst.render()
   }
   catch(e) {
@@ -51,36 +51,21 @@ test.serial('pug render with absolute path', async t => {
 });
 
 test.serial('pug render with beforeRender', async t => {
-  let viewData = {name: 'Thinkjs'};
   let filterFn = (text, options) => {
     if (options.addStart) text = 'Start\n' + text;
     if (options.addEnd)   text = text + '\nEnd';
     return text;
   };
-
-  let options = {
-    cache: false,
-    debug: false,
-    viewPath: path.join(__dirname, '/views'),
+  let config = helper.extend({}, defaultOptions, {
+    viewPath: viewBasePath,
     beforeRender: (pug, config) => {
       pug.filters['my-own-filter'] = filterFn;
     }
-  };
-  let pugInst = new Pug(
-      path.join(__dirname, '/views/filter.jade'), // viewFile
-      {}, // viewData
-      helper.extend({}, options, {
-        beforeRender: (pug, config) => {
-          pug.filters['my-own-filter'] = filterFn;
-        }
-      })
-  );
-
+  });
+  let pugInst = new Pug(path.join(viewBasePath, '/filter.jade'), viewData, config);
   pugOrigin.filters['my-own-filter'] = filterFn;
-  let originOut = pugOrigin.renderFile(
-    path.join(__dirname, '/views/filter.jade'),
-    helper.extend({}, options)
-  );
+  let originOut = pugOrigin.renderFile( path.join(viewBasePath, '/filter.jade'), helper.extend({}, defaultOptions, {viewPath: viewBasePath}));
+
   t.is(originOut, await pugInst.render());
 });
 
