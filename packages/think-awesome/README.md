@@ -9,6 +9,8 @@ awesome projects for `ThinkJS 3.x`
 ## adapters
 
 * [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) use nunjucks to render view files
+* [think-view-handlebars](https://github.com/thinkjs/think-view-handlebars) use handlebars to render view files
+
 
 ## extends
 
