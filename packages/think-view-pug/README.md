@@ -20,7 +20,9 @@ exports.view = {
   type: 'pug',
   pug: {
     handle: pug,
-    beforeRender: (env, pug, config) => {}
+    beforeRender: (pug, config) => {
+      // todo
+    }
   }
 }
 ```
@@ -29,10 +31,8 @@ exports.view = {
 
 ```js
 const defaultOptions = {
-  autoescape: true,
-  watch: false,
-  noCache: false,
-  throwOnUndefined: false
+  cache: false,
+  debug: false
 };
 ```
 change options:
@@ -42,34 +42,33 @@ exports.view = {
   type: 'pug',
   pug: {
     handle: pug,
-    tags: {
-      blockStart: '<%',
-      blockEnd: '%>',
-      variableStart: '<$',
-      variableEnd: '$>',
-      commentStart: '<#',
-      commentEnd: '#>'
-    },
-    beforeRender: (env, pug, config) => {}
+    cache: true,
+    self: true,
+    beforeRender: (pug, config) => {
+      // todo
+    }
   }
 }
 ```
-you can find all pug support options by https://mozilla.github.io/pug/api.html#configure
+you can find all pug support options at https://pugjs.org/api/reference.html
 
 ### beforeRender
 
-you can use `beforeRender` method to set some env:
+you can use `beforeRender` method to enhance pug:
 
 ```js
 exports.view = {
   type: 'pug',
   pug: {
     handle: pug,
-    beforeRender: (env, pug, config) => {
-      env.addGlobal('think', think);
-      env.addGlobal('JSON', JSON);
+    beforeRender: (pug, config) => {
+      pug.filters['my-own-filter'] = (text, options) => {
+        if (options.addStart) text = 'Start\n' + text;
+        if (options.addEnd)   text = text + '\nEnd';
+        return text;
+      };
     }
   }
 }
 ```
-you can find all APIs in `env` by https://mozilla.github.io/pug/api.html#environment
+you can find all APIs at https://pugjs.org/api/reference.html

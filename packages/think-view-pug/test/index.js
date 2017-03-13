@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-13 10:55:10
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 12:27:44
+* @Last Modified time: 2017-03-13 13:53:56
 */
 
 import test from 'ava';
@@ -67,7 +67,7 @@ test.serial('pug render with beforeRender', async t => {
     }
   };
   let pugInst = new Pug(
-      path.join(__dirname, '/views/filter.jade'),
+      path.join(__dirname, '/views/filter.jade'), // viewFile
       {}, // viewData
       helper.extend({}, options, {
         beforeRender: (pug, config) => {
