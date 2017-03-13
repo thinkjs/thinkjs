@@ -1,0 +1,48 @@
+{
+  "name": "think-view-pug",
+  "version": "1.0.0",
+  "description": "think-view-pug for ThinkJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-view-pug.git"
+  },
+  "keywords": [
+    "think-view-pug"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-view-pug/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-view-pug#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~3.15.0",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "pug": "~2.0.0-beta11",
+    "think-helper": "~1.0.0"
+  }
+}
