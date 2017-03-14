@@ -6,7 +6,7 @@ const thinkAwait = require('think-await');
  * cache manage
  * can not be defined a arrow function, because has `this` in it.
  * @param {String} name 
- * @param {undefined|null|Function|Mixed} value 
+ * @param {Mixed} value 
  * @param {String|Object} config 
  */
 function thinkCache(name, value, config){
