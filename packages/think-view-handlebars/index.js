@@ -2,13 +2,14 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-14 09:44:28
+* @Last Modified time: 2017-03-14 10:23:12
 */
 const helper = require('think-helper');
 const path = require('path');
 const handlebars = require('handlebars');
 const fs = require('fs');
 const assert = require('assert');
+const fsReadfile = helper.promisify(fs.readFile, fs);
 let cacheFn = {};
 
 /**
@@ -40,17 +41,6 @@ class Handlebars {
     }
 
     /**
-     * get file content by absolute file path
-     */
-    _getContent(absolutePath) {
-      return new Promise((resolve, reject) => {
-        fs.readFile(absolutePath, 'utf8', (err, data) => {
-          err ? reject(err) : resolve(data);
-        });
-      });
-    }
-
-    /**
      * render view file
      */
     render() {
@@ -71,17 +61,12 @@ class Handlebars {
         return Promise.resolve(cacheFn[absolutePath](this.viewData));
       }
 
-      return new Promise((resolve, reject) => {
-        this._getContent(absolutePath).then((data) => {
-          let compileFn = handlebars.compile(data, this.config);
-          let output = compileFn(this.viewData);
-          if(this.config.cache) {
-            cacheFn[absolutePath] = compileFn;
-          }
-          resolve(output);
-        }, (err) => {
-          reject(err);
-        });
+      return  fsReadfile(absolutePath, 'utf8').then((data) => {
+        let compileFn = handlebars.compile(data, this.config);
+        if(this.config.cache) {
+          cacheFn[absolutePath] = compileFn;
+        }
+        return compileFn(this.viewData);
       });
     }
 }
