@@ -143,13 +143,9 @@ test('assert when router config is object, each name should be an object and has
   createTest(
   ['admin', 'user'],
   [true, true, true, true],
-  [{user: {match: /^usermatch(?:\/(?=$))?$/i}, admin: {match: /^usermatch(?:\/(?=$))?$/i}}, 'userFile', 'adminFile'],
-  undefined, // there are asserts, ignore
-  undefined, // there are asserts, ignore
-  [
-    false, `common/config/router: user.match must be set`,
-    false, `common/config/router: admin.match must be set`
-  ]
+  [{user: {}, admin: {match: /^usermatch(?:\/(?=$))?$/i}}, 'userFile', 'adminFile'],
+  ['userFile', 'adminFile'], // there are asserts, ignore
+  {admin: {match: /^usermatch(?:\/(?=$))?$/i, rules: 'formatRouter result'}, user: {rules: 'formatRouter result'}},
 ));
 
 

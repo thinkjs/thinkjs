@@ -110,9 +110,11 @@ const RouterLoader = {
       debug('load module router');
       for(let name in commonRouter){
         let match = commonRouter[name].match;
-        assert(!match, `common/config/router: ${name}.match must be set`);
         let moduleRouterFile = path.join(appPath, name, 'config/router.js');
-        commonRouter[name].match = pathToRegexp(match);
+        //match is not required
+        if(match){
+          commonRouter[name].match = pathToRegexp(match);
+        }
         if(!helper.isFile(moduleRouterFile)){
           commonRouter[name].rules = [];
           continue;
