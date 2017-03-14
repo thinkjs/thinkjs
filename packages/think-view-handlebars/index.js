@@ -2,13 +2,14 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 18:04:43
+* @Last Modified time: 2017-03-14 09:44:28
 */
 const helper = require('think-helper');
 const path = require('path');
 const handlebars = require('handlebars');
 const fs = require('fs');
 const assert = require('assert');
+let cacheFn = {};
 
 /**
  * handlebars default render options
@@ -19,7 +20,7 @@ const defaultOptions = {
   strict: false,
   preventIndent: true,
   ignoreStandalone: true,
-  cache: false
+  cache: false // disable template cache by default
 };
 
 /**
@@ -36,7 +37,6 @@ class Handlebars {
       this.viewFile = viewFile;
       this.viewData = viewData;
       this.config = helper.extend({}, defaultOptions, config);
-      this.cacheFn = {};
     }
 
     /**
@@ -67,8 +67,8 @@ class Handlebars {
         absolutePath = path.join(viewPath, absolutePath);
       }
 
-      if(this.config.cache && this.cacheFn[absolutePath]) {
-        return Promise.resolve(this.cacheFn[absolutePath](this.viewData));
+      if(this.config.cache && cacheFn[absolutePath]) {
+        return Promise.resolve(cacheFn[absolutePath](this.viewData));
       }
 
       return new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ class Handlebars {
           let compileFn = handlebars.compile(data, this.config);
           let output = compileFn(this.viewData);
           if(this.config.cache) {
-            this.cacheFn[absolutePath] = compileFn;
+            cacheFn[absolutePath] = compileFn;
           }
           resolve(output);
         }, (err) => {
