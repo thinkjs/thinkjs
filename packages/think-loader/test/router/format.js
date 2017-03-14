@@ -21,7 +21,8 @@ test('formatRouter will call router function and return rules', t=>{
   var rules = formatRouter(router);
   t.deepEqual(rules, [{
     method: 'get',
-    match: 'match',
-    path: 'path'
+    match: /^match(?:\/(?=$))?$/i,
+    path: 'path',
+    query: []
   }]);
 });

@@ -41,7 +41,7 @@ const methods = [
   'connect',
   'verb',
   'redirect',
-  'resource',
+  'rest',
   'del'
 ];
 
@@ -55,13 +55,13 @@ test('Router object methods', t=>{
   methods.forEach((m, i)=>{
 
     instance[m]('match', 'path');
-    if(['verb', 'redirect', 'resource', 'del'].indexOf(m) === -1) {
+    if(['verb', 'redirect', 'rest', 'del'].indexOf(m) === -1) {
       expectRules.push({match: 'match', method: m, path: 'path'});
     }
   })
   expectRules.push({match: 'match', path: 'path'});
   expectRules.push({method: 'redirect', statusCode: 302, match: 'match', path: 'path'});
-  expectRules.push({method: 'resource', match: 'match', path: 'path'});
+  expectRules.push({method: 'rest', match: 'match', path: 'path'});
   expectRules.push({method: 'delete', match: 'match', path: 'path'});
   t.deepEqual(instance.rules, expectRules);
 });

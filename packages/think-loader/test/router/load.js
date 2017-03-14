@@ -117,38 +117,38 @@ test('test2', createTest(
 test('test3', createTest(
   ['admin', 'user'],
   [true, false, true, true],
-  [{user: {match: 'usermatch'}, admin: {match: 'adminmatch'}}, undefined, 'adminFileContent'],
+  [{user: {match: /^usermatch(?:\/(?=$))?$/i, rules: []}, admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: []}}, undefined, 'adminFileContent'],
   ['adminFileContent'],
-  {admin: {match: 'adminmatch', rules: 'formatRouter result'}, user: {match: 'usermatch'}}
+  {admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: 'formatRouter result'}, user: {match: /^usermatch(?:\/(?=$))?$/i, rules: []}}
 ));
 
 test('test4', createTest(
   ['admin', 'user'],
   [true, false, false, true],
-  [{user: {match: 'usermatch'}, admin: {match: 'adminmatch'}}, undefined, undefined],
+  [{user: {match: /^usermatch(?:\/(?=$))?$/i, rules: []}, admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: []}}, undefined, undefined],
   [],
-  {admin: {match: 'adminmatch'}, user: {match: 'usermatch'}}
+  {admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: []}, user: {match: /^usermatch(?:\/(?=$))?$/i, rules: []}}
 ));
 
 
 test('test5', createTest(
   ['admin', 'user'],
   [true, true, true, true],
-  [{user: {match: 'usermatch'}, admin: {match: 'adminmatch'}}, 'userFile', 'adminFile'],
+  [{user: {match: /^usermatch(?:\/(?=$))?$/i, rules: []}, admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: []}}, 'userFile', 'adminFile'],
   ['userFile', 'adminFile'],
-  {admin: {match: 'adminmatch', rules: 'formatRouter result'}, user: {match: 'usermatch', rules: 'formatRouter result'}}
+  {admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: 'formatRouter result'}, user: {match: /^usermatch(?:\/(?=$))?$/i, rules: 'formatRouter result'}}
 ));
 
 test('assert when router config is object, each name should be an object and has match filed',
   createTest(
   ['admin', 'user'],
   [true, true, true, true],
-  [{user: {}, admin: {}}, 'userFile', 'adminFile'],
+  [{user: {match: /^usermatch(?:\/(?=$))?$/i}, admin: {match: /^usermatch(?:\/(?=$))?$/i}}, 'userFile', 'adminFile'],
   undefined, // there are asserts, ignore
   undefined, // there are asserts, ignore
   [
-    undefined, `common/config/router: user.match must be set`,
-    undefined, `common/config/router: admin.match must be set`
+    false, `common/config/router: user.match must be set`,
+    false, `common/config/router: admin.match must be set`
   ]
 ));
 

@@ -4,7 +4,7 @@ const methods = require('methods');
 const path = require('path');
 const assert = require('assert');
 const interopRequire = require('./util.js').interopRequire;
-
+const pathToRegexp = require('path-to-regexp');
 
 /**
  * Router class
@@ -28,14 +28,14 @@ const Router = class {
     return this;
   }
   /**
-   * resource
+   * REST resource
    */
-  resource(match, path){
-    this.rules.push({match, path, method: 'resource'});
+  rest(match, path){
+    this.rules.push({match, path, method: 'rest'});
     return this;
   }
   /**
-   * delete method
+   * delete method, alias delete
    */
   del(match, path){
     this.rules.push({match, path, method: 'delete'});
@@ -68,9 +68,15 @@ const RouterLoader = {
     if(helper.isFunction(router)){
       let routerInstance = new RouterLoader.Router();
       router(routerInstance);
-      return routerInstance.rules;
+      router = routerInstance.rules;
     }
-    return router;
+    assert(helper.isArray(router), 'router must be an array');
+    return router.map(item => {
+      item.query = [];
+      //convert string match to RegExp
+      item.match = pathToRegexp(item.match, item.query);
+      return item;
+    });
   },
 
   /**
@@ -89,6 +95,7 @@ const RouterLoader = {
         return formatRouter(commonRouter);
       }
       /**
+       * rules in multi module
        * rule = {
        *    home: {
        *      match: '',
@@ -102,9 +109,12 @@ const RouterLoader = {
        */
       debug('load module router');
       for(let name in commonRouter){
-        assert(commonRouter[name].match, `common/config/router: ${name}.match must be set`);
+        let match = commonRouter[name].match;
+        assert(!match, `common/config/router: ${name}.match must be set`);
         let moduleRouterFile = path.join(appPath, name, 'config/router.js');
+        commonRouter[name].match = pathToRegexp(match);
         if(!helper.isFile(moduleRouterFile)){
+          commonRouter[name].rules = [];
           continue;
         }
         let moduleRouter = interopRequire(moduleRouterFile);
