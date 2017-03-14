@@ -1,7 +1,7 @@
 {
   "name": "think-view-pug",
-  "version": "1.0.0",
-  "description": "think-view-pug for ThinkJS",
+  "version": "1.0.1",
+  "description": "Pug view adapter for ThinkJS",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
