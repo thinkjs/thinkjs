@@ -7,7 +7,7 @@ awesome projects for `ThinkJS 3.x`
 * [think-router](https://github.com/thinkjs/think-router) Router Parser
 
 ## adapters
-* [think-view-pug](https://github.com/thinkjs/think-view-pug) use pug to render view files
+* [think-view-pug](https://github.com/thinkjs/think-view-pug) use pug to render view files (pug is rename from jade)
 * [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) use nunjucks to render view files
 * [think-view-handlebars](https://github.com/thinkjs/think-view-handlebars) use handlebars to render view files
 
