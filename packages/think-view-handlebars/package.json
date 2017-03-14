@@ -1,7 +1,7 @@
 {
   "name": "think-view-handlebars",
-  "version": "1.0.1",
-  "description": "think-view-handlebars for ThinkJS",
+  "version": "1.0.2",
+  "description": "Handlebars view adapter for ThinkJS",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
