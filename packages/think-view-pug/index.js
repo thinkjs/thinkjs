@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-14 10:30:18
+* @Last Modified time: 2017-03-14 14:20:41
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -30,8 +30,7 @@ class Pug {
    */
   constructor(viewFile, viewData, config) {
     this.viewFile = viewFile;
-    this.viewData = viewData;
-    this.config = helper.extend({}, defaultOptions, config);
+    this.config = helper.extend({}, defaultOptions, config, viewData);
   }
 
   /**
@@ -53,7 +52,7 @@ class Pug {
     }
 
     let fn = helper.promisify(pug.renderFile, pug);
-    return fn(absolutePath, helper.extend({}, this.config, this.viewData));
+    return fn(absolutePath, this.config);
   }
 }
 
