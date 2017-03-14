@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 12:27:35
+* @Last Modified time: 2017-03-14 10:30:18
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -51,11 +51,9 @@ class Pug {
     if(!path.isAbsolute(absolutePath)){
       absolutePath = path.join(viewPath, absolutePath);
     }
-    return new Promise((resolve, reject) => {
-      pug.renderFile(absolutePath, helper.extend({}, this.config, this.viewData), (err, data) => {
-        err ? reject(err) : resolve(data);
-      })
-    });
+
+    let fn = helper.promisify(pug.renderFile, pug);
+    return fn(absolutePath, helper.extend({}, this.config, this.viewData));
   }
 }
 
