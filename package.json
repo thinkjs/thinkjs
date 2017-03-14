@@ -6,6 +6,9 @@
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
+  "publishConfig": {
+    "tag": "next"
+  },
   "scripts": {
     "test": "eslint lib/ && nyc ava test/",
     "coverage": "nyc report --reporter=html"
@@ -36,13 +39,15 @@
   "dependencies": {
     "bluebird": "3.3.5",
     "debug": "^2.6.1",
+    "depd": "^1.1.0",
     "koa": "^2.0.0-alpha.8",
     "koa-bodyparser": "^3.2.0",
-    "think-helper": "^1.0.0",
-    "think-logger3": "^1.0.0",
-    "think-config": "^1.0.0",
-    "think-loader": "^1.0.0",
+    "think-cache": "^1.0.0",
     "think-cluster": "^1.0.0",
+    "think-config": "^1.0.0",
+    "think-helper": "^1.0.0",
+    "think-loader": "^1.0.0",
+    "think-logger3": "^1.0.0",
     "think-pm2": "^1.0.0"
   },
   "devDependencies": {
