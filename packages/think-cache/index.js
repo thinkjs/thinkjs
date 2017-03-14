@@ -1,5 +1,5 @@
 const assert = require('assert');
-const helper = require('think-helpers');
+const helper = require('think-helper');
 const thinkAwait = require('think-await');
 
 /**
