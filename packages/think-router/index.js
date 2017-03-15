@@ -5,15 +5,15 @@ const helper = require('think-helper');
  * default options
  */
 const defaultOptions = {
-  defaultModule: 'home',
-  defaultController: 'index',
-  defaultAction: 'index',
+  defaultModule: 'home', //default module name, is enable in multi module mode
+  defaultController: 'index', //default controller name
+  defaultAction: 'index', //default action name
   prefix: [], // url prefix
   suffix: ['.html'], // url suffix
   enableDefaultRouter: true,
-  subdomainOffset: 2,
+  subdomainOffset: 2, 
   subdomain: {}, //subdomain
-  denyModules: [] //enable in multi module
+  denyModules: [] //deny module, enable in multi module mode
 }
 
 /**
