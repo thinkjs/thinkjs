@@ -1,6 +1,6 @@
 {
   "name": "think-cache",
-  "description": "cache for ThinkJS",
+  "description": "Cache for ThinkJS",
   "version": "1.0.0",
   "author": {
     "name": "welefen",
@@ -8,12 +8,7 @@
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
-  },
-  "ava": {
-    "require": [
-      "babel-core/register"
-    ]
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
   },
   "contributors": [
     {
@@ -23,8 +18,8 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "think-helper": "^1.0.0",
-    "think-await": "^1.0.0"
+    "think-await": "^1.0.0",
+    "think-helper": "~1.0.0"
   },
   "devDependencies": {
     "ava": "^0.18.0",
