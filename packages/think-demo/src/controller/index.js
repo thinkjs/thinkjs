@@ -3,7 +3,10 @@ export default class extends think.Controller {
     //console.log('__before')
   }
   async indexAction(){
-    this.assign('title', 'test')
+    let data = await Promise.resolve(333);
+    let {a, b, ...c} = data;
+    let x = {};
+    let z = { x, ...data };
     //console.log('indexAction')
     await this.display();
   }

@@ -1,7 +1,8 @@
 import index from '../index.js';
 
 module.exports = class extends index {
-    indexAction(){
-        this.ctx.body = 'fasdfasd'
-    }
+  indexAction(){
+    let data = Promise.resolve(333);
+    this.ctx.body = data;
+  }
 }

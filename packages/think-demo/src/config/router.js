@@ -1,3 +1,5 @@
 module.exports = router => {
-  router.redirect('/test', 'http://www.welefen.com/');
+  //router.get('/test/:name', 'index/test');
+  router.get(/^\/test\/(\w+)/, 'index/test?id=:1');
+  //router.redirect('/eee', 'http://www.welefen.com/');
 }
