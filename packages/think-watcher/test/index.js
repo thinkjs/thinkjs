@@ -281,7 +281,31 @@ test('getChangedFiles function -- delete extra files in diffPath', t => {
   t.deepEqual(homeFiles, ['home1.js']);
 });
 
+test('getChangedFiles function -- get empty file if mtime of diff file is later then src file', async (t)=>{
+  function sleep(ms = 0) {
+    return new Promise(r => setTimeout(r, ms));
+  }
 
+  const Watcher = getWatcher();
+  let [admin, diffAdmin] = [
+    path.resolve(__dirname, 'tmp', 'admin'),
+    path.resolve(__dirname, 'tmp', 'diff-admin'),
+  ];
+
+  createFile(admin, 'admin1.js');
+  // ensure diff file's mtime is later then src file.
+  await sleep(1000);
+  createFile(diffAdmin,'admin1.js');
+
+  let options = {
+    srcPath: admin,
+    diffPath: diffAdmin
+  };
+
+  let watcher = new Watcher(options, defaultCallback);
+  let files = watcher.getChangedFiles();
+  t.deepEqual(files,[]);
+});
 
 
 
