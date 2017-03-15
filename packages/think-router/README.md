@@ -34,3 +34,13 @@ support options:
   denyModules: [] //deny module, enable in multi module mode
 }
 ```
+
+## Router config
+
+config file `src/config/router.js`
+
+```js
+module.exports = router => {
+  router.get('/demo', 'index/demo');
+}
+```
