@@ -37,21 +37,11 @@ function mockAssert(assertCallParams = []) {
   });
 }
 
-function removeFiles(dirPath) {
-  let files = helper.getdirFiles(dirPath);
-  files.forEach(file => {
-    let filepath = path.join(dirPath, file);
-    if(helper.isFile(filepath)){
-      fs.unlinkSync(filepath);
-    }
-  })
-}
-
-function createFile(dir,filename) {
-  if(!fs.existsSync(dir)){
+function createFile(dir, filename) {
+  if (!fs.existsSync(dir)) {
     mkdirp.sync(dir);
   }
-  let filePath = path.join(dir,filename);
+  let filePath = path.join(dir, filename);
   fs.openSync(filePath, 'w');
 }
 
@@ -62,15 +52,6 @@ test.afterEach.always(_ => {
   const tmp = path.resolve(__dirname, 'tmp');
   rimraf.sync(tmp);
 });
-
-
-// param option fields:
-// const options = {
-//   srcPath,    // array , string
-//   diffPath,   // array , string
-//   filter,     // function
-//   allowExts,  // array   **?
-// };
 
 test('constructor function -- cb not a function', t => {
   let assertCallParams = [];
@@ -308,6 +289,36 @@ test('getChangedFiles function -- get empty file if mtime of diff file is later 
 });
 
 
+test('getChangedFiles function -- watch file change', async(t) => {
+  function sleep(ms = 0) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+  const Watcher = getWatcher();
+  let [admin] = [
+    path.resolve(__dirname, 'tmp1', 'admin'),
+  ];
+  createFile(admin, 'admin1.js');
+  let options = {
+    srcPath: admin,
+  };
+  let fileChange = false;
+  let cb = () => {
+    fileChange = true;
+  };
+  let watcher = new Watcher(options, cb);
+  watcher.watch();
+
+  await sleep(1000);
+
+  fs.writeFile(path.resolve(__dirname, 'tmp1', 'admin','admin1.js'),"console.log('Hello thinkjs!')");
+
+  await sleep(1000);
+
+  t.is(fileChange,true);
+
+  const tmp = path.resolve(__dirname, 'tmp1');
+  rimraf.sync(tmp);
+});
 
 
 
