@@ -1,0 +1,31 @@
+{
+  "name": "think-trace",
+  "version": "0.0.1",
+  "description": "Error trace for thinkjs 3.x",
+  "main": "./src",
+  "dependencies": {
+    "stack-trace": "^0.0.9",
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-trace.git"
+  },
+  "keywords": [
+    "stack",
+    "trace",
+    "node",
+    "thinkjs",
+    "error"
+  ],
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-trace/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-trace#readme"
+}
