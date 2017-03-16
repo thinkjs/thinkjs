@@ -30,7 +30,16 @@ const ExtendLoader = {
       if(!ret[type]){
         ret[type] = {};
       }
-      ret[type] = Object.assign(ret[type], ext);
+      for(let name in ext){
+         let descriptor = Object.getOwnPropertyDescriptor(ext, name);
+         if(descriptor.value){
+           ret[type][name] = descriptor.value;
+         }else if(descriptor.get){
+           ret[type].__defineGetter__(name, descriptor.get);
+         }else if(descriptor.set){
+           ret[type].__defineSetter__(name, descriptor.set);
+         }
+      }
     }
     //system extend
     allowExtends.forEach(type => {
