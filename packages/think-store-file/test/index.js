@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 16:20:07
+* @Last Modified time: 2017-03-16 16:34:19
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -22,7 +22,7 @@ function getCacheFilePath(key, config) {
   return path.join(__dirname, 'cache', cacheFileDir, helper.md5(key)) + config.file_ext;
 }
 
-test.serial.cb.beforeEach(t => {
+test.serial.cb.afterEach(t => {
   let cachePath = path.join(__dirname, 'cache');
   helper.rmdir(cachePath, false).then(() => {
     t.end();
