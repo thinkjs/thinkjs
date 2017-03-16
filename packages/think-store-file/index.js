@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 15:50:18
+* @Last Modified time: 2017-03-16 20:09:42
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -15,12 +15,12 @@ const FileStore = require('./store');
  */
 class FileCache {
   constructor(config) {
-    assert(config.dir_path && helper.isString(config.dir_path), 'config.dir_path must be set');
+    assert(config.cachePath && helper.isString(config.cachePath), 'config.cachePath must be set');
     this.store = new FileStore(config);
     this.timeout = config.timeout;
-    this.file_ext = config.file_ext;
-    this.dir_path = config.dir_path;
-    this.path_depth = config.path_depth || 1;
+    this.fileExt = config.fileExt;
+    this.cachePath = config.cachePath;
+    this.pathDepth = config.pathDepth || 1;
     setImmediate(this.gc.bind(this));
   }
 
@@ -31,8 +31,8 @@ class FileCache {
    */
   _getFilePath(key) {
     key = helper.md5(key);
-    let dir = key.slice(0, this.path_depth).split('').join(path.sep);
-    return path.join(dir, key) + this.file_ext;
+    let dir = key.slice(0, this.pathDepth).split('').join(path.sep);
+    return path.join(dir, key) + this.fileExt;
   }
 
   /**
@@ -90,8 +90,8 @@ class FileCache {
    */
   gc() {
     let now = Date.now();
-    helper.getdirFiles(this.dir_path).forEach(file => {
-      let filePath = path.join(this.dir_path, file);
+    helper.getdirFiles(this.cachePath).forEach(file => {
+      let filePath = path.join(this.cachePath, file);
       fs.readFile(filePath, 'utf8', (err, content) => {
         if(content) {
           try{

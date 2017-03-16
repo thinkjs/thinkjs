@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 17:41:44
+* @Last Modified time: 2017-03-16 20:10:31
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -12,14 +12,14 @@ import FileCache from '../index';
 
 let myOptions = {
   timeout: 3600,
-  file_ext: '.txt',
-  dir_path: path.join(__dirname, 'cache'),
-  path_depth: 1
+  fileExt: '.txt',
+  cachePath: path.join(__dirname, 'cache'),
+  pathDepth: 1
 };
 
 function getCacheFilePath(key, config) {
-  let cacheFileDir = helper.md5(key).slice(0, config.path_depth).split('').join(path.sep);
-  return path.join(__dirname, 'cache', cacheFileDir, helper.md5(key)) + config.file_ext;
+  let cacheFileDir = helper.md5(key).slice(0, config.pathDepth).split('').join(path.sep);
+  return path.join(__dirname, 'cache', cacheFileDir, helper.md5(key)) + config.fileExt;
 }
 
 test.serial.cb.afterEach(t => {
@@ -41,9 +41,9 @@ test.serial('set key & get key & del key', async t => {
   t.true(ret1 === 'thinkjs' && ret2 === undefined);
 });
 
-test.serial('set key & get key & del key without path_depth', async t => {
+test.serial('set key & get key & del key without pathDepth', async t => {
   let key = 'name';
-  let config = helper.extend({}, myOptions, {path_depth: null});
+  let config = helper.extend({}, myOptions, {pathDepth: null});
   let cacheInst = new FileCache(config);
   await cacheInst.set(key, 'thinkjs');
   let ret1 = await cacheInst.get(key);

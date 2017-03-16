@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 11:03:05
+* @Last Modified time: 2017-03-16 20:11:06
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -13,9 +13,9 @@ const fs = require('fs');
  */
 class FileStore {
   constructor(config) {
-    this.dir_path = config.dir_path;
+    this.storePath = config.cachePath;
     if(!helper.isDirectory) {
-      helper.mkdir(this.dir_path);
+      helper.mkdir(this.storePath);
     }
   }
 
@@ -25,7 +25,7 @@ class FileStore {
    * @return {String}     [description]
    */
   _getFilePath(key) {
-    return path.join(this.dir_path, key);
+    return path.join(this.storePath, key);
   }
 
   /**
