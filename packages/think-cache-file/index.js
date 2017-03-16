@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 14:54:51
+* @Last Modified time: 2017-03-16 15:50:18
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -95,6 +95,7 @@ class FileCache {
       fs.readFile(filePath, 'utf8', (err, content) => {
         if(content) {
           try{
+            content = JSON.parse(content);
             if(now > content.expire){
               fs.unlink(filePath, () => {});
             }
