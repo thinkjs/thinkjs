@@ -13,7 +13,10 @@ const defaultOptions = {
   onUnhandledRejection: () => {},
   processKillTimeout: 10 * 1000 //10s
 };
-
+/**
+ * think process id
+ */
+let thinkProcessId = 1;
 /**
  * Graceful class
  */
@@ -33,14 +36,16 @@ module.exports = class Graceful {
   /**
    * fork worker
    */
-  forkWorker(){
-    const worker = cluster.fork();
+  forkWorker(env = {}){
+    env.THINK_PROCESS_ID = thinkProcessId++;
+    const worker = cluster.fork(env);
     worker.on('message', message => {
       if(message === 'think-graceful-disconnect'){
         this.options.logger(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
-        this.forkWorker();
+        this.forkWorker(env);
       }
     });
+    return worker;
   }
   /**
    * disable keep alive
@@ -155,23 +160,52 @@ module.exports = class Graceful {
     let workers = this.options.workers || cpus;
     let index = 0;
     while(index++ < workers){
-      this.forkWorker();
+      this.forkWorker({
+        THINK_FIRST_WORKER: index === 1 ? 1 : 0,
+        THINK_WORKERS: workers
+      });
     }
     if(this.options.reloadSignal){
       this.captureReloadSignal();
     }
   }
   /**
+   * check worker is first
+   */
+  isFirstWorker(){
+    return process.env.THINK_FIRST_WORKER === '1';
+  }
+  /**
    * force reload all workers, in development env
    */
   forceReloadWorkers(){
     assert(cluster.isMaster, 'only invoke in master process');
+    let firstWorker, aliveWorkers = [];
     for(let id in cluster.workers){
       let worker = cluster.workers[id];
-      worker.disconnect();
-      worker.kill();
-      this.forkWorker();
+      if(worker.state === 'disconnected'){
+        continue;
+      }
+      if(!firstWorker){
+        firstWorker = worker;
+      }else{
+        aliveWorkers.push(worker);
+      }
     }
+    const worker = this.forkWorker();
+    //http://man7.org/linux/man-pages/man7/signal.7.html
+    worker.once('listening', () => {
+      if(firstWorker){
+        firstWorker.kill('SIGQUIT');
+        setTimeout(function () {
+          firstWorker.process.kill('SIGQUIT');
+        }, 100);
+      }
+    });
+    aliveWorkers.forEach(worker => {
+      worker.kill('SIGQUIT');
+      this.forkWorker();
+    });
   }
   /**
    * for worker
