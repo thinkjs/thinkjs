@@ -36,15 +36,22 @@ module.exports = class Graceful {
   /**
    * fork worker
    */
-  forkWorker(env = {}){
+  forkWorker(env = {}, callback){
     env.THINK_PROCESS_ID = thinkProcessId++;
     const worker = cluster.fork(env);
-    worker.on('message', message => {
+    worker.once('message', message => {
       if(message === 'think-graceful-disconnect'){
         this.options.logger(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
-        this.forkWorker(env);
+        this.forkWorker(env, () => {
+          worker.send('think-graceful-fork');
+        });
       }
     });
+    if(callback){
+      worker.once('listening', () => {
+        callback();
+      });
+    }
     return worker;
   }
   /**
@@ -63,12 +70,10 @@ module.exports = class Graceful {
     });
   }
   /**
-   * disconnect worker
-   * @param {Boolean} sendSignal 
+   * close server
    */
-  disconnectWorker(sendSignal){
+  closeServer(){
     this.disableKeepAlive();
-
     const logger = this.options.logger;
 
     const killTimeout = this.options.processKillTimeout;
@@ -79,16 +84,11 @@ module.exports = class Graceful {
       }, killTimeout);
       timer.unref();
     }
-    
     const worker = cluster.worker;
     worker.on('disconnect', () => {
       logger(`process exit by disconnect event, pid: ${process.pid}`);
       process.exit(0);
     });
-
-    if(sendSignal){
-      worker.send('think-graceful-disconnect');
-    }
     
     const server = this.options.server;
     logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
@@ -96,6 +96,24 @@ module.exports = class Graceful {
       logger(`server closed, pid: ${process.pid}`);
       worker.disconnect();
     });
+  }
+  /**
+   * disconnect worker
+   * @param {Boolean} sendSignal 
+   */
+  disconnectWorker(sendSignal){
+
+    const worker = cluster.worker;
+    if(sendSignal){
+      worker.send('think-graceful-disconnect');
+      worker.once('message', message => {
+        if(message === 'think-graceful-fork'){
+          this.closeServer();
+        }
+      });
+    }else{
+      this.closeServer();
+    }
   }
   /**
    * uncaughtException
