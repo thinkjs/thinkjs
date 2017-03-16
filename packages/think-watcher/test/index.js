@@ -241,6 +241,31 @@ test('getChangedFiles function -- empty diffPath', t => {
   )
 });
 
+test('getChangedFiles function -- delete error files in diffPath', t => {
+  const Watcher = getWatcher();
+  let [admin, diffAdmin] = [
+    path.resolve(__dirname, 'tmp', 'admin'),
+    path.resolve(__dirname, 'tmp', 'diff-admin'),
+  ];
+
+  createFile(admin, 'admin1.js');
+  createFile(diffAdmin,'diff1.js');
+  createFile(diffAdmin,'admin1.js');
+
+  let options = {
+    srcPath: [admin],
+    diffPath: [diffAdmin]
+  };
+
+  let watcher = new Watcher(options, defaultCallback);
+  watcher.removeDeletedFiles(
+    [ 'admin1.js' ],
+    [ 'admin1.js', 'diff2.js' ],  // create diff1.js,but give an error diff2.js file path
+    diffAdmin
+  );
+  t.deepEqual(helper.getdirFiles(diffAdmin),[ 'admin1.js', 'diff1.js' ]);
+});
+
 test('getChangedFiles function -- delete extra files in diffPath', t => {
   const Watcher = getWatcher();
   let [admin, home, diff] = [
@@ -347,6 +372,8 @@ test('getChangedFiles function -- watch file change', async(t) => {
   const tmp = path.resolve(__dirname, 'tmp1');
   rimraf.sync(tmp);
 });
+
+
 
 
 
