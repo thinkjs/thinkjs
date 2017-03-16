@@ -163,8 +163,8 @@ module.exports = class Graceful {
         }
       });
     }else{
-      process.on('message', msg => {
-        if(msg === 'think-reload-signal'){
+      process.once('message', message => {
+        if(message === 'think-reload-signal'){
           this.disconnectWorker(true);
         }
       });
