@@ -34,9 +34,11 @@ const ExtendLoader = {
          let descriptor = Object.getOwnPropertyDescriptor(ext, name);
          if(descriptor.value){
            ret[type][name] = descriptor.value;
-         }else if(descriptor.get){
+         }
+         if(descriptor.get){
            ret[type].__defineGetter__(name, descriptor.get);
-         }else if(descriptor.set){
+         }
+         if(descriptor.set){
            ret[type].__defineSetter__(name, descriptor.set);
          }
       }
