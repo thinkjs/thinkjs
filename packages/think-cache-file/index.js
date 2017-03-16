@@ -2,12 +2,13 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 20:09:42
+* @Last Modified time: 2017-03-16 20:15:57
 */
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
 const fs = require('fs');
+const thinkAwait = require('think-await');
 const FileStore = require('./store');
 
 /**
@@ -42,21 +43,23 @@ class FileCache {
    */
   get(key) {
     let filePath = this._getFilePath(key);
-    return this.store.get(filePath).then(content => {
-      if(!content) {
-        return;
-      }
-      try{
-        content = JSON.parse(content);
-        if(Date.now() > content.expire){
-          return this.store.delete(filePath);
-        }else{
-          return content.content;
+    return thinkAwait(filePath, () => {
+      return this.store.get(filePath).then(content => {
+        if(!content) {
+          return;
         }
-      }catch(e){
-        return this.store.delete(filePath);
-      }
-    }).catch(() => {});
+        try{
+          content = JSON.parse(content);
+          if(Date.now() > content.expire){
+            return this.store.delete(filePath);
+          }else{
+            return content.content;
+          }
+        }catch(e){
+          return this.store.delete(filePath);
+        }
+      }).catch(() => {});
+    });
   }
 
   /**
