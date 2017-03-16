@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 11:52:22
+* @Last Modified time: 2017-03-16 14:54:51
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -16,7 +16,7 @@ const FileStore = require('./store');
 class FileCache {
   constructor(config) {
     assert(config.dir_path && helper.isString(config.dir_path), 'config.dir_path must be set');
-    this.store = new FileStore(config.dir_path);
+    this.store = new FileStore(config);
     this.timeout = config.timeout;
     this.file_ext = config.file_ext;
     this.dir_path = config.dir_path;
@@ -95,7 +95,6 @@ class FileCache {
       fs.readFile(filePath, 'utf8', (err, content) => {
         if(content) {
           try{
-            let content = JSON.parse(content);
             if(now > content.expire){
               fs.unlink(filePath, () => {});
             }
