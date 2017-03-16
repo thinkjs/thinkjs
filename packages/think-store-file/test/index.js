@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 16:34:19
+* @Last Modified time: 2017-03-16 17:41:44
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -71,8 +71,7 @@ test.serial('gc', async t => {
   let cacheInst2 = new FileCache(config2);
   await cacheInst2.set(key2, 'thinkjs');
 
-  // cacl name1's cache path
-  let cacheExpiredPath = path.join(__dirname, 'cache', helper.md5(key1).slice(0, config1.path_depth).split('').join(path.sep));
+  let cacheExpiredPath = path.dirname(getCacheFilePath(key1, config1));
 
   t.true(helper.getdirFiles(cacheExpiredPath).length === 0);
 });
