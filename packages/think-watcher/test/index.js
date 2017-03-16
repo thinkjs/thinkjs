@@ -288,6 +288,26 @@ test('getChangedFiles function -- delete extra files in diffPath', t => {
 
 test('getChangedFiles function -- delete extra files in diffPath', t => {
   const Watcher = getWatcher();
+  let [admin, diff] = [
+    path.resolve(__dirname, 'tmp','admin'),
+    path.resolve(__dirname, 'tmp','diff'),
+  ];
+
+  createFile(admin, 'admin.js');
+  createFile(diff, 'diff.js');
+
+  let options = {
+    srcPath: [admin],
+    diffPath: [diff]
+  };
+  let watcher = new Watcher(options, defaultCallback);
+  watcher.getChangedFiles();
+  let files = helper.getdirFiles(diff);
+  t.deepEqual(files, []);
+});
+
+test('getChangedFiles function -- delete extra files in diffPath', t => {
+  const Watcher = getWatcher();
   let [admin, home, diffAdmin, diffHome] = [
     path.resolve(__dirname, 'tmp', 'admin'),
     path.resolve(__dirname, 'tmp', 'home'),
@@ -314,6 +334,8 @@ test('getChangedFiles function -- delete extra files in diffPath', t => {
   t.deepEqual(adminFiles, ['admin1.js']);
   t.deepEqual(homeFiles, ['home1.js']);
 });
+
+
 
 test('getChangedFiles function -- get empty file if mtime of diff file is later then src file', async (t)=>{
   function sleep(ms = 0) {
@@ -372,38 +394,3 @@ test('getChangedFiles function -- watch file change', async(t) => {
   const tmp = path.resolve(__dirname, 'tmp1');
   rimraf.sync(tmp);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
