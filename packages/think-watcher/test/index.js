@@ -135,6 +135,34 @@ test('buildOptions function -- Array srcPath,string diffPath,undefined filter,un
   t.deepEqual(helper.isFunction(watcher.options.filter), true);
 });
 
+test('buildOptions function -- options.filter', t => {
+  const Watcher = getWatcher();
+  let options = {
+    srcPath: ['watchFiles1','watchFiles2'],
+    diffPath: 'diffFiles',
+    filter:()=>{}
+  };
+  let watcher = new Watcher(options, defaultCallback);
+  t.deepEqual(watcher.options.srcPath, ['watchFiles1','watchFiles2']);
+  t.deepEqual(watcher.options.diffPath, ['diffFiles']);
+  t.deepEqual(watcher.options.allowExts, defaultOptions.allowExts);
+  t.deepEqual(helper.isFunction(watcher.options.filter), true);
+});
+
+test('buildOptions function -- options.allowExts', t => {
+  const Watcher = getWatcher();
+  let options = {
+    srcPath: ['watchFiles1','watchFiles2'],
+    diffPath: 'diffFiles',
+    allowExts:['js','ts','jsx']
+  };
+  let watcher = new Watcher(options, defaultCallback);
+  t.deepEqual(watcher.options.srcPath, ['watchFiles1','watchFiles2']);
+  t.deepEqual(watcher.options.diffPath, ['diffFiles']);
+  t.deepEqual(watcher.options.allowExts, ['js','ts','jsx']);
+  t.deepEqual(helper.isFunction(watcher.options.filter), true);
+});
+
 test('defaultOptions.filter function -- hidden file', t => {
   const Watcher = getWatcher();
   let watcher = new Watcher('watchFiles',defaultCallback);
