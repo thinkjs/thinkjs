@@ -4,24 +4,35 @@ const helper = require('think-helper');
 const stackTrace = require('stack-trace');
 
 const readFileAsync = helper.promisify(fs.readFile);
-const DEFAULT_TEMPLATE = path.join(__dirname, 'template/error.html');
+const DEFAULT_404_TEMPLATE = path.join(__dirname, 'template/404.html');
+const DEFAULT_500_TEMPLATE = path.join(__dirname, 'template/500.html');
 
 module.exports = class Tracer {
   constructor(opts = {
     ctxLineNumbers: 10, 
-    templateFile: DEFAULT_TEMPLATE
+    err404Template: DEFAULT_404_TEMPLATE,
+    err500Template: DEFAULT_500_TEMPLATE
   }) {
     this.ctxLineNumbers = opts.ctxLineNumbers;
-    this.templateFile = opts.templateFile;
+    this.err404Template = opts.err404Template;
+    this.err500Template = opts.err500Template;
   }
 
   /**
    * get error template file content
    */
   getTemplateContent() {
-    return readFileAsync(this.templateFile, {encoding: 'utf-8'})
-    .catch(() => readFileAsync(DEFAULT_TEMPLATE, {encoding: 'utf-8'}))
-    .then(templateContent => this.templateContent = templateContent);
+    return Promise.all([
+      /** 404 */
+      readFileAsync(this.err404Template, {encoding: 'utf-8'})
+        .catch(() => readFileAsync(DEFAULT_404_TEMPLATE, {encoding: 'utf-8'}))
+        .then(templateContent => this.err404TemplateContent = templateContent),
+        
+      /** 500 */
+      readFileAsync(this.err500Template, {encoding: 'utf-8'})
+        .catch(() => readFileAsync(DEFAULT_500_TEMPLATE, {encoding: 'utf-8'}))
+        .then(templateContent => this.err500TemplateContent = temlateContent)
+    ]);
   }
 
   /**

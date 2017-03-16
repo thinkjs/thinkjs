@@ -4,6 +4,7 @@
   "description": "Error trace for thinkjs 3.x",
   "main": "./src",
   "dependencies": {
+    "source-map-support": "^0.4.12",
     "stack-trace": "^0.0.9",
     "think-helper": "^1.0.0"
   },
