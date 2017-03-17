@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 20:15:57
+* @Last Modified time: 2017-03-17 12:08:52
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -10,6 +10,7 @@ const assert = require('assert');
 const fs = require('fs');
 const thinkAwait = require('think-await');
 const FileStore = require('./store');
+const readFileFn = helper.promisify(fs.readFile, fs);
 
 /**
  * file cache adapter
@@ -22,7 +23,6 @@ class FileCache {
     this.fileExt = config.fileExt;
     this.cachePath = config.cachePath;
     this.pathDepth = config.pathDepth || 1;
-    setImmediate(this.gc.bind(this));
   }
 
   /**
@@ -93,9 +93,9 @@ class FileCache {
    */
   gc() {
     let now = Date.now();
-    helper.getdirFiles(this.cachePath).forEach(file => {
+    return helper.getdirFiles(this.cachePath).map(file => {
       let filePath = path.join(this.cachePath, file);
-      fs.readFile(filePath, 'utf8', (err, content) => {
+      return readFileFn(filePath, 'utf8').then((content) => {
         if(content) {
           try{
             content = JSON.parse(content);
