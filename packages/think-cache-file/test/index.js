@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-17 12:12:25
+* @Last Modified time: 2017-03-17 13:58:06
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -16,6 +16,7 @@ let myOptions = {
   cachePath: path.join(__dirname, 'cache'),
   pathDepth: 1
 };
+
 
 function getCacheFilePath(key, config) {
   let cacheFileDir = helper.md5(key).slice(0, config.pathDepth).split('').join(path.sep);
@@ -42,7 +43,7 @@ test.serial('set key & get key & del key', async t => {
   t.true(ret1 === 'thinkjs' && ret2 === undefined);
 });
 
-test.serial('set key & get key & del key without pathDepth', async t => {
+test.serial('set key & get key without pathDepth', async t => {
   let key = 'name';
   let config = helper.extend({}, myOptions, {pathDepth: null});
   let cacheInst = new FileCache(config);
@@ -77,22 +78,24 @@ test.serial('get key with error', async t => {
 
 test.serial('gc & gc when error', async t => {
   let key1 = 'name1';
+  let key2 = 'name2';
   let config1 = helper.extend({}, myOptions);
   let cacheInst1 = new FileCache(config1);
   await cacheInst1.set(key1, 'thinkjs', -1);
-
-  Promise.all(cacheInst1.gc()).then(() => {
+  await cacheInst1.set(key2, 'thinkjs');
+  // let cacheFilePath2 = getCacheFilePath(key2, config1);
+  // fs.writeFileSync(cacheFilePath2, 'Hello World}');
+  Promise.all(cacheInst1.gc()).then(async () => {
     let cacheExpiredPath = getCacheFilePath(key1, config1);
     t.true(!helper.isFile(cacheExpiredPath));
-  });
 
-
-  // modify the file
-  await cacheInst1.set(key1, 'thinkjs', -1);
-  let cacheFilePath = getCacheFilePath(key1, config1);
-  fs.writeFileSync(cacheFilePath, 'Hello World');
-  Promise.all(cacheInst1.gc()).then(() => {
-    let cacheExpiredPath = getCacheFilePath(key1, config1);
-    t.true(!helper.isFile(cacheExpiredPath));
+    // modify the file
+    // await cacheInst1.set(key1, 'thinkjs', -1);
+    // let cacheFilePath = getCacheFilePath(key1, config1);
+    // fs.writeFileSync(cacheFilePath, 'Hello World');
+    // Promise.all(cacheInst1.gc()).then(() => {
+    //   let cacheExpiredPath = getCacheFilePath(key1, config1);
+    //   t.true(!helper.isFile(cacheExpiredPath));
+    // });
   });
 });

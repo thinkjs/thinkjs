@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-16 20:11:06
+* @Last Modified time: 2017-03-17 12:28:23
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -14,7 +14,7 @@ const fs = require('fs');
 class FileStore {
   constructor(config) {
     this.storePath = config.cachePath;
-    if(!helper.isDirectory) {
+    if(!helper.isDirectory(this.storePath)) {
       helper.mkdir(this.storePath);
     }
   }
