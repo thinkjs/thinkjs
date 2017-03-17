@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-17 13:58:06
+* @Last Modified time: 2017-03-17 14:02:23
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -24,7 +24,7 @@ function getCacheFilePath(key, config) {
 }
 
 // del cache dir after every test case
-test.serial.cb.afterEach(t => {
+test.serial.cb.beforeEach(t => {
   let cachePath = path.join(__dirname, 'cache');
   helper.rmdir(cachePath, false).then(() => {
     t.end();
@@ -83,19 +83,11 @@ test.serial('gc & gc when error', async t => {
   let cacheInst1 = new FileCache(config1);
   await cacheInst1.set(key1, 'thinkjs', -1);
   await cacheInst1.set(key2, 'thinkjs');
-  // let cacheFilePath2 = getCacheFilePath(key2, config1);
-  // fs.writeFileSync(cacheFilePath2, 'Hello World}');
+  let cacheFilePath2 = getCacheFilePath(key2, config1);
+  fs.writeFileSync(cacheFilePath2, 'aa');
+
   Promise.all(cacheInst1.gc()).then(async () => {
     let cacheExpiredPath = getCacheFilePath(key1, config1);
     t.true(!helper.isFile(cacheExpiredPath));
-
-    // modify the file
-    // await cacheInst1.set(key1, 'thinkjs', -1);
-    // let cacheFilePath = getCacheFilePath(key1, config1);
-    // fs.writeFileSync(cacheFilePath, 'Hello World');
-    // Promise.all(cacheInst1.gc()).then(() => {
-    //   let cacheExpiredPath = getCacheFilePath(key1, config1);
-    //   t.true(!helper.isFile(cacheExpiredPath));
-    // });
   });
 });

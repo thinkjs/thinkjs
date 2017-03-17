@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-17 12:28:23
+* @Last Modified time: 2017-03-17 14:03:15
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -21,28 +21,28 @@ class FileStore {
 
   /**
    * get file path
-   * @param  {String} key [description]
+   * @param  {String} fileName [description]
    * @return {String}     [description]
    */
-  _getFilePath(key) {
-    return path.join(this.storePath, key);
+  _getFilePath(fileName) {
+    return path.join(this.storePath, fileName);
   }
 
   /**
    * get file data
-   * @param  {String} key   [fileName]
+   * @param  {String} fileName   [fileName]
    * @param  {Number} times [try times when can not get file content]
    * @return {Promise}       [description]
    */
-  get(key, times = 1) {
-    let filePath = this._getFilePath(key);
+  get(fileName, times = 1) {
+    let filePath = this._getFilePath(fileName);
     if(times === 1 && !helper.isFile(filePath)){
       return Promise.resolve();
     }
     // try 3 times when can not get file content
     return helper.promisify(fs.readFile, fs)(filePath, {encoding: 'utf8'}).then(content => {
       if(!content && times <= 3){
-        return this.get(key, times + 1);
+        return this.get(fileName, times + 1);
       }
       return content;
     });
@@ -50,11 +50,11 @@ class FileStore {
 
   /**
    * set file content
-   * @param {String} key     [fileName]
+   * @param {String} fileName     [fileName]
    * @param {Promise} content [description]
    */
-  set(key, content) {
-    let filePath = this._getFilePath(key);
+  set(fileName, content) {
+    let filePath = this._getFilePath(fileName);
     helper.mkdir(path.dirname(filePath));
     return helper.promisify(fs.writeFile, fs)(filePath, content).then(() => {
       helper.chmod(filePath);
@@ -64,11 +64,11 @@ class FileStore {
 
   /**
    * delete file
-   * @param  {String} key [fileName]
+   * @param  {String} fileName [fileName]
    * @return {Promise}     [description]
    */
-  delete(key) {
-    let filePath = this._getFilePath(key);
+  delete(fileName) {
+    let filePath = this._getFilePath(fileName);
     if(!helper.isFile(filePath)){
       return Promise.resolve();
     }
