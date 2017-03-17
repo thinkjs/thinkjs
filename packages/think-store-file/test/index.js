@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-17 12:09:03
+* @Last Modified time: 2017-03-17 12:12:25
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -75,7 +75,7 @@ test.serial('get key with error', async t => {
   t.true(ret === undefined);
 });
 
-test.serial('gc', async t => {
+test.serial('gc & gc when error', async t => {
   let key1 = 'name1';
   let config1 = helper.extend({}, myOptions);
   let cacheInst1 = new FileCache(config1);
@@ -84,5 +84,15 @@ test.serial('gc', async t => {
   Promise.all(cacheInst1.gc()).then(() => {
     let cacheExpiredPath = getCacheFilePath(key1, config1);
     t.true(!helper.isFile(cacheExpiredPath));
-  })
+  });
+
+
+  // modify the file
+  await cacheInst1.set(key1, 'thinkjs', -1);
+  let cacheFilePath = getCacheFilePath(key1, config1);
+  fs.writeFileSync(cacheFilePath, 'Hello World');
+  Promise.all(cacheInst1.gc()).then(() => {
+    let cacheExpiredPath = getCacheFilePath(key1, config1);
+    t.true(!helper.isFile(cacheExpiredPath));
+  });
 });
