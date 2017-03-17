@@ -48,13 +48,52 @@ function promisify(fn, receiver){
 
 exports.promisify = promisify;
 
-
+/**
+ * extend, support getter & setter
+ * @param {Object} target 
+ * @param {Object} source 
+ */
+function extendObj(target, source){
+  const properties = Object.getOwnPropertyNames(source);
+  for (let i = 0; i < properties.length; i++) {
+    let property = properties[i];
+    let descriptor = Object.getOwnPropertyDescriptor(source, property);
+    if (descriptor.get) {
+      target.__defineGetter__(property, descriptor.get);
+    }
+    if (descriptor.set) {
+      target.__defineSetter__(property, descriptor.set);
+    }
+    if (descriptor.hasOwnProperty('value')) { // could be undefined but writable
+      let value = descriptor.value;
+      if(target[property] && target[property] === value){
+        continue;
+      }
+      if(exports.isArray(value)){
+        target[property] = extendObj([], value);
+      }else if(exports.isObject(value)){
+        let src = target[property];
+        target[property] = extendObj(src && exports.isObject(src) ? src : {}, value);
+      }else{
+        target.__defineGetter__(property, () => {
+          return source[property];
+        });
+        if (descriptor.writable) {
+          target.__defineSetter__(property, val => {
+            source[property] = val;
+          });
+        }
+      }
+    }
+  }
+  return target;
+}
 /**
  * extend object
  * @return {Object} []
  */
 function extend(target = {}, ...args) {
-  let i = 0, length = args.length, options, name, src, copy;
+  let i = 0, length = args.length, options;
   if(!target){
     target = exports.isArray(args[0]) ? [] : {};
   }
@@ -63,20 +102,7 @@ function extend(target = {}, ...args) {
     if (!options) {
       continue;
     }
-    for(name in options){
-      src = target[name];
-      copy = options[name];
-      if (src && src === copy) {
-        continue;
-      }
-      if(exports.isArray(copy)){
-        target[name] = extend([], copy);
-      }else if(exports.isObject(copy)){
-        target[name] = extend(src && exports.isObject(src) ? src : {}, copy);
-      } else{
-        target[name] = copy;
-      }
-    }
+    target = extendObj(target, options);
   }
   return target;
 }
