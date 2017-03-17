@@ -1,7 +1,8 @@
 import test from 'ava';
-import thinkAwait from '../index.js';
+import Debounce from '../index.js';
 import fs from 'fs';
 
+const instance = new Debounce();
 test('await', t => {
   let readTimes = 0;
 
@@ -17,8 +18,8 @@ test('await', t => {
     });
   }
 
-  let promise1 = thinkAwait(awaitKey, readFileCallback);
-  let promise2 = thinkAwait(awaitKey, readFileCallback);
+  let promise1 = instance.debounce(awaitKey, readFileCallback);
+  let promise2 = instance.debounce(awaitKey, readFileCallback);
 
 
   return Promise.all([promise1, promise2]).then(values => {
@@ -45,8 +46,8 @@ test('await 1', t => {
     });
   }
 
-  let promise1 = thinkAwait(awaitKey, readFileCallback);
-  let promise2 = thinkAwait(awaitKey, readFileCallback);
+  let promise1 = instance.debounce(awaitKey, readFileCallback);
+  let promise2 = instance.debounce(awaitKey, readFileCallback);
 
   return Promise.all([promise1, promise2]).then(values => {
     t.is(readTimes, 1);

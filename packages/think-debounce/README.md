@@ -1,17 +1,18 @@
-# think-await
-[![Build Status](https://img.shields.io/travis/thinkjs/think-await/master.svg?style=flat-square)](https://travis-ci.org/thinkjs/think-await)
-[![Coverage Status](https://img.shields.io/coveralls/thinkjs/think-await/master.svg?style=flat-square)](https://coveralls.io/github/thinkjs/think-await?branch=master)
-[![npm](https://img.shields.io/npm/v/think-await.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/think-await)
+# think-debounce
+[![Build Status](https://img.shields.io/travis/thinkjs/think-debounce/master.svg?style=flat-square)](https://travis-ci.org/thinkjs/think-debounce)
+[![Coverage Status](https://img.shields.io/coveralls/thinkjs/think-debounce/master.svg?style=flat-square)](https://coveralls.io/github/thinkjs/think-debounce?branch=master)
+[![npm](https://img.shields.io/npm/v/think-debounce.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/think-debounce)
 
-`think-await` runs a time-consuming operation. The operation may be called several times concurrently, but within `think-await`, it will only be run once before it's finished.
+`think-debounce` runs a time-consuming operation. The operation may be called several times concurrently, but within `think-debounce`, it will only be run once before it's finished.
 
-In particular, You can use `think-await` to avoid duplicate requests for a remote API.
+In particular, You can use `think-debounce` to avoid duplicate requests for a remote API.
 
 ## Syntax
 
 ```js
-import thinkAwait from 'think-await';
-thinkAwait(key, callback);
+import Debounce from 'think-debounce';
+const instance = new Debounce();
+instance.debounce(key, callback);
 ```
 
 - `key` {String} the identity of the operation.
@@ -23,9 +24,10 @@ thinkAwait(key, callback);
 Take reading a local file for an example:
 
 ```js
-import thinkAwait from 'think-await';
+import Debounce from 'think-debounce';
 import fs from 'fs';
 
+let instance = new Debounce();
 let readTimes = 0;
 let awaitKey = 'readMyFile';
 let filePath = '../my/file/path';
@@ -41,8 +43,8 @@ let readMyFileCallback = () => {
   });
 }
 
-let promise1 = thinkAwait(awaitKey, readMyFileCallback);
-let promise2 = thinkAwait(awaitKey, readMyFileCallback);
+let promise1 = instance(awaitKey, readMyFileCallback);
+let promise2 = instance(awaitKey, readMyFileCallback);
 
 return Promise.all([promise1, promise2]).then(values => {
   console.log(readTimes); // 1

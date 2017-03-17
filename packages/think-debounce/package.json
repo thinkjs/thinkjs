@@ -1,6 +1,6 @@
 {
-  "name": "think-await",
-  "description": "await for ThinkJS",
+  "name": "think-debounce",
+  "description": "debounce for ThinkJS",
   "version": "1.0.2",
   "author": {
     "name": "welefen",
@@ -37,13 +37,13 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-await"
+    "url": "https://github.com/thinkjs/think-debounce"
   },
   "engines": {
     "node": ">=6.0.0"
   },
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-await/issues"
+    "url": "https://github.com/thinkjs/think-debounce/issues"
   }
 }
