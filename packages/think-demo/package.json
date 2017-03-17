@@ -7,6 +7,7 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
+    "start": "node development.js",
     "test": "eslint index.js && nyc ava test/",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
@@ -18,7 +19,7 @@
   "contributors": [],
   "main": "index.js",
   "dependencies": {
-    "babel-preset-think-node": "0.0.8",
+    "babel-preset-think-node": "^1.0.0",
     "node-notifier": "^5.0.2",
     "think-babel": "^1.0.3",
     "think-logger": "^1.0.0",

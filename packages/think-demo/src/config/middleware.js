@@ -1,7 +1,7 @@
 const router = require('think-router');
 
 module.exports = [
-  'body_parser',
+  'meta',
   {handle: router, options: {}},
   'logic',
   'controller'
