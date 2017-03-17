@@ -42,6 +42,7 @@ module.exports = class Graceful {
     worker.once('message', message => {
       if(message === 'think-graceful-disconnect'){
         this.options.logger(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
+        env.THINK_FIRST_WORKER = 0; 
         this.forkWorker(env, () => {
           worker.send('think-graceful-fork');
         });
