@@ -1,6 +1,8 @@
 const assert = require('assert');
 const helper = require('think-helper');
-const thinkAwait = require('think-await');
+const Debounce = require('think-debounce');
+
+const debounceInstance = new Debounce();
 
 /**
  * cache manage
@@ -22,13 +24,13 @@ function thinkCache(name, value, config){
   }
   //get cache
   if(value === undefined){
-    return thinkAwait(name, () => {
+    return debounceInstance.debounce(name, () => {
       return instance.get(name);
     });
   }
   //get cache when value is function
   if(helper.isFunction(value)){
-    return thinkAwait(name, () => {
+    return debounceInstance.debounce(name, () => {
       let cacheData;
       return instance.get(name).then(data => {
         if(data === undefined){
