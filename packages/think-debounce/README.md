@@ -43,8 +43,8 @@ let readMyFileCallback = () => {
   });
 }
 
-let promise1 = instance(awaitKey, readMyFileCallback);
-let promise2 = instance(awaitKey, readMyFileCallback);
+let promise1 = instance.debounce(awaitKey, readMyFileCallback);
+let promise2 = instance.debounce(awaitKey, readMyFileCallback);
 
 return Promise.all([promise1, promise2]).then(values => {
   console.log(readTimes); // 1
