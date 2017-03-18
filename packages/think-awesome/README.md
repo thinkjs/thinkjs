@@ -16,5 +16,6 @@ awesome projects for `ThinkJS 3.x`
 
 * [think-view](https://github.com/thinkjs/think-view) make controller support render view files
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. **already built in framework!**
+* [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller. **already built in framework!**
 
 ## projects by ThinkJS
