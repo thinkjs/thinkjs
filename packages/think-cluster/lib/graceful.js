@@ -2,7 +2,7 @@ const assert = require('assert');
 const cluster = require('cluster');
 const cpus = require('os').cpus().length;
 
-const KEEP_ALIVE = Symbol('think@graceful:keepalive');
+const KEEP_ALIVE = Symbol('think-graceful-keepalive');
 /**
  * default options
  */
