@@ -1,115 +1,80 @@
 /*
 * @Author: lushijie
-* @Date:   2017-03-16 09:23:41
+* @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-18 20:19:22
+* @Last Modified time: 2017-03-19 14:42:25
 */
-const path = require('path');
 const helper = require('think-helper');
-const assert = require('assert');
+const path = require('path');
 const fs = require('fs');
-const thinkDebounce = require('think-debounce');
-const FileStore = require('./store');
-const readFileFn = helper.promisify(fs.readFile, fs);
 
 /**
- * file cache adapter
+ * file store
  */
-class FileCache {
-  constructor(config) {
-    assert(config.cachePath && helper.isString(config.cachePath), 'config.cachePath must be set');
-    this.store = new FileStore(config);
-    this.timeout = config.timeout;
-    this.fileExt = config.fileExt;
-    this.cachePath = config.cachePath;
-    this.pathDepth = config.pathDepth || 1;
+class FileStore {
+  constructor(storePath) {
+    this.storePath = storePath;
+    if(!helper.isDirectory(this.storePath)) {
+      helper.mkdir(this.storePath);
+    }
   }
 
   /**
-   * get file path by the cache key
-   * @param  {String} key [description]
+   * get file path
+   * @param  {String} relativePath [description]
    * @return {String}     [description]
    */
-  _getFilePath(key) {
-    key = helper.md5(key);
-    let dir = key.slice(0, this.pathDepth).split('').join(path.sep);
-    return path.join(dir, key) + this.fileExt;
+  _getFilePath(relativePath) {
+    return path.join(this.storePath, relativePath);
   }
 
   /**
-   * get cache content by the cache key
-   * @param  {String} key [description]
-   * @return {Promise}      [description]
+   * get file data
+   * @param  {String} relativePath   [relativePath]
+   * @param  {Number} times [try times when can not get file content]
+   * @return {Promise}       [description]
    */
-  get(key) {
-    let filePath = this._getFilePath(key);
-    return thinkDebounce(filePath, () => {
-      return this.store.get(filePath).then(content => {
-        if(!content) {
-          return;
-        }
-        try{
-          content = JSON.parse(content);
-          if(Date.now() > content.expire){
-            return this.store.delete(filePath);
-          }else{
-            return content.content;
-          }
-        }catch(e){
-          return this.store.delete(filePath);
-        }
-      }).catch(() => {});
+  get(relativePath, times = 1) {
+    let filePath = this._getFilePath(relativePath);
+    if(times === 1 && !helper.isFile(filePath)){
+      return Promise.resolve();
+    }
+    // try 3 times when can not get file content
+    return helper.promisify(fs.readFile, fs)(filePath, {encoding: 'utf8'}).then(content => {
+      if(!content && times <= 3){
+        return this.get(relativePath, times + 1);
+      }
+      return content;
     });
   }
 
   /**
-   * get cache key's content
-   * @param {String} key     [description]
-   * @param {Mixed} content [description]
-   * @return {Promise}      [description]
+   * set file content
+   * @param {String} relativePath     [relativePath]
+   * @param {Promise} content [description]
    */
-  set(key, content, timeout = this.timeout) {
-    let filePath = this._getFilePath(key);
-    let tmp = {
-      content: content,
-      expire: Date.now() + timeout * 1000
-    }
-    return this.store.set(filePath, JSON.stringify(tmp)).catch(() => {});
+  set(relativePath, content) {
+    let filePath = this._getFilePath(relativePath);
+    console.log(filePath)
+    helper.mkdir(path.dirname(filePath));
+    return helper.promisify(fs.writeFile, fs)(filePath, content).then(() => {
+      helper.chmod(filePath);
+      return true;
+    });
   }
 
   /**
-   * delete cache key
-   * @param  {String} key [description]
+   * delete file
+   * @param  {String} relativePath [relativePath]
    * @return {Promise}     [description]
    */
-  delete(key) {
-    let filePath = this._getFilePath(key);
-    return this.store.delete(filePath).catch(() => {});
+  delete(relativePath) {
+    let filePath = this._getFilePath(relativePath);
+    if(!helper.isFile(filePath)){
+      return Promise.resolve();
+    }
+    return helper.promisify(fs.unlink, fs)(filePath);
   }
-
-  /**
-   * delete expired key
-   * @return {[type]} [description]
-   */
-  gc() {
-    let now = Date.now();
-    return helper.getdirFiles(this.cachePath).map(file => {
-      let filePath = path.join(this.cachePath, file);
-      return readFileFn(filePath, 'utf8').then((content) => {
-        if(content) {
-          try{
-            content = JSON.parse(content);
-            if(now > content.expire){
-              fs.unlink(filePath, () => {});
-            }
-          }catch(e){
-            fs.unlink(filePath, () => {});
-          }
-        }
-      })
-    })
-  }
-
 }
 
-module.exports = FileCache;
+module.exports = FileStore;
