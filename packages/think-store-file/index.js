@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 16:33:44
+* @Last Modified time: 2017-03-19 16:36:37
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -32,7 +32,7 @@ class FileStore {
    */
   _getFilePath(relativePath) {
     let filePath = path.join(this.storePath, relativePath);
-    assert(filePath.indexOf(this.storePath) === 0, 'The file should be in storePath');
+    assert(filePath.indexOf(this.storePath) === 0, 'the file should be in storePath');
     return filePath;
   }
 
