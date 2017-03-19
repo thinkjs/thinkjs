@@ -1,6 +1,6 @@
 {
   "name": "think-cache-file",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "File cache Adapter for ThinkJS'S Cache",
   "main": "index.js",
   "scripts": {
