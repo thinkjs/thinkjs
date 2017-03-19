@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 14:42:25
+* @Last Modified time: 2017-03-19 15:10:19
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -55,7 +55,6 @@ class FileStore {
    */
   set(relativePath, content) {
     let filePath = this._getFilePath(relativePath);
-    console.log(filePath)
     helper.mkdir(path.dirname(filePath));
     return helper.promisify(fs.writeFile, fs)(filePath, content).then(() => {
       helper.chmod(filePath);
