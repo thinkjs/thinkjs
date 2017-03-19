@@ -23,7 +23,6 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "debug": "^2.6.1",
     "think-helper": "^1.0.0"
   },
   "devDependencies": {
