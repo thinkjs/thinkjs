@@ -2,14 +2,15 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-18 20:19:22
+* @Last Modified time: 2017-03-19 13:56:48
 */
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
 const fs = require('fs');
-const thinkDebounce = require('think-debounce');
+const debounce = require('think-debounce');
 const FileStore = require('./store');
+const debounceInst = new debounce();
 const readFileFn = helper.promisify(fs.readFile, fs);
 
 /**
@@ -43,7 +44,7 @@ class FileCache {
    */
   get(key) {
     let filePath = this._getFilePath(key);
-    return thinkDebounce(filePath, () => {
+    return debounceInst.debounce(filePath, () => {
       return this.store.get(filePath).then(content => {
         if(!content) {
           return;
