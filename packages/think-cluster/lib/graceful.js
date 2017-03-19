@@ -181,7 +181,8 @@ module.exports = class Graceful {
     while(index++ < workers){
       this.forkWorker({
         THINK_FIRST_WORKER: index === 1 ? 1 : 0,
-        THINK_WORKERS: workers
+        THINK_WORKERS: workers,
+        THINK_CLUSTER: 1
       });
     }
     if(this.options.reloadSignal){
