@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-17 14:02:23
+* @Last Modified time: 2017-03-19 15:43:36
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -17,14 +17,12 @@ let myOptions = {
   pathDepth: 1
 };
 
-
 function getCacheFilePath(key, config) {
   let cacheFileDir = helper.md5(key).slice(0, config.pathDepth).split('').join(path.sep);
   return path.join(__dirname, 'cache', cacheFileDir, helper.md5(key)) +config.fileExt;
 }
 
-// del cache dir after every test case
-test.serial.cb.beforeEach(t => {
+test.serial.cb.afterEach(t => {
   let cachePath = path.join(__dirname, 'cache');
   helper.rmdir(cachePath, false).then(() => {
     t.end();
@@ -76,15 +74,36 @@ test.serial('get key with error', async t => {
   t.true(ret === undefined);
 });
 
-test.serial('gc & gc when error', async t => {
+test.serial('normal gc', async t => {
   let key1 = 'name1';
   let key2 = 'name2';
   let config1 = helper.extend({}, myOptions);
   let cacheInst1 = new FileCache(config1);
   await cacheInst1.set(key1, 'thinkjs', -1);
   await cacheInst1.set(key2, 'thinkjs');
-  let cacheFilePath2 = getCacheFilePath(key2, config1);
+
+  Promise.all(cacheInst1.gc()).then(async () => {
+    let cacheExpiredPath = getCacheFilePath(key1, config1);
+    t.true(!helper.isFile(cacheExpiredPath));
+  });
+});
+
+
+
+test.serial('gc content error', async t => {
+  let key1 = 'name11';
+  let key2 = 'name22';
+  let config1 = helper.extend({}, myOptions);
+  let cacheInst1 = new FileCache(config1);
+  // not json
+  let cacheFilePath2 = getCacheFilePath(key1, config1);
+  helper.mkdir(path.dirname(cacheFilePath2));
   fs.writeFileSync(cacheFilePath2, 'aa');
+
+  // empty content
+  let cacheFilePath3 = getCacheFilePath(key2, config1);
+  helper.mkdir(path.dirname(cacheFilePath3));
+  fs.writeFileSync(cacheFilePath3, '');
 
   Promise.all(cacheInst1.gc()).then(async () => {
     let cacheExpiredPath = getCacheFilePath(key1, config1);

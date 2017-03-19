@@ -2,14 +2,14 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 14:15:47
+* @Last Modified time: 2017-03-19 15:08:30
 */
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
 const fs = require('fs');
 const debounce = require('think-debounce');
-const FileStore = require('./store');
+const FileStore = require('think-store-file');
 const debounceInst = new debounce();
 const readFileFn = helper.promisify(fs.readFile, fs);
 
