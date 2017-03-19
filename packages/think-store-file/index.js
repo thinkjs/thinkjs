@@ -2,17 +2,23 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 15:10:19
+* @Last Modified time: 2017-03-19 16:33:44
 */
 const helper = require('think-helper');
 const path = require('path');
 const fs = require('fs');
-
+const assert = require('assert');
+const debounce = require('think-debounce');
+const debounceInst = new debounce();
+const readFilePro = helper.promisify(fs.readFile, fs);
+const writeFilePro = helper.promisify(fs.writeFile, fs);
+const unlinkPro = helper.promisify(fs.unlink, fs);
 /**
  * file store
  */
 class FileStore {
   constructor(storePath) {
+    assert(storePath && path.isAbsolute(storePath), 'storePath need be an absolute path');
     this.storePath = storePath;
     if(!helper.isDirectory(this.storePath)) {
       helper.mkdir(this.storePath);
@@ -25,7 +31,9 @@ class FileStore {
    * @return {String}     [description]
    */
   _getFilePath(relativePath) {
-    return path.join(this.storePath, relativePath);
+    let filePath = path.join(this.storePath, relativePath);
+    assert(filePath.indexOf(this.storePath) === 0, 'The file should be in storePath');
+    return filePath;
   }
 
   /**
@@ -39,13 +47,15 @@ class FileStore {
     if(times === 1 && !helper.isFile(filePath)){
       return Promise.resolve();
     }
-    // try 3 times when can not get file content
-    return helper.promisify(fs.readFile, fs)(filePath, {encoding: 'utf8'}).then(content => {
-      if(!content && times <= 3){
-        return this.get(relativePath, times + 1);
-      }
-      return content;
-    });
+    return debounceInst.debounce(filePath, () => {
+      return readFilePro(filePath, {encoding: 'utf8'}).then(content => {
+        // try 3 times when can not get file content
+        if(!content && times <= 3){
+          return this.get(relativePath, times + 1);
+        }
+        return content;
+      })
+    })
   }
 
   /**
@@ -56,7 +66,7 @@ class FileStore {
   set(relativePath, content) {
     let filePath = this._getFilePath(relativePath);
     helper.mkdir(path.dirname(filePath));
-    return helper.promisify(fs.writeFile, fs)(filePath, content).then(() => {
+    return writeFilePro(filePath, content).then(() => {
       helper.chmod(filePath);
       return true;
     });
@@ -72,7 +82,7 @@ class FileStore {
     if(!helper.isFile(filePath)){
       return Promise.resolve();
     }
-    return helper.promisify(fs.unlink, fs)(filePath);
+    return unlinkPro(filePath);
   }
 }
 
