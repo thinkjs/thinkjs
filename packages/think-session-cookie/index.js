@@ -12,7 +12,6 @@ class CookieSession {
    * @param {Object} ctx koa ctx
    */
   constructor(options = {}, ctx){
-    options.encrypt = true;
     if(options.encrypt){
       assert(options.keys && helper.isArray(options.keys), '.keys required when encrypt is set');
       options.sign = false; //disable sign when set encrypt
@@ -51,6 +50,10 @@ class CookieSession {
    * @param {String} name 
    */
   get(name){
+    //auto update cookie when maxAge or expires is set
+    if(this.options.autoUpdate && this.options.maxAge && !this.fresh){
+      this.set();
+    }
     if(name) return Promise.resolve(this.data[name]);
     return Promise.resolve(this.data);
   }
@@ -60,7 +63,9 @@ class CookieSession {
    * @param {Mixed} value 
    */
   set(name, value){
-    this.data[name] = value;
+    if(name){
+      this.data[name] = value;
+    }
     let data = JSON.stringify(this.data);
     if(this.keygrip){
       data = this.keygrip.encrypt(data).toString('base64');

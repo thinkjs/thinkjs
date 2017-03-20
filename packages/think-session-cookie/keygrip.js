@@ -53,7 +53,6 @@ class Keygrip {
       var keys = this.keys;
       for (var i = 0, l = keys.length; i < l; i++) {
         var message = this.decrypt(data, iv, keys[i]);
-        console.log('message', message)
         if (message !== false) return [message, i]
       }
       return false
