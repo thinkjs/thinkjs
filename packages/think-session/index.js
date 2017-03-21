@@ -1,4 +1,4 @@
-const Session = require('./session.js');
+const Session = require('./lib/session.js');
 
 module.exports = {
   context: {
