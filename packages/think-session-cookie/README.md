@@ -29,12 +29,14 @@ exports.session = {
       httpOnly: true,
       sameSite: false,
       signed: false,
-      overwrite: false,
-      encrypt: false //encrypt cookie data
+      overwrite: false
     }
   }
   cookie: {
-    handle: cookie
+    handle: cookie,
+    cookie: {
+      encrypt: false //encrypt cookie data
+    }
   }
 }
 ```
