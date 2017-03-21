@@ -16,13 +16,25 @@ config file `src/config/adapter.js`, add options:
 const cookie = require('think-session-cookie');
 exports.session = {
   type: 'cookie',
-  cookie: {
-    handle: cookie,
+  common: {
     cookie: {
       name: 'thinkjs',
-      keys: ['thinkjs-key1', 'thinkjs-key2'],
-      encrypt: true
+      autoUpdate: false, //auto update cookie when is set maxAge
+      //maxAge: '',
+      //expires: '',
+      path: '/',  //a string indicating the path of the cookie
+      //domain: '',
+      //secure: false,
+      //keys: [],
+      httpOnly: true,
+      sameSite: false,
+      signed: false,
+      overwrite: false,
+      encrypt: false //encrypt cookie data
     }
+  }
+  cookie: {
+    handle: cookie
   }
 }
 ```
