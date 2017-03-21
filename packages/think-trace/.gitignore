@@ -37,3 +37,5 @@ jspm_packages
 .node_repl_history
 test.js
 .vscode
+src/template/404.js
+src/template/500.js

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Internal Server Error - ThinkJS</title>
+</head>
+<body>
+<div class="header">
+  <div class="wrap">
+		<div class="logo">
+			<a href="http://www.thinkjs.org/">
+				<img src="<%=require('url-loader!../images/logo.png')%>" alt="ThinkJS"></a>
+			</div>
+			<div class="headr">
+				<a href="http://www.thinkjs.org/doc/error_handle.html#500" target="_blank">
+					Why might this be happening?
+				</a>
+			</div>
+  </div>
+</div>
+<div class="wrap"></div>
+<script type="text/javascript">
+	<%= require('raw-loader!../lib/prettify.min.js') %>
+	<% htmlWebpackPlugin.files.js.forEach(function(jsFile) { %>
+	<%=compilation.assets[jsFile.substr(htmlWebpackPlugin.files.publicPath.length)].source()%>
+	<% }) %>
+	new App("{{errMsg}}", {{error}});
+</script>
+</body>
+</html>
