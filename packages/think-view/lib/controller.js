@@ -1,7 +1,8 @@
 const View = require('./view.js');
 const helper = require('think-helper');
 
-const viewInstance = Symbol('think@viewInstance');
+const viewInstance = Symbol('think-view-instance');
+const getViewInstance = Symbol('think-get-view-instance');
 
 /**
  * add some methods for controller
@@ -10,7 +11,7 @@ module.exports = {
   /**
    * get view instance
    */
-  _getViewInstance(){
+  [getViewInstance](){
     if(!this[viewInstance]){
       const instance = new View(this.ctx);
       instance.assign('controller', this);
@@ -26,7 +27,7 @@ module.exports = {
    * @param {Mixed} value 
    */
   assign(name, value){
-    return this._getViewInstance().assign(name, value);
+    return this[getViewInstance]().assign(name, value);
   },
   /**
    * render view file
@@ -39,7 +40,7 @@ module.exports = {
       file = '';
     }
     config = helper.parseAdapterConfig(this.config('view'), config);
-    return this._getViewInstance().render(file, config);
+    return this[getViewInstance]().render(file, config);
   },
   /**
    * display view file 
