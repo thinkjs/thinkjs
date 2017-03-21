@@ -8,21 +8,25 @@ const helper = require('think-helper');
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
-const debounce = require('think-debounce');
-const debounceInst = new debounce();
-const readFilePro = helper.promisify(fs.readFile, fs);
-const writeFilePro = helper.promisify(fs.writeFile, fs);
-const unlinkPro = helper.promisify(fs.unlink, fs);
+const Debounce = require('think-debounce');
+const debounceInstance = new Debounce();
+const readFile = helper.promisify(fs.readFile, fs);
+const writeFile = helper.promisify(fs.writeFile, fs);
+const unlink = helper.promisify(fs.unlink, fs);
+
+const getFilePath = Symbol('think-get-file-path');
+
 /**
  * file store
  */
 class FileStore {
+  /**
+   * constructor
+   * @param {String} storePath store file root path
+   */
   constructor(storePath) {
     assert(storePath && path.isAbsolute(storePath), 'storePath need be an absolute path');
     this.storePath = storePath;
-    if(!helper.isDirectory(this.storePath)) {
-      helper.mkdir(this.storePath);
-    }
   }
 
   /**
@@ -30,7 +34,7 @@ class FileStore {
    * @param  {String} relativePath [description]
    * @return {String}     [description]
    */
-  _getFilePath(relativePath) {
+  [getFilePath](relativePath) {
     let filePath = path.join(this.storePath, relativePath);
     assert(filePath.indexOf(this.storePath) === 0, 'the file should be in storePath');
     return filePath;
@@ -40,49 +44,57 @@ class FileStore {
    * get file data
    * @param  {String} relativePath   [relativePath]
    * @param  {Number} times [try times when can not get file content]
-   * @return {Promise}       [description]
+   * @return {Promise}       []
    */
-  get(relativePath, times = 1) {
-    let filePath = this._getFilePath(relativePath);
-    if(times === 1 && !helper.isFile(filePath)){
+  get(relativePath) {
+    let filePath = this[getFilePath](relativePath);
+    if(!helper.isFile(filePath)){
       return Promise.resolve();
     }
-    return debounceInst.debounce(filePath, () => {
-      return readFilePro(filePath, {encoding: 'utf8'}).then(content => {
-        // try 3 times when can not get file content
+
+    function getFileContent(times = 1){
+      return readFile(filePath, {encoding: 'utf8'}).then(content => {
         if(!content && times <= 3){
-          return this.get(relativePath, times + 1);
+          return Promise.reject(new Error(`content empty, file path is ${filePath}`));
         }
         return content;
-      })
-    })
+      }).catch(err => {
+        if(times <= 3){
+          return helper.timeout(10).then(() => {
+            return getFileContent(times + 1);
+          });
+        }
+        return Promise.reject(err);
+      });
+    }
+
+    return debounceInstance.debounce(filePath, () => getFileContent());
   }
 
   /**
    * set file content
    * @param {String} relativePath     [relativePath]
-   * @param {Promise} content [description]
+   * @param {String} content []
    */
   set(relativePath, content) {
-    let filePath = this._getFilePath(relativePath);
+    let filePath = this[getFilePath](relativePath);
     helper.mkdir(path.dirname(filePath));
-    return writeFilePro(filePath, content).then(() => {
-      helper.chmod(filePath);
-      return true;
+    return writeFile(filePath, content).then(() => {
+      return helper.chmod(filePath);
     });
   }
 
   /**
    * delete file
    * @param  {String} relativePath [relativePath]
-   * @return {Promise}     [description]
+   * @return {Promise}     []
    */
   delete(relativePath) {
-    let filePath = this._getFilePath(relativePath);
+    let filePath = this[getFilePath](relativePath);
     if(!helper.isFile(filePath)){
       return Promise.resolve();
     }
-    return unlinkPro(filePath);
+    return unlink(filePath);
   }
 }
 
