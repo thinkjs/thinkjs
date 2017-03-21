@@ -42,6 +42,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
+    "think-debounce": "^1.0.3",
     "think-helper": "~1.0.0"
   }
 }
