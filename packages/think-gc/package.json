@@ -23,7 +23,8 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "think-helper": "^1.0.0"
+    "think-helper": "^1.0.0",
+    "think-ms": "^1.0.1"
   },
   "devDependencies": {
     "ava": "^0.18.2",
