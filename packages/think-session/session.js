@@ -54,9 +54,9 @@ class Session {
         instance = new handle(this.cookieOptions, this.ctx);
       }else{
         let name = this.cookieOptions.name;
-        let cookie = this.ctx.cookie(name);
+        let cookie = this.ctx.cookie(name, undefined, this.cookieOptions);
         let fresh = false;
-        if(!this.ctx.cookie(name)){
+        if(!cookie){
           cookie = helper.uuid();
           this.ctx.cookie(name, cookie, this.cookieOptions);
           fresh = true;
