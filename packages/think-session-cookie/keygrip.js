@@ -6,6 +6,10 @@ const debug = require('debug')('keygrip');
  * from https://github.com/crypto-utils/keygrip
  */
 class Keygrip {
+  /**
+   * keys
+   * @param {Array} keys 
+   */
   constructor(keys){
     this.keys = keys;
     this.cipher = 'aes-256-cbc';
@@ -18,14 +22,11 @@ class Keygrip {
   crypt(cipher, data){
     let text = cipher.update(data, 'utf8');
     let pad  = cipher.final();
-
     if (typeof text === 'string') {
-      // cipher output binary strings (Node.js <= 0.8)
-      text = new Buffer(text, 'binary')
-      pad  = new Buffer(pad, 'binary')
+      text = new Buffer(text, 'binary');
+      pad  = new Buffer(pad, 'binary');
     }
-
-    return Buffer.concat([text, pad])
+    return Buffer.concat([text, pad]);
   }
   /**
    * encrypt a message
@@ -35,7 +36,7 @@ class Keygrip {
    */
   encrypt(data, iv, key){
     key = key || this.keys[0];
-    var cipher = iv
+    let cipher = iv
       ? crypto.createCipheriv(this.cipher, key, iv)
       : crypto.createCipher(this.cipher, key);
 
@@ -50,18 +51,18 @@ class Keygrip {
   decrypt(data, iv, key){
     if (!key) {
       // decrypt every key
-      var keys = this.keys;
-      for (var i = 0, l = keys.length; i < l; i++) {
-        var message = this.decrypt(data, iv, keys[i]);
-        if (message !== false) return [message, i]
+      let keys = this.keys;
+      for (let i = 0, l = keys.length; i < l; i++) {
+        let message = this.decrypt(data, iv, keys[i]);
+        if (message !== false) return [message, i];
       }
       return false
     }
     try {
-      var cipher = iv
+      let cipher = iv
         ? crypto.createDecipheriv(this.cipher, key, iv)
-        : crypto.createDecipher(this.cipher, key)
-      return this.crypt(cipher, data)
+        : crypto.createDecipher(this.cipher, key);
+      return this.crypt(cipher, data);
     } catch (err) {
       debug(err.stack);
       return false
