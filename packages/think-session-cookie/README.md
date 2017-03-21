@@ -19,7 +19,7 @@ exports.session = {
   common: {
     cookie: {
       name: 'thinkjs',
-      autoUpdate: false, //auto update cookie when is set maxAge
+      autoUpdate: false, //auto update cookie when maxAge is set
       //maxAge: '',
       //expires: '',
       path: '/',  //a string indicating the path of the cookie
