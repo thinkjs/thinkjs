@@ -12,7 +12,11 @@ module.exports = {
    */
   _getViewInstance(){
     if(!this[viewInstance]){
-      this[viewInstance] = new View(this.ctx);
+      const instance = new View(this.ctx);
+      instance.assign('controller', this);
+      instance.assign('config', this.config());
+      instance.assign('ctx', this.ctx);
+      this[viewInstance] = instance;
     }
     return this[viewInstance];
   },
