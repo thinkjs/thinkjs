@@ -2,15 +2,16 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 16:34:19
+* @Last Modified time: 2017-03-21 20:47:20
 */
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
 const fs = require('fs');
 const FileStore = require('think-store-file');
-const readFilePro = helper.promisify(fs.readFile, fs);
+const readFile = helper.promisify(fs.readFile, fs);
 
+let _getRelativePath = Symbol('getRelativePath');
 /**
  * file cache adapter
  */
@@ -19,7 +20,6 @@ class FileCache {
     assert(config.cachePath && helper.isString(config.cachePath), 'config.cachePath must be set');
     this.store = new FileStore(config.cachePath);
     this.timeout = config.timeout;
-    this.fileExt = config.fileExt;
     this.cachePath = config.cachePath;
     this.pathDepth = config.pathDepth || 1;
   }
@@ -29,10 +29,10 @@ class FileCache {
    * @param  {String} key [description]
    * @return {String}     [description]
    */
-  _getRelativePath(key) {
+  [_getRelativePath](key) {
     key = helper.md5(key);
     let dir = key.slice(0, this.pathDepth).split('').join(path.sep);
-    return path.join(dir, key) + this.fileExt;
+    return path.join(dir, key);
   }
 
   /**
@@ -41,7 +41,7 @@ class FileCache {
    * @return {Promise}      [description]
    */
   get(key) {
-    let relativePath = this._getRelativePath(key);
+    let relativePath = this[_getRelativePath](key);
     return this.store.get(relativePath).then(content => {
       if(!content) {
         return;
@@ -66,7 +66,7 @@ class FileCache {
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
-    let relativePath = this._getRelativePath(key);
+    let relativePath = this[_getRelativePath](key);
     let tmp = {
       content: content,
       expire: Date.now() + timeout * 1000
@@ -80,7 +80,7 @@ class FileCache {
    * @return {Promise}     [description]
    */
   delete(key) {
-    let relativePath = this._getRelativePath(key);
+    let relativePath = this[_getRelativePath](key);
     return this.store.delete(relativePath).catch(() => {});
   }
 
@@ -92,7 +92,7 @@ class FileCache {
     let now = Date.now();
     return helper.getdirFiles(this.cachePath).map(file => {
       let relativePath = path.join(this.cachePath, file);
-      return readFilePro(relativePath, 'utf8').then((content) => {
+      return readFile(relativePath, 'utf8').then((content) => {
         if(content) {
           try{
             content = JSON.parse(content);

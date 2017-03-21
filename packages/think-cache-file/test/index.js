@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:29
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 15:43:36
+* @Last Modified time: 2017-03-21 20:47:05
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -12,14 +12,13 @@ import FileCache from '../index';
 
 let myOptions = {
   timeout: 3600,
-  fileExt: '.txt',
   cachePath: path.join(__dirname, 'cache'),
   pathDepth: 1
 };
 
 function getCacheFilePath(key, config) {
   let cacheFileDir = helper.md5(key).slice(0, config.pathDepth).split('').join(path.sep);
-  return path.join(__dirname, 'cache', cacheFileDir, helper.md5(key)) +config.fileExt;
+  return path.join(__dirname, 'cache', cacheFileDir, helper.md5(key));
 }
 
 test.serial.cb.afterEach(t => {
@@ -87,8 +86,6 @@ test.serial('normal gc', async t => {
     t.true(!helper.isFile(cacheExpiredPath));
   });
 });
-
-
 
 test.serial('gc content error', async t => {
   let key1 = 'name11';
