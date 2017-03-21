@@ -44,6 +44,7 @@
   "dependencies": {
     "think-debounce": "~1.0.3",
     "think-helper": "~1.0.0",
-    "think-store-file": "~1.0.5"
+    "think-store-file": "~1.0.5",
+    "think-gc": "~1.0.0"
   }
 }

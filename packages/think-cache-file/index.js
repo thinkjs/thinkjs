@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-21 20:47:20
+* @Last Modified time: 2017-03-21 20:51:15
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -10,8 +10,9 @@ const assert = require('assert');
 const fs = require('fs');
 const FileStore = require('think-store-file');
 const readFile = helper.promisify(fs.readFile, fs);
-
+const gc = require('think-gc');
 let _getRelativePath = Symbol('getRelativePath');
+
 /**
  * file cache adapter
  */
@@ -22,6 +23,10 @@ class FileCache {
     this.timeout = config.timeout;
     this.cachePath = config.cachePath;
     this.pathDepth = config.pathDepth || 1;
+
+    //gc interval by 1 hour
+    this.gcType = `cache-${config.cachePath}`;
+    gc(this, 3600 * 1000);
   }
 
   /**
