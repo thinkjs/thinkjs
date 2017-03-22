@@ -5,6 +5,7 @@ awesome projects for `ThinkJS 3.x`
 ## middlewares
 
 * [think-router](https://github.com/thinkjs/think-router) Router Parser
+* [think-trace](https://github.com/thinkjs/think-trace) Error trace
 
 ## adapters
 
