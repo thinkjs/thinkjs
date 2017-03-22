@@ -23,7 +23,7 @@ exports.cache = {
   file: {
     handle: cacheFile,
     timeout: 24 * 60 * 60 * 1000, // millisecond
-    cachePath: '/home/usr/data',
+    cachePath: '/home/usr/data',  // absoulte path is necessarily required
     pathDepth: 1
   }
 }
@@ -36,6 +36,6 @@ exports.cache = {
 const defaultOptions = {
   timeout = 24 * 60 * 60 * 1000, // millisecond
   pathDepth = 1,
-  // cachePath don't have default and must be set an absolute path;
+  // cachePath don't have default value and must set an absolute path
 };
 
