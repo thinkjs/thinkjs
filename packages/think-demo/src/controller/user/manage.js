@@ -1,9 +1,10 @@
-import index from '../index.js';
+
+const index = require('../index.js');
 
 module.exports = class extends index {
-  async indexAction(){
+  indexAction(){
 
-    let data = await Promise.resolve(666 + ':' + process.env.THINK_PROCESS_ID);
+    let data = Promise.resolve(666 + ':' + process.env.THINK_PROCESS_ID);
     this.ctx.body = data;
     setTimeout(() => {
       xxx();
