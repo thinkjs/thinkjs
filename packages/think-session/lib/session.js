@@ -38,7 +38,8 @@ class Session {
    */
   constructor(ctx, options){
     this.ctx = ctx;
-    this.options = helper.parseAdapterConfig(ctx.config('session'), options);
+    const sessionConfig =  helper.parseAdapterConfig(ctx.config('session'), options);
+    this.options = helper.extend({}, defaultOptions, sessionConfig);
     assert(helper.isFunction(this.options.handle), 'session.handle must be a function');
     this.cookieOptions = Object.assign({}, defaultCookieOptions, ctx.config('cookie'), this.options.cookie);
   }
