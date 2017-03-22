@@ -210,3 +210,8 @@ ul.stacks .stack-file {
 	word-wrap: break-word;
 	color: #a29d9d;
 }
+.wrap-bg {
+	margin-top:20px;
+	height:313px;
+	background:url(../images/500.png) top center no-repeat;
+}

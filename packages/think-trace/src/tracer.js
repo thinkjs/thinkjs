@@ -8,8 +8,9 @@ const DEFAULT_404_TEMPLATE = path.join(__dirname, 'template/404.html');
 const DEFAULT_500_TEMPLATE = path.join(__dirname, 'template/500.html');
 
 module.exports = class Tracer {
-  constructor({ctxLineNumbers, err404Template, err500Template}) {
+  constructor({ctxLineNumbers, err404Template, err500Template, debug}) { 
     this.ctxLineNumbers = ctxLineNumbers || 10;
+    this.debug = debug !== undefined ? debug : true;
     this.err404Template = err404Template || DEFAULT_404_TEMPLATE;
     this.err500Template = err500Template || DEFAULT_500_TEMPLATE;
   }
@@ -46,7 +47,7 @@ module.exports = class Tracer {
       
       line.content = content.join('\n');
       line.getContent = function() { return this.content; };
-      line.startLineNumber = startLineNumber < 0 ? 1 : startLineNumber + 1;
+      line.startLineNumber = Math.min(0, startLineNumber) + 1;
       line.getStartLineNumber = function() { return this.startLineNumber; };
 
       return line;
@@ -58,7 +59,14 @@ module.exports = class Tracer {
    * @param {*Array} stacks stacke tracer array
    */
   render500(stacks, err) {
-    let error = JSON.stringify(stacks, null, '\t');
+    let error;
+    if( this.debug ) {
+      error = JSON.stringify(stacks, null, '\t');
+    } else {
+      error = '[]';
+      err = '';
+    }
+
     return this.err500TemplateContent
       .replace('{{error}}', error)
       .replace('{{errMsg}}', err.toString());
@@ -68,10 +76,12 @@ module.exports = class Tracer {
    * render 404 not found page
    * @param {*Error} err Error instance
    */
-  render404(err) {
-    error = 'controller not found';
+  render404(ctx, err) {
+    if( !this.debug ) {
+      err = '';
+    }
+
     return this.err404TemplateContent
-      .replace('{{error}}', error)
       .replace('{{errMsg}}', err.toString());
   }
 
@@ -81,7 +91,6 @@ module.exports = class Tracer {
    */
   run(ctx, err) {
     this.ctx = ctx;
-
     if( !(err instanceof Error) ) {
       err = new Error(err);
     }

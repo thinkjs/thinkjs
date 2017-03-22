@@ -24,6 +24,10 @@ global.App = class App {
 
   render() {
     let {errMsg, stacks, activeStack} = this.state;
+    if( !errMsg && !stacks.length ) {
+      return true;
+    }
+    
     let html = `
       <div class="stacks-header">${errMsg}</div>
       <!--stacks-->

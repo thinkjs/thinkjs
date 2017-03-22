@@ -9,16 +9,20 @@
   <div class="wrap">
 		<div class="logo">
 			<a href="http://www.thinkjs.org/">
-				<img src="<%=require('url-loader!../images/logo.png')%>" alt="ThinkJS"></a>
-			</div>
-			<div class="headr">
-				<a href="http://www.thinkjs.org/doc/error_handle.html#500" target="_blank">
-					Why might this be happening?
-				</a>
-			</div>
+				<img src="<%=require('../images/logo.png')%>" alt="ThinkJS">
+			</a>
+		</div>
+		<div class="headr">
+			<a href="http://www.thinkjs.org/doc/error_handle.html#500" target="_blank">
+				Why might this be happening?
+			</a>
+		</div>
   </div>
 </div>
-<div class="wrap"></div>
+<div class="wrap">
+	<div class="wrap-bg"></div>
+  <h1>Internal Server Error</h1>
+</div>
 <script type="text/javascript">
 	<%= require('raw-loader!../lib/prettify.min.js') %>
 	<% htmlWebpackPlugin.files.js.forEach(function(jsFile) { %>
