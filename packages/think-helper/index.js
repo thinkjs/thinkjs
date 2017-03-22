@@ -6,6 +6,7 @@ const cluster = require('cluster');
 const is = require('core-util-is');
 const uuid = require('uuid');
 const assert = require('assert');
+const ms = require('ms');
 
 const fs_rmdir = promisify(fs.rmdir, fs);
 const fs_unlink = promisify(fs.unlink, fs);
@@ -313,6 +314,19 @@ exports.parseAdapterConfig = (config, extConfig) => {
   //merge config
   config = exports.extend({}, config, extConfig);
   return config[config.type] || {};
+}
+/**
+ * transform humanize time to ms
+ */
+exports.ms = function (time) {
+  if (typeof time === 'number') {
+    return time;
+  }
+  let result = ms(time);
+  if (result === undefined) {
+    throw new Error(`think-ms('${time}') result is undefined`);
+  }
+  return result;
 }
 
 

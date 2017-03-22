@@ -21,7 +21,8 @@ import {
   isTrueEmpty,
   isIP,
   timeout,
-  parseAdapterConfig
+  parseAdapterConfig,
+  ms
 } from '../index.js';
 import fs from 'fs';
 
@@ -235,6 +236,32 @@ test('uuid', t => {
   var uuid2 = uuid();
   t.is(uuid2.length > 1, true);
 })
+
+test('ms 1200', t => {
+  var value = ms(1200);
+  t.is(value, 1200);
+})
+test('ms 2 days', t => {
+  var value = ms('2 days');
+  t.is(value, 172800000);
+})
+test('ms 1d', t => {
+  var value = ms('1d');
+  t.is(value, 86400000);
+})
+test('ms 10h', t => {
+  var value = ms('10h');
+  t.is(value, 36000000);
+})
+test('ms 2.5 hrs', t => {
+  var value = ms('2.5 hrs');
+  t.is(value, 9000000);
+})
+test('ms 1y', t => {
+  var value = ms('1y');
+  t.is(value, 31557600000);
+})
+
 
 test('datetime', t => {
   datetime();
