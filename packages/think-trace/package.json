@@ -1,6 +1,6 @@
 {
   "name": "think-trace",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "description": "Error trace for thinkjs 3.x",
   "main": "./src",
   "scripts": {
@@ -8,7 +8,7 @@
     "pretest": "npm run compile",
     "test": "",
     "preversion": "npm run test",
-    "postversion": "git publish"
+    "postversion": "git push"
   },
   "dependencies": {
     "source-map-support": "^0.4.12",
