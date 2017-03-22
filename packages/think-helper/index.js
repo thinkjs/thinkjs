@@ -76,14 +76,7 @@ function extendObj(target, source){
         let src = target[property];
         target[property] = extendObj(src && exports.isObject(src) ? src : {}, value);
       }else{
-        target.__defineGetter__(property, () => {
-          return source[property];
-        });
-        if (descriptor.writable) {
-          target.__defineSetter__(property, val => {
-            source[property] = val;
-          });
-        }
+        target[property] = source[property];
       }
     }
   }
