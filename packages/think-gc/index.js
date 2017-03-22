@@ -1,6 +1,5 @@
 const assert = require('assert');
 const helper = require('think-helper');
-const ms = require('think-ms');
 
 //min interval, 1 hour
 const MIN_INTERVAL = 3600 * 1000;
@@ -17,7 +16,7 @@ function gc(instance, interval = MIN_INTERVAL){
     if(helper.isFunction(interval)){
       if(!interval()) return;
     }else{
-      interval = ms(interval);
+      interval = helper.ms(interval);
       let num = Math.floor(interval / MIN_INTERVAL);
       if(intervalTimes % num !== 0) return;
     }
