@@ -40,7 +40,7 @@ global.App = class App {
             <span class="stack-function">${stack.functionName}</span>
           </div>
           <div class="stack-file">
-            <span>${stack.fileName}:${stack.startLineNumber}</span>
+            <span>${stack.fileName}:${stack.lineNumber}</span>
           </div>
         </li>
         <li class="stack-code">

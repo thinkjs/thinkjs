@@ -41,13 +41,14 @@ module.exports = class Tracer {
     let lineNumber = line.getLineNumber();
 
     return readFileAsync(filename, {encoding: 'utf-8'}).then(data => {
-      let startLineNumber = lineNumber - this.ctxLineNumbers;
-      let endLineNumber = lineNumber + this.ctxLineNumbers;
-      let content = data.split('\n').slice(startLineNumber, endLineNumber);
+      let content = data.split('\n');
+      let startLineNumber = Math.max(0, lineNumber - this.ctxLineNumbers);
+      let endLineNumber = Math.min(lineNumber + this.ctxLineNumbers, data.length);
+      content = content.slice(startLineNumber, endLineNumber);
       
       line.content = content.join('\n');
       line.getContent = function() { return this.content; };
-      line.startLineNumber = Math.min(0, startLineNumber) + 1;
+      line.startLineNumber = Math.max(0, startLineNumber) + 1;
       line.getStartLineNumber = function() { return this.startLineNumber; };
 
       return line;
