@@ -67,6 +67,8 @@ class Session {
             this.ctx.cookie(name, cookie, this.cookieOptions);
           }
         }
+        //transform humanize time to ms
+        this.options.maxAge = helper.ms(this.options.maxAge);
         this.options.cookie = cookie;
         this.options.fresh = fresh;
         instance = new handle(this.options, this.ctx);
