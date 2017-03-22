@@ -29,9 +29,6 @@
     "webpack-zepto": "0.0.1",
     "zepto": "^1.2.0"
   },
-  "scripts": {
-    "test": ""
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thinkjs/think-trace.git"
