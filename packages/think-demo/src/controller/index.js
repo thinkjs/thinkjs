@@ -5,7 +5,7 @@ export default class extends think.Controller {
   async indexAction(){
     let allSession = await this.session();
     //await this.session('userInfo', 'test');
-    await this.session('hahaha', 'wwww')
+    await this.session('hahaha', 'wwww');
     //await this.session(null);
     this.ctx.body = 1;;
   }
