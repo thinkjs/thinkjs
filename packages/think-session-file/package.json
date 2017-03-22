@@ -24,8 +24,9 @@
   "main": "index.js",
   "dependencies": {
     "debug": "^2.6.1",
-    "think-helper": "^1.0.0",
+    "think-debounce": "^1.0.3",
     "think-gc": "^1.0.0",
+    "think-helper": "^1.0.0",
     "think-store-file": "^1.0.0"
   },
   "devDependencies": {
