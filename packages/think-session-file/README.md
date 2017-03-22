@@ -33,6 +33,7 @@ exports.session = {
   },
   file: {
     handle: fileSession,
+    sessionPath: path.join(think.ROOT_PATH, 'runtime/session'),
     maxAge: '1d', //session timeout, default is 1 day
     autoUpdate: false, //update expires time when get session, default is false
   }
