@@ -1,6 +1,6 @@
 # think-trace
 
-think-trace is an error handler for thinkjs3.x and koa2. It provides a pretty error web interface that helps you debug your web project.
+think-trace is an error handler for ThinkJS 3.x and koa2. It provides a pretty error web interface that helps you debug your web project.
 
 ## Installation
 
