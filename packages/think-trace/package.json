@@ -1,6 +1,6 @@
 {
   "name": "think-trace",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Error trace for thinkjs 3.x",
   "main": "./src",
   "scripts": {
