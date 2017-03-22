@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-21 20:51:15
+* @Last Modified time: 2017-03-22 09:08:18
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -26,7 +26,7 @@ class FileCache {
 
     //gc interval by 1 hour
     this.gcType = `cache-${config.cachePath}`;
-    gc(this, 3600 * 1000);
+    gc(this, 3600);
   }
 
   /**
@@ -74,7 +74,7 @@ class FileCache {
     let relativePath = this[_getRelativePath](key);
     let tmp = {
       content: content,
-      expire: Date.now() + timeout * 1000
+      expire: Date.now() + timeout
     }
     return this.store.set(relativePath, JSON.stringify(tmp)).catch(() => {});
   }
