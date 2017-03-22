@@ -13,7 +13,7 @@ npm install think-trace
 
 ### Koa2
 
-```
+```js
 const traceMiddleware = require('think-trace');
 app.use(traceMiddleware({
   sourceMap: false
@@ -24,17 +24,15 @@ app.use(traceMiddleware({
 
 Modify `src/config/middleware.js`:
 
-```
-const traceMiddleware = require('think-trace');
+```js
+const trace = require('think-trace');
 
 module.exports = [
-  traceMiddleware({
-    sourceMap: false
-  })
+  {handle: trace, options: {}}
 ];
 ```
 
-## Configuration
+## Options
 
 - `sourceMap`: Whether your project has source map support, default is `true`.
 - `debug`: Whether show error detail in web, default is `true`. 
