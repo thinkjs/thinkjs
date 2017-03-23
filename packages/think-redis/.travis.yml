@@ -4,7 +4,7 @@ node_js:
 sudo: false
 script:
     - "npm test"
-before_script:
-    - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass '123456'
+services:
+  - redis-server /etc/redis/redis.conf --port 6379 --requirepass '123456'
 after_success:
     - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
