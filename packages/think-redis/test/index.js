@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 21:00:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-23 10:07:56
+* @Last Modified time: 2017-03-23 10:36:25
 */
 // const helper = require('think-helper');
 // const path = require('path');
@@ -18,7 +18,7 @@ import Redis from '../index';
 let config = {
   port: 6379,          // Redis port
   host: '127.0.0.1',   // Redis host
-  password: '123456',
+  password: '',
 };
 
 test.serial('set key & get key & del key', async t => {
