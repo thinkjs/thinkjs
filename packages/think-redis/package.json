@@ -1,6 +1,6 @@
 {
   "name": "think-redis",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "think-redis for ThinkJS",
   "main": "index.js",
   "scripts": {
