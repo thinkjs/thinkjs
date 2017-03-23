@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 21:00:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-23 10:36:25
+* @Last Modified time: 2017-03-23 10:51:18
 */
 // const helper = require('think-helper');
 // const path = require('path');
@@ -29,12 +29,12 @@ test.serial('set key & get key & del key', async t => {
   redisInst.on('connect', function() {
     // console.log('connect...')
   });
-  let setres = await redisInst.set(key, value);
-  let getres1 = await redisInst.get(key);
-  let delres = await redisInst.delete(key);
-  let getres2 = await redisInst.get(key);
+  let s = await redisInst.set(key, value);
+  let g1 = await redisInst.get(key);
+  let d = await redisInst.delete(key);
+  let g2 = await redisInst.get(key);
 
-  t.true(setres === 'OK' && getres1 === value && delres ===1 && getres2 === null);
+  t.true(s === 'OK' && g1 === value && d === 1 && g2 === null);
 });
 
 test.serial('set key', async t => {

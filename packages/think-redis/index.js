@@ -2,18 +2,24 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-23 10:01:19
+* @Last Modified time: 2017-03-23 10:52:35
 */
 const helper = require('think-helper');
 const assert = require('assert');
 const ioredis = require('ioredis');
 let _validExpire = Symbol('validExpire');
 
+let defaultOptions = {
+  port: 6379,          // Redis port
+  host: '127.0.0.1',   // Redis host
+  password: '',
+};
+
 class thinkRedis {
 
   // config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
   constructor(config) {
-    this.redis = new ioredis(config);
+    this.redis = new ioredis(helper.extend({}, defaultOptions, config));
   }
 
   /**
