@@ -4,8 +4,8 @@ const helper = require('think-helper');
 const stackTrace = require('stack-trace');
 
 const readFileAsync = helper.promisify(fs.readFile);
-const DEFAULT_404_TEMPLATE = path.join(__dirname, 'template/404.html');
-const DEFAULT_500_TEMPLATE = path.join(__dirname, 'template/500.html');
+const DEFAULT_404_TEMPLATE = path.join(__dirname, '../template/404.html');
+const DEFAULT_500_TEMPLATE = path.join(__dirname, '../template/500.html');
 
 module.exports = class Tracer {
   constructor({ctxLineNumbers, err404Template, err500Template, debug}) { 
