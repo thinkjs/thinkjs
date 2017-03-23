@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-22 21:05:37
+* @Last Modified time: 2017-03-23 10:01:19
 */
 const helper = require('think-helper');
 const assert = require('assert');
@@ -57,7 +57,7 @@ class thinkRedis {
         assert(type === 'EX' || type === 'PX', 'type should eq "EX" or "PX"');
         this[_validExpire](expire);
         return this.redis.set(key, value, type, expire);
-      }else if(helper.isNumber(type)) {
+      }else {
         this[_validExpire](type);
         return this.redis.set(key, value, 'EX', type);
       }
