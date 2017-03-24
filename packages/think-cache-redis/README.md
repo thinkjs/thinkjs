@@ -1,14 +1,14 @@
-# think-cache-file
-[![Build Status](https://travis-ci.org/thinkjs/think-cache-file.svg?branch=master)](https://travis-ci.org/thinkjs/think-cache-file)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-cache-file/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-cache-file?branch=master)
-[![npm](https://img.shields.io/npm/v/think-cache-file.svg?style=flat-square)](https://www.npmjs.com/package/think-cache-file)
+# think-cache-redis
+[![Build Status](https://travis-ci.org/thinkjs/think-cache-redis.svg?branch=master)](https://travis-ci.org/thinkjs/think-cache-redis)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-cache-redis/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-cache-redis?branch=master)
+[![npm](https://img.shields.io/npm/v/think-cache-redis.svg?style=flat-square)](https://www.npmjs.com/package/think-cache-redis)
 
 Use file to cache data
 
 ## Install
 
 ```
-npm install think-cache-file
+npm install think-cache-redis
 ```
 
 
@@ -17,25 +17,18 @@ npm install think-cache-file
 edit config file `src/config/adapter.js`, add options:
 
 ```js
-const cacheFile = require('think-cache-file');
+const redisCache = require('think-cache-redis');
 exports.cache = {
-  type: 'file',
-  file: {
-    handle: cacheFile,
-    timeout: 24 * 60 * 60 * 1000, // millisecond
-    cachePath: '/home/usr/data',  // absoulte path is necessarily required
-    pathDepth: 1
+  type: 'redis',
+  redis: {
+    handle: redisCache,
+    timeout: 24 * 3600 * 1000, // millisecond
+    redis: {
+      port: 6379,
+      host: '127.0.0.1',
+      password: '',
+    }
   }
 }
 ```
-
-
-### default options
-
-```js
-const defaultOptions = {
-  timeout = 24 * 60 * 60 * 1000, // millisecond
-  pathDepth = 1,
-  // cachePath don't have default value and must set an absolute path
-};
-
+redis config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
