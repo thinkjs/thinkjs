@@ -24,6 +24,7 @@ const defaultConfig = {
 };
 ```
 
+### usage
 
 ```js
 import Redis from '../index';
