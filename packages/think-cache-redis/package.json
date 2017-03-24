@@ -1,7 +1,7 @@
 {
-  "name": "think-cache-file",
-  "version": "1.0.6",
-  "description": "File cache Adapter for ThinkJS'S Cache",
+  "name": "think-cache-redis",
+  "version": "1.0.0",
+  "description": "Redis cache Adapter for ThinkJS'S Cache",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
@@ -14,10 +14,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-cache-file.git"
+    "url": "git+https://github.com/thinkjs/think-cache-redis.git"
   },
   "keywords": [
-    "think-cache-file"
+    "think-cache-redis"
   ],
   "author": {
     "name": "lushijie",
@@ -31,9 +31,9 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-cache-file/issues"
+    "url": "https://github.com/thinkjs/think-cache-redis/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-cache-file#readme",
+  "homepage": "https://github.com/thinkjs/think-cache-redis#readme",
   "devDependencies": {
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",
@@ -42,10 +42,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "think-debounce": "~1.0.3",
-    "think-gc": "~1.0.0",
     "think-helper": "~1.0.0",
-    "think-redis": "~1.0.3",
-    "think-store-file": "~1.0.5"
+    "think-redis": "~1.0.3"
   }
 }

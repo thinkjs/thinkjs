@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-cache-redis/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-cache-redis?branch=master)
 [![npm](https://img.shields.io/npm/v/think-cache-redis.svg?style=flat-square)](https://www.npmjs.com/package/think-cache-redis)
 
-Use file to cache data
+Use redis to cache data
 
 ## Install
 
