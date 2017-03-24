@@ -34,7 +34,7 @@ class FileCache {
 
     //gc interval by 1 hour
     this.gcType = `cache-${this.cachePath}`;
-    gc(this, 3600 * 1000);
+    gc(this, config.gcInterval);
   }
 
   /**
