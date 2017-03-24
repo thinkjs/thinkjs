@@ -7,6 +7,8 @@
 
 think-trace is an error handler for ThinkJS 3.x and koa2. It provides a pretty error web interface that helps you debug your web project.
 
+![](https://p1.ssl.qhimg.com/t0105986ac7dfc1c197.png)
+
 ## Installation
 
 ```
