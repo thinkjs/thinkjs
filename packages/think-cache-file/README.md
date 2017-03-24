@@ -17,11 +17,11 @@ npm install think-cache-file
 edit config file `src/config/adapter.js`, add options:
 
 ```js
-const cacheFile = require('think-cache-file');
+const fileCache = require('think-cache-file');
 exports.cache = {
   type: 'file',
   file: {
-    handle: cacheFile,
+    handle: fileCache,
     timeout: 24 * 60 * 60 * 1000, // millisecond
     cachePath: '/home/usr/data',  // absoulte path is necessarily required
     pathDepth: 1
@@ -34,8 +34,8 @@ exports.cache = {
 
 ```js
 const defaultOptions = {
-  timeout = 24 * 60 * 60 * 1000, // millisecond
-  pathDepth = 1,
-  // cachePath don't have default value and must set an absolute path
+  timeout: 24 * 60 * 60 * 1000,
+  pathDepth: 1,
+  cachePath: '',
 };
 
