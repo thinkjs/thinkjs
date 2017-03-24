@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const base = path.join(__dirname, 'src/template');
+const base = path.join(__dirname, 'template');
 module.exports = {
   entry: {
     '404': path.join(base, 'src/404'),
