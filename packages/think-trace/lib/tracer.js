@@ -8,11 +8,11 @@ const DEFAULT_404_TEMPLATE = path.join(__dirname, '../template/404.html');
 const DEFAULT_500_TEMPLATE = path.join(__dirname, '../template/500.html');
 
 module.exports = class Tracer {
-  constructor({ctxLineNumbers, err404Template, err500Template, debug}) { 
-    this.ctxLineNumbers = ctxLineNumbers || 10;
-    this.debug = debug !== undefined ? debug : true;
-    this.err404Template = err404Template || DEFAULT_404_TEMPLATE;
-    this.err500Template = err500Template || DEFAULT_500_TEMPLATE;
+  constructor(opts = {}) { 
+    this.ctxLineNumbers = opts.ctxLineNumbers || 10;
+    this.debug = opts.debug !== undefined ? opts.debug : true;
+    this.err404Template = opts.err404Template || DEFAULT_404_TEMPLATE;
+    this.err500Template = opts.err500Template || DEFAULT_500_TEMPLATE;
   }
 
   /**
@@ -47,12 +47,10 @@ module.exports = class Tracer {
       content = content.slice(startLineNumber, endLineNumber);
       
       line.content = content.join('\n');
-      line.getContent = function() { return this.content; };
       line.startLineNumber = Math.max(0, startLineNumber) + 1;
-      line.getStartLineNumber = function() { return this.startLineNumber; };
 
       return line;
-    }).catch((err) => null);
+    }).catch(() => {});
   }
 
   /**
@@ -92,9 +90,6 @@ module.exports = class Tracer {
    */
   run(ctx, err) {
     this.ctx = ctx;
-    if( !(err instanceof Error) ) {
-      err = new Error(err);
-    }
 
     // 404 not found error
     if( err.status === 404 ) {
@@ -106,6 +101,6 @@ module.exports = class Tracer {
     return Promise.all( 
       stack.map(this.getFile.bind(this)) 
     ).then(stacks => stacks.filter(stack => stack))
-     .then(stacks => ctx.body = this.render500(stacks, err));
+    .then(stacks => ctx.body = this.render500(stacks, err));
   }
 }

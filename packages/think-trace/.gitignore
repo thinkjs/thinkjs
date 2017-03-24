@@ -35,7 +35,7 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
-test.js
+run.js
 .vscode
 src/template/404.js
 src/template/500.js
