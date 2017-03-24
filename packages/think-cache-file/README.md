@@ -24,7 +24,8 @@ exports.cache = {
     handle: fileCache,
     timeout: 24 * 60 * 60 * 1000, // millisecond
     cachePath: '/home/usr/data',  // absoulte path is necessarily required
-    pathDepth: 1
+    pathDepth: 1,
+    gcInterval: 24 * 60 * 60 * 1000 // gc
   }
 }
 ```
@@ -37,5 +38,6 @@ const defaultOptions = {
   timeout: 24 * 60 * 60 * 1000,
   pathDepth: 1,
   cachePath: '',
+  gcInterval: 24 * 60 * 60 * 1000
 };
 

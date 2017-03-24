@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 15:52:29
+* @Last Modified time: 2017-03-24 15:59:05
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -10,14 +10,15 @@ const assert = require('assert');
 const fs = require('fs');
 const readFile = helper.promisify(fs.readFile, fs);
 const unlink = helper.promisify(fs.unlink, fs);
-// const gc = require('think-gc');
+const gc = require('think-gc');
 const FileStore = require('think-store-file');
 let _getRelativePath = Symbol('getRelativePath');
 
 let defaultConfig = {
   timeout: 24 * 3600 * 1000,
   cachePath: '',
-  pathDepth: 1
+  pathDepth: 1,
+  gcInterval: 48 * 3600 * 1000
 };
 
 /**
@@ -35,7 +36,8 @@ class FileCache {
 
     //gc interval by 1 hour
     this.gcType = `cache-${this.cachePath}`;
-    // gc(this, 3600 * 1000);
+    gc(this, config.gcInterval);
+
   }
 
   /**
