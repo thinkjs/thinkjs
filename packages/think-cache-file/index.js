@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 10:03:05
+* @Last Modified time: 2017-03-24 10:45:34
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -75,7 +75,7 @@ class FileCache {
   /**
    * set cache
    * @param {String} key     [description]
-   * @param {Mixed} content [description]
+   * @param {String} content [description]
    * @param {Number} timeout [millisecond]
    * @return {Promise}      [description]
    */
