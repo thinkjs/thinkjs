@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 21:00:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-23 10:51:18
+* @Last Modified time: 2017-03-24 10:15:58
 */
 // const helper = require('think-helper');
 // const path = require('path');
@@ -14,18 +14,11 @@ import path from 'path';
 import fs from 'fs';
 import Redis from '../index';
 
-
-let config = {
-  port: 6379,          // Redis port
-  host: '127.0.0.1',   // Redis host
-  password: '',
-};
-
 test.serial('set key & get key & del key', async t => {
   let key = 'name1';
   let value = 'thinkjs';
 
-  let redisInst = new Redis(helper.extend({}, config));
+  let redisInst = new Redis();
   redisInst.on('connect', function() {
     // console.log('connect...')
   });
@@ -39,7 +32,7 @@ test.serial('set key & get key & del key', async t => {
 
 test.serial('set key', async t => {
 
-  let redisInst = new Redis(helper.extend({}, config));
+  let redisInst = new Redis();
   let s1 = await redisInst.set('name2', 'lushijie');
   let s2 = await redisInst.set('name3', 'lushijie', 3);
   let s3 = await redisInst.set('name4', 'lushijie', 'EX', 5);

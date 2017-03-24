@@ -12,18 +12,23 @@ npm install think-redis
 
 ## How to Usage
 
+### default options
+
+You can find all the config options at https://github.com/luin/ioredis/blob/master/lib/redis.js
 
 ```js
-import Redis from '../index';
-
-// default options
-let defaultOptions = {
+const defaultConfig = {
   port: 6379,          // Redis port
   host: '127.0.0.1',   // Redis host
   password: '',
 };
+```
 
-let redisInst = new Redis(helper.extend({}, defaultOptions));
+
+```js
+import Redis from '../index';
+
+let redisInst = new Redis(config);
 
 // set key
 let s1 = await redisInst.set('name2', 'lushijie');
@@ -43,4 +48,4 @@ redisInst.on('connect', function() {
 });
 
 ```
-You can find all the config options at https://github.com/luin/ioredis/blob/master/lib/redis.js
+

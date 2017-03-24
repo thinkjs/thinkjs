@@ -2,31 +2,31 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-23 10:52:35
+* @Last Modified time: 2017-03-24 10:18:19
 */
 const helper = require('think-helper');
 const assert = require('assert');
 const ioredis = require('ioredis');
 let _validExpire = Symbol('validExpire');
 
-let defaultOptions = {
-  port: 6379,          // Redis port
-  host: '127.0.0.1',   // Redis host
+// redis config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
+const defaultConfig = {
+  port: 6379,
+  host: '127.0.0.1',
   password: '',
 };
 
 class thinkRedis {
 
-  // config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
   constructor(config) {
-    this.redis = new ioredis(helper.extend({}, defaultOptions, config));
+    this.redis = new ioredis(helper.extend({}, defaultConfig, config));
   }
 
   /**
    * valid expire num
    */
   [_validExpire](num) {
-    let needMessage = 'expire should be an int great than zero';
+    let needMessage = 'expire should be an integer great than zero';
     assert(num && /^[+]?[0-9]+$/.test(num) && num > 0, needMessage);
   }
 
@@ -53,9 +53,9 @@ class thinkRedis {
    * set key
    * @param {Stirng} key    [description]
    * @param {String} value  [description]
-   * @param {EX|PX} type   [description]
-   * @param {int>0} expire [description]
-   * @return {Promise}     [description]
+   * @param {String} type   [EX|PX]
+   * @param {Int} expire    [>0]
+   * @return {Promise}      [description]
    */
   set(key, value, type, expire) {
     if(type) {
@@ -68,7 +68,6 @@ class thinkRedis {
         return this.redis.set(key, value, 'EX', type);
       }
     }
-
     // without type
     return this.redis.set(key, value);
   }
