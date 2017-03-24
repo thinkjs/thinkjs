@@ -2,31 +2,39 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 09:40:21
+* @Last Modified time: 2017-03-24 10:03:05
 */
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
 const fs = require('fs');
-const FileStore = require('think-store-file');
 const readFile = helper.promisify(fs.readFile, fs);
 const gc = require('think-gc');
+const FileStore = require('think-store-file');
 let _getRelativePath = Symbol('getRelativePath');
+
+let defaultConfig = {
+  timeout: 24 * 3600 * 1000,
+  cachePath: '',
+  pathDepth: 1
+};
 
 /**
  * file cache adapter
  */
 class FileCache {
   constructor(config) {
-    assert(config.cachePath && helper.isString(config.cachePath), 'config.cachePath must be set');
-    this.store = new FileStore(config.cachePath);
-    this.timeout = config.timeout;
-    this.cachePath = config.cachePath;
-    this.pathDepth = config.pathDepth || 1;
+    this.config = helper.extend({}, defaultConfig, config);
+
+    this.timeout = this.config.timeout;
+    this.cachePath = this.config.cachePath;
+    this.pathDepth = this.config.pathDepth;
+    this.store = new FileStore(this.cachePath);
+    assert(this.cachePath && helper.isString(this.cachePath), 'config.cachePath must be set');
 
     //gc interval by 1 hour
-    this.gcType = `cache-${config.cachePath}`;
-    gc(this, 3600);
+    this.gcType = `cache-${this.cachePath}`;
+    gc(this, 3600 * 1000);
   }
 
   /**
@@ -41,7 +49,7 @@ class FileCache {
   }
 
   /**
-   * get cache content by the cache key
+   * get cache by the cache key
    * @param  {String} key [description]
    * @return {Promise}      [description]
    */
@@ -65,10 +73,10 @@ class FileCache {
   }
 
   /**
-   * get cache key's content
+   * set cache
    * @param {String} key     [description]
    * @param {Mixed} content [description]
-   * @param {Number} timeout [MS]
+   * @param {Number} timeout [millisecond]
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
@@ -81,7 +89,7 @@ class FileCache {
   }
 
   /**
-   * delete cache key
+   * delete cache by the cache key
    * @param  {String} key [description]
    * @return {Promise}     [description]
    */
