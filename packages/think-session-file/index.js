@@ -109,7 +109,7 @@ class FileSession {
     let files = helper.getdirFiles(this.options.sessionPath);
     files.forEach(file => {
       let filePath = path.join(this.options.sessionPath, file);
-      return readFile(filePath, 'utf8').then(content => {
+      readFile(filePath, 'utf8').then(content => {
         if(!content) return Promise.reject(new Error('content empty'));
         content = JSON.parse(content);
         if(Date.now() > content.expires){
