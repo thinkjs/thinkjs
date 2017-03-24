@@ -35,7 +35,7 @@ const defaultOptions = {
   throwOnUndefined: false
 };
 ```
-change options:
+### change options:
 
 ```js
 exports.view = {
