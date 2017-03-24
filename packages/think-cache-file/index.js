@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-22 09:08:18
+* @Last Modified time: 2017-03-24 09:40:21
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -68,6 +68,7 @@ class FileCache {
    * get cache key's content
    * @param {String} key     [description]
    * @param {Mixed} content [description]
+   * @param {Number} timeout [MS]
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
