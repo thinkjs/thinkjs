@@ -1,5 +1,10 @@
 # think-trace
 
+[![npm](https://img.shields.io/npm/v/think-trace.svg?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/thinkjs/think-trace.svg?style=flat-square)]()
+[![Coveralls](https://img.shields.io/coveralls/thinkjs/think-trace/master.svg?style=flat-square)]()
+[![David](https://img.shields.io/david/thinkjs/think-trace.svg?style=flat-square)]()
+
 think-trace is an error handler for ThinkJS 3.x and koa2. It provides a pretty error web interface that helps you debug your web project.
 
 ## Installation
