@@ -6,7 +6,6 @@
   "scripts": {
     "compile": "webpack -p",
     "eslint": "eslint ./lib",
-    "pretest": "npm run compile",
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
     "preversion": "npm test",
