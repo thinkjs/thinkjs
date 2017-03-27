@@ -15,9 +15,9 @@ class View {
     this.viewData = {};
   }
   /**
-   * 
-   * @param {String | Object} name 
-   * @param {Mixed} value 
+   *
+   * @param {String | Object} name
+   * @param {Mixed} value
    */
   assign(name, value){
     if (name === undefined) {
@@ -57,12 +57,15 @@ class View {
       assert(config.viewPath && helper.isString(config.viewPath), 'config.viewPath required');
       file = path.join(config.viewPath, file);
     }
+    if (config.beforeRender) {
+      assert(helper.isFunction(config.beforeRender), 'config.beforeRender must be a function');
+    }
     return file;
   }
   /**
    * render file
-   * @param {String} file 
-   * @param {Object} config 
+   * @param {String} file
+   * @param {Object} config
    */
   render(file, config = {}){
     assert(helper.isFunction(config.handle), 'config.handle must be a function');
