@@ -1,5 +1,4 @@
 import test from 'ava';
-import thinkViewEjs from '../index.js';
 import ejs from 'ejs';
 
 
@@ -9,6 +8,7 @@ test.beforeEach(t => {
 
 
 function callEjsView(file, viewData, config) {
+  const thinkViewEjs = require('../index');
   const instance = new thinkViewEjs(file, viewData, config);
   return Promise.resolve(instance.render());
 }

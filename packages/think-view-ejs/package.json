@@ -8,7 +8,8 @@
   },
    "scripts": {
     "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=html"
+    "coverage": "nyc report --reporter=html",
+    "publish": "npm version patch && npm publish"
   },
   "dependencies": {
     "think-helper": "^1.0.0",

@@ -7,7 +7,7 @@ const helper = require('think-helper');
 const defaultOptions = {
   cache: true
 };
-
+const fn = helper.promisify(ejs.renderFile);
 class Ejs {
   /**
    * @param {String} file: filename(absolute path)of template
@@ -30,7 +30,7 @@ class Ejs {
     if(config.beforeRender) {
       config.beforeRender(ejs, config);
     }
-    let fn = helper.promisify(ejs.renderFile);
+    
     return fn(this.file, this.data, this.config);
   }
 }
