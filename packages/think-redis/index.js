@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 16:08:43
+* @Last Modified time: 2017-03-27 16:21:38
 */
 const helper = require('think-helper');
 const assert = require('assert');
@@ -56,7 +56,7 @@ class thinkRedis {
         return this.redis.set(key, value, type, expire);
       }else {
         this[_validExpire](type);
-        return this.redis.set(key, value, 'EX', type);
+        return this.redis.set(key, value, 'PX', type);
       }
     }
     // without type
