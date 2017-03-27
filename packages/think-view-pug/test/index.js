@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-13 10:55:10
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 14:56:32
+* @Last Modified time: 2017-03-27 16:58:34
 */
 
 import test from 'ava';
@@ -21,10 +21,10 @@ let viewData = {name: 'thinkjs'};
 
 
 test.serial('pug render', async t => {
+  let viewFile = path.join(__dirname, '/views/home.jade');
   let config = helper.extend({}, defaultOptions, viewData, {viewPath: viewBasePath});
-  let originOut = pugOrigin.renderFile(path.join(__dirname, '/views/home.jade'), config);
-  let pugInst = new Pug('home.jade', viewData, config);
-
+  let originOut = pugOrigin.renderFile(viewFile, config);
+  let pugInst = new Pug(viewFile, viewData, config);
   t.is(originOut, await pugInst.render());
 });
 
