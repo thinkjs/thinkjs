@@ -1,8 +1,9 @@
-const assert = require('assert');
+const util = require('./util.js');
 const cluster = require('cluster');
-const cpus = require('os').cpus().length;
+const assert = require('assert');
 
 const KEEP_ALIVE = Symbol('think-graceful-keepalive');
+
 /**
  * default options
  */
@@ -14,46 +15,22 @@ const defaultOptions = {
   processKillTimeout: 10 * 1000 //10s
 };
 /**
- * think process id
+ * Worker
  */
-let thinkProcessId = 1;
-/**
- * Graceful class
- */
-module.exports = class Graceful {
+class Worker {
   /**
-   * 
+   * constructor
    * @param {Object} options 
    */
   constructor(options){
-    this.options = options || {};
-    for(let key in defaultOptions){
-      if(!this.options[key]){
-        this.options[key] = defaultOptions[key];
-      }
-    }
+    options = util.parseOptions(options);
+    this.options = Object.assign({}, defaultOptions, options);
   }
   /**
-   * fork worker
+   * check worker is first
    */
-  forkWorker(env = {}, callback){
-    env.THINK_PROCESS_ID = thinkProcessId++;
-    const worker = cluster.fork(env);
-    worker.once('message', message => {
-      if(message === 'think-graceful-disconnect'){
-        this.options.logger(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
-        env.THINK_FIRST_WORKER = 0; 
-        this.forkWorker(env, () => {
-          worker.send('think-graceful-fork');
-        });
-      }
-    });
-    if(callback){
-      worker.once('listening', () => {
-        callback();
-      });
-    }
-    return worker;
+  isFirstWorker(){
+    return process.env.THINK_FIRST_WORKER === '1';
   }
   /**
    * disable keep alive
@@ -103,18 +80,27 @@ module.exports = class Graceful {
    * @param {Boolean} sendSignal 
    */
   disconnectWorker(sendSignal){
-
     const worker = cluster.worker;
     if(sendSignal){
-      worker.send('think-graceful-disconnect');
+      worker.send(util.THINK_GRACEFUL_DISCONNECT);
       worker.once('message', message => {
-        if(message === 'think-graceful-fork'){
+        if(message === util.THINK_GRACEFUL_FORK){
           this.closeServer();
         }
       });
     }else{
       this.closeServer();
     }
+  }
+  /**
+   * capture reload signal
+   */
+  captureReloadSignal(){
+    process.once('message', message => {
+      if(message === 'think-reload-signal'){
+        this.disconnectWorker(true);
+      }
+    });
   }
   /**
    * uncaughtException
@@ -152,86 +138,9 @@ module.exports = class Graceful {
     });
   }
   /**
-   * capture reload signal
+   * capture events
    */
-  captureReloadSignal(){
-    if(cluster.isMaster){
-      const signal = this.options.reloadSignal;
-      process.on(signal, () => {
-        for(let id in cluster.workers){
-          let worker = cluster.workers[id];
-          worker.send('think-reload-signal');
-        }
-      });
-    }else{
-      process.once('message', message => {
-        if(message === 'think-reload-signal'){
-          this.disconnectWorker(true);
-        }
-      });
-    }
-  }
-  /**
-   * for master
-   */
-  master(){
-    assert(cluster.isMaster, 'only invoke in master process');
-    let workers = this.options.workers || cpus;
-    let index = 0;
-    while(index++ < workers){
-      this.forkWorker({
-        THINK_FIRST_WORKER: index === 1 ? 1 : 0,
-        THINK_WORKERS: workers,
-        THINK_CLUSTER: 1
-      });
-    }
-    if(this.options.reloadSignal){
-      this.captureReloadSignal();
-    }
-  }
-  /**
-   * check worker is first
-   */
-  isFirstWorker(){
-    return process.env.THINK_FIRST_WORKER === '1';
-  }
-  /**
-   * force reload all workers, in development env
-   */
-  forceReloadWorkers(){
-    assert(cluster.isMaster, 'only invoke in master process');
-    let firstWorker, aliveWorkers = [];
-    for(let id in cluster.workers){
-      let worker = cluster.workers[id];
-      if(worker.state === 'disconnected'){
-        continue;
-      }
-      if(!firstWorker){
-        firstWorker = worker;
-      }else{
-        aliveWorkers.push(worker);
-      }
-    }
-    const worker = this.forkWorker();
-    //http://man7.org/linux/man-pages/man7/signal.7.html
-    worker.once('listening', () => {
-      if(firstWorker){
-        firstWorker.kill('SIGQUIT');
-        setTimeout(function () {
-          firstWorker.process.kill('SIGQUIT');
-        }, 100);
-      }
-    });
-    aliveWorkers.forEach(worker => {
-      worker.kill('SIGQUIT');
-      this.forkWorker();
-    });
-  }
-  /**
-   * for worker
-   */
-  worker(){
-    assert(cluster.isWorker, 'only invoke in worker process');
+  captureEvents(){
     assert(this.options.server, 'options.server required');
     this.uncaughtException();
     this.unhandledRejection();
@@ -243,4 +152,12 @@ module.exports = class Graceful {
     }
     this.captureReloadSignal();
   }
+  /**
+   * get workers
+   */
+  getWorkers(){
+    return process.env.THINK_WORKERS;
+  }
 }
+
+module.exports = Worker;
