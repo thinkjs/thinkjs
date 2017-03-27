@@ -13,7 +13,7 @@ class CookieSession {
    */
   constructor(options = {}, ctx){
     if(options.encrypt){
-      assert(options.keys && helper.isArray(options.keys), '.keys required when encrypt is set');
+      assert(options.keys && helper.isArray(options.keys), '.keys required and must be an array when encrypt is set');
       options.sign = false; //disable sign when set encrypt
       this.keygrip = new Keygrip(options.keys);
     }
