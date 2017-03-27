@@ -16,7 +16,7 @@ npm install think-view-ejs
 
 edit config file `src/config/adapter.js`, add options for ejs adapter:
 
-```
+```js
 const ejs = require('think-view-ejs');
 exports.view = {
   type: 'ejs',
@@ -36,7 +36,7 @@ exports.view = {
 
 Default options:
 
-```
+```js
 const defaultOptions = {
   cache: true
 }
@@ -44,7 +44,7 @@ const defaultOptions = {
 
 You can override it and add other options by editing file  `src/config/adapter.js` :
 
-````
+````js
 exports.view = {
   type: 'ejs',
   ejs: {
