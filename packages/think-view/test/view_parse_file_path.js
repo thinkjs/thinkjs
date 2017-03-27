@@ -1,6 +1,5 @@
 const test = require('ava');
 const mock = require('mock-require');
-const helper = require('think-helper');
 
 const ctx = {
   module: 'admin',
@@ -23,14 +22,6 @@ function mockAssert(assertCallParams = []) {
     assertCallParams.push(type, desc);
   });
 }
-
-test('parseFilePath function -- beforeRender', t => {
-  const View = getView();
-  const view = new View(ctx);
-  let config1 = helper.extend({}, config, {beforeRender: function() {}});
-  let file = view.parseFilePath('index.html', config1);
-  t.pass();
-});
 
 test('parseFilePath function -- normal scene', t => {
   const View = getView();

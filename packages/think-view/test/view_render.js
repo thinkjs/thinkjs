@@ -1,5 +1,6 @@
 const test = require('ava');
 const mock = require('mock-require');
+const helper = require('think-helper');
 
 function getView() {
   return mock.reRequire('../lib/view');
@@ -43,6 +44,16 @@ test('render function -- normal scene', t => {
   const view = new View(ctx);
   const file = 'index.html';
   let promise = view.render(file,getConfig());
+  t.not(promise.then,undefined);
+});
+
+
+test('render function -- beforeRender', t => {
+  const View = getView();
+  const view = new View(ctx);
+  const file = 'index.html';
+  let config = helper.extend({}, getConfig(), {beforeRender: function() {}});
+  let promise = view.render(file,config);
   t.not(promise.then,undefined);
 });
 

@@ -57,9 +57,6 @@ class View {
       assert(config.viewPath && helper.isString(config.viewPath) && path.isAbsolute(config.viewPath), 'config.viewPath required an absolute path');
       file = path.join(config.viewPath, file);
     }
-    if (config.beforeRender) {
-      assert(helper.isFunction(config.beforeRender), 'config.beforeRender must be a function');
-    }
     return file;
   }
   /**
@@ -70,6 +67,9 @@ class View {
   render(file, config = {}){
     assert(helper.isFunction(config.handle), 'config.handle must be a function');
     file = this.parseFilePath(file, config);
+    if (config.beforeRender) {
+      assert(helper.isFunction(config.beforeRender), 'config.beforeRender must be a function');
+    }
     const handle = config.handle;
     delete config.handle;
     const instance = new handle(file, this.viewData, config);
