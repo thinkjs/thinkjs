@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 15:06:11
+* @Last Modified time: 2017-03-27 17:05:37
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -23,8 +23,9 @@ let viewData = {title: 'Thinkjs'};
 
 // test case
 test.serial('handlebars default render', async t => {
+  let viewFile = path.join(viewBasePath, './home.tpl');
   let config = helper.extend({}, defaultOptions, {viewPath: viewBasePath});
-  let handlebars = new Handlebars('./home.tpl', viewData, config);
+  let handlebars = new Handlebars(viewFile, viewData, config);
   let fileContent = fs.readFileSync(path.join(viewBasePath, 'home.tpl')).toString();
   let originResp = handlebarsOrigin.compile(fileContent)(viewData);
 
@@ -68,7 +69,8 @@ test.serial('handlebars with registerHelper', async t => {
       handlebars.registerHelper('shorten', shortenFn);
     }
   });
-  let handlebars = new Handlebars('./admin.tpl', viewData, config);
+  let viewFile = path.join(viewBasePath, './admin.tpl');
+  let handlebars = new Handlebars(viewFile, viewData, config);
   handlebarsOrigin.registerHelper('shorten', shortenFn);
   let fileContent = fs.readFileSync(path.join(__dirname, 'views/admin.tpl')).toString();
   let originResp = handlebarsOrigin.compile(fileContent)(viewData);

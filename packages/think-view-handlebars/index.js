@@ -2,10 +2,9 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 12:23:30
+* @Last Modified time: 2017-03-27 17:08:45
 */
 const helper = require('think-helper');
-const path = require('path');
 const handlebars = require('handlebars');
 const fs = require('fs');
 const readFile = helper.promisify(fs.readFile, fs);
@@ -43,25 +42,20 @@ class Handlebars {
      * render view file
      */
     render() {
-      let viewPath = this.config.viewPath;
+      let viewFile = this.viewFile;
 
       if(this.config.beforeRender){
         this.config.beforeRender(handlebars, this.config);
       }
 
-      let absolutePath = this.viewFile;
-      if(!path.isAbsolute(absolutePath)){
-        absolutePath = path.join(viewPath, absolutePath);
+      if(this.config.cache && cacheFn[viewFile]) {
+        return Promise.resolve(cacheFn[viewFile](this.viewData));
       }
 
-      if(this.config.cache && cacheFn[absolutePath]) {
-        return Promise.resolve(cacheFn[absolutePath](this.viewData));
-      }
-
-      return readFile(absolutePath, 'utf8').then((data) => {
+      return readFile(viewFile, 'utf8').then((data) => {
         let compileFn = handlebars.compile(data, this.config);
         if(this.config.cache) {
-          cacheFn[absolutePath] = compileFn;
+          cacheFn[viewFile] = compileFn;
         }
         return compileFn(this.viewData);
       });
