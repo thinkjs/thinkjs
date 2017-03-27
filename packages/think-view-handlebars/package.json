@@ -1,6 +1,6 @@
 {
   "name": "think-view-handlebars",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Handlebars view adapter for ThinkJS",
   "main": "index.js",
   "scripts": {
