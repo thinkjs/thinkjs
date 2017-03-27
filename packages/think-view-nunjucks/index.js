@@ -2,12 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-14 10:25:21
+* @Last Modified time: 2017-03-27 12:28:00
 */
 const helper = require('think-helper');
 const path = require('path');
 const nunjucks = require('nunjucks');
-const assert = require('assert');
 
 /**
  * default options for nunjucks
@@ -40,7 +39,6 @@ class Nunjucks {
    */
   render(){
     let env, viewPath = this.config.viewPath;
-    assert(viewPath && helper.isString(viewPath), 'config.viewPath required and must be a string');
 
     const viewFile = this.viewFile;
     if(path.isAbsolute(viewFile) && viewFile.indexOf(viewPath) !== 0 ){
@@ -51,7 +49,6 @@ class Nunjucks {
 
     const beforeRender = this.config.beforeRender;
     if(beforeRender){
-      assert(helper.isFunction(beforeRender), 'config.beforeRender must be a function');
       beforeRender(env, nunjucks, this.config);
     }
 
