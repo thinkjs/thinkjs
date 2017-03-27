@@ -2,10 +2,9 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 12:28:00
+* @Last Modified time: 2017-03-27 17:14:46
 */
 const helper = require('think-helper');
-const path = require('path');
 const nunjucks = require('nunjucks');
 
 /**
@@ -41,7 +40,7 @@ class Nunjucks {
     let env, viewPath = this.config.viewPath;
 
     const viewFile = this.viewFile;
-    if(path.isAbsolute(viewFile) && viewFile.indexOf(viewPath) !== 0 ){
+    if(viewFile.indexOf(viewPath) !== 0 ){
       env = nunjucks.configure(this.config);
     }else{
       env = nunjucks.configure(viewPath, this.config);

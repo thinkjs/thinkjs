@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-13 15:09:03
+* @Last Modified time: 2017-03-27 17:16:32
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -23,7 +23,8 @@ njk.configure(path.join(__dirname, 'views'), defaultOptions);
 let resp1 = njk.render('home.njk', viewData);
 
 test.serial('nunjucks absolute path', async t => {
-  let nunjucks = new Nunjucks('./home.njk', viewData, {viewPath: viewBasePath});
+  let viewFile = path.join(viewBasePath, 'home.njk');
+  let nunjucks = new Nunjucks(viewFile, viewData, {viewPath: viewBasePath});
   let ret = await nunjucks.render();
 
   t.is(ret, resp1);
@@ -37,7 +38,8 @@ test.serial('nunjucks not in absolute path', async t => {
 });
 
 test.serial('nunjucks releative path', async t => {
-  let nunjucks = new Nunjucks('./home.njk', viewData, {viewPath: viewBasePath});
+  let viewFile = path.join(viewBasePath, 'home.njk');
+  let nunjucks = new Nunjucks(viewFile, viewData, {viewPath: viewBasePath});
   let ret = await nunjucks.render();
 
   t.is(ret, resp1);
@@ -47,7 +49,8 @@ test.serial('nunjucks beforeRender', async t => {
   let shortenFn = str =>{
     return str.slice(0, 5);
   };
-  let nunjucks = new Nunjucks('./admin.njk', viewData, {
+  let viewFile = path.join(viewBasePath, 'admin.njk');
+  let nunjucks = new Nunjucks(viewFile, viewData, {
     viewPath: viewBasePath,
     beforeRender: function(env, nunjucks, config) {
       env.addFilter('shorten', shortenFn);
@@ -62,7 +65,8 @@ test.serial('nunjucks beforeRender', async t => {
 });
 
 test.serial('nunjucks file not found cause reject', async t => {
-  let nunjucks = new Nunjucks('./error.njk', viewData, {viewPath: viewBasePath});
+  let viewFile = path.join(viewBasePath, 'error.njk');
+  let nunjucks = new Nunjucks(viewFile, viewData, {viewPath: viewBasePath});
   try {
     let ret = await nunjucks.render();
   }catch(e) {
