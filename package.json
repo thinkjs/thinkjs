@@ -38,10 +38,10 @@
   "main": "lib/application.js",
   "dependencies": {
     "bluebird": "3.3.5",
+    "cookies": "^0.7.0",
     "debug": "^2.6.1",
     "depd": "^1.1.0",
-    "koa": "^2.0.0-alpha.8",
-    "koa-bodyparser": "^3.2.0",
+    "koa": "^2.2.0",
     "think-cache": "^1.0.0",
     "think-cluster": "^1.0.0",
     "think-config": "^1.0.0",
