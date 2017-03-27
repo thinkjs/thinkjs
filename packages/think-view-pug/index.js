@@ -2,12 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-14 14:20:41
+* @Last Modified time: 2017-03-27 12:26:16
 */
 const helper = require('think-helper');
 const path = require('path');
 const pug = require('pug');
-const assert = require('assert');
 
 /**
  * pug default render options
@@ -38,11 +37,9 @@ class Pug {
    */
   render() {
     let viewPath = this.config.viewPath;
-    assert(viewPath && helper.isString(viewPath), 'config.viewPath required and must be a string');
     this.config.basedir = viewPath;
 
     if(this.config.beforeRender){
-      assert(helper.isFunction(this.config.beforeRender), 'config.beforeRender must be a function');
       this.config.beforeRender(pug, this.config);
     }
 
