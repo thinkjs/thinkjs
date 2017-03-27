@@ -2,11 +2,8 @@
 * @Author: lushijie
 * @Date:   2017-03-22 21:00:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 10:15:58
+* @Last Modified time: 2017-03-27 16:08:29
 */
-// const helper = require('think-helper');
-// const path = require('path');
-// const fs = require('fs');
 
 import test from 'ava';
 import helper from 'think-helper';
@@ -17,7 +14,6 @@ import Redis from '../index';
 test.serial('set key & get key & del key', async t => {
   let key = 'name1';
   let value = 'thinkjs';
-
   let redisInst = new Redis();
   redisInst.on('connect', function() {
     // console.log('connect...')
@@ -31,7 +27,6 @@ test.serial('set key & get key & del key', async t => {
 });
 
 test.serial('set key', async t => {
-
   let redisInst = new Redis();
   let s1 = await redisInst.set('name2', 'lushijie');
   let s2 = await redisInst.set('name3', 'lushijie', 3);
@@ -41,5 +36,23 @@ test.serial('set key', async t => {
   redisInst.close();
 
   t.true(s1 === 'OK' && s2 === 'OK' && s3 === 'OK' && s4 === 'OK');
+});
+
+
+test.serial('set key and then incr & decr ', async t => {
+  let key = 'id';
+  let redisInst = new Redis();
+  let s1 = await redisInst.set(key, '100', 365 * 24 * 3600);
+  redisInst.increment(key).catch((e) => {
+    console.log(e);
+  });
+  let g1 = await redisInst.get(key);
+
+  redisInst.decrement(key).catch((e) => {
+    console.log(e);
+  });
+  let g2 = await redisInst.get(key);
+
+  t.true(g1 === '101' && g2 === '100');
 });
 

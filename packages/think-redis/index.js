@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 10:18:19
+* @Last Modified time: 2017-03-27 16:08:43
 */
 const helper = require('think-helper');
 const assert = require('assert');
@@ -26,22 +26,13 @@ class thinkRedis {
    * valid expire num
    */
   [_validExpire](num) {
-    let needMessage = 'expire should be an integer great than zero';
-    assert(num && /^[+]?[0-9]+$/.test(num) && num > 0, needMessage);
-  }
-
-  /**
-   * get key
-   * @param  {String} key [description]
-   * @return {Promise}     [description]
-   */
-  get(key) {
-    return this.redis.get(key);
+    let msg = 'expire should be an integer great than zero';
+    assert(num && /^[+]?[0-9]+$/.test(num) && num > 0, msg);
   }
 
   /**
    * add event listener
-   * @param  {String}   event    [description]
+   * @param  {String}   event  [connect,ready,error,close,reconnecting,end is supported]
    * @param  {Function} callback [description]
    * @return {void}            [description]
    */
@@ -53,7 +44,7 @@ class thinkRedis {
    * set key
    * @param {Stirng} key    [description]
    * @param {String} value  [description]
-   * @param {String} type   [EX|PX]
+   * @param {String} type   [EX='seconds'|PX='milliseconds']
    * @param {Int} expire    [>0]
    * @return {Promise}      [description]
    */
@@ -73,12 +64,39 @@ class thinkRedis {
   }
 
   /**
+   * get key
+   * @param  {String} key [description]
+   * @return {Promise}     [description]
+   */
+  get(key) {
+    return this.redis.get(key);
+  }
+
+  /**
    * delete key
    * @param  {String} key [description]
    * @return {Promise}     [description]
    */
   delete(key) {
     return this.redis.del(key);
+  }
+
+  /**
+   * increment key's value
+   * @param  {String} key [description]
+   * @return {Promise}     [description]
+   */
+  increment(key) {
+    return this.redis.incr(key);
+  }
+
+  /**
+   * decrement key's value
+   * @param  {String} key [description]
+   * @return {Promise}     [description]
+   */
+  decrement(key) {
+    return this.redis.decr(key);
   }
 
   /**
