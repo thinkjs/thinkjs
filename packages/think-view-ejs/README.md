@@ -21,7 +21,7 @@ const ejs = require('think-view-ejs');
 exports.view = {
   type: 'ejs',
   ejs: {
-  	//options
+    //options
     handle: ejs,
     beforeRender: (ejs, config) => {
       //do something before render the template.
@@ -48,9 +48,9 @@ You can override it and add other options by editing file  `src/config/adapter.j
 exports.view = {
   type: 'ejs',
   ejs: {
-  	//override `cache` option
-  	cache: false,
-  	root: '/public/path',
+    //override `cache` option
+    cache: false,
+    root: '/public/path',
     handle: ejs,
     beforeRender: (ejs, config) => {
       //do something before render the template.
