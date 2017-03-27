@@ -12,7 +12,7 @@ function delegate(cls, classId){
   classId = classId || helper.md5(cls).slice(0, 8);
   //it's already registered
   if(!agentClient.register(classId, cls)) return cls;
-  //in agent worker, can not delegate methos
+  //in agent worker, not need delegate methods
   if(util.isAgent()) return cls;
 
   let methods = cls.delegateMethods;
