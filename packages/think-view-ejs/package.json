@@ -1,6 +1,6 @@
 {
   "name": "think-view-ejs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "compile view templates with EJS for ThinkJS 3.x",
   "author": {
     "name": "huangxiaolu",
