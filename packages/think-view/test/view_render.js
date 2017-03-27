@@ -21,7 +21,7 @@ function getConfig() {
   return {
     sep: '/',
     extname: '.html',
-    viewPath: 'www/static',
+    viewPath: '/www/static',
     handle: Nunjucks
   }
 }
@@ -70,7 +70,7 @@ test('render function -- empty config', t => {
       false,
       'config.handle must be a function',
       undefined,
-      'config.viewPath required'
+      'config.viewPath required an absolute path'
     ]
   );
 });

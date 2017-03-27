@@ -54,7 +54,7 @@ class View {
       file = file + config.extname;
     }
     if (!path.isAbsolute(file)) {
-      assert(config.viewPath && helper.isString(config.viewPath), 'config.viewPath required');
+      assert(config.viewPath && helper.isString(config.viewPath) && path.isAbsolute(config.viewPath), 'config.viewPath required an absolute path');
       file = path.join(config.viewPath, file);
     }
     if (config.beforeRender) {
