@@ -1,12 +1,12 @@
 {
   "name": "think-view-ejs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "compile view templates with EJS for ThinkJS 3.x",
   "author": {
     "name": "huangxiaolu",
     "email": "lu.huang90@gmail.com"
   },
-   "scripts": {
+  "scripts": {
     "test": "eslint index.js && nyc ava test/",
     "coverage": "nyc report --reporter=html",
     "publish": "npm version patch && npm publish"
