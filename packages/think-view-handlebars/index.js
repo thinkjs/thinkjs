@@ -2,14 +2,13 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-14 10:23:12
+* @Last Modified time: 2017-03-27 12:23:30
 */
 const helper = require('think-helper');
 const path = require('path');
 const handlebars = require('handlebars');
 const fs = require('fs');
-const assert = require('assert');
-const fsReadfile = helper.promisify(fs.readFile, fs);
+const readFile = helper.promisify(fs.readFile, fs);
 let cacheFn = {};
 
 /**
@@ -45,10 +44,8 @@ class Handlebars {
      */
     render() {
       let viewPath = this.config.viewPath;
-      assert(viewPath && helper.isString(viewPath), 'config.viewPath required and must be a string');
 
       if(this.config.beforeRender){
-        assert(helper.isFunction(this.config.beforeRender), 'config.beforeRender must be a function');
         this.config.beforeRender(handlebars, this.config);
       }
 
@@ -61,7 +58,7 @@ class Handlebars {
         return Promise.resolve(cacheFn[absolutePath](this.viewData));
       }
 
-      return  fsReadfile(absolutePath, 'utf8').then((data) => {
+      return readFile(absolutePath, 'utf8').then((data) => {
         let compileFn = handlebars.compile(data, this.config);
         if(this.config.cache) {
           cacheFn[absolutePath] = compileFn;
