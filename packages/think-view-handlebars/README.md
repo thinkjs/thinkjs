@@ -10,7 +10,7 @@ npm install think-view-handlebars
 ```
 
 
-## How to Usage
+## Usage
 
 edit config file `src/config/adapter.js`, add options:
 
