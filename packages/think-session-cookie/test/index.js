@@ -12,10 +12,6 @@ function mockAssert(assertCallParams = []) {
   });
 }
 
-function mockKeygrip() {
-  mock('./keygrip', () => {});
-}
-
 const defaultCtx = {
   cookie:(name)=>{
     return name;
@@ -25,7 +21,6 @@ const defaultCtx = {
 test('constructor function -- option.encrypt with empty keys', t => {
   let assertCallParams = [];
   mockAssert(assertCallParams);
-  mockKeygrip();
   const options = {
     encrypt: 'test',
     name:'cookie_name'
@@ -39,7 +34,7 @@ test('constructor function -- option.encrypt with empty keys', t => {
   t.deepEqual(assertCallParams,
     [
       undefined,
-      '.keys required when encrypt is set'
+      '.keys required and must be an array when encrypt is set'
     ]
   )
 });
@@ -47,7 +42,6 @@ test('constructor function -- option.encrypt with empty keys', t => {
 test('constructor function -- option.encrypt with not array keys', t => {
   let assertCallParams = [];
   mockAssert(assertCallParams);
-  mockKeygrip();
   const options = {
     encrypt: 'test',
     name:'cookie_name'
@@ -61,7 +55,7 @@ test('constructor function -- option.encrypt with not array keys', t => {
   t.deepEqual(assertCallParams,
     [
       undefined,
-      '.keys required when encrypt is set'
+      '.keys required and must be an array when encrypt is set'
     ]
   )
 });
