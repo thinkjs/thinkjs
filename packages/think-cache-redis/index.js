@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 10:53:07
+* @Last Modified time: 2017-03-27 16:23:09
 */
 const helper = require('think-helper');
 const Redis = require('think-redis');
@@ -43,7 +43,7 @@ class RedisCache {
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
-    return  this.redis.set(key, content, 'PX', timeout).catch(() => {});
+    return  this.redis.set(key, content, timeout).catch(() => {});
   }
 
   /**
