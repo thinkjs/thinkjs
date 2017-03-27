@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 21:00:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 16:08:29
+* @Last Modified time: 2017-03-27 19:03:16
 */
 
 import test from 'ava';
@@ -29,7 +29,7 @@ test.serial('set key & get key & del key', async t => {
 test.serial('set key', async t => {
   let redisInst = new Redis();
   let s1 = await redisInst.set('name2', 'lushijie');
-  let s2 = await redisInst.set('name3', 'lushijie', 3);
+  let s2 = await redisInst.set('name3', 'lushijie', 3000);
   let s3 = await redisInst.set('name4', 'lushijie', 'EX', 5);
   let s4 = await redisInst.set('name5', 'lushijie', 'PX', 10000);
   redisInst.close();
