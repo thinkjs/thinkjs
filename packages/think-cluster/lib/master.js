@@ -63,9 +63,8 @@ class Master {
       if(address){
         env.THINK_AGENT_OPTIONS = JSON.stringify(address);
       }
-      env = Object.assign(env, this.getForkEnv());
       while(index++ < workers){
-        util.forkWorker(env);
+        util.forkWorker(Object.assign({}, env, this.getForkEnv()));
       }
     }
     if(this.options.agent){
