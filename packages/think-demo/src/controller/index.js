@@ -2,8 +2,10 @@ module.exports = class extends think.Controller {
   __before(){
     //console.log('__before')
   }
-  indexAction(){
-    throw new Error('haha')
+  async indexAction(){
+    //this.ctx.body = 'test2';
+    //this.display('index/index')
+    //throw new Error('haha')
   }
   __after(){
     //console.log('__after')
