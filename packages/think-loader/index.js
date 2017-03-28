@@ -7,6 +7,7 @@ const middleware = require('./loader/middleware.js');
 const router = require('./loader/router.js');
 const extend = require('./loader/extend.js');
 const common = require('./loader/common.js');
+const crontab = require('./loader/crontab.js');
 
 
 /**
@@ -82,6 +83,12 @@ class Loader {
    */
   loadExtend(){
     return extend.load(this.appPath, this.thinkPath, this.modules);
+  }
+  /**
+   * load crontab
+   */
+  loadCrontab(){
+    return crontab(this.appPath, this.modules);
   }
   /**
    * load use defined file
