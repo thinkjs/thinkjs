@@ -2,20 +2,22 @@ var helper = require('think-helper');
 var commander  = require('commander');
 var fs = require('fs');
 var path = require('path');
-const colors = require('colors/safe');
-const cwd = process.cwd();
+var colors = require('colors/safe');
+var cwd = process.cwd();
 //var templatePath = path.dirname(__dirname) + sep + 'template';
 var projectRootPath = cwd; //project root path
-const excludeFile = /^\./;
 var configTree = {};
-const configTreeReg = /[^\.]+\.[^\.]+/;
-const fs_readdir = helper.promisify(fs.readdir, fs);
-const excludeDir = [];
+const excludeFile = /^\./;
+const configTreeFile = /.file$/;
+const configTreeDir = /.dir$/
+//const fs_readdir = helper.promisify(fs.readdir, fs);
+var excludeDir = [];
 
 function errlog(msg) {
 	console.log(colors.red.underline(msg));
 }
 /**
+ * copyProject
  * source
  * target
  */
@@ -25,6 +27,7 @@ function copyProject(source, target) {
 	console.log(colors.green('project create succeed'));
 }
 /**
+ * copyFile
  * source
  * target
  */
@@ -34,6 +37,7 @@ function copyFile(source, target) {
 }
 
 /**
+ * copyDir
  * source
  * target
  */
@@ -47,7 +51,7 @@ function copyDir(source, target) {
 			let targetSourcePath = path.resolve(target, filePath);
 
 			if(!excludeFile.test(filePath)) {
-				let index =  excludeDir.indexof(filePath);
+				let index =  excludeDir.indexOf(filePath);
 				if(index === -1) {
 					if(helper.isDirectory(currentSourcePath)) {
 						helper.mkdir(targetSourcePath);
@@ -57,24 +61,26 @@ function copyDir(source, target) {
 					}
 				} else {
 					let path = excludeDir[index].toLowerCase()
-					privateFunc[path](currentSourcePath, targetSourcePath);
+					privateFunc['create'+path](currentSourcePath, targetSourcePath);
 				}
 			}
 		})	
 	})
 }
 /**
+ * createProject
  * projectPath
  */
 function createProject(projectPath) {
 	if(helper.isDirectory(projectRootPath)) {
-		errlog(projectPath+" is already exist in current path")
+		errlog(projectPath +' is already exist in current path');
 		return;
 	}
-	copyProject('think-cli/template', projectRootPath);
+	copyProject(path.resolve(__dirname, 'template'), projectRootPath);
 }
 
 /**
+ * createConfigFile
  * configPath
  * configTree
  */
@@ -89,11 +95,11 @@ function createConfigFile(configPath, treeBranch) {
 			if(!excludeFile.test(filePath)) {
 				let currentSourcePath = path.resolve(configPath, filePath);
 				if(helper.isDirectory(currentSourcePath)) {
-					treeBranch[filePath+".dir"] = {};
-				    handleDir(currentSourcePath, treeBranch[filePath+".dir"]);
+					treeBranch[filePath+'.dir'] = {};
+				    handleDir(currentSourcePath, treeBranch[filePath+'.dir']);
 				} else {
 					let content = fs.readFileSync(currentSourcePath, 'utf8');
-					treeBranch[filePath+".file"] = content;
+					treeBranch[filePath+'.file'] = content;
 				}
 			}
 		})
@@ -105,11 +111,11 @@ function createConfigFile(configPath, treeBranch) {
 
 }
 /**
- * privateFunc use in clie
+ * privateFunc use in cli
  */
 var privateFunc = {
 	createconfig: function(currentSourcePath, targetSourcePath) {
-		 var configFilePath = path.resolve(cwd, "configTree.js");
+		 var configFilePath = path.resolve(cwd, 'configTree.js');
 		 fs.readFile(configFilePath, function(err, data) {
 		 	if(err) {
 		 		errlog(err)
@@ -117,21 +123,37 @@ var privateFunc = {
 		 	var configTree = JSON.parse(data);
 
 		 	function handleConfig(currentSourcePath, targetSourcePath, config) {
+		 		
+		 		targetSourcePath = targetSourcePath.replace(configTreeDir, '')
 		 		helper.mkdir(targetSourcePath);
+		 		
 		 		for(var i in config) {
+		 			let fileName = i.replace(configTreeFile, '');
 		 			var source = path.resolve(currentSourcePath, fileName);
 			 		var target = path.resolve(targetSourcePath, fileName);
 			 		if(helper.isString(config[i])) {
-			 			var fileName = i.match(configTreeReg)[0];;
+			 			//var fileName = i.match(configTreeReg)[0];
 			 			fs.writeFileSync(target, config[i], 'utf8');
 			 		} else {
 			 			handleConfig(source, target, config[i]);
 			 		}
 			 	}
 		 	}
-
 		 	handleConfig(currentSourcePath, targetSourcePath, configTree);
 		 })
+	},
+	handleConfig: function() {
+
+		// var configArr = config.split('-');
+
+		// configArr.forEach((item)=>{
+		// 	switch(item) {
+		// 		case '-c':
+		// 		excludeDir.push('config');
+		// 		break;
+		// 	}
+		// })	
+		excludeDir.push('config');
 	}
 }
 /**
@@ -166,30 +188,33 @@ commander.option('-v, --version', 'output the version number', () => {
   displayVersion();
 });
 
-commander.option('-V', 'output the version number', () => {
-  displayVersion();
-});
 
-commander.command('new <projectPath> <config>').description('create project').action((projectPath, configPath) => {
+commander.command('new <projectPath> [config]').description('create project').action((projectPath, config) => {
 	projectRootPath = path.resolve(projectRootPath, projectPath);
-	if(configPath) {
-		excludeDir.push("config");
+	if(config) {
+		privateFunc.handleConfig();
 	}
+	
 	createProject(projectPath);
 });
 
-commander.command('create config').action(() => {
-	var configPath = path.resolve(projectRootPath, 'config');
+commander.command('create <mode>')
+		 .description('create config file')
+		 .action((mode) => {
+		 	if(mode === 'config') {
+		 		var configPath = path.resolve(projectRootPath, 'config');
+		 		
+				if(!helper.isDirectory(configPath)) {
+					errlog('can not find config folder');
+				} else {
+					createConfigFile(configPath, configTree);
+				}
+		 	}
+		});
 
-	if(!helper.isDirectory(configPath)) {
-		errlog("can not find config folder")
-	} else {
-		createConfigFile(configPath, configTree);
-	}
-});
 
-commander.option('creat-config', 'output the version number', () => {
+// commander.option('creat-config', 'output the version number', () => {
 
-});
+// });
 
 commander.parse(process.argv);;
