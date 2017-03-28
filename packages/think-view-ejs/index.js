@@ -1,5 +1,6 @@
 const ejs = require('ejs');
 const helper = require('think-helper');
+const renderFile = helper.promisify(ejs.renderFile, ejs);
 /**
  * ejs default render options
  * for more information on ejs options, refer to https://github.com/mde/ejs#options
@@ -7,7 +8,7 @@ const helper = require('think-helper');
 const defaultOptions = {
   cache: true
 };
-const fn = helper.promisify(ejs.renderFile);
+
 class Ejs {
   /**
    * @param {String} file: filename(absolute path)of template
@@ -30,8 +31,7 @@ class Ejs {
     if(config.beforeRender) {
       config.beforeRender(ejs, config);
     }
-    
-    return fn(this.file, this.data, this.config);
+    return renderFile(this.file, this.data, config);
   }
 }
 
