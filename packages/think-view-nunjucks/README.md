@@ -18,6 +18,11 @@ edit config file `src/config/adapter.js`, add options:
 const nunjucks = require('think-view-nunjucks');
 exports.view = {
   type: 'nunjucks',
+  common: {
+    viewPath: path.join(think.ROOT_PATH, 'view'),
+    extname: '.html',
+    sep: '_' //seperator between controller and action
+  },
   nunjucks: {
     handle: nunjucks,
     beforeRender: (env, nunjucks, config) => {}
