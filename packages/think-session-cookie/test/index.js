@@ -13,8 +13,11 @@ function mockAssert(assertCallParams = []) {
 }
 
 const defaultCtx = {
-  cookie:(name)=>{
-    return name;
+  cookieStore: {
+    test: JSON.stringify({id: 1, value: 'test'})
+  },
+  cookie(name){
+    return this.cookieStore[name];
   }
 };
 
@@ -59,3 +62,61 @@ test('constructor function -- option.encrypt with not array keys', t => {
     ]
   )
 });
+
+
+test('initSessionData function -- get empty session data', t => {
+  const options = {
+    name: 'cookie_name'
+  };
+  const SessionCookie = getSessionCookie();
+
+  const sc = new SessionCookie(options, defaultCtx);
+
+  t.deepEqual(sc.data, {});
+});
+
+test('initSessionData function -- get empty session data', t => {
+  const options = {
+    name: 'test'
+  };
+  const SessionCookie = getSessionCookie();
+
+  const sc = new SessionCookie(options, defaultCtx);
+
+  t.deepEqual(sc.data, {id: 1, value: 'test'});
+  t.deepEqual(sc.fresh, false);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
