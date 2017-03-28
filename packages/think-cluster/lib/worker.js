@@ -27,12 +27,6 @@ class Worker {
     this.options = Object.assign({}, defaultOptions, options);
   }
   /**
-   * check worker is first
-   */
-  isFirstWorker(){
-    return process.env.THINK_FIRST_WORKER === '1';
-  }
-  /**
    * disable keep alive
    */
   disableKeepAlive(){

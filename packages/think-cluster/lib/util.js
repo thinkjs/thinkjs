@@ -12,6 +12,13 @@ exports.THINK_AGENT_CLOSED = 'think-agent-closed';
 exports.PIN = 'PIN';
 
 /**
+ * check worker is first
+ */
+exports.isFirstWorker = function(){
+  return process.env.THINK_FIRST_WORKER === '1';
+}
+
+/**
  * check is agent worker
  */
 exports.isAgent = function(){
