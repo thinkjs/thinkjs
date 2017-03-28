@@ -18,6 +18,11 @@ edit config file `src/config/adapter.js`, add options:
 const pug = require('think-view-pug');
 exports.view = {
   type: 'pug',
+  common: {
+    viewPath: path.join(think.ROOT_PATH, 'view'),
+    extname: '.html',
+    sep: '_' //seperator between controller and action
+  },
   pug: {
     handle: pug,
     beforeRender: (pug, config) => {
