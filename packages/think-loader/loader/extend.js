@@ -5,7 +5,7 @@ const interopRequire = require('./util.js').interopRequire;
 
 const ExtendLoader = {
 
-  allowExtends: ['think', 'context', 'request', 'response', 'controller', 'logic'],
+  allowExtends: ['think', 'application', 'context', 'request', 'response', 'controller', 'logic'],
   /**
    * const modelExtend = require('think-model').extend;
    *  modelExtend = {
