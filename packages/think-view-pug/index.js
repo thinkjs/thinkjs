@@ -2,10 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 16:54:55
+* @Last Modified time: 2017-03-28 09:16:20
 */
 const helper = require('think-helper');
 const pug = require('pug');
+const renderFile = helper.promisify(pug.renderFile, pug);
+
 
 /**
  * pug default render options
@@ -42,8 +44,7 @@ class Pug {
       this.config.beforeRender(pug, this.config);
     }
 
-    let fn = helper.promisify(pug.renderFile, pug);
-    return fn(this.viewFile, this.config);
+    return renderFile(this.viewFile, this.config);
   }
 }
 
