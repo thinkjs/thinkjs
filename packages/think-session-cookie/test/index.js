@@ -63,7 +63,6 @@ test('constructor function -- option.encrypt with not array keys', t => {
   )
 });
 
-
 test('initSessionData function -- get empty session data', t => {
   const options = {
     name: 'cookie_name'
@@ -87,9 +86,34 @@ test('initSessionData function -- get empty session data', t => {
   t.deepEqual(sc.fresh, false);
 });
 
+test('set/get function -- normal scene', async t => {
+  const options = {
+    name: 'test'
+  };
 
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(options, defaultCtx);
+  await sc.set('username','thinkjs');
+  let value = await sc.get('username');
 
+  t.deepEqual(value, 'thinkjs');
 
+});
+
+test('set/get function -- encrypt', async t => {
+  const options = {
+    name: 'test',
+    encrypt: 'test',
+    keys: ['a', 'b']
+  };
+
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(options, defaultCtx);
+  await sc.set('username','thinkjs');
+  let value = await sc.get('username');
+
+  t.deepEqual(value, 'thinkjs');
+});
 
 
 
