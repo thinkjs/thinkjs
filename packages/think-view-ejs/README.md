@@ -20,6 +20,11 @@ edit config file `src/config/adapter.js`, add options for ejs adapter:
 const ejs = require('think-view-ejs');
 exports.view = {
   type: 'ejs',
+  common: {
+    viewPath: path.join(think.ROOT_PATH, 'view'),
+    extname: '.html',
+    sep: '_' //seperator between controller and action
+  },
   ejs: {
     //options
     handle: ejs,
@@ -50,7 +55,6 @@ exports.view = {
   ejs: {
     //override `cache` option
     cache: false,
-    root: '/public/path',
     handle: ejs,
     beforeRender: (ejs, config) => {
       //do something before render the template.
