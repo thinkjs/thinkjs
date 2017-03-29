@@ -245,3 +245,25 @@ test('delete function', async t => {
   val = await sc.get('username');
   t.deepEqual(val, 'thinkjs');
 });
+
+test('encrypt function', t => {
+  const crypto = require('crypto');
+  const iv = crypto.randomBytes(16);
+  const salt = "foobar";
+  const hash = crypto.createHash("sha1");
+
+  hash.update(salt);
+
+  let key = hash.digest().slice(0, 16);
+
+  const Keygrip = getKeygrip();
+  const keys = ['a','b'];
+  const kg = new Keygrip(keys);
+  kg.cipher = 'aes-128-cbc';
+  const data = JSON.stringify('a');
+  let result = kg.encrypt(data,iv,key);
+
+  t.deepEqual(result instanceof Buffer,true);
+  let value = kg.decrypt(result,iv,key)
+  t.deepEqual(value instanceof Buffer,true);
+});
