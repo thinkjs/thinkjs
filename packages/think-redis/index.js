@@ -2,11 +2,13 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 16:21:38
+* @Last Modified time: 2017-03-29 17:14:47
 */
 const helper = require('think-helper');
 const assert = require('assert');
 const ioredis = require('ioredis');
+const Debounce = require('think-debounce');
+const debounceInstance = new Debounce();
 let _validExpire = Symbol('validExpire');
 
 // redis config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
@@ -60,7 +62,9 @@ class thinkRedis {
       }
     }
     // without type
-    return this.redis.set(key, value);
+    return this.redis.set(key, value).then((result) => {
+      return result;
+    });
   }
 
   /**
@@ -69,7 +73,7 @@ class thinkRedis {
    * @return {Promise}     [description]
    */
   get(key) {
-    return this.redis.get(key);
+    return debounceInstance.debounce(key, () => this.redis.get(key));
   }
 
   /**

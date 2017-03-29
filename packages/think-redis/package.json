@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "ioredis": "~2.5.0",
+    "think-debounce": "~1.0.3",
     "think-helper": "~1.0.4"
   }
 }
