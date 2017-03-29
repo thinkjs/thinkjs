@@ -23,7 +23,7 @@ const defaultCtx = {
     test: JSON.stringify({id: 1, value: 'test'})
   },
   cookie(name,data){
-    if(!data){
+    if(data == undefined){
       return this.cookieStore[name];
     }
     this.cookieStore[name] = data;
@@ -215,25 +215,33 @@ test('set/get function -- encrypt', t => {
   t.deepEqual(sc.data, {});
 });
 
+test('delete function', async t => {
+  const options = {
+    name: 'test',
+  };
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(options, defaultCtx);
+  await sc.set('username','thinkjs');
+  let val = await sc.get('username');
 
+  t.deepEqual(val, 'thinkjs');
+  await sc.delete();
+  val = await sc.get('username');
+  t.deepEqual(val, undefined);
+});
 
+test('delete function', async t => {
+  const options = {
+    name: 'test',
+  };
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(options, defaultCtx);
+  await sc.set('username','thinkjs');
+  let val = await sc.get('username');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  t.deepEqual(val, 'thinkjs');
+  sc.fresh = true;
+  await sc.delete();
+  val = await sc.get('username');
+  t.deepEqual(val, 'thinkjs');
+});
