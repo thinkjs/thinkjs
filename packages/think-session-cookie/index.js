@@ -79,6 +79,7 @@ class CookieSession {
   delete(){
     if(!this.fresh){
       this.ctx.cookie(this.options.name, '');
+      this.data = {};
     }
     return Promise.resolve();
   }
