@@ -14,6 +14,10 @@ function getSessionCookie() {
   return mock.reRequire('../index');
 }
 
+function getKeygrip() {
+  return mock.reRequire('../keygrip');
+}
+
 const defaultCtx = {
   cookieStore: {
     test: JSON.stringify({id: 1, value: 'test'})
@@ -158,9 +162,58 @@ test('get function -- autoUpdate && maxAge name', async t => {
   t.deepEqual(result, {});
 });
 
+test('set/get function -- encrypt', async t => {
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(undefined,defaultCtx);
+  t.deepEqual(sc instanceof SessionCookie,true)
+});
 
+test('set/get function -- encrypt', t => {
+  const keys = ['a', 'b'];
+  const cpData = {id: 1, name: 'thinkjs'};
+  const Keygrip = getKeygrip();
+  const kg = new Keygrip(keys);
+  const cpVal = kg.encrypt(JSON.stringify(cpData))
+  const ctx = {
+    cookieStore: {
+      test: cpVal
+    },
+    cookie(name, data){
+      if (!data) {
+        return this.cookieStore[name];
+      }
+      this.cookieStore[name] = data;
+    },
+  };
+  const options = {
+    name: 'test',
+    encrypt: 'test',
+    keys
+  };
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(options, ctx);
+  t.deepEqual(sc.data, cpData);
+});
 
-
+test('set/get function -- encrypt', t => {
+  const ctx = {
+    cookieStore: {
+      test: '0'
+    },
+    cookie(name, data){
+      if (!data) {
+        return this.cookieStore[name];
+      }
+      this.cookieStore[name] = data;
+    },
+  };
+  const options = {
+    name: 'test',
+  };
+  const SessionCookie = getSessionCookie();
+  const sc = new SessionCookie(options, ctx);
+  t.deepEqual(sc.data, {});
+});
 
 
 
