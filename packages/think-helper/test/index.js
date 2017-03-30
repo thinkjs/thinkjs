@@ -116,36 +116,36 @@ test('extend 10', t => {
   t.deepEqual(data, {name:'sgy'});
 })
 
-test('extend getter', t => {
-  let source = {
-    get a(){
-      return this.b();
-    },
-    b(){
-      return 1;
-    }
-  }
-  let data = extend({name:'sgy'}, source);
-  t.deepEqual(data.a, 1);
-})
+// test('extend getter', t => {
+//   let source = {
+//     get a(){
+//       return this.b();
+//     },
+//     b(){
+//       return 1;
+//     }
+//   }
+//   let data = extend({name:'sgy'}, source);
+//   t.deepEqual(data.a, 1);
+// })
 
-test('extend setter', t => {
-  let source = {
-    get a(){
-      return this.xxx;
-    },
-    set a(val){
-      this.xxx = val;
-    },
-    b(){
-      return 1;
-    }
-  }
-  let data = extend({name:'sgy'}, source);
-  data.a = 222;
-  t.deepEqual(data.a, 222);
-  t.deepEqual(data.xxx, 222)
-})
+// test('extend setter', t => {
+//   let source = {
+//     get a(){
+//       return this.xxx;
+//     },
+//     set a(val){
+//       this.xxx = val;
+//     },
+//     b(){
+//       return 1;
+//     }
+//   }
+//   let data = extend({name:'sgy'}, source);
+//   data.a = 222;
+//   t.deepEqual(data.a, 222);
+//   t.deepEqual(data.xxx, 222)
+// })
 
 
 
