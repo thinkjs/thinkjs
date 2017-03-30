@@ -8,6 +8,7 @@ const router = require('./loader/router.js');
 const extend = require('./loader/extend.js');
 const common = require('./loader/common.js');
 const crontab = require('./loader/crontab.js');
+const extendMethod = require('./loader/util.js').extend;
 
 
 /**
@@ -97,5 +98,7 @@ class Loader {
     return common.load(this.appPath, name, this.modules);
   }
 }
+
+Loader.extend = extendMethod;
 
 module.exports = Loader;

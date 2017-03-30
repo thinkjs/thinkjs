@@ -1,7 +1,9 @@
 const path = require('path');
 const helper = require('think-helper');
 const assert = require('assert');
-const interopRequire = require('./util.js').interopRequire;
+const util = require('./util.js');
+const interopRequire = util.interopRequire;
+const extendObj = util.extend;
 
 const ExtendLoader = {
 
@@ -30,7 +32,7 @@ const ExtendLoader = {
       if(!ret[type]){
         ret[type] = {};
       }
-      ret[type] = helper.extend(ret[type], ext);
+      ret[type] = extendObj(ret[type], ext);
     }
     //system extend
     allowExtends.forEach(type => {
