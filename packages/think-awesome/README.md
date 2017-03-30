@@ -6,6 +6,9 @@ awesome projects for `ThinkJS 3.x`
 
 * [think-router](https://github.com/thinkjs/think-router) Router Parser
 * [think-trace](https://github.com/thinkjs/think-trace) Error trace
+* [think-meta](https://github.com/thinkjs/think-meta) Show meta info
+* [think-logic](https://github.com/thinkjs/think-logic) Invoke logic action
+* [think-controller](https://github.com/thinkjs/think-controller) Invoke controller action
 
 ## adapters
 
