@@ -1,3 +1,4 @@
+const helper = require('think-helper');
 /**
  * default options
  */
@@ -14,6 +15,8 @@ const defaultOptions = {
  */
 module.exports = (options, app) => {
   options = Object.assign({}, defaultOptions, options);
+  options.requestTimeout = helper.ms(options.requestTimeout);
+  
   return (ctx, next) => {
     //set request timeout
     ctx.res.setTimeout(options.requestTimeout, options.requestTimeoutCallback);
