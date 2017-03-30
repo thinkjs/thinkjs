@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
-  "version": "2.2.17",
+  "version": "2.2.18",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -18,22 +18,28 @@
   "bin": {
     "thinkjs": "./bin/index.js"
   },
-  "contributors": [{
-    "name": "welefen",
-    "email": "welefen@gmail.com"
-  }, {
-    "name": "im-kulikov",
-    "email": "im@kulikov.im"
-  }, {
-    "name": "maxzhang",
-    "email": "zhangdaiping@gmail.com"
-  }, {
-    "name": "akira-cn",
-    "email": "akira.cn@gmail.com"
-  }, {
-    "name": "qgy18",
-    "email": "quguangyu@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    },
+    {
+      "name": "im-kulikov",
+      "email": "im@kulikov.im"
+    },
+    {
+      "name": "maxzhang",
+      "email": "zhangdaiping@gmail.com"
+    },
+    {
+      "name": "akira-cn",
+      "email": "akira.cn@gmail.com"
+    },
+    {
+      "name": "qgy18",
+      "email": "quguangyu@gmail.com"
+    }
+  ],
   "main": "lib/index.js",
   "dependencies": {
     "ejs": "2.4.1",
