@@ -22,10 +22,10 @@ class Keygrip {
   crypt(cipher, data){
     let text = cipher.update(data, 'utf8');
     let pad  = cipher.final();
-    if (typeof text === 'string') {
-      text = new Buffer(text, 'binary');
-      pad  = new Buffer(pad, 'binary');
-    }
+    // if (typeof text === 'string') {
+    //   text = new Buffer(text, 'binary');
+    //   pad  = new Buffer(pad, 'binary');
+    // }
     return Buffer.concat([text, pad]);
   }
   /**
