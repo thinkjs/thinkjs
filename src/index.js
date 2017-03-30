@@ -352,6 +352,7 @@ export default class {
         process.exit();
       }
     });
+    process.removeAllListeners('unhandledRejection');
     process.on('unhandledRejection', err => {
       if(think.isPrevent(err)){
         return;
