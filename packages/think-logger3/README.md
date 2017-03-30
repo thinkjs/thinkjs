@@ -5,7 +5,7 @@
 [![Coveralls](https://img.shields.io/coveralls/thinkjs/think-logger/master.svg?style=flat-square)]()
 [![David](https://img.shields.io/david/thinkjs/think-logger.svg?style=flat-square)]()
 
-ThinkJS3.x log module
+ThinkJS3.x log module, based on log4js.
 
 ## Installation
 
