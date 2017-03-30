@@ -53,7 +53,8 @@ module.exports = {
       template: path.join(base, 'src/404/index.html'),
       filename: path.join(base, '404.html'),
       chunks: ['404'],
-      inject: 'head'
+      inject: false,
+      minify: {html5: false}
     }),
     new HtmlWebpackPlugin({
       template: path.join(base, 'src/500/index.html'),
