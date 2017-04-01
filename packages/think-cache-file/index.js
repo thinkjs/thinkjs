@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-24 15:59:05
+* @Last Modified time: 2017-04-01 17:41:37
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -14,11 +14,11 @@ const gc = require('think-gc');
 const FileStore = require('think-store-file');
 let _getRelativePath = Symbol('getRelativePath');
 
-let defaultConfig = {
+let defaultOptions = {
   timeout: 24 * 3600 * 1000,
   cachePath: '',
   pathDepth: 1,
-  gcInterval: 48 * 3600 * 1000
+  gcInterval: 24 * 3600 * 1000
 };
 
 /**
@@ -26,11 +26,10 @@ let defaultConfig = {
  */
 class FileCache {
   constructor(config) {
-    this.config = helper.extend({}, defaultConfig, config);
-
-    this.timeout = this.config.timeout;
-    this.cachePath = this.config.cachePath;
-    this.pathDepth = this.config.pathDepth;
+    config = helper.extend({}, defaultOptions, config);
+    this.timeout = config.timeout;
+    this.cachePath = config.cachePath;
+    this.pathDepth = config.pathDepth;
     this.store = new FileStore(this.cachePath);
     assert(this.cachePath && helper.isString(this.cachePath), 'config.cachePath must be set');
 

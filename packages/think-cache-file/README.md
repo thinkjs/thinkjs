@@ -20,24 +20,16 @@ edit config file `src/config/adapter.js`, add options:
 const fileCache = require('think-cache-file');
 exports.cache = {
   type: 'file',
+  common: {
+    timeout: 24 * 60 * 60 * 1000, // millisecond
+  },
   file: {
     handle: fileCache,
-    timeout: 24 * 60 * 60 * 1000, // millisecond
-    cachePath: '/home/usr/data',  // absoulte path is necessarily required
-    pathDepth: 1,
-    gcInterval: 48 * 60 * 60 * 1000 // gc
+    options: {
+      cachePath: '/home/usr/data',  // absoulte path is necessarily required
+      pathDepth: 1,
+      gcInterval: 24 * 60 * 60 * 1000 // gc
+    }
   }
 }
 ```
-
-
-### default options
-
-```js
-const defaultOptions = {
-  timeout: 24 * 60 * 60 * 1000,
-  pathDepth: 1,
-  cachePath: '',
-  gcInterval: 48 * 60 * 60 * 1000
-};
-
