@@ -2,11 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 17:46:07
+* @Last Modified time: 2017-04-01 17:56:05
 */
 const helper = require('think-helper');
 const Memcache = require('think-memcache');
 
+// memcache config see at http://memcache-plus.com/
 const defaultConfig = {
   timeout: 24 * 3600 * 1000,
   hosts: ['127.0.0.1:11211'],
