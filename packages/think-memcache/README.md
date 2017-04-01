@@ -14,18 +14,14 @@ npm install think-memcache
 
 ### default options
 
-You can find all the config options at https://github.com/3rd-Eden/memcached
+You can find all the config options at http://memcache-plus.com/
 
 ```js
 const defaultOptions = {
-  server: '127.0.0.1:11211',
-  options: {
-    maxExpiration: 2592000,
-    maxKeySize: 250,
-    maxValue: 1048576,
-    algorithm: 'md5',
-    timeout: 5000
-  }
+  hosts: ['127.0.0.1:11211'],
+  maxValueSize: 1048576,
+  netTimeout: 5000,
+  reconnect: true
 }
 ```
 
@@ -36,11 +32,9 @@ import Memcache from '../index';
 
 let memInst = new Memcache(config);
 
-// set key, expire = milliseconds
-let s1 = await memInst.set('name2', 'lushijie'); // expire = config.options.maxExpiration
+// set key, expire should be milliseconds
+let s1 = await memInst.set('name2', 'lushijie'); // expire = 0
 let s2 = await memInst.set('name3', 'lushijie', 3000); // milliseconds
-let s3 = await memInst.set('name4', 'lushijie', 'EX', 5); //seconds
-let s4 = await memInst.set('name5', 'lushijie', 'PX', 3000); //milliseconds
 
 // get key's value
 let g1 = await memInst.get('name2');
@@ -48,15 +42,10 @@ let g1 = await memInst.get('name2');
 // delete key
 await memInst.delete(key);
 
-// add event listener, supported events https://github.com/3rd-Eden/memcached
-memInst.on('failure', function() {
-  // todo
-});
-
-// increase 1, if key'value is not integer will reject(err)
+// increase 1, key'value should be integer, if key not exist will do nothing
 await memInst.increase(key);
 
-// decrease 1, if key'value is not integer will reject(err)
+// decrease 1, key'value should be integer, if key not exist will do nothing
 await memInst.decrease(key);
 
 ```

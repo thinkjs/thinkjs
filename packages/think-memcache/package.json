@@ -1,7 +1,7 @@
 {
   "name": "think-memcache",
   "version": "1.0.0",
-  "description": "think-memcache for ThinkJS",
+  "description": "Memcache for ThinkJS",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
@@ -42,7 +42,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "memcached": "~2.2.2",
+    "memcache-plus": "~0.2.17",
     "think-helper": "~1.0.4"
   }
 }
