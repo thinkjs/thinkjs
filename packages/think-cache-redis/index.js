@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 17:36:31
+* @Last Modified time: 2017-04-01 17:43:44
 */
 const helper = require('think-helper');
 const Redis = require('think-redis');
@@ -19,10 +19,10 @@ const defaultOptions = {
  */
 class RedisCache {
 
-  constructor(options = {}) {
-    options = helper.extend({}, defaultOptions, options);
-    this.redis = new Redis(options);
-    this.timeout = options.timeout;
+  constructor(config = {}) {
+    config = helper.extend({}, defaultOptions, config);
+    this.redis = new Redis(config);
+    this.timeout = config.timeout;
   }
 
   /**
