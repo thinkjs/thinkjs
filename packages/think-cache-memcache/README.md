@@ -25,12 +25,10 @@ exports.cache = {
   },
   memcache: {
     handle: memcacheCache,
-    options: {
-      hosts: ['127.0.0.1:11211'],
-      maxValueSize: 1048576,
-      netTimeout: 5000,
-      reconnect: true
-    }
+    hosts: ['127.0.0.1:11211'],
+    maxValueSize: 1048576,
+    netTimeout: 5000,
+    reconnect: true
   }
 }
 ```

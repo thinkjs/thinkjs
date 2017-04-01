@@ -2,19 +2,17 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 17:33:18
+* @Last Modified time: 2017-04-01 17:46:07
 */
 const helper = require('think-helper');
 const Memcache = require('think-memcache');
 
 const defaultConfig = {
   timeout: 24 * 3600 * 1000,
-  options: {
-    hosts: ['127.0.0.1:11211'],
-    maxValueSize: 1048576,
-    netTimeout: 5000,
-    reconnect: true
-  }
+  hosts: ['127.0.0.1:11211'],
+  maxValueSize: 1048576,
+  netTimeout: 5000,
+  reconnect: true
 };
 
 /**
@@ -23,7 +21,7 @@ const defaultConfig = {
 class MemcacheCache {
 
   constructor(config = {}) {
-    config = helper.extend({}, defaultConfig.options, config);
+    config = helper.extend({}, defaultConfig, config);
     this.memcache = new Memcache(config);
     this.timeout = config.timeout;
   }
