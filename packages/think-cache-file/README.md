@@ -25,11 +25,9 @@ exports.cache = {
   },
   file: {
     handle: fileCache,
-    options: {
-      cachePath: '/home/usr/data',  // absoulte path is necessarily required
-      pathDepth: 1,
-      gcInterval: 24 * 60 * 60 * 1000 // gc
-    }
+    cachePath: '/home/usr/data',  // absoulte path is necessarily required
+    pathDepth: 1,
+    gcInterval: 24 * 60 * 60 * 1000 // gc
   }
 }
 ```
