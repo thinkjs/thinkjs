@@ -20,10 +20,12 @@ edit config file `src/config/adapter.js`, add options:
 const redisCache = require('think-cache-redis');
 exports.cache = {
   type: 'redis',
+  common: {
+    timeout: 24 * 3600 * 1000 // millisecond
+  }
   redis: {
     handle: redisCache,
-    timeout: 24 * 3600 * 1000, // millisecond
-    redis: {
+    options: {
       port: 6379,
       host: '127.0.0.1',
       password: '',

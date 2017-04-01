@@ -2,18 +2,16 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 16:23:09
+* @Last Modified time: 2017-04-01 17:36:31
 */
 const helper = require('think-helper');
 const Redis = require('think-redis');
 
-const defaultConfig = {
-  redis: {
-    port: 6379,
-    host: '127.0.0.1',
-    password: '',
-  },
-  timeout: 24 * 3600 * 1000
+const defaultOptions = {
+  port: 6379,
+  host: '127.0.0.1',
+  password: '',
+  timeout: 24 * 3600 * 1000,
 };
 
 /**
@@ -21,9 +19,10 @@ const defaultConfig = {
  */
 class RedisCache {
 
-  constructor(config = {}) {
-    this.redis = new Redis(helper.extend({}, defaultConfig.redis, config));
-    this.timeout = config.timeout || defaultConfig.timeout;
+  constructor(options = {}) {
+    options = helper.extend({}, defaultOptions, options);
+    this.redis = new Redis(options);
+    this.timeout = options.timeout;
   }
 
   /**
