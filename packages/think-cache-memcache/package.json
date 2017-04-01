@@ -1,0 +1,48 @@
+{
+  "name": "think-cache-memcache",
+  "version": "1.0.1",
+  "description": "Redis cache Adapter for ThinkJS'S Cache",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-cache-memcache.git"
+  },
+  "keywords": [
+    "think-cache-memcache"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-cache-memcache/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-cache-memcache#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~3.15.0",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "think-helper": "~1.0.0",
+    "think-memcache": "~1.0.1"
+  }
+}
