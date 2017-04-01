@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-29 17:14:47
+* @Last Modified time: 2017-04-01 11:34:05
 */
 const helper = require('think-helper');
 const assert = require('assert');
@@ -10,6 +10,9 @@ const ioredis = require('ioredis');
 const Debounce = require('think-debounce');
 const debounceInstance = new Debounce();
 let _validExpire = Symbol('validExpire');
+let _getConnection = Symbol('_getConnection');
+
+let cacheConn = {};
 
 // redis config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
 const defaultConfig = {
@@ -21,7 +24,21 @@ const defaultConfig = {
 class thinkRedis {
 
   constructor(config) {
-    this.redis = new ioredis(helper.extend({}, defaultConfig, config));
+    config = helper.extend({}, defaultConfig, config);
+    this.redis = this[_getConnection](config);
+  }
+
+  /**
+   * getConnection by config
+   * @param  {Object} config [description]
+   * @return {Object}        [description]
+   */
+  [_getConnection](config) {
+    let md5 = helper.md5(JSON.stringify(config));
+    if(!cacheConn[md5] || !cacheConn[md5].connector.connecting) {
+      cacheConn[md5] = new ioredis(config);
+    }
+    return cacheConn[md5];
   }
 
   /**
