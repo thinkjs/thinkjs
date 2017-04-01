@@ -1,0 +1,31 @@
+{
+  "name": "think-request",
+  "version": "1.0.0",
+  "description": "Request for ThinkJS 3.x",
+  "main": "index.js",
+  "dependencies": {
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.1",
+    "eslint": "^3.18.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-request.git"
+  },
+  "keywords": [
+    "thinkjs3",
+    "request",
+    "think-extend"
+  ],
+  "author": "Berwin <liubowen.niubi@gmail.com> (https://github.com/berwin)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-request/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-request#readme"
+}
