@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 21:00:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-29 17:14:32
+* @Last Modified time: 2017-04-01 11:40:51
 */
 
 import test from 'ava';
@@ -43,12 +43,12 @@ test.serial('set key and then incr & decr ', async t => {
   let key = 'id';
   let redisInst = new Redis();
   let s1 = await redisInst.set(key, '100', 365 * 24 * 3600);
-  await redisInst.increment(key).catch((e) => {
+  await redisInst.increase(key).catch((e) => {
     console.log(e);
   });
   let g1 = await redisInst.get(key);
 
-  await redisInst.decrement(key).catch((e) => {
+  await redisInst.decrease(key).catch((e) => {
     console.log(e);
   });
   let g2 = await redisInst.get(key);

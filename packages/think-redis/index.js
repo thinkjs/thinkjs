@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 11:34:05
+* @Last Modified time: 2017-04-01 11:40:38
 */
 const helper = require('think-helper');
 const assert = require('assert');
@@ -103,20 +103,20 @@ class thinkRedis {
   }
 
   /**
-   * increment key's value
+   * increase key's value
    * @param  {String} key [description]
    * @return {Promise}     [description]
    */
-  increment(key) {
+  increase(key) {
     return this.redis.incr(key);
   }
 
   /**
-   * decrement key's value
+   * decrease key's value
    * @param  {String} key [description]
    * @return {Promise}     [description]
    */
-  decrement(key) {
+  decrease(key) {
     return this.redis.decr(key);
   }
 
