@@ -2592,6 +2592,15 @@ describe('core/think.js', function(){
     })
   })
 
+  it('think.parallelLimit normal again', function(done){
+    think.parallelLimit('key', 'name', function(name){
+      return 'again';
+    }).then(function(data){
+      assert.equal(data, 'again');
+      done();
+    })
+  })
+
   it('think.parallelLimit normal, is not function', function(done){
     try{
       think.parallelLimit('keywwww', 'name', {limit: 10});

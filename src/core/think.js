@@ -1040,9 +1040,6 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   }
   
   let flag = !think.isArray(data) || options.array;
-  if(!flag){
-    key = '';
-  }
 
   //get parallel limit class
   let Limit = thinkCache(thinkCache.COLLECTION, 'limit');
@@ -1055,7 +1052,7 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   if(key){
     instance = thinkCache(thinkCache.LIMIT, key);
     if(!instance){
-      instance = new Limit(options.limit, callback);
+      instance = new Limit(options.limit);
       thinkCache(thinkCache.LIMIT, key, instance);
     }
   }else{
@@ -1063,7 +1060,7 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   }
 
   if(flag){
-    return instance.add(data);
+    return instance.add(data, key && callback);
   }
-  return instance.addMany(data, options.ignoreError);
+  return instance.addMany(data, key && callback, options.ignoreError);
 };
