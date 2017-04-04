@@ -2618,11 +2618,11 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is not set', function(done){
-    think.parallelLimit('data', function(name){
+  it('think.parallelLimit data is not set', function(done){
+    think.parallelLimit('key', function(name){
       return name;
     }).then(function(data){
-      assert.equal(data, 'data');
+      assert.equal(data, undefined);
       done();
     })
   })

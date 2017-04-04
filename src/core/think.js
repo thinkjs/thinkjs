@@ -1028,8 +1028,12 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   if(!think.isString(key) || think.isFunction(data)){
     options = callback || {};
     callback = data;
-    data = key;
-    key = '';
+    if(think.isString(key)){
+      data = undefined;
+    }else{
+      data = key;
+      key = '';
+    }
   }
   if(!think.isFunction(callback)){
     options = callback || {};
@@ -1049,6 +1053,9 @@ think.parallelLimit = (key, data, callback, options = {}) => {
   }
 
   let instance;
+  if(think.isFunction(data)){
+    key = '__parallelLimit';
+  }
   if(key){
     instance = thinkCache(thinkCache.LIMIT, key);
     if(!instance){
