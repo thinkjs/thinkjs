@@ -2,10 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 16:27:19
+* @Last Modified time: 2017-04-05 08:53:56
 */
 const helper = require('think-helper');
 const assert = require('assert');
+const Debounce = require('think-debounce');
+const debounceInstance = new Debounce();
 const Memcached = require('memcache-plus');
 let _getConnection = Symbol('getConnection');
 let _validExpire = Symbol('validExpire');
@@ -72,7 +74,7 @@ class thinkMemcache {
    * @return {Promise}     [description]
    */
   get(key) {
-    return this.memcache.get(key);
+    return debounceInstance.debounce(key, () => this.memcache.get(key));
   }
 
   /**
