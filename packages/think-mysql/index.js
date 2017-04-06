@@ -3,88 +3,57 @@ const helper = require('think-helper');
 const assert = require('assert');
 const Debounce = require('think-debounce');
 const debounceInstance = new Debounce();
-let bindConnectionEvent = Symbol('bindConnectionEvent');
+const getConnection = Symbol('getConnection');
 
+const defaultConfig = {
+  port: 3306,
+  host: '127.0.0.1',
+  user: 'root',
+  password: '',
+  connectionLimit: 1
+};
 
 class thinkMysql {
   /**
    * @param  {Object} config [connection options]
    */
   constructor(config = {}) {
-    this.config = config;
+    config = helper.extend({}, defaultConfig, config);
+    this.pool = this[getConnection](config);
   }
 
   /**
    * get connection
    * @return {Promise} [conneciton handle]
    */
-  getConnection() {
-    if (this.connection) {
-      return Promise.resolve(this.connection);
-    }
-
-    let config = this.config;
-    let str = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
-
-    if (this.pool) {
-      let fn = helper.promisify(this.pool.getConnection, this.pool);
-      return fn().catch(err => {
-        this.close();
-        return Promise.reject(err);
-      });
-    }
-
-    if (config.connectionLimit) {
-      this.pool = mysql.createPool(config);
-      return this.getConnection();
-    }
-
-    return debounceInstance.debounce(str, () => {
-      return new Promise((resolve,reject) => {
-        this.connection = mysql.createConnection(config);
-        this.connection.connect(err => {
-          if (err) {
-            reject(err);
-            this.close();
-          } else {
-            this[bindConnectionEvent]();
-            resolve(this.connection);
-          }
-        });
-      }).then(connection => {
-        if(config.setNames){
-          let fn = helper.promisify(connection.query, connection);
-          return fn(`SET NAMES ${config.charset}`).then(() => connection);
-        }
-        return connection;
-      });
-    })
+  [getConnection](config) {
+    return this.pool ? this.pool : mysql.createPool(config);
   }
 
-  [bindConnectionEvent](){
-    this.connection.on('error', () => {
-      this.close();
-    });
-    this.connection.on('close', () => {
-      this.close();
-    });
-    //PROTOCOL_CONNECTION_LOST
-    this.connection.on('end', () => {
-      this.connection = null;
-    });
-  }
   /**
-   * close connections
-   * @return {} []
+   * query
+   * @param sql
+   * @param useDebounce
+   * @returns {Promise}
    */
-  close() {
-    if (this.pool) {
-      let fn = helper.promisify(this.pool.end, this.pool);
-      return fn().then(() => this.pool = null);
-    } else if (this.connection) {
-      let fn = helper.promisify(this.connection.end, this.connection);
-      return fn().then(() => this.connection = null);
+  query(sql, useDebounce = true) {
+    const poolQuery = new Promise((resolve, reject) => {
+      this.pool.query(sql, (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results);
+      })
+    });
+    if (useDebounce) {
+      debounceInstance.debounce(sql, () => poolQuery)
     }
+    return poolQuery;
   }
+
+  execute() {
+
+  }
+
 }
 module.exports = thinkMysql;
