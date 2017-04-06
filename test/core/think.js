@@ -2592,6 +2592,15 @@ describe('core/think.js', function(){
     })
   })
 
+  it('think.parallelLimit normal again', function(done){
+    think.parallelLimit('key', 'name', function(name){
+      return 'again';
+    }).then(function(data){
+      assert.equal(data, 'again');
+      done();
+    })
+  })
+
   it('think.parallelLimit normal, is not function', function(done){
     try{
       think.parallelLimit('keywwww', 'name', {limit: 10});
@@ -2609,11 +2618,11 @@ describe('core/think.js', function(){
       done();
     })
   })
-  it('think.parallelLimit key is not set', function(done){
-    think.parallelLimit('data', function(name){
+  it('think.parallelLimit data is not set', function(done){
+    think.parallelLimit('key', function(name){
       return name;
     }).then(function(data){
-      assert.equal(data, 'data');
+      assert.equal(data, undefined);
       done();
     })
   })
