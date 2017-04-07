@@ -19,7 +19,7 @@ class thinkMysql {
    */
   constructor(config = {}) {
     config = helper.extend({}, defaultConfig, config);
-    this.pool = this[getConnection](config);
+    this.mysql = this[getConnection](config);
   }
 
   /**
@@ -27,7 +27,7 @@ class thinkMysql {
    * @return {Promise} [conneciton handle]
    */
   [getConnection](config) {
-    return this.pool ? this.pool : mysql.createPool(config);
+    return this.mysql ? this.mysql : mysql.createPool(config);
   }
 
   /**
@@ -38,7 +38,7 @@ class thinkMysql {
    */
   query(sql, useDebounce = true) {
     const poolQuery = new Promise((resolve, reject) => {
-      this.pool.query(sql, (err, results) => {
+      this.mysql.query(sql, (err, results) => {
         if (err) {
           reject(err);
         }
@@ -46,13 +46,18 @@ class thinkMysql {
       })
     });
     if (useDebounce) {
-      debounceInstance.debounce(sql, () => poolQuery)
+      return debounceInstance.debounce(sql, () => poolQuery)
     }
     return poolQuery;
   }
 
-  execute() {
-
+  /**
+   * execute
+   * @param sql
+   * @returns {Promise}
+   */
+  execute(sql) {
+    return this.query(sql, false);
   }
 
 }
