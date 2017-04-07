@@ -2,12 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-04-07 09:14:25
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-07 10:43:48
+* @Last Modified time: 2017-04-07 10:58:48
 */
 
 const svgCaptcha = require('svg-captcha');
 const helper = require('think-helper');
-const path = require('path');
 
 const cacheFont = {};
 const defaultOptions = {
@@ -39,7 +38,7 @@ class thinkCaptcha {
         this.options.font = theCacheFont;
       }else {
         svgCaptcha.loadFont(this.options.fontPath);
-        theCacheFont = svgCaptcha.options.font;
+        cacheFont[this.options.fontPath] = svgCaptcha.options.font;
       }
     }
   }
