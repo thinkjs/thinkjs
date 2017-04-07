@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/think-svg-captcha.svg?style=flat-square)](https://www.npmjs.com/package/think-svg-captcha)
 
 
-think-svg-captcha is just a wrap of [svg-captcha)](https://github.com/lemonce/svg-captcha) .
+think-svg-captcha is just a wrap of [svg-captcha](https://github.com/lemonce/svg-captcha).
 
 
 ## Usage
