@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-07 09:14:25
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-07 10:58:48
+* @Last Modified time: 2017-04-07 18:32:37
 */
 
 const svgCaptcha = require('svg-captcha');
@@ -22,7 +22,7 @@ const defaultOptions = {
   charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' // random character preset
 }
 
-class thinkCaptcha {
+class ThinkSvgCaptcha {
   /**
    * [constructor description]
    * @param  {Object} options [description]
@@ -62,6 +62,6 @@ class thinkCaptcha {
 
 }
 
-module.exports = thinkCaptcha;
+module.exports = ThinkSvgCaptcha;
 
 

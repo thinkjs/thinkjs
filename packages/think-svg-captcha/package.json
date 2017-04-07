@@ -1,7 +1,7 @@
 {
-  "name": "think-captcha",
-  "version": "1.0.1",
-  "description": "think-captcha for ThinkJS",
+  "name": "think-svg-captcha",
+  "version": "1.0.0",
+  "description": "svg captcha for ThinkJS",
   "main": "index.js",
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js",
@@ -14,10 +14,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-captcha.git"
+    "url": "git+https://github.com/thinkjs/think-svg-captcha.git"
   },
   "keywords": [
-    "think-captcha"
+    "think-svg-captcha"
   ],
   "author": {
     "name": "lushijie",
@@ -31,9 +31,9 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-captcha/issues"
+    "url": "https://github.com/thinkjs/think-svg-captcha/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-captcha#readme",
+  "homepage": "https://github.com/thinkjs/think-svg-captcha#readme",
   "devDependencies": {
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",

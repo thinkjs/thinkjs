@@ -1,10 +1,10 @@
-# think-captcha
-[![Build Status](https://travis-ci.org/thinkjs/think-captcha.svg?branch=master)](https://travis-ci.org/thinkjs/think-captcha)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-captcha/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-captcha?branch=master)
-[![npm](https://img.shields.io/npm/v/think-captcha.svg?style=flat-square)](https://www.npmjs.com/package/think-captcha)
+# think-svg-captcha
+[![Build Status](https://travis-ci.org/thinkjs/think-svg-captcha.svg?branch=master)](https://travis-ci.org/thinkjs/think-svg-captcha)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-svg-captcha/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-svg-captcha?branch=master)
+[![npm](https://img.shields.io/npm/v/think-svg-captcha.svg?style=flat-square)](https://www.npmjs.com/package/think-svg-captcha)
 
 
-think-captcha is just a wrap of [svg-captcha)](https://github.com/lemonce/svg-captcha) .
+think-svg-captcha is just a wrap of [svg-captcha)](https://github.com/lemonce/svg-captcha) .
 
 
 ## Usage
@@ -28,8 +28,8 @@ const defaultOptions = {
 ### demo
 
 ```js
-import ThinkCaptcha from 'think-captcha';
-let captcha = new ThinkCaptcha(options);
+import ThinkSvgCaptcha from 'think-svg-captcha';
+let captcha = new ThinkSvgCaptcha(options);
 
 captcha.create(); // returns an object that has the following property: {data: 'svg path data', text: 'captcha text'}
 captcha.svgCaptcha(text); // return a svg captcha based on text provided.
