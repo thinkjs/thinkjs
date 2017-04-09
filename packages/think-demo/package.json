@@ -24,11 +24,11 @@
     "think-babel": "^1.0.3",
     "think-debounce": "^1.0.3",
     "think-logger": "^1.0.0",
-    "think-trace": "^0.0.6",
+    "think-trace": "^1.0.0",
     "think-view": "^1.0.0",
     "think-view-nunjucks": "^1.0.1",
     "think-watcher": "^3.0.0",
-    "thinkjs": "^3.0.0"
+    "thinkjs": "thinkjs/thinkjs#3.0"
   },
   "devDependencies": {
     "think-inspect": "0.0.2"
