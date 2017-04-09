@@ -48,7 +48,8 @@
     "think-helper": "^1.0.0",
     "think-loader": "^1.0.0",
     "think-logger3": "^1.0.0",
-    "think-pm2": "^1.0.0"
+    "think-pm2": "^1.0.0",
+    "think-session": "thinkjs/think-session"
   },
   "devDependencies": {
     "ava": "^0.18.0",
