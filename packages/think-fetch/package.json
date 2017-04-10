@@ -4,14 +4,21 @@
   "description": "Request for ThinkJS 3.x",
   "main": "index.js",
   "dependencies": {
-    "request": "^2.81.0"
+    "request-promise-native": "^1.0.3"
   },
   "devDependencies": {
+    "ava": "^0.18.2",
     "babel-eslint": "^7.2.1",
-    "eslint": "^3.18.0"
+    "eslint": "^3.18.0",
+    "nyc": "^10.2.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint index.js && nyc ava test/index.js"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
   },
   "repository": {
     "type": "git",

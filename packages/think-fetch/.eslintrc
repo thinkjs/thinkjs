@@ -2,7 +2,6 @@
   "parser": "babel-eslint",
   "env": {
     "node": true,
-    "mocha": true,
     "es6": true // es6 envoriment
   },
   "rules": {
