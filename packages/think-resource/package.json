@@ -1,0 +1,36 @@
+{
+  "name": "think-resource",
+  "version": "1.0.0",
+  "description": "Resource for ThinkJS 3.x ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-resource.git"
+  },
+  "keywords": [
+    "resource",
+    "thinkjs",
+    "node",
+    "static"
+  ],
+  "author": "xiamingxing",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-resource/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-resource#readme",
+  "dependencies": {
+    "debug": "^2.6.3",
+    "koa-send": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.1"
+  },
+  "readmeFilename": "README.md"
+}
