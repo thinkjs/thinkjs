@@ -14,7 +14,7 @@ $ npm install think-request
 
 config file `src/config/extend.js`
 
-```
+```javascript
 const request = require('think-request');
 
 module.exports = [
@@ -24,7 +24,7 @@ module.exports = [
 
 ## Methods in Controller
 
-```
+```javascript
 module.exports = class extends think.Controller {
   async indexAction(){
     this.ctx.body = await this.curl('https://api.github.com/repos/thinkjs/think-request');
@@ -32,4 +32,4 @@ module.exports = class extends think.Controller {
 }
 ```
 
-[More Methods click](https://github.com/request/request-promise)
+[More Methods Click](https://github.com/request/request-promise)
