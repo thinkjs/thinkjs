@@ -4,6 +4,7 @@ const debug = require('debug')('think-resource');
 const resolve = require('path').resolve;
 const assert = require('assert');
 const send = require('koa-send');
+const helper = require('think-helper');
 
 /**
  * defaultOptions
@@ -26,9 +27,9 @@ const defaultOptions = {
  * @returns {serve}
  */
 module.exports = function (options) {
-  options = Object.assign(defaultOptions, options);
+  options = helper.extend({}, defaultOptions, options || {});
 
-  const root = options.root
+  const root = options.root;
   assert(options.root, 'root directory is required to serve files');
   debug('static "%s" %j', root, options);
   options.root = resolve(root);
@@ -37,7 +38,7 @@ module.exports = function (options) {
    * serve
    */
   return function serve(ctx, next){
-    if (ctx.method == 'HEAD' || ctx.method == 'GET') {
+    if (ctx.method === 'HEAD' || ctx.method === 'GET') {
       return send(ctx, ctx.path, options).then(done => {
         if (!done) {
           return next();

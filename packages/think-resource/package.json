@@ -4,7 +4,7 @@
   "description": "Resource for ThinkJS 3.x ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint index.js && nyc ava test/index.js && nyc report --reporter=html"
   },
   "repository": {
     "type": "git",
@@ -27,10 +27,15 @@
   "homepage": "https://github.com/thinkjs/think-resource#readme",
   "dependencies": {
     "debug": "^2.6.3",
-    "koa-send": "^4.0.0"
+    "koa-send": "^4.0.0",
+    "think-helper": "latest"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.1"
+    "ava": "^0.19.1",
+    "babel-eslint": "^7.2.1",
+    "koa": "^2.2.0",
+    "supertest": "^3.0.0",
+    "lodash": "latest"
   },
   "readmeFilename": "README.md"
 }
