@@ -4,7 +4,6 @@ node_js:
 install:
 |
     npm install -g npm@latest
-    npm install eslint -g
     npm --version
     npm install --registry http://registry.npmjs.org
 script:

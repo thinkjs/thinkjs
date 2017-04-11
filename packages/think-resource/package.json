@@ -33,9 +33,10 @@
   "devDependencies": {
     "ava": "^0.19.1",
     "babel-eslint": "^7.2.1",
+    "eslint": "^3.19.0",
     "koa": "^2.2.0",
-    "supertest": "^3.0.0",
-    "lodash": "latest"
+    "lodash": "latest",
+    "supertest": "^3.0.0"
   },
   "readmeFilename": "README.md"
 }
