@@ -39,5 +39,10 @@
     "nyc": "^10.2.0",
     "supertest": "^3.0.0"
   },
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
 }
