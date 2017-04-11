@@ -28,7 +28,9 @@
   "dependencies": {
     "debug": "^2.6.3",
     "koa-send": "^4.0.0",
-    "think-helper": "latest"
+    "think-helper": "latest",
+    "resolve-path": "latest",
+    "http-errors": "latest"
   },
   "devDependencies": {
     "ava": "^0.19.1",
@@ -36,7 +38,6 @@
     "babel-polyfill": "latest",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
-    "babel-register": "latest",
     "coveralls": "^2.13.0",
     "eslint": "^3.19.0",
     "koa": "^2.2.0",

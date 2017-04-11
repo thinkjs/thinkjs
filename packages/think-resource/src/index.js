@@ -1,16 +1,16 @@
 'use strict';
 
-var debug = require('debug')('think-resource');
-var resolve = require('path').resolve;
-var assert = require('assert');
-var helper = require('think-helper');
-var send = require('./send');
+const debug = require('debug')('think-resource');
+const resolve = require('path').resolve;
+const assert = require('assert');
+const helper = require('think-helper');
+const send = require('./send');
 
 /**
  * defaultOptions
  * @type {{root: string, index: string, hidden: boolean, format: boolean, gzip: boolean, extensions: boolean, maxage: number, setHeaders: boolean}}
  */
-var defaultOptions = {
+const defaultOptions = {
   root: '',
   index: 'index.html',
   hidden: false,
@@ -19,7 +19,7 @@ var defaultOptions = {
   extensions: false,
   maxage: 0,
   setHeaders: false
-};
+}
 
 /**
  * serve wrapper by koa-send
@@ -29,7 +29,7 @@ var defaultOptions = {
 module.exports = function (options) {
   options = helper.extend({}, defaultOptions, options || {});
 
-  var root = options.root;
+  const root = options.root;
   assert(root, 'root directory is required to serve files');
   debug('static "%s" %j', root, options);
   options.root = resolve(root);
@@ -37,9 +37,9 @@ module.exports = function (options) {
   /**
    * serve
    */
-  return function serve(ctx, next) {
+  return function serve(ctx, next){
     if (ctx.method === 'HEAD' || ctx.method === 'GET') {
-      return send(ctx, ctx.path, options).then(function (done) {
+      return send(ctx, ctx.path, options).then(done => {
         if (!done) {
           return next();
         }
@@ -47,4 +47,4 @@ module.exports = function (options) {
     }
     return next();
   };
-};
+}
