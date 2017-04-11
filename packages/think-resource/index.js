@@ -35,7 +35,7 @@ module.exports = function (options) {
   options = helper.extend({}, defaultOptions, options || {});
 
   const root = options.root;
-  assert(options.root, 'root directory is required to serve files');
+  assert(root, 'root directory is required to serve files');
   debug('static "%s" %j', root, options);
   options.root = resolve(root);
 
