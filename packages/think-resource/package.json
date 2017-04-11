@@ -44,5 +44,5 @@
     "require": [
       "babel-core/register"
     ]
-  },
+  }
 }
