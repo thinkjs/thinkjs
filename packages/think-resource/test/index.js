@@ -2,7 +2,7 @@
 
 const Koa = require('koa');
 const test = require('ava');
-const serve = require('..');
+const serve = require('../lib');
 const request = require('supertest');
 const _ = require('lodash');
 
