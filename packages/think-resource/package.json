@@ -4,6 +4,7 @@
   "description": "Resource for ThinkJS 3.x ",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf ./lib && babel src --out-dir lib",
     "test": "eslint index.js && nyc ava test/index.js && nyc report --reporter=html"
   },
   "repository": {
