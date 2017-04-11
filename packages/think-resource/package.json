@@ -39,7 +39,9 @@
     "koa": "^2.2.0",
     "lodash": "latest",
     "nyc": "^10.2.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "babel-register": "latest",
+    "babel-polyfill": "latest"
   },
   "readmeFilename": "README.md",
   "ava": {

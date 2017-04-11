@@ -1,4 +1,9 @@
 'use strict';
+require('babel-polyfill');
+require('babel-register')({
+  ignore: false,
+  cache: true
+});
 
 const debug = require('debug')('think-resource');
 const resolve = require('path').resolve;
