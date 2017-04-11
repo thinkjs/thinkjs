@@ -43,6 +43,13 @@
   "ava": {
     "require": [
       "babel-core/register"
+    ],
+    "babel": "inherit"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-3"
     ]
   }
 }
