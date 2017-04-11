@@ -33,6 +33,8 @@
   "devDependencies": {
     "ava": "^0.19.1",
     "babel-eslint": "^7.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
     "eslint": "^3.19.0",
     "koa": "^2.2.0",
     "lodash": "latest",
