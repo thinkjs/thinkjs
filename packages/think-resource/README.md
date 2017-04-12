@@ -2,7 +2,6 @@
 Resource for ThinkJS 3.x
 
 [![Build Status](https://travis-ci.org/thinkjs/think-resource.svg?branch=master)](https://travis-ci.org/thinkjs/think-resource)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-resource/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-resource?branch=master)
 
 think-resource is an static-file handler for Thinkjs 3.x. 
 
@@ -40,7 +39,7 @@ module.exports = [
 - `gzip`: Try to serve the gzipped version of a file automatically when gzip is supported by a client and if the requested file with .gz extension exists. default is `false`.
 - `extensions`: Try to match extensions from passed array to search for file when no extension is sufficed in URL. First found is served. default is `false`.
 - `maxage`: Function to set custom headers on response. Browser cache max-age in milliseconds, default is `0`.
-- `setHeaders`: default is `false`.
+- `publicPath`: Public path for route-match. default is `/`.
 
 ## Contributing
 
