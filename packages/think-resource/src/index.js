@@ -15,7 +15,7 @@ const defaultOptions = {
   publicPath: '/',
   index: 'index.html',
   hidden: false,
-  format: false,
+  format: true,
   gzip: false,
   extensions: false,
   maxage: 0,

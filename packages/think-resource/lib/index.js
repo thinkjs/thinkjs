@@ -15,7 +15,7 @@ var defaultOptions = {
   publicPath: '/',
   index: 'index.html',
   hidden: false,
-  format: false,
+  format: true,
   gzip: false,
   extensions: false,
   maxage: 0,
@@ -79,7 +79,7 @@ module.exports = function (options) {
   options.root = resolve(root);
 
   var publicPath = options.publicPath;
-  assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'route must be regexp or string');
+  assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string');
   options.publicPath = prefixPath(options.publicPath);
 
   /**

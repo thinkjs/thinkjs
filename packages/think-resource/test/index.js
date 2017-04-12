@@ -201,4 +201,48 @@ test.cb('serve by publicPath', t => {
     });
 });
 
+test.cb('serve by format:"true"', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', publicPath: /\/static/, format: true }))
+    .get('/static/html')
+    .expect(200, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
 
+
+test.cb('serve by format:"false"', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', publicPath: /\/static/, format: false }))
+    .get('/static/html')
+    .expect(404, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by setHeaders:"true"', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', publicPath: /\/static/, setHeaders: true }))
+    .get('/static/html')
+    .expect(500, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
