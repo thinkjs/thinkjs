@@ -53,7 +53,6 @@ var matchRoute = function matchRoute(path, route) {
       }
     });
   }
-  throw new Error('route must be regexp or string');
 };
 
 /**
@@ -79,6 +78,8 @@ module.exports = function (options) {
   debug('static "%s" %j', root, options);
   options.root = resolve(root);
 
+  var publicPath = options.publicPath;
+  assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'route must be regexp or string');
   options.publicPath = prefixPath(options.publicPath);
 
   /**

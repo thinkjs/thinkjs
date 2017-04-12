@@ -53,7 +53,6 @@ const matchRoute = (path, route) => {
       }
     });
   }
-  throw new Error('route must be regexp or string');
 };
 
 /**
@@ -78,7 +77,9 @@ module.exports = function (options) {
   assert(root, 'root directory is required to serve files');
   debug('static "%s" %j', root, options);
   options.root = resolve(root);
-  
+
+  let publicPath = options.publicPath;
+  assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string')
   options.publicPath = prefixPath(options.publicPath);
 
   /**

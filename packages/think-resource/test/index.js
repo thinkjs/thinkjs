@@ -186,3 +186,19 @@ test.cb('serve by publicPath', t => {
     });
 });
 
+test.cb('serve by publicPath', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', publicPath: /\/static/ }))
+    .get('/static/1.txt')
+    .expect(200, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+
