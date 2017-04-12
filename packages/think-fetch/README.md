@@ -1,13 +1,13 @@
-# think-request
-[![Build Status](https://travis-ci.org/thinkjs/think-request.svg?branch=master)](https://travis-ci.org/thinkjs/think-request)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-request/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-request?branch=master)
+# think-fetch
+[![Build Status](https://travis-ci.org/thinkjs/think-fetch.svg?branch=master)](https://travis-ci.org/thinkjs/think-fetch)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-fetch/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-fetch?branch=master)
 
-Request for ThinkJS 3.x
+Fetch for ThinkJS 3.x
 
 ## Install
 
 ```
-$ npm install think-request
+$ npm install think-fetch
 ```
 
 ## How to use
@@ -15,10 +15,10 @@ $ npm install think-request
 config file `src/config/extend.js`
 
 ```javascript
-const request = require('think-request');
+const fetch = require('think-fetch');
 
 module.exports = [
-  request, // HTTP request client.
+  fetch, // HTTP request client.
 ];
 ```
 
@@ -26,10 +26,18 @@ module.exports = [
 
 ```javascript
 module.exports = class extends think.Controller {
-  async indexAction(){
-    this.ctx.body = await this.curl('https://api.github.com/repos/thinkjs/think-request');
+  async indexAction () {
+
+    // plain text or html
+    const text = await this.fetch('https://github.com/').then(res => res.text());
+
+    // json
+    const json = await this.fetch('https://api.github.com/repos/thinkjs/think-fetch').then(res => res.json());
+
+    // post
+    const body = await this.fetch('http://httpbin.org/post', { method: 'POST', body: 'a=1' }).then(res => res.json());
   }
 }
 ```
 
-[More Methods Click](https://github.com/request/request-promise)
+[More Methods Click](https://github.com/bitinn/node-fetch)

@@ -1,6 +1,6 @@
 const test = require('ava');
 const startServer = require('./server.js');
-const curl = require('../index.js').controller.curl;
+const fetch = require('../index.js').controller.fetch;
 let stopServer = null;
 
 test.before(t => {
@@ -9,44 +9,32 @@ test.before(t => {
   });
 });
 
-test('Request', t => {
-  return curl('http://127.0.0.1:1995/200').then(body => {
-    t.is(body, 'GET /200');
+test('Fetch', t => {
+  return fetch('http://127.0.0.1:1995/200').then(res => {
+    t.true(res.ok);
   });
 });
 
-test('Response 404', t => {
-  return curl('http://127.0.0.1:1995/404').catch(error => {
-    t.is(error.statusCode, 404);
+test('should return a promise', t => {
+  const p = fetch('http://127.0.0.1:1995/200');
+  t.true(p instanceof fetch.Promise)
+});
+
+test('Should return 404 status', t => {
+  return fetch('http://127.0.0.1:1995/404').then(res => {
+    t.is(res.status, 404);
   });
 });
 
-test('Post Method', t => {
-  return curl.post('http://127.0.0.1:1995/200').then(body => {
-    t.is(body, 'POST /200');
+test('Should can get the correct text', t => {
+  return fetch('http://127.0.0.1:1995/200').then(res => res.text()).then(text => {
+    t.is(text, 'GET /200');
   });
 });
 
-test('Options', t => {
-  const options = {
-    method: 'DELETE',
-    uri: 'http://127.0.0.1:1995/200'
-  };
-
-  return curl(options).then(body => {
-    t.is(body, 'DELETE /200');
-  });
-});
-
-test('resolveWithFullResponse', t => {
-  const options = {
-    method: 'DELETE',
-    uri: 'http://127.0.0.1:1995/200',
-    resolveWithFullResponse: true
-  };
-
-  return curl(options).then(res => {
-    t.is(res.body, 'DELETE /200');
+test('Should can get the correct json', t => {
+  return fetch('http://127.0.0.1:1995/json').then(res => res.json()).then(json => {
+    t.deepEqual(json, {name: 'value'});
   });
 });
 

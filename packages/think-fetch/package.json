@@ -1,11 +1,10 @@
 {
-  "name": "think-request",
+  "name": "think-fetch",
   "version": "1.0.0",
-  "description": "Request for ThinkJS 3.x",
+  "description": "Fetch for ThinkJS 3.x",
   "main": "index.js",
   "dependencies": {
-    "request": "^2.34",
-    "request-promise-native": "^1.0.3"
+    "node-fetch": "^1.6.3"
   },
   "devDependencies": {
     "ava": "^0.18.2",
@@ -24,17 +23,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-request.git"
+    "url": "git+https://github.com/thinkjs/think-fetch.git"
   },
   "keywords": [
     "thinkjs3",
-    "request",
+    "fetch",
     "think-extend"
   ],
   "author": "Berwin <liubowen.niubi@gmail.com> (https://github.com/berwin)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-request/issues"
+    "url": "https://github.com/thinkjs/think-fetch/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-request#readme"
+  "homepage": "https://github.com/thinkjs/think-fetch#readme"
 }

@@ -1,7 +1,7 @@
-const request = require('request-promise-native');
+const fetch = require('node-fetch');
 
 const extend = {
-  curl: request
+  fetch
 };
 
 module.exports = {
