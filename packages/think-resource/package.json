@@ -42,7 +42,7 @@
     "coveralls": "^2.13.0",
     "eslint": "^3.19.0",
     "koa": "^2.2.0",
-    "lodash": "latest",
+    "think-helper": "latest",
     "nyc": "^10.2.0",
     "supertest": "^3.0.0"
   },

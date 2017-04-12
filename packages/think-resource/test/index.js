@@ -4,15 +4,15 @@ const Koa = require('koa');
 const test = require('ava');
 const serve = require('..');
 const request = require('supertest');
-const _ = require('lodash');
+const helper = require('think-helper');
 
 function createServer (options, middlewares = [], callback) {
   const app = new Koa();
-  if (_.isFunction(middlewares)) {
+  if (helper.isFunction(middlewares)) {
     callback = middlewares;
     middlewares = [];
   }
-  if (!_.isArray(middlewares)) {
+  if (!helper.isArray(middlewares)) {
     middlewares = [];
   }
   middlewares.unshift(serve(options));
@@ -20,7 +20,7 @@ function createServer (options, middlewares = [], callback) {
     app.use(middleware);
   });
   return app.listen(function () {
-    if (_.isFunction(callback)) {
+    if (helper.isFunction(callback)) {
       callback(this);
     }
   });
@@ -146,6 +146,36 @@ test.cb('serve by POST method', t => {
   request(createServer({ root: 'test/assets' }))
     .post('/1.txt')
     .expect(404, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by publicPath', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', publicPath: '/static' }))
+    .get('/static/1.txt')
+    .expect(200, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by publicPath', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', publicPath: 'static' }))
+    .get('/static/1.txt')
+    .expect(200, (err, res) => {
       if (err) {
         t.fail();
       }
