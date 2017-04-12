@@ -13,7 +13,7 @@ only one method **i18n**
           // Just let you know jed is singlton, all locale data will be loaded at start, we only change the domain here so that to minimum the cost.
         }
       */
-      retunr {moment, numeral, jed};
+      return {moment, numeral, jed};
     }
 
 
