@@ -1,0 +1,41 @@
+{
+  "name": "think-i18n",
+  "version": "1.0.0",
+  "description": "i18n solution in thinkjs 3.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=html"
+  },
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "jed": "^1.1.1",
+    "moment": "^2.18.1",
+    "numeral": "^2.0.6",
+    "think-helper": "^1.0.5"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.16.1",
+    "mock-require": "^2.0.1",
+    "nyc": "^7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-i18n.git"
+  },
+  "keywords": [
+    "thinkjs-extend",
+    "thinkjs",
+    "i18n",
+    "l10n"
+  ],
+  "author": "Sijie Cai <sijie.cai@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-i18n/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-i18n#readme"
+}
