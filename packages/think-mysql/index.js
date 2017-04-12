@@ -3,7 +3,7 @@ const helper = require('think-helper');
 const assert = require('assert');
 const Debounce = require('think-debounce');
 const debounceInstance = new Debounce();
-const getConnection = Symbol('getConnection');
+const initConnection = Symbol('initConnection');
 
 const defaultConfig = {
   port: 3306,
@@ -13,21 +13,30 @@ const defaultConfig = {
   connectionLimit: 1
 };
 
+let instance = null;
+let config = {};
+
 class thinkMysql {
   /**
-   * @param  {Object} config [connection options]
+   * @param  {Object} conf [connection options]
    */
-  constructor(config = {}) {
-    config = helper.extend({}, defaultConfig, config);
-    this.mysql = this[getConnection](config);
+  constructor(conf = {}) {
+    conf = helper.extend({}, defaultConfig, conf);
+    // if use the same configuration,use singleton
+    if(instance && JSON.stringify(conf) === JSON.stringify(config)){
+      return instance
+    }
+    instance = this;
+    this.config = config = conf;
+    this[initConnection](config);
   }
 
   /**
    * get connection
    * @return {Promise} [conneciton handle]
    */
-  [getConnection](config) {
-    return this.mysql ? this.mysql : mysql.createPool(config);
+  [initConnection](config) {
+    this.pool = mysql.createPool(config);
   }
 
   /**
@@ -37,8 +46,12 @@ class thinkMysql {
    * @returns {Promise}
    */
   query(sql, useDebounce = true) {
+    assert(this.config,'configuration can not be null');
+    if(!this.pool){
+      this[initConnection](this.config);
+    }
     const poolQuery = new Promise((resolve, reject) => {
-      this.mysql.query(sql, (err, results) => {
+      this.pool.query(sql, (err, results) => {
         if (err) {
           reject(err);
         }
@@ -60,5 +73,25 @@ class thinkMysql {
     return this.query(sql, false);
   }
 
+  /**
+   * close
+   * @returns {Promise}
+   */
+  close(){
+    if(!this.pool){
+      return
+    }
+    return new Promise((resolve,reject)=>{
+      this.pool.end(err => {
+        if(err){
+          reject(err);
+          return;
+        }
+        this.pool = null;
+        resolve();
+      })
+    })
+
+  }
 }
 module.exports = thinkMysql;
