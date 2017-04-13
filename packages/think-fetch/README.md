@@ -8,7 +8,7 @@ Fetch for ThinkJS 3.x
 ## Install
 
 ```
-$ npm install think-fetch
+$ npm install think-fetch --save
 ```
 
 ## How to use
