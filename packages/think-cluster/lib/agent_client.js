@@ -1,11 +1,10 @@
 const util = require('./util.js');
 const helper = require('think-helper');
 const net = require('net');
-
-let delegateClass = {};
+const debug = require('debug')('think-cluster');
 
 const STATUS = Symbol('think-agent-client-status');
-
+const INSTANCE = Symbol('think-agent-client-instance');
 /**
  * agent client
  */
@@ -16,6 +15,13 @@ class AgentClient {
   constructor(){
     this.client = null;
     this.tasks = {};
+    //get agent server address
+    process.on('message', message => {
+      if(message && message.act === util.THINK_AGENT_OPTIONS){
+        debug(`receive agent worker address: ${JSON.stringify(message.address)}, pid:${process.pid}`);
+        this.createConnection(message.address);
+      }
+    });
   }
   /**
    * get status
@@ -36,8 +42,8 @@ class AgentClient {
         this.sendData(data);
       }
     }else if(status === 'closed'){
-      process.emit(util.THINK_AGENT_CLOSED);
-      this.doLeaveTask();
+      //process.emit(util.THINK_AGENT_CLOSED);
+      //this.doLeaveTask();
     }
   }
   /**
@@ -60,22 +66,22 @@ class AgentClient {
    * capture data
    */
   captureData(){
-    let pinTimes = 0;
+    //let pinTimes = 0;
     this.client.on('data', data => {
-      if(data === util.PIN){
-        pinTimes--;
-        return;
-      }
+      // if(data === util.PIN){
+      //   pinTimes--;
+      //   return;
+      // }
       this.handleData(data);
     });
-    let timer = setInterval(() => {
-      pinTimes++;
-      this.client.write(util.PIN);
-      if(pinTimes > 5){
-        this.status = 'closed';
-      }
-    }, 3 * 1000);
-    timer.unref();
+    // let timer = setInterval(() => {
+    //   pinTimes++;
+    //   this.client.write(util.PIN);
+    //   if(pinTimes > 5){
+    //     this.status = 'closed';
+    //   }
+    // }, 3 * 1000);
+    // timer.unref();
   }
   /**
    * handle client data
@@ -109,28 +115,19 @@ class AgentClient {
     return this.status === 'closed';
   }
   /**
-   * register class
-   * @param {String} classId 
-   * @param {Function} cls 
-   */
-  register(classId, cls){
-    if(delegateClass[classId]) return false;
-    delegateClass[classId] = cls;
-    return true;
-  }
-  /**
    * createConnection
    */
-  createConnection(){
-    if(this.client) return;
-    let options = util.getAgentConnectOptions();
+  createConnection(options){
     const client = net.connect(options, () => {
+      debug(`connect agent server success, pid: ${process.pid}`);
       this.status = 'connected';
     });
     client.on('close', () => {
+      debug(`agent server closed, pid: ${process.pid}`);
       this.status = 'closed';
     });
-    client.on('error', () => {
+    client.on('error', err => {
+      debug(`connect agent server error, message: ${err.message}, pid: ${process.pid}`);
       this.status = 'closed';
     });
     client.on('end', () => {
@@ -158,10 +155,17 @@ class AgentClient {
       this.sendData(data);
     }else{
       deferred.data = data;
-      this.createConnection();
     }
     this.tasks[taskId] = deferred;
     return deferred.promise;
+  }
+  /**
+   * get instance
+   */
+  static getInstance(){
+    if(this[INSTANCE]) return this[INSTANCE];
+    this[INSTANCE] = new AgentClient();
+    return this[AgentClient];
   }
 }
 

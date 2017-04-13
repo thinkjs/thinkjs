@@ -1,5 +1,8 @@
 const cluster = require('cluster');
+const util = require('./util.js');
+
 const cpus = require('os').cpus().length;
+const debug = require('debug')('think-cluster');
 
 let thinkProcessId = 1;
 
@@ -15,7 +18,7 @@ exports.PIN = 'PIN';
  * check worker is first
  */
 exports.isFirstWorker = function(){
-  return process.env.THINK_FIRST_WORKER === '1';
+  return +process.env.THINK_PROCESS_ID === 1;
 }
 
 /**
@@ -24,46 +27,19 @@ exports.isFirstWorker = function(){
 exports.isAgent = function(){
   return !!process.env.THINK_AGENT_WORKER;
 }
-
 /**
- * can delegate
+ * enable agent
  */
-exports.canDelegate = function(){
-  return !!exports.getAgentConnectOptions();
+exports.enableAgent = function(){
+  return !! process.env.THINK_ENABLE_AGENT;
 }
-
-/**
- * get agent connect options
- */
-let connectOptions = null;
-exports.getAgentConnectOptions = function(){
-  if(connectOptions) return connectOptions;
-  let options = process.env.THINK_AGENT_OPTIONS;
-  if(!options) return false;
-  try{
-    connectOptions = JSON.parse(options);
-    return connectOptions;
-  }catch(e){
-    return false;
-  }
-}
-
 /**
  * parse options
  */
 exports.parseOptions = function(options = {}){
   options.workers = options.workers || cpus;
-  options.agent = true;
-  options.delegate = !!options.delegate;
   if(options.workers < 2){
-    options.delegate = false;
-    options.agent = false;
-  }
-  if(cluster.isWorker && !exports.isAgent()){
-    if(!exports.getAgentConnectOptions()){
-      options.delegate = false;
-      options.agent = false;
-    }
+    options.enableAgent = false;
   }
   return options;
 }
@@ -71,25 +47,34 @@ exports.parseOptions = function(options = {}){
 /**
  * fork worker
  */
-exports.forkWorker = function(env = {}, logger, callback){
-  env.THINK_PROCESS_ID = thinkProcessId++;
+exports.forkWorker = function(env = {}, callback){
+  env.THINK_PROCESS_ID = env.THINK_AGENT_WORKER ? 0 : thinkProcessId++;
   const worker = cluster.fork(env);
-  worker.once('message', message => {
+  worker.on('message', message => {
     if(message === exports.THINK_GRACEFUL_DISCONNECT){
-      logger(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
-      env.THINK_FIRST_WORKER = 0; 
+      debug(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
+      worker.hasGracefulReload = true;
       exports.forkWorker(env, () => {
         worker.send(exports.THINK_GRACEFUL_FORK);
       });
     }
   });
   worker.once('exit', (code, signal) => {
-
+    debug(`worker exit, code:${code}, signal:${signal}, pid: ${process.pid}`);
+    if(worker.hasGracefulReload) return;
+    exports.forkWorker(env);
   });
-  if(callback){
-    worker.once('listening', () => {
-      callback(worker);
-    });
-  }
+  worker.once('listening', address => {
+    if(worker.isAgent){
+      debug(`agent worker is listening, address:${JSON.stringify(address)}`);
+      //send agent server address to workers
+      for(let id in cluster.workers){
+        let item = cluster.workers[id];
+        if(item.isAgent) continue;
+        item.send({act: util.THINK_AGENT_OPTIONS, address});
+      }
+    }
+    callback && callback(worker, address);
+  });
   return worker;
 }

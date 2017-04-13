@@ -1,9 +1,9 @@
 const events = require('events');
 const cluster = require('cluster');
 /**
- * messager class
+ * Messenger class
  */
-class Messager extends events {
+class Messenger extends events {
   /**
    * get target workers
    * @param {String} target 
@@ -106,4 +106,4 @@ class Messager extends events {
   }
 }
 
-module.exports = Messager;
+module.exports = Messenger;

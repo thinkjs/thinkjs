@@ -20,30 +20,11 @@ class Agent {
     this.options = util.parseOptions(options);
   }
   /**
-   * set address, then send message to master
-   */
-  set address(address){
-    process.send({
-      cmd: util.THINK_AGENT_OPTIONS,
-      address
-    });
-  }
-  /**
-   * register class
-   * @param {String} classId 
-   * @param {Function} cls 
-   */
-  register(classId, cls){
-    if(delegateClass[classId]) return false;
-    delegateClass[classId] = cls;
-    return true;
-  }
-  /**
    * do task in agent
    * @param {Object} data 
    */
   handleTask(data){
-    let cls = this.delegateClass[data.classId];
+    let cls = delegateClass[data.classId];
     assert(cls, 'can not find class, classId: ${data.classId}');
     assert(helper.isArray(data.cArgs), '.cArgs must be an array');
     const instance = new cls(...data.cArgs);
@@ -94,10 +75,18 @@ class Agent {
     server.on('error', () => {
       server.close();
     });
-    server.listen('', '127.0.0.1', () => {
-      this.address = JSON.stringify(server.address());
-    });
+    server.listen('', '127.0.0.1');
     return server;
+  }
+  /**
+   * register class
+   * @param {String} classId 
+   * @param {Function} cls 
+   */
+  static register(classId, cls){
+    if(delegateClass[classId]) return false;
+    delegateClass[classId] = cls;
+    return true;
   }
 }
 

@@ -1,6 +1,7 @@
 const util = require('./util.js');
 const cluster = require('cluster');
 const assert = require('assert');
+const AgentClient = require('./agent_client.js');
 
 const KEEP_ALIVE = Symbol('think-graceful-keepalive');
 
@@ -145,6 +146,7 @@ class Worker {
       this.disableKeepAlive();
     }
     this.captureReloadSignal();
+    AgentClient.getInstance();
   }
   /**
    * get workers

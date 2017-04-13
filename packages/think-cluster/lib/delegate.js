@@ -1,40 +1,44 @@
 const helper = require('think-helper');
 const assert = require('assert');
 const AgentClient = require('./agent_client.js');
+const Agent = require('./agent.js');
 const util = require('./util.js');
-const agentClient = new AgentClient();
+
+const agentClientInstance = AgentClient.getInstance();
 
 function delegate(cls, classId){
   assert(cls && helper.isFunction(cls), `delegate object required and must be a function`);
-  //no need delegate workers
-  if(!util.canDelegate()) return cls;
 
   classId = classId || helper.md5(cls).slice(0, 8);
-  //it's already registered
-  if(!agentClient.register(classId, cls)) return cls;
   //in agent worker, not need delegate methods
-  if(util.isAgent()) return cls;
+  if(util.isAgent()){
+    Agent.register(classId, cls);
+    return cls;
+  }
+  //agent worker is not enabled
+  if(!util.enableAgent()) return cls;
 
-  let methods = cls.delegateMethods;
+  let delegateCls = class delegateCls extends cls {};
+  let methods = delegateCls.delegateMethods;
   if(helper.isFunction(methods)){
     methods = methods();
   }
   assert(helper.isArray(methods) && methods.length, 'delegateMethods required and must be an array');
 
   let cArgs = null;
-  cls.prototype.constructor = function(){
+  delegateCls.prototype.constructor = function(){
     cArgs = arguments;
-    cls.apply(this, arguments);
+    delegateCls.apply(this, arguments);
   }
   methods.forEach(method => {
-    assert(helper.isFunction(cls.prototype[method]), `.${method} is not a function`);
-    let methodFn = cls.prototype[method];
-    cls.prototype[method] = function(){
+    assert(helper.isFunction(delegateCls.prototype[method]), `.${method} is not a function`);
+    let methodFn = delegateCls.prototype[method];
+    delegateCls.prototype[method] = function(){
       //if agent client is closed, run method directly
-      if(agentClient.isClosed){
+      if(agentClientInstance.isClosed){
         return methodFn.apply(this, arguments);
       };
-      return agentClient.send({
+      return agentClientInstance.send({
         classId,
         cArgs, //constructor arguments
         method,
@@ -42,7 +46,7 @@ function delegate(cls, classId){
       }, {ctx: this, method: methodFn});
     }
   });
-  return cls;
+  return delegateCls;
 }
 
 module.exports = delegate;

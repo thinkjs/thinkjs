@@ -1,7 +1,6 @@
 const cluster = require('cluster');
 const util = require('./util.js');
-
-let isFirstWorker = true;
+const debug = require('debug')('think-cluster');
 
 /**
  * Master class
@@ -30,12 +29,8 @@ class Master {
    * get fork env
    */
   getForkEnv(){
-    let first = isFirstWorker;
-    isFirstWorker = false;
     return {
-      THINK_FIRST_WORKER: first ? 1 : 0, //is first worker
       THINK_WORKERS: this.options.workers, //workers num
-      THINK_CLUSTER: 1, //
     }
   }
   /**
@@ -44,31 +39,27 @@ class Master {
   forkAgentWorker(callback){
     let worker = util.forkWorker({
       THINK_AGENT_WORKER: 1
-    });
+    }, callback);
     worker.isAgent = true;
-    worker.on('message', msg => {
-      if(msg.cmd === util.THINK_AGENT_OPTIONS){
-        callback(msg.address);
-      }
-    });
   }
   /**
    * fork workers
    */
   forkWorkers(){
-    const forkWorker = address => {
+    const forkWorker = (env = {}, address) => {
       let workers = this.options.workers;
       let index = 0;
-      let env = {};
-      if(address){
-        env.THINK_AGENT_OPTIONS = JSON.stringify(address);
-      }
       while(index++ < workers){
-        util.forkWorker(Object.assign({}, env, this.getForkEnv()));
+        env = Object.assign(env, this.getForkEnv());
+        let worker = util.forkWorker(env);
+        if(address){
+          //send agent address
+          worker.send(`{act: util.THINK_AGENT_OPTIONS, address}`);
+        }
       }
     }
-    if(this.options.agent){
-      this.forkAgentWorker(address => forkWorker(address));
+    if(this.options.enableAgent){
+      this.forkAgentWorker((worker, address) => forkWorker({THINK_ENABLE_AGENT: 1}, address));
     }else{
       forkWorker();
     }
