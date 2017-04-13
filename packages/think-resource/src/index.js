@@ -80,7 +80,7 @@ module.exports = function (options) {
 
   let publicPath = options.publicPath;
   assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string')
-  options.publicPath = prefixPath(options.publicPath);
+  options.publicPath = prefixPath(publicPath);
 
   /**
    * serve
