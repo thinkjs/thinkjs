@@ -1,14 +1,14 @@
 # think-i18n
-[English Document](https://github.com/thinkjs/think-i18n/master/README.md)
+[English Document](https://github.com/thinkjs/think-i18n)
 
 thinkjs 3.0 国际化方案, 基于 [Jed](https://github.com/messageformat/Jed), [Moment](https://github.com/moment/moment/) 和 [Numeral](https://github.com/adamwdraper/Numeral-js).
 
 ## 特性
  - 涵盖了翻译，日期显示和数字、货币显示。
  - 支持给每个 locale 配置自定义的日期和数字格式。
- - 简单易用，只需要定义好每个 locale 的行为，插件会在合适的时间应用配置，再也不需要手工繁琐的切换各个类库的 locale ！
- - 方便调试不同 locale
- - 可以定制方案的各个步骤行为
+ - 简单易用，只需要定义好每个 locale 的行为，插件会在合适的时间应用配置，再也不需要手工繁琐的切换各个类库的 locale 。
+ - 方便调试不同 locale。
+ - 可以定制方案的各个步骤行为。
 
 ## 安装
     npm install think-i18n --save

@@ -1,5 +1,5 @@
 # think-i18n
-[简体中文文档](https://github.com/thinkjs/think-i18n/master/README_zh-CN.md)
+[简体中文文档](https://github.com/thinkjs/think-i18n/blob/master/README_ch_CN.md)
 
 i18n solution in thinkjs 3.0, implement base on [Jed](https://github.com/messageformat/Jed), [Moment](https://github.com/moment/moment/) and [Numeral](https://github.com/adamwdraper/Numeral-js).
 
