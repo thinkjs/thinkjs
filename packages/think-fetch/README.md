@@ -1,4 +1,5 @@
 # think-fetch
+[![npm](https://img.shields.io/npm/v/think-fetch.svg)](https://www.npmjs.com/package/think-fetch)
 [![Build Status](https://travis-ci.org/thinkjs/think-fetch.svg?branch=master)](https://travis-ci.org/thinkjs/think-fetch)
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-fetch/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-fetch?branch=master)
 
