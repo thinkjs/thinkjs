@@ -1,18 +1,18 @@
 # think-i18n
-[简体中文文档](https://github.com/thinkjs/think-i18n/master/README_zh-CN.md)
+[English Document](https://github.com/thinkjs/think-i18n/master/README.md)
 
-i18n solution in thinkjs 3.0, implement base on [Jed](https://github.com/messageformat/Jed), [Moment](https://github.com/moment/moment/) and [Numeral](https://github.com/adamwdraper/Numeral-js).
+thinkjs 3.0 国际化方案, 基于 [Jed](https://github.com/messageformat/Jed), [Moment](https://github.com/moment/moment/) 和 [Numeral](https://github.com/adamwdraper/Numeral-js).
 
-## Features
- - I18N solution cover translation, datetime and number display.
- - Support per locale custom format for datetime and number.
- - Easy to use, just defined your expect format and translation in each locale file and the library will help to apply locale settings on time, no more annoying locale switching!
- - Easy to debug
- - Locale switch process is Customizable to suit your case.
+## 特性
+ - 涵盖了翻译，日期显示和数字、货币显示。
+ - 支持给每个 locale 配置自定义的日期和数字格式。
+ - 简单易用，只需要定义好每个 locale 的行为，插件会在合适的时间应用配置，再也不需要手工繁琐的切换各个类库的 locale ！
+ - 方便调试不同 locale
+ - 可以定制方案的各个步骤行为
 
-## How to use
+## 安装
     npm install think-i18n --save
-### Configure extends.js
+### 配置 extends.js
 
 ```js
 // thinkjs config/extend.js
@@ -44,11 +44,13 @@ module.exports = [
 ];
 
 ```
-### Provide locale settings
+### 配置 locale 文件
 
-- **dateFormat** will apply to moment.local(localeId, dateFormat);
-- **numeralFormat** will apply numeral.locales[localeId] = numeralFormat;
-- **translation** will be transform to jed's locale_data， localeId  is mapped to domain.
+ 每个 locale 一个文件，放在 i18nFolter 目录下。
+
+- **dateFormat** 会应用到 moment.local(localeId, dateFormat);
+- **numeralFormat** 会应用到 numeral.locales[localeId] = numeralFormat;
+- **translation** 会被转换成 Jed 的 locale_data, localeId 被映射成 domain.
 ```js
 module.exports = {
   localeId: 'cn',
@@ -177,38 +179,40 @@ module.exports = {
 
 ```
 
-### Controller and View (nunjucks)
+### Controller 和 View (nunjucks)
 
-####  in controller
+####  controller
 
     async indexAction(){
       this.assign(this.i18n(/*forceLocale*/));
       ...
     }
 
-####  in view
+####  view
 
 ```js
 
-{{ jed.gettext('some key') }} translation
-{{ moment().format('llll') }} datetime format
-{{ numeral(1000).format('currency') }} number format (see numberFormat.formats)
+{{ jed.gettext('some key') }} 翻译
+{{ moment().format('llll') }} 时间格式
+{{ numeral(1000).format('currency') }} 数字格式 (参考配置 numberFormat.formats)
 
 ```
 
-### Why not use moment bundled i18n configure
-  For transparent but most importantly, flexibility to compose you date, number and message's localization per locale, for example, you have a website in China and want to provide English translation, but keep the chinese currency symbol, so you can configure the en.js file to use.
+### 为什么不使用 Moment 自带的 i18n 文件
 
-### Notice
-If you defined **en** locale, witch will override the default **en** locale in [Numeral](https://github.com/adamwdraper/Numeral-js).
+为的是配置的透明和可控制性，可以灵活的组合在某一个 locale 下，分别使用的 语言翻译，时间格式和数字格式。比如有一个在中国的购物网站，希望提供英文的翻译方便老外使用，但是货币数字和时间的格式仍然使用中国的标准。
 
-## Debug a locale
+### 注
+如果定义了 **en** locale， 会覆盖 [Numeral](https://github.com/adamwdraper/Numeral-js) 默认的配置。
 
-  By default, getLocal read value from header['accept-language'] ，and then pass through localesMapping . But if you just want to test a locale, just set **debugLocal** to that locale.
+## 调试某个 locale
+  默认情况下，是通过读取 header['accept-language'] 的值，然后通过 localesMapping 转换后作为某一时刻采纳的 locale。如果需要调试，在 view 配置里面设置 **debugLocal** = <locale>
 
-## Best Pratice
+## 最佳实践
 
-### use customize format
+### 使用自定义格式
 
-  - Always use **moment().format('llll')**  instead of moment().format('YYYY-MM-dd HH:mm').
-  - Always use **numeral(value).format('customFormat')** instead of numeral(value).format('00.00$'), [Numeral](https://github.com/adamwdraper/Numeral-js) doesn't not support per locale custom format,  this is done using some tricks and you can config each locale's customFormat's in locale.numeralFormat.formats.
+总是使用自定义的格式，这样就可以通过配置定制不用locale下有不同的输出格式。同时也方便后期的维护，比如某天我们需要把所有长日期显示修改格式，不用到每个文件里面取修改，只需要改配置就好，相当于一层抽象。
+
+  - 使用 **moment().format('llll')** 而不是 moment().format('YYYY-MM-dd HH:mm').
+  - 使用 **numeral(value).format('customFormat')** 而不是 numeral(value).format('00.00$'), [Numeral](https://github.com/adamwdraper/Numeral-js) 是不支持对每个 locale 自定义格式的，类库里面通过额外的代码支持了这个功能（具体可以看源码），配置方式参考 locale.numeralFormat.formats。
