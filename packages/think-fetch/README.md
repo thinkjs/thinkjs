@@ -55,7 +55,7 @@ module.exports = class extends think.Controller {
 ### fetch(url[, options])
 
 - `url` A string representing the URL for fetching
-- `options` [Options](#fetch-options) for the HTTP(S) request
+- `options` [Options](#options) for the HTTP(S) request
 - Returns: `Promise<Response>`
 
 Perform an HTTP(S) fetch.
