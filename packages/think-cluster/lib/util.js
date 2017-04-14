@@ -1,5 +1,6 @@
 const cluster = require('cluster');
 const util = require('./util.js');
+const helper = require('think-helper');
 
 const cpus = require('os').cpus().length;
 const debug = require('debug')('think-cluster');
@@ -47,9 +48,13 @@ exports.parseOptions = function(options = {}){
 /**
  * fork worker
  */
-exports.forkWorker = function(env = {}, callback){
+exports.forkWorker = function(env = {}){
+  let deferred = helper.defer();
   env.THINK_PROCESS_ID = env.THINK_AGENT_WORKER ? 0 : thinkProcessId++;
   const worker = cluster.fork(env);
+  if(env.THINK_AGENT_WORKER){
+    worker.isAgent = true;
+  }
   worker.on('message', message => {
     if(message === exports.THINK_GRACEFUL_DISCONNECT){
       debug(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
@@ -74,7 +79,7 @@ exports.forkWorker = function(env = {}, callback){
         item.send({act: util.THINK_AGENT_OPTIONS, address});
       }
     }
-    callback && callback(worker, address);
+    deferred.resolve({worker, address});
   });
-  return worker;
+  return deferred.promise;
 }
