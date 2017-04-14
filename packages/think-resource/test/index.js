@@ -26,6 +26,18 @@ function createServer (options, middlewares = [], callback) {
   });
 }
 
+test.cb('serve by no options"."', t => {
+  t.plan(1);
+  try {
+    createServer();
+    t.fail();
+  }
+  catch (e) {
+    t.pass();
+  }
+  t.end();
+});
+
 test.cb('serve by root:"."', t => {
   t.plan(1);
   request(createServer({ root: '.' }))
@@ -203,8 +215,8 @@ test.cb('serve by publicPath', t => {
 
 test.cb('serve by format:"true"', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: /\/static/, format: true }))
-    .get('/static/html')
+  request(createServer({ root: 'test/assets', format: true }))
+    .get('/html')
     .expect(200, (err, res) => {
       if (err) {
         t.fail();
@@ -219,8 +231,8 @@ test.cb('serve by format:"true"', t => {
 
 test.cb('serve by format:"false"', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: /\/static/, format: false }))
-    .get('/static/html')
+  request(createServer({ root: 'test/assets', format: false }))
+    .get('/html')
     .expect(404, (err, res) => {
       if (err) {
         t.fail();
@@ -234,8 +246,8 @@ test.cb('serve by format:"false"', t => {
 
 test.cb('serve by setHeaders:"true"', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: /\/static/, setHeaders: true }))
-    .get('/static/html')
+  request(createServer({ root: 'test/assets', setHeaders: true }))
+    .get('/html')
     .expect(500, (err, res) => {
       if (err) {
         t.fail();
@@ -246,3 +258,64 @@ test.cb('serve by setHeaders:"true"', t => {
       t.end();
     });
 });
+
+test.cb('serve by gzip', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', gzip: true }))
+    .get('/gzip.json')
+    .expect(200, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by extensions', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', extensions: ['txt'] }))
+    .get('/index')
+    .expect(200, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by extensions fail', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', extensions: ['txt'] }))
+    .get('/test')
+    .expect(404, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by extensions err', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', extensions: [2, {}, []] }))
+    .get('/index')
+    .expect(500, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
