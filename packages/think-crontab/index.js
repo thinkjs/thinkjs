@@ -128,7 +128,7 @@ class Crontab {
         process.on('message', message => {
           if(message && message.act === action){
             debug(`run task${taskName}, pid:${process.pid}`);
-            item.handle();
+            item.handle(this.app);
           }
         });
       }
