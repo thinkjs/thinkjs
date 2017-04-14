@@ -44,12 +44,12 @@
     "koa": "^2.2.0",
     "think-cache": "^1.0.0",
     "think-cluster": "thinkjs/think-cluster",
-    "think-crontab": "thinkjs/think-crontab",
     "think-config": "^1.0.0",
     "think-helper": "^1.0.0",
-    "think-loader": "^1.0.0",
+    "think-loader": "thinkjs/think-loader",
     "think-logger3": "^1.0.0",
-    "think-pm2": "^1.0.0"
+    "think-pm2": "^1.0.0",
+    "think-session": "thinkjs/think-session"
   },
   "devDependencies": {
     "ava": "^0.18.0",
