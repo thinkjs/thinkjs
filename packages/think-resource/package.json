@@ -1,6 +1,6 @@
 {
   "name": "think-resource",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Resource for ThinkJS 3.x ",
   "main": "index.js",
   "scripts": {
