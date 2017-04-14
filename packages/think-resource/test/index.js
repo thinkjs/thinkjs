@@ -68,6 +68,21 @@ test.cb('serve by path:"not a file"', t => {
     });
 });
 
+test.cb('serve by invalid path', t => {
+  t.plan(1)
+  request(createServer({ root: 'test/assets' }))
+    .get('/%fdsa')
+    .expect(400, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
 test.cb('serve by valid path', t => {
   t.plan(1)
   request(createServer({ root: 'test/assets' }))
@@ -276,7 +291,7 @@ test.cb('serve by gzip', t => {
 
 test.cb('serve by extensions', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', extensions: ['txt'] }))
+  request(createServer({ root: 'test/assets', extensions: ['.html', 'txt'] }))
     .get('/index')
     .expect(200, (err, res) => {
       if (err) {
@@ -318,4 +333,36 @@ test.cb('serve by extensions err', t => {
       t.end();
     });
 });
+
+test.cb('serve by hidden file', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', hidden: true }))
+    .get('/.hidden')
+    .expect(200, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+test.cb('serve by hidden file', t => {
+  t.plan(1);
+  request(createServer({ root: 'test/assets', hidden: false }))
+    .get('/.hidden')
+    .expect(404, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
+
+
 
