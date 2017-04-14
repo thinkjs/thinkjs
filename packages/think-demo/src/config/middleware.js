@@ -4,29 +4,20 @@ const meta = require('think-meta');
 const logic = require('think-logic');
 const controller = require('think-controller');
 
-module.exports = [
-  {
+module.exports = [{
     handle: trace, 
     options: {
       debug: true
     }
-  },
-  {
+  },{
     handle: meta,
-    options: {
-      
-    }
-  },
-  {
+    options: {}
+  },{
     handle: router, 
-    options: {
-
-    }
-  },
-  {
+    options: {}
+  },{
     handle: logic
-  },
-  {
+  },{
     handle: controller
   }
 ];
