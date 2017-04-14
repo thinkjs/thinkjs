@@ -49,6 +49,9 @@ class Crontab {
         item.handle = () => this.mockServer(item.handle);
       }
       return item;
+    }).filter(item => {
+      if(item.enable !== undefined) return !!item.enable;
+      return true;
     });
     return options;
   }

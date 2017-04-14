@@ -22,8 +22,9 @@ module.exports = [{
 
 ### options
 
-* `interval` 
-* `cron`
-* `worker`
-* `handle`
-* `immediate`
+* `interval` {String|Number} interval task
+* `cron` {String} cron task
+* `worker` {String} task type, *one*/*all*, default is one
+* `handle` {Function|String} task handle, required
+* `immediate` {Boolean} immediate to run task, default is false
+* `enable` {Boolean} enable task, default is true
