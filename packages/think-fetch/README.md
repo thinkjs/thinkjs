@@ -66,7 +66,7 @@ url should be an absolute url, such as `http://example.com/`. A path-relative UR
 
 The default values are shown after each option key.
 
-```
+```javascript
 {
   // These properties are part of the Fetch Standard
   method: 'GET',
