@@ -48,7 +48,7 @@
     "think-helper": "^1.0.0",
     "think-loader": "thinkjs/think-loader",
     "think-logger3": "^1.0.0",
-    "think-pm2": "^1.0.0",
+    "think-pm2": "thinkjs/think-pm2",
     "think-session": "thinkjs/think-session",
     "think-crontab": "thinkjs/think-crontab"
   },
