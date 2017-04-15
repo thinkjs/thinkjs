@@ -1,0 +1,26 @@
+{
+  "name": "think-model",
+  "version": "0.0.1",
+  "description": "An adapter-based ORM for ThinkJS 3.x",
+  "main": "./lib",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-model.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "orm",
+    "mysql",
+    "adapter",
+    "model"
+  ],
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-model/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-model#readme"
+}
