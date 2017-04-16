@@ -141,7 +141,7 @@ var privateFunc = {
 	},
 
 	handleTsConfig: function() {
-		var entryFileList = ['development.js', 'production.js', 'testing.js'];
+		let entryFileList = ['development.js', 'production.js', 'testing.js'];
 
 		entryFileList.forEach((item)=>{
 			let configPath = path.join(projectRootPath, item);
