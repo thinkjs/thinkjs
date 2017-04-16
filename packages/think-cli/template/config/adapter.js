@@ -1,21 +1,43 @@
+const nunjucks = require('think-view-nunjucks');
 const path = require('path');
-const thinkLogger = require('think-logger3');
-const ConsoleLogger = thinkLogger.Console;
-const FileLogger = thinkLogger.File;
-const DateFileLogger = thinkLogger.DateFile;
+const cookieSession = require('think-session-cookie');
+const fileSession = require('think-session-file');
 
-/**
- * logger
- */
-exports.logger = {
-  type: 'console',
-  console: {
-    handle: ConsoleLogger
+//view adapter config
+exports.view = {
+  type: 'nunjucks',
+  common: {
+    viewPath: path.join(think.ROOT_PATH, 'view'),
+    sep: '_',
+    extname: '.html'
   },
-  file: {
-    handle: FileLogger
-  },
-  datefile: {
-    handle: DateFileLogger
+  nunjucks: {
+    handle: nunjucks
   }
 }
+
+//session adapter config
+exports.session = {
+  type: 'file',
+  common: {
+    cookie: {
+      name: 'test',
+      keys: ['werwer', 'werwer'],
+      signed: true
+    }
+  },
+  cookie: {
+    handle: cookieSession,
+    cookie: {
+      maxAge: 1009990 * 1000,
+      keys: ['welefen', 'suredy'],
+      encrypt: true
+    }
+  },
+  file: {
+    handle: fileSession,
+    sessionPath: path.join(think.ROOT_PATH, 'runtime/session')
+  }
+}
+
+

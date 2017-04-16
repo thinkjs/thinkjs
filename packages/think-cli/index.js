@@ -1,5 +1,8 @@
 var helper = require('think-helper');
 var commander  = require('commander');
+var directiveCollector = require('./directives/directiveCollector');
+var tsDirective = require('./directives/tsDirective');
+
 var fs = require('fs');
 var path = require('path');
 var colors = require('colors/safe');
@@ -51,21 +54,33 @@ function copyDir(source, target) {
 			let targetSourcePath = path.resolve(target, filePath);
 
 			if(!excludeFile.test(filePath)) {
-				let index =  excludeDir.indexOf(filePath);
-				if(index === -1) {
+
+				let handleResult = excludeHandle(filePath);
+
+				if(handleResult) {
+					privateFunc[handleResult.directive](currentSourcePath, targetSourcePath);
+				} else {
 					if(helper.isDirectory(currentSourcePath)) {
 						helper.mkdir(targetSourcePath);
 						return copyDir(currentSourcePath, targetSourcePath);
 					} else {
 						return copyFile(currentSourcePath, targetSourcePath);
 					}
-				} else {
-					let path = excludeDir[index].toLowerCase()
-					privateFunc['create'+path](currentSourcePath, targetSourcePath);
 				}
 			}
 		})	
 	})
+}
+/**
+ * copyDir
+ * filePath
+ */
+function excludeHandle(filePath) {
+	return excludeDir.filter((item)=>{
+		if(item.path === filePath) {
+			return item;
+		}
+	})[0];
 }
 /**
  * createProject
@@ -79,42 +94,12 @@ function createProject(projectPath) {
 	copyProject(path.resolve(__dirname, 'template'), projectRootPath);
 }
 
-/**
- * createConfigFile
- * configPath
- * configTree
- */
 
-function createConfigFile(configPath, treeBranch) {
-
-	function handleDir(configPath, treeBranch) {
-
-		var files = fs.readdirSync(configPath);
-
-		files.forEach(function (filePath){
-			if(!excludeFile.test(filePath)) {
-				let currentSourcePath = path.resolve(configPath, filePath);
-				if(helper.isDirectory(currentSourcePath)) {
-					treeBranch[filePath+'.dir'] = {};
-				    handleDir(currentSourcePath, treeBranch[filePath+'.dir']);
-				} else {
-					let content = fs.readFileSync(currentSourcePath, 'utf8');
-					treeBranch[filePath+'.file'] = content;
-				}
-			}
-		})
-	}
-
-	handleDir(configPath, treeBranch);
-	var configFile = path.resolve(projectRootPath, 'configTree.js');
-	fs.writeFileSync(configFile, JSON.stringify(configTree), 'utf8');
-
-}
 /**
  * privateFunc use in cli
  */
 var privateFunc = {
-	createconfig: function(currentSourcePath, targetSourcePath) {
+	createConfig: function(currentSourcePath, targetSourcePath) {
 		 var configFilePath = path.resolve(cwd, 'configTree.js');
 		 fs.readFile(configFilePath, function(err, data) {
 		 	if(err) {
@@ -132,7 +117,6 @@ var privateFunc = {
 		 			var source = path.resolve(currentSourcePath, fileName);
 			 		var target = path.resolve(targetSourcePath, fileName);
 			 		if(helper.isString(config[i])) {
-			 			//var fileName = i.match(configTreeReg)[0];
 			 			fs.writeFileSync(target, config[i], 'utf8');
 			 		} else {
 			 			handleConfig(source, target, config[i]);
@@ -142,18 +126,31 @@ var privateFunc = {
 		 	handleConfig(currentSourcePath, targetSourcePath, configTree);
 		 })
 	},
+
 	handleConfig: function() {
+		let configPath = path.join(projectRootPath, 'config');
 
-		// var configArr = config.split('-');
+		excludeDir.push({
+			'path': configPath,
+			'directive': createConfig
+		});
+	},
 
-		// configArr.forEach((item)=>{
-		// 	switch(item) {
-		// 		case '-c':
-		// 		excludeDir.push('config');
-		// 		break;
-		// 	}
-		// })	
-		excludeDir.push('config');
+	createTsConfig: function(currentSourcePath, targetSourcePath) {
+		tsDirective(currentSourcePath, targetSourcePath);
+	},
+
+	handleTsConfig: function() {
+		var entryFileList = ['development.js', 'production.js', 'testing.js'];
+
+		entryFileList.forEach((item)=>{
+			let configPath = path.join(projectRootPath, item);
+
+			excludeDir.push({
+				'path': configPath,
+				'directive': createTsConfig
+			});
+		})
 	}
 }
 /**
@@ -189,32 +186,23 @@ commander.option('-v, --version', 'output the version number', () => {
 });
 
 
-commander.command('new <projectPath> [config]').description('create project').action((projectPath, config) => {
-	projectRootPath = path.resolve(projectRootPath, projectPath);
-	if(config) {
-		privateFunc.handleConfig();
-	}
-	
-	createProject(projectPath);
-});
+commander.command('new <projectPath> [config]')
+				 .description('create project')
+				 .action((projectPath, config) => {
+						projectRootPath = path.resolve(projectRootPath, projectPath);
+						if(config === "config") {
+							privateFunc.handleConfig();
+						}
+						if(config === "-ts") {
+							privateFunc.handleTsConfig();
+						}
+						createProject(projectPath);
+				});
 
-commander.command('create <mode>')
-		 .description('create config file')
-		 .action((mode) => {
-		 	if(mode === 'config') {
-		 		var configPath = path.resolve(projectRootPath, 'config');
-		 		
-				if(!helper.isDirectory(configPath)) {
-					errlog('can not find config folder');
-				} else {
-					createConfigFile(configPath, configTree);
-				}
-		 	}
-		});
+commander.command('create <mode> <name>')
+				 .description('create all kinds of modes in your project')
+				 .action((mode, name) => {
+				 		directiveCollector(mode, name, projectRootPath);
+				});
 
-
-// commander.option('creat-config', 'output the version number', () => {
-
-// });
-
-commander.parse(process.argv);;
+commander.parse(process.argv);
