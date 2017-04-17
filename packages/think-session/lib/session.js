@@ -15,17 +15,17 @@ const defaultOptions = {
 const defaultCookieOptions = {
   name: 'thinkjs',
   autoUpdate: false, //auto update cookie when is set maxAge
-  //maxAge: '',
-  //expires: '',
   path: '/',  //a string indicating the path of the cookie
-  //domain: '',
-  //secure: false,
-  //keys: [],
   httpOnly: true,
   sameSite: false,
   signed: false,
   overwrite: false,
   encrypt: false //encrypt cookie data
+  //maxAge: '',
+  //expires: '',
+  //domain: '',
+  //secure: false,
+  //keys: []
 }
 /**
  * Session Manage
