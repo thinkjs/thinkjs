@@ -48,23 +48,23 @@ class thinkMysql {
    * @returns {Promise}
    */
   query(sql, useDebounce = true, nestTables, times = 1) {
-    assert(helper.isString(sql),'sql must be a string');
-    assert(this.config,'configuration can not be null');
-    if(!this.pool){
+    assert(helper.isString(sql), 'sql must be a string');
+    assert(this.config, 'configuration can not be null');
+    if (!this.pool) {
       this[initConnection](this.config);
     }
     let data = {sql, nestTables};
     const poolQuery = new Promise((resolve, reject) => {
       this.pool.query(data, (err, results) => {
         if (err) {
+          // if lost connections,try 3 times
+          if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') {
+            this.close();
+            if (times <= 3) {
+              return this.query(sql, nestTables, useDebounce, ++times);
+            }
+          }
           reject(err);
-          // if(err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE'){
-          //   this.close();
-          //   if(times <= 3){
-          //     return this.query(sql, nestTables, useDebounce, ++times);
-          //   }
-          // }
-          // reject(err);
         }
         resolve(results);
       })
@@ -77,11 +77,11 @@ class thinkMysql {
 
   /**
    * execute
-   * @param sql
+   * @param  {Array} args []
    * @returns {Promise}
    */
-  execute(sql) {
-    return this.query(sql, false);
+  execute(...args) {
+    return this.query(...args);
   }
 
   /**
