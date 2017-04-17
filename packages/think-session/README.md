@@ -1,4 +1,6 @@
 # think-session
+[![Build Status](https://img.shields.io/travis/thinkjs/think-session/master.svg?style=flat-square)](https://travis-ci.org/thinkjs/think-session)
+[![Coverage Status](https://img.shields.io/coveralls/thinkjs/think-session/master.svg?style=flat-square)](https://coveralls.io/github/thinkjs/think-session?branch=master)
 
 Session for ThinkJS 3.x, **it's already built in framework**
 
