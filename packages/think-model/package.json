@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/thinkjs/think-model/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-model#readme"
+  "homepage": "https://github.com/thinkjs/think-model#readme",
+  "dependencies": {
+    "think-helper": "^1.0.5"
+  }
 }
