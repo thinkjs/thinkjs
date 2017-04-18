@@ -25,7 +25,14 @@ module.exports = [
   { 
       handle: resource,
       options: {
-        root: '.'
+           root: '.',
+           publicPath: '/static',
+           index: 'index.html',
+           hidden: false,
+           format: true,
+           gzip: false,
+           extensions: ['.txt'],
+           maxage: 0,
       }
   }
 ]
