@@ -4,11 +4,8 @@ node_js:
 install:
 |
     npm install -g npm@latest
-    npm install -g babel-cli@latest
     npm --version
     npm install --registry http://registry.npmjs.org
-before_script:
-    - npm run build
 script:
     - npm test
 after_success:
