@@ -99,6 +99,18 @@ function camelCase(str){
 exports.camelCase = camelCase;
 
 /**
+ * snakeCase string
+ * @param  {String} str []
+ * @return {String}     []
+ */
+function snakeCase(str) {
+  return str.replace(/([^A-Z])([A-Z])/g, function ($0, $1, $2) {
+    return $1 + '_' + $2.toLowerCase();
+  });
+};
+exports.snakeCase = snakeCase;
+
+/**
  * check object is number string
  * @param  {Mixed}  obj []
  * @return {Boolean}     []
