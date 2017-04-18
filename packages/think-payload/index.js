@@ -1,4 +1,3 @@
-const helper = require('think-helper');
 const parse = require('./lib/index.js');
 
 module.exports = function (opts) {
@@ -29,13 +28,12 @@ module.exports = function (opts) {
   return function (ctx, next) {
     if (ctx.request.body !== undefined) return next();
 
-    try {
-      ctx.request.body = parseBody(ctx);
-    } catch (err) {
+    return parseBody(ctx).then(body => {
+      ctx.request.body = body;
+      return next();
+    }).catch(err => {
       throw err;
-    }
-
-    return next();
+    });
   }
 
   function parseBody(ctx) {
