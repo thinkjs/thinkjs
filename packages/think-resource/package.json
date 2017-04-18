@@ -4,7 +4,6 @@
   "description": "Resource for ThinkJS 3.x ",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf ./lib && babel src --out-dir lib",
     "test": "eslint index.js && nyc ava test/index.js && nyc report --reporter=html"
   },
   "repository": {
@@ -28,23 +27,19 @@
   "homepage": "https://github.com/thinkjs/think-resource#readme",
   "dependencies": {
     "debug": "^2.6.3",
-    "koa-send": "^4.0.0",
-    "think-helper": "latest",
-    "resolve-path": "latest",
-    "http-errors": "latest",
-    "babel-polyfill": "latest"
+    "koa-send": "3.3.0",
+    "think-helper": "latest"
   },
   "devDependencies": {
     "ava": "^0.19.1",
     "babel-eslint": "^7.2.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-3": "^6.24.1",
+    "babel-preset-think-node": "^1.0.1",
     "coveralls": "^2.13.0",
     "eslint": "^3.19.0",
     "koa": "^2.2.0",
-    "think-helper": "latest",
     "nyc": "^10.2.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "think-helper": "latest"
   },
   "readmeFilename": "README.md",
   "ava": {
@@ -55,8 +50,7 @@
   },
   "babel": {
     "presets": [
-      "es2015",
-      "stage-3"
+      "think-node"
     ]
   }
 }
