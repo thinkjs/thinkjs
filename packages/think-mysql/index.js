@@ -59,7 +59,6 @@ class thinkMysql {
         if (err) {
           // if lost connections,try 3 times
           if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') {
-            this.close();
             if (times <= 3) {
               return this.query(sql, nestTables, useDebounce, ++times);
             }
@@ -82,6 +81,33 @@ class thinkMysql {
    */
   execute(...args) {
     return this.query(...args);
+  }
+
+  /**
+   *
+   * @param trans {sql:'',cb:()=>{}}
+   *
+   */
+  executeTrans(sqls) {
+    assert(helper.isArray(sqls),'transArr must be an array');
+    let query;
+    let connect = helper.promisify(this.pool.getConnection,this.pool);
+
+    let p = connect().then(conn =>{
+      query = helper.promisify(conn.query,conn);
+      return {conn,query}
+    });
+    return sqls.reduce((p, sql) => {
+      return p.then(({conn, query, results}) =>
+        query(sql).then((results) =>
+          Promise.resolve({conn, query, results})
+        )
+      ).catch(err=>{
+        Promise.reject(err);
+      })
+    }, p).then(({results}) => {
+      return Promise.resolve(results)
+    })
   }
 
   /**
