@@ -1,5 +1,7 @@
 var configTree = {};
 var helper = require('think-helper');
+var fs = require('fs');
+var path = require('path');
 /**
  * createConfigFile
  * configPath
@@ -11,7 +13,7 @@ module.exports =  function createConfigFile(configPath) {
 	if(!helper.isDirectory(configPath)) {
 		errlog('can not find config folder');
 	} else {
-		createConfigFile(configPath, configTree);
+		handleDir(configPath);
 	}
 
 	function handleDir(configPath) {
@@ -19,7 +21,6 @@ module.exports =  function createConfigFile(configPath) {
 		var files = fs.readdirSync(configPath);
 
 		files.forEach(function (filePath){
-			if(!excludeFile.test(filePath)) {
 				let currentSourcePath = path.resolve(configPath, filePath);
 				if(helper.isDirectory(currentSourcePath)) {
 					configTree[filePath+'.dir'] = {};
@@ -28,12 +29,11 @@ module.exports =  function createConfigFile(configPath) {
 					let content = fs.readFileSync(currentSourcePath, 'utf8');
 					configTree[filePath+'.file'] = content;
 				}
-			}
 		})
 	}
 
-	handleDir(configPath);
-	var configFile = path.resolve(projectRootPath, 'configTree.js');
+	
+	var configFile = path.resolve(configPath, 'think.json');
 	fs.writeFileSync(configFile, JSON.stringify(configTree), 'utf8');
 }
 
