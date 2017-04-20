@@ -780,6 +780,11 @@ describe('adapter/db/_parse.js', function(){
   })
   it('parseWhere, BETWEEN', function(){
     var instance = new Parse();
+    var data = instance.parseWhere({id: ['BETWEEN', '2017-04-13 00:00:00', '2017-04-19 00:00:00']});
+    assert.equal(data, ' WHERE (  (id BETWEEN \'2017-04-13 00:00:00\' AND \'2017-04-19 00:00:00\') )')
+  })
+  it('parseWhere, BETWEEN', function(){
+    var instance = new Parse();
     var data = instance.parseWhere({id: ['between', '1,2']});
     assert.equal(data, ' WHERE (  (id BETWEEN \'1\' AND \'2\') )')
   })

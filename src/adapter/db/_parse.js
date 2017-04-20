@@ -309,7 +309,7 @@ export default class extends think.base {
       //between
       else if(val0 === 'BETWEEN'){
         data = think.isString(val[1]) ? val[1].split(',') : val[1];
-        if (!think.isArray(data)) {
+        if (!think.isArray(data) || data.length === 1) {
           data = [val[1], val[2]];
         }
         whereStr += ' (' + key + ' ' + val0 + ' ' + this.parseValue(data[0]);
