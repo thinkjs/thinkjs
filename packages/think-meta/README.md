@@ -1,4 +1,9 @@
 # think-meta
+[![Build Status](https://travis-ci.org/thinkjs/think-meta.svg?branch=master)](https://travis-ci.org/thinkjs/think-meta)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-meta/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-meta?branch=master)
+[![npm](https://img.shields.io/npm/v/think-meta.svg?style=flat-square)](https://www.npmjs.com/package/think-meta)
+
+
 Show meta for ThinkJS 3.x
 
 ## Install
