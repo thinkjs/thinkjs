@@ -52,7 +52,7 @@ test('default option with err', async t => {
 	};
 
 	await Meta({}, app)(ctx, next).catch((err) => {
-		console.log(err);
+		// console.log(err);
 	});
 	t.is(ctx.res.headers['X-Powered-By'], `thinkjs-${app.think.version}`, '有报错成功设置X-Powered-By');
 	t.truthy(ctx.res.headers['X-Response-Time'], '有报错成功设置X-Response-Time');
