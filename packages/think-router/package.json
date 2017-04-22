@@ -8,12 +8,7 @@
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
-  },
-  "ava": {
-    "require": [
-      "babel-core/register"
-    ]
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
   },
   "contributors": [
     {
@@ -24,16 +19,16 @@
   "main": "index.js",
   "dependencies": {
     "debug": "^2.6.3",
-    "think-helper": "^1.0.0"
+    "think-helper": "~1.0.5"
   },
   "devDependencies": {
-    "ava": "^0.18.0",
+    "ava": "~0.18.1",
     "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
-    "codecov": "^1.0.1",
-    "coveralls": "^2.11.16",
-    "eslint": "2.8.0",
-    "nyc": "^7.1.0"
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~3.15.0",
+    "mockery": "~2.0.0",
+    "nyc": "~10.1.2"
   },
   "keywords": [],
   "repository": {

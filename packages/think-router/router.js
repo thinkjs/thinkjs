@@ -6,7 +6,7 @@ const assert = require('assert');
  * rules = [
  *  {match: '', path: '', method: ''}
  * ]
- * 
+ *
  * rules = {
  *  admin: {
  *    match: '',
@@ -83,45 +83,45 @@ class Router {
   /**
    * get path match
    */
-  getPathMatch(pathname, match){
-    if(helper.isRegExp(match)){
-      return pathname.match(match);
-    }
-    // /name/:id
-    if(match.indexOf(':') > -1){
-      match = match.split('/');
-      pathname = path.split(/\/+/);
-      let ret = {};
-      let flag = match.every((item, index) => {
-        if(!item) return true;
-        if(item[0] === ':'){
-          if(pathname[index]){
-            ret[item.slice(1)] = pathname[index];
-            return true;
-          }
-        }else{
-          if(item === pathname[index]){
-            return true;
-          }
-        }
-      });
-      return flag ? ret : false;
-    }
-    return pathname.replace(/^\/|\/$/g, '') === match.replace(/^\/|\/$/g, '');
-  }
+  // getPathMatch(pathname, match){
+  //   if(helper.isRegExp(match)){
+  //     return pathname.match(match);
+  //   }
+  //   // /name/:id
+  //   if(match.indexOf(':') > -1){
+  //     match = match.split('/');
+  //     pathname = path.split(/\/+/);
+  //     let ret = {};
+  //     let flag = match.every((item, index) => {
+  //       if(!item) return true;
+  //       if(item[0] === ':'){
+  //         if(pathname[index]){
+  //           ret[item.slice(1)] = pathname[index];
+  //           return true;
+  //         }
+  //       }else{
+  //         if(item === pathname[index]){
+  //           return true;
+  //         }
+  //       }
+  //     });
+  //     return flag ? ret : false;
+  //   }
+  //   return pathname.replace(/^\/|\/$/g, '') === match.replace(/^\/|\/$/g, '');
+  // }
   /**
    * get router rules
    */
   getRules(){
     let rules = this.rules;
     if(this.modules.length && helper.isObject(rules)){
-      for(let m in rules){
-        let match = rules[m].match;
+      for(let module in rules){
+        let match = rules[module].match;
         if(match){
           assert(helper.isRegExp(match), 'router.match must be a RegExp');
           if(match.test(this.pathname)){
-            this.ctx.module = m;
-            return rules[m].rules || []
+            this.ctx.module = module;
+            return rules[module].rules || []
           }
         }
       }
@@ -171,7 +171,7 @@ class Router {
       }
       return this.ctx.redirect(rule.path);
     }
-    //remove / 
+    //remove /
     let pathname = rule.path.replace(/^\/|\/$/g, '').replace(/\/{2,}/g, '/');
     let query = rule.query || {};
     let queryPos = pathname.indexOf('?');
@@ -187,18 +187,18 @@ class Router {
       }
     }
 
-    let m = ''; // module
+    let module = ''; // module
     // multi module application, parse module first
     let controllers = this.controllers;
     if(this.modules.length){
       let pos = pathname.indexOf('/');
-      m = pos === -1 ? pathname : pathname.slice(0, pos);
-      if(this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1){
+      module = pos === -1 ? pathname : pathname.slice(0, pos);
+      if(this.modules.indexOf(module) > -1 && module !== 'common' && this.options.denyModules.indexOf(module) === -1){
         pathname = pos === -1 ? '' : pathname.slice(pos + 1);
       }else{
-        m = this.options.defaultModule;
+        module = this.options.defaultModule;
       }
-      controllers = controllers[m] || {};
+      controllers = controllers[module] || {};
     }
     let controller = '';
     for(let name in controllers){
@@ -217,7 +217,7 @@ class Router {
       controller = pathname[0];
       action = pathname[1];
     }
-    this.ctx.module = m;
+    this.ctx.module = module;
     this.ctx.controller = controller || this.options.defaultController;
     this.ctx.action = action || this.options.defaultAction;
     //add query to context
