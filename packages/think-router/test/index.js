@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-23 11:45:26
+* @Last Modified time: 2017-04-23 11:58:08
 */
 
 const test = require('ava');
@@ -897,6 +897,57 @@ test.serial.cb('controller with /',  t => {
 });
 
 
+test.serial.cb('controller with / 2',  t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: '/admin/article/list/paper'
+  });
+
+  let app = {
+    modules: ['home', 'admin'],
+    controllers: {
+      admin: {
+        'article/page': {},
+      }
+    },
+    routers: [
+      {
+        match: /admin\/article\/page(\.*)/,
+        path: 'admin/article/page',
+        method: 'get',
+        query: [{name: 0}]
+      }
+    ]
+  };
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESP, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
+    t.end();
+  });
+});
+
+
+test.serial.cb('options without subdomainOffset',  t => {
+  let options = helper.extend({}, defaultOptions, {
+    subdomainOffset: 0
+  });
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp);
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESP, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
+    t.end();
+  });
+});
+
 
 test.serial.cb('options with enableDefaultRouter',  t => {
   let options = helper.extend({}, defaultOptions, {enableDefaultRouter: false});
@@ -924,32 +975,10 @@ test.serial.cb('options with enableDefaultRouter',  t => {
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESP, {
       module: 'admin',
-      controller: 'article/page',
-      action: 'index'
-    });
-    t.end();
-  });
-});
-
-
-
-
-test.serial.cb('options without subdomainOffset',  t => {
-  let options = helper.extend({}, defaultOptions, {
-    subdomainOffset: 0
-  });
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp);
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
-      module: 'admin',
       controller: 'article',
       action: 'list'
     });
     t.end();
   });
 });
-
-
 
