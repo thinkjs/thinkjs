@@ -450,3 +450,5 @@ function rmdir(p, reserve){
   });
 }
 exports.rmdir = rmdir;
+
+exports.isBuffer = Buffer.isBuffer;
