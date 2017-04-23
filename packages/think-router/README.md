@@ -1,4 +1,7 @@
 # think-router
+[![Build Status](https://travis-ci.org/thinkjs/think-router.svg?branch=master)](https://travis-ci.org/thinkjs/think-router)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-router/badge.svg)](https://coveralls.io/github/thinkjs/think-router)
+[![npm](https://img.shields.io/npm/v/think-router.svg)](https://www.npmjs.com/package/think-router)
 
 Router for ThinkJS 3.x
 
@@ -28,8 +31,8 @@ support options:
   defaultAction: 'index', //default action name
   prefix: [], // url prefix
   suffix: ['.html'], // url suffix
-  enableDefaultRouter: true, 
-  subdomainOffset: 2, 
+  enableDefaultRouter: true,
+  subdomainOffset: 2,
   subdomain: {}, //subdomain
   denyModules: [] //deny module, enable in multi module mode
 }
