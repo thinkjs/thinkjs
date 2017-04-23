@@ -1,3 +1,5 @@
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 const util = require('util');
 const helper = require('think-helper');
 const Base = require('../base');
@@ -11,52 +13,60 @@ module.exports = class extends Base {
    * @param  {String} table [table name]
    * @return {}       []
    */
-  async getSchema(table){
-    table = table || this.getTableName();
-    let schema = await this.db().getSchema(table);
+  getSchema(table) {
+    var _this = this;
 
-    if(table !== this.getTableName()){
-      return schema;
-    }
-    
-    //get primary key
-    for(let name in schema){
-      if(schema[name].primary){
-        this.pk = name;
-        break;
+    return _asyncToGenerator(function* () {
+      table = table || _this.getTableName();
+      let schema = yield _this.db().getSchema(table);
+
+      if (table !== _this.getTableName()) {
+        return schema;
       }
-    }
 
-    //merge user set schema config
-    this.schema = helper.extend({}, schema, this.schema);
-    return this.schema;
+      //get primary key
+      for (let name in schema) {
+        if (schema[name].primary) {
+          _this.pk = name;
+          break;
+        }
+      }
+
+      //merge user set schema config
+      _this.schema = helper.extend({}, schema, _this.schema);
+      return _this.schema;
+    })();
   }
   /**
    * get unique field
    * @param  {Object} data []
    * @return {Promise}      []
    */
-  async getUniqueField(data){
-    let schema = await this.getSchema();
-    for(let name in schema){
-      if(schema[name].unique && (!data || data[name])){
-        return name;
+  getUniqueField(data) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let schema = yield _this2.getSchema();
+      for (let name in schema) {
+        if (schema[name].unique && (!data || data[name])) {
+          return name;
+        }
       }
-    }
+    })();
   }
   /**
    * get last sql
    * @return {Promise} []
    */
-  getLastSql(){
+  getLastSql() {
     return this.db().getLastSql();
   }
   /**
    * get primary key
    * @return {Promise} []
    */
-  getPk(){
-    if(this.pk !== 'id'){
+  getPk() {
+    if (this.pk !== 'id') {
       return Promise.resolve(this.pk);
     }
     return this.getSchema().then(() => this.pk);
@@ -66,13 +76,17 @@ module.exports = class extends Base {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  async buildSql(options, noParentheses){
-    options = await this.parseOptions(options);
-    let sql = this.db().buildSelectSql(options).trim();
-    if(noParentheses){
-      return sql;
-    }
-    return '( ' + sql + ' )';
+  buildSql(options, noParentheses) {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      options = yield _this3.parseOptions(options);
+      let sql = _this3.db().buildSelectSql(options).trim();
+      if (noParentheses) {
+        return sql;
+      }
+      return '( ' + sql + ' )';
+    })();
   }
   /**
    * parse options
@@ -80,100 +94,103 @@ module.exports = class extends Base {
    * @param extraOptions 
    * @param flag 
    */
-  async parseOptions(oriOpts, extraOptions, flag = false){
-    let options = helper.extend({}, this._options);
-    if(helper.isObject(oriOpts)) {
-      options = helper.extend(options, oriOpts);
-    }
-    if(extraOptions){
-      options = helper.extend(options, extraOptions);
-    }
-    //clear options
-    this._options = {};
-    //get table name
-    options.table = options.table || this.getTableName();
+  parseOptions(oriOpts, extraOptions, flag = false) {
+    var _this4 = this;
 
-    options.tablePrefix = this.getTablePrefix();
-    options.model = this.getModelName();
-
-    //get table schema can not use table alias
-    let schema = await this.getSchema(options.table);
-
-    //table alias
-    if (options.alias) {
-      options.table += ' AS ' + options.alias;
-    }
-
-    if(oriOpts !== undefined && !helper.isObject(oriOpts)){
-      options = helper.extend(options, this.parseWhereOptions(oriOpts));
-    }
-    //check where key
-    if(options.where && !helper.isEmpty(schema)){
-      let keyReg = /^[\w\.\|\&]+$/;
-      for(let key in options.where){
-        if(!keyReg.test(key)){
-          // let msg = new Error(think.locale('FIELD_KEY_NOT_VALID', key));
-          // return Promise.reject(msg);
-        }
+    return _asyncToGenerator(function* () {
+      let options = helper.extend({}, _this4._options);
+      if (helper.isObject(oriOpts)) {
+        options = helper.extend(options, oriOpts);
       }
-    }
+      if (extraOptions) {
+        options = helper.extend(options, extraOptions);
+      }
+      //clear options
+      _this4._options = {};
+      //get table name
+      options.table = options.table || _this4.getTableName();
 
-    //field reverse
-    if(options.field && options.fieldReverse){
-      //reset fieldReverse value
-      options.fieldReverse = false;
-      let optionsField = options.field;
-      options.field = Object.keys(schema).filter(item => {
-        if(optionsField.indexOf(item) === -1){
-          return item;
-        }
-      });
-    }
+      options.tablePrefix = _this4.getTablePrefix();
+      options.model = _this4.getModelName();
 
+      //get table schema can not use table alias
+      let schema = yield _this4.getSchema(options.table);
 
-    if(flag){
-      let camelCase = this.config.camel_case || false;
-      if(camelCase){
-        if(helper.isEmpty(options.field)){
-          options.field = [];
-          let keyArray = Object.keys(schema);
-          for (let key of keyArray) {
-            options.field.push(util.format('`%s` AS `%s`', key, helper.camelCase(key)));
-          }
-        } else {
-          // make field camelCase
-          let fields = options.field;
-          options.field = [];
-          for (let field of fields) {
-            options.field.push(util.format('`%s` AS `%s`', field, helper.camelCase(field)));
-          }
-        }
+      //table alias
+      if (options.alias) {
+        options.table += ' AS ' + options.alias;
+      }
 
-        // make field camelCase in where condition
-        let where = options.where;
-        options.where = {};
-        if(!helper.isEmpty(where)){
-          let keyArray = Object.keys(where);
-          for (let key of keyArray) {
-            options.where[helper.snakeCase(key)] = where[key];
+      if (oriOpts !== undefined && !helper.isObject(oriOpts)) {
+        options = helper.extend(options, _this4.parseWhereOptions(oriOpts));
+      }
+      //check where key
+      if (options.where && !helper.isEmpty(schema)) {
+        let keyReg = /^[\w\.\|\&]+$/;
+        for (let key in options.where) {
+          if (!keyReg.test(key)) {
+            // let msg = new Error(think.locale('FIELD_KEY_NOT_VALID', key));
+            // return Promise.reject(msg);
           }
         }
       }
-    }
-    
-    return this.optionsFilter(options, schema);
+
+      //field reverse
+      if (options.field && options.fieldReverse) {
+        //reset fieldReverse value
+        options.fieldReverse = false;
+        let optionsField = options.field;
+        options.field = Object.keys(schema).filter(function (item) {
+          if (optionsField.indexOf(item) === -1) {
+            return item;
+          }
+        });
+      }
+
+      if (flag) {
+        let camelCase = _this4.config.camel_case || false;
+        if (camelCase) {
+          if (helper.isEmpty(options.field)) {
+            options.field = [];
+            let keyArray = Object.keys(schema);
+            for (let key of keyArray) {
+              options.field.push(util.format('`%s` AS `%s`', key, helper.camelCase(key)));
+            }
+          } else {
+            // make field camelCase
+            let fields = options.field;
+            options.field = [];
+            for (let field of fields) {
+              options.field.push(util.format('`%s` AS `%s`', field, helper.camelCase(field)));
+            }
+          }
+
+          // make field camelCase in where condition
+          let where = options.where;
+          options.where = {};
+          if (!helper.isEmpty(where)) {
+            let keyArray = Object.keys(where);
+            for (let key of keyArray) {
+              options.where[helper.snakeCase(key)] = where[key];
+            }
+          }
+        }
+      }
+
+      return _this4.optionsFilter(options, schema);
+    })();
   }
   /**
    * parse where options
    * @return {Object}
    */
-  parseWhereOptions(options){
+  parseWhereOptions(options) {
     if (helper.isNumber(options) || helper.isString(options)) {
       options += '';
       let where = {
-        [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
+        [this.pk]: options.indexOf(',') > -1 ? { IN: options } : options
       };
-      return {where: where};
+      return { where: where };
     }
     return options;
   }
@@ -183,16 +200,16 @@ module.exports = class extends Base {
    * @param  {} key  []
    * @return {}      []
    */
-  parseType(key, value){
+  parseType(key, value) {
     let fieldType = (this.schema[key].type || '').toLowerCase();
-    if(fieldType.indexOf('enum') > -1 || fieldType.indexOf('set') > -1){
+    if (fieldType.indexOf('enum') > -1 || fieldType.indexOf('set') > -1) {
       return value;
     }
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
       return parseInt(value, 10) || 0;
-    }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1 || fieldType.indexOf('decimal') > -1){
+    } else if (fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1 || fieldType.indexOf('decimal') > -1) {
       return parseFloat(value) || 0.0;
-    }else if(fieldType.indexOf('bool') > -1){
+    } else if (fieldType.indexOf('bool') > -1) {
       return !!value;
     }
     return value;
@@ -202,9 +219,9 @@ module.exports = class extends Base {
    * @param  {} data []
    * @return {}      []
    */
-  parseData(data){
+  parseData(data) {
     let camelCase = this.config.camel_case;
-    if(camelCase){
+    if (camelCase) {
       let tmpData = helper.extend({}, data);
       data = {};
       let keyArray = Object.keys(tmpData);
@@ -214,12 +231,12 @@ module.exports = class extends Base {
     }
     //deep clone data
     data = helper.extend({}, data);
-    for(let key in data){
+    for (let key in data) {
       let val = data[key];
       //remove data not in fields
       if (!this.schema[key]) {
         delete data[key];
-      }else if(helper.isNumber(val) || helper.isString(val) || helper.isBoolean(val)){
+      } else if (helper.isNumber(val) || helper.isString(val) || helper.isBoolean(val)) {
         data[key] = this.parseType(key, val);
       }
     }
@@ -231,30 +248,34 @@ module.exports = class extends Base {
    * @param {Object} options []
    * @param {} replace []
    */
-  async add(data, options, replace){
-    if (options === true) {
-      replace = true;
-      options = {};
-    }
-    //copy data
-    data = helper.extend({}, this._data, data);
-    //clear data
-    this._data = {};
+  add(data, options, replace) {
+    var _this5 = this;
 
-    options = await this.parseOptions(options, {}, true);
+    return _asyncToGenerator(function* () {
+      if (options === true) {
+        replace = true;
+        options = {};
+      }
+      //copy data
+      data = helper.extend({}, _this5._data, data);
+      //clear data
+      _this5._data = {};
 
-    let parsedData = this.parseData(data);
-    parsedData = await this.beforeAdd(parsedData, options);
-    if (helper.isEmpty(parsedData)) {
-      throw new Error('DATA_EMPTY');
-    }
+      options = yield _this5.parseOptions(options, {}, true);
 
-    let db = this.db();
-    await db.add(parsedData, options, replace);
-    let insertId = parsedData[this.pk] = db.getLastInsertId();
-    let copyData = helper.extend({}, data, parsedData, {[this.pk]: insertId});
-    await this.afterAdd(copyData, options);
-    return insertId;
+      let parsedData = _this5.parseData(data);
+      parsedData = yield _this5.beforeAdd(parsedData, options);
+      if (helper.isEmpty(parsedData)) {
+        throw new Error('DATA_EMPTY');
+      }
+
+      let db = _this5.db();
+      yield db.add(parsedData, options, replace);
+      let insertId = parsedData[_this5.pk] = db.getLastInsertId();
+      let copyData = helper.extend({}, data, parsedData, { [_this5.pk]: insertId });
+      yield _this5.afterAdd(copyData, options);
+      return insertId;
+    })();
   }
   /**
    * add data when not exist
@@ -262,25 +283,33 @@ module.exports = class extends Base {
    * @param  {Object} where      []
    * @return {}            []
    */
-  async thenAdd(data, where){
-    let findData = await this.where(where).find();
-    if(!helper.isEmpty(findData)){
-      return {[this.pk]: findData[this.pk], type: 'exist'};
-    }
-    let insertId = await this.add(data);
-    return {[this.pk]: insertId, type: 'add'};
+  thenAdd(data, where) {
+    var _this6 = this;
+
+    return _asyncToGenerator(function* () {
+      let findData = yield _this6.where(where).find();
+      if (!helper.isEmpty(findData)) {
+        return { [_this6.pk]: findData[_this6.pk], type: 'exist' };
+      }
+      let insertId = yield _this6.add(data);
+      return { [_this6.pk]: insertId, type: 'add' };
+    })();
   }
   /**
    * update data when exist, otherwise add data
    * @return {id}
    */
-  async thenUpdate(data, where){
-    let findData = await this.where(where).find();
-    if(helper.isEmpty(findData)){
-      return this.add(data);
-    }
-    await this.where(where).update(data);
-    return findData[this.pk];
+  thenUpdate(data, where) {
+    var _this7 = this;
+
+    return _asyncToGenerator(function* () {
+      let findData = yield _this7.where(where).find();
+      if (helper.isEmpty(findData)) {
+        return _this7.add(data);
+      }
+      yield _this7.where(where).update(data);
+      return findData[_this7.pk];
+    })();
   }
   /**
    * add multi data
@@ -288,47 +317,55 @@ module.exports = class extends Base {
    * @param {} options []
    * @param {} replace []
    */
-  async addMany(data, options, replace){
-    if (!helper.isArray(data) || !helper.isObject(data[0])) {
-      throw new Error('DATA_MUST_BE_ARRAY');
-    }
-    if (options === true) {
-      replace = true;
-      options = {};
-    }
-    options = await this.parseOptions(options, {}, true);
-    let promises = data.map(item => {
-      item = this.parseData(item);
-      return this.beforeAdd(item, options);
-    });
-    data = await Promise.all(promises);
-    let db = this.db();
-    await db.addMany(data, options, replace);
-    let insertId = db.getLastInsertId();
-    let insertIds = [];
-    promises = data.map((item, i) => {
-      let id = insertId + i;
-      if(this.config.type === 'sqlite'){
-        id = insertId - data.length + i + 1;
+  addMany(data, options, replace) {
+    var _this8 = this;
+
+    return _asyncToGenerator(function* () {
+      if (!helper.isArray(data) || !helper.isObject(data[0])) {
+        throw new Error('DATA_MUST_BE_ARRAY');
       }
-      item[this.pk] = id;
-      insertIds.push(id);
-      return this.afterAdd(item, options);
-    });
-    data = await Promise.all(promises);
-    return insertIds;
+      if (options === true) {
+        replace = true;
+        options = {};
+      }
+      options = yield _this8.parseOptions(options, {}, true);
+      let promises = data.map(function (item) {
+        item = _this8.parseData(item);
+        return _this8.beforeAdd(item, options);
+      });
+      data = yield Promise.all(promises);
+      let db = _this8.db();
+      yield db.addMany(data, options, replace);
+      let insertId = db.getLastInsertId();
+      let insertIds = [];
+      promises = data.map(function (item, i) {
+        let id = insertId + i;
+        if (_this8.config.type === 'sqlite') {
+          id = insertId - data.length + i + 1;
+        }
+        item[_this8.pk] = id;
+        insertIds.push(id);
+        return _this8.afterAdd(item, options);
+      });
+      data = yield Promise.all(promises);
+      return insertIds;
+    })();
   }
   /**
    * delete data
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  async delete(options){
-    options = await this.parseOptions(options, {}, true);
-    options = await this.beforeDelete(options);
-    let rows = await this.db().delete(options);
-    await this.afterDelete(options);
-    return rows;
+  delete(options) {
+    var _this9 = this;
+
+    return _asyncToGenerator(function* () {
+      options = yield _this9.parseOptions(options, {}, true);
+      options = yield _this9.beforeDelete(options);
+      let rows = yield _this9.db().delete(options);
+      yield _this9.afterDelete(options);
+      return rows;
+    })();
   }
   /**
    * update data
@@ -337,45 +374,49 @@ module.exports = class extends Base {
    * @param  {Boolean} ignoreWhere []
    * @return {Promise}          []
    */
-  async update(data, options){
+  update(data, options) {
+    var _this10 = this;
 
-    data = helper.extend({}, this._data, data);
-    //clear data
-    this._data = {};
+    return _asyncToGenerator(function* () {
 
-    options = await this.parseOptions(options, {}, true);
+      data = helper.extend({}, _this10._data, data);
+      //clear data
+      _this10._data = {};
 
-    let parsedData = this.parseData(data);
+      options = yield _this10.parseOptions(options, {}, true);
 
-    //check where condition
-    if(helper.isEmpty(options.where)){
-      //get where condition from data
-      let pk = await this.getPk();
-      if(parsedData[pk]){
-        options.where = {[pk]: parsedData[pk]};
-        delete parsedData[pk];
-      }else{
-        throw new Error('MISS_WHERE_CONDITION');
+      let parsedData = _this10.parseData(data);
+
+      //check where condition
+      if (helper.isEmpty(options.where)) {
+        //get where condition from data
+        let pk = yield _this10.getPk();
+        if (parsedData[pk]) {
+          options.where = { [pk]: parsedData[pk] };
+          delete parsedData[pk];
+        } else {
+          throw new Error('MISS_WHERE_CONDITION');
+        }
       }
-    }
 
-    parsedData = await this.beforeUpdate(parsedData, options);
-    //check data is empty
-    if (helper.isEmpty(parsedData)) {
-      throw new Error('DATA_EMPTY');
-    }
+      parsedData = yield _this10.beforeUpdate(parsedData, options);
+      //check data is empty
+      if (helper.isEmpty(parsedData)) {
+        throw new Error('DATA_EMPTY');
+      }
 
-    let rows = await this.db().update(parsedData, options);
-    let copyData = helper.extend({}, data, parsedData);
-    await this.afterUpdate(copyData, options);
-    return rows;
+      let rows = yield _this10.db().update(parsedData, options);
+      let copyData = helper.extend({}, data, parsedData);
+      yield _this10.afterUpdate(copyData, options);
+      return rows;
+    })();
   }
   /**
    * update all data
    * @param  {Array} dataList []
    * @return {Promise}          []
    */
-  updateMany(dataList, options){
+  updateMany(dataList, options) {
     if (!helper.isArray(dataList)) {
       //empty data and options
       this._options = {};
@@ -394,7 +435,7 @@ module.exports = class extends Base {
    * increment field data
    * @return {Promise} []
    */
-  increment(field, step = 1){
+  increment(field, step = 1) {
     let data = {
       [field]: ['exp', `\`${field}\`+${step}`]
     };
@@ -404,7 +445,7 @@ module.exports = class extends Base {
    * decrement field data
    * @return {} []
    */
-  decrement(field, step = 1){
+  decrement(field, step = 1) {
     let data = {
       [field]: ['exp', `\`${field}\`-${step}`]
     };
@@ -414,36 +455,48 @@ module.exports = class extends Base {
    * find data
    * @return Promise
    */
-  async find(options){
-    options = await this.parseOptions(options, {limit: 1}, true);
-    options = await this.beforeFind(options);
-    let data = await this.db().select(options);
-    return this.afterFind(data[0] || {}, options);
+  find(options) {
+    var _this11 = this;
+
+    return _asyncToGenerator(function* () {
+      options = yield _this11.parseOptions(options, { limit: 1 }, true);
+      options = yield _this11.beforeFind(options);
+      let data = yield _this11.db().select(options);
+      return _this11.afterFind(data[0] || {}, options);
+    })();
   }
   /**
    * select
    * @return Promise
    */
-  async select(options){
-    options = await this.parseOptions(options, {}, true);
-    options = await this.beforeSelect(options);
-    let data = await this.db().select(options);
-    return this.afterSelect(data, options);
+  select(options) {
+    var _this12 = this;
+
+    return _asyncToGenerator(function* () {
+      options = yield _this12.parseOptions(options, {}, true);
+      options = yield _this12.beforeSelect(options);
+      let data = yield _this12.db().select(options);
+      return _this12.afterSelect(data, options);
+    })();
   }
   /**
    * select add
    * @param  {} options []
    * @return {Promise}         []
    */
-  async selectAdd(options){
-    let promise = Promise.resolve(options);
-    let Class = module.exports.default || module.exports;
-    if (options instanceof Class) {
-      promise = options.parseOptions();
-    }
-    let data = await Promise.all([this.parseOptions(), promise]);
-    let fields = data[0].field || Object.keys(this.schema);
-    return this.db().selectAdd(fields, data[0].table, data[1]);
+  selectAdd(options) {
+    var _this13 = this;
+
+    return _asyncToGenerator(function* () {
+      let promise = Promise.resolve(options);
+      let Class = module.exports.default || module.exports;
+      if (options instanceof Class) {
+        promise = options.parseOptions();
+      }
+      let data = yield Promise.all([_this13.parseOptions(), promise]);
+      let fields = data[0].field || Object.keys(_this13.schema);
+      return _this13.db().selectAdd(fields, data[0].table, data[1]);
+    })();
   }
   /**
    * count select
@@ -451,155 +504,190 @@ module.exports = class extends Base {
    * @param  pageFlag
    * @return promise
    */
-  async countSelect(options, pageFlag){
-    let count;
-    if (helper.isBoolean(options)) {
-      pageFlag = options;
-      options = {};
-    }else if(helper.isNumber(options)){
-      count = options;
-      options = {};
-    }
+  countSelect(options, pageFlag) {
+    var _this14 = this;
 
-    options = await this.parseOptions(options);
-    let pk = this.pk;
-    let table = options.alias || this.getTableName();
-
-    //delete table options avoid error when has alias
-    delete options.table;
-    //reserve and delete the possible order option
-    let order = options.order;
-    delete options.order;
-
-    if(!count){
-      count = await this.options(options).count(`${table}.${pk}`);
-    }
-
-    options.limit = options.limit || [0, this.config.nums_per_page];
-    //recover the deleted possible order
-    options.order = order;
-    let numsPerPage = options.limit[1];
-    //get page options
-    let data = {numsPerPage: numsPerPage};
-    let totalPage = Math.ceil(count / data.numsPerPage);
-
-    data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
-
-    if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
-      if(pageFlag){
-        data.currentPage = 1;
-        options.limit = [0, numsPerPage];
-      }else{
-        data.currentPage = totalPage;
-        options.limit = [(totalPage - 1) * numsPerPage, numsPerPage];
+    return _asyncToGenerator(function* () {
+      let count;
+      if (helper.isBoolean(options)) {
+        pageFlag = options;
+        options = {};
+      } else if (helper.isNumber(options)) {
+        count = options;
+        options = {};
       }
-    }
-    let result = helper.extend({count: count, totalPages: totalPage}, data);
 
-    if(options.cache && options.cache.key){
-      options.cache.key += '_count';
-    }
-    result.data = count ? await this.select(options) : [];
-    return result;
+      options = yield _this14.parseOptions(options);
+      let pk = _this14.pk;
+      let table = options.alias || _this14.getTableName();
+
+      //delete table options avoid error when has alias
+      delete options.table;
+      //reserve and delete the possible order option
+      let order = options.order;
+      delete options.order;
+
+      if (!count) {
+        count = yield _this14.options(options).count(`${table}.${pk}`);
+      }
+
+      options.limit = options.limit || [0, _this14.config.nums_per_page];
+      //recover the deleted possible order
+      options.order = order;
+      let numsPerPage = options.limit[1];
+      //get page options
+      let data = { numsPerPage: numsPerPage };
+      let totalPage = Math.ceil(count / data.numsPerPage);
+
+      data.currentPage = parseInt(options.limit[0] / options.limit[1] + 1);
+
+      if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
+        if (pageFlag) {
+          data.currentPage = 1;
+          options.limit = [0, numsPerPage];
+        } else {
+          data.currentPage = totalPage;
+          options.limit = [(totalPage - 1) * numsPerPage, numsPerPage];
+        }
+      }
+      let result = helper.extend({ count: count, totalPages: totalPage }, data);
+
+      if (options.cache && options.cache.key) {
+        options.cache.key += '_count';
+      }
+      result.data = count ? yield _this14.select(options) : [];
+      return result;
+    })();
   }
   /**
    * get field data
    * @return {[type]} [description]
    */
-  async getField(field, one){
-    let options = await this.parseOptions({'field': field});
-    if (helper.isNumber(one)) {
-      options.limit = one;
-    }else if (one === true) {
-      options.limit = 1;
-    }
-    let data = await this.db().select(options);
-    let multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
-    if (multi) {
-      let fields = field.split(/\s*,\s*/);
-      let result = {};
-      fields.forEach(item => result[item] = []);
-      data.every(item => {
-        fields.forEach(fItem => {
-          if (one === true) {
-            result[fItem] = item[fItem];
-          }else{
-            result[fItem].push(item[fItem]);
+  getField(field, one) {
+    var _this15 = this;
+
+    return _asyncToGenerator(function* () {
+      let options = yield _this15.parseOptions({ 'field': field });
+      if (helper.isNumber(one)) {
+        options.limit = one;
+      } else if (one === true) {
+        options.limit = 1;
+      }
+      let data = yield _this15.db().select(options);
+      let multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
+      if (multi) {
+        let fields = field.split(/\s*,\s*/);
+        let result = {};
+        fields.forEach(function (item) {
+          return result[item] = [];
+        });
+        data.every(function (item) {
+          fields.forEach(function (fItem) {
+            if (one === true) {
+              result[fItem] = item[fItem];
+            } else {
+              result[fItem].push(item[fItem]);
+            }
+          });
+          return one !== true;
+        });
+        return result;
+      } else {
+        data = data.map(function (item) {
+          for (let key in item) {
+            return item[key];
           }
         });
-        return one !== true;
-      });
-      return result;
-    }else{
-      data = data.map(item => {
-        for(let key in item){
-          return item[key];
-        }
-      });
-      return one === true ? data[0] : data;
-    }
+        return one === true ? data[0] : data;
+      }
+    })();
   }
   /**
    * get quote field
    * @param  {String} field []
    * @return {String}       []
    */
-  async _getQuoteField(field){
-    if(field){
-      return /^\w+$/.test(field) ? '`' + field + '`' : field;
-    }
-    return await this.getPk() || '*';
+  _getQuoteField(field) {
+    var _this16 = this;
+
+    return _asyncToGenerator(function* () {
+      if (field) {
+        return (/^\w+$/.test(field) ? '`' + field + '`' : field
+        );
+      }
+      return (yield _this16.getPk()) || '*';
+    })();
   }
   /**
    * get count
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async count(field){
-    field = await this._getQuoteField(field);
-    return this.getField('COUNT(' + field + ') AS think_count', true);
+  count(field) {
+    var _this17 = this;
+
+    return _asyncToGenerator(function* () {
+      field = yield _this17._getQuoteField(field);
+      return _this17.getField('COUNT(' + field + ') AS think_count', true);
+    })();
   }
   /**
    * get sum
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async sum(field){
-    field = await this._getQuoteField(field);
-    return this.getField('SUM(' + field + ') AS think_sum', true);
+  sum(field) {
+    var _this18 = this;
+
+    return _asyncToGenerator(function* () {
+      field = yield _this18._getQuoteField(field);
+      return _this18.getField('SUM(' + field + ') AS think_sum', true);
+    })();
   }
   /**
    * get min value
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async min(field){
-    field = await this._getQuoteField(field);
-    return this.getField('MIN(' + field + ') AS think_min', true);
+  min(field) {
+    var _this19 = this;
+
+    return _asyncToGenerator(function* () {
+      field = yield _this19._getQuoteField(field);
+      return _this19.getField('MIN(' + field + ') AS think_min', true);
+    })();
   }
   /**
    * get max valud
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async max(field){
-    field = await this._getQuoteField(field);
-    return this.getField('MAX(' + field + ') AS think_max', true);
+  max(field) {
+    var _this20 = this;
+
+    return _asyncToGenerator(function* () {
+      field = yield _this20._getQuoteField(field);
+      return _this20.getField('MAX(' + field + ') AS think_max', true);
+    })();
   }
   /**
    * get value average
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async avg(field){
-    field = await this._getQuoteField(field);
-    return this.getField('AVG(' + field + ') AS think_avg', true);
+  avg(field) {
+    var _this21 = this;
+
+    return _asyncToGenerator(function* () {
+      field = yield _this21._getQuoteField(field);
+      return _this21.getField('AVG(' + field + ') AS think_avg', true);
+    })();
   }
   /**
    * query
    * @return {Promise} []
    */
-  query(...args){
+  query(...args) {
     let sql = this.parseSql(...args);
     return this.db().select(sql, this._options.cache);
   }
@@ -609,7 +697,7 @@ module.exports = class extends Base {
    * @param  {[type]} parse [description]
    * @return {[type]}       [description]
    */
-  execute(...args){
+  execute(...args) {
     let sql = this.parseSql(...args);
     return this.db().execute(sql);
   }
@@ -617,11 +705,11 @@ module.exports = class extends Base {
    * parse sql
    * @return promise [description]
    */
-  parseSql(...args){
+  parseSql(...args) {
     let sql = util.format(...args);
     //replace table name
     return sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
-      if(b === 'TABLE'){
+      if (b === 'TABLE') {
         return ' `' + this.getTableName() + '` ';
       }
       return ' `' + this.getTablePrefix() + b.toLowerCase() + '` ';

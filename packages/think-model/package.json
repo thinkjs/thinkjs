@@ -4,6 +4,7 @@
   "description": "An adapter-based ORM for ThinkJS 3.x",
   "main": "./lib",
   "scripts": {
+    "compile": "babel ./src --presets think-node --out-dir ./lib",
     "test": ""
   },
   "repository": {
@@ -24,6 +25,12 @@
   },
   "homepage": "https://github.com/thinkjs/think-model#readme",
   "dependencies": {
-    "think-helper": "^1.0.5"
+    "think-debounce": "^1.0.3",
+    "think-helper": "^1.0.5",
+    "think-mysql": "github:thinkjs/think-mysql"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-preset-think-node": "^1.0.1"
   }
 }
