@@ -137,9 +137,9 @@ class Router {
     let specialMethods = ['redirect', 'rest'];
     const method = this.ctx.method.toLowerCase();
     rules.some(item => {
-      if(item.method && specialMethods.indexOf(item.method) === -1){
+      if(item.method.toLowerCase() && specialMethods.indexOf(item.method) === -1){
         //check method matched
-        if(item.method !== method) return;
+        if(item.method.toLowerCase() !== method) return;
       }
       assert(helper.isRegExp(item.match), 'router.match must be a RegExp');
       let match = item.match.exec(this.pathname);
