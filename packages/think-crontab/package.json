@@ -1,5 +1,5 @@
 {
-  "name": "think-watcher",
+  "name": "think-crontab",
   "description": "watch file changed",
   "version": "3.0.2",
   "author": {
