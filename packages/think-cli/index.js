@@ -1,19 +1,17 @@
-var helper = require('think-helper');
-var commander  = require('commander');
-var directiveCollector = require('./directives/directiveCollector');
-var tsDirective = require('./directives/tsDirective');
-
-var fs = require('fs');
-var path = require('path');
-var colors = require('colors/safe');
-var cwd = process.cwd();
-//var templatePath = path.dirname(__dirname) + sep + 'template';
-var projectRootPath = cwd; //project root path
+const helper = require('think-helper');
+const commander  = require('commander');
+const directiveCollector = require('./directives/directiveCollector');
+const tsDirective = require('./directives/tsDirective');
+const fs = require('fs');
+const path = require('path');
+const colors = require('colors/safe');
+const cwd = process.cwd();
+const templatePath = path.join(__dirname, 'template');
 const excludeFile = /^\./;
 const configTreeFile = /.file$/;
 const configTreeDir = /.dir$/
-//const fs_readdir = helper.promisify(fs.readdir, fs);
 var excludeDir = [];
+var projectRootPath = cwd; //project root path
 
 function errlog(msg) {
   console.log(colors.red.underline(msg));
@@ -90,7 +88,7 @@ function createProject(projectPath) {
     errlog(projectPath +' is already exist in current path');
     return;
   }
-  copyProject(path.resolve(__dirname, 'template'), projectRootPath);
+  copyProject(templatePath, projectRootPath);
 }
 
 
@@ -100,21 +98,29 @@ function createProject(projectPath) {
 var privateFunc = {
   createConfig: function(currentSourcePath, targetSourcePath) {
      var configFilePath = path.resolve(cwd, 'think.json');
+
      fs.readFile(configFilePath, function(err, data) {
       if(err) {
-        errlog(err)
+        errlog(err);
+        return;
       }
-      var configTree = JSON.parse(data);
+
+      try{
+        var configTree = JSON.parse(data);
+      }catch(e){
+        errlog(e);
+      }
 
       function handleConfig(currentSourcePath, targetSourcePath, config) {
         
-        targetSourcePath = targetSourcePath.replace(configTreeDir, '')
+        targetSourcePath = targetSourcePath.replace(configTreeDir, '');
         helper.mkdir(targetSourcePath);
         
         for(var i in config) {
           let fileName = i.replace(configTreeFile, '');
           var source = path.resolve(currentSourcePath, fileName);
           var target = path.resolve(targetSourcePath, fileName);
+
           if(helper.isString(config[i])) {
             fs.writeFileSync(target, config[i], 'utf8');
           } else {
@@ -201,7 +207,7 @@ commander.command('new <projectPath> [config]')
 commander.command('create <mode> [name]')
          .description('create all kinds of modes in your project')
          .action((mode, name) => {
-            directiveCollector(mode, name, projectRootPath);
+            directiveCollector(mode, name, projectRootPath, templatePath);
         });
 
 commander.parse(process.argv);

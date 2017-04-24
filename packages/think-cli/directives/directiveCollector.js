@@ -2,11 +2,11 @@ var handleConfig = require("./handleConfig");
 var simpleConfig = require("./simpleConfig");
 var path = require('path');
 
-module.exports = function(mode, name, projectRootPath) {
+module.exports = function(mode, name, projectRootPath, templatePath) {
 	let configPath = '';
 	switch(mode) {
 		case 'config':
-		handleConfig(projectRootPath);
+		handleConfig(projectRootPath, templatePath);
 		break;
 		case 'service':
 		configPath = path.resolve(projectRootPath, 'service');

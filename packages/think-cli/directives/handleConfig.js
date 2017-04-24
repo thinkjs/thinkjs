@@ -8,13 +8,10 @@ var path = require('path');
  * configTree
  */
 
-module.exports =  function createConfigFile(configPath) {
+module.exports =  function createConfigFile(configPath, templatePath) {
 
-	if(!helper.isDirectory(configPath)) {
-		errlog('can not find config folder');
-	} else {
-		handleDir(configPath);
-	}
+	
+	templatePath = path.join(templatePath, 'config');
 
 	function handleDir(configPath) {
 
@@ -32,8 +29,10 @@ module.exports =  function createConfigFile(configPath) {
 		})
 	}
 
-	
+	handleDir(templatePath);
+
 	var configFile = path.resolve(configPath, 'think.json');
+
 	fs.writeFileSync(configFile, JSON.stringify(configTree), 'utf8');
 }
 

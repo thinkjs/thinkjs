@@ -98,21 +98,5 @@ test.serial.cb('-v', t => {
 	})
 })
 
-// test.serial.cb('new project name is abc', t => {
-
-// 	exec('node ../index.js create config', {cwd: '/Users/sgy/think3.0/think-cli/abc'}, (error, stdout, stderr) => {
-// 		t.pass();
-// 		t.end();
-// 	})
-// })
-
-// test.serial.cb('-v', t => {
-// 	require(modelPath);	
-// 	exec('node index.js create config', (error, stdout, stderr) => {
-// 		t.pass();
-// 		t.end();
-// 	})
-// })
-
 
 
