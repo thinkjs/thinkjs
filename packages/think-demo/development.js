@@ -1,9 +1,11 @@
+const path = require('path');
 const Application = require('thinkjs');
 const babel = require('think-babel');
 const watcher = require('think-watcher');
 const notifier = require('node-notifier');
 
 const instance = new Application({
+  APP_PATH: path.join(__dirname, 'app'),
   ROOT_PATH: __dirname,
   watcher: watcher,
   transpiler: [babel, {

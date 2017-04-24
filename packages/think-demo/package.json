@@ -23,6 +23,7 @@
     "node-notifier": "^5.0.2",
     "think-babel": "^1.0.3",
     "think-controller": "thinkjs/think-controller",
+    "think-crontab": "github:thinkjs/think-crontab",
     "think-debounce": "^1.0.3",
     "think-fetch": "^1.0.0",
     "think-logger": "^1.0.0",
