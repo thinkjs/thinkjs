@@ -5,6 +5,7 @@ module.exports = function (opts) {
     json: [],
     form: [],
     text: [],
+    multipart: []
   }, opts.extendTypes);
 
   // default json types
@@ -23,6 +24,12 @@ module.exports = function (opts) {
   const textTypes = [
     'text/plain',
     ...extendTypes.text,
+  ];
+
+  // default multipart-form types
+  const multipartTypes = [
+    'multipart/form-data',
+    ...extendTypes.multipart
   ];
 
   return function (ctx, next) {
@@ -45,6 +52,9 @@ module.exports = function (opts) {
     }
     if (ctx.request.is(textTypes)) {
       return parse.text(ctx);
+    }
+    if (ctx.request.is(multipartTypes)) {
+      return parse.multipart(ctx);
     }
 
     return Promise.resolve({});
