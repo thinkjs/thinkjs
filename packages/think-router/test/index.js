@@ -2,10 +2,10 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-23 12:17:11
+* @Last Modified time: 2017-04-24 09:47:10
 */
 
-let RESP = {};
+let RESULT = {};
 const next = () => Promise.resolve();
 let params = ['module', 'controller', 'action'];
 
@@ -19,14 +19,13 @@ mockery.enable({
 });
 mockery.registerMock('debug', function() {
   return function(out) {
-    RESP = {};
     let output = out && out.split(':');
     output = output[1] && output[1].split(',');
     output && output.forEach(function(e, i) {
       if(e) {
         e = e.trim().split('=');
         if(params.indexOf(e[0]) > -1) {
-          RESP[e[0]] = e[1];
+          RESULT[e[0]] = e[1];
         }
       }
     })
@@ -46,8 +45,10 @@ let defaultCtx = {
     return Promise.resolve();
   },
   param: function(query) {
-    // set query to ctx.query for test
-    this.query = query;
+    // set query to RESULT for test
+    if(Object.keys(query).length > 0) {
+      RESULT.query = query;
+    }
   },
   subdomains: function() {
     // default subdomains is empty
@@ -76,7 +77,13 @@ let defaultApp = {
     }
   }
 };
+let defaultOutPut = {
 
+};
+
+test.serial.afterEach(t => {
+  RESULT = {};
+});
 
 /**
  * getPathname.js
@@ -90,7 +97,7 @@ test.serial.cb('options with suffix is string', t => {
   let app = helper.extend({}, defaultApp);
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -108,7 +115,7 @@ test.serial.cb('options with suffix is string', t => {
   let app = helper.extend({}, defaultApp, {});
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -126,7 +133,7 @@ test.serial.cb('options with suffix is regexp', t => {
   let app = helper.extend({}, defaultApp, {});
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -143,7 +150,7 @@ test.serial.cb('options with prefix is string', t => {
   let app = helper.extend({}, defaultApp, {});
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -160,7 +167,7 @@ test.serial.cb('options with prefix is regexp', t => {
   let app = helper.extend({}, defaultApp, {});
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -177,7 +184,7 @@ test.serial.cb('options with with is regexp without match', t => {
   let app = helper.extend({}, defaultApp, {});
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -214,7 +221,7 @@ test.serial.cb('options with subdomain Object', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'root',
       controller: 'admin',
       action: 'article'
@@ -249,7 +256,7 @@ test.serial.cb('options with subdomain Array', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'm1',
       controller: 'admin',
       action: 'article'
@@ -285,7 +292,7 @@ test.serial.cb('options with subdomain Array not match', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'home',
       controller: 'm1',
       action: 'admin'
@@ -322,7 +329,7 @@ test.serial.cb('options with subdomain and path not begin with /', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'root',
       controller: 'admin',
       action: 'article'
@@ -360,7 +367,7 @@ test.serial.cb('options with subdomain null', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -378,7 +385,7 @@ test.serial.cb('default options', t => {
   let app = helper.extend({}, defaultApp, {});
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -398,7 +405,7 @@ test.serial.cb('options with routers don\'t have match', t => {
     }
   })
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -418,7 +425,7 @@ test.serial.cb('options with match test failed', t => {
     }
   })
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -439,7 +446,7 @@ test.serial.cb('options without rules for module', t => {
     }
   })
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -461,7 +468,7 @@ test.serial.cb('options with routers is an Array', t => {
   })
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -479,7 +486,7 @@ test.serial.cb('rules method not match ctx method', t => {
   let app = helper.extend({}, defaultApp);
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -506,7 +513,7 @@ test.serial.cb('rules method equal rest', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -533,7 +540,7 @@ test.serial.cb('rules match not match the path', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -564,7 +571,7 @@ test.serial.cb('rules match with query name is number', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -574,7 +581,7 @@ test.serial.cb('rules match with query name is number', t => {
 });
 
 
-test.serial.cb('rules match with query name is number', t => {
+test.serial.cb('rules match with query name is number 2', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list/123',
@@ -594,10 +601,13 @@ test.serial.cb('rules match with query name is number', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
-      action: 'list'
+      action: 'list',
+      query: {
+        title: '123'
+      }
     });
     t.end();
   });
@@ -627,11 +637,7 @@ test.serial.cb('rules method equal redirect', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
-      module: 'admin',
-      controller: 'article',
-      action: 'list'
-    });
+    t.deepEqual(RESULT, {});
     t.end();
   });
 });
@@ -654,11 +660,7 @@ test.serial.cb('rules method equal redirect and without statusCode', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
-      module: 'admin',
-      controller: 'article',
-      action: 'list'
-    });
+    t.deepEqual(RESULT, {});
     t.end();
   });
 });
@@ -681,10 +683,13 @@ test.serial.cb('rules path with query', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
-      action: 'list'
+      action: 'list',
+      query: {
+        page: '1'
+      }
     });
     t.end();
   });
@@ -709,7 +714,7 @@ test.serial.cb('rules path with query empty', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -727,7 +732,7 @@ test.serial.cb('ctx path is not beigin with /', t => {
   let app = helper.extend({}, defaultApp);
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'index',
       action: 'index'
@@ -762,7 +767,7 @@ test.serial.cb('controller with /', t => {
   };
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article/page',
       action: 'index'
@@ -794,7 +799,7 @@ test.serial.cb('controller with / 2', t => {
   };
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -812,7 +817,7 @@ test.serial.cb('options without subdomainOffset', t => {
   let app = helper.extend({}, defaultApp);
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
+    t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
       action: 'list'
@@ -844,11 +849,7 @@ test.serial.cb('options with enableDefaultRouter', t => {
   };
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESP, {
-      module: 'admin',
-      controller: 'article',
-      action: 'list'
-    });
+    t.deepEqual(RESULT, {});
     t.end();
   });
 });
