@@ -89,26 +89,28 @@ class thinkMysql {
    *
    */
   executeTrans(sqls) {
-    assert(helper.isArray(sqls),'transArr must be an array');
-    let query;
-    let connect = helper.promisify(this.pool.getConnection,this.pool);
+    assert(helper.isArray(sqls), 'transArr must be an array');
+    let connect = helper.promisify(this.pool.getConnection, this.pool);
 
-    let p = connect().then(conn =>{
-      query = helper.promisify(conn.query,conn);
-      return {conn,query}
-    });
-    return sqls.reduce((p, sql) => {
-      return p.then(({conn, query, results}) =>
-        query(sql).then((results) =>
-          Promise.resolve({conn, query, results})
-        )
-      ).catch(err=>{
-        Promise.reject(err);
-      })
-    }, p).then(({results}) => {
-      return Promise.resolve(results)
+    return connect().then(conn => {
+      let query = helper.promisify(conn.query, conn);
+      let begin = helper.promisify(conn.beginTransaction, conn);
+      let commit = helper.promisify(conn.commit, conn);
+      let rollback = helper.promisify(conn.rollback, conn);
+
+      let finalPromise = sqls.reduce((p, sql) => {
+        return p.then(results => {
+          return query(sql);
+        })
+      }, begin()).then(_ => {
+        return commit();
+      }).catch(err => {
+        return rollback().then(() => Promise.reject(err));
+      });
+      return Promise.resolve(finalPromise);
     })
   }
+
 
   /**
    * close
