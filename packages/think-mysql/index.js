@@ -85,22 +85,20 @@ class thinkMysql {
 
   /**
    *
-   * @param trans {sql:'',cb:()=>{}}
-   *
+   * @param args
+   * @returns {Promise}
    */
   executeTrans(args) {
     assert(helper.isArray(args), 'args must be array');
-
     args = args.map(item=>{
       if(helper.isString(item)){
         return {
           sql:item
         }
       }
-      assert(item.sql,'item.sql cannot be empty');
+      assert(item.sql,'args item.sql cannot be empty');
       return item;
     });
-
     let connect = helper.promisify(this.pool.getConnection, this.pool);
 
     return connect().then(conn => {
@@ -112,7 +110,10 @@ class thinkMysql {
 
       let finalPromise = args.reduce((p, item) => {
         return p.then(_=> {
-          return query(item.sql).then(result=>{
+          if(helper.isFunction(item.params)){
+            item.params = item.params(results);
+          }
+          return query(item.sql,item.params || '').then(result=>{
             results.push(result);
             if(item.cb){
               item.cb(results)
