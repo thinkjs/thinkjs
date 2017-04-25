@@ -2,7 +2,7 @@ const raw = require('raw-body');
 const inflate = require('inflation');
 const qs = require('querystring');
 
-module.exports = function (ctx, opts = {}) {
+exports.before = function (ctx, opts = {}) {
   const req = ctx.req;
 
   // defaults
