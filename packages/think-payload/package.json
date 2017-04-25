@@ -1,0 +1,33 @@
+{
+  "name": "think-payload",
+  "version": "1.0.0",
+  "description": "Payload for ThinkJS 3.x",
+  "main": "index.js",
+  "dependencies": {
+    "busboy": "^0.2.14",
+    "babel-eslint": "^7.2.2",
+    "eslint": "^3.19.0",
+    "inflation": "^2.0.0",
+    "raw-body": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-payload.git"
+  },
+  "keywords": [
+    "payload",
+    "thinkjs",
+    "thinkjs3",
+    "think-middleware"
+  ],
+  "author": "Berwin <liubowen.niubi@gmail.com> (https://github.com/berwin)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-payload/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-payload#readme"
+}

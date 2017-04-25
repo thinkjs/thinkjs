@@ -6,13 +6,13 @@ const Busboy = require('busboy');
 
 const uploadDir = `${os.tmpdir()}${path.sep}thinkjs${path.sep}upload`;
 
-exports.before = (ctx, opts = {}) => {
+exports.before = (ctx) => {
   const req = ctx.req;
   helper.mkdir(uploadDir);
 
   const multipart = new Promise((resolve, reject) => {
     const busboy = new Busboy({ headers: req.headers });
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    busboy.on('file', (fieldname, file, filename) => {
       const filepath = `${uploadDir}${path.sep}${helper.uuid()}${path.extname(filename)}`;
       const stream = fs.createWriteStream(filepath);
 
@@ -36,6 +36,6 @@ exports.before = (ctx, opts = {}) => {
   return multipart;
 };
 
-exports.after = (ctx) => {
+exports.after = () => {
   return helper.rmdir(uploadDir);
 };
