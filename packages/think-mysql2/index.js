@@ -127,9 +127,12 @@ class thinkMysql {
         conn.release();
         return Promise.resolve(results);
       }).catch(err => {
-        return rollback().then(() => Promise.resolve(conn.release())).then(() => Promise.reject(err));
+        return rollback().then(() => {
+          conn.release();
+          return Promise.reject(err);
+        });
       });
-      return Promise.resolve(finalPromise);
+      return finalPromise;
     })
   }
 
