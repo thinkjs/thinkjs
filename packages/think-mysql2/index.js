@@ -10,7 +10,7 @@ const defaultConfig = {
   host: '127.0.0.1',
   user: 'root',
   password: '',
-  connectionLimit: 1
+  connectionLimit: 5
 };
 
 let instance = null;
@@ -106,10 +106,11 @@ class thinkMysql {
       let begin = helper.promisify(conn.beginTransaction, conn);
       let commit = helper.promisify(conn.commit, conn);
       let rollback = helper.promisify(conn.rollback, conn);
+      let release = helper.promisify(conn.release,conn);
       let results = [];
 
       let finalPromise = args.reduce((p, item) => {
-        return p.then(_=> {
+        return p.then(()=> {
           if(helper.isFunction(item.params)){
             item.params = item.params(results);
           }
@@ -120,8 +121,10 @@ class thinkMysql {
             }
           });
         })
-      }, begin()).then(_ => {
+      }, begin()).then(()=> {
         return commit();
+      }).then(()=>{
+        return release();
       }).catch(err => {
         return rollback().then(() => Promise.reject(err));
       });
