@@ -106,15 +106,15 @@ class thinkMysql {
       let begin = helper.promisify(conn.beginTransaction, conn);
       let commit = helper.promisify(conn.commit, conn);
       let rollback = helper.promisify(conn.rollback, conn);
-      let release = helper.promisify(conn.release,conn);
       let results = [];
 
       let finalPromise = args.reduce((p, item) => {
         return p.then(()=> {
+          let params = '';
           if(helper.isFunction(item.params)){
-            item.params = item.params(results);
+            params = item.params(results);
           }
-          return query(item.sql,item.params || '').then(result=>{
+          return query(item.sql,params).then(result=>{
             results.push(result);
             if(item.cb){
               item.cb(results)
@@ -124,9 +124,10 @@ class thinkMysql {
       }, begin()).then(()=> {
         return commit();
       }).then(()=>{
-        return release();
+        conn.release();
+        return Promise.resolve(results);
       }).catch(err => {
-        return rollback().then(() => Promise.reject(err));
+        return rollback().then(() => Promise.resolve(conn.release())).then(() => Promise.reject(err));
       });
       return Promise.resolve(finalPromise);
     })
