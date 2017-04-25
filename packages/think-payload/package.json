@@ -5,12 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "busboy": "^0.2.14",
-    "babel-eslint": "^7.2.2",
-    "eslint": "^3.19.0",
     "inflation": "^2.0.0",
     "raw-body": "^2.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^7.2.2",
+    "eslint": "^3.19.0",
+    "ava": "^0.19.1",
+    "nyc": "^10.2.0",
+    "coveralls": "^2.13.0"
+  },
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js"
   },
