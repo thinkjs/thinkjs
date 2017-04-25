@@ -9,11 +9,13 @@
     "raw-body": "^2.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.2",
-    "eslint": "^3.19.0",
     "ava": "^0.19.1",
+    "babel-eslint": "^7.2.2",
+    "coveralls": "^2.13.0",
+    "eslint": "^3.19.0",
+    "koa": "^2.2.0",
     "nyc": "^10.2.0",
-    "coveralls": "^2.13.0"
+    "supertest": "^3.0.0"
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js"

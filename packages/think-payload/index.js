@@ -1,6 +1,6 @@
 const parse = require('./lib/index.js');
 
-module.exports = function (opts) {
+module.exports = function (opts = {}) {
   const extendTypes = Object.assign({
     json: [],
     form: [],
