@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-24 16:58:12
+* @Last Modified time: 2017-04-25 09:20:51
 */
 
 let RESULT = {};
@@ -584,24 +584,8 @@ test.serial.cb('rules path with query empty', t => {
   });
 });
 
-// test.serial.cb('ctx path is not beigin with /', t => {
-//   let options = helper.extend({}, defaultOptions);
-//   let ctx = helper.extend({}, defaultCtx, {
-//     path: 'admin'
-//   });
-//   let app = helper.extend({}, defaultApp);
 
-//   parseRouter(options, app)(ctx, next).then(data => {
-//     t.deepEqual(RESULT, {
-//       module: 'admin',
-//       controller: 'index',
-//       action: 'index'
-//     });
-//     t.end();
-//   });
-// });
-
-test.serial.cb('controller with /', t => {
+test.serial.cb('controller with / and match', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list/paper'
@@ -631,7 +615,7 @@ test.serial.cb('controller with /', t => {
   });
 });
 
-test.serial.cb('controller with / 2', t => {
+test.serial.cb('controller with / and not match', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list/paper'
@@ -645,8 +629,8 @@ test.serial.cb('controller with / 2', t => {
       }
     },
     routers: [{
-      match: /admin\/article\/page/,
-      path: 'admin/article/page',
+      match: /admin\/article\/notmatch/,
+      path: 'admin/article/notmatch',
       method: 'get',
       query: []
     }]
@@ -661,4 +645,57 @@ test.serial.cb('controller with / 2', t => {
     t.end();
   });
 });
+
+test.serial.cb('ctx path is not beigin with /', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: 'admin'
+  });
+  let app = helper.extend({}, defaultApp);
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'index',
+      action: 'index'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('the modules not in app.modules', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: ['home']
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'home',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('app modules not match', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: []
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'home',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+
 

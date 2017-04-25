@@ -80,6 +80,7 @@ class Router {
     }
     return pathname;
   }
+
   /**
    * get path match
    */
@@ -109,12 +110,15 @@ class Router {
   //   }
   //   return pathname.replace(/^\/|\/$/g, '') === match.replace(/^\/|\/$/g, '');
   // }
+
   /**
    * get router rules
    */
   getRules(){
     let rules = this.rules;
-    if(this.modules.length && helper.isObject(rules)){
+    if(this.modules.length === 0) {
+      return [];
+    }else if(this.modules.length && helper.isObject(rules)){
       for(let module in rules){
         let match = rules[module].match;
         if(match){
@@ -217,7 +221,7 @@ class Router {
       controller = pathname[0];
       action = pathname[1];
     }
-    this.ctx.module = module;
+    this.ctx.module = module || this.options.defaultModule;
     this.ctx.controller = controller || this.options.defaultController;
     this.ctx.action = action || this.options.defaultAction;
     //add query to context
