@@ -6,7 +6,8 @@
   "dependencies": {
     "busboy": "^0.2.14",
     "inflation": "^2.0.0",
-    "raw-body": "^2.2.0"
+    "raw-body": "^2.2.0",
+    "think-helper": "^1.0.5"
   },
   "devDependencies": {
     "ava": "^0.19.1",
