@@ -1,6 +1,7 @@
 'use strict';
 
 import Base from './base.js';
+import Url from 'url';
 /**
  * websocket adapter for socket.io
  */
@@ -71,6 +72,9 @@ export default class extends Base {
 
       //open connection
       if(open){
+        let request = socket.request;
+        let urlParse = Url.parse(request.url);
+        open = `${open}${urlParse.search}`;
         this.message(open, undefined, socket);
       }
       //listen disonnection event
@@ -119,9 +123,6 @@ export default class extends Base {
    */
   async message(url, data, socket){
     let request = socket.request;
-    if(url[0] !== '/'){
-      url = `/${url}`;
-    }
     request.url = url;
     let http;
     //socket.io c++ client发过来的requet没有res
