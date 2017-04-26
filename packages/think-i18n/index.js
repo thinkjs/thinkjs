@@ -6,20 +6,17 @@ const moment = require('moment');
 const numeral = require('numeral');
 const assert = require('assert');
 
-
-/**
- * add some methods for controller
- */
-module.exports = ({i18nFolder, defaultLocale='cn', localesMapping, debugLocale})=> {
+module.exports = ({i18nFolder, defaultLocale='cn', localesMapping, debugLocale, getLocale, jedOptions={}})=> {
 
   assert(helper.isString(defaultLocale), 'defaultLocale must be string');
 
   let files = helper.getdirFiles(i18nFolder).filter(p=>/\.js$/.test(p));
-  const locale_data = {};
+  const localeConfigs = {};
   const custom_numeral_formats = [];
   files.map(fileName=>{
     var config = require(path.join(i18nFolder, fileName));
     let {localeId, dateFormat, numeralFormat, translation} = config;
+    localeConfigs[localeId] = config;
     if(dateFormat) {
       moment.locale(localeId, dateFormat);
     }
@@ -29,26 +26,14 @@ module.exports = ({i18nFolder, defaultLocale='cn', localesMapping, debugLocale})
       assert(helper.isArray(cnFormats), 'numeralFormat.formats must be array, in locale ' + localeId);
       numeral.locales[localeId] = numeralFormat;
     }
-    if(translation) {
-      locale_data[localeId] = Object.assign({
-        "": {
-          domain: localeId,
-          lang: translation.language,
-          plural_forms : translation.plural_forms
-        },
-      }, translation.data);
+    if(!translation) {
+      throw new Error('translation is empty, refer to jed locale_data');
     }
   });
 
   var curLocale = defaultLocale;
   var i18n;
-  const jedInstance = new Jed({
-    "domain" : defaultLocale,
-    "missing_key_callback" : function(key) {
-      console.error('missing key:', key)
-    },
-    locale_data
-  });
+
 
   var numeral_custom_format_pass_through = false;
   numeral.register('format', 'think_i18n_numeral_format', {
@@ -76,32 +61,63 @@ module.exports = ({i18nFolder, defaultLocale='cn', localesMapping, debugLocale})
   return {
     controller: {
       getLocale() {
-        var locales = this.ctx.request.header['accept-language'].split(',') || [];
-        return debugLocale || localesMapping(locales) || defaultLocale;
+        if(!getLocale) {
+          return this.ctx.request.header['accept-language'].split(',') || [];
+        }
+        if(helper.isObject(getLocale)) {
+          switch(getLocale.by) {
+            case 'query':
+              reg = new RegExp(`${getLocale.name}=([^&]*)`);
+              return [reg.exec(this.ctx.request.url)[1]];
+            case 'cookie':
+              return [cookie.parse.parse(this.ctx.request.header.cookie)[getLocale.name]];
+            default:
+              throw new Error('getLocale.by must be value of "header", "query" or  "cookie".');
+          }
+        } else if(helper.isFunction(getLocale)) {
+          return getLocale.bind(this)(this.ctx);
+        }
+        throw new Error('unknown getLocale config');
       },
       // all i18n provider re-initialization
       // locale(String);
-      i18n(locale=this.getLocale()){
+      i18n(locale){
+        if(!locale) {
+          console.log(localesMapping(this.getLocale()));
+          locale = debugLocale || localesMapping(this.getLocale()) || defaultLocale;
+        }
+
         if(!helper.isString(locale)) {
           throw new Error('controller.i18n(locale), locale must be string or undefined');
         }
         if(locale === curLocale && i18n) return i18n;
         curLocale = locale;
 
+        var localeConfig = localeConfigs[locale];
+        if(!localeConfig) {
+          throw new Error(`locale config ${locale} not found`);
+        }
+
         // jed
-        jedInstance.options.domain = locale;
+        var jed = new Jed(Object.assign(jedOptions, {locale_data: localeConfig.translation}));
+        i18n = {jed};
 
-        // moment
-        moment.locale(locale);
+        i18n.moment = function(...args) {
+          // set locale locally
+          let m = moment(...args);
+          if(localeConfig.dateFormat) {
+            m.locale(locale);
+          }
+          return m;
+        }
 
-        // numeral
-        numeral.locale(locale);
+        if(localeConfig.numeralFormat) {
+          // numeral, since we can't set number locale locally, so we use bundleDependency in case we want to
+          // use numeral in some other way.
+          numeral.locale(locale);
+        }
+        i18n.numeral = numeral;
 
-        i18n = {
-          jed: jedInstance,
-          moment: moment,
-          numeral: numeral
-        };
         return i18n;
       }
     }

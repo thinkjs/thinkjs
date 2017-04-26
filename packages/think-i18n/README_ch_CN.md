@@ -9,6 +9,7 @@ thinkjs 3.0 国际化方案, 基于 [Jed](https://github.com/messageformat/Jed),
  - 简单易用，只需要定义好每个 locale 的行为，插件会在合适的时间应用配置，再也不需要手工繁琐的切换各个类库的 locale 。
  - 方便调试不同 locale。
  - 可以定制方案的各个步骤行为。
+ - moment 和 numberal 的 i18n 行为会被隔离，这样你可以在系统其它地方按照期望的方式使用这两个类库。
 
 ## 安装
     npm install think-i18n --save
@@ -27,6 +28,10 @@ module.exports = [
   createI18n({
     i18nFolder: path.resolve(__dirname, '../i18n'),
     defaultLocale: 'cn',
+    // getLocale: default logic is to extract header['accept-language'] is not specified
+    // getLocale: {by: 'query', name: 'locale'}
+    // getLocale: {by: 'cookie', name: 'locale'}
+    // getLocale: function(ctx) { <!-- implement your getLocale logic --> }
     localesMapping(locales) {
       for(l of locales) {
         if(l.match(regCn)) {
@@ -48,134 +53,10 @@ module.exports = [
 
  每个 locale 一个文件，放在 i18nFolter 目录下。
 
-- **dateFormat** 会应用到 moment.local(localeId, dateFormat);
-- **numeralFormat** 会应用到 numeral.locales[localeId] = numeralFormat;
-- **translation** 会被转换成 Jed 的 locale_data, localeId 被映射成 domain.
-```js
-module.exports = {
-  localeId: 'cn',
-  dateFormat: {
-    months : '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
-    monthsShort : '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
-    weekdays : '星期日_星期一_星期二_星期三_星期四_星期五_星期六'.split('_'),
-    weekdaysShort : '周日_周一_周二_周三_周四_周五_周六'.split('_'),
-    weekdaysMin : '日_一_二_三_四_五_六'.split('_'),
-    longDateFormat : {
-      LT : 'HH:mm',
-      LTS : 'HH:mm:ss',
-      L : 'YYYY年MMMD日',
-      LL : 'YYYY年MMMD日',
-      LLL : 'YYYY年MMMD日Ah点mm分',
-      LLLL : 'YYYY年MMMD日ddddAh点mm分',
-      l : 'YYYY年MMMD日',
-      ll : 'YYYY年MMMD日',
-      lll : 'YYYY年MMMD日 HH:mm',
-      llll : 'YYYY年MMMD日dddd自定义的格式 HH:mm'
-    },
-    meridiemParse: /凌晨|早上|上午|中午|下午|晚上/,
-    meridiemHour: function (hour, meridiem) {
-      if (hour === 12) {
-          hour = 0;
-      }
-      if (meridiem === '凌晨' || meridiem === '早上' || meridiem === '上午') {
-        return hour;
-      } else if (meridiem === '下午' || meridiem === '晚上') {
-        return hour + 12;
-      } else {
-        // '中午'
-        return hour >= 11 ? hour : hour + 12;
-      }
-    },
-    meridiem : function (hour, minute, isLower) {
-      var hm = hour * 100 + minute;
-      if (hm < 600) {
-          return '凌晨';
-      } else if (hm < 900) {
-          return '早上';
-      } else if (hm < 1130) {
-          return '上午';
-      } else if (hm < 1230) {
-          return '中午';
-      } else if (hm < 1800) {
-          return '下午';
-      } else {
-          return '晚上';
-      }
-    },
-    calendar : {
-      sameDay : '[今天]LT',
-      nextDay : '[明天]LT',
-      nextWeek : '[下]ddddLT',
-      lastDay : '[昨天]LT',
-      lastWeek : '[上]ddddLT',
-      sameElse : 'L'
-    },
-    dayOfMonthOrdinalParse: /\d{1,2}(日|月|周)/,
-    ordinal : function (number, period) {
-      switch (period) {
-        case 'd':
-        case 'D':
-        case 'DDD':
-          return number + '日';
-        case 'M':
-          return number + '月';
-        case 'w':
-        case 'W':
-          return number + '周';
-        default:
-          return number;
-      }
-    },
-    relativeTime : {
-      future : '%s内',
-      past : '%s前',
-      s : '几秒',
-      m : '1 分钟',
-      mm : '%d 分钟',
-      h : '1 小时',
-      hh : '%d 小时',
-      d : '1 天',
-      dd : '%d 天',
-      M : '1 个月',
-      MM : '%d 个月',
-      y : '1 年',
-      yy : '%d 年'
-    },
-    week : {
-      // GB/T 7408-1994《数据元和交换格式·信息交换·日期和时间表示法》与ISO 8601:1988等效
-      dow : 1, // Monday is the first day of the week.
-      doy : 4  // The week that contains Jan 4th is the first week of the year.
-    }
-  },
-  numeralFormat: {
-    delimiters: {
-      thousands: ',',
-      decimal: '.'
-    },
-    abbreviations: {
-      thousand: '千',
-      million: '百万',
-      billion: '十亿',
-      trillion: '兆'
-    },
-    ordinal: function (number) {
-      return '.';
-    },
-    currency: {
-      symbol: '¥'
-    },
-    formats: [ // 定义缩写
-      {name: 'currency', format: '0,0[.]00 $'} // numeral(1000).format(currency) === numeral(1000).format('0,0[.]00 $')
-    ]
-  },
-  translation: {
-    language: 'cn',
-    "plural_forms" : "nplurals=1; plural=(n != 1);",
-    data: {
-      "some key" : [ "一些键"]
-    }
-  }
-}
+- **dateFormat** 会应用到 moment.local(localeId, dateFormat); 如果不提供配置，默认使用 en
+- **numeralFormat** 会应用到 numeral.locales[localeId] = numeralFormat; 如果不提供配置，默认使用 cn
+- **translation** 相当于 [Jed](https://github.com/messageformat/Jed) 里面的 locale_data, 如果你是使用 po 文件管理翻译，jed 推荐使用 [po2json](https://www.npmjs.com/package/po2json)。
+
 
 ```
 
@@ -193,6 +74,7 @@ module.exports = {
 ```js
 
 {{ jed.gettext('some key') }} 翻译
+{{ jed.dgettext('domain', 'some key') }} 带domain翻译
 {{ moment().format('llll') }} 时间格式
 {{ numeral(1000).format('currency') }} 数字格式 (参考配置 numberFormat.formats)
 

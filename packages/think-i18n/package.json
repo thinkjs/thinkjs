@@ -7,6 +7,9 @@
     "test": "eslint index.js && nyc ava test/",
     "coverage": "nyc report --reporter=html"
   },
+  "bundledDependencies": [
+    "numeral"
+  ],
   "dependencies": {
     "cookie": "^0.3.1",
     "jed": "^1.1.1",
