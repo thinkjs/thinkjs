@@ -22,11 +22,7 @@ const defaultConfig = {
 };
 ```
 
-### Usage and feature
-
-#### Singleton
-
-If your aplication use the same db config, think-mysql will return the last one instance.
+### Usage
 
 #### Custom usage
 ```js
