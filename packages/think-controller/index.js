@@ -5,7 +5,7 @@ function invokeController(options, app){
   
   return (ctx, next) => {
     const isMultiModule = app.modules.length;
-    const controllers = app.controllers;
+    let controllers = app.controllers;
 
     if(isMultiModule){
       assert(ctx.module, 'ctx.module required in multi module');
@@ -20,7 +20,7 @@ function invokeController(options, app){
     if(helper.isEmpty(controllers)){
       return next();
     }
-    let controller = controllers[ctx.controller];
+    const controller = controllers[ctx.controller];
     // controller not exist
     if(helper.isEmpty(controller)){
       return next();
