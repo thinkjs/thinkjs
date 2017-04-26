@@ -57,7 +57,6 @@ module.exports = [
 
 see [config example](https://github.com/thinkjs/think-i18n/blob/master/i18n_example/en.js)
 
-```
 
 ### Controller and View (nunjucks)
 
