@@ -26,8 +26,8 @@ const defaultConfig = {
 
 #### Custom usage
 ```js
-import ThinkMysql from 'think-mysql';
-const config = {
+  import ThinkMysql from 'think-mysql';
+  const config = {
     port: 3306,
     host: '127.0.0.1',
     user: 'root',
