@@ -47,7 +47,7 @@ class thinkMysql {
    * @param times
    * @returns {Promise}
    */
-  query(sql, useDebounce = true, nestTables, times = 1) {
+  query(sql, params, useDebounce = true, nestTables, times = 1) {
     assert(helper.isString(sql), 'sql must be a string');
     assert(this.config, 'configuration can not be null');
     if (!this.pool) {
@@ -55,7 +55,7 @@ class thinkMysql {
     }
     let data = {sql, nestTables};
     const poolQuery = new Promise((resolve, reject) => {
-      this.pool.query(data, (err, results) => {
+      this.pool.query(data,params, (err, results) => {
         if (err) {
           // if lost connections,try 3 times
           if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') {
@@ -108,22 +108,20 @@ class thinkMysql {
       let rollback = helper.promisify(conn.rollback, conn);
       let results = [];
 
-      let finalPromise = args.reduce((p, item) => {
-        return p.then(()=> {
+      return args.reduce((p, item) => {
+        return p.then(() => {
           let params = '';
-          if(helper.isFunction(item.params)){
+          if (helper.isFunction(item.params)) {
             params = item.params(results);
           }
-          return query(item.sql,params).then(result=>{
+          return query(item.sql, params).then(result => {
             results.push(result);
-            if(item.cb){
+            if (item.cb) {
               item.cb(results)
             }
           });
         })
-      }, begin()).then(()=> {
-        return commit();
-      }).then(()=>{
+      }, begin()).then(() => commit()).then(() => {
         conn.release();
         return Promise.resolve(results);
       }).catch(err => {
@@ -132,7 +130,6 @@ class thinkMysql {
           return Promise.reject(err);
         });
       });
-      return finalPromise;
     })
   }
 
@@ -155,7 +152,6 @@ class thinkMysql {
         resolve();
       })
     })
-
   }
 }
 module.exports = thinkMysql;
