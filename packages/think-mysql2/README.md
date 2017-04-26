@@ -35,7 +35,7 @@ const config = {
     port: 3306,
     host: '127.0.0.1',
     user: 'root',
-    password: 'Hello@123',
+    password: 'test',
     database: 'think_test',
   };
   const mysql = new ThinkMysql(config);
@@ -57,9 +57,10 @@ Transactions will execute one by one from then array items.If you pass an object
     port: 3306,
     host: '127.0.0.1',
     user: 'root',
-    password: 'Hello@123',
+    password: 'test',
     database: 'think_test',
   };
+  // let obj = ['INSERT INTO table1 (name) VALUES("test")','SELECT * FROM table1',];
   let obj = [
     {
       sql:'INSERT INTO table1 (name) VALUES("test")',
