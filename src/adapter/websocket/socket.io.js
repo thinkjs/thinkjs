@@ -123,6 +123,9 @@ export default class extends Base {
    */
   async message(url, data, socket){
     let request = socket.request;
+    if(url[0] !== '/'){
+        url = `/${url}`;
+    }
     request.url = url;
     let http;
     //socket.io c++ client发过来的requet没有res
