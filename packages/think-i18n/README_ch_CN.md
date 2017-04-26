@@ -57,6 +57,7 @@ module.exports = [
 - **numeralFormat** 会应用到 numeral.locales[localeId] = numeralFormat; 如果不提供配置，默认使用 cn
 - **translation** 相当于 [Jed](https://github.com/messageformat/Jed) 里面的 locale_data, 如果你是使用 po 文件管理翻译，jed 推荐使用 [po2json](https://www.npmjs.com/package/po2json)。
 
+[查看配置详情](https://github.com/thinkjs/think-i18n/blob/master/i18n_example/en.js)
 
 ```
 

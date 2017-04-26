@@ -55,6 +55,7 @@ module.exports = [
 - **numeralFormat** will apply numeral.locales[localeId] = numeralFormat; if empty you will get numeral instance with 'en' locale.
 - **translation** is equivalent to [Jed](https://github.com/messageformat/Jed) locale_data, if you use .po file, jed suggest use [po2json](https://www.npmjs.com/package/po2json) which support jed format transform.
 
+see [config example](https://github.com/thinkjs/think-i18n/blob/master/i18n_example/en.js)
 
 ```
 
