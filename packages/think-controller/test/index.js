@@ -59,7 +59,7 @@ test('empty controller', t => {
   fn2({controller: 'foo', action: 'bar', module: 'baz'}, plus);
   expected++;
   t.is(recieved, expected)
-  // multi module but not specific controll
+  // multi module but not specific controllers
   const fn3 = invokeController(undefined, {
     modules: ['baz'],
     controllers: {} 
