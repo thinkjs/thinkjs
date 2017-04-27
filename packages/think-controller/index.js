@@ -12,8 +12,8 @@ function invokeController(options, app){
     }
     assert(ctx.controller, 'ctx.controller required');
     assert(ctx.action, 'ctx.action required');
-    
-    if(isMultiModule){
+    assert(controllers, 'app.controllers required');
+    if(controllers && isMultiModule){
       controllers = controllers[ctx.module];
     }
     //controllers empty

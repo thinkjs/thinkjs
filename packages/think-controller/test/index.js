@@ -1,6 +1,6 @@
 import test from 'ava';
 import invokeController from '../index.js';
-// test('app check', t => {
+ test('app check', t => {
   /**
    * @throws {ReferenceError} If module not exist
    */
@@ -10,10 +10,10 @@ import invokeController from '../index.js';
   /**
    * @throws {ReferenceError} If controller not exist
    */
-//   const fn2 = invokeController({modules: []});
-//   const err2 = t.throws(() => fn2({controller: 'foo'}));
-//   t.is(err2.message, 'app.controllers required');
-// });
+  const fn2 = invokeController(undefined, {modules: []});
+  const err2 = t.throws(() => fn2({controller: 'foo', action: 'bar'}));
+  t.is(err2.message, 'app.controllers required');
+});
 
 test('ctx.module required in multi module', t => {
   const fn = invokeController(undefined, {
@@ -45,20 +45,12 @@ test('empty controller', t => {
   const plus = () => recieved++;
   // single module but no controllers
   const fn1 = invokeController(undefined, {
-    modules: []
+    modules: [],
+    controllers: {}
   });
   fn1({controller: 'foo', action: 'bar'}, plus);
   expected++;
   t.is(recieved, expected);
-  /**
-   * @throws {ReferenceError} If multi module and no controllers and with ctx.module
-   */
-  // const fn2 = invokeController(undefined, {
-  //   modules: ['baz'],
-  // }); 
-  // fn2({controller: 'foo', action: 'bar', module: 'baz'}, plus);
-  // expected++;
-  // t.is(recieved, expected)
   // multi module but not specific controll
   const fn3 = invokeController(undefined, {
     modules: ['baz'],
