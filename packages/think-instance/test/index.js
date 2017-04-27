@@ -106,6 +106,24 @@ test('get instance, set max & close 2', t => {
   t.is(close, false);
 });
 
+test('get instance, set max & close 3', t => {
+  let close = 0;
+  let cls = class {
+    constructor(index){
+      this.index = index;
+    }
+    close(){
+      close += this.index;
+    }
+  }
+  cls = thinkInstance(cls, 1, 'close');
+  const instance1 = cls.getInstance(2);
+  const instance2 = cls.getInstance(3);
+  const instance3 = cls.getInstance(4);
+  t.is(close, 5);
+});
+
+
 
 test('get instance with multi args', t => {
   let cls = class {
