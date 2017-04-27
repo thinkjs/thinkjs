@@ -8,7 +8,7 @@ function invokeLogic(options, app){
   
   return (ctx, next) => {
     const isMultiModule = app.modules.length;
-    const logics = app.logics;
+    let logics = app.logics;
 
     if(isMultiModule){
       assert(ctx.module, 'ctx.module required in multi module');
@@ -16,15 +16,15 @@ function invokeLogic(options, app){
     assert(ctx.controller, 'ctx.controller required');
     assert(ctx.action, 'ctx.action required');
 
-    
-    if(isMultiModule){
+    // avoid to throw error
+    if(logics && isMultiModule){
       logics = logics[ctx.module];
     }
     //logics empty
     if(helper.isEmpty(logics)){
       return next();
     }
-    let logic = logics[ctx.controller];
+    const logic = logics[ctx.controller];
     // logic not exist
     if(helper.isEmpty(logic)){
       return next();
