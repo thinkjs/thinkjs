@@ -6,7 +6,7 @@ let instanceArray = [];
 /**
  * add .getInstance method to class
  */
-module.exports = function thinkInstance(cls){
+module.exports = function thinkInstance(cls, maxLength = 10, beforeDeleteMethod = 'close'){
   assert(helper.isFunction(cls), 'cls must be a function');
 
   if(cls.getInstance) return cls;
@@ -26,6 +26,16 @@ module.exports = function thinkInstance(cls){
     const md5 = helper.md5(JSON.stringify(config));
     if(!item[md5]){
       item[md5] = new cls(...config);
+      if(Object.keys(item).length > maxLength){
+        for(let key in item){
+          let instance = item[key];
+          if(instance[beforeDeleteMethod]){
+            instance[beforeDeleteMethod]();
+          }
+          delete item[key];
+          break;
+        }
+      }
     }
     return item[md5];
   }
