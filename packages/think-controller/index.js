@@ -12,7 +12,7 @@ function invokeController(options, app){
     }
     assert(ctx.controller, 'ctx.controller required');
     assert(ctx.action, 'ctx.action required');
-    assert(controllers, 'app.controllers required');
+    // error avoiding
     if(controllers && isMultiModule){
       controllers = controllers[ctx.module];
     }
