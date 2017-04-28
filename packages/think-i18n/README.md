@@ -6,7 +6,7 @@ i18n solution in thinkjs 3.0, implement base on [Jed](https://github.com/message
 ## Features
  - I18N solution cover translation, datetime and number display.
  - Support per locale custom format for datetime and number.
- - Easy to use, just defined your expect format and translation in each locale file and the library will help to apply locale settings on time, no more annoying locale switching!
+ - Easy to use, just defined your expect format and translation in each locale file and the library will help to apply [locale settings](#locale-settings) on time, no more annoying locale switching!
  - Easy to debug
  - Locale switch process is Customizable to suit your case.
  - moment and numeral are isolated, so you can use them for free.
@@ -26,12 +26,12 @@ module.exports = [
   createI18n({
     i18nFolder: path.resolve(__dirname, '../i18n'),
     localesMapping(locales) {return 'en';}
-    // [more options](### Provide locale settings)
+
   })
 ];
 
 ```
-
+[complete options](#complete-options)
 
 ### Locale Settings
 
@@ -75,9 +75,9 @@ module.exports = {
 
 ### Complete Options
 - **i18nFolder:string**
-  Directory path where you put all [locale settings](#Provide-locale-settings) files
+  Directory path where you put all [locale settings](#locale-settings) files
 - **localesMapping:function(locales){return localeId;}**
-  Given a list of possible locales, return a [localeId](#localeId)
+  Given a list of possible locales, return a localeId
 - **getLocale**
   default logic is to extract header['accept-language'] if set to falsy value.
   To get from url query locale, set to {by: 'query', name: 'locale'}.
@@ -85,7 +85,7 @@ module.exports = {
   To implement your own logic, function([ctx](https://github.com/koajs/koa/blob/master/docs/api/context.md)) {return locale;}
 
 - **debugLocale**
-  set to value of [localeId](#localeId)
+  set to value of localeId
 
 ### Some Thoughs Behine
   Why combine all there libraries' i18n config into one? the answer is for transparent but most importantly, flexibility to compose you date, number and message's behavior per locale, for example, you have a website in China and want to provide English translation, but keep the chinese currency symbol, so you can compose english translation and chinese date and currency in your en.js [locale setting](#locale-setting).
@@ -94,8 +94,8 @@ module.exports = {
   module.exports = {
     localeId: 'en_CH',
     translation: require('../english.po.json'),
-    dateFormat: require('../moment/en.json),
-    numeralFormat: require('../numeral/en.json)
+    dateFormat: require('../moment/en.json'),
+    numeralFormat: require('../numeral/en.json')
   };
   ```
 
@@ -107,6 +107,6 @@ We should always use customize format.
 #### Notice
 - If you defined **en** locale, witch will override the default **en** locale in [Numeral](https://github.com/adamwdraper/Numeral-js).
 - In case you also want to use moment and numeral in your system, we isolated the [Moment](https://github.com/moment/moment/) and [Numeral](https://github.com/adamwdraper/Numeral-js) by use bundledDependencies in package.json.
-- [Numeral](https://github.com/adamwdraper/Numeral-js) doesn't not support per locale custom format,  this is done using some tricks and you can config each locale's customFormat's in locale.numeralFormat.formats.
+- [Numeral](https://github.com/adamwdraper/Numeral-js) doesn't not support per locale custom format,  this is done using some tricks and you can config each locale's customFormat in [config](https://github.com/thinkjs/think-i18n/blob/master/i18n_example/en.js).numeralFormat.formats.
 
 
