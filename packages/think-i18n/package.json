@@ -1,11 +1,12 @@
 {
   "name": "think-i18n",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "i18n solution in thinkjs 3.0",
   "main": "index.js",
   "scripts": {
-    "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=html"
+    "test": "eslint index.js && eslint loader/ && nyc ava test/",
+    "eslint": "eslint index.js loader/",
+    "coverage": "nyc ava test/ && nyc report --reporter=html"
   },
   "bundledDependencies": [
     "numeral"
@@ -22,6 +23,7 @@
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
     "eslint": "^3.16.1",
+    "coveralls": "~2.11.16",
     "mock-require": "^2.0.1",
     "nyc": "^7.0.0"
   },
