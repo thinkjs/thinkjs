@@ -5,7 +5,10 @@
   "main": "./lib",
   "scripts": {
     "compile": "babel ./src --out-dir ./lib",
-    "test": ""
+    "test": "npm run eslint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "eslint": "eslint ./src",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
@@ -32,13 +35,20 @@
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
-    "babel-preset-think-node": "^1.0.1"
+    "babel-eslint": "^7.2.3",
+    "babel-preset-think-node": "^1.0.1",
+    "eslint": "^3.19.0",
+    "nyc": "^10.3.0"
   },
   "ava": {
-    "require": ["babel-register"],
+    "require": [
+      "babel-register"
+    ],
     "babel": "inherit"
   },
   "babel": {
-    "presets" : ["think-node"]
+    "presets": [
+      "think-node"
+    ]
   }
 }
