@@ -4,7 +4,7 @@
   "description": "An adapter-based ORM for ThinkJS 3.x",
   "main": "./lib",
   "scripts": {
-    "compile": "babel ./src --presets think-node --out-dir ./lib",
+    "compile": "babel ./src --out-dir ./lib",
     "test": ""
   },
   "repository": {
@@ -33,5 +33,12 @@
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-preset-think-node": "^1.0.1"
+  },
+  "ava": {
+    "require": ["babel-register"],
+    "babel": "inherit"
+  },
+  "babel": {
+    "presets" : ["think-node"]
   }
 }
