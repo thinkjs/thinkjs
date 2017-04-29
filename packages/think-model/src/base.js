@@ -440,10 +440,12 @@ module.exports = class {
       let _default = fieldSchema.default;
       //default value is setted
       if(!helper.isTrueEmpty(_default)){
-        ret[field] = {
-          value: data[field],
-          default: _default
-        };
+        ret[field] = {default: _default};
+        if(data.hasOwnProperty(field)) {
+          ret[field].value = data[field];
+        } else {
+          ret[field].value = helper.isFunction(_default) ? _default.call(data) : _default;
+        }
       }else{
         if(this._isSubSchema(fieldSchema)){
           extRet[field] = this.beforeAdd(data[field] || {}, options, fieldSchema);
