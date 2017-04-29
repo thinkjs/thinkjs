@@ -564,7 +564,7 @@ module.exports = class {
       let sql = ' ';
       union.forEach(item => {
         sql += item.all ? 'UNION ALL ' : 'UNION ';
-        sql += '(' + (think.isObject(item.union) ? this.buildSelectSql(item.union) : item.union) + ')';
+        sql += '(' + (helper.isObject(item.union) ? this.buildSelectSql(item.union) : item.union) + ')';
       });
       return sql;
     }else{
