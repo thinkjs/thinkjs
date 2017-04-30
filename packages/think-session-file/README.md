@@ -2,6 +2,10 @@
 
 File session for ThinkJS
 
+[![Build Status](https://img.shields.io/travis/thinkjs/think-session-file/master.svg?style=flat-square)](https://travis-ci.org/thinkjs/think-session-file)
+[![Coverage Status](https://img.shields.io/coveralls/thinkjs/think-session-file/master.svg?style=flat-square)](https://coveralls.io/github/thinkjs/think-session-file?branch=master)
+[![npm](https://img.shields.io/npm/v/think-session-file.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/think-session-file)
+
 ## Install
 
 ```
