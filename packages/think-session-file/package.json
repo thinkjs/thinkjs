@@ -1,7 +1,7 @@
 {
   "name": "think-session-file",
   "description": "Use file to store session data",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -10,9 +10,7 @@
     "test": "eslint index.js && nyc ava test/index.js ",
     "coverage": "nyc report --reporter=html"
   },
-  "ava": {
-  
-  },
+  "ava": {},
   "contributors": [
     {
       "name": "welefen",
