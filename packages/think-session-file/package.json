@@ -11,9 +11,7 @@
     "coverage": "nyc report --reporter=html"
   },
   "ava": {
-    "require": [
-      "babel-core/register"
-    ]
+  
   },
   "contributors": [
     {

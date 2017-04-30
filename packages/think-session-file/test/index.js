@@ -109,10 +109,11 @@ test.serial('1. set and get session data without maxAge', t => {
     const data = await fileSession1.get('abc');
     t.is(data, undefined);// session expired, so data is deleted;
     t.is(fileSession1.status, -1);
+    
+    const data1 = await fileSession1.get();
+    t.deepEqual(data1, {});
 
-
-    const data1 = await fileSession1.get('abc'); //just for covering line 42
-
+   
     const fileSession2 = new FileSession(options, ctx);
     fileSession2.delete();
     fileSession2.get('abc');//just for covering line 45
@@ -207,6 +208,7 @@ test.serial('4. set and gc when content empty', t => {
       sessionPath: '/session/absolute/path',
       cookie: cookieName,
       autoUpdate: true,
+      maxAge: 3600 * 1000,
       gcInterval: 3600 * 1000
     }
     const param = mockHelper();
@@ -231,6 +233,14 @@ test.serial('4. set and gc when content empty', t => {
     await sleep(100);
     fileStoreData[path.join(sessionPath, cookieName)] = '';
     fileSession.gc();
+
+    //when content.data is undefined
+    fileStoreData[path.join(sessionPath, cookieName)] = JSON.stringify({
+      expires: Date.now() + 3600 * 1000
+    });
+    const fileSession1 = new FileSession(options, ctx);
+    await fileSession1.get('abc');
+    t.deepEqual(fileSession1.data, {});
 
     resolve();
   });
