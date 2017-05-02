@@ -9,7 +9,8 @@
     "coverage": "nyc ava test/ && nyc report --reporter=html"
   },
   "bundledDependencies": [
-    "numeral"
+    "numeral",
+    "moment"
   ],
   "dependencies": {
     "cookie": "^0.3.1",
