@@ -7,20 +7,12 @@ const numeral = require('numeral');
 const assert = require('assert');
 
 module.exports = class i18n {
-  constructor(options) {
-    var localeFiles = this.prepareOptions(options);
-    var {localeConfigs, custom_numeral_formats} = this.loadLocaleSettings(localeFiles);
-    this.applyNumeralCustomFormat(custom_numeral_formats);
 
-    this.options = options;
-    this.localeConfigs = localeConfigs;
+  assert(type, value, message) {
+    assert(helper[type](value), message);
   }
 
-  prepareOptions(options) {
-    var {i18nFolder, localesMapping, getLocale} = options;
-    assert(helper.isString(i18nFolder), 'i18nFolder should be type of string');
-    assert(helper.isDirectory(i18nFolder), 'i18nFolder must be directory path');
-    assert(helper.isFunction(localesMapping), 'missing configure localesMapping(locales){return locale;}')
+  validateGetLocale(getLocale) {
     if(getLocale) {
       if(helper.isObject(getLocale)) {
         assert(['cookie', 'query'].indexOf(getLocale.by) > -1, 'getLocale.by must be value of "cookie" or "query", value is ' + getLocale.by);
@@ -29,9 +21,23 @@ module.exports = class i18n {
         assert(helper.isFunction(getLocale), 'getLocale must be either object or function');
       }
     }
+    return true;
+  }
+
+  getConfigFiles(i18nFolder) {
     let files = helper.getdirFiles(i18nFolder).filter(p=>/\.js$/.test(p));
     assert(files.length > 0, 'missing locale setting, no .js files are found in ' + i18nFolder);
     return files.map(f=>path.join(i18nFolder, f));
+  }
+
+  prepareOptions(options) {
+    var {i18nFolder, localesMapping, getLocale} = options;
+    this.assert('isString', i18nFolder, 'i18nFolder should be type of string');
+    this.assert('isDirectory', i18nFolder, 'i18nFolder must be directory path');
+    this.assert('isFunction', localesMapping, 'missing configure localesMapping(locales){return locale;}');
+    this.validateGetLocale(getLocale);
+
+    return this.getConfigFiles(i18nFolder);
   }
 
   loadLocaleSettings(localeFiles) {
@@ -81,7 +87,17 @@ module.exports = class i18n {
     });
   }
 
-  extend(options=this.options, localeConfigs=this.localeConfigs) {
+  loadLocaleConfigs(options) {
+    var localeFiles = this.prepareOptions(options);
+    var {localeConfigs, custom_numeral_formats} = this.loadLocaleSettings(localeFiles);
+    this.applyNumeralCustomFormat(custom_numeral_formats);
+
+    return localeConfigs;
+  }
+
+  extend(options) {
+    var localeConfigs = this.loadLocaleConfigs(options);
+
     var {getLocale, localesMapping, debugLocale, jedOptions={}} = options;
     var curLocale, i18n;
     return {
@@ -96,7 +112,7 @@ module.exports = class i18n {
                 if(!getLocale.reg) {
                   getLocale.reg = new RegExp(`${getLocale.name}=([^&]*)`);
                 }
-                return [getLocale.reg.exec(this.ctx.request.url)[1]];
+                return [(getLocale.reg.exec(this.ctx.request.url) || {})[1]];
               case 'cookie':
                 return [cookie.parse.parse(this.ctx.request.header.cookie)[getLocale.name]];
               default:
