@@ -10,7 +10,7 @@
 npm install think-redis
 ```
 
-## How to Usage
+## How to Use
 
 ### default options
 
