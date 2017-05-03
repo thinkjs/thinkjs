@@ -1,7 +1,7 @@
 # think-cli
 
 
-`think-helper` defines a set of helper functions for ThinkJS.
+`think-cli` is a command-line interface for ThinkJS.
 
 ## Installation
 
@@ -16,12 +16,15 @@ In Node.js:
 ```js
 import helper from 'think-cli';
 
-
 ```
+Commands:
 
-Example:
-thinkjs new projectname
+    new <projectPath> [config]  create project
+    create <mode> [name]        create all kinds of modes in your project
 
+  Options:
 
+    -h, --help     output usage information
+    -v, --version  output the version number
 
 

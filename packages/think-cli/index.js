@@ -43,9 +43,6 @@ function copyFile(source, target) {
  */
 function copyDir(source, target) {
   fs.readdir(source, function(err, files) {
-    if(err) {
-      errlog(err);
-    }
     files.forEach((filePath)=>{
       let currentSourcePath = path.resolve(source, filePath);
       let targetSourcePath = path.resolve(target, filePath);
@@ -109,6 +106,7 @@ var privateFunc = {
         var configTree = JSON.parse(data);
       }catch(e){
         errlog(e);
+        return;
       }
 
       function handleConfig(currentSourcePath, targetSourcePath, config) {
