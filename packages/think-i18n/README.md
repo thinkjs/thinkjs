@@ -1,4 +1,9 @@
 # think-i18n
+
+[![Build Status](https://travis-ci.org/thinkjs/think-i18n.svg?branch=master)](https://travis-ci.org/thinkjs/think-i18n)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-i18n/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-i18n?branch=master)
+[![npm](https://img.shields.io/npm/v/think-i18n.svg?style=flat-square)](https://www.npmjs.com/package/think-i18n)
+
 [简体中文文档](https://github.com/thinkjs/think-i18n/blob/master/README_ch_CN.md)
 
 i18n solution in thinkjs 3.0, implement base on [Jed](https://github.com/messageformat/Jed), [Moment](https://github.com/moment/moment/) and [Numeral](https://github.com/adamwdraper/Numeral-js).
