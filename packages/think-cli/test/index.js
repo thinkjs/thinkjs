@@ -11,13 +11,15 @@ var filePath =  '../index.js';
 var exec = require('child_process').exec;
 
 const modelPath = require.resolve("../index.js");
-
+const projectPath = path.join(__dirname,'../');
+const testDirPath = path.join(projectPath,'test');
 
 test.serial.cb('new project name is abc', t => {
+	let dirPath = path.join(projectPath,'abc');
 	exec('node index.js new abc', (error, stdout, stderr) => {
-		exec('node ../index.js create config', {cwd: '/Users/sgy/think3.0/think-cli/abc'}, (error, stdout, stderr) => {
+		exec('node ../index.js create config', {cwd: dirPath}, (error, stdout, stderr) => {
 			t.pass();
-			shell.rm('-rf', '/Users/sgy/think3.0/think-cli/abc');
+			shell.rm('-rf', dirPath);
 			t.end();
 		})
 	})
@@ -26,38 +28,40 @@ test.serial.cb('new project name is abc', t => {
 })
 
 test.serial.cb('new project name is abc2 for ts', t => {
+	let dirPath = path.join(projectPath,'abc2');
 	exec('node index.js new abc2 ts', (error, stdout, stderr) => {
-		exec('node ../index.js create adapter test.js', {cwd: '/Users/sgy/think3.0/think-cli/abc2'}, (error, stdout, stderr) => {
+		exec('node ../index.js create adapter test.js', {cwd: dirPath}, (error, stdout, stderr) => {
 			t.pass();
-			shell.rm('-rf', '/Users/sgy/think3.0/think-cli/abc2');
+			shell.rm('-rf', dirPath);
 			t.end();
 		})
 	})
 })
 
 test.serial.cb('new project name is abc3 for config', t => {
-	exec('node ../index.js new abc3 config',{cwd: '/Users/sgy/think3.0/think-cli/test'},  (error, stdout, stderr) => {
+
+	exec('node ../index.js new abc3 config',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
 	})
 })
 
 test.serial.cb('create logic', t => {
-	exec('node ../index.js create logic test.js',{cwd: '/Users/sgy/think3.0/think-cli/test'},  (error, stdout, stderr) => {
+	exec('node ../index.js create logic test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
 	})
 })
 
 test.serial.cb('create extend', t => {
-	exec('node ../index.js create extend test.js',{cwd: '/Users/sgy/think3.0/think-cli/test'},  (error, stdout, stderr) => {
+	exec('node ../index.js create extend test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
 	})
 })
 
 test.serial.cb('create service', t => {
-	exec('node ../index.js create service test.js',{cwd: '/Users/sgy/think3.0/think-cli/test'},  (error, stdout, stderr) => {
+	exec('node ../index.js create service test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
 	})
@@ -65,32 +69,36 @@ test.serial.cb('create service', t => {
 
 
 test.serial.cb('create model', t => {
-	exec('node ../index.js create model test.js',{cwd: '/Users/sgy/think3.0/think-cli/test'},  (error, stdout, stderr) => {
+	let dirPath = path.join(testDirPath,"abc3");
+	exec('node ../index.js create model test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
-		shell.rm('-rf', '/Users/sgy/think3.0/think-cli/test/abc3');
+		shell.rm('-rf', dirPath);
 		t.end();
 	})
 })
 
 
 test.serial.cb('abnormal 1', t => {
-	shell.mkdir('-p', '/Users/sgy/think3.0/think-cli/test/abnormal');
-	exec('node ../../index.js new abc3 config',{cwd: '/Users/sgy/think3.0/think-cli/test/abnormal'},  (error, stdout, stderr) => {
-		exec('node ../../index.js new abc3 config',{cwd: '/Users/sgy/think3.0/think-cli/test/abnormal'},  (error, stdout, stderr) => {
+	let dirPath = path.join(testDirPath, 'abnormal');
+	shell.mkdir('-p', dirPath);
+	exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
+		exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
 			t.pass();
-			shell.rm('-rf', '/Users/sgy/think3.0/think-cli/test/abnormal');
+			shell.rm('-rf', dirPath);
 			t.end();
 		})
 	})
 })
 
 test.serial.cb('abnormal 2', t => {
-	shell.mkdir('-p', '/Users/sgy/think3.0/think-cli/test/abnormal2');
-	fs.writeFile('/Users/sgy/think3.0/think-cli/test/abnormal2/think.json','test', function() {
-		exec('node ../../index.js new abc3 config',{cwd: '/Users/sgy/think3.0/think-cli/test/abnormal2'},  (error, stdout, stderr) => {
-			exec('node ../../index.js new abc3 config',{cwd: '/Users/sgy/think3.0/think-cli/test/abnormal2'},  (error, stdout, stderr) => {
+	let dirPath = path.join(testDirPath, 'abnormal2');
+	let thinkjsonPath = path.join(dirPath, 'think.json');
+	shell.mkdir('-p', dirPath);
+	fs.writeFile(thinkjsonPath,'test', function() {
+		exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
+			exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
 				t.pass();
-				shell.rm('-rf', '/Users/sgy/think3.0/think-cli/test/abnormal2');
+				shell.rm('-rf', dirPath);
 				t.end();
 			})
 		})
