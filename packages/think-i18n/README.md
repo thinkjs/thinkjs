@@ -87,6 +87,15 @@ module.exports = {
 - **debugLocale**
   set to value of localeId
 
+- **jedOptions**
+  You can set **domain** and **missing_key_callback**, for details refer to [jed doc](http://messageformat.github.io/Jed/).
+
+  default value is {}, the final jed options will be
+
+``` js
+   Object.assign(jedOptions, {locale_data: <your locale translation>})
+```
+
 ### Some Thoughs Behine
   Why combine all there libraries' i18n config into one? the answer is for transparent but most importantly, flexibility to compose you date, number and message's behavior per locale, for example, you have a website in China and want to provide English translation, but keep the chinese currency symbol, so you can compose english translation and chinese date and currency in your en.js [locale setting](#locale-setting).
   ```javascript

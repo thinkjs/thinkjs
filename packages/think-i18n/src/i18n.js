@@ -103,8 +103,13 @@ module.exports = class i18n {
     return {
       controller: {
         getLocale() {
+          let locale;
           if(!getLocale) {
-            return this.ctx.request.header['accept-language'].split(',') || [];
+            var header = this.ctx.request.header;
+            if(header && header['accept-language']) {
+              return header['accept-language'].split(',');
+            }
+            return [];
           }
           if(helper.isObject(getLocale)) {
             switch(getLocale.by) {
@@ -112,9 +117,14 @@ module.exports = class i18n {
                 if(!getLocale.reg) {
                   getLocale.reg = new RegExp(`${getLocale.name}=([^&]*)`);
                 }
-                return [(getLocale.reg.exec(this.ctx.request.url) || {})[1]];
+                locale = (getLocale.reg.exec(decodeURIComponent(this.ctx.request.url)) || {})[1]
+                return locale ? [locale] : [];
               case 'cookie':
-                return [cookie.parse.parse(this.ctx.request.header.cookie)[getLocale.name]];
+                var c = this.ctx.request.header.cookie;
+                if(c) {
+                  locale = cookie.parse(c)[getLocale.name];
+                }
+                return locale ? [locale] : [];
               default:
                 throw new Error('getLocale.by must be value of "header", "query" or  "cookie".');
             }

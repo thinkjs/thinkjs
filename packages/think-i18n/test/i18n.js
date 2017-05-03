@@ -87,13 +87,6 @@ test('getCofnigFiles will assert when no file is matched', t=>{
   t.deepEqual(args, [false, 'missing locale setting, no .js files are found in i18nFolder']);
 });
 
-// var {i18nFolder, localesMapping, getLocale} = options;
-//     this.assert('isString', i18nFolder, 'i18nFolder should be type of string');
-//     this.assert('isDirectory', i18nFolder, 'i18nFolder must be directory path');
-//     this.assert('isFunction', localesMapping, 'missing configure localesMapping(locales){return locale;}');
-//     this.validateGetLocale(getLocale);
-
-//     return this.getConfigFiles(i18nFolder);
 test('prepareOptions will call with right params', t=>{
   var args = [];
   var getLocaleArg, i18nFolder;
@@ -122,4 +115,37 @@ test('prepareOptions will call with right params', t=>{
   t.is(getLocaleArg, 'getLocale');
   t.is(i18nFolder, 'i18nFolder');
   t.is(result, 'getConfigFiles');
+});
+
+test('loadLocaleSettings', t=>{
+  var expectCallWith = [];
+  var locales = {};
+  var localeId = 'localeId';
+  var dateFormat = {};
+  var numeralFormat = {formats: [1,2,3]};
+  var translation = {};
+  var localeFiles = ['a'];
+  var config = {localeId, dateFormat, translation, numeralFormat};
+  mock('a', config);
+  mock('moment', {locale(a,b){expectCallWith.push(a,b)}});
+  mock('numeral', {locales});
+  var instance = getInstance();
+  var result = instance.loadLocaleSettings(localeFiles);
+
+  t.deepEqual(expectCallWith, ['localeId', dateFormat]);
+  t.deepEqual(locales, {localeId: {}});
+  t.deepEqual(result, {
+    localeConfigs: {localeId: config},
+    custom_numeral_formats: {localeId: [1,2,3]}
+  });
+});
+
+test('applyNumeralCustomFormat', t=>{
+  var instance = getInstance();
+  instance.applyNumeralCustomFormat({
+    en: [{name: 'currency', format: '$ 000.000'}]
+  });
+  var value = 11111.1111;
+  var numeral = require('numeral');
+  t.is(numeral(value).format('currency'), numeral(value).format('$ 000.000'));
 });
