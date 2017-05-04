@@ -6,7 +6,6 @@ const thinkInstance = require('think-instance');
 
 const debug = require('debug')('think-mysql');
 const debounceInstance = new Debounce();
-const RELEASE = Symbol('think-mysql-release');
 const QUERY = Symbol('think-mysql-query');
 
 const defaultConfig = {
@@ -123,7 +122,7 @@ class ThinkMysql {
         let endTime = Date.now();
         this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
       }
-      this[RELEASE](connection);
+      this.releaseConnection(connection);
       
       if(err) return Promise.reject(err);
       return data;
@@ -132,7 +131,7 @@ class ThinkMysql {
   /**
    * release connection
    */
-  [RELEASE](connection){
+  releaseConnection(connection){
     //if not in transaction, release connection
     if(connection.transaction !== TRANSACTION.start){
       debug('release connection, id=' + connection.connectionId)
@@ -169,7 +168,7 @@ class ThinkMysql {
           if(connection.transaction === TRANSACTION.start) return;
         }else if(sqlOptions.transaction === TRANSACTION.end){
           if(connection.transaction !== TRANSACTION.start) {
-            this[RELEASE](connection);
+            this.releaseConnection(connection);
             return;
           };
         }
