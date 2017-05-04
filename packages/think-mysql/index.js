@@ -29,8 +29,6 @@ const TRANSACTION = {
   end: 2
 }
 
-let connectionId = 1;
-
 class ThinkMysql {
   /**
    * @param  {Object} config [connection options]
@@ -134,7 +132,7 @@ class ThinkMysql {
   releaseConnection(connection){
     //if not in transaction, release connection
     if(connection.transaction !== TRANSACTION.start){
-      debug('release connection, id=' + connection.connectionId)
+      debug('release connection, id=' + connection.threadId)
       try{
         connection.release();
       }catch(e){}
@@ -158,10 +156,7 @@ class ThinkMysql {
     }
     let startTime = Date.now();
     return this.getConnection(connection).then(connection => {
-      if(!connection.connectionId){
-        connection.connectionId = connectionId++;
-      }
-      debug('connection id ' + connection.connectionId);
+      debug('get connection, id=' + connection.threadId);
       //set transaction status to connection
       if(sqlOptions.transaction){
         if(sqlOptions.transaction === TRANSACTION.start){
