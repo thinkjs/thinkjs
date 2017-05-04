@@ -2,77 +2,189 @@ const mysql = require('mysql');
 const helper = require('think-helper');
 const assert = require('assert');
 const Debounce = require('think-debounce');
+const thinkInstance = require('think-instance');
+
+const debug = require('debug')('think-mysql');
 const debounceInstance = new Debounce();
-const initConnection = Symbol('initConnection');
+const RELEASE = Symbol('think-mysql-release');
+const QUERY = Symbol('think-mysql-query');
 
 const defaultConfig = {
   port: 3306,
   host: '127.0.0.1',
-  user: 'root',
+  user: '',
   password: '',
-  connectionLimit: 5
+  database: '',
+  connectionLimit: 1,
+  multipleStatements: true,
+  logger: console.log.bind(console),
+  logConnect: false,
+  logSql: false
 };
 
-let instance = null;
-let config = {};
+/**
+ * transaction status
+ */
+const TRANSACTION = {
+  start: 1,
+  end: 2
+}
 
-class thinkMysql {
+let connectionId = 1;
+
+class ThinkMysql {
   /**
-   * @param  {Object} conf [connection options]
+   * @param  {Object} config [connection options]
    */
-  constructor(conf = {}) {
-    conf = helper.extend({}, defaultConfig, conf);
-    // if use the same configuration,use singleton
-    if(instance && JSON.stringify(conf) === JSON.stringify(config)){
-      return instance
-    }
-    instance = this;
-    this.config = config = conf;
-    this[initConnection](config);
-  }
+  constructor(config) {
+    config = helper.extend({}, defaultConfig, config);
+    this.config = config;
+    this.pool = mysql.createPool(config);
 
+    //log connect
+    if(config.logConnect){
+      let connectionPath = '';
+      if(config.socketPath){
+        connectionPath = config.socketPath;
+      }else{
+        connectionPath = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
+      }
+      config.logger(connectionPath);
+    }
+  }
   /**
    * get connection
-   * @return {Promise} [conneciton handle]
    */
-  [initConnection](config) {
-    this.pool = mysql.createPool(config);
+  getConnection(connection){
+    if(connection) return Promise.resolve(connection);
+    return helper.promisify(this.pool.getConnection, this.pool)();
   }
-
   /**
-   *
-   * @param sql
-   * @param params
-   * @param useDebounce
-   * @param nestTables
-   * @param times
-   * @returns {Promise}
+   * start transaction
+   * @param {Object} connection 
    */
-  query(sql, params = '', useDebounce = true, nestTables, times = 1) {
-    assert(helper.isString(sql), 'sql must be a string');
-    assert(this.config, 'configuration can not be null');
-    if (!this.pool) {
-      this[initConnection](this.config);
-    }
-    let data = {sql, nestTables};
-    const poolQuery = new Promise((resolve, reject) => {
-      this.pool.query(data, params, (err, results) => {
-        if (err) {
-          // if lost connections,try 3 times
-          if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') {
-            if (times <= 3) {
-              return this.query(sql, params, nestTables, useDebounce, ++times);
-            }
-          }
-          reject(err);
-        }
-        resolve(results);
+  startTrans(connection){
+    return this.query({
+      sql: 'START TRANSACTION',
+      transaction: TRANSACTION.start,
+      debounce: false
+    }, connection);
+  }
+  /**
+   * commit transaction
+   * @param {Object} connection 
+   */
+  commit(connection){
+    return this.query({
+      sql: 'COMMIT',
+      transaction: TRANSACTION.end,
+      debounce: false,
+    }, connection);
+  }
+  /**
+   * rollback transaction
+   * @param {Object} connection 
+   */
+  rollback(connection){
+    return this.query({
+      sql: 'ROLLBACK',
+      transaction: TRANSACTION.end,
+      debounce: false,
+    }, connection);
+  }
+  /**
+   * transaction
+   * @param {Function} fn 
+   * @param {Object} connection 
+   */
+  transaction(fn, connection){
+    assert(helper.isFunction(fn), 'fn must be a function');
+    return this.getConnection(connection).then(connection => {
+      return this.startTrans(connection).then(() => {
+         return fn(connection);
+      }).then(data => {
+        return this.commit(connection).then(() => data);
+      }).catch(err => {
+        return this.rollback(connection).then(() => Promise.reject(err));
       })
     });
-    if (useDebounce) {
-      return debounceInstance.debounce(sql, () => poolQuery)
+  }
+  /**
+   * query data
+   */
+  [QUERY](sqlOptions, connection, startTime){
+    let err = null;
+    let queryFn = helper.promisify(connection.query, connection);
+    return queryFn(sqlOptions).catch(e => {
+      err = e;
+    }).then(data => {
+      //log sql
+      if(this.config.logSql){
+        let endTime = Date.now();
+        this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
+      }
+      this[RELEASE](connection);
+      
+      if(err) return Promise.reject(err);
+      return data;
+    });
+  }
+  /**
+   * release connection
+   */
+  [RELEASE](connection){
+    //if not in transaction, release connection
+    if(connection.transaction !== TRANSACTION.start){
+      debug('release connection, id=' + connection.connectionId)
+      try{
+        connection.release();
+      }catch(e){}
     }
-    return poolQuery;
+  }
+  /**
+   * query({
+   *  sql: 'SELECT * FROM `books` WHERE `author` = ?',
+   *  timeout: 40000, // 40s
+   *  values: ['David']
+   * })
+   * @param {Object} sqlOptions 
+   * @param {Object} connection 
+   */
+  query(sqlOptions, connection) {
+    if(helper.isString(sqlOptions)){
+      sqlOptions = {sql: sqlOptions};
+    }
+    if(sqlOptions.debounce === undefined){
+      sqlOptions.debounce = true;
+    }
+    let startTime = Date.now();
+    return this.getConnection(connection).then(connection => {
+      if(!connection.connectionId){
+        connection.connectionId = connectionId++;
+      }
+      debug('connection id ' + connection.connectionId);
+      //set transaction status to connection
+      if(sqlOptions.transaction){
+        if(sqlOptions.transaction === TRANSACTION.start){
+          if(connection.transaction === TRANSACTION.start) return;
+        }else if(sqlOptions.transaction === TRANSACTION.end){
+          if(connection.transaction !== TRANSACTION.start) {
+            this[RELEASE](connection);
+            return;
+          };
+        }
+        connection.transaction = sqlOptions.transaction;
+      }
+
+      if(sqlOptions.debounce){
+        let key = JSON.stringify(sqlOptions);
+        return debounceInstance.debounce(key, () => {
+          return this[QUERY](sqlOptions, connection, startTime);
+        });
+      }else{
+        return this[QUERY](sqlOptions, connection, startTime);
+      }
+    });
   }
 
   /**
@@ -80,78 +192,19 @@ class thinkMysql {
    * @param  {Array} args []
    * @returns {Promise}
    */
-  execute(...args) {
-    return this.query(...args);
+  execute(sqlOptions, connection) {
+    if(helper.isString(sqlOptions)){
+      sqlOptions = {sql: sqlOptions};
+    }
+    sqlOptions.debounce = false;
+    return this.query(sqlOptions, connection);
   }
-
-  /**
-   *
-   * @param args
-   * @returns {Promise}
-   */
-  executeTrans(args) {
-    assert(helper.isArray(args), 'args must be array');
-    args = args.map(item=>{
-      if(helper.isString(item)){
-        return {
-          sql:item
-        }
-      }
-      assert(item.sql,'args item.sql cannot be empty');
-      return item;
-    });
-    let connect = helper.promisify(this.pool.getConnection, this.pool);
-
-    return connect().then(conn => {
-      let query = helper.promisify(conn.query, conn);
-      let begin = helper.promisify(conn.beginTransaction, conn);
-      let commit = helper.promisify(conn.commit, conn);
-      let rollback = helper.promisify(conn.rollback, conn);
-      let results = [];
-
-      return args.reduce((p, item) => {
-        return p.then(() => {
-          let params = '';
-          if (helper.isFunction(item.params)) {
-            params = item.params(results);
-          }
-          return query(item.sql, params).then(result => {
-            results.push(result);
-            if (item.cb) {
-              item.cb(results)
-            }
-          });
-        })
-      }, begin()).then(() => commit()).then(() => {
-        conn.release();
-        return Promise.resolve(results);
-      }).catch(err => {
-        return rollback().then(() => {
-          conn.release();
-          return Promise.reject(err);
-        });
-      });
-    })
-  }
-
   /**
    * close
    * @returns {Promise}
    */
   close(){
-    if(!this.pool){
-      return
-    }
-    return new Promise((resolve,reject)=>{
-      this.pool.end(err => {
-        if(err){
-          reject(err);
-          return;
-        }
-        this.pool = null;
-        resolve();
-      })
-    })
+    return helper.promisify(this.pool.end, this.pool)();
   }
 }
-module.exports = thinkMysql;
+module.exports = thinkInstance(ThinkMysql);
