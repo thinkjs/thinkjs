@@ -9,12 +9,10 @@ services:
 before_install:
   - mysql -e
   '
-    CREATE DATABASE think_test;\n
-    USE think_test;\n
     CREATE TABLE `think_test`.`books` (
-    	`id` int NOT NULL,
-    	`name` varchar(255) NOT NULL,
-    	`author` varchar(255) NOT NULL,
+    	`id` int NOT NULL AUTO_INCREMENT,
+    	`name` varchar(255) NOT NULL DEFAULT '',
+    	`author` varchar(255) NOT NULL DEFAULT '',
     	PRIMARY KEY (`id`)
     );\n
   '
