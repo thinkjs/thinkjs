@@ -22,7 +22,9 @@ import {
   isIP,
   timeout,
   parseAdapterConfig,
-  ms
+  ms,
+  snakeCase,
+  isBuffer
 } from '../index.js';
 import fs from 'fs';
 
@@ -337,6 +339,21 @@ test('timeout', t => {
   timeout(1000).then(()=>{
     t.pass('success');
   })
+})
+
+test('snakeCase', t => {
+  var value = snakeCase('wwwTest');
+  t.deepEqual(value, 'www_test');
+})
+
+test('isBuffer', t => {
+  var value = isBuffer('wwwTest');
+  t.deepEqual(value, false);
+})
+
+test('isBuffer 2', t => {
+  var value = isBuffer(new Buffer('test'));
+  t.deepEqual(value, true);
 })
 
 test("parseAdapterConfig",t=>{
