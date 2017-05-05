@@ -1,11 +1,13 @@
 const assert = require('assert');
 const helper = require('think-helper');
+const debug = require('debug')('think-gc');
 
 //min interval, 1 hour
 const MIN_INTERVAL = 3600 * 1000;
 let intervalTimes = 0;
 let gcTypes = {};
 let timerStart = false;
+
 
 function gc(instance, interval = MIN_INTERVAL){
   assert(instance && helper.isFunction(instance.gc), 'instance.gc must be a function');
@@ -20,6 +22,7 @@ function gc(instance, interval = MIN_INTERVAL){
       let num = Math.floor(interval / MIN_INTERVAL);
       if(intervalTimes % num !== 0) return;
     }
+    debug(`run gc, type: ${instance.gcType}`);
     instance.gc();
   }
 
@@ -31,7 +34,6 @@ function gc(instance, interval = MIN_INTERVAL){
         gcTypes[type]();
       }
     }, MIN_INTERVAL);
-    timer.unref();
   }
 }
 
