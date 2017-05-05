@@ -9,7 +9,7 @@ function getMysql() {
 }
 const config = {
   user: 'root',
-  password: 'Hello@123',
+  password: '',
   database: 'think_test',
   logConnect: true,
   logSql: true,
