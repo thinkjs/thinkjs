@@ -1,5 +1,6 @@
 const path = require('path');
 const helper = require('think-helper');
+const values = require('./lib/values');
 const MysqlInstance = require('./mysql/instance');
 
 let forceNewNum = 1;
@@ -423,12 +424,10 @@ module.exports = class {
    * @return {}      []
    */
   beforeAdd(data, options, schema){
-    
+     
     //for addMany invoked
     if(helper.isArray(data)){
-      return data.map(item => {
-        return this.beforeAdd(item, options);
-      });
+      return data.map(item => this.beforeAdd(item, options));
     }
 
     let ret = {};
@@ -440,12 +439,10 @@ module.exports = class {
       let _default = fieldSchema.default;
       //default value is setted
       if(!helper.isTrueEmpty(_default)){
-        ret[field] = {default: _default};
-        if(data.hasOwnProperty(field)) {
-          ret[field].value = data[field];
-        } else {
-          ret[field].value = helper.isFunction(_default) ? _default.call(data) : _default;
-        }
+        ret[field] = {
+          value: data[field],
+          default: _default
+        };
       }else{
         if(this._isSubSchema(fieldSchema)){
           extRet[field] = this.beforeAdd(data[field] || {}, options, fieldSchema);
@@ -459,7 +456,7 @@ module.exports = class {
         };
       }
     }
-    // ret = Validator.values(ret);
+    ret = values(ret);
     if(!helper.isEmpty(extRet)){
       ret = helper.extend(ret, extRet);
     }
@@ -548,7 +545,7 @@ module.exports = class {
         }
       }
     }
-    ret = Validator.values(ret);
+    ret = values(ret);
     if(!helper.isEmpty(extRet)){
       ret = helper.extend(ret, extRet);
     }

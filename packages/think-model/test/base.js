@@ -532,7 +532,7 @@ ava.test('beforeAdd, empty', t => {
 ava.test('beforeAdd, array', t => {
   var instance = new Base('user', DBConfig);
   var data = instance.beforeAdd([{name: 1}]);
-  t.deepEqual(data, [{name: {value: 1}}]);
+  t.deepEqual(data, [{name: 1}]);
 })
 ava.test('beforeAdd, default', t => {
   var instance = new Base('user', DBConfig);
@@ -543,7 +543,7 @@ ava.test('beforeAdd, default', t => {
     }
   }
   var data = instance.beforeAdd({});
-  t.deepEqual(data, {name: {default: 'lizheming', value: 'lizheming'}});
+  t.deepEqual(data, {name: 'lizheming'});
 })
 ava.test('beforeAdd, default', t => {
   var instance = new Base('user', DBConfig);
@@ -554,7 +554,7 @@ ava.test('beforeAdd, default', t => {
     }
   }
   var data = instance.beforeAdd({name: 'suredy'});
-  t.deepEqual(data, {name: {value: 'suredy', default: 'lizheming'}});
+  t.deepEqual(data, {name: 'suredy'});
 })
 ava.test('beforeAdd, default 2', t => {
   var instance = new Base('user', DBConfig);
@@ -565,9 +565,9 @@ ava.test('beforeAdd, default 2', t => {
     }
   }
   var data = instance.beforeAdd({name: 'test'});
-  t.deepEqual(data, {name: {value: 'test'}});
+  t.deepEqual(data, {name: 'test'});
 })
-  ava.test('beforeAdd, default 4', t => {
+ava.test('beforeAdd, default 4', t => {
   var instance = new Base('user', DBConfig);
   instance.schema = {
     name: {
@@ -576,12 +576,7 @@ ava.test('beforeAdd, default 2', t => {
     }
   }
   var data = instance.beforeAdd({name: ''});
-  t.deepEqual(data, {
-    name: {
-      value: '', 
-      default: instance.schema.name.default
-    }
-  });
+  t.deepEqual(data, {name: 1});
 })
 ava.test('beforeAdd, default other field', t => {
   var instance = new Base('user', DBConfig);
@@ -595,13 +590,8 @@ ava.test('beforeAdd, default other field', t => {
   }
   var data = instance.beforeAdd({username: 'lizheming'});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming', 
-      default: instance.schema.name.default
-    }, 
-    username: {
-      value: 'lizheming'
-    }
+    name: 'lizheming', 
+    username: 'lizheming'
   });
 })
 ava.test('beforeAdd, has depth 1', t => {
@@ -622,22 +612,11 @@ ava.test('beforeAdd, has depth 1', t => {
   }
   var data = instance.beforeAdd({username: 'lizheming'});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      createAt: {
-        value: 1,
-        default: instance.schema.meta.createAt.default
-      },
-      updateAt: {
-        value: 2,
-        default: instance.schema.meta.updateAt.default
-      }
+      createAt: 1,
+      updateAt: 2
     }
   });
 })
@@ -661,22 +640,11 @@ ava.test('beforeAdd, has depth 2', t => {
     createAt: 3
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      createAt: {
-        value: 3,
-        default: instance.schema.meta.createAt.default
-      },
-      updateAt: {
-        value: 2,
-        default: instance.schema.meta.updateAt.default
-      }
+      createAt: 3,
+      updateAt: 2
     }
   });
 })
@@ -701,22 +669,11 @@ ava.test('beforeAdd, has depth 3', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      createAt: {
-        value: 3,
-        default: instance.schema.meta.createAt.default
-      },
-      updateAt: {
-        value: 4,
-        default: instance.schema.meta.updateAt.default
-      }
+      createAt: 3,
+      updateAt: 4
     }
   });
 })
@@ -737,21 +694,11 @@ ava.test('beforeAdd, has depth 3', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      createAt: {
-        value: 1,
-        default: instance.schema.meta.createAt.default
-      },
-      updateAt: {
-        value: 4
-      }
+      createAt: 1,
+      updateAt: 4
     }
   });
 })
@@ -773,21 +720,11 @@ ava.test('beforeAdd, has depth 4', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      createAt: {
-        value: 5,
-        default: instance.schema.meta.createAt.default
-      },
-      updateAt: {
-        value: 4
-      }
+      createAt: 5,
+      updateAt: 4
     }
   });
 })
@@ -812,20 +749,11 @@ ava.test('beforeAdd, has depth 5', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      createAt: {
-        value: 5
-      },
-      updateAt: {
-        value: 4
-      }
+      createAt: 5,
+      updateAt: 4
     }
   });
 })
@@ -851,23 +779,13 @@ ava.test('beforeAdd, has depth 6', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
       createAt: {
-        xxx: {
-          value: 20,
-          default: instance.schema.meta.createAt.xxx.default
-        }
+        xxx: 20
       },
-      updateAt: {
-        value: 4
-      }
+      updateAt: 4
     }
   });
 })
@@ -896,26 +814,14 @@ ava.test('beforeAdd, has depth 7', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
       createAt: {
-        xxx: {
-          value: 20,
-          default: instance.schema.meta.createAt.xxx.default
-        },
-        yyy: {
-          value: 5
-        }
+        xxx: 20,
+        yyy: 5
       },
-      updateAt: {
-        value: 4
-      }
+      updateAt: 4
     }
   });
 })
@@ -934,179 +840,166 @@ ava.test('beforeAdd, has depth 8', t => {
     updateAt: 4
   }});
   t.deepEqual(data, {
-    name: {
-      value: 'lizheming',
-      default: instance.schema.name.default
-    },
-    username: {
-      value: 'lizheming'
-    },
+    name: 'lizheming',
+    username: 'lizheming',
     meta: {
-      value: {
-        createAt: {
-          yyy: 5
-        },
-        updateAt: 4
-      }
+      createAt: {
+        yyy: 5
+      },
+      updateAt: 4
     }
   });
 })
-// ava.test('beforeUpdate, emtpy', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     name: {
-//       type: 'string',
-//       default: t => {return 1}
-//     }
-//   }
-//   var data = instance.beforeUpdate({});
-//   t.deepEqual(data, {});
-// })
-// ava.test('beforeUpdate, update true', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     name: {
-//       type: 'string',
-//       default: t => {return 1},
-//       update: true
-//     }
-//   }
-//   var data = instance.beforeUpdate({});
-//   t.deepEqual(data, {name: 1});
-// })
-// ava.test('beforeUpdate, update true', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     name: {
-//       type: 'string',
-//       default: t => {return 1},
-//       update: true
-//     }
-//   }
-//   var data = instance.beforeUpdate({name: 0});
-//   t.deepEqual(data, {name: 1});
-// })
-// ava.test('beforeUpdate, update true, readonly true', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     name: {
-//       type: 'string',
-//       default: t => {return 1},
-//       update: true,
-//       readonly: true
-//     }
-//   }
-//   var data = instance.beforeUpdate({});
-//   t.deepEqual(data, {});
-// })
-// ava.test('beforeUpdate, readonly true', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     name: {
-//       type: 'string',
-//       readonly: true
-//     }
-//   }
-//   var data = instance.beforeUpdate({name: 'lizheming'});
-//   t.deepEqual(data, {});
-// })
+ava.test('beforeUpdate, emtpy', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    name: {
+      type: 'string',
+      default: t => {return 1}
+    }
+  }
+  var data = instance.beforeUpdate({});
+  t.deepEqual(data, {});
+})
+ava.test('beforeUpdate, update true', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    name: {
+      type: 'string',
+      default: t => {return 1},
+      update: true
+    }
+  }
+  var data = instance.beforeUpdate({});
+  t.deepEqual(data, {name: 1});
+})
+ava.test('beforeUpdate, update true', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    name: {
+      type: 'string',
+      default: t => {return 1},
+      update: true
+    }
+  }
+  var data = instance.beforeUpdate({name: 0});
+  t.deepEqual(data, {name: 1});
+})
+ava.test('beforeUpdate, update true, readonly true', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    name: {
+      type: 'string',
+      default: t => {return 1},
+      update: true,
+      readonly: true
+    }
+  }
+  var data = instance.beforeUpdate({});
+  t.deepEqual(data, {});
+})
+ava.test('beforeUpdate, readonly true', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    name: {
+      type: 'string',
+      readonly: true
+    }
+  }
+  var data = instance.beforeUpdate({name: 'lizheming'});
+  t.deepEqual(data, {});
+})
 
-// ava.test('beforeUpdate, has depth 1', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     meta: {
-//       createAt: {
-//         default: function () { return 111 },
-//         update: true
-//       }
-//     }
-//   }
-//   var data = instance.beforeUpdate({name: 'lizheming'});
-//   t.deepEqual(data, { name: 'lizheming', meta: { createAt: 111 } });
-// });
-// ava.test('beforeUpdate, has depth 2', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     meta: {
-//       createAt: {
-//         default: function () { return 111 },
-//         readonly: true
-//       }
-//     }
-//   }
-//   var data = instance.beforeUpdate({
-//     name: 'lizheming', 
-//     meta: {
-//       createAt: 444
-//     }
-//   });
-//   t.deepEqual(data, { name: 'lizheming' });
-// });
-// ava.test('beforeUpdate, has depth 3', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     meta: {
-//       createAt: {
-//         default: function () { return 111 },
-//         readonly: true
-//       },
-//       updateAt: {
-//         default: function () { return 222 },
-//         update: true
-//       }
-//     }
-//   }
-//   var data = instance.beforeUpdate({
-//     name: 'lizheming', 
-//     meta: {
-//       createAt: 444
-//     }
-//   });
-//   t.deepEqual(data, { name: 'lizheming', meta: {updateAt: 222} });
-// });
+ava.test('beforeUpdate, has depth 1', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    meta: {
+      createAt: {
+        default: function () { return 111 },
+        update: true
+      }
+    }
+  }
+  var data = instance.beforeUpdate({name: 'lizheming'});
+  t.deepEqual(data, { name: 'lizheming', meta: { createAt: 111 } });
+});
+ava.test('beforeUpdate, has depth 2', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    meta: {
+      createAt: {
+        default: function () { return 111 },
+        readonly: true
+      }
+    }
+  }
+  var data = instance.beforeUpdate({
+    name: 'lizheming', 
+    meta: {
+      createAt: 444
+    }
+  });
+  t.deepEqual(data, { name: 'lizheming' });
+});
+ava.test('beforeUpdate, has depth 3', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    meta: {
+      createAt: {
+        default: function () { return 111 },
+        readonly: true
+      },
+      updateAt: {
+        default: function () { return 222 },
+        update: true
+      }
+    }
+  }
+  var data = instance.beforeUpdate({
+    name: 'lizheming', 
+    meta: {
+      createAt: 444
+    }
+  });
+  t.deepEqual(data, { name: 'lizheming', meta: {updateAt: 222} });
+});
 
-// ava.test('beforeUpdate, has depth 4', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.schema = {
-//     meta: {
-//       createAt: {
-//         default: function () { return 111 },
-//         readonly: true
-//       },
-//       updateAt: {
-//         default: function () { return 222 },
-//         update: true
-//       }
-//     }
-//   }
-//   var data = instance.beforeUpdate({
-//     name: 'lizheming', 
-//     meta: {
-//       createAt: 444,
-//       updateAt: 555
-//     }
-//   });
-//   t.deepEqual(data, { name: 'lizheming', meta: {updateAt: 555} });
-// });
-
-// ava.test('beforeUpdate, readonlyFields', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.readonlyFields = ['name']
-//   var data = instance.beforeUpdate({name: 'lizheming'});
-//   t.deepEqual(data, {});
-// })
-// ava.test('close', t => {
-//   var instance = new Base('user', DBConfig);
-//   instance.close();
-// })
-// ava.test('close, has _db', t => {
-//   var instance = new Base('user', DBConfig);
-//   var flag = false;
-//   instance._db = {
-//     close: t => {
-//       flag = true;
-//     }
-//   }
-//   instance.close();
-//   t.is(flag, true);
-// })
+ava.test('beforeUpdate, has depth 4', t => {
+  var instance = new Base('user', DBConfig);
+  instance.schema = {
+    meta: {
+      createAt: {
+        default: function () { return 111 },
+        readonly: true
+      },
+      updateAt: {
+        default: function () { return 222 },
+        update: true
+      }
+    }
+  }
+  var data = instance.beforeUpdate({
+    name: 'lizheming', 
+    meta: {
+      createAt: 444,
+      updateAt: 555
+    }
+  });
+  t.deepEqual(data, { name: 'lizheming', meta: {updateAt: 555} });
+});
+ava.test('close', t => {
+  var instance = new Base('user', DBConfig);
+  instance.close();
+  t.pass();
+})
+ava.test('close, has _db', t => {
+  var instance = new Base('user', DBConfig);
+  var flag = false;
+  instance._db = {
+    close: t => {
+      flag = true;
+    }
+  }
+  instance.close();
+  t.is(flag, true);
+})
