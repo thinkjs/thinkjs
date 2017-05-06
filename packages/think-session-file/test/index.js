@@ -82,7 +82,7 @@ test.serial('1. set and get session data without maxAge', t => {
   const cookieName = fileList[0];
   return new Promise(async (resolve, reject) => {
     const options = {
-      sessionPath: '/session/absolute/path',
+      sessionPath: sessionPath,
       cookie: cookieName,
       gcInterval: 3600 * 1000
     }
@@ -128,9 +128,9 @@ test.serial('2. set and get session data with maxAge', t => {
   const cookieName = fileList[1];
   return new Promise(async (resolve, reject) => {
     const options = {
-      sessionPath: '/session/absolute/path',
+      sessionPath: sessionPath,
       cookie: cookieName,
-      maxAge: 3600 * 1000,
+      maxAge: '1d',
       gcInterval: 3600 * 1000
     }
     const param = mockHelper();
@@ -167,7 +167,7 @@ test.serial('3. set and get session data with autoUpdate', t => {
   const cookieName = fileList[2];
   return new Promise(async (resolve, reject) => {
     const options = {
-      sessionPath: '/session/absolute/path',
+      sessionPath: sessionPath,
       cookie: cookieName,
       autoUpdate: true,
       gcInterval: 3600 * 1000
@@ -205,7 +205,7 @@ test.serial('4. set and gc when content empty', t => {
   const cookieName = fileList[3];
   return new Promise(async (resolve, reject) => {
     const options = {
-      sessionPath: '/session/absolute/path',
+      sessionPath: sessionPath,
       cookie: cookieName,
       autoUpdate: true,
       maxAge: 3600 * 1000,

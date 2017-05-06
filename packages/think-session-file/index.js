@@ -65,7 +65,7 @@ class FileSession {
         return this.fileStore.delete(this.options.cookie);
       }else if(this.status === 1){
         return this.fileStore.set(this.options.cookie, JSON.stringify({
-          expires: Date.now() + this.options.maxAge,
+          expires: Date.now() + helper.ms(this.options.maxAge || 0),
           data: this.data
         }));
       }
