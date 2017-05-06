@@ -5,7 +5,8 @@ module.exports = function (opts = {}) {
     json: [],
     form: [],
     text: [],
-    multipart: []
+    multipart: [],
+    xml: []
   }, opts.extendTypes);
 
   // default json types
@@ -30,6 +31,12 @@ module.exports = function (opts = {}) {
   const multipartTypes = [
     'multipart/form-data',
     ...extendTypes.multipart
+  ];
+
+  // default xml types
+  const xmlTypes = [
+    'text/xml',
+    ...extendTypes.xml
   ];
 
   return function (ctx, next) {
@@ -58,6 +65,9 @@ module.exports = function (opts = {}) {
     }
     if (ctx.request.is(multipartTypes)) {
       return parse.multipart.before(ctx);
+    }
+    if (ctx.request.is(xmlTypes)) {
+      return parse.xml.before(ctx);
     }
 
     return Promise.resolve({});
