@@ -3,11 +3,12 @@ const os = require('os');
 const path = require('path');
 const helper = require('think-helper');
 const Busboy = require('busboy');
+const fs_unlink = helper.promisify(fs.unlink, fs);
+const FILE_PATH = Symbol('filepath');
 
-const uploadDir = `${os.tmpdir()}${path.sep}thinkjs${path.sep}upload`;
-
-exports.before = (ctx) => {
+exports.before = ctx => {
   const req = ctx.req;
+  const uploadDir = `${os.tmpdir()}${path.sep}thinkjs${path.sep}upload`;
   helper.mkdir(uploadDir);
 
   const multipart = new Promise((resolve, reject) => {
@@ -24,10 +25,10 @@ exports.before = (ctx) => {
           size: stream.bytesWritten
         });
       });
-
       stream.on('error', reject);
-
       file.pipe(stream);
+
+      ctx.state[FILE_PATH] = filepath;
     });
 
     req.pipe(busboy);
@@ -36,6 +37,6 @@ exports.before = (ctx) => {
   return multipart;
 };
 
-exports.after = () => {
-  return helper.rmdir(uploadDir);
+exports.after = ctx => {
+  return fs_unlink(ctx.state[FILE_PATH]);
 };
