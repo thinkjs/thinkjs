@@ -38,6 +38,7 @@
     "babel-eslint": "^7.2.3",
     "babel-preset-think-node": "^1.0.1",
     "eslint": "^3.19.0",
+    "muk": "^0.5.3",
     "nyc": "^10.3.0"
   },
   "ava": {
