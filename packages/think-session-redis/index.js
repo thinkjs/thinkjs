@@ -37,7 +37,7 @@ class RedisSession {
     this.initPromise = this.redis.get(this.options.cookie).then(content => {
       content = JSON.parse(content);
       if(helper.isEmpty(content)) return;
-      this.data = content || {};
+      this.data = content;
     }).catch(err => debug(err));
     this[autoSave]();
     return this.initPromise;
@@ -50,7 +50,8 @@ class RedisSession {
       if(this.status === -1){
         return this.redis.delete(this.options.cookie);
       }else if(this.status === 1){
-        return this.redis.set(this.options.cookie, JSON.stringify(this.data), this.options.maxAge);
+        const maxAge = this.options.maxAge;
+        return this.redis.set(this.options.cookie, JSON.stringify(this.data), maxAge? helper.ms(maxAge) : undefined);
       }
     });
   }
