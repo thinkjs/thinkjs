@@ -11,7 +11,7 @@ function mockRequire() {
 function mockDebug(param = []) {
   const debug1 = function(str) {
     
-    return function(err) {console.log(err.message);
+    return function(err) {
       param.push(err);
     }
   }
@@ -25,7 +25,7 @@ function mockIORedis() {
       }
     }
     get(key) {
-      return new Promise((resolve, reject) => {console.log('get', redisData);
+      return new Promise((resolve, reject) => {
         resolve(redisData[key]);
       });
     }

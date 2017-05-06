@@ -35,13 +35,10 @@ class RedisSession {
       return this.initPromise = Promise.resolve();
     }
     this.initPromise = this.redis.get(this.options.cookie).then(content => {
-      console.log('content', content, this.options.cookie);
-      content = JSON.parse(content);console.log(helper.isEmpty({}))
+      content = JSON.parse(content);
       if(helper.isEmpty(content)) return;
       this.data = content || {};
-    }).catch(err => {
-      debug(err);
-    });
+    }).catch(err => debug(err));
     this[autoSave]();
     return this.initPromise;
   }
