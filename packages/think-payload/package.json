@@ -7,7 +7,8 @@
     "formidable": "^1.1.1",
     "inflation": "^2.0.0",
     "raw-body": "^2.2.0",
-    "think-helper": "^1.0.5"
+    "think-helper": "^1.0.5",
+    "xml2json": "^0.11.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",
