@@ -4,7 +4,7 @@
   "description": "Payload for ThinkJS 3.x",
   "main": "index.js",
   "dependencies": {
-    "busboy": "^0.2.14",
+    "formidable": "^1.1.1",
     "inflation": "^2.0.0",
     "raw-body": "^2.2.0",
     "think-helper": "^1.0.5"

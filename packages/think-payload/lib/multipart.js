@@ -1,42 +1,29 @@
 const fs = require('fs');
-const os = require('os');
-const path = require('path');
 const helper = require('think-helper');
-const Busboy = require('busboy');
+const formidable = require('formidable');
 const fs_unlink = helper.promisify(fs.unlink, fs);
-const FILE_PATH = Symbol('filepath');
 
 exports.before = ctx => {
   const req = ctx.req;
-  const uploadDir = `${os.tmpdir()}${path.sep}thinkjs${path.sep}upload`;
-  helper.mkdir(uploadDir);
+  const form = new formidable.IncomingForm();
 
-  const multipart = new Promise((resolve, reject) => {
-    const busboy = new Busboy({ headers: req.headers });
-    busboy.on('file', (fieldname, file, filename) => {
-      const filepath = `${uploadDir}${path.sep}${helper.uuid()}${path.extname(filename)}`;
-      const stream = fs.createWriteStream(filepath);
+  return new Promise((resolve, reject) => {
+    form.parse(req, function(err, fields, files) {
+      if (err) return reject(err);
 
-      stream.on('finish', () => {
-        resolve({
-          fieldName: fieldname,
-          originalFilename: filename,
-          path: filepath,
-          size: stream.bytesWritten
-        });
+      resolve({
+        post: fields,
+        file: files
       });
-      stream.on('error', reject);
-      file.pipe(stream);
-
-      ctx.state[FILE_PATH] = filepath;
     });
-
-    req.pipe(busboy);
   });
-
-  return multipart;
 };
 
 exports.after = ctx => {
-  return fs_unlink(ctx.state[FILE_PATH]);
+  const files = ctx.request.body.file;
+  const unlinks = Object.keys(files).map(key => {
+    return fs_unlink(files[key].path);
+  });
+
+  return Promise.all(unlinks);
 };
