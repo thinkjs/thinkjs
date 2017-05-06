@@ -169,7 +169,8 @@ test.serial('4. set and get session data when JSON.parse(content) returns error'
     mockDebug(debugParam);
     const RedisSession = mockRequire();
     const options = {
-      cookie: cookieName
+      cookie: cookieName,
+      maxAge: '1d'
     }
     const ctx = {
       res: {
