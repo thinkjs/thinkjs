@@ -7,12 +7,12 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/index.js ",
-    "coverage": "nyc report --reporter=html"
+    "test": "eslint index.js && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
   },
   "ava": {
-    "require": [
-      "babel-core/register"
+    "files": [
+      "test/*.js"
     ]
   },
   "contributors": [
@@ -23,7 +23,7 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "think-helper": "^1.0.0",
+    "think-helper": "^1.0.6",
     "think-ms": "^1.0.1"
   },
   "devDependencies": {
@@ -32,10 +32,7 @@
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.12.0",
     "eslint": "2.8.0",
-    "mkdirp": "^0.5.1",
-    "mock-require": "^2.0.1",
-    "nyc": "^7.0.0",
-    "rimraf": "^2.6.1"
+    "nyc": "^7.0.0"
   },
   "keywords": [],
   "repository": {

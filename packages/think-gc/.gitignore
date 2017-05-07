@@ -35,3 +35,15 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# test output
+test/out
+
+# MAC
+.DS_Store
+
+# Sublime config
+.editorconfig
+
+
+coverage.lcov
