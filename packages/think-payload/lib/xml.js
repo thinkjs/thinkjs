@@ -1,6 +1,9 @@
 const text = require('./text.js');
-const parser = require('xml2json');
+const helper = require('think-helper');
+const parseString = require('xml2js').parseString;
+const parser = helper.promisify(parseString, parseString);
+
 
 exports.before = ctx => {
-  return text.before(ctx).then(parser.toJson).then(JSON.parse);
+  return text.before(ctx).then(parser);
 };

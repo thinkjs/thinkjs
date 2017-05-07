@@ -80,12 +80,11 @@ test.cb('should be able to receive xml type requests', t => {
   request(app.callback())
   .post('/')
   .set('Content-Type', 'text/xml')
-  .send("<parent parent_property='bar'><child child_property='foo'></child></parent>")
+  .send("<root>Hello Berwin!</root>")
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
-    t.is(res.body.parent.parent_property, 'bar');
-    t.is(res.body.parent.child.child_property, 'foo');
+    t.is(res.body.root, 'Hello Berwin!');
     t.end();
   });
 });
