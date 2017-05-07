@@ -2,11 +2,10 @@
 * @Author: lushijie
 * @Date:   2017-05-05 15:29:11
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-07 13:44:26
+* @Last Modified time: 2017-05-07 13:52:49
 */
 import test from 'ava';
 import helper from 'think-helper';
-import mockery from 'mockery';
 import gc from '..';
 let relay = 20; // setInterval is not precise
 let RESULT = [];
