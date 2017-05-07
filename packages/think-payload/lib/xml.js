@@ -4,6 +4,4 @@ const parseString = require('xml2js').parseString;
 const parser = helper.promisify(parseString, parseString);
 
 
-exports.before = ctx => {
-  return text.before(ctx).then(parser);
-};
+exports.before = ctx => text.before(ctx).then(parser);
