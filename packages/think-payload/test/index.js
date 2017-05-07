@@ -76,6 +76,35 @@ test.cb('should be able to receive multipart type requests', t => {
   });
 });
 
+test.cb('should be able to receive multi file', t => {
+  request(app.callback())
+  .post('/')
+  .attach('a', path.join(__dirname, '../index.js'))
+  .attach('b', path.join(__dirname, '../package.json'))
+  .expect(200)
+  .end((err, res) => {
+    if (err) throw err;
+    t.is(res.body.file.a.type, 'application/javascript');
+    t.is(res.body.file.b.type, 'application/json');
+    t.end();
+  });
+});
+
+test.cb('should be able to receive both file and text', t => {
+  request(app.callback())
+  .post('/')
+  .attach('xxfile', path.join(__dirname, '../index.js'))
+  .field('text', 'test text')
+  .expect(200)
+  .end((err, res) => {
+    if (err) throw err;
+    t.is(res.body.post.text, 'test text');
+    t.is(res.body.file.xxfile.name, 'index.js');
+    t.is(res.body.file.xxfile.type, 'application/javascript');
+    t.end();
+  });
+});
+
 test.cb('should be able to receive xml type requests', t => {
   request(app.callback())
   .post('/')
