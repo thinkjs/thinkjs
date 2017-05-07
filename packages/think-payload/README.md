@@ -31,7 +31,8 @@ console.log(this.ctx.request.body); // {}
 ```
 
 ## multipart/form-data type in Controller
-```
+
+```javascript
 console.log(thsi.ctx.request.body);
 /*
   {
