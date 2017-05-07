@@ -7,8 +7,7 @@ script:
 services:
   - mysql
 before_install:
-  - mysql -e
-  '
+  - mysql -e "
     CREATE DATABASE think_test;\n
     USE think_test;\n
     CREATE TABLE `think_test`.`books` (
@@ -16,7 +15,6 @@ before_install:
         `name` varchar(255) NOT NULL DEFAULT '',
         `author` varchar(255) NOT NULL DEFAULT '',
         PRIMARY KEY (`id`)
-    );\n
-  '
+    );\n"
 after_success:
     - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
