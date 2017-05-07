@@ -2,16 +2,15 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-25 09:20:51
+* @Last Modified time: 2017-05-07 13:52:15
 */
+import test from 'ava';
+import mockery from 'mockery';
+import helper from 'think-helper';
 
 let RESULT = {};
 const next = () => Promise.resolve();
 let params = ['module', 'controller', 'action'];
-
-const test = require('ava');
-const mockery = require('mockery');
-const helper = require('think-helper');
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
