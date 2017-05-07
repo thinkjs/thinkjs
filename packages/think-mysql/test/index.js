@@ -7,9 +7,9 @@ const mysql = require('../index.js');
 function getMysql() {
   return mock.reRequire('../index');
 }
-const config = {
+let config = {
   user: 'root',
-  password: '',
+  password: 'Hello@123',
   database: 'think_test',
   logConnect: true,
   logSql: true,
@@ -21,6 +21,26 @@ test.afterEach.always(_ => {
 });
 
 test('constructor function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+  let conn = await instance.getConnection();
+  t.is(helper.isEmpty(instance.config),false);
+  t.is(helper.isEmpty(instance.pool),false);
+  t.is(helper.isEmpty(conn),false);
+});
+
+test('constructor function', async t => {
+  config.socketPath = '/tmp/mysql.sock';
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+  let conn = await instance.getConnection();
+  t.is(helper.isEmpty(instance.config),false);
+  t.is(helper.isEmpty(instance.pool),false);
+  t.is(helper.isEmpty(conn),false);
+});
+
+test('constructor function', async t => {
+  config.logConnect = false;
   const mysql = getMysql();
   let instance = mysql.getInstance(config);
   let conn = await instance.getConnection();
