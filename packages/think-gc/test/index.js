@@ -2,13 +2,13 @@
 * @Author: lushijie
 * @Date:   2017-05-05 15:29:11
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-07 13:35:38
+* @Last Modified time: 2017-05-07 13:44:26
 */
 import test from 'ava';
 import helper from 'think-helper';
 import mockery from 'mockery';
 import gc from '..';
-let relay = 20;
+let relay = 20; // setInterval is not precise
 let RESULT = [];
 
 function caclCount(array, key) {
@@ -33,8 +33,8 @@ test.serial.afterEach(t => {
 });
 
 test.cb.serial('interval is function', t => {
-  gc(instance('think-cache-file'), function() {return false});
-  gc(instance('think-session-file'), function() {return true});
+  gc(instance('think-cache-file'), function() {return false}, 1000);
+  gc(instance('think-session-file'), function() {return true}, 1000);
   setTimeout(function() {
     t.is(caclCount(RESULT, 'think-session-file'), 2);
     t.end();
@@ -42,7 +42,7 @@ test.cb.serial('interval is function', t => {
 });
 
 test.cb.serial('interval is default',  t => {
-  gc(instance('think-cache-file2'), 2 * 1000);
+  gc(instance('think-cache-file2'), 2 * 1000, 1000);
   gc(instance('think-cache-file2'));
   setTimeout(function() {
     let res1= caclCount(RESULT, 'think-cache-file2') == 2;
