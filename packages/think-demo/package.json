@@ -29,6 +29,7 @@
     "think-logger": "^1.0.0",
     "think-logic": "thinkjs/think-logic",
     "think-meta": "thinkjs/think-meta",
+    "think-payload": "^1.0.0",
     "think-router": "thinkjs/think-router",
     "think-session-cookie": "thinkjs/think-session-cookie",
     "think-session-file": "thinkjs/think-session-file",
