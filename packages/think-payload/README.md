@@ -34,6 +34,7 @@ console.log(this.ctx.request.body); // {}
 
 ```javascript
 console.log(thsi.ctx.request.body);
+
 /*
   {
     post: {
