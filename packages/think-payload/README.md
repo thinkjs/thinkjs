@@ -27,7 +27,7 @@ module.exports = [{
 ## Data in Controller
 
 ```javascript
-console.log(this.ctx.request.body); // {}
+console.log(this.ctx.request.body); // {...}
 ```
 
 ## multipart/form-data type in Controller
