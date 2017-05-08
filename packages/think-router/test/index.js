@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-07 13:52:15
+* @Last Modified time: 2017-05-08 12:03:33
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -210,6 +210,7 @@ test.serial.cb('options with subdomain is an Object', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list',
     subdomains: function() {
+      // multiple subdomains to reflect
       return ['m1', 'm2'];
     }
   });
@@ -220,7 +221,7 @@ test.serial.cb('options with subdomain is an Object', t => {
         match: /thinkjs\/admin\/.*/,
         rules: [{
           match: /thinkjs\/admin\/article\/list/,
-          path: 'admin/article/list/',
+          path: 'thinkjs/admin/article',
           method: 'get',
           query: []
         }]
@@ -229,13 +230,18 @@ test.serial.cb('options with subdomain is an Object', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT,{
+      module: 'thinkjs',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
 
 test.serial.cb('options with subdomain is an Array', t => {
   let options = {
+    // domain name equal module name
     subdomain: ['thinkjs']
   };
   let ctx = helper.extend({}, defaultCtx, {
@@ -251,7 +257,7 @@ test.serial.cb('options with subdomain is an Array', t => {
         match: /thinkjs\/admin\/.*/,
         rules: [{
           match: /thinkjs\/admin\/article\/list/,
-          path: 'admin/article/list/',
+          path: 'thinkjs/admin/article',
           method: 'get',
           query: []
         }]
@@ -260,7 +266,11 @@ test.serial.cb('options with subdomain is an Array', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: 'thinkjs',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
