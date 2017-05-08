@@ -140,3 +140,53 @@ test('trans function', async t => {
   });
   t.deepEqual([],result);
 });
+
+test('transaction function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+  let result = null;
+  await instance.transaction(async(conn) => {
+    result = instance.execute({
+      sql: "insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+      values: ['0-David']
+    }, conn);
+    result = await instance.execute({
+      sql: "insert into `think_test`.`books` (`name`, `author`) values ('this is a trans test', ?)",
+      values: [`${result.insertId}-David`]
+    }, conn);
+    await instance.execute({
+      sql: "insert into `think_test`.`books` (`name`, `author`) values ('this is a trans test', ?)",
+      values: [`${result.insertId}-David`]
+    }, conn);
+  });
+  result = await instance.query({
+    sql: 'SELECT * FROM `books` WHERE `author` = ?',
+    values: [`${result.insertId}-David`]
+  });
+  t.is(result[0].name, 'this is a trans test');
+});
+
+test('transaction function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+  let result = null;
+  try{
+    await instance.transaction(async(conn) => {
+      result = instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+        values: ['0-David']
+      }, conn);
+      result = await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('this is a trans test', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+      await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `autor`) values ('this is a trans test', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+    });
+  }catch (e){
+    result = e;
+  }
+  t.is(result instanceof Error,true);
+});
