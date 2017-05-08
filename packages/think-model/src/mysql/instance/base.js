@@ -140,7 +140,7 @@ module.exports = class extends Parser {
       sql = options;
     }
     if (!helper.isEmpty(cache) && this.config.cache.on) {
-      let key = cache.key || helper.md5(sql);
+      // let key = cache.key || helper.md5(sql);
       return this.query(sql);
       // return think.cache(key, () => this.query(sql), cache);
     }

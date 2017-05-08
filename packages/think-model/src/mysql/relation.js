@@ -41,6 +41,16 @@ class Relation extends Base {
     this._relationName = true;
   }
   /**
+   * find relation model
+   * @param {String} name []
+   */
+  findModel(name) {
+    if(!name || !helper.isObject(this.config.models)) {
+      return this;
+    }
+    return this.config.models[name];
+  }
+  /**
    * set relation
    * @param {String} name []
    */
@@ -57,13 +67,13 @@ class Relation extends Base {
       return this;
     }
 
-    if(think.isBoolean(name)){
+    if(helper.isBoolean(name)){
       this._relationName = name;
       return this;
     }
 
     //enable relation
-    if (think.isString(name)) {
+    if (helper.isString(name)) {
       name = name.split(/\s*,\s*/);
     }
 
@@ -118,7 +128,7 @@ class Relation extends Base {
       //get relation model options
       let opts = helper.extend({
         name: key,
-        type: think.model.HAS_ONE,
+        type: HAS_ONE,
         key: pk,
         fKey: this.name + '_id',
         relation: true
@@ -131,13 +141,14 @@ class Relation extends Base {
         return;
       }
 
-      let modelOpts = helper.extend({}, {
-        cache: options.cache
-      });
-      //remove cache key
-      if(modelOpts.cache && modelOpts.cache.key){
-        delete modelOpts.cache.key;
-      }
+      // let modelOpts = helper.extend({}, {
+      //   cache: options.cache
+      // });
+      // //remove cache key
+      // if(modelOpts.cache && modelOpts.cache.key){
+      //   delete modelOpts.cache.key;
+      // }
+      let modelOpts = {};
 
       ['where', 'field', 'order', 'limit', 'page'].forEach(optItem => {
         if(helper.isFunction(item[optItem])){
@@ -147,7 +158,7 @@ class Relation extends Base {
         }
       });
       //get relation model instance
-      let model = this.model(item.model || key).options(modelOpts);
+      let model = this.findModel(item.model || key).options(modelOpts);
 
       //set relation to relate model
       if(model.setRelation){
@@ -155,14 +166,14 @@ class Relation extends Base {
       }
 
       opts.model = model;
-      
+
       switch(item.type){
         case BELONG_TO:
           // if(item.model) {
           //   delete item.model;
           // }
           opts = helper.extend(opts, {
-            key: opts.model.modelName + '_id',
+            key: opts.model.getModelName() + '_id',
             fKey: 'id' 
           }, item);
           opts.model = model; //get ref back
@@ -239,9 +250,9 @@ class Relation extends Base {
      table = this.getRelationTableName(mapOpts.model);
     }
 
-    let table1 = mapOpts.model.tableName;
+    let table1 = mapOpts.model.getTableName();
     let where1 = this.db().parseWhere(where);
-    let rkey = mapOpts.rfKey || (mapOpts.model.modelName + '_id');
+    let rkey = mapOpts.rfKey || (mapOpts.model.getModelName() + '_id');
     let where2 = mapOpts.where ? (' AND ' + this.db().parseWhere(mapOpts.where).trim().slice(6)) : '';
     sql = this.parseSql(sql, field, mapOpts.fKey, table, table1, where1, rkey, pk, where2);
     let mapData = await this.db().select(sql, options.cache);
@@ -257,7 +268,7 @@ class Relation extends Base {
       this.tablePrefix,
       this.tableName || this.name,
       '_',
-      model.modelName
+      model.getModelName()
     ].join('');
     return table.toLowerCase();
   }
@@ -267,8 +278,8 @@ class Relation extends Base {
    * @return {}       []
    */
   getRelationModel(model){
-    let name = (this.tableName || this.name) + '_' + model.modelName;
-    return this.model(name);
+    let name = (this.tableName || this.name) + '_' + model.getModelName();
+    return this.findModel(name);
   }
   /**
    * parese relation where
@@ -386,7 +397,7 @@ class Relation extends Base {
         }
         opts.data = mapData;
       }
-      opts.model = this.model(item.model || key).where(item.where);
+      opts.model = this.findModel(item.model || key).where(item.where);
       switch(item.type){
         case BELONG_TO:
           return this._postBelongsToRelation(data, opts);
@@ -482,8 +493,8 @@ class Relation extends Base {
   async _postManyToManyRelation(data, mapOpts){
     let model = mapOpts.model;
     await model.getSchema();
-    let rfKey = mapOpts.rfKey || (model.modelName.toLowerCase() + '_id');
-    let relationModel = mapOpts.rModel ? this.model(mapOpts.rModel) : this.getRelationModel(model);
+    let rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
+    let relationModel = mapOpts.rModel ? this.findModel(mapOpts.rModel) : this.getRelationModel(model);
 
     let type = mapOpts.postType;
     if (type === 'DELETE' || type === 'UPDATE') {
