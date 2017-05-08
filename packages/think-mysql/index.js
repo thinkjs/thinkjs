@@ -166,7 +166,7 @@ class ThinkMysql {
           if(connection.transaction !== TRANSACTION.start) {
             this.releaseConnection(connection);
             return;
-          };
+          }
         }
         connection.transaction = sqlOptions.transaction;
       }
