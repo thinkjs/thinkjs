@@ -1,7 +1,6 @@
 import test from 'ava';
 const helper = require('think-helper');
 const mock = require('mock-require');
-const mysql = require('../index.js');
 
 
 function getMysql() {
@@ -66,4 +65,37 @@ test('query function', async t => {
   });
 
   t.is(books[0].name,'thinkjs best practice');
+});
+
+test('query function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+
+  await instance.execute(
+    "insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', 'David')"
+  );
+
+  let books = await instance.query({
+    sql:'SELECT * FROM `books` WHERE `author` = ?',
+    timeout: 5000,
+    values: ['David']
+  });
+
+  t.is(books[0].name,'thinkjs best practice');
+});
+
+test('close function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+
+  await instance.close();
+  t.is(instance.pool._closed,true);
+});
+
+test('close function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+
+  await instance.close();
+  t.is(instance.pool._closed,true);
 });
