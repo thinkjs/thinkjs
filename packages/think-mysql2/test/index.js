@@ -191,7 +191,7 @@ test('transaction function', async t => {
   t.is(result instanceof Error,true);
 });
 
-test('trans function', async t => {
+test('transaction function', async t => {
   const mysql = getMysql();
   let instance = mysql.getInstance(config);
 
