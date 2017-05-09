@@ -190,3 +190,83 @@ test('transaction function', async t => {
   }
   t.is(result instanceof Error,true);
 });
+
+test('trans function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+
+  let conn = instance.getConnection();
+  await instance.startTrans(conn);
+  await instance.startTrans(conn);
+  let result = await instance.execute({
+    sql:"insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+    values:['0-David']
+  },conn);
+  result = await instance.execute({
+    sql:"insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+    values:[`${result.insertId}-David`]
+  },conn);
+  await instance.execute({
+    sql:"insert into `think_test`.`books` (`name`, `author`) values ('this is a trans test', ?)",
+    values:[`${result.insertId}-David`]
+  },conn);
+  await instance.commit(conn);
+
+  result = await instance.query({
+    sql:'SELECT * FROM `books` WHERE `author` = ?',
+    values:[`${result.insertId}-David`]
+  });
+  t.is(result[0].name,'this is a trans test');
+});
+
+test('transaction function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+  let result = null;
+  try{
+    await instance.transaction(async(conn) => {
+      result = instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+        values: ['0-David']
+      }, conn);
+      result = await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('this is a trans test', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+      conn.transaction = 2;
+      await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `autor`) values ('this is a trans test', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+    });
+  }catch (e){
+    result = e;
+  }
+  t.is(result instanceof Error,true);
+});
+
+test('transaction function', async t => {
+  const mysql = getMysql();
+  let instance = mysql.getInstance(config);
+  let result = null;
+  try{
+    await instance.transaction(async(conn) => {
+      conn.transaction = 3;
+      result = instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+        values: ['0-David']
+      }, conn);
+      result = await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('this is a trans test', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+      await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `autor`) values ('this is a trans test', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+    });
+  }catch (e){
+    result = e;
+  }
+  t.is(result instanceof Error,true);
+});
