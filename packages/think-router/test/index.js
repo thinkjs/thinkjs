@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-09 11:40:38
+* @Last Modified time: 2017-05-09 13:59:00
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -461,7 +461,7 @@ test.serial.cb('rules match with query name is string', t => {
         rules: [{
           match: /^\/admin\/article\/list\/(.*)/,
           path: 'admin/article/list',
-          method: 'rest',
+          method: 'get',
           query: [{ name: 'id' }]
         }]
       }
