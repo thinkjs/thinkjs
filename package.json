@@ -45,12 +45,18 @@
     "think-cache": "^1.0.0",
     "think-cluster": "thinkjs/think-cluster",
     "think-config": "^1.0.0",
+    "think-controller": "^1.0.1",
+    "think-crontab": "thinkjs/think-crontab",
     "think-helper": "^1.0.0",
     "think-loader": "thinkjs/think-loader",
     "think-logger3": "^1.0.0",
-    "think-pm2": "thinkjs/think-pm2",
-    "think-session": "thinkjs/think-session",
-    "think-crontab": "thinkjs/think-crontab"
+    "think-logic": "^1.0.0",
+    "think-meta": "^1.0.1",
+    "think-pm2": "^1.0.0",
+    "think-resource": "^1.0.0",
+    "think-router": "^1.0.0",
+    "think-session": "^1.0.0",
+    "think-trace": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.0",
