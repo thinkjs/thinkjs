@@ -33,7 +33,7 @@ const defaultConfig = {
 
 #### Custom usage
 ```js
-  import ThinkMysql from 'think-mysql';
+  import mysql from 'think-mysql';
   let instance = mysql.getInstance(config);
   await instance.execute({
     sql:"insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
@@ -51,7 +51,7 @@ const defaultConfig = {
 #### Transactions
 
 ```js
-  import ThinkMysql from 'think-mysql';
+  import mysql from 'think-mysql';
   let instance = mysql.getInstance(config);
   let result = null;
   try{

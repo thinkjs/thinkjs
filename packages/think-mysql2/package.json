@@ -7,7 +7,7 @@
     "email": "362965772@qq.com"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/index.js ",
+    "test": "eslint index.js && nyc ava test/",
     "coverage": "nyc report --reporter=html"
   },
   "ava": {
