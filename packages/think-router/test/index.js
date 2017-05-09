@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-09 10:33:27
+* @Last Modified time: 2017-05-09 11:40:38
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -44,6 +44,7 @@ let defaultOptions = {
   subdomain: {}, //subdomain
   denyModules: [] //deny module, enable in multi module mode
 };
+
 let defaultCtx = {
   path: '/admin/article/list',
   module: '',
@@ -64,6 +65,7 @@ let defaultCtx = {
   },
   status: 200
 };
+
 let defaultApp = {
   modules: ['admin', 'home'],
   controllers: {
@@ -85,6 +87,7 @@ let defaultApp = {
     }
   }
 };
+
 let defaultOutput = {
   module: 'admin',
   controller: 'article',
@@ -420,15 +423,15 @@ test.serial.cb('rules method equal rest', t => {
 test.serial.cb('rules match with query name is number', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
-    path: '/admin/article/list/123',
+    path: '/admin/article/list/detail',
   });
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
         match: /^\/admin/,
         rules: [{
-          match: /^\/admin\/article\/list\/(\d+)/,
-          path: 'admin/article/list/:1',
+          match: /^\/admin\/article\/list\/(\w+)/,
+          path: 'admin/article/:1',
           method: 'get',
           query: [{ name: 0 }]
         }]
@@ -437,7 +440,11 @@ test.serial.cb('rules match with query name is number', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'detail'
+    });
     t.end();
   });
 });
@@ -445,7 +452,7 @@ test.serial.cb('rules match with query name is number', t => {
 test.serial.cb('rules match with query name is string', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
-    path: '/admin/article/list/test',
+    path: '/admin/article/list/123456',
   });
   let app = helper.extend({}, defaultApp, {
     routers: {
@@ -455,7 +462,7 @@ test.serial.cb('rules match with query name is string', t => {
           match: /^\/admin\/article\/list\/(.*)/,
           path: 'admin/article/list',
           method: 'rest',
-          query: [{ name: 'title' }]
+          query: [{ name: 'id' }]
         }]
       }
     }
@@ -464,14 +471,14 @@ test.serial.cb('rules match with query name is string', t => {
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, helper.extend({}, defaultOutput, {
       query: {
-        title: 'test'
+        id: '123456'
       }
     }));
     t.end();
   });
 });
 
-test.serial.cb('rules method equal redirect', t => {
+test.serial.cb('rules method equal redirect with statusCode', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
@@ -495,7 +502,7 @@ test.serial.cb('rules method equal redirect', t => {
   });
 });
 
-test.serial.cb('rules method equal redirect and without statusCode', t => {
+test.serial.cb('rules method equal redirect without statusCode', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
@@ -518,7 +525,7 @@ test.serial.cb('rules method equal redirect and without statusCode', t => {
   });
 });
 
-test.serial.cb('rules path with query', t => {
+test.serial.cb('rules path with query not empty', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
@@ -568,12 +575,9 @@ test.serial.cb('rules path with query empty', t => {
   });
 });
 
-test.serial.cb('controller with / and match', t => {
+test.serial.cb('multiple layer controller and match', t => {
   let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx, {
-    path: '/admin/article/list/paper'
-  });
-
+  let ctx = helper.extend({}, defaultCtx);
   let app = {
     modules: ['admin', 'home'],
     controllers: {
@@ -582,8 +586,8 @@ test.serial.cb('controller with / and match', t => {
       }
     },
     routers: [{
-      match: /^\/admin\/article\/list(\.*)/,
-      path: 'admin/article/page',
+      match: /^\/admin\/article\/list/,
+      path: 'admin/article/page/list',
       method: 'get',
       query: [{ name: 0 }]
     }]
@@ -593,17 +597,15 @@ test.serial.cb('controller with / and match', t => {
     t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article/page',
-      action: 'index'
+      action: 'list'
     });
     t.end();
   });
 });
 
-test.serial.cb('controller with / and not match', t => {
+test.serial.cb('multiple layer controller and not match', t => {
   let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx, {
-    path: '/admin/article/list/paper'
-  });
+  let ctx = helper.extend({}, defaultCtx);
   let app = {
     modules: ['admin', 'home'],
     controllers: {
@@ -613,7 +615,7 @@ test.serial.cb('controller with / and not match', t => {
     },
     routers: [{
       match: /^\/admin\/article\/matchnothing/,
-      path: 'admin/article/list',
+      path: 'admin/article/page/list',
       method: 'get',
       query: []
     }]
@@ -629,7 +631,7 @@ test.serial.cb('controller with / and not match', t => {
   });
 });
 
-test.serial.cb('ctx path is not beigin with /', t => {
+test.serial.cb('use defaultController & defaultAction', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin'
@@ -663,7 +665,7 @@ test.serial.cb('the modules not in app.modules', t => {
   });
 });
 
-test.serial.cb('app modules not match', t => {
+test.serial.cb('app modules is empty', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
