@@ -1,6 +1,8 @@
 # think-mysql
 [![Build Status](https://travis-ci.org/thinkjs/think-mysql.svg?branch=master)](https://travis-ci.org/thinkjs/think-mysql)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-mysql/badge.svg)](https://coveralls.io/github/thinkjs/think-mysql)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-mysql/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-mysql?branch=master)
+[![npm](https://img.shields.io/npm/v/think-mysql.svg?style=flat-square)](https://www.npmjs.com/package/think-mysql)
+
 ## Install
 
 ```
