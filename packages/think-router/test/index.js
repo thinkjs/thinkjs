@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-08 12:03:33
+* @Last Modified time: 2017-05-09 10:03:47
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -74,10 +74,10 @@ let defaultApp = {
   },
   routers: {
     admin: {
-      match: /admin.*/,
+      match: /^\/admin/,
       rules: [
         {
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list',
           method: 'get',
           query: []
@@ -210,17 +210,17 @@ test.serial.cb('options with subdomain is an Object', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list',
     subdomains: function() {
-      // multiple subdomains to reflect
+      // multiple layer subdomains
       return ['m1', 'm2'];
     }
   });
   let app = helper.extend({}, defaultApp, {
-    modules: ['thinkjs', 'admin', 'home'],
+    modules: ['thinkjs', 'admin'],
     routers: {
       admin: {
-        match: /thinkjs\/admin\/.*/,
+        match: /^\/thinkjs/,
         rules: [{
-          match: /thinkjs\/admin\/article\/list/,
+          match: /^\/thinkjs\/admin\/article/,
           path: 'thinkjs/admin/article',
           method: 'get',
           query: []
@@ -241,22 +241,22 @@ test.serial.cb('options with subdomain is an Object', t => {
 
 test.serial.cb('options with subdomain is an Array', t => {
   let options = {
-    // domain name equal module name
-    subdomain: ['thinkjs']
+    subdomain: ['thinkjs'], // domain name equal module name
+    prefix: ['/']
   };
   let ctx = helper.extend({}, defaultCtx, {
-    path: 'admin/article/list',
+    path: '/admin/article/list',
     subdomains: function() {
       return ['thinkjs'];
     }
   });
   let app = helper.extend({}, defaultApp, {
-    modules: ['thinkjs', 'admin', 'home'],
+    modules: ['thinkjs', 'admin'],
     routers: {
       admin: {
-        match: /thinkjs\/admin\/.*/,
+        match: /^thinkjs/,
         rules: [{
-          match: /thinkjs\/admin\/article\/list/,
+          match: /^thinkjs\/admin\/article/,
           path: 'thinkjs/admin/article',
           method: 'get',
           query: []
@@ -291,9 +291,9 @@ test.serial.cb('options with subdomain not match ', t => {
     modules: ['admin', 'home'],
     routers: {
       admin: {
-        match: /admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
           method: 'get',
           query: []
@@ -356,7 +356,7 @@ test.serial.cb('router with match test failed', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /notmatch\/.*/
+        match: /^\/notmatch/
       }
     }
   })
@@ -372,7 +372,7 @@ test.serial.cb('rules is null', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/article\/.*/,
+        match: /^\/admin/,
         rules: null
       }
     }
@@ -383,12 +383,12 @@ test.serial.cb('rules is null', t => {
   });
 });
 
-test.serial.cb('rules is an Array', t => {
+test.serial.cb('rules is an Array and not match', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
     routers: [{
-      match: /admin\/article\/get\//,
+      match: /^\/admin\/article\/get\//,
       path: 'admin/article/get/',
       method: 'get',
       query: []
@@ -401,9 +401,6 @@ test.serial.cb('rules is an Array', t => {
   });
 });
 
-/**
- * getMatchedRule.js
- */
 test.serial.cb('rules method not equal ctx method', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, { method: 'post' });
@@ -421,9 +418,9 @@ test.serial.cb('rules method equal rest', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
           method: 'rest',
           query: []
@@ -446,9 +443,9 @@ test.serial.cb('rules match with query name is number', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list\/(\d+)/,
+          match: /^\/admin\/article\/list\/(\d+)/,
           path: 'admin/article/list/:1',
           method: 'rest',
           query: [{ name: 0 }]
@@ -471,9 +468,9 @@ test.serial.cb('rules match with query name is string', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list\/(.*)/,
+          match: /^\/admin\/article\/list\/(.*)/,
           path: 'admin/article/list',
           method: 'rest',
           query: [{ name: 'title' }]
@@ -492,19 +489,15 @@ test.serial.cb('rules match with query name is string', t => {
   });
 });
 
-
-/**
- * parseRule.js
- */
 test.serial.cb('rules method equal redirect', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
           method: 'redirect',
           query: [],
@@ -526,9 +519,9 @@ test.serial.cb('rules method equal redirect and without statusCode', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
           method: 'redirect',
           query: []
@@ -549,9 +542,9 @@ test.serial.cb('rules path with query', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list?page=1',
           method: 'get',
           query: []
@@ -576,9 +569,9 @@ test.serial.cb('rules path with query empty', t => {
   let app = helper.extend({}, defaultApp, {
     routers: {
       admin: {
-        match: /\/admin\/.*/,
+        match: /^\/admin/,
         rules: [{
-          match: /admin\/article\/list/,
+          match: /^\/admin\/article\/list/,
           path: 'admin/article/list?page',
           method: 'get',
           query: []
@@ -601,14 +594,14 @@ test.serial.cb('controller with / and match', t => {
   });
 
   let app = {
-    modules: ['home', 'admin'],
+    modules: ['admin', 'home'],
     controllers: {
       admin: {
         'article/page': {},
       }
     },
     routers: [{
-      match: /admin\/article\/list(\.*)/,
+      match: /^\/admin\/article\/list(\.*)/,
       path: 'admin/article/page',
       method: 'get',
       query: [{ name: 0 }]
@@ -631,14 +624,14 @@ test.serial.cb('controller with / and not match', t => {
   });
 
   let app = {
-    modules: ['home', 'admin'],
+    modules: ['admin', 'home'],
     controllers: {
       admin: {
         'article/page': {},
       }
     },
     routers: [{
-      match: /admin\/article\/notmatch/,
+      match: /^\/admin\/article\/notmatch/,
       path: 'admin/article/notmatch',
       method: 'get',
       query: []
