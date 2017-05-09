@@ -56,16 +56,6 @@ const matchRoute = (path, route) => {
 };
 
 /**
- * resolve real path
- * @param path
- * @param route
- * @returns {string|void|XML|*}
- */
-const resloveRealPath = (path, route) => {
-  return prefixPath(path.replace(route, ''));
-};
-
-/**
  * serve wrapper by koa-send
  * @param options
  * @returns {serve}
@@ -87,7 +77,7 @@ module.exports = function (options) {
    */
   return function serve (ctx, next) {
     if (matchRoute(ctx.path, options.publicPath) && (ctx.method === 'HEAD' || ctx.method === 'GET')) {
-      return send(ctx, resloveRealPath(ctx.path, options.publicPath), options).then(done => {
+      return send(ctx, prefixPath(ctx.path), options).then(done => {
         if (!done) {
           return next();
         }

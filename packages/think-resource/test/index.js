@@ -185,8 +185,8 @@ test.cb('serve by POST method', t => {
 
 test.cb('serve by publicPath', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: '/static' }))
-    .get('/static/1.txt')
+  request(createServer({ root: 'test/assets', publicPath: '/1.txt' }))
+    .get('/1.txt')
     .expect(200, (err, res) => {
       if (err) {
         t.fail();
@@ -200,8 +200,8 @@ test.cb('serve by publicPath', t => {
 
 test.cb('serve by publicPath', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: 'static' }))
-    .get('/static/1.txt')
+  request(createServer({ root: 'test/assets', publicPath: /1\.txt/ }))
+    .get('/1.txt')
     .expect(200, (err, res) => {
       if (err) {
         t.fail();
@@ -215,8 +215,8 @@ test.cb('serve by publicPath', t => {
 
 test.cb('serve by publicPath', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: /\/static/ }))
-    .get('/static/1.txt')
+  request(createServer({ root: 'test/assets', publicPath: /^\/html\/index.html/ }))
+    .get('/html/index.html')
     .expect(200, (err, res) => {
       if (err) {
         t.fail();
@@ -230,8 +230,8 @@ test.cb('serve by publicPath', t => {
 
 test.cb('serve by publicPath', t => {
   t.plan(1);
-  request(createServer({ root: 'test/assets', publicPath: '/static/test' }))
-    .get('/static/test/1.txt')
+  request(createServer({ root: 'test/assets', publicPath: '1.txt' }))
+    .get('/1.txt')
     .expect(200, (err, res) => {
       if (err) {
         t.fail();

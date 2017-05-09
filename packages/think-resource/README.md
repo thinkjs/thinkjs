@@ -49,6 +49,7 @@ module.exports = [
 - `extensions`: Try to match extensions from passed array to search for file when no extension is sufficed in URL. First found is served. default is `false`.
 - `maxage`: Function to set custom headers on response. Browser cache max-age in milliseconds, default is `0`.
 - `publicPath`: Public path for route-match. default is `/`.
+- `setHeaders`: Function to set custom headers on response. default is `false`. usage: `setHeaders: function(res, path, stats){}`
 
 ## Contributing
 
