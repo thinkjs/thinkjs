@@ -21,13 +21,14 @@
   "dependencies": {
     "babel-preset-think-node": "^1.0.0",
     "node-notifier": "^5.0.2",
-    "think-babel": "^1.0.3",
     "think-controller": "thinkjs/think-controller",
     "think-debounce": "^1.0.3",
     "think-fetch": "^1.0.0",
     "think-logger": "^1.0.0",
     "think-logic": "thinkjs/think-logic",
     "think-meta": "thinkjs/think-meta",
+    "think-payload": "^1.0.0",
+    "think-resource": "^1.0.0",
     "think-router": "thinkjs/think-router",
     "think-session-cookie": "thinkjs/think-session-cookie",
     "think-session-file": "thinkjs/think-session-file",
@@ -38,7 +39,8 @@
     "thinkjs": "thinkjs/thinkjs#3.0"
   },
   "devDependencies": {
-    "think-inspect": "0.0.2"
+    "think-inspect": "0.0.2",
+    "think-babel": "^1.0.3"
   },
   "keywords": [],
   "repository": {
