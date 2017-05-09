@@ -34,6 +34,9 @@ module.exports = [
            gzip: false,
            extensions: ['.txt'],
            maxage: 0,
+           setHeaders: function(res, path, stats) {
+              ...
+           }
       }
   }
 ]
