@@ -18,9 +18,14 @@ You can find all the config options at https://github.com/mysqljs/mysql#connecti
 const defaultConfig = {
   port: 3306,
   host: '127.0.0.1',
-  user: 'root',
+  user: '',
   password: '',
-  connectionLimit: 5
+  database: '',
+  connectionLimit: 1,
+  multipleStatements: true,
+  logger: console.log.bind(console),
+  logConnect: false,
+  logSql: false
 };
 ```
 
@@ -29,64 +34,47 @@ const defaultConfig = {
 #### Custom usage
 ```js
   import ThinkMysql from 'think-mysql';
-  const config = {
-    port: 3306,
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'test',
-    database: 'think_test',
-  };
-  const mysql = new ThinkMysql(config);
-  let result = await mysql.execute('INSERT INTO table1 (name) VALUES(?)','thinkjs');
-  console.log(`insert id is:${result.insertId}`);
-  result = await mysql.query('SELECT * FROM table1 WHERE id=?',result.insertId);
-  console.log(`item name is ${result[0].name}`);
+  let instance = mysql.getInstance(config);
+  await instance.execute({
+    sql:"insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
+    timeout: 5000,
+    values: ['David']
+  });  
+  let books = await instance.query({
+    sql:'SELECT * FROM `books` WHERE `author` = ?',
+    timeout: 5000,
+    values: ['David']
+  });
+  console.log(books[0].name)  //thinkjs best practice
 ```
 
 #### Transactions
-Transactions operation also be supported via executeTrans function, an array param need(string or object array).
-Transactions will execute one by one from then array items.If you pass an object Array item,`cb` will call after the `sql` executed,
-`params` means you can pass either an escaping params or an unknown params which the result from before sqls.Finally 
-`executeTrans` will return an Array which wrap all the results.
 
 ```js
   import ThinkMysql from 'think-mysql';
-  const config = {
-    port: 3306,
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'test',
-    database: 'think_test',
-  };
-  // let obj = ['INSERT INTO table1 (name) VALUES("test")','SELECT * FROM table1',];
-  let obj = [
-    {
-      sql:'INSERT INTO table1 (name) VALUES("test")',
-      cb:(results)=>{
-      }
-    },
-    {
-      sql:'INSERT INTO table2 (table1_id) VALUES(?)',
-      params:(results)=>{
-        // use the insertId from the before the last result
-        return [results[0].insertId];
-      },
-      cb: (results) => {
-      }
-    },
-    {
-      sql: 'INSERT INTO table3 (table1_id,table2_id) VALUES(?,?)',
-      params:(results)=>{
-        return [results[0].insertId,results[1].insertId];
-      },
-      cb: (results) => {
-        console.log('first insert id is ：' + results[0].insertId);
-        console.log('second insert id is ：' + results[1].insertId);
-        console.log('last insert id is ：' + results[2].insertId);
-      }
-    }
-  ];
-  const mysql = new ThinkMysql(config);
-  let results = await mysql.executeTrans(obj);
-  console.log(results);
+  let instance = mysql.getInstance(config);
+  let result = null;
+  try{
+    await instance.transaction(async(conn) => {
+      result = instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('1st step', ?)",
+        values: ['0-David']
+      }, conn);
+      result = await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `author`) values ('2nd step', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+      await instance.execute({
+        sql: "insert into `think_test`.`books` (`name`, `autor`) values ('3rd step', ?)",
+        values: [`${result.insertId}-David`]
+      }, conn);
+    });
+  }catch (e){
+    console.log(e);
+  }
+  result = await instance.query({
+      sql:'SELECT * FROM `books` WHERE `author` = ?',
+      values:[`${result.insertId}-David`]
+  });
+  console.log(result[0].name);  //3rd step
 ```
