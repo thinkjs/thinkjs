@@ -29,7 +29,7 @@ test.serial.cb('new project name is abc', t => {
 
 test.serial.cb('new project name is abc2 for ts', t => {
 	let dirPath = path.join(projectPath,'abc2');
-	exec('node index.js new abc2 ts', (error, stdout, stderr) => {
+	exec('node index.js new abc2 -t', (error, stdout, stderr) => {
 		exec('node ../index.js create adapter test.js', {cwd: dirPath}, (error, stdout, stderr) => {
 			t.pass();
 			shell.rm('-rf', dirPath);
@@ -40,7 +40,7 @@ test.serial.cb('new project name is abc2 for ts', t => {
 
 test.serial.cb('new project name is abc3 for config', t => {
 
-	exec('node ../index.js new abc3 config',{cwd: testDirPath},  (error, stdout, stderr) => {
+	exec('node ../index.js new abc3 -c',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
 	})
@@ -81,8 +81,8 @@ test.serial.cb('create model', t => {
 test.serial.cb('abnormal 1', t => {
 	let dirPath = path.join(testDirPath, 'abnormal');
 	shell.mkdir('-p', dirPath);
-	exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
-		exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
+	exec('node ../../index.js new abc3 -c',{cwd: dirPath},  (error, stdout, stderr) => {
+		exec('node ../../index.js new abc3 -c',{cwd: dirPath},  (error, stdout, stderr) => {
 			t.pass();
 			shell.rm('-rf', dirPath);
 			t.end();
@@ -95,8 +95,8 @@ test.serial.cb('abnormal 2', t => {
 	let thinkjsonPath = path.join(dirPath, 'think.json');
 	shell.mkdir('-p', dirPath);
 	fs.writeFile(thinkjsonPath,'test', function() {
-		exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
-			exec('node ../../index.js new abc3 config',{cwd: dirPath},  (error, stdout, stderr) => {
+		exec('node ../../index.js new abc3 -c',{cwd: dirPath},  (error, stdout, stderr) => {
+			exec('node ../../index.js new abc3 -c',{cwd: dirPath},  (error, stdout, stderr) => {
 				t.pass();
 				shell.rm('-rf', dirPath);
 				t.end();

@@ -189,14 +189,16 @@ commander.option('-v, --version', 'output the version number', () => {
 });
 
 
-commander.command('new <projectPath> [config]')
+commander.command('new <projectPath>')
          .description('create project')
-         .action((projectPath, config) => {
+         .option('-c --config', 'use config create project')
+         .option('-t --ts','create project in typescript')
+         .action((projectPath, option) => {
             projectRootPath = path.resolve(projectRootPath, projectPath);
-            if(config === 'config') {
+            if(option.config === true) {
               privateFunc.handleConfig();
             }
-            if(config === 'ts') {
+            if(option.ts === true) {
               privateFunc.handleTsConfig();
             }
             createProject(projectPath);
@@ -207,5 +209,4 @@ commander.command('create <mode> [name]')
          .action((mode, name) => {
             directiveCollector(mode, name, projectRootPath, templatePath);
         });
-
 commander.parse(process.argv);

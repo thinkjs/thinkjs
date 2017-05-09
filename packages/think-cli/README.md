@@ -19,7 +19,7 @@ import helper from 'think-cli';
 ```
 Commands:
 
-    new <projectPath> [config]  create project
+    new [options] <projectPath>  create project
     create <mode> [name]        create all kinds of modes in your project
 
   Options:
