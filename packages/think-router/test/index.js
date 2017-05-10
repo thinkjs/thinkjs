@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-09 13:59:00
+* @Last Modified time: 2017-05-10 09:39:05
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -397,7 +397,7 @@ test.serial.cb('rules method not equal ctx method', t => {
   });
 });
 
-test.serial.cb('rules method equal rest', t => {
+test.serial.cb('rules method equal rest with controller', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
@@ -415,7 +415,11 @@ test.serial.cb('rules method equal rest', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'get'
+    });
     t.end();
   });
 });
@@ -598,6 +602,34 @@ test.serial.cb('multiple layer controller and match', t => {
       module: 'admin',
       controller: 'article/page',
       action: 'list'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('rest multiple layer controller and match', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = {
+    modules: ['admin', 'home'],
+    controllers: {
+      admin: {
+        'article/page': {},
+      }
+    },
+    routers: [{
+      match: /^\/admin\/article\/list/,
+      path: 'admin/article/page/list',
+      method: 'rest',
+      query: [{ name: 0 }]
+    }]
+  };
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article/page',
+      action: 'get'
     });
     t.end();
   });

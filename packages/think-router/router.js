@@ -32,6 +32,7 @@ class Router {
     this.controllers = app.controllers;
     this.pathname = this.getPathname();
     this.rules = app.routers;
+    this.app = app;
   }
   /**
    * get pathname, remove prefix & suffix
@@ -217,10 +218,10 @@ class Router {
     let action = '';
     pathname = pathname.split('/');
     if(controller){
-      action = pathname[0];
+      action = rule.method === 'rest' ? this.ctx.method : pathname[0];
     }else{
       controller = pathname[0];
-      action = pathname[1];
+      action = rule.method === 'rest' ? this.ctx.method : pathname[1];
     }
     this.ctx.module = module || this.options.defaultModule;
     this.ctx.controller = controller || this.options.defaultController;
