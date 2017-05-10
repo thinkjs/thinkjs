@@ -96,7 +96,7 @@ You will see some messages on console like :
 [2016-01-12 15:09:51] [THINK] WebSocket Status: closed
 [2016-01-12 15:09:51] [THINK] File Auto Compile: true
 [2016-01-12 15:09:51] [THINK] File Auto Reload: true
-[2016-01-12 15:09:51] [THINK] App Enviroment: development
+[2016-01-12 15:09:51] [THINK] App Environment: development
 ```
 
 ## Performance comparsion
