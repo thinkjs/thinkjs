@@ -8,7 +8,7 @@ function getMysql() {
 }
 const config = {
   user: 'root',
-  password: 'Hello@123',
+  password: '',
   database: 'think_test',
   logConnect: true,
   logSql: true,
@@ -25,8 +25,8 @@ test('constructor function', async t => {
 });
 
 test('constructor function', async t => {
-  // let conf = Object.assign(config,{socketPath:'/var/run/mysqld/mysqld.sock'});
-  let conf = Object.assign({socketPath:'/tmp/mysql.sock'},config);
+  let conf = Object.assign(config,{socketPath:'/var/run/mysqld/mysqld.sock'});
+  // let conf = Object.assign({socketPath:'/tmp/mysql.sock'},config);
   const mysql = getMysql();
   let instance = mysql.getInstance(conf);
   let conn = await instance.getConnection();
