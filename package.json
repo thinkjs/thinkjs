@@ -53,12 +53,12 @@
     "think-logger3": "^1.0.0",
     "think-logic": "^1.0.0",
     "think-meta": "^1.0.1",
+    "think-payload": "^1.0.0",
     "think-pm2": "^1.0.0",
     "think-resource": "^1.0.0",
     "think-router": "^1.0.0",
     "think-session": "^1.0.0",
-    "think-trace": "^1.0.2",
-    "think-cli": "thinkjs/think-cli"
+    "think-trace": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.0",
