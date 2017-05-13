@@ -5,12 +5,6 @@ module.exports = [
     handle: 'meta'
   },
   {
-    handle: 'trace',
-    options: {
-      debug: think.env === 'development'
-    }
-  },
-  {
     handle: 'resource',
     enable: think.env === 'development',
     options: {
@@ -19,16 +13,19 @@ module.exports = [
     }
   },
   {
-    handle: 'payload'
+    handle: 'trace',
+    options: {
+      debug: think.env === 'development'
+    }
+  },
+  {
+    handle: 'payload',
+    options: {}
   },
   {
     handle: 'router', 
     options: {}
   },
-  {
-    handle: 'logic'
-  },
-  {
-    handle: 'controller'
-  }
+  'logic',
+  'controller'
 ];
