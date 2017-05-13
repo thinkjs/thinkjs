@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-08 16:49:23
+* @Last Modified time: 2017-05-13 11:06:06
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -55,22 +55,22 @@ class Validator {
   _getErrorMessage(ruleName, rule, validName, parsedValidArgs, msgs) {
     let errMsg = validator.errors[validName];
     if(helper.isObject(msgs)) {
-      // int: 'error'
+      // eg int: 'error message'
       errMsg = msgs[validName];
 
       let msgs_RuleName = msgs[ruleName];
-      // name: 'error'
+      // eg name: 'error message'
       if(msgs_RuleName && helper.isString(msgs_RuleName)) {
         errMsg = msgs_RuleName;
       }
 
-      // name: {int: 'error'}
+      // eg name: {int: 'error message'}
       if(msgs_RuleName && helper.isObject(msgs_RuleName) && helper.isString(msgs_RuleName[validName])) {
         errMsg = msgs_RuleName[validName];
       }
 
-      // name: {name1,name2: 'error'}
-      // name: {name1,name2: {int: 'error'}}
+      // eg name: {name1,name2: 'error message'}
+      // eg name: {name1,name2: {int: 'error message'}}
       if(ruleName.indexOf(OBJECT_SP) > -1) {
         let parsedResult = ruleName.split(OBJECT_SP);
         ruleName = parsedResult[0];
@@ -244,9 +244,7 @@ class Validator {
           }
         }
       }
-
     }
-
     return ({childRules, rules});
   }
 
@@ -321,7 +319,6 @@ class Validator {
         }
       }
     }
-
     return ret;
   }
 }
