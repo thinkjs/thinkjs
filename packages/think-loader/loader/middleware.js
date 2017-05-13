@@ -12,9 +12,15 @@ class Middleware {
    * check url matched
    */
   createRegexp(match){
-    if(match) {
-      return pathToRegexp(match);
-    }
+    if(helper.isFunction(match)) return match;
+    if(match) return pathToRegexp(match);
+  }
+  /**
+   * check rule match
+   */
+  checkMatch(rule, ctx){
+    if(helper.isFunction(rule)) return rule(ctx);
+    return rule.test(ctx.path);
   }
   /**
    * middleware rules(appPath/middleware.js):
@@ -52,13 +58,13 @@ class Middleware {
       }
 
       // create regexp here for better performance
-      const matchRegexp = this.createRegexp(item.match);
-      const ignoreRegexp = this.createRegexp(item.ignore);
+      const match = this.createRegexp(item.match);
+      const ignore = this.createRegexp(item.ignore);
 
       // has match or ignore
       return (ctx, next) => {
-        if(matchRegexp && !matchRegexp.test(ctx.path) ||
-            ignoreRegexp && ignoreRegexp.test(ctx.path) ) {
+        if(match && !this.checkMatch(match, ctx) ||
+            ignore && this.checkMatch(ignore, ctx) ) {
           return next();
         }
         return item.handle(ctx, next);
