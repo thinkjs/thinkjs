@@ -1,7 +1,7 @@
 var configTree = {};
-var helper = require('think-helper');
-var fs = require('fs');
-var path = require('path');
+const helper = require('think-helper');
+const fs = require('fs');
+const path = require('path');
 /**
  * createConfigFile
  * configPath
@@ -11,7 +11,7 @@ var path = require('path');
 module.exports =  function createConfigFile(configPath, templatePath) {
 
 	
-	templatePath = path.join(templatePath, 'config');
+	templatePath = path.join(templatePath, 'src/config');
 
 	function handleDir(configPath) {
 

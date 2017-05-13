@@ -1,6 +1,7 @@
-var handleConfig = require("./handleConfig");
-var simpleConfig = require("./simpleConfig");
-var path = require('path');
+const handleConfig = require("./handleConfig");
+const simpleConfig = require("./simpleConfig");
+const path = require('path');
+const fs = require('fs');
 
 module.exports = function(mode, name, projectRootPath, templatePath) {
 	let configPath = '';
@@ -9,24 +10,15 @@ module.exports = function(mode, name, projectRootPath, templatePath) {
 		handleConfig(projectRootPath, templatePath);
 		break;
 		case 'service':
-		configPath = path.resolve(projectRootPath, 'service');
-		simpleConfig(configPath, name);
-		break;
-		case 'extend':
-		configPath = path.resolve(projectRootPath, 'extend');
+		configPath = path.join(projectRootPath, 'src/service');
 		simpleConfig(configPath, name);
 		break;
 		case 'logic':
-		configPath = path.resolve(projectRootPath, 'logic');
+		configPath = path.resolve(projectRootPath, 'src/logic');
 		simpleConfig(configPath, name);
 		break;
 		case 'model':
-		configPath = path.resolve(projectRootPath, 'model');    
-		simpleConfig(configPath, name);
-		break;
-		case 'adapter':
-		configPath = path.resolve(projectRootPath, 'adapter');    
-		simpleConfig(configPath, name);
+		configPath = path.resolve(projectRootPath, 'src/model');
 		break;
 	}
 }

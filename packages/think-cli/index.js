@@ -7,11 +7,12 @@ const path = require('path');
 const colors = require('colors/safe');
 const cwd = process.cwd();
 const templatePath = path.join(__dirname, 'template');
-const excludeFile = /^\./;
+//const excludeFile = /^\./;
 const configTreeFile = /.file$/;
-const configTreeDir = /.dir$/
+const configTreeDir = /.dir$/;
 var excludeDir = [];
 var projectRootPath = cwd; //project root path
+var model = 'es6';
 
 function errlog(msg) {
   console.log(colors.red.underline(msg));
@@ -46,22 +47,23 @@ function copyDir(source, target) {
     files.forEach((filePath)=>{
       let currentSourcePath = path.resolve(source, filePath);
       let targetSourcePath = path.resolve(target, filePath);
+      //if(!excludeFile.test(filePath)) {
 
-      if(!excludeFile.test(filePath)) {
+      let handleResult = excludeHandle(targetSourcePath);
 
-        let handleResult = excludeHandle(targetSourcePath);
-
-        if(handleResult) {
-          privateFunc[handleResult.directive](currentSourcePath, targetSourcePath);
+      if(handleResult) {
+        privateFunc[handleResult.directive](currentSourcePath, targetSourcePath);
+      } else {
+        if(helper.isDirectory(currentSourcePath)) {
+          helper.mkdir(targetSourcePath);
+          return copyDir(currentSourcePath, targetSourcePath);
         } else {
-          if(helper.isDirectory(currentSourcePath)) {
-            helper.mkdir(targetSourcePath);
-            return copyDir(currentSourcePath, targetSourcePath);
-          } else {
+          if(privateFunc.switchModel(currentSourcePath, targetSourcePath)) {
             return copyFile(currentSourcePath, targetSourcePath);
           }
         }
       }
+      //}
     })  
   })
 }
@@ -131,7 +133,7 @@ var privateFunc = {
   },
 
   handleConfig: function() {
-    let configPath = path.join(projectRootPath, 'config');
+    let configPath = path.join(projectRootPath, 'src/config');
 
     excludeDir.push({
       'path': configPath,
@@ -154,6 +156,15 @@ var privateFunc = {
         'directive': 'createTsConfig'
       });
     })
+  },
+  switchModel: function(csp) {
+    const regtots = /.+\.ts$/;
+    const regtojs = /.+\.js$/;
+    if(regtots.test(csp) && model === 'typescript') {
+      return true;
+    } else if(regtojs.test(csp) && model === 'es6') {
+      return true;
+    }
   }
 }
 /**
@@ -194,11 +205,12 @@ commander.command('new <projectPath>')
          .option('-c --config', 'use config create project')
          .option('-t --ts','create project in typescript')
          .action((projectPath, option) => {
-            projectRootPath = path.resolve(projectRootPath, projectPath);
+            projectRootPath = path.join(projectRootPath, projectPath);
             if(option.config === true) {
               privateFunc.handleConfig();
             }
             if(option.ts === true) {
+              model = 'typescript';
               privateFunc.handleTsConfig();
             }
             createProject(projectPath);

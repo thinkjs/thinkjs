@@ -39,5 +39,3 @@ exports.session = {
     sessionPath: path.join(think.ROOT_PATH, 'runtime/session')
   }
 }
-
-

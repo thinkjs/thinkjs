@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=html"
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "ava": {
     "require": [

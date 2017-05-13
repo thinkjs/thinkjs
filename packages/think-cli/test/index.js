@@ -30,16 +30,13 @@ test.serial.cb('new project name is abc', t => {
 test.serial.cb('new project name is abc2 for ts', t => {
 	let dirPath = path.join(projectPath,'abc2');
 	exec('node index.js new abc2 -t', (error, stdout, stderr) => {
-		exec('node ../index.js create adapter test.js', {cwd: dirPath}, (error, stdout, stderr) => {
-			t.pass();
-			shell.rm('-rf', dirPath);
-			t.end();
-		})
+		t.pass();
+		shell.rm('-rf', dirPath);
+		t.end();
 	})
 })
 
 test.serial.cb('new project name is abc3 for config', t => {
-
 	exec('node ../index.js new abc3 -c',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
@@ -47,20 +44,22 @@ test.serial.cb('new project name is abc3 for config', t => {
 })
 
 test.serial.cb('create logic', t => {
-	exec('node ../index.js create logic test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
-		t.pass();
-		t.end();
-	})
-})
-
-test.serial.cb('create extend', t => {
-	exec('node ../index.js create extend test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
+	let dirPath = path.join(testDirPath,"abc3");
+	exec('node ../../index.js create logic test.js',{cwd: dirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
 	})
 })
 
 test.serial.cb('create service', t => {
+	let dirPath = path.join(testDirPath,"abc3");
+	exec('node ../../index.js create service test.js',{cwd: dirPath},  (error, stdout, stderr) => {
+		t.pass();
+		t.end();
+	})
+})
+
+test.serial.cb('create service error', t => {
 	exec('node ../index.js create service test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
 		t.pass();
 		t.end();
@@ -70,7 +69,7 @@ test.serial.cb('create service', t => {
 
 test.serial.cb('create model', t => {
 	let dirPath = path.join(testDirPath,"abc3");
-	exec('node ../index.js create model test.js',{cwd: testDirPath},  (error, stdout, stderr) => {
+	exec('node ../../index.js create model test.js',{cwd: dirPath},  (error, stdout, stderr) => {
 		t.pass();
 		shell.rm('-rf', dirPath);
 		t.end();
