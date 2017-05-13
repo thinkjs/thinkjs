@@ -6,12 +6,6 @@ exports.Agent = require('./lib/agent.js');
 exports.Master = require('./lib/master.js');
 exports.delegate = require('./lib/delegate.js');
 
-
-exports.extend = function(app){
-  return {
-    application: messenger(app)
-  }
-};
-
+exports.messenger = new messenger();
 exports.isAgent = util.isAgent;
 exports.isFirstWorker = util.isFirstWorker;
