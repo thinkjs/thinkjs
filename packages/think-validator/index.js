@@ -2,12 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-13 11:06:06
+* @Last Modified time: 2017-05-13 14:00:54
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
 const ARRAY_SP = '_array_', OBJECT_SP = '_object_';
-const METHOD_GET = 'get';
 
 class Validator {
   constructor(ctx) {
@@ -113,12 +112,11 @@ class Validator {
    * @return {Mixed}           [description]
    */
   _parseValidArgs(validName, rule) {
-    let method = rule.method || this.ctx.method;
     let ruleArgs = rule[validName];
     let pfn = validator['_' + validName];
     if(helper.isFunction(pfn)){
       // this.ctx in this method is only read
-      ruleArgs = pfn(ruleArgs, Object.assign({}, this.ctx[method]));
+      ruleArgs = pfn(ruleArgs, Object.assign({}, this.ctx));
     }
     return ruleArgs;
   }
@@ -130,18 +128,17 @@ class Validator {
    * @return {Mixed}          [description]
    */
   _convertParamValue(ruleName, rule) {
-    let method = rule.method || this.ctx.method || METHOD_GET;
     if(rule.int || rule.float || rule.numeric) {
       if(ruleName.indexOf(ARRAY_SP) > -1) {
         let parsedRuleName = ruleName.split(ARRAY_SP);
-        this.ctx[method][parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else if (ruleName.indexOf(OBJECT_SP) > -1) {
         let parsedRuleName = ruleName.split(OBJECT_SP);
-        this.ctx[method][parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else {
-        this.ctx[method][ruleName] = parseFloat(rule.value);
+        this.ctx[ruleName] = parseFloat(rule.value);
       }
       return parseFloat(rule.value);
     }
@@ -182,9 +179,8 @@ class Validator {
 
     for(let ruleName in rules) {
       let rule = rules[ruleName];
-      let method = rule.method || this.ctx.method || METHOD_GET;
 
-      // basic type check
+      // basic type check, only one basic type is legal(ok)
       let containTypeNum = this.basicType.reduce((acc, val) => {
         val = rule[val] ? 1 : 0;
         return acc + val;
@@ -194,42 +190,41 @@ class Validator {
         throw new Error('Any rule can\'t contains one more basic type, the param you are validing is ' + ruleName);
       }
 
-      // array & object children with value, skip this operator
-      if(!rule.value && this.ctx[method]) {
-        // rule.value = this.ctx[ruleName];
-        rule.value = this.ctx[method][ruleName];
+      // set related value on ctx to rule.value first
+      if(!rule.value && this.ctx) {
+        rule.value = this.ctx[ruleName];
       }
 
-      // set default
+      // set default, when rule.value is undefined
       if(typeof(rule.value) === 'undefined' && !helper.isTrueEmpty(rule.default)){
         rule.value = rule.default;
       }
 
-      // trim rule value if trim is true
+      // trim rule.value, when trim is true
       if(rule.trim && rule.value && rule.value.trim){
         rule.value = rule.value.trim();
       }
 
-      // array convert in enter
+      // array convert
       if(rule.array && !helper.isArray(rule.value)) {
         rule.value = [rule.value]
       }
 
-      // boolean convert in enter
+      // boolean convert
       if(rule.boolean) {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
-      // write back to ctx, nested children don't need
+      // write back rule.value to ctx, nested children wait for next round to handle
       if(typeof rule.value !== 'undefined' && ruleName.indexOf(ARRAY_SP) === -1 & ruleName.indexOf(OBJECT_SP) === -1){
-        this.ctx[method] = this.ctx[method] || {};
-        this.ctx[method][ruleName] = rule.value;
+        this.ctx[ruleName] = rule.value;
       }
 
-      // array & object children split and give the value
+      // array & object children split and set the value
       if(rule.children) {
         let ruleValue = rule.value;
         let ruleChildren = rules[ruleName].children;
+        // delete [array|object]: true
         delete rules[ruleName];
 
         if(rule.array) {
