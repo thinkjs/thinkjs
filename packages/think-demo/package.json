@@ -22,6 +22,7 @@
     "babel-preset-think-node": "^1.0.0",
     "node-notifier": "^5.0.2",
     "think-fetch": "^1.0.0",
+    "think-model": "*",
     "think-session-cookie": "thinkjs/think-session-cookie",
     "think-session-file": "thinkjs/think-session-file",
     "think-view": "^1.0.0",
