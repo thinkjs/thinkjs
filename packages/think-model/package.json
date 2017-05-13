@@ -8,7 +8,7 @@
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
     "eslint": "eslint ./src",
-    "prepublish": "npm test"
+    "prepublish": "npm test && npm run compile"
   },
   "repository": {
     "type": "git",
