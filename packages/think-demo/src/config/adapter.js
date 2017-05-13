@@ -3,6 +3,8 @@ const path = require('path');
 const cookieSession = require('think-session-cookie');
 const fileSession = require('think-session-file');
 
+const modelConfig = require('./model');
+
 //view adapter config
 exports.view = {
   type: 'nunjucks',
@@ -41,3 +43,4 @@ exports.session = {
 }
 
 
+exports.model = modelConfig;
