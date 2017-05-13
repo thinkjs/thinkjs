@@ -18,6 +18,9 @@ let Base;
 
 test.before(() => {
   muk(mysqlSocket.prototype, 'query', function(sql){
+    if(helper.isObject(sql)){
+      sql = sql.sql;
+    }
     if (sql === 'SHOW COLUMNS FROM `think_friend`') {
       var data = [
         {"Field":"id","Type":"int(11) unsigned","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},
