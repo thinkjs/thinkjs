@@ -86,11 +86,11 @@ class Crontab {
   runItemTask(item){
     if(item.type === 'all'){
       item.handle(this.app);
-      debug(`run task${item.taskName}, pid:${process.pid}`);
+      debug(`run task ${item.taskName}, pid:${process.pid}`);
     }else{
       messenger.runInOne(() => {
         item.handle(this.app);
-        debug(`run task${item.taskName}, pid:${process.pid}`);
+        debug(`run task ${item.taskName}, pid:${process.pid}`);
       });
     }
   }
