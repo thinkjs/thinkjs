@@ -1,12 +1,18 @@
 const path = require('path');
 
+const isDev = think.env === 'development';
+
 module.exports = [
   {
-    handle: 'meta'
+    handle: 'meta',
+    options: {
+      logRequest: isDev,
+      sendResponseTime: isDev
+    }
   },
   {
     handle: 'resource',
-    enable: think.env === 'development',
+    enable: isDev,
     options: {
       root: path.join(think.ROOT_PATH, 'www'),
       publicPath: /^\/(static|favicon\.ico)/
@@ -15,7 +21,7 @@ module.exports = [
   {
     handle: 'trace',
     options: {
-      debug: think.env === 'development'
+      debug: isDev
     }
   },
   {
