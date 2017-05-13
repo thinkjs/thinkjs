@@ -1,13 +1,13 @@
 {
   "name": "think-crontab",
-  "description": "watch file changed",
-  "version": "3.0.2",
+  "description": "crontab for thinkjs",
+  "version": "1.0.0",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/index.js ",
+    "test": "eslint index.js && nyc ava test",
     "coverage": "nyc report --reporter=html"
   },
   "ava": {
