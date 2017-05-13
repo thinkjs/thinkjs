@@ -13,7 +13,7 @@ function loadBootstrap(appPath, modules, type = 'worker'){
   }
   let filepath = path.join(bootstrapPath, `${type}.js`);
   if(helper.isFile(filepath)){
-    require(filepath);
+    return require(filepath);
   }
 }
 
