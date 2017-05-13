@@ -2,13 +2,12 @@ const helper = require('think-helper');
 const Readable = require('stream').Readable;
 const http = require('http');
 const schedule = require('node-schedule');
-const assert = require('assert');
-const cluster = require('cluster');
+const messenger = require('think-cluster').messenger;
+
 const debug = require('debug')('think-crontab');
 
 const IncomingMessage = http.IncomingMessage;
 const ServerResponse = http.ServerResponse;
-const isMaster = cluster.isMaster;
 
 /**
  * default mock args
@@ -38,7 +37,7 @@ class Crontab {
     if(helper.isString(options)){
       options = [{
         handle: options,
-        worker: 'one'
+        type: 'one'
       }];
     }else if(!helper.isArray(options)){
       options = [options];
@@ -82,58 +81,45 @@ class Crontab {
     return {req, res};
   }
   /**
-   * get task workers
+   * run item task
    */
-  getWorkers(type){
-    let allWorkers = Object.keys(cluster.workers).map(id => cluster.workers[id]).filter(worker => {
-      return !worker.isAgent;
-    });
-    if(type === 'all'){
-      return allWorkers;
+  runItemTask(item){
+    if(item.type === 'all'){
+      item.handle(this.app);
+      debug(`run task${item.taskName}, pid:${process.pid}`);
+    }else{
+      messenger.runInOne(() => {
+        item.handle(this.app);
+        debug(`run task${item.taskName}, pid:${process.pid}`);
+      });
     }
-    return [allWorkers[Math.floor(Math.random() * allWorkers.length)]];
   }
   /**
    * run task
    */
   runTask(){
-    this.options.forEach((item, index) => {
-      let action = `think_crontab_index_${index}`;
-      if(isMaster){
-        //immediate run task
-        if(item.immediate){
-          this.app.on('appReady', () => {
-            let workers = this.getWorkers(item.worker);
-            workers.forEach(worker => worker.send({act: action}));
-          });
-        }
-        if(item.interval){
-          let interval = helper.ms(item.interval);
-          let timer = setInterval(() => {
-            let workers = this.getWorkers(item.worker);
-            workers.forEach(worker => worker.send({act: action}));
-          }, interval);
-        }else if(item.cron){
-          schedule.scheduleJob(item.cron, () => {
-            let workers = this.getWorkers(item.worker);
-            workers.forEach(worker => worker.send({act: action}));
-          });
-        }else{
-          throw new Error('.interval or .cron need be set');
-        }
-      }else{
-        let taskName = `${item.name ? ', name:' + item.name : ''}`;
-        if(item.interval){
-          taskName += `, interval: ${item.interval}`;
-        }else{
-          taskName += `, cron: ${item.cron}`;
-        }
-        process.on('message', message => {
-          if(message && message.act === action){
-            debug(`run task${taskName}, pid:${process.pid}`);
-            item.handle(this.app);
-          }
+    this.options.forEach(item => {
+      item.taskName = `${item.name ? ', name:' + item.name : ''}`;
+      //immediate run task
+      if(item.immediate){
+        this.app.on('appReady', () => {
+          this.runItemTask(item);
         });
+      }
+      if(item.interval){
+        let interval = helper.ms(item.interval);
+        let timer = setInterval(() => {
+          this.runItemTask(item);
+        }, interval);
+        timer.unref();
+        item.taskName += `interval: ${item.interval}`;
+      }else if(item.cron){
+        schedule.scheduleJob(item.cron, () => {
+          this.runItemTask(item);
+        });
+        item.taskName += `, cron: ${item.cron}`;
+      }else{
+        throw new Error('.interval or .cron need be set');
       }
     });
   }
