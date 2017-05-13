@@ -40,7 +40,7 @@ module.exports = class {
   /**
    * use clustered type if in cluster mode
    */
-  isCluster(config) {
+  isCluster(config, clusterMode) {
     let lConfig = Object.assign({}, config);
     let appenders = config.appenders;
     delete lConfig.appenders;
@@ -55,7 +55,10 @@ module.exports = class {
     }
 
     //Master process
-    if( !Object.keys(cluster.workers).length ) {
+    if(typeof(clusterMode) === 'undefined') {
+      clusterMode = Object.keys(cluster.workers).length;
+    }
+    if(!clusterMode) {
       return config;
     }
     
