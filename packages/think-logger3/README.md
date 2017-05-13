@@ -107,7 +107,7 @@ Then initial log would create a file called `debug.log`. At midnight, the curren
 
 ### Tips:
 
-`think-logger3` will auto detect cluster mode, you needn't configure for cluster handly.
+`think-logger3` will auto detect cluster mode by `cluster.workers`, you needn't configure for cluster handly. If you want instance logger before fork worker, you can use like `new Logger({handle: Logger.File}, true)`.
 
 
 ## Contributing
