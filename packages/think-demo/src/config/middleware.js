@@ -1,25 +1,17 @@
-const router = require('think-router');
-const trace = require('think-trace');
-const meta = require('think-meta');
-const logic = require('think-logic');
-const controller = require('think-controller');
-const resource = require('think-resource');
-const payload = require('think-payload');
 const path = require('path');
 
 module.exports = [
   {
-    handle: meta,
-    options: {}
+    handle: 'meta'
   },
   {
-    handle: trace,
+    handle: 'trace',
     options: {
-      debug: true
+      debug: think.env === 'development'
     }
   },
   {
-    handle: resource,
+    handle: 'resource',
     enable: think.env === 'development',
     options: {
       root: path.join(think.ROOT_PATH, 'www'),
@@ -27,19 +19,16 @@ module.exports = [
     }
   },
   {
-    handle: payload,
-    options: {
-      
-    }
+    handle: 'payload'
   },
   {
-    handle: router, 
+    handle: 'router', 
     options: {}
   },
   {
-    handle: logic
+    handle: 'logic'
   },
   {
-    handle: controller
+    handle: 'controller'
   }
 ];
