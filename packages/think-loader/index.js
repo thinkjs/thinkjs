@@ -39,8 +39,8 @@ class Loader {
   /**
    * load bootstrap
    */
-  loadBootstrap(){
-    return bootstrap(this.appPath, this.modules);
+  loadBootstrap(type){
+    return bootstrap(this.appPath, this.modules, type);
   }
   /**
    * load controller
