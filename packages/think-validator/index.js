@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-13 14:00:54
+* @Last Modified time: 2017-05-13 14:12:02
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -240,7 +240,11 @@ class Validator {
         }
       }
     }
-    return ({childRules, rules});
+    let parsedChildRules = {};
+    if(Object.keys(childRules).length > 0) {
+      parsedChildRules = this._preTreatRules(childRules);
+    }
+    return Object.assign({}, rules, parsedChildRules);
   }
 
   /**
@@ -262,13 +266,7 @@ class Validator {
    */
   validate(rules, msgs) {
     let ret = {};
-    let parsedResult = this._preTreatRules(rules);
-    let parsedRules = parsedResult.rules;
-    let parsedChildRules = {};
-    if(Object.keys(parsedResult.childRules).length > 0) {
-      parsedChildRules = this._preTreatRules(parsedResult.childRules).rules;
-    }
-    parsedRules = Object.assign({}, parsedRules, parsedChildRules);
+    let parsedRules = this._preTreatRules(rules);
 
     outerLoop:
     for(let ruleName in parsedRules){
