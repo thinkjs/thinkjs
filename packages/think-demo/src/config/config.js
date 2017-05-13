@@ -1,3 +1,3 @@
 module.exports = {
-  workers: 0
+  workers: 1
 }
