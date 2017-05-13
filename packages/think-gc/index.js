@@ -27,12 +27,13 @@ function gc(instance, interval = MIN_STEP, MIN_INTERVAL = MIN_STEP){
 
   if(!timerStart){
     timerStart = true;
-    setInterval(() => {
+    const timer = setInterval(() => {
       intervalTimes++;
       for(let type in gcTypes){
         gcTypes[type]();
       }
     }, MIN_INTERVAL);
+    timer.unref();
   }
 }
 
