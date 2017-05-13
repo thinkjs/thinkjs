@@ -3,7 +3,7 @@ module.exports = class IndexController extends think.Controller {
     //console.log('__before')
   }
   async indexAction(){
-    console.log(this.ctx.request.body)
+    //console.log(this.ctx.request.body)
     
     const result = await this.fetch('https://cnodejs.org/api/v1/topic/56e688a983cbb63b6d120300').then(res => res.json());
     this.assign('title', result.data.title);
