@@ -34,6 +34,7 @@
     "think-mysql": "github:thinkjs/think-mysql"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-preset-think-node": "^1.0.1",
