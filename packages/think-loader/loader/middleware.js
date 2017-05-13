@@ -52,8 +52,8 @@ class Middleware {
       }
 
       // create regexp here for better performance
-      var matchRegexp = this.createRegexp(item.match);
-      var ignoreRegexp = this.createRegexp(item.ignore);
+      const matchRegexp = this.createRegexp(item.match);
+      const ignoreRegexp = this.createRegexp(item.ignore);
 
       // has match or ignore
       return (ctx, next) => {
