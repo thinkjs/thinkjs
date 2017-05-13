@@ -36,7 +36,6 @@
     }
   ],
   "main": "lib/application.js",
-  "bin": "lib/bin/index.js",
   "dependencies": {
     "bluebird": "3.3.5",
     "cookies": "^0.7.0",
