@@ -1,7 +1,7 @@
 const Base = require('./base');
 
 module.exports = class DateFileLogger extends Base {
-  constructor(config) {
+  constructor(config, clusterMode) {
     super(config);
 
     let lConfig = Object.assign({}, config);
@@ -16,7 +16,7 @@ module.exports = class DateFileLogger extends Base {
     }, lConfig);
 
     //check cluster mode
-    config = this.isCluster(config);
+    config = this.isCluster(config, clusterMode);
 
     this._logger = this.getLogger(config);
   }
