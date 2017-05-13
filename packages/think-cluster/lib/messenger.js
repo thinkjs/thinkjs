@@ -2,7 +2,6 @@ const cluster = require('cluster');
 const helper = require('think-helper');
 const events = require('events');
 
-const isMaster = cluster.isMaster;
 const MessengerInit = Symbol('think-messenger-init');
 const MESSENGER = 'think-messenger';
 
@@ -21,7 +20,7 @@ class Messenger extends events {
    * @param  {String} type []
    * @return {Array}      []
    */
-  getWorkers(type = 'all'){
+  getWorkers(type = 'all', cWorker){
     let workers = [];
     for(let id in cluster.workers){
       let worker = cluster.workers[id];
@@ -40,6 +39,7 @@ class Messenger extends events {
           break;
       }
     }
+    if(type === 'one' && workers[0] !== cWorker) return [];
     return workers;
   }
   /**
@@ -51,9 +51,9 @@ class Messenger extends events {
     process[MessengerInit] = true;
 
     if(cluster.isMaster){
-      process.on('message', message => {
+      cluster.on('message', (worker, message) => {
         if(message && message.act === MESSENGER){
-          let workers = this.getWorkers(message.target);
+          let workers = this.getWorkers(message.target, worker);
           workers.forEach(worker => worker.send(message));
         }
       })
