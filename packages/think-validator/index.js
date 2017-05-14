@@ -2,15 +2,21 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-13 14:12:02
+* @Last Modified time: 2017-05-14 14:23:11
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
 const ARRAY_SP = '_array_', OBJECT_SP = '_object_';
+const METHOD_MAP = {
+  get: 'param',
+  post: 'post',
+  file: 'file'
+};
 
 class Validator {
   constructor(ctx) {
-    this.ctx = ctx || {};
+    this.ctx = ctx;
+    this.ctxQuery = {};
     this.requiredValidNames = [
       'required',
       'requiredIf',
@@ -98,7 +104,6 @@ class Validator {
     }
 
     // ruleName validName validArgs parsedValidArgs
-    // itemValue = _convertParamValue(ruleName, rule)
     let validArgs = rule[ruleName];
     return errMsg.replace('{name}', originRuleName)
                  .replace('{args}', JSON.stringify(validArgs))
@@ -115,8 +120,8 @@ class Validator {
     let ruleArgs = rule[validName];
     let pfn = validator['_' + validName];
     if(helper.isFunction(pfn)){
-      // this.ctx in this method is only read
-      ruleArgs = pfn(ruleArgs, Object.assign({}, this.ctx));
+      // support rewrite back
+      ruleArgs = pfn(ruleArgs, this.ctxQuery);
     }
     return ruleArgs;
   }
@@ -128,21 +133,20 @@ class Validator {
    * @return {Mixed}          [description]
    */
   _convertParamValue(ruleName, rule) {
-    if(rule.int || rule.float || rule.numeric) {
+    let queryMethod = this._getQueryMethod(rule);
+    if((rule.int || rule.float || rule.numeric) && queryMethod) {
       if(ruleName.indexOf(ARRAY_SP) > -1) {
         let parsedRuleName = ruleName.split(ARRAY_SP);
-        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        this.ctxQuery[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else if (ruleName.indexOf(OBJECT_SP) > -1) {
         let parsedRuleName = ruleName.split(OBJECT_SP);
-        this.ctx[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        this.ctxQuery[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       }
       else {
-        this.ctx[ruleName] = parseFloat(rule.value);
+        this.ctxQuery[ruleName] = parseFloat(rule.value);
       }
-      return parseFloat(rule.value);
     }
-    return rule.value;
   }
 
   /**
@@ -167,12 +171,28 @@ class Validator {
   }
 
   /**
+   * get ctx's method which to get or set the query
+   * @param  {Object} rule [description]
+   * @return {String}      [methodName]
+   */
+  _getQueryMethod(rule) {
+    let methodName;
+    let ctxMethod = this.ctx.method.toLowerCase();
+    if(typeof rule.method === 'undefined' || rule.method === '') {
+      methodName = ctxMethod;
+    }else {
+      methodName = rule.method.toLowerCase();
+    }
+    return METHOD_MAP[methodName];
+  }
+
+  /**
    * pre treat rule.value & handle the nested array and object valid
    * @param  {Object} rules [description]
    * @return {Object}       [description]
    */
   _preTreatRules(rules) {
-    rules = Object.assign({}, rules);
+    rules = helper.extend({}, rules);
 
     // to keep the nested rules split from the array or object
     let childRules = {};
@@ -190,9 +210,13 @@ class Validator {
         throw new Error('Any rule can\'t contains one more basic type, the param you are validing is ' + ruleName);
       }
 
+      // set this.ctxQuery
+      let queryMethod = this._getQueryMethod(rule);
+      this.ctxQuery = this.ctx[queryMethod]();
+
       // set related value on ctx to rule.value first
-      if(!rule.value && this.ctx) {
-        rule.value = this.ctx[ruleName];
+      if(!rule.value) {
+        rule.value = this.ctxQuery[ruleName];
       }
 
       // set default, when rule.value is undefined
@@ -216,26 +240,26 @@ class Validator {
       }
 
       // write back rule.value to ctx, nested children wait for next round to handle
-      if(typeof rule.value !== 'undefined' && ruleName.indexOf(ARRAY_SP) === -1 & ruleName.indexOf(OBJECT_SP) === -1){
-        this.ctx[ruleName] = rule.value;
+      if(typeof rule.value !== 'undefined' && ruleName.indexOf(ARRAY_SP) === -1 & ruleName.indexOf(OBJECT_SP) === -1 && queryMethod){
+        this.ctxQuery[ruleName] = rule.value;
       }
 
       // array & object children split and set the value
       if(rule.children) {
         let ruleValue = rule.value;
         let ruleChildren = rules[ruleName].children;
-        // delete [array|object]: true
+        // delete the ruleName, like [array|object]: true
         delete rules[ruleName];
 
         if(rule.array) {
           for(let i = 0; i < ruleValue.length; i++) {
             let tmpRuleName = ruleName + ARRAY_SP + i;
-            childRules[tmpRuleName] = Object.assign({}, ruleChildren, {value: ruleValue[i]});
+            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[i]});
           }
         }else {
           for(let key in ruleValue) {
             let tmpRuleName = ruleName + OBJECT_SP + key;
-            childRules[tmpRuleName] = Object.assign({}, ruleChildren, {value: ruleValue[key]});
+            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[key]});
           }
         }
       }
@@ -244,7 +268,7 @@ class Validator {
     if(Object.keys(childRules).length > 0) {
       parsedChildRules = this._preTreatRules(childRules);
     }
-    return Object.assign({}, rules, parsedChildRules);
+    return helper.extend({}, rules, parsedChildRules);
   }
 
   /**
@@ -308,6 +332,7 @@ class Validator {
           ret[newRuleName] = errMsg;
           continue outerLoop;
         }else {
+          // if this is no error, convert the value
           this._convertParamValue(ruleName, rule);
         }
       }
