@@ -9,7 +9,5 @@ module.exports = [{
   interval: '1s',
   type: 'one',
   enable: false,
-  handle: function(){
-    console.log(`crontab one, pid: ${process.pid}`)
-  }
+  handle: 'crontab/index'
 }]
