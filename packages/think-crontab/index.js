@@ -43,7 +43,7 @@ class Crontab {
       options = [options];
     }
     options = options.map(item => {
-      item.worker = item.worker || 'one';
+      item.type = item.type || 'one';
       if(!helper.isFunction(item.handle)){
         item.handle = () => this.mockServer(item.handle);
       }
