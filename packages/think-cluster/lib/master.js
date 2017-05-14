@@ -1,6 +1,6 @@
 const cluster = require('cluster');
 const util = require('./util.js');
-const helper = require('think-helper');
+//const helper = require('think-helper');
 //const debug = require('debug')('think-cluster');
 
 /**
