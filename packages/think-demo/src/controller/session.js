@@ -20,6 +20,13 @@ module.exports = class SessionController extends think.Controller {
     return this.success(data);
   }
   /**
+   * get session
+   */
+  async get2Action(){
+    let data = await this.session('name', undefined, {type: 'cookie'});
+    return this.success(data);
+  }
+  /**
    * remove session
    */
   async rmAction(){
