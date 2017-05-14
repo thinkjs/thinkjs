@@ -31,7 +31,7 @@ class Crontab {
       options = [options];
     }
     options = options.map(item => {
-      item.worker = item.worker || 'one';
+      item.type = item.type || 'one';
       if(!helper.isFunction(item.handle)){
         let handle = item.handle;
         item.handle = () => mockHttp(handle, this.app);
