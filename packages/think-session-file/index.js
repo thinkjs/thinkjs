@@ -33,6 +33,7 @@ class FileSession {
 
     this.gcType = `session_${options.sessionPath}`;
     gc(this, this.options.gcInterval);
+    this[autoSave]();
   }
   /**
    * init session data
@@ -53,7 +54,6 @@ class FileSession {
       }
       this.data = content.data || {};
     }).catch(err => debug(err));
-    this[autoSave]();
     return this.initPromise;
   }
   /**
