@@ -15,7 +15,7 @@ function mockAssert(assertCallParams = []) {
 }
 
 function mockCluster(cluster) {
-  mock('cluster',cluster);
+  mock('cluster', cluster);
 }
 
 test('constructor function', t => {
@@ -29,8 +29,8 @@ test('constructor function', t => {
 test('constructor function', t => {
   let Crontab = getCrontab();
   let option = {
-    handle:'crontab/test',
-    type:'one'
+    handle: 'crontab/test',
+    type: 'one'
   };
   let cron = new Crontab(option);
   t.deepEqual(helper.isFunction(cron.options[0].handle), true);
@@ -43,8 +43,8 @@ test('constructor function', t => {
     handle(){
       console.log('test');
     },
-    type:'one',
-    enable:true
+    type: 'one',
+    enable: true
   };
   let cron = new Crontab([option]);
   t.deepEqual(helper.isFunction(cron.options[0].handle), true);
@@ -57,7 +57,7 @@ test('constructor function', t => {
     handle(){
       console.log('test');
     },
-    enable:false
+    enable: false
   };
   let cron = new Crontab(option);
   t.deepEqual(cron.options, []);
@@ -66,30 +66,73 @@ test('constructor function', t => {
 test('constructor function', async t => {
   let Crontab = getCrontab();
   let app = {
-    on:(evtName,cb)=>{
-      if(evtName === 'appReady'){
+    on: (evtName, cb) => {
+      if (evtName === 'appReady') {
         cb();
       }
     },
-    immediateExecuted:false,
-    executedTime:0
+    immediateExecuted: false,
+    executedTime: 0
   };
   let option = {
-    handle:(app)=>{
+    handle: (app) => {
       app.immediateExecuted = true;
       ++app.executedTime;
     },
-    immediate:true,
-    interval:'1s',
-    type:'all'
+    immediate: true,
+    interval: '1s',
+    type: 'all'
   };
-  let cron = new Crontab(option,app);
+  let cron = new Crontab(option, app);
   cron.runTask();
-  t.is(app.immediateExecuted,true);
+  t.is(app.immediateExecuted, true);
   await sleep(3500);
-  t.is(app.executedTime,4);
+  t.is(app.executedTime, 4);
 });
 
+test('constructor function', async t => {
+  let Crontab = getCrontab();
+  let url = '';
+  let app = {
+    callback: (req, res) => {
+      return (req, res) => {
+        url = req.url;
+      }
+    },
+    on: (evtName, cb) => {
+      if (evtName === 'appReady') {
+        cb();
+      }
+    },
+  };
+  let option = {
+    name:'test',
+    cron: '* * * * *',
+    handle: './task',
+    type: 'all',
+    immediate: true
+  };
+  let cron = new Crontab(option, app);
+  cron.runTask();
+  t.is(url, './task');
+});
+
+test('constructor function', async t => {
+  let Crontab = getCrontab();
+  let option = {
+    handle: () => {
+    },
+    type: 'all'
+  };
+  let cron = new Crontab(option);
+  let err;
+  try {
+    cron.runTask();
+  } catch (e) {
+    err = e;
+  }
+  t.is(err instanceof Error, true);
+});
 
 
 
