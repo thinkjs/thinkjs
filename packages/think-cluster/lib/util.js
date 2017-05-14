@@ -65,6 +65,7 @@ exports.forkWorker = function(env = {}){
     }
   });
   worker.once('exit', (code, signal) => {
+    if(signal === 'SIGQUIT') return;
     debug(`worker exit, code:${code}, signal:${signal}, pid: ${process.pid}`);
     if(worker.hasGracefulReload) return;
     exports.forkWorker(env);

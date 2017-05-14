@@ -71,6 +71,15 @@ class Master {
     }
     return forkWorker();
   }
+  /**
+   * kill worker
+   */
+  killWorker(worker){
+    worker.kill('SIGQUIT');
+    setTimeout(function () {
+      worker.process.kill('SIGQUIT');
+    }, 100);
+  }
    /**
    * force reload all workers, in development env
    */
@@ -85,14 +94,11 @@ class Master {
     }
     if(!aliveWorkers.length) return;
     const firstWorker = aliveWorkers.shift();
-    util.forkWorker(this.getForkEnv()).then(data => {
+    util.forkWorker(this.getForkEnv()).then(() => {
       //http://man7.org/linux/man-pages/man7/signal.7.html
-      firstWorker.kill('SIGQUIT');
-      setTimeout(function () {
-        firstWorker.process.kill('SIGQUIT');
-      }, 100);
+      this.killWorker(firstWorker);
       aliveWorkers.forEach(worker => {
-        worker.kill('SIGQUIT');
+        this.killWorker(worker);
         return util.forkWorker(this.getForkEnv());
       });
     });
