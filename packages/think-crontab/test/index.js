@@ -8,16 +8,6 @@ function getCrontab() {
   return mock.reRequire('../index');
 }
 
-function mockAssert(assertCallParams = []) {
-  mock('assert', (type, desc) => {
-    assertCallParams.push(type, desc);
-  });
-}
-
-function mockCluster(cluster) {
-  mock('cluster', cluster);
-}
-
 test('constructor function', t => {
   let Crontab = getCrontab();
   let option = 'crontab/test';
@@ -134,7 +124,32 @@ test('constructor function', async t => {
   t.is(err instanceof Error, true);
 });
 
-
+test('constructor function', async t => {
+  let Crontab = getCrontab();
+  let url = '';
+  let app = {
+    callback: (req, res) => {
+      return (req, res) => {
+        url = req.url;
+      }
+    },
+    on: (evtName, cb) => {
+      if (evtName === 'appReady') {
+        cb();
+      }
+    },
+  };
+  let option = {
+    name:'test',
+    cron: '* * * * *',
+    handle: './task',
+    type: 'one',
+    immediate: true
+  };
+  let cron = new Crontab(option, app);
+  cron.runTask();
+  // t.is(url, './task');
+});
 
 
 
