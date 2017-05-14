@@ -29,3 +29,5 @@ exports.session = {
 * `this.session(name, value)` set session data
 * `this.session(null)` delete all session data
 * `this.session(name, undefined, options)` get session data with options
+
+*For each `ctx`, session is only instantiated once.*
