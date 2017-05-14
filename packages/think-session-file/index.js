@@ -10,7 +10,6 @@ const readFile = helper.promisify(fs.readFile, fs);
 const unlink = helper.promisify(fs.unlink, fs);
 
 const initSessionData = Symbol('think-session-file-init');
-const autoSave = Symbol('think-session-save');
 
 /**
  * use file to store session
@@ -33,7 +32,11 @@ class FileSession {
 
     this.gcType = `session_${options.sessionPath}`;
     gc(this, this.options.gcInterval);
-    this[autoSave]();
+    
+    //flush session when request finish
+    this.ctx.res.once('finish', () => {
+      this.flush();
+    });
   }
   /**
    * init session data
@@ -55,21 +58,6 @@ class FileSession {
       this.data = content.data || {};
     }).catch(err => debug(err));
     return this.initPromise;
-  }
-  /**
-   * auto save session data when is changed
-   */
-  [autoSave](){
-    this.ctx.res.once('finish', () => {
-      if(this.status === -1){
-        return this.fileStore.delete(this.options.cookie);
-      }else if(this.status === 1){
-        return this.fileStore.set(this.options.cookie, JSON.stringify({
-          expires: Date.now() + helper.ms(this.options.maxAge || 0),
-          data: this.data
-        }));
-      }
-    });
   }
   /**
    * get session data
@@ -101,6 +89,21 @@ class FileSession {
     this.status = -1;
     this.data = {};
     return Promise.resolve();
+  }
+  /**
+   * flush session data to store
+   */
+  flush(){
+    if(this.status === -1){
+      this.status = 0;
+      return this.fileStore.delete(this.options.cookie);
+    }else if(this.status === 1){
+      this.status = 0;
+      return this.fileStore.set(this.options.cookie, JSON.stringify({
+        expires: Date.now() + helper.ms(this.options.maxAge || 0),
+        data: this.data
+      }));
+    }
   }
   /**
    * gc
