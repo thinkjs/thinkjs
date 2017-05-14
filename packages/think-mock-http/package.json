@@ -1,0 +1,50 @@
+{
+  "name": "think-mock-http",
+  "description": "mock http for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=html"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "debug": "^2.6.1",
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "coveralls": "^2.12.0",
+    "eslint": "^3.16.1",
+    "mock-require": "^2.0.1",
+    "nyc": "^7.0.0"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-mock-http"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-mock-http/issue"
+  }
+}
