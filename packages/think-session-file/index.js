@@ -104,6 +104,7 @@ class FileSession {
         data: this.data
       }));
     }
+    return Promise.resolve();
   }
   /**
    * gc
