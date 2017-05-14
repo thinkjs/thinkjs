@@ -26,7 +26,8 @@
     "debug": "^2.6.1",
     "node-schedule": "^1.2.1",
     "think-helper": "^1.0.0",
-    "think-cluster": "thinkjs/think-cluster"
+    "think-cluster": "thinkjs/think-cluster",
+    "think-mock-http": "thinkjs/think-mock-http"
   },
   "devDependencies": {
     "ava": "^0.18.2",

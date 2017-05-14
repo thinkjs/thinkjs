@@ -1,21 +1,9 @@
 const helper = require('think-helper');
-const Readable = require('stream').Readable;
-const http = require('http');
 const schedule = require('node-schedule');
 const messenger = require('think-cluster').messenger;
-
+const mockHttp = require('think-mock-http');
 const debug = require('debug')('think-crontab');
 
-const IncomingMessage = http.IncomingMessage;
-const ServerResponse = http.ServerResponse;
-
-/**
- * default mock args
- */
-const defaultArgs = {
-  method: 'GET',
-  httpVersion: '1.1'
-}
 /**
  * crontab class
  */
@@ -45,7 +33,8 @@ class Crontab {
     options = options.map(item => {
       item.worker = item.worker || 'one';
       if(!helper.isFunction(item.handle)){
-        item.handle = () => this.mockServer(item.handle);
+        let handle = item.handle;
+        item.handle = () => mockHttp(handle, this.app);
       }
       return item;
     }).filter(item => {
@@ -53,32 +42,6 @@ class Crontab {
       return true;
     });
     return options;
-  }
-  /**
-   * mock server
-   * @param {String|Object} cronpath 
-   */
-  mockServer(cronpath){
-    let args = this.mockServerArgs(cronpath);
-    let fn = this.app.callback();
-    process.nextTick(() => fn(args.req, args.res));
-  }
-  /**
-   * mock server args
-   * @param {String|Object} cronpath 
-   */
-  mockServerArgs(cronpath){
-    if(helper.isString(cronpath)){
-      cronpath = {url: cronpath};
-    }
-    const socket = new Readable();
-    const req = new IncomingMessage(socket);
-    const args = Object.assign({}, defaultArgs, cronpath);
-    for(let name in args){
-      req[name] = args[name];
-    }
-    const res = new ServerResponse(req);
-    return {req, res};
   }
   /**
    * run item task
