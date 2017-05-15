@@ -43,6 +43,6 @@
   },
   "dependencies": {
     "think-helper": "~1.0.6",
-    "validator": "~6.2.1"
+    "validator": "^7.0.0"
   }
 }
