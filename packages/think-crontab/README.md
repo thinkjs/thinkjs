@@ -1,5 +1,7 @@
 # think-crontab
-
+[![Build Status](https://travis-ci.org/thinkjs/think-crontab.svg?branch=master)](https://travis-ci.org/thinkjs/think-crontab)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-crontab/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-crontab?branch=master)
+[![npm](https://img.shields.io/npm/v/think-crontab.svg?style=flat-square)](https://www.npmjs.com/package/think-crontab)
 crontab for ThinkJS
 
 ## How to use
