@@ -8,7 +8,7 @@ function getCrontab() {
   return mock.reRequire('../index');
 }
 
-test('constructor function', t => {
+test('test case', t => {
   let Crontab = getCrontab();
   let option = 'crontab/test';
   let cron = new Crontab(option);
@@ -16,7 +16,7 @@ test('constructor function', t => {
   t.is(cron.options[0].type, 'one');
 });
 
-test('constructor function', t => {
+test('test case', t => {
   let Crontab = getCrontab();
   let option = {
     handle: 'crontab/test',
@@ -27,7 +27,7 @@ test('constructor function', t => {
   t.is(cron.options[0].type, 'one');
 });
 
-test('constructor function', t => {
+test('test case', t => {
   let Crontab = getCrontab();
   let option = {
     handle(){
@@ -41,7 +41,7 @@ test('constructor function', t => {
   t.is(cron.options[0].type, 'one');
 });
 
-test('constructor function', t => {
+test('test case', t => {
   let Crontab = getCrontab();
   let option = {
     handle(){
@@ -53,7 +53,7 @@ test('constructor function', t => {
   t.deepEqual(cron.options, []);
 });
 
-test('constructor function', async t => {
+test('test case', async t => {
   let Crontab = getCrontab();
   let app = {
     on: (evtName, cb) => {
@@ -80,7 +80,7 @@ test('constructor function', async t => {
   t.is(app.executedTime, 4);
 });
 
-test('constructor function', async t => {
+test('test case', async t => {
   let Crontab = getCrontab();
   let url = '';
   let app = {
@@ -107,7 +107,7 @@ test('constructor function', async t => {
   t.is(url, './task');
 });
 
-test('constructor function', async t => {
+test('test case', async t => {
   let Crontab = getCrontab();
   let option = {
     handle: () => {
@@ -124,7 +124,7 @@ test('constructor function', async t => {
   t.is(err instanceof Error, true);
 });
 
-test('constructor function', async t => {
+test('test case', async t => {
   mock('think-cluster',{
     messenger:{
       runInOne:(fn)=>{
