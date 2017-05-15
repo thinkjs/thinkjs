@@ -125,6 +125,18 @@ test('constructor function', async t => {
 });
 
 test('constructor function', async t => {
+  mock('think-cluster',{
+    messenger:{
+      runInOne:(fn)=>{
+        fn();
+      }
+    }
+  });
+  mock('node-schedule', {
+    scheduleJob: (cron,fn) => {
+      fn();
+    }
+  });
   let Crontab = getCrontab();
   let url = '';
   let app = {
@@ -138,17 +150,20 @@ test('constructor function', async t => {
         cb();
       }
     },
+    isExecuted:false
   };
   let option = {
     name:'test',
     cron: '* * * * *',
-    handle: './task',
+    handle: (app)=>{
+      app.isExecuted = true;
+    },
     type: 'one',
-    immediate: true
+    // immediate: true
   };
   let cron = new Crontab(option, app);
   cron.runTask();
-  // t.is(url, './task');
+  t.is(app.isExecuted, true);
 });
 
 
