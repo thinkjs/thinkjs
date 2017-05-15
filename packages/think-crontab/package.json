@@ -10,7 +10,7 @@
     "test": "eslint index.js && nyc ava test/index.js",
     "coverage": "nyc report --reporter=html"
   },
-  "ava": {git s
+  "ava": {
     "require": [
       "babel-core/register"
     ]
