@@ -1,6 +1,6 @@
 {
   "name": "think-crontab",
-  "description": "crontab for thinkjs",
+  "description": "crontab for thinkjs ",
   "version": "1.0.0",
   "author": {
     "name": "welefen",
@@ -10,7 +10,7 @@
     "test": "eslint index.js && nyc ava test/index.js",
     "coverage": "nyc report --reporter=html"
   },
-  "ava": {
+  "ava": {git s
     "require": [
       "babel-core/register"
     ]
