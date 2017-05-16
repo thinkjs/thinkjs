@@ -16,7 +16,6 @@ test('test case', t => {
       return (req,res)=>{
         request = req;
         response = res;
-        // console.log(req,res);
       }
     }
   };
