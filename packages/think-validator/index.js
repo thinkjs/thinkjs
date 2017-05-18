@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-14 15:10:55
+* @Last Modified time: 2017-05-18 21:09:24
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -184,6 +184,7 @@ class Validator {
     }else {
       methodName = rule.method.toLowerCase();
     }
+    rule.method = methodName;
     return METHOD_MAP[methodName];
   }
 
@@ -201,6 +202,14 @@ class Validator {
     for(let argName in rules) {
       let rule = rules[argName];
 
+      let queryMethod = this._getQueryMethod(rule);
+      // skip rule.method not match this.ctx.method
+      if(this.ctx.method.toLowerCase() !== rule.method.toLowerCase()) {
+        continue;
+      }
+      // set this.ctxQuery
+      this.ctxQuery = this.ctx[queryMethod]();
+
       // basic type check, only one basic type is legal(ok)
       let containTypeNum = this.basicType.reduce((acc, val) => {
         val = rule[val] ? 1 : 0;
@@ -210,10 +219,6 @@ class Validator {
       if(containTypeNum > 1) {
         throw new Error('Any rule can\'t contains one more basic type, the param you are validing is ' + argName);
       }
-
-      // set this.ctxQuery
-      let queryMethod = this._getQueryMethod(rule);
-      this.ctxQuery = this.ctx[queryMethod]();
 
       // set related value on ctx to rule.value first
       if(!rule.value) {
@@ -296,6 +301,11 @@ class Validator {
     outerLoop:
     for(let argName in parsedRules){
       let rule = parsedRules[argName];
+
+      // skip rule.method not match this.ctx.method
+      if(this.ctx.method.toLowerCase() !== rule.method.toLowerCase()) {
+        continue;
+      }
 
       // required check
       let isRequired = this._checkRequired(rule);

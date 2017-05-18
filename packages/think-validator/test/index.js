@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-14 14:22:26
+* @Last Modified time: 2017-05-18 21:09:45
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2899,4 +2899,16 @@ test('rule-object-nest', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length === 0 && ctx.param().arg.a === 123)
+});
+
+test('rule\'method not match this.ctx.method', t => {
+  let rules = {
+    username: {
+      required: true,
+      method: 'POST'
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
