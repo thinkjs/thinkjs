@@ -59,7 +59,7 @@
     "think-session": "^1.0.0",
     "think-trace": "^1.0.2",
     "think-validator": "^1.0.2",
-    "think-mock-http": "thinkjs/think-mock-http"
+    "think-mock-http": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^0.18.0",
