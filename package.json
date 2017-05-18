@@ -46,7 +46,7 @@
     "think-cluster": "thinkjs/think-cluster",
     "think-config": "^1.0.0",
     "think-controller": "^1.0.1",
-    "think-crontab": "thinkjs/think-crontab",
+    "think-crontab": "^1.0.0",
     "think-helper": "^1.0.0",
     "think-loader": "thinkjs/think-loader",
     "think-logger3": "^1.0.0",
