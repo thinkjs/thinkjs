@@ -1,0 +1,95 @@
+{% extends "./base.html" %}
+
+{% block header %}
+  <h1>Request Demo</h1>
+  <div>
+    <a href="/payload">Payload Demo</a> > payload request demo
+  </div>
+{% endblock %}
+{% block body %}
+<dl>
+  <dt>
+    <button id="json">send post request (json)</button>
+    <button id="form">send post request (x-www-form-urlencoded)</button>
+    <button id="xml">send post request (xml)</button>
+    <button id="text">send get request (text/plain)</button>
+  </dt>
+  <dd>
+    <h3>请求信息</h3>
+    <div id="result"></div>
+  </dd>
+</dl>
+{% endblock %}
+
+{% block loadJs %}
+<script>
+  utils.inheritPrototype(Request, BaseRequest);
+
+  function Request() {
+    BaseRequest.call(this);
+
+    this.eventMap = {
+      'click:#json': 'requestJson',
+      'click:#form': 'requestForm',
+      'click:#xml': 'requestXml',
+      'click:#text': 'requestText'
+    };
+
+    this.eles = {
+      result: '#result'
+    };
+    this.initialization();
+  }
+
+  Request.prototype = Object.assign(Request.prototype, {
+    requestJson: function () {
+      var self = this;
+      $.ajax({
+        method: 'post',
+        url: '/payload/demo',
+        data: JSON.stringify({'name': 'berwin', 'age': '22'}),
+        dataType:'json',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).done(function (data) {
+        self.result.html('header: {"Content-Type": "application/json"} </br> data: {"name": "berwin", "age": 22} </br> response body: ' + JSON.stringify(data));
+      });
+    },
+    requestForm: function () {
+      var self = this;
+      $.post('/payload/demo', {'name': 'berwin', 'age': '22'}).done(function (data) {
+        self.result.html('header: {"Content-Type": "application/x-www-form-urlencoded"} </br> data: {"name": "berwin", "age": 22} </br> response body: ' + JSON.stringify(data));
+      });
+    },
+    requestXml: function () {
+      var self = this;
+      $.ajax({
+        method: 'post',
+        url: '/payload/demo',
+        data: '<name>berwin</name>',
+        headers: {
+          'Content-Type': 'text/xml'
+        }
+      }).done(function (data) {
+        self.result.html('header: {"Content-Type": "text/xml"} </br> data: "&lt;name&gt;berwin&lt;/name&gt;" </br> response body: ' + JSON.stringify(data));
+      });
+    },
+    requestText: function () {
+      var self = this;
+      $.ajax({
+        method: 'post',
+        url: '/payload/demo',
+        data: 'hello berwin',
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      }).done(function (data) {
+        self.result.html('header: {"Content-Type": "text/plain"} </br> data: "hello berwin" </br> response body: ' + JSON.stringify(data));
+      });
+    }
+  });
+
+  new Request();
+</script>
+{%  endblock%}
