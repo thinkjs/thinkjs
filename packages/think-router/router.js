@@ -120,13 +120,13 @@ class Router {
     if(this.modules.length === 0) {
       return [];
     }else if(this.modules.length && helper.isObject(rules)){
-      for(let module in rules){
-        let match = rules[module].match;
+      for(let m in rules){
+        let match = rules[m].match;
         if(match){
           assert(helper.isRegExp(match), 'router.match must be a RegExp');
           if(match.test(this.pathname)){
-            this.ctx.module = module;
-            return rules[module].rules || []
+            this.ctx.module = m;
+            return rules[m].rules || []
           }
         }
       }
@@ -193,18 +193,18 @@ class Router {
       }
     }
 
-    let module = ''; // module
+    let m = ''; // module
     // multi module application, parse module first
     let controllers = this.controllers;
     if(this.modules.length){
       let pos = pathname.indexOf('/');
-      module = pos === -1 ? pathname : pathname.slice(0, pos);
-      if(this.modules.indexOf(module) > -1 && module !== 'common' && this.options.denyModules.indexOf(module) === -1){
+      m = pos === -1 ? pathname : pathname.slice(0, pos);
+      if(this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1){
         pathname = pos === -1 ? '' : pathname.slice(pos + 1);
       }else{
-        module = this.options.defaultModule;
+        m = this.options.defaultModule;
       }
-      controllers = controllers[module] || {};
+      controllers = controllers[m] || {};
     }
     let controller = '';
     for(let name in controllers){
@@ -223,7 +223,7 @@ class Router {
       controller = pathname[0];
       action = rule.method === 'rest' ? this.ctx.method : pathname[1];
     }
-    this.ctx.module = module || this.options.defaultModule;
+    this.ctx.module = m;
     this.ctx.controller = controller || this.options.defaultController;
     this.ctx.action = action || this.options.defaultAction;
     //add query to context
