@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-18 21:09:45
+* @Last Modified time: 2017-05-19 13:59:56
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2778,18 +2778,21 @@ test('rule-name-no-message', t => {
 test('rule-add-method', t => {
   let rules = {
     arg: {
-      default: 'abc',
+      default: 'lu',
       eqlushijie: true
     }
   }
   let wrongMsg = 'eqlushijie valid failed';
 
-  let instance = new Validator(helper.extend({}, defaultCtx));
-  instance.add('eqlushijie', function(value, options) {
-    return value === 'lushijie';
+  Validator.add('eqlushijie', function(value, parsedValue) {
+    return parsedValue === 'lushijie';
   }, wrongMsg);
+  Validator.add('_eqlushijie', function(validValue, query) {
+    return query.arg + 'shijie';
+  });
+  let instance = new Validator(helper.extend({}, defaultCtx));
   let ret = instance.validate(rules);
-  t.true(ret.arg === wrongMsg)
+  t.true(Object.keys(ret).length === 0);
 });
 
 test('rule one-more-basic type', t => {

@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-18 21:09:24
+* @Last Modified time: 2017-05-19 13:52:08
 */
 const validator = require('./rules.js');
 const helper = require('think-helper');
@@ -283,7 +283,7 @@ class Validator {
    * @param {Function} callback  [description]
    * @param {String}   msg       [description]
    */
-  add(validName, callback, msg) {
+  static add(validName, callback, msg) {
     validator[validName] = callback;
     validator.errors[validName] = msg;
   }

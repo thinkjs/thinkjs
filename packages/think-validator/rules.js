@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-14 11:19:48
+* @Last Modified time: 2017-05-19 14:21:19
 */
 'use strict';
 const helper = require('think-helper');
@@ -16,233 +16,232 @@ Validator.errors = errors;
 /**
  * check value is set
  * @param  {String}  value []
- * @param  {Boolean} options []
+ * @param  {Boolean} validValue []
  * @return {Boolean}       []
  */
-Validator.required = (value, options) => {
-  return options;
+Validator.required = (value, validValue) => {
+  return validValue;
 };
 
 /**
- * parse requiredIf rule options
- * @param  {Array}  options []
- * @param  {Object} ctx []
+ * parse requiredIf rule validValue
+ * @param  {Array}  validValue []
+ * @param  {Object} query []
  * @return {Array}  []
  */
-Validator._requiredIf = (options, ctx) => {
-  assert(helper.isArray(options), 'requiredIf\'s options should be array');
-  options = options.slice();
+Validator._requiredIf = (validValue, query) => {
+  assert(helper.isArray(validValue), 'requiredIf\'s value should be array');
+  validValue = validValue.slice();
 
   // just parse the first param
-  let arg0 = options[0];
-  options[0] = !helper.isTrueEmpty(ctx[arg0]) ? ctx[arg0] : arg0;
-  return options;
+  let arg0 = validValue[0];
+  validValue[0] = !helper.isTrueEmpty(query[arg0]) ? query[arg0] : arg0;
+  return validValue;
 };
 
 /**
  * The field under validation must be present if the otherFields field is equal to any value.
  * @param  {String}    value       [description]
- * @param  {Array}     options     [description]
+ * @param  {Array}     parsedValue     [description]
  * @return {Boolean}               [description]
  */
-Validator.requiredIf = (value, options) => {
-  let first = options[0];
-  let others = options.slice(1);
+Validator.requiredIf = (value, parsedValue) => {
+  let first = parsedValue[0];
+  let others = parsedValue.slice(1);
   return others.indexOf(first) > -1;
 };
 
 /**
- * parse requiredNotIf rule options
- * @param  {Array} options      []
- * @param  {Object} ctx []
+ * parse requiredNotIf rule validValue
+ * @param  {Array} validValue      []
+ * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredNotIf = (options, ctx) => {
-  assert(helper.isArray(options), 'requiredNotIf\'s options should be array');
-  return Validator._requiredIf(options, ctx);
+Validator._requiredNotIf = (validValue, query) => {
+  assert(helper.isArray(validValue), 'requiredNotIf\'s value should be array');
+  return Validator._requiredIf(validValue, query);
 };
 
 /**
  * The field under validation must be present not if the otherFileds field is equal to any value.
  * @param  {String}    value        []
- * @param  {Array}     options       []
+ * @param  {Array}     parsedValue       []
  * @return {Boolean}                 []
  */
-Validator.requiredNotIf = (value, options) => {
-  let first = options[0];
-  let others = options.slice(1);
+Validator.requiredNotIf = (value, parsedValue) => {
+  let first = parsedValue[0];
+  let others = parsedValue.slice(1);
   return (others.indexOf(first) === -1);
 };
 
 /**
- * parse required rule options
- * @param  {Array}  options []
- * @param  {Object} ctx []
+ * parse required rule validValue
+ * @param  {Array}  validValue []
+ * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWith = (options, ctx) => {
-  assert(helper.isArray(options), 'requiredWith\'s options should be array');
-  options = options.slice();
+Validator._requiredWith = (validValue, query) => {
+  assert(helper.isArray(validValue), 'requiredWith\'s value should be array');
+  validValue = validValue.slice();
 
   // parsed all the param
-  return options.map(item => {
-    return !helper.isTrueEmpty(ctx[item]) ? ctx[item] : '';
+  return validValue.map(item => {
+    return !helper.isTrueEmpty(query[item]) ? query[item] : '';
   });
 };
 
 /**
  * The field under validation must be present only if any of the other specified fields are present.
  * @param  {String} value         []
- * @param  {Array}  options  []
+ * @param  {Array}  parsedValue  []
  * @return {Boolean}              []
  */
-Validator.requiredWith = (value, options) => {
-  return options.some(item => {
+Validator.requiredWith = (value, parsedValue) => {
+  return parsedValue.some(item => {
     return !helper.isTrueEmpty(item);
   });
 };
 
 /**
- * parse requiredWithAll rule options
- * @param  {Array}  options []
- * @param  {Object} ctx []
+ * parse requiredWithAll rule validValue
+ * @param  {Array}  validValue []
+ * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWithAll = (options, ctx) => {
-  assert(helper.isArray(options), 'requiredWithAll\'s options should be array');
-  return Validator._requiredWith(options, ctx);
+Validator._requiredWithAll = (validValue, query) => {
+  assert(helper.isArray(validValue), 'requiredWithAll\'s value should be array');
+  return Validator._requiredWith(validValue, query);
 };
 
 /**
  * The field under validation must be present only if all of the other specified fields are present.
  * @param  {String}    value         []
- * @param  {Array}     options       []
+ * @param  {Array}     parsedValue       []
  * @return {Boolean}                 []
  */
-Validator.requiredWithAll = (value, options) => {
-  return options.every(item => {
+Validator.requiredWithAll = (value, parsedValue) => {
+  return parsedValue.every(item => {
     return !helper.isTrueEmpty(item);
   });
 };
 
 /**
- * parse requiredWithOut rule options
- * @param  {Array} options []
- * @param  {Object} ctx []
+ * parse requiredWithOut rule validValue
+ * @param  {Array} validValue []
+ * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWithOut = (options, ctx) => {
-  assert(helper.isArray(options), 'requiredWithOut\'s options should be array');
-  return Validator._requiredWith(options, ctx);
+Validator._requiredWithOut = (validValue, query) => {
+  assert(helper.isArray(validValue), 'requiredWithOut\'s value should be array');
+  return Validator._requiredWith(validValue, query);
 };
 
 /**
  * The field under validation must be present only when any of the other specified fields are not present.
  * @param  {String}    value          []
- * @param  {Array} options            []
+ * @param  {Array} parsedValue            []
  * @return {Boolean}                  []
  */
-Validator.requiredWithOut = (value, options) => {
-  return options.some(item => {
+Validator.requiredWithOut = (value, parsedValue) => {
+  return parsedValue.some(item => {
     return helper.isTrueEmpty(item);
   });
 };
 
 /**
- * parse requiredWithOutAll rule options
- * @param  {Array} options []
- * @param  {Object} ctx []
+ * parse requiredWithOutAll rule validValue
+ * @param  {Array} validValue []
+ * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWithOutAll = (options, ctx) => {
-  assert(helper.isArray(options), 'requiredWithOutAll\'s options should be array');
-  return Validator._requiredWith(options, ctx);
+Validator._requiredWithOutAll = (validValue, query) => {
+  assert(helper.isArray(validValue), 'requiredWithOutAll\'s value should be array');
+  return Validator._requiredWith(validValue, query);
 };
 
 /**
  * The field under validation must be present only when all of the other specified fields are not present.
  * @param  {String}    value         []
- * @param  {Array}     options []
+ * @param  {Array}     parsedValue []
  * @return {Boolean}                  []
  */
-Validator.requiredWithOutAll = (value, options) => {
-  return options.every(item => {
+Validator.requiredWithOutAll = (value, parsedValue) => {
+  return parsedValue.every(item => {
     return helper.isTrueEmpty(item);
   });
 };
 
 /**
- * parse contains rule seed
- * @param  {String} seed [description]
- * @param  {Object} ctx  [description]
+ * parse contains rule validValue
+ * @param  {String} validValue [description]
+ * @param  {Object} query  [description]
  * @return {String}      [description]
  */
-Validator._contains = (seed, ctx) => {
-  let item = ctx[seed];
-  return !helper.isTrueEmpty(item) ? item : seed;
+Validator._contains = (validValue, query) => {
+  let item = query[validValue];
+  return !helper.isTrueEmpty(item) ? item : validValue;
 }
 /**
- * check if the string contains the seed.
+ * check if the string contains the parsedValue.
  * @param  {String} value []
- * @param  {String} seed   []
+ * @param  {String} parsedValue   []
  * @return {Boolean}       []
  */
-Validator.contains = (value, seed) => {
+Validator.contains = (value, parsedValue) => {
   value = validator.toString(value);
-  return validator.contains(value, seed);
+  return validator.contains(value, parsedValue);
 };
 
-
 /**
- * parse equal rule comparison
- * @param  {String} comparison []
- * @param  {Object} ctx []
+ * parse equal rule validValue
+ * @param  {String} validValue []
+ * @param  {Object} query []
  * @return {String}      []
  */
-Validator._equals = (comparison, ctx) => {
-  let item = ctx[comparison];
-  return !helper.isTrueEmpty(item) ? item : comparison;
+Validator._equals = (validValue, query) => {
+  let item = query[validValue];
+  return !helper.isTrueEmpty(item) ? item : validValue;
 };
 
 /**
- * check if the string matches the comparison.
+ * check if the string matches the parsedValue.
  * @param  {String} value      []
- * @param  {String} comparison []
+ * @param  {String} parsedValue []
  * @return {Boolean}            []
  */
-Validator.equals = (value, comparison) => {
+Validator.equals = (value, parsedValue) => {
   value = validator.toString(value);
-  return validator.equals(value, comparison);
+  return validator.equals(value, parsedValue);
 };
 
 /**
- * parse different rule comparison
- * @param  {Array}  comparison []
- * @param  {Object} ctx []
+ * parse different rule validValue
+ * @param  {Array}  validValue []
+ * @param  {Object} query []
  * @return {Array}  []
  */
-Validator._different = (comparison, ctx) => {
-  return Validator._equals(comparison, ctx);
+Validator._different = (validValue, query) => {
+  return Validator._equals(validValue, query);
 };
 
 /**
- * check if the string not matches the comparison.
+ * check if the string not matches the parsedValue.
  * @param  {String} value      [description]
- * @param  {String} comparison [description]
+ * @param  {String} parsedValue [description]
  * @return {Boolean}            [description]
  */
-Validator.different = (value, comparison) => {
+Validator.different = (value, parsedValue) => {
   value = validator.toString(value);
-  return !validator.equals(value, comparison);
+  return !validator.equals(value, parsedValue);
 };
 
 /*
- * pretreat before rule comparison
- * @param  {Date String|true} comparison []
+ * pretreat before rule validValue
+ * @param  {Date String|true} validValue []
  * @return {Array}      []
 */
-Validator._before = (comparison) => {
- if(comparison === true) {
+Validator._before = (validValue) => {
+ if(validValue === true) {
     let now = new Date();
     let nowTime = now.getFullYear() + '-' +
                   (now.getMonth() + 1) + '-' +
@@ -252,39 +251,39 @@ Validator._before = (comparison) => {
                   now.getSeconds();
     return nowTime;
   }
-  assert(Validator.date(comparison), 'comparison should be date');
-  return comparison;
+  assert(Validator.date(validValue), 'validValue should be date');
+  return validValue;
 };
 
 /*
  * check if the string is a date that's before the specified date.
  * @param  {String} value []
- * @param  {Date String} comparison  []
+ * @param  {Date String} parsedValue  []
  * @return {Boolean}       []
 */
-Validator.before = (value, comparison) => {
+Validator.before = (value, parsedValue) => {
   value = validator.toString(value);
-  return validator.isBefore(value, comparison);
+  return validator.isBefore(value, parsedValue);
 };
 
 /*
- * pretreat after rule comparison
- * @param  {Date String | true} comparison []
+ * pretreat after rule validValue
+ * @param  {Date String | true} validValue []
  * @return {Array}      []
 */
-Validator._after = (comparison) => {
-  return Validator._before(comparison);
+Validator._after = (validValue) => {
+  return Validator._before(validValue);
 };
 
 /*
  * check if the string is a date that's after the specified date (defaults to now).
  * @param  {String} value []
- * @param  {Date String} comparison  []
+ * @param  {Date String} parsedValue  []
  * @return {Boolean}       []
 */
-Validator.after = (value, comparison) => {
+Validator.after = (value, parsedValue) => {
   value = validator.toString(value);
-  return validator.isAfter(value, comparison);
+  return validator.isAfter(value, parsedValue);
 };
 
 /**
@@ -351,13 +350,13 @@ Validator.base64 = value => {
 /**
  * check if the string's length (in bytes) falls in a range.
  * @param  {String} value []
- * @param  {Object} options []
+ * @param  {Object} validValue []
  * @return {Boolean}       []
  */
-Validator.byteLength = (value, options) => {
-  assert(helper.isObject(options), 'byteLength\'s options should be object');
+Validator.byteLength = (value, validValue) => {
+  assert(helper.isObject(validValue), 'byteLength\'s value should be object');
   value = validator.toString(value);
-  return validator.isByteLength(value, {min: options.min | 0, max: options.max});
+  return validator.isByteLength(value, {min: validValue.min | 0, max: validValue.max});
 };
 
 /**
@@ -371,18 +370,18 @@ Validator.creditCard = value => {
 };
 
 /**
- * check if the string is a valid currency amount. options is an object which defaults to
+ * check if the string is a valid currency amount
  * @param  {String} value   []
- * @param  {Object|true} options []
+ * @param  {Object|true} validValue []
  * @return {Boolean}         []
  */
-Validator.currency = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'currency\'s options should be object or true');
+Validator.currency = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'currency\'s value should be object or true');
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isCurrency(value);
   }else {
-    return validator.isCurrency(value, options);
+    return validator.isCurrency(value, validValue);
   }
 };
 
@@ -412,59 +411,59 @@ Validator.decimal = value => {
 /**
  * check if the string is a number that's divisible by another.
  * @param  {String} value  [description]
- * @param  {Number} number [description]
+ * @param  {Number} validValue [description]
  * @return {Boolean}        [description]
  */
-Validator.divisibleBy = (value, number) => {
+Validator.divisibleBy = (value, validValue) => {
   value = validator.toString(value);
-  return validator.isDivisibleBy(value, number);
+  return validator.isDivisibleBy(value, validValue);
 };
 
 /**
  * check if the string is an email
  * @param  {String} value   [description]
- * @param  {Object|true} options [description]
+ * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.email = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'email\'s options should be object or true');
+Validator.email = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'email\'s value should be object or true');
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isEmail(value);
   }else {
-    return validator.isEmail(value, options);
+    return validator.isEmail(value, validValue);
   }
 };
 
 /**
  * check if the string is a fully qualified domain name (e.g. domain.com).
  * @param  {String} value   [description]
- * @param  {Object|true} options [description]
+ * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.fqdn = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'fqdn\'s options should be object or true');
+Validator.fqdn = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'fqdn\'s value should be object or true');
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isFQDN(value);
   }else {
-    return validator.isFQDN(value, options);
+    return validator.isFQDN(value, validValue);
   }
 };
 
 /**
  * check if the string is a float.
  * @param  {String} value   [description]
- * @param  {Object|true} options [description]
+ * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.float = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'float\'s options should be object or true');
+Validator.float = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'float\'s value should be object or true');
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isFloat(value);
   }else {
-    return validator.isFloat(value, options);
+    return validator.isFloat(value, validValue);
   }
 };
 
@@ -571,54 +570,54 @@ Validator.iso8601 = value => {
 /**
  * check if the string is in a array of allowed values.
  * @param  {String} value [description]
- * @param  {Array} options [description]
+ * @param  {Array} validValue [description]
  * @return {Boolean}       [description]
  */
-Validator.in = (value, options) => {
-  assert(helper.isArray(options), 'in\'s options should be array');
+Validator.in = (value, validValue) => {
+  assert(helper.isArray(validValue), 'in\'s value should be array');
   value = validator.toString(value);
-  return validator.isIn(value, options);
+  return validator.isIn(value, validValue);
 };
 
 /**
  * check if the string is not in a array of allowed values.
  * @param  {String} value [description]
- * @param  {Array} options [description]
+ * @param  {Array} validValue [description]
  * @return {Boolean}       [description]
  */
-Validator.notIn = (value, options) => {
-  assert(helper.isArray(options), 'notIn\'s options should be array');
+Validator.notIn = (value, validValue) => {
+  assert(helper.isArray(validValue), 'notIn\'s value should be array');
 
   value = validator.toString(value);
-  return !validator.isIn(value, options);
+  return !validator.isIn(value, validValue);
 };
 
 /**
  *  check if the string is an integer.
  * @param  {String} value   [description]
- * @param  {Object|true} options [description]
+ * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.int = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'int\'s options should be object or true');
+Validator.int = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'int\'s value should be object or true');
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isInt(value);
   }else {
-    return validator.isInt(value, options);
+    return validator.isInt(value, validValue);
   }
 };
 
 /**
  * check if the string's length falls in a range.
  * @param  {String} value   [description]
- * @param  {Object|true} options [description]
+ * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.length = (value, options) => {
-  assert(helper.isObject(options), 'length\'s options should be object');
+Validator.length = (value, validValue) => {
+  assert(helper.isObject(validValue), 'length\'s value should be object');
   value = validator.toString(value);
-  return validator.isLength(value, {min: options.min | 0, max: options.max});
+  return validator.isLength(value, {min: validValue.min | 0, max: validValue.max});
 };
 
 /**
@@ -644,15 +643,15 @@ Validator.uppercase = value => {
 /**
  * check if the string is a mobile phone number
  * @param  {String} value  [description]
- * @param  {String} locale [description]
+ * @param  {String} validValue [description]
  * @return {Boolean}        [description]
  */
-Validator.mobile = (value, locale) => {
+Validator.mobile = (value, validValue) => {
   value = validator.toString(value);
-  if(locale === true) {
+  if(validValue === true) {
     return validator.isMobilePhone(value, 'zh-CN');
   }else {
-    return validator.isMobilePhone(value, locale);
+    return validator.isMobilePhone(value, validValue);
   }
 };
 
@@ -681,17 +680,17 @@ Validator.multibyte = value => {
 /**
  * check if the string is an URL.
  * @param  {String} value   [description]
- * @param  {Object|true} options [description]
+ * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.url = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'url\'s options should be object or true');
+Validator.url = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'url\'s validValue should be object or true');
 
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isURL(value);
   }else {
-    return validator.isURL(value, options);
+    return validator.isURL(value, validValue);
   }
 };
 
@@ -733,21 +732,21 @@ Validator.image = value => {
 /**
  * check is string start with str
  * @param  {String} value []
- * @param  {String} str   []
+ * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Validator.startWith = (value, str) => {
-  return value.indexOf(str) === 0;
+Validator.startWith = (value, validValue) => {
+  return value.indexOf(validValue) === 0;
 };
 
 /**
  * check is string end with str
  * @param  {String} value []
- * @param  {String} str   []
+ * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Validator.endWith = (value, str) => {
-  return value.lastIndexOf(str) === (value.length - str.length);
+Validator.endWith = (value, validValue) => {
+  return value.lastIndexOf(validValue) === (value.length - validValue.length);
 };
 
 /**
@@ -789,12 +788,12 @@ Validator.object = value => {
 /**
  * check value with regexp
  * @param  {Mixed} value []
- * @param  {RegExp} reg   []
+ * @param  {RegExp} validValue   []
  * @return {Boolean}       []
  */
-Validator.regexp = (value, reg) => {
-  assert(helper.isRegExp(reg), 'argument should be regexp');
-  return reg.test(value);
+Validator.regexp = (value, validValue) => {
+  assert(helper.isRegExp(validValue), 'argument should be regexp');
+  return validValue.test(value);
 };
 
 /**
@@ -803,13 +802,13 @@ Validator.regexp = (value, reg) => {
  * @param  {Object|true} value [description]
  * @return {Boolean}       [description]
  */
-Validator.issn = (value, options) => {
-  assert((helper.isObject(options) || options === true), 'issn\'s options should be object or true');
+Validator.issn = (value, validValue) => {
+  assert((helper.isObject(validValue) || validValue === true), 'issn\'s validValue should be object or true');
   value = validator.toString(value);
-  if(options === true) {
+  if(validValue === true) {
     return validator.isISSN(value);
   }else {
-    return validator.isISSN(value, options);
+    return validator.isISSN(value, validValue);
   }
 };
 
@@ -873,7 +872,5 @@ Validator.variableWidth = value => {
   value = validator.toString(value);
   return validator.isVariableWidth(value);
 };
-
-
 
 module.exports = Validator;
