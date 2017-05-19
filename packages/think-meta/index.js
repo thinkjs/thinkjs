@@ -21,7 +21,7 @@ module.exports = (options, app) => {
     //set request timeout
     ctx.res.setTimeout(options.requestTimeout, options.requestTimeoutCallback);
     //send power by header
-    if(options.sendPowerBy){
+    if(options.sendPowerBy && !ctx.res.headersSent){
       const version = app.think.version;
       ctx.res.setHeader('X-Powered-By', `thinkjs-${version}`);
     }
@@ -33,7 +33,7 @@ module.exports = (options, app) => {
         err = e;
       }).then(() => {
         const endTime = Date.now();
-        if(options.sendResponseTime){
+        if(options.sendResponseTime && !ctx.res.headersSent){
            ctx.res.setHeader('X-Response-Time', `${endTime - startTime}ms`);
         }
         if(options.logRequest){
