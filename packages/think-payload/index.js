@@ -46,8 +46,6 @@ module.exports = function (opts = {}) {
       ctx.request.body = body;
     }).then(() => {
       return next();
-    }).then(() => {
-      return middlewareAfter(ctx);
     }).catch(err => {
       throw err;
     });
@@ -55,27 +53,21 @@ module.exports = function (opts = {}) {
 
   function parseBody(ctx) {
     if (ctx.request.is(jsonTypes)) {
-      return parse.json.before(ctx);
+      return parse.json(ctx);
     }
     if (ctx.request.is(formTypes)) {
-      return parse.form.before(ctx);
+      return parse.form(ctx);
     }
     if (ctx.request.is(textTypes)) {
-      return parse.text.before(ctx);
+      return parse.text(ctx);
     }
     if (ctx.request.is(multipartTypes)) {
-      return parse.multipart.before(ctx);
+      return parse.multipart(ctx);
     }
     if (ctx.request.is(xmlTypes)) {
-      return parse.xml.before(ctx);
+      return parse.xml(ctx);
     }
 
     return Promise.resolve({});
-  }
-
-  function middlewareAfter(ctx) {
-    if (ctx.request.is(multipartTypes)) {
-      return parse.multipart.after(ctx);
-    }
   }
 };

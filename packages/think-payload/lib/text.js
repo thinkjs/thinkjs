@@ -1,7 +1,7 @@
 const raw = require('raw-body');
 const inflate = require('inflation');
 
-exports.before = function (ctx, opts = {}) {
+module.exports = function (ctx, opts = {}) {
   const req = ctx.req;
 
   // defaults
