@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-10 09:39:05
+* @Last Modified time: 2017-05-19 15:39:19
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -706,7 +706,7 @@ test.serial.cb('app modules is empty', t => {
 
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
-      module: 'home',
+      module: '',
       controller: 'admin',
       action: 'article'
     });
