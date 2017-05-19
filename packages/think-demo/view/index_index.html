@@ -1,2 +1,14 @@
 <h3>{{title}}</h3>
+
+<h3>下面是i18n展示
+  <a href="/?locale=en-US">英文</a>
+  <a href="/?locale=zh-CN">中文</a>
+</h3>
+<div style="background: #eee">
+<div>{{ jed.gettext('some key') }}</div>
+<div>{{ jed.dgettext('setting', 'some key') }}</div>
+<div>{{ moment().format('llll') }}</div>
+<div>{{ numeral.locale() }}</div>
+<div>{{ numeral(1000).format('currency') }}</div>
+</div>
 <script src="/static/js/a.js"></script>
