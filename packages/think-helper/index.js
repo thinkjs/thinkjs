@@ -284,7 +284,8 @@ exports.uuid = function(version){
 /**
  * parse adapter config
  */
-exports.parseAdapterConfig = (config, extConfig) => {
+exports.parseAdapterConfig = (config = {}, extConfig) => {
+  if(!extConfig && !config.type && config.handle) return config;
   assert(exports.isString(config.type), 'config.type required');
   if(extConfig){
     //only change type
