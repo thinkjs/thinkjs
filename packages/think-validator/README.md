@@ -4,15 +4,14 @@
 [![npm](https://img.shields.io/npm/v/think-validator.svg?style=flat-square)](https://www.npmjs.com/package/think-validator)
 
 - [think-validator](#think-validator)
-    + [Useage](#useage)
-    + [Add Custom Valid Method](#add-custom-valid-method)
-    + [Parse Rule's Arguments](#parse-rules-arguments)
-    + [Param Validation Config](#param-validation-config)
-    + [Supported Data Type](#supported-data-type)
-    + [Nested Validation Type](#nested-validation-type)
-      - [Nested array valid, eg](#nested-array-valid-eg)
-      - [Nested object valid, eg](#nested-object-valid-eg)
+    + [How to Use in Thinkjs3.0](#how-to-use-in-thinkjs30)
+    + [Validation Rules Config](#validation-rules-config)
+    + [Supported Data Type & Auto Convert](#supported-data-type--auto-convert)
+    + [Nested Validation](#nested-validation)
+      - [Nested Validation for Array](#nested-validation-for-array)
+      - [Nested Validation for Object](#nested-validation-for-object)
     + [Custom Error Message](#custom-error-message)
+    + [Add Custom Valid Method](#add-custom-valid-method)
     + [Supported Validation Type](#supported-validation-type)
       - [requiredIf: [Array]](#requiredif--array)
       - [requiredNotIf: [Array]](#requirednotif--array)
@@ -78,48 +77,22 @@
       - [dataURI: [true]](#datauri--true)
       - [variableWidth: [true]](#variablewidth--true)
 
-### Usage
+### How to Use in Thinkjs3.0
+
 
 ```js
-import Validator from 'think-validator';
-
-let instance = new Validator(ctx);
-let ret = instance.validate(rules, msgs);
-
+// In your logic dir, xxx.js
+let ret = this.validate(rules, msgs)
 ```
-* `ctx`: the request data.
+
 * `rules`: the validation rules.
 * `msgs`: the custom error messages.
+* If valid ok, the `ret` is {}, else `ret` is like {param1: 'error message', ...}.
 
-If valid ok, the `ret` is {}, else `ret` is output like {param1: 'error message', ...}.
-
-
-### Add Custom Valid Method
-```js
-let instance = new Validator(ctx);
-instance.add('custom-valid', function(value, options) {
-  return value === 'thinkjs';
-}, 'this id default error message');
-let ret = instance.validate(rules);
-```
-
-
-### Parse Rule's Arguments
-
-You can parse the rule's arguments with ctx before validation.
-Just like this to add parse function for custom-valid:
-
-```js
-let instance = new Validator(ctx);
-instance.add('_custom-valid', function(arg, ctx) {
-  return newarg
-};
-```
-
-
-### Param Validation Config
+### Validation Rules Config
 
 Validation rules is written in json like this:
+
 ```js
 let rules = {
   id: {
@@ -127,31 +100,32 @@ let rules = {
     required: true,
     trim: true,
     default: 12,
-    method: 'get'
+    method: 'GET,POST'
   }
 }
 ```
-Param is not `required` by default, so if you need param not empty, you should assign `required` with `true`.
-If you want `trim` the space for the param you should assign `trim` with `true`,for example, if the id's value is '12   ' and `trim: true` then `id` is an integer, but it won't with `trim: false`.
-With `default` you can give the param default value, if param's value is true empty, it will be the default value.
-With `method` you can assign in which type we get the param, `get`,`post`,`file` is supported.
+
+* Param is not `required` by default, so if you need param not empty, you should assign `required` with `true`.
+* If you want `trim` the space for the param you should assign `trim` with `true`,for example, if the id's value is '12   ' and `trim: true` then `id` is an integer, but it won't been an integer with `trim: false`.
+* With `default` you can give the param default value, if param's value is true empty, it will be the default value.
+* By default `mehod` eq ctx.method, only when `method` include the ctx.method validation will be run.
 
 
 
-### Supported Data Type
+### Supported Data Type & Auto Convert
 
-The supported data types include boolean,string,int,float,array,object. And the default type is string.
-When valid type `int` is true, if pass the validation the param's value will auto convert into integer.
-When valid type `float` is true, if pass the validation the param's value will auto convert into float.
-When valid type `boolean` is true, `['yes', 'on', '1', 'true', true]` will auto convert into `true`, and others to `false`.
-When valid type `array` is true and param's value is not array, it will convert param's value to `[param's value]`.
+* The supported data types include boolean,string,int,float,array,object. And the default type is string. Only one basic data type is permit at the same time in one rule.
+* When valid type `int` is true, if pass the validation the param's value will auto convert into integer.
+* When valid type `float` is true, if pass the validation the param's value will auto convert into float.
+* When valid type `boolean` is true, `['yes', 'on', '1', 'true', true]` will auto convert into `true`, and others to `false`.
+* When valid type `array` is true and param's value is not array, it will convert param's value to `[param's value]`.
 
 
-### Nested Validation Type
+### Nested Validation
 
-Nested validation will valid the item in array or in object. But it only support the first layer child validation.
+Nested validation will valid the item in array or object. But it only support one layer child validation and every child'rule should be the same for now.
 
-#### Nested array valid, eg
+#### Nested Validation for Array
 
 ```js
 let rules = {
@@ -164,7 +138,7 @@ let rules = {
 }
 ```
 
-#### Nested object valid, eg
+#### Nested Validation for Object
 
 ```js
 let rules = {
@@ -180,19 +154,30 @@ let rules = {
 ### Custom Error Message
 
 ```js
-let rules = {
-  id: {
-    int: true
+let msgs = {
+  required: 'must required',
+  arg: 'arg must required',
+  arg2: {
+    required: 'arg2 must required'
+  },
+  arg3: {
+    'a,b': 'this is error message for a,b',
+    c: 'this is error message for c',
+    d: {
+      int: 'this is error message for d.int type'
+    }
   }
 }
 ```
-It will find the matched error message with valid failed by order:
 
-* 1. 'int': 'error message'
-* 2. 'id': 'error message'
-* 3. 'id': {
-     int: 'error message'
-    }
+It will find the matched error message when valid failed by order: (argName like `username`, ruleName like `float`).
+
+* 1. 'ruleName': 'error message'
+* 2. 'argName': 'error message'
+* 3. 'argName': {
+        ruleName: 'error message'
+     }
+
 
 when the rule is object nested,
 
@@ -205,7 +190,43 @@ when the rule is object nested,
       }
    }
 
-And the priority is 5 > 4 > 3 > 2 > 1.
+And the priority is v > iv > iii > ii > i.
+
+### Add Custom Valid Method
+
+* You can parse the rule's arguments with query before validation.
+*  Just add a _ruleMethodName function for the ruleMethodName.
+* If ctx.method == get, query eq the get query param of ctx,
+if ctx.method == post, query eq the post query param of ctx.
+if ctx.method == file, query eq the file query param of ctx.
+
+
+```js
+// in src/config/validator.js
+module.exports = {
+  rules: {
+    /**
+     * @param  {Mixed} validValue  [the origin rule's value]
+     * @param  {Object} query      [the ctx query which match the ctx.method]
+     * @return {Mixed}             [the rule's value after parse]
+     */
+    _newrule: function(validValue, query) {
+      return validValue;
+    },
+    /**
+     * @param  {Mixed} value            [the argument'value need to valid]
+     * @param  {Mixed} parsedValidValue [the rule's value after parse]
+     * @return {Boolean}                []
+     */
+    newrule: function(value, parsedValidValue) {
+      return value === validValue;
+    }
+  },
+  messages: {
+    newrule: 'this is newrule custom message'
+  }
+}
+```
 
 
 ### Supported Validation Type
