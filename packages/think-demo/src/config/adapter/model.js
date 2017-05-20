@@ -1,5 +1,3 @@
-const cache = require('./cache');
-
 module.exports = {
   type: 'mysql',
   mysql: {
@@ -11,8 +9,5 @@ module.exports = {
     port: '',
     user: 'root',
     password: 'root'
-  },
-  common: {
-    cache
   }
 };
