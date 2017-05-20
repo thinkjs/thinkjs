@@ -627,47 +627,47 @@ module.exports = class extends Base {
       return ' `' + this.getTablePrefix() + b.toLowerCase() + '` ';
     });
   }
-  // /**
-  //  * start transaction
-  //  * @return {Promise} []
-  //  */
-  // startTrans(){
-  //   return this.db(true).startTrans();
-  // }
-  // /**
-  //  * commit transcation
-  //  * @return {Promise} []
-  //  */
-  // async commit(){
-  //   let data = await this.db().commit();
-  //   this.close();
-  //   this._db = null;
-  //   return data;
-  // }
-  // /**
-  //  * rollback transaction
-  //  * @return {Promise} []
-  //  */
-  // async rollback(){
-  //   let data = await this.db().rollback();
-  //   this.close();
-  //   this._db = null;
-  //   return data;
-  // }
-  // /**
-  //  * transaction exec functions
-  //  * @param  {Function} fn [exec function]
-  //  * @return {Promise}      []
-  //  */
-  // async transaction(fn){
-  //   let result;
-  //   await this.startTrans();
-  //   try{
-  //     result = await think.co(fn());
-  //     await this.commit();
-  //   }catch(e){
-  //     await this.rollback();
-  //   }
-  //   return result;
-  // }
+  /**
+   * start transaction
+   * @return {Promise} []
+   */
+  startTrans(){
+    return this.db(true).startTrans();
+  }
+  /**
+   * commit transcation
+   * @return {Promise} []
+   */
+  async commit(){
+    let data = await this.db().commit();
+    this.close();
+    this._db = null;
+    return data;
+  }
+  /**
+   * rollback transaction
+   * @return {Promise} []
+   */
+  async rollback(){
+    let data = await this.db().rollback();
+    this.close();
+    this._db = null;
+    return data;
+  }
+  /**
+   * transaction exec functions
+   * @param  {Function} fn [async exec function]
+   * @return {Promise}      []
+   */
+  async transaction(fn){
+    let result;
+    await this.startTrans();
+    try{
+      result = await fn();
+      await this.commit();
+    }catch(e){
+      await this.rollback();
+    }
+    return result;
+  }
 };
