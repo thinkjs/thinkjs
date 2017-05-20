@@ -1,637 +1,2917 @@
 /*
 * @Author: lushijie
-* @Date:   2017-02-14 10:56:08
+* @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-02-24 12:00:50
+* @Last Modified time: 2017-05-19 13:59:56
 */
 import test from 'ava';
-import thinkHelper from 'think-helper';
-// import thinkValidate from '../index.js';
-import validatorRule from '../rules.js';
-// import util from 'util';
-
-// // check already exist validation
-// test('CheckExistValidation', t => {
-//   t.true(thinkValidate('required')('123'));
-// });
-
-// // add custom validation
-// test('AddCustomValidation', t => {
-//   thinkValidate('lushijie', (value, ...args) => {
-//     //console.log('extra args-->', args);
-//     return value === 'lushijie';
-//   });
-//   t.true(thinkValidate('lushijie')('lushijie'));
-// });
-
-// // rules validate
-// test('RulesValidation', t => {
-//   let rules = {
-//     mydate: {
-//       date: true,
-//       value: '2017-02-22'
-//     },
-//     myint: {
-//       int: true,
-//       value: '12.89'
-//     }
-//   };
-
-//   let out = thinkValidate(rules);
-//   t.true(thinkHelper.isObject(out))
-//   && t.true(out.mydate === undefined)
-//   && t.true(out.myint !== undefined);
-// });
-
-// // custom error message
-// test('RulesValidation', t => {
-//   let rules = {
-//     mydate: {
-//       date: true,
-//       value: '2017-02-22-12'
-//     },
-//     myint: {
-//       int: true,
-//       value: '12.89'
-//     }
-//   };
-//   let msgs = {
-//     validate_int_myint: 'This is not integer!',
-//     validate_date: 'This is not date!'
-//   }
-//   let out = thinkValidate(rules, msgs);
-//   t.true(out.mydate === msgs.validate_date)
-//   && t.true(out.myint === msgs.validate_int_myint);
-// });
-
-// // get rules value
-// test('RulesValidation', t => {
-//   let rules = {
-//     mydate: {
-//       date: true,
-//       value: '2017-02-22-12'
-//     },
-//     myint: {
-//       int: true,
-//       value: '12.89'
-//     }
-//   };
-//   let out = thinkValidate.values(rules);
-//   t.true(out.mydate === rules.mydate.value)
-//   && t.true(out.myint === rules.myint.value);
-// });
-
-
-// validator rules
-
-// required
-test('required', t => {
-  let out1 = validatorRule.required('lushijie');
-  let out2 = validatorRule.required('');
-  t.true(out1 && !out2);
-});
-
-// requiredIf
-test('requiredIf', t => {
-  let out1 = validatorRule.requiredIf('', 'email', 'email', 'email1', 'email2');
-  let out2 = validatorRule.requiredIf('lushijie', 'email', 'email', 'email1', 'email2');
-  let out3 = validatorRule.requiredIf('', 'email', 'email0', 'email1', 'email2');
-  let out4 = validatorRule.requiredIf('lushijie', 'email', 'email0', 'email1', 'email2');
-  t.true(!out1 && out2 && out3 && out4);
-});
-
-// _requiredIf
-test('_requiredIf', t => {
-  let args = ['name'];
-  let out1 = validatorRule._requiredIf(args.slice(), {});
-  let out2 = validatorRule._requiredIf(args.slice(), {name:{value: 'lushijie'}});
-  t.true(out1[0] === '' && out2[0] === 'lushijie');
-});
-
-// requiredNotIf
-test('requiredNotIf', t => {
-  let out1 = validatorRule.requiredNotIf('', 'email', 'email', 'email1', 'email2');
-  let out2 = validatorRule.requiredNotIf('lushijie', 'email', 'email', 'email1', 'email2');
-  let out3 = validatorRule.requiredNotIf('', 'email', 'email0', 'email1', 'email2');
-  let out4 = validatorRule.requiredNotIf('lushijie', 'email', 'email0', 'email1', 'email2');
-  t.true(out1 && out2 && !out3 && out4);
-});
-
-// _requiredNotIf
-test('_requiredNotIf', t => {
-  let args = ['name'];
-  let out1 = validatorRule._requiredNotIf(args.slice(), {});
-  let out2 = validatorRule._requiredNotIf(args.slice(), {name:{value: 'lushijie'}});
-  t.true(out1[0] === '' && out2[0] === 'lushijie');
-});
-
-// requiredWith
-test('requiredWith', t => {
-  let out1 = validatorRule.requiredWith('', []);
-  let out2 = validatorRule.requiredWith('', ['a', 'b', 'c']);
-  let out3 = validatorRule.requiredWith('lushijie', ['a', '', 'c']);
-  t.true(out1 && !out2 && out3);
-});
-
-// _requiredWith
-test('_requiredWith', t => {
-  let out1 = validatorRule._requiredWith(['a', 'b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && (out1[1] === ''));
-});
-
-// requiredWithAll
-test('requiredWithAll', t => {
-  let out1 = validatorRule.requiredWithAll('', '', '', '');
-  let out2 = validatorRule.requiredWithAll('', 'test', '', '');
-  let out3 = validatorRule.requiredWithAll('value', 'test', 'test1', 'test2');
-  let out4 = validatorRule.requiredWithAll('', 'test', 'test1', 'test2');
-  t.true(out1 && out2 && out3 && !out4);
-});
-
-// _requiredWithAll
-test('_requiredWithAll', t => {
-  let out1 = validatorRule._requiredWithAll(['a', 'b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && (out1[1] === ''));
-});
-
-// requiredWithout
-test('requiredWithout', t => {
-  let out1 = validatorRule.requiredWithout('', '', '', '');
-  let out2 = validatorRule.requiredWithout('', 'test', '', '');
-  let out3 = validatorRule.requiredWithout('value', 'test', 'test1', 'test2');
-  let out4 = validatorRule.requiredWithout('', 'test', 'test1', 'test2');
-  t.true(!out1 && !out2 && out3 && out4);
-});
-
-// _requiredWithout
-test('_requiredWithout', t => {
-  let out1 = validatorRule._requiredWithout(['a', 'b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && (out1[1] === ''));
-});
-
-// requiredWithoutAll
-test('requiredWithoutAll', t => {
-  let out1 = validatorRule.requiredWithoutAll('', '', '', '');
-  let out2 = validatorRule.requiredWithoutAll('', 'test', '', '');
-  let out3 = validatorRule.requiredWithoutAll('value', 'test', 'test1', 'test2');
-  let out4 = validatorRule.requiredWithoutAll('', 'test', 'test1', 'test2');
-  t.true(!out1 && out2 && out3 && out4);
-});
-
-// _requiredWithoutAll
-test('_requiredWithoutAll', t => {
-  let out1 = validatorRule._requiredWithoutAll(['a', 'b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && (out1[1] === ''));
-});
-
-
-// contains
-test('contains', t => {
-  let out1 = validatorRule.contains('');
-  let out2 = validatorRule.contains('lushijie', 'lu');
-  t.true(out1 && out2);
-});
-
-// equals
-test('equals', t => {
-  let out1 = validatorRule.equals('');
-  let out2 = validatorRule.equals('lushijie', 'lushijie');
-  t.true(out1 && out2);
-});
-
-// _equals
-test('_equals', t => {
-  let out1 = validatorRule._equals(['a', 'b'], {a: {value: 123}});
-  let out2 = validatorRule._equals(['b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && out2[0] === '');
-});
-
-// equalsValue
-test('equalsValue', t => {
-  let out0 = validatorRule.equalsValue('');
-  let out1 = validatorRule.equalsValue('lushijie', 'lushijie');
-  t.true(out0 && out1);
-});
-
-// different
-test('different', t => {
-  let out1 = validatorRule.different('');
-  let out2 = validatorRule.different('lushijie1218', 'lushijie');
-  t.true(out1 && out2);
-});
-
-// _different
-test('_different', t => {
-  let out1 = validatorRule._different(['a', 'b'], {a: {value: 123}});
-  let out2 = validatorRule._different(['b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && out2[0] === '');
-});
-
-// after
-test('after', t => {
-  let out1 = validatorRule.after('');
-  let out2 = validatorRule.after('1955-09-11 13:22:00');
-  t.true(out1 && !out2);
-});
-
-// _after
-test('_after', t => {
-  let out1 = validatorRule._after(['a', 'b'], {a: {value: 123}});
-  let out2 = validatorRule._after(['b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && out2[0] === 'b');
-});
-
-
-// before
-test('before', t => {
-  let out1 = validatorRule.before('');
-  let out2 = validatorRule.before('1970-09-11 13:22:00');
-  t.true(out1 && out2);
-});
-
-// _before
-test('_before', t => {
-  let out1 = validatorRule._before(['a', 'b'], {a: {value: 123}});
-  let out2 = validatorRule._before(['b'], {a: {value: 123}});
-  t.true((out1[0] === 123) && out2[0] === 'b');
-});
-
-// alpha
-test('alpha', t => {
-  let out1 = validatorRule.alpha('');
-  let out2 = validatorRule.alpha('lushijie');
-  t.true(out1 && out2);
-});
-
-// alphaDash
-test('alphaDash', t => {
-  let out1 = validatorRule.alphaDash('');
-  let out2 = validatorRule.alphaDash('lushijie');
-  t.true(out1 && out2);
-});
-
-// alphaNumeric
-test('alphaNumeric', t => {
-  let out1 = validatorRule.alphaNumeric('');
-  let out2 = validatorRule.alphaNumeric('lushijie');
-  t.true(out1 && out2);
-});
-
-// alphaNumericDash
-test('alphaNumericDash', t => {
-  let out1 = validatorRule.alphaNumericDash('');
-  let out2 = validatorRule.alphaNumericDash('lushijie_212');
-  t.true(out1 && out2);
-});
-
-// ascii
-test('ascii', t => {
-  let out1 = validatorRule.ascii('');
-  let out2 = validatorRule.ascii('welefNnwer_we1$212');
-  t.true(out1 && out2);
-});
-
-// base64
-test('base64', t => {
-  let out1 = validatorRule.base64('');
-  let out2 = validatorRule.base64((new Buffer('lushijie')).toString('base64'));
-  t.true(out1 && out2);
-});
-
-// byteLength
-test('byteLength', t => {
-  let out1 = validatorRule.byteLength('');
-  let out2 = validatorRule.byteLength('lushijie', 2, 10);
-  t.true(out1 && out2);
-});
-
-// creditcard
-test('creditcard', t => {
-  let out1 = validatorRule.creditcard('');
-  let out2 = validatorRule.creditcard('6226090109493516');
-  t.true(out1 && out2);
-});
-
-// currency
-test('currency', t => {
-  let out1 = validatorRule.currency('');
-  let out2 = validatorRule.currency('$128');
-  t.true(out1 && out2);
-});
-
-// date
-test('date', t => {
-  let out1 = validatorRule.date('');
-  let out2 = validatorRule.date('2012-12-12');
-  t.true(out1 && out2);
-});
-
-// decimal
-test('decimal', t => {
-  let out1 = validatorRule.decimal('');
-  let out2 = validatorRule.decimal('0.1');
-  let out3 = validatorRule.decimal('.1');
-  t.true(out1 && out2 && out3);
-});
-
-// divisibleBy
-test('divisibleBy', t => {
-  let out1 = validatorRule.divisibleBy('');
-  let out2 = validatorRule.divisibleBy('10', 2);
-  t.true(out1 && out2);
-});
-
-// email
-test('email', t => {
-  let out1 = validatorRule.email('');
-  let out2 = validatorRule.email('lushijie1218@126.com');
-  let out3 = validatorRule.email('lushijie');
-  t.true(out1 && out2 && !out3);
-});
-
-//fqdn
-test('fqdn', t => {
-  let out1 = validatorRule.fqdn('');
-  let out2 = validatorRule.fqdn('gmail.com');
-  let out3 = validatorRule.fqdn('www.gmail.com');
-  let out4 = validatorRule.fqdn('ww-w.gmail.com');
-  t.true(out1 && out2 && out3 && out4);
-});
-
-//float
-test('float', t => {
-  let out1 = validatorRule.float('');
-  let out2 = validatorRule.float('65M');
-  let out3 = validatorRule.float('34.00', 23, 56);
-  let out4 = validatorRule.float('34.00', 23, 33);
-  let out5 = validatorRule.float('34.00', 35, 56);
-  let out6 = validatorRule.float('34.00', 23);
-  let out7 = validatorRule.float('34.00', 35);
-  t.true(out1 && !out2 && out3 && !out4 && !out5 && out6 && !out7);
-});
-
-// fullWidth
-test('fullWidth', t => {
-  let out0 = validatorRule.fullWidth('');
-  let out1 = validatorRule.fullWidth('￥$$$');
-  t.true(out0 && out1);
-});
-
-// halfWidth
-test('halfWidth', t => {
-  let out0 = validatorRule.halfWidth('');
-  let out1 = validatorRule.halfWidth('￥$$');
-  t.true(out0 && out1);
-});
-
-// hexColor
-test('hexColor', t => {
-  let out0 = validatorRule.hexColor('');
-  let out1 = validatorRule.hexColor('#000000');
-  let out2 = validatorRule.hexColor('#000');
-  t.true(out0 && out1 && out2);
-});
-
-// hex
-test('hex', t => {
-  let out0 = validatorRule.hex('');
-  let out1 = validatorRule.hex('a0a');
-  t.true(out0 && out1);
-});
-
-// ip
-test('ip', t => {
-  let out0 = validatorRule.ip('');
-  let out1 = validatorRule.ip('127.0.0.1');
-  let out2 = validatorRule.ip('2031:0000:1F1F:0000:0000:0100:11A0:ADD');
-  t.true(out0 && out1 && out2);
-});
-
-// ip4
-test('ip4', t => {
-  let out0 = validatorRule.ip4('');
-  let out1 = validatorRule.ip4('127.0.0.1');
-  let out2 = validatorRule.ip4('256.0.0.0');
-  t.true(out0 && out1 && !out2);
-});
-
-// ip6
-test('ip6', t => {
-  let out0 = validatorRule.ip6('');
-  let out1 = validatorRule.ip6('2031:0000:1F1F:0000:0000:0100:11A0:ADD');
-  let out2 = validatorRule.ip6('127.0.0.1');
-  t.true(out0 && out1 && !out2);
-});
-
-// isbn
-test('isbn', t => {
-  let out0 = validatorRule.isbn('');
-  let out1 = validatorRule.isbn('9787540471644');
-  t.true(out0 && out1);
-});
-
-// isin
-test('isin', t => {
-  let out0 = validatorRule.isin('');
-  let out1 = validatorRule.isin('9787540471644');
-  t.true(out0 && !out1);
-});
-
-//iso8601
-test('iso8601', t => {
-  let out0 = validatorRule.iso8601('');
-  let out1 = validatorRule.iso8601('2011-09-11');
-  let out2 = validatorRule.iso8601('2011-09-11-123');
-  t.true(out0 && out1 && !out2);
-});
-
-//in
-test('in', t => {
-  let out0 = validatorRule.in('');
-  let out1 = validatorRule.in('1.2', '1.2', '2.3');
-  let out2 = validatorRule.in('1.2', '1.3', '1.4');
-  let out3 = validatorRule.in('lu', 'lushijie', 'shijie');
-  t.true(out0 && out1 && !out2 && !out3);
-});
-
-//notIn
-test('notIn', t => {
-  let out0 = validatorRule.notIn('')
-  let out1 = validatorRule.notIn('1.2', '1.2', '2.3');
-  let out2 = validatorRule.notIn('1.2', '1.3', '1.4');
-  let out3 = validatorRule.notIn('lu', 'lushijie', 'shijie');
-  t.true(out0 && !out1 && out2 && out3);
-});
-
-//int
-test('int', t => {
-  let out1 = validatorRule.int('');
-  let out2 = validatorRule.int('65M');
-  let out3 = validatorRule.int('34', 23, 56);
-  let out4 = validatorRule.int('34', 23, 33);
-  let out5 = validatorRule.int('34', 35, 56);
-  let out6 = validatorRule.int('34', 23);
-  let out7 = validatorRule.int('34', 35);
-  t.true(out1 && !out2 && out3 && !out4 && !out5 && out6 && !out7);
-})
-
-// min
-test('min', t => {
-  let out1 = validatorRule.min('');
-  let out2 = validatorRule.min('6', 6);
-  let out3 = validatorRule.min('6', 10);
-  let out4 = validatorRule.min('lushijie', 10);
-  t.true(out1 && out2 && !out3 && !out4);
-});
-
-// max
-test('max', t => {
-  let out1 = validatorRule.max('');
-  let out2 = validatorRule.max('6', 8);
-  let out3 = validatorRule.max('10', 8);
-  let out4 = validatorRule.min('lushijie', 10);
-  t.true(out1 && out2 && !out3 && !out4);
-});
-
-// length
-test('length', t => {
-  let out1 = validatorRule.length('');
-  let out2 = validatorRule.length('lushijie', 4, 10);
-  let out3 = validatorRule.length('lushijie', 4, 6);
-  let out4 = validatorRule.length('lushijie', 10, 12);
-  let out5 = validatorRule.length('lushijie');
-  t.true(out1 && out2 && !out3 && !out4 && out5);
-});
-
-// minLength
-test('minLength', t => {
-  let out1 = validatorRule.minLength('');
-  let out2 = validatorRule.minLength('Lushijie', 8);
-  let out3 = validatorRule.minLength('lushijie', 10);
-  t.true(out1 && out2 && !out3);
-});
-
-// maxLength
-test('maxLength', t => {
-  let out1 = validatorRule.maxLength('');
-  let out2 = validatorRule.maxLength('Lushijie', 8);
-  let out3 = validatorRule.maxLength('lushijie12', 8);
-  t.true(out1 && out2 && !out3);
-});
-
-// lowercase
-test('lowercase', t => {
-  let out1 = validatorRule.lowercase('');
-  let out2 = validatorRule.lowercase('Lushijie');
-  let out3 = validatorRule.lowercase('lushijie');
-  t.true(out1 && !out2 && out3);
-});
-
-// mobile
-test('mobile', t => {
-  let out1 = validatorRule.mobile('');
-  let out2 = validatorRule.mobile('13269209969');
-  let out3 = validatorRule.mobile('13269209969', 'zh-CN');
-  t.true(out1 && out2 && out3);
-});
-
-// mongoId
-test('mongoId', t => {
-  let out1 = validatorRule.mongoId('');
-  let out2 = validatorRule.mongoId('542c2b97bac0595474108b48');
-  let out3 = validatorRule.mongoId('123456');
-  t.true(out1 && out2 && !out3);
-});
-
-// multibyte
-test('multibyte', t => {
-  let out1 = validatorRule.multibyte('奇舞团');
-  let out2 = validatorRule.multibyte('lushijie');
-  t.true(out1 && !out2);
-});
-
-// url
-test('url', t => {
-  let out1 = validatorRule.url('');
-  let out2 = validatorRule.url('http://www.baidu.com');
-  let out3 = validatorRule.url('https://www.so.com/');
-  let out4 = validatorRule.url('www.so.com');
-  t.true(out1 && out2 && out3 && !out4);
-});
-
-// uppercase
-test('uppercase', t => {
-  let out1 = validatorRule.uppercase('');
-  let out2 = validatorRule.uppercase('LUSHIJIE');
-  let out3 = validatorRule.uppercase('LUSHIJIEhello');
-  t.true(out1 && out2 && !out3);
-});
-
-// variableWidth
-test('variableWidth', t => {
-  let out1 = validatorRule.variableWidth('');
-  let out2 = validatorRule.variableWidth('lushijielushijielushijielushijie');
-  t.true(out1 && !out2);
-});
-
-// order
-test('order', t => {
-  let out1 = validatorRule.order('');
-  let out2 = validatorRule.order('name ASC, id DESC');
-  let out3 = validatorRule.order('AA|ww');
-  t.true(out1 && out2 && !out3);
-});
-
-
-// field
-test('field', t => {
-  let out1 = validatorRule.field('');
-  let out2 = validatorRule.field('name,*');
-  let out3 = validatorRule.field('name-23,*');
-  t.true(out1 && out2 && !out3);
-});
-
-// image
-test('image', t => {
-  let out1 = validatorRule.image('');
-  let out2 = validatorRule.image({
-      originalFilename: 'test.jpg'
+import helper from 'think-helper';
+import Validator from '../index.js';
+import defaultCtx from './ctx.js';
+
+test('rule-required, required = true', t => {
+  let rules = {
+    username: {
+      required: true
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-required, required = false', t => {
+  let rules = {
+    username: {
+      required: false
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredIf, if the first(parsed) in the last others then required = true', t => {
+  let rules = {
+    username: {
+      requiredIf: ['name', 'lushijie', 'tom']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lushijie'
+    }
   });
-  let out3 = validatorRule.image('test.gif');
-  t.true(out1 && out2 && out3);
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
 });
 
-// startWith
-test('startWith', t => {
-  let out1 = validatorRule.startWith('', 'jie');
-  let out2 = validatorRule.startWith('lushijie', 'lu');
-  let out3 = validatorRule.startWith('lushijie', 'jie');
-  t.true(out1 && out2 && !out3);
+test('rule-requiredIf, if the fist(parsed) not in the last then required = false', t => {
+  let rules = {
+    username: {
+      requiredIf: ['name', 'lushijie', 'tom']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'xiaoming'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
-// endWith
-test('endWith', t => {
-  let out1 = validatorRule.endWith('', 'jie');
-  let out2 = validatorRule.endWith('lushijie', 'jie');
-  let out3 = validatorRule.endWith('lushijie', 'shi');
-  t.true(out1 && out2 && !out3);
+test('rule-requiredIf, if the first not in this.query then required = false', t => {
+  let rules = {
+    username: {
+      requiredIf: ['lushijie', '', 'tom']
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });
 
-// regexp
-test('regexp', t => {
-  let out1 = validatorRule.regexp('lushijie', /lushijie/);
-  let out2 = validatorRule.regexp('', /lushijie/);
-  t.true(out1 && out2);
+test('rule-requiredNotIf, if the first(parsed) not in the last then required = true', t => {
+  let rules = {
+    username: {
+      requiredNotIf: ['name', 'lushijie', 'tom']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'xiaoming'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
 });
 
-// type
-test('type', t => {
-  let out1 = validatorRule.type('');
-  let out2 = validatorRule.type('123', 'int');
-  let out3 = validatorRule.type('123.12', 'float');
-  let out4 = validatorRule.type(true, 'boolean');
-  let out5 = validatorRule.type([2, 3], 'array');
-  let out6 = validatorRule.type({a: 1, b: 2}, 'object');
-  let out7 = validatorRule.type('this is string', 'xxx');
-  t.true(out1 && out2 && out3 && out4 && out5 && out6 && out7);
+test('rule-requiredNotIf, if the first(parsed) in the last then required = false', t => {
+  let rules = {
+    username: {
+      requiredNotIf: ['name', 'lushijie', 'tom']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWith, if more than one in this.query then required = true', t => {
+  let rules = {
+    username: {
+      requiredWith: ['name', 'email']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-requiredWith, if zero one in this.query then required = false', t => {
+  let rules = {
+    param: {
+      requiredWith: ['name', 'email']
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWithAll, if all in this.query then required = true', t => {
+  let rules = {
+    username: {
+      requiredWithAll: ['name', 'email']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lushijie',
+      email: 'lushijie@126.com'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-requiredWithAll, if not all in this.query then required = false', t => {
+  let rules = {
+    username: {
+      requiredWithAll: ['name', 'email']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      email: 'lushijie@126.com'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWithOut, if at least one not in this.query then required = true', t => {
+  let rules = {
+    username: {
+      requiredWithOut: ['name', 'email']
+    }
+  };
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-requiredWithOut, if all in this.query then required = false', t => {
+  let rules = {
+    username: {
+      requiredWithOut: ['name', 'email']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lily',
+      email: 'lushijie@126.com'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-requiredWithOutAll, if all not in this.query then required = true', t => {
+  let rules = {
+    username: {
+      requiredWithOutAll: ['name', 'email']
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-requiredWithOutAll, if not all in this.query then required = false', t => {
+  let rules = {
+    username: {
+      requiredWithOutAll: ['name', 'email']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      name: 'lily'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-contains failure', t => {
+  let rules = {
+    username: {
+      contains: 'xxx'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-contains success', t => {
+  let rules = {
+    username: {
+      contains: 'xxx'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lxxxd'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-contains parse failure', t => {
+  let rules = {
+    username: {
+      contains: 'abc'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie',
+      abc: '6666'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-contains parse success', t => {
+  let rules = {
+    username: {
+      contains: 'abc'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie',
+      abc: 'shiji'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-equals failure', t => {
+  let rules = {
+    username: {
+      equals: 'xxx'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-equals success', t => {
+  let rules = {
+    username: {
+      equals: 'lushijie'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-equals parse failure', t => {
+  let rules = {
+    username: {
+      equals: 'abc'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie',
+      abc: 'xiaoming'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-equals parse success', t => {
+  let rules = {
+    username: {
+      equals: 'abc'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie',
+      abc: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-different failure', t => {
+  let rules = {
+    username: {
+      different: 'lushijie'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie',
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-different success', t => {
+  let rules = {
+    username: {
+      different: 'lushijie'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'shijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-before failure', t => {
+  let rules = {
+    time: {
+      before: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '2099-12-12 12:00:00',
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-before success', t => {
+  let rules = {
+    time: {
+      before: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '2001-12-12 12:00:00',
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-before date argument failure', t => {
+  let rules = {
+    time: {
+      before: '2011-12-12'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '2099-12-12',
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-before date argument success', t => {
+  let rules = {
+    time: {
+      before: '2011-12-12'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '2000-12-12'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-after failure', t => {
+  let rules = {
+    time: {
+      after: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '1990-12-12 12:00:00'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-after success', t => {
+  let rules = {
+    time: {
+      after: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '2099-12-12 01:00:00'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-after date argument failure', t => {
+  let rules = {
+    time: {
+      after: '2099-12-12'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '1990-12-12'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-after date argument success', t => {
+  let rules = {
+    time: {
+      after: '1970-12-12'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      time: '1990-12-12'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-alpha failure', t => {
+  let rules = {
+    arg: {
+      alpha: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123A'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-alpha success', t => {
+  let rules = {
+    arg: {
+      alpha: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'abcABC'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-alphaDash failure', t => {
+  let rules = {
+    arg: {
+      alphaDash: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123A'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-alphaDash success', t => {
+  let rules = {
+    arg: {
+      alphaDash: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'Ab_'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-alphaNumeric failure', t => {
+  let rules = {
+    arg: {
+      alphaNumeric: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123Ad_'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-alphaNumeric success', t => {
+  let rules = {
+    arg: {
+      alphaNumeric: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123ABCabc'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-alphaNumericDash failure', t => {
+  let rules = {
+    arg: {
+      alphaNumericDash: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123A@_sdfF'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-alphaNumericDash success', t => {
+  let rules = {
+    arg: {
+      alphaNumericDash: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'aA1sdf_ASDF'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ascii failure', t => {
+  let rules = {
+    arg: {
+      ascii: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123A中国'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-ascii failure', t => {
+  let rules = {
+    arg: {
+      ascii: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'welefNn￥wer_we1$212'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-ascii success', t => {
+  let rules = {
+    arg: {
+      ascii: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'welefNnwer_we1$212'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-base64 failure', t => {
+  let rules = {
+    arg: {
+      base64: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: (new Buffer('fasdfasdfw23$$$')).toString('utf8'),
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-base64 success', t => {
+  let rules = {
+    arg: {
+      base64: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: (new Buffer('welefen')).toString('base64'),
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-byteLength failure', t => {
+  let rules = {
+    arg: {
+      byteLength: {min: 0, max: 4}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-byteLength success', t => {
+  let rules = {
+    arg: {
+      byteLength: {min: 0, max: 10}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-byteLength-max-only', t => {
+  let rules = {
+    arg: {
+      byteLength: {max: 4}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-creditCard failure', t => {
+  let rules = {
+    arg: {
+      creditCard: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-creditCard success', t => {
+  let rules = {
+    arg: {
+      creditCard: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '378260516568353'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-currency failure', t => {
+  let rules = {
+    arg: {
+      currency: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '￥123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-currency success', t => {
+  let rules = {
+    arg: {
+      currency: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '$123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-currency options success', t => {
+  let rules = {
+    arg: {
+      currency: {symbol: '￥'}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '￥123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-date failure', t => {
+  let rules = {
+    arg: {
+      date: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2011-13-01'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-date success', t => {
+  let rules = {
+    arg: {
+      date: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2011-11-01 12:00:32'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-decimal failure', t => {
+  let rules = {
+    arg: {
+      decimal: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'x'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-decimal success1', t => {
+  let rules = {
+    arg: {
+      decimal: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '.1'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-decimal success2', t => {
+  let rules = {
+    arg: {
+      decimal: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '0.01'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-divisibleBy failure', t => {
+  let rules = {
+    arg: {
+      divisibleBy: 4
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-divisibleBy success', t => {
+  let rules = {
+    arg: {
+      divisibleBy: 2
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '10'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-email failure', t => {
+  let rules = {
+    arg: {
+      email: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-email success', t => {
+  let rules = {
+    arg: {
+      email: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie@126.com'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-email options success', t => {
+  let rules = {
+    arg: {
+      email: { allow_utf8_local_part: false }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '"foo\\@bar"@example.com'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn failure', t => {
+  let rules = {
+    arg: {
+      fqdn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'www'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-fqdn success1', t => {
+  let rules = {
+    arg: {
+      fqdn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'gmail.com'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn success2', t => {
+  let rules = {
+    arg: {
+      fqdn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'www.gmail.com'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn success3', t => {
+  let rules = {
+    arg: {
+      fqdn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'ww-w.gmail.com'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fqdn options success', t => {
+  let rules = {
+    arg: {
+      fqdn: { allow_trailing_dot: true }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'example.com.'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float failure', t => {
+  let rules = {
+    arg: {
+      float: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'abc'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-float success1', t => {
+  let rules = {
+    arg: {
+      float: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '12.45'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float success2', t => {
+  let rules = {
+    arg: {
+      float: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '125'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float success3', t => {
+  let rules = {
+    arg: {
+      float: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: NaN
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-float options failure', t => {
+  let rules = {
+    arg: {
+      float: {min:0, max:9.55}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '12.00'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-float options success', t => {
+  let rules = {
+    arg: {
+      float: {min:0, max:9.55}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '8.00'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fullWidth failure', t => {
+  let rules = {
+    arg: {
+      fullWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'www'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-fullWidth success1', t => {
+  let rules = {
+    arg: {
+      fullWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '￥'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fullWidth success2', t => {
+  let rules = {
+    arg: {
+      fullWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '￥$$'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-fullWidth success3', t => {
+  let rules = {
+    arg: {
+      fullWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '￥$$'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-halfWidth', t => {
+  let rules = {
+    arg: {
+      halfWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '中国'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-hexColor failure', t => {
+  let rules = {
+    arg: {
+      hexColor: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '3444'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-hexColor success1', t => {
+  let rules = {
+    arg: {
+      hexColor: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '#fff'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-hexColor success2', t => {
+  let rules = {
+    arg: {
+      hexColor: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '#998323'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-hex success', t => {
+  let rules = {
+    arg: {
+      hex: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'a0a'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip failure', t => {
+  let rules = {
+    arg: {
+      ip: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '127.0.0.256'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-ip success1', t => {
+  let rules = {
+    arg: {
+      ip: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '127.0.0.255'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip success2', t => {
+  let rules = {
+    arg: {
+      ip: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2031:0000:1F1F:0000:0000:0100:11A0:ADD'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip4 failure', t => {
+  let rules = {
+    arg: {
+      ip4: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2031:0000:1F1F:0000:0000:0100:11A0:ADD'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-ip4 success', t => {
+  let rules = {
+    arg: {
+      ip4: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '127.0.0.1'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-ip6 failure', t => {
+  let rules = {
+    arg: {
+      ip6: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '127.0.0.1'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-ip6 success', t => {
+  let rules = {
+    arg: {
+      ip6: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2031:0000:1F1F:0000:0000:0100:11A0:ADD'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-isbn failure', t => {
+  let rules = {
+    arg: {
+      isbn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-isbn success', t => {
+  let rules = {
+    arg: {
+      isbn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '9787540471644'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-isin failure', t => {
+  let rules = {
+    arg: {
+      isin: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-isin success', t => {
+  let rules = {
+    arg: {
+      isin: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'DE000BAY0017'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-iso8601 failure', t => {
+  let rules = {
+    arg: {
+      iso8601: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-iso8601 success', t => {
+  let rules = {
+    arg: {
+      iso8601: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2011-02-11'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-in failure', t => {
+  let rules = {
+    arg: {
+      in: ['lushijie','1234560']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-in success', t => {
+  let rules = {
+    arg: {
+      in: ['lushijie','1234560']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-notIn failure', t => {
+  let rules = {
+    arg: {
+      notIn: ['lushijie','123456']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-notIn success', t => {
+  let rules = {
+    arg: {
+      notIn: ['lushijie','123456']
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'avc'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-int failure', t => {
+  let rules = {
+    arg: {
+      int: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123.456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-int success', t => {
+  let rules = {
+    arg: {
+      int: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-int options failure', t => {
+  let rules = {
+    arg: {
+      int: {min: 0, max: 10}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-int options success', t => {
+  let rules = {
+    arg: {
+      int: {min: 0, max: 10}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '6'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-length options failure', t => {
+  let rules = {
+    arg: {
+      length: {min: 0, max: 4}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-length options success', t => {
+  let rules = {
+    arg: {
+      length: {min: 0, max: 10}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-length-max-only', t => {
+  let rules = {
+    arg: {
+      length: {max: 3}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+
+test('rule-length-min-only', t => {
+  let rules = {
+    arg: {
+      length: {min: 10}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-lowercase', t => {
+  let rules = {
+    arg: {
+      lowercase: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'Abc'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-uppercase failure', t => {
+  let rules = {
+    arg: {
+      uppercase: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'Abc'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-uppercase success', t => {
+  let rules = {
+    arg: {
+      uppercase: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '$$$$$￥'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+
+test('rule-mobile failure', t => {
+  let rules = {
+    arg: {
+      mobile: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1326920XXXX'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-mobile success', t => {
+  let rules = {
+    arg: {
+      mobile: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '13269207867'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-mobile-locale', t => {
+  let rules = {
+    arg: {
+      mobile: 'zh-CN'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1326920888X'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-mongoId', t => {
+  let rules = {
+    arg: {
+      mongoId: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1326920'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-multibyte failure', t => {
+  let rules = {
+    arg: {
+      multibyte: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'ABC'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-multibyte success', t => {
+  let rules = {
+    arg: {
+      multibyte: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '$$$$$￥'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-url failure', t => {
+  let rules = {
+    arg: {
+      url: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-url success2', t => {
+  let rules = {
+    arg: {
+      url: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'https://github.com/lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-url success2', t => {
+  let rules = {
+    arg: {
+      url: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: ''
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-url options success', t => {
+  let rules = {
+    arg: {
+      url: {protocols: ['http','https','ftp']}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'https://github.com/lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-order failure', t => {
+  let rules = {
+    arg: {
+      order: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'name|DESC'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-order success1', t => {
+  let rules = {
+    arg: {
+      order: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'name ASC, id DESC'
+    }
+  });
+
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-order success2', t => {
+  let rules = {
+    arg: {
+      order: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: ''
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-field success1', t => {
+  let rules = {
+    arg: {
+      field: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'name and title'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-field success2', t => {
+  let rules = {
+    arg: {
+      field: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: ''
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-field success3', t => {
+  let rules = {
+    arg: {
+      field: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '*'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-field success4', t => {
+  let rules = {
+    arg: {
+      field: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'name, *'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-image', t => {
+  let rules = {
+    arg: {
+      image: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'a.js'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-image-options', t => {
+  let rules = {
+    arg: {
+      image: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: {originalFilename: 'a.js'},
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-startWith failure', t => {
+  let rules = {
+    arg: {
+      startWith: 'shijie'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-startWith success', t => {
+  let rules = {
+    arg: {
+      startWith: 'shijie'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'shijiesdf'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-endWith failure', t => {
+  let rules = {
+    arg: {
+      endWith: 'lu'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-endWith success', t => {
+  let rules = {
+    arg: {
+      endWith: 'jie'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-issn failure', t => {
+  let rules = {
+    arg: {
+      issn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-issn success', t => {
+  let rules = {
+    arg: {
+      issn: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '2434-561X'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-issn-options', t => {
+  let rules = {
+    arg: {
+      issn: {case_sensitive: false}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+
+test('rule-uuid failure', t => {
+  let rules = {
+    arg: {
+      uuid: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-uuid success', t => {
+  let rules = {
+    arg: {
+      uuid: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'A987FBC9-4BED-3078-CF07-9141BA07C9F3'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-md5 failure', t => {
+  let rules = {
+    arg: {
+      md5: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-md5 success', t => {
+  let rules = {
+    arg: {
+      md5: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'd94f3f016ae679c3008de268209132f2'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-macAddress failure', t => {
+  let rules = {
+    arg: {
+      macAddress: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1:2:3:4:5:6'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-macAddress success', t => {
+  let rules = {
+    arg: {
+      macAddress: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '01:02:03:04:05:ab'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-numeric failure', t => {
+  let rules = {
+    arg: {
+      numeric: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1.222'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-numeric success', t => {
+  let rules = {
+    arg: {
+      numeric: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-dataURI failure', t => {
+  let rules = {
+    arg: {
+      dataURI: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'abc'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-dataURI success', t => {
+  let rules = {
+    arg: {
+      dataURI: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-regexp', t => {
+  let rules = {
+    arg: {
+      regexp: /lushijie2/g
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-variableWidth failure', t => {
+  let rules = {
+    arg: {
+      variableWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-variableWidth success', t => {
+  let rules = {
+    arg: {
+      variableWidth: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '$$$$$￥w'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-string failure', t => {
+  let rules = {
+    arg: {
+      string: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 123
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-string success', t => {
+  let rules = {
+    arg: {
+      string: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-object failure', t => {
+  let rules = {
+    arg: {
+      object: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-object success', t => {
+  let rules = {
+    arg: {
+      object: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: {a: 123},
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule method empty', t => {
+  let rules = {
+    arg: {
+      required: true,
+      method: ''
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule method not empty', t => {
+  let rules = {
+    arg: {
+      required: true,
+      method: 'get'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-no-exist', t => {
+  let rules = {
+    arg: {
+      notExist: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 'lushijie'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  try{
+    let ret = instance.validate(rules);
+  }catch(e) {
+    t.pass();
+  }
+});
+
+test('rule-ip-no-required', t => {
+  let rules = {
+    arg: {
+      ip: true,
+      required: false
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-name-custom-message', t => {
+  let rules = {
+    arg: {
+      required: true
+    },
+    arg2: {
+      required: true
+    },
+    arg3: {
+      object: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: {
+        a: 'aaa',
+        b: 'abc',
+        c: 'vvv',
+        d: 'abc'
+      }
+    }
+  });
+
+  let msgs = {
+    required: 'must required',
+    arg: 'arg must required',
+    arg2: {
+      required: 'arg2 must required'
+    },
+    arg3: {
+      'a,b': 'this is wrong for a,b',
+      c: 'this is wrong for c',
+      d: {
+        int: 'this wrong for d'
+      }
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(
+    ret.arg === msgs.arg &&
+    ret.arg2 === msgs.arg2.required &&
+    ret['arg3.a'] === msgs.arg3['a,b'] &&
+    ret['arg3.c'] === msgs.arg3.c &&
+    ret['arg3.d'] === msgs.arg3.d.int
+  );
+});
+
+test('rule-object-message', t => {
+  let rules = {
+    arg3: {
+      object: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: {
+        a: 'aaa'
+      }
+    }
+  });
+
+  let msgs = {
+    arg3: ''
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret['arg3.a'] === 'arg3 valid failed');
+});
+
+test('rule-array-message', t => {
+  let rules = {
+    arg3: {
+      array: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: ['1a']
+    }
+  });
+
+  let msgs = {
+    int: 'wrong valid'
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret['arg3[0]'] === msgs.int);
+});
+
+test('rule-ip-default', t => {
+  let rules = {
+    arg: {
+      ip: true,
+      default: '127.0.0.1',
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx);
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-name-no-message', t => {
+  let rules = {
+    arg: {
+      required: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx);
+  let msgs = {
+    required: ''
+  }
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret.arg === 'arg valid failed');
+});
+
+test('rule-add-method', t => {
+  let rules = {
+    arg: {
+      default: 'lu',
+      eqlushijie: true
+    }
+  }
+  let wrongMsg = 'eqlushijie valid failed';
+
+  Validator.add('eqlushijie', function(value, parsedValue) {
+    return parsedValue === 'lushijie';
+  }, wrongMsg);
+  Validator.add('_eqlushijie', function(validValue, query) {
+    return query.arg + 'shijie';
+  });
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule one-more-basic type', t => {
+  let rules = {
+    arg: {
+      int: true,
+      float: true
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  try {
+    let ret = instance.validate(rules);
+  }catch(e) {
+    t.pass();
+  }
+});
+
+test('rule-boolean', t => {
+  let rules = {
+    arg: {
+      boolean: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: 123
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(ctx.param().arg === false);
+});
+
+test('rule-array', t => {
+  let rules = {
+    arg: {
+      array: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.deepEqual(ctx.param().arg, ['123']);
+});
+
+test('rule-int-convert', t => {
+  let rules = {
+    arg: {
+      int: true,
+      trim: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123 '
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0 && ctx.param().arg === 123);
+});
+
+test('rule-array-nest', t => {
+  let rules = {
+    arg: {
+      array: true,
+      children: {
+        int: true,
+        trim: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: ['12   ', 34, 56],
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0 && ctx.param().arg[0] === 12)
+});
+
+test('rule-object-nest', t => {
+  let rules = {
+    arg: {
+      object: true,
+      children: {
+        int: true,
+        trim: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: {
+        a: '123  '
+      },
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0 && ctx.param().arg.a === 123)
+});
+
+test('rule\'method not match this.ctx.method', t => {
+  let rules = {
+    username: {
+      required: true,
+      method: 'POST'
+    }
+  }
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
 });

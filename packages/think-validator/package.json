@@ -1,12 +1,11 @@
 {
   "name": "think-validator",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "Validator for ThinkJS",
   "main": "index.js",
   "scripts": {
-    "test": "nyc ava test/index.js",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "report": "nyc ava test/index.js && nyc report --reporter=html"
+    "test": "eslint index.js && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
   },
   "ava": {
     "files": [
@@ -38,13 +37,12 @@
   "devDependencies": {
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",
-    "codecov": "~1.0.1",
     "coveralls": "~2.11.16",
     "eslint": "~3.15.0",
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "think-helper": "~1.0.0",
+    "think-helper": "~1.0.6",
     "validator": "~6.2.1"
   }
 }
