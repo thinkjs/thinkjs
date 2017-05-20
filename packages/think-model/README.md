@@ -39,6 +39,46 @@ ThinkJS3.x model, support mysql.
     });
   ```
 
+### Cache
+
+`think-model` implement cache feature by using [think-cache](https://github.com/thinkjs/think-cache). You can confiure like:
+
+  ```js
+  const fileCache = require('think-cache-file');
+
+  const Model = require('think-model/mysql');
+  const ModelConfig = {
+    database: 'test',
+    prefix: 'fk_',
+    encoding: 'utf8',
+    nums_per_page: 10,
+    host: '127.0.0.1',
+    port: '',
+    user: 'root',
+    password: 'root',
+    cache: {
+      type: 'file',
+      common: {
+        timeout: 24 * 60 * 60 * 1000, // millisecond
+      },
+      file: {
+        handle: fileCache,
+        cachePath: './runtime/cache',  // absoulte path is necessarily required
+        pathDepth: 1,
+        gcInterval: 24 * 60 * 60 * 1000 // gc
+      }
+    }
+  };
+
+  let userModel = new Model('user', ModelConfig);
+  userModel
+    .where({name: 'lizheming'})
+    .cache('user_lizheming')
+    .find()
+    .then(user => {
+      console.log(user);
+    });
+  ```
 
 ### Advanced
 
