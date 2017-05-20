@@ -25,6 +25,7 @@ awesome projects for `ThinkJS 3.x`
 ### cache
 * [think-cache-file](https://github.com/thinkjs/think-cache-file) use file to store cache data
 * [think-cache-redis](https://github.com/thinkjs/think-cache-redis) use redis to store cache data
+* [think-cache-memcache](https://github.com/thinkjs/think-cache-memchache) use memcache to store cache data
 
 ## extends
 
