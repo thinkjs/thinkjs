@@ -9,7 +9,7 @@ const extend = require('./loader/extend.js');
 const common = require('./loader/common.js');
 const crontab = require('./loader/crontab.js');
 const extendMethod = require('./loader/util.js').extend;
-
+const validator = require('./loader/validator.js');
 
 /**
  * Loader
@@ -96,6 +96,12 @@ class Loader {
    */
   loadCommon(name){
     return common.load(this.appPath, name, this.modules);
+  }
+  /**
+   * load validator
+   */
+  loadValidator(){
+    return validator(this.appPath, this.modules);
   }
 }
 
