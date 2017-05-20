@@ -160,7 +160,7 @@ module.exports = class {
       return this;
     }
     
-    if(helper.isNumber(key)) {
+    if(!helper.isString(key)) {
       [key, config] = ['', key];
     }
 
@@ -169,8 +169,7 @@ module.exports = class {
     }
     
     let options = helper.parseAdapterConfig(this.config.cache, config);
-    options.key = key;
-    
+    if(!options.key) { options.key = key; }
     this._options.cache = options;
     return this;
   }

@@ -141,32 +141,69 @@ ava.test('getTableName, has table name', t => {
   var data = instance.getTableName();
   t.is(data, 'think_test')
 })
-// model cache have not set yet!
-// ava.test('cache, return this', t => {
-//   var instance = new Base('user', DBConfig);
-//   var data = instance.cache();
-//   t.is(data, instance);
-// })
-// ava.test('cache, with key', t => {
-//   var instance = new Base('user', DBConfig);
-//   var data = instance.cache('lizheming');
-//   t.deepEqual(instance._options.cache, { on: true, type: '', timeout: 3600, key: 'lizheming' });
-// })
-// ava.test('cache, with key, has timeout', t => {
-//   var instance = new Base('user', DBConfig);
-//   var data = instance.cache('lizheming', 3000);
-//   t.deepEqual(instance._options.cache, { on: true, type: '', timeout: 3000, key: 'lizheming' })
-// })
-// ava.test('cache, no key, has timeout', t => {
-//   var instance = new Base('user', DBConfig);
-//   var data = instance.cache(3000);
-//   t.deepEqual(instance._options.cache, { on: true, type: '', timeout: 3000, key: '' })
-// })
-// ava.test('cache, key is object', t => {
-//   var instance = new Base('user', DBConfig);
-//   var data = instance.cache({key: 'suredy', timeout: 4000});
-//   t.deepEqual(instance._options.cache, {key: 'suredy', timeout: 4000})
-// })
+ava.test('cache, return this', t => {
+  var instance = new Base('user', DBConfig);
+  var data = instance.cache();
+  t.is(data, instance);
+})
+ava.test('cache, with key', t => {
+  var instance = new Base('user', DBConfig);
+  var data = instance.cache('lizheming');
+  t.deepEqual(instance._options.cache, {type: '_', key: 'lizheming' });
+})
+ava.test('cache, with key, has timeout', t => {
+  var instance = new Base('user', DBConfig);
+  var data = instance.cache('lizheming', 3000);
+  t.deepEqual(instance._options.cache, {type: '_', timeout: 3000, key: 'lizheming' })
+})
+ava.test('cache, no key, has timeout', t => {
+  var instance = new Base('user', DBConfig);
+  var data = instance.cache(3000);
+  t.deepEqual(instance._options.cache, {type: '_', timeout: 3000, key: '' })
+})
+ava.test('cache, key is object', t => {
+  var instance = new Base('user', DBConfig);
+  var data = instance.cache({key: 'suredy', timeout: 4000});
+  t.deepEqual(instance._options.cache, {type: '_', key: 'suredy', timeout: 4000})
+})
+ava.test('cache with file', t => {
+  let config = helper.extend({}, DBConfig, {
+    cache: {
+      type: 'file', 
+      file: {
+        handle: new Function(),
+        filePath: 'somepath'
+      }
+    }
+  });
+  let instance = new Base('user', config);
+  let data = instance.cache('name');
+  t.deepEqual(instance._options.cache, {
+    key: 'name',
+    type: 'file',
+    handle: config.cache.file.handle,
+    filePath: 'somepath'
+  });
+});
+ava.test('cache dynamic change type', t => {
+  let config = helper.extend({}, DBConfig, {
+    cache: {
+      file: {
+        handle: new Function(),
+        filePath: 'somepath'
+      }
+    }
+  });
+  let instance = new Base('user', config);
+  let data = instance.cache('name', {type: 'file', file: {timeout: 1024}});
+  t.deepEqual(instance._options.cache, {
+    type: 'file',
+    key: 'name',
+    handle: config.cache.file.handle,
+    filePath: 'somepath',
+    timeout: 1024
+  });
+});
 ava.test('limit, return this', t => {
   var instance = new Base('user', DBConfig);
   var data = instance.limit();
