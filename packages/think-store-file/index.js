@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-19 16:36:37
+* @Last Modified time: 2017-05-20 12:41:01
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -78,7 +78,8 @@ class FileStore {
    */
   set(relativePath, content) {
     let filePath = this[getFilePath](relativePath);
-    helper.mkdir(path.dirname(filePath));
+    let res = helper.mkdir(path.dirname(filePath));
+    assert(res, 'You don\'t have right to create file in the given path!');
     return writeFile(filePath, content).then(() => {
       return helper.chmod(filePath);
     });
