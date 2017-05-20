@@ -33,6 +33,7 @@ class Router {
     this.pathname = this.getPathname();
     this.rules = app.routers;
     this.app = app;
+    this.ctxMethod = ctx.method.toUpperCase();
   }
   /**
    * get pathname, remove prefix & suffix
@@ -139,13 +140,12 @@ class Router {
    */
   getMatchedRule(rules){
     let rule;
-    let specialMethods = ['redirect', 'rest'];
-    const method = this.ctx.method.toLowerCase();
+    let specialMethods = ['REDIRECT', 'REST'];
     rules.some(item => {
-      let itemMethod = item.method.toLowerCase();
+      let itemMethod = item.method.toUpperCase();
       if(itemMethod && specialMethods.indexOf(item.method) === -1){
         //check method matched
-        if(itemMethod !== method) return;
+        if(itemMethod !== this.ctxMethod) return;
       }
       assert(helper.isRegExp(item.match), 'router.match must be a RegExp');
       let match = item.match.exec(this.pathname);
@@ -170,8 +170,10 @@ class Router {
    * parser item rule
    */
   parseRule(rule){
+    let ruleMethod = rule.method && rule.method.toUpperCase();
+
     // redirect url
-    if(rule.method === 'redirect'){
+    if(ruleMethod === 'REDIRECT'){
       if(rule.statusCode){
         this.ctx.status = rule.statusCode;
       }
@@ -218,10 +220,10 @@ class Router {
     let action = '';
     pathname = pathname.split('/');
     if(controller){
-      action = rule.method === 'rest' ? this.ctx.method : pathname[0];
+      action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase()  : pathname[0];
     }else{
       controller = pathname[0];
-      action = rule.method === 'rest' ? this.ctx.method : pathname[1];
+      action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase() : pathname[1];
     }
     this.ctx.module = m;
     this.ctx.controller = controller || this.options.defaultController;

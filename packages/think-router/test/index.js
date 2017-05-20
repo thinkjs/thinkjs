@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-19 15:39:19
+* @Last Modified time: 2017-05-20 17:44:52
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -407,7 +407,7 @@ test.serial.cb('rules method equal rest with controller', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
-          method: 'rest',
+          method: 'REST',
           query: []
         }]
       }
@@ -492,7 +492,7 @@ test.serial.cb('rules method equal redirect with statusCode', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
-          method: 'redirect',
+          method: 'REDIRECT',
           query: [],
           statusCode: 302
         }]
@@ -516,7 +516,7 @@ test.serial.cb('rules method equal redirect without statusCode', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
-          method: 'redirect',
+          method: 'REDIRECT',
           query: []
         }]
       }
@@ -620,7 +620,7 @@ test.serial.cb('rest multiple layer controller and match', t => {
     routers: [{
       match: /^\/admin\/article\/list/,
       path: 'admin/article/page/list',
-      method: 'rest',
+      method: 'REST',
       query: [{ name: 0 }]
     }]
   };
