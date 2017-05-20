@@ -379,3 +379,60 @@ test("parseAdapterConfig",t=>{
   t.deepEqual(parseAdapterConfig(config, extConfig).handle, "ejs");
   t.deepEqual(parseAdapterConfig(config, extConfig2).handle, "ejs");
 })
+
+test("parseAdapterConfig 2",t=>{
+  let config = {
+    type: 'nunjucks',
+    common: {
+      viewPath: 'thinkjs',
+      extname: '.html',
+      sep: '_' //seperator between controller and action
+    },
+    nunjucks: {
+      handle: "nunjucks"
+    },
+    ejs: {
+      handle: "ejs"
+    }
+  }
+  let extConfig = "ejs";
+  let extConfig2 = {
+    type: "ejs",
+    handle: "ejs"
+  };
+  t.deepEqual(parseAdapterConfig(config, extConfig2).type, "ejs");
+})
+
+test("parseAdapterConfig 3",t=>{
+  let config = {
+    type: 'nunjucks',
+    common: {
+      viewPath: 'thinkjs',
+      extname: '.html',
+      sep: '_' //seperator between controller and action
+    },
+    nunjucks: {
+      handle: "nunjucks"
+    },
+    ejs: {
+      handle: "ejs"
+    }
+  }
+  let extConfig = "ejs";
+  let extConfig2 = {
+    type: "ejs",
+    handle: "ejs"
+  };
+  let value = parseAdapterConfig(config);
+  t.deepEqual(parseAdapterConfig(value, extConfig2).type, "ejs");
+})
+
+test("parseAdapterConfig 3",t=>{
+  let value = parseAdapterConfig({});
+  t.deepEqual(parseAdapterConfig(value).type, "_");
+})
+
+test("parseAdapterConfig 3",t=>{
+  let value = parseAdapterConfig({handle: 'www', value: '222'});
+  t.deepEqual(parseAdapterConfig(value).value, "222");
+})

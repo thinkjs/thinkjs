@@ -5,7 +5,6 @@ const net = require('net');
 const cluster = require('cluster');
 const is = require('core-util-is');
 const uuid = require('uuid');
-const assert = require('assert');
 const ms = require('ms');
 
 const fs_rmdir = promisify(fs.rmdir, fs);
@@ -285,21 +284,39 @@ exports.uuid = function(version){
  * parse adapter config
  */
 exports.parseAdapterConfig = (config = {}, extConfig) => {
-  if(!extConfig && !config.type && config.handle) return config;
-  assert(exports.isString(config.type), 'config.type required');
+  config = exports.extend({}, config);
+  // {handle: ''}
+  if(!config.type) config.type = '_';
+  // {type: 'xxx', handle: ''}
+  if(config.handle){
+    let type = config.type;
+    delete config.type;
+    config = {type, [type]: config};
+  }
   if(extConfig){
     //only change type
+    // 'xxx'
     if(exports.isString(extConfig)){
       extConfig = {type: extConfig};
     }
+    // {handle: 'www'}
     //only add some configs
     if(!extConfig.type){
       extConfig = {[config.type]: extConfig};
     }
+    // {type: 'xxx', handle: 'www'}
+    if(extConfig.handle){
+      let type = extConfig.type;
+      delete extConfig.type;
+      extConfig = {type, [type]: extConfig};
+    }
   }
   //merge config
   config = exports.extend({}, config, extConfig);
-  return config[config.type] || {};
+  let value = config[config.type] || {};
+  // add type for return value
+  value.type = config.type;
+  return value;
 }
 /**
  * transform humanize time to ms
