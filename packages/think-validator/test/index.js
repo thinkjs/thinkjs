@@ -2,12 +2,14 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-19 13:59:56
+* @Last Modified time: 2017-05-20 15:45:57
 */
 import test from 'ava';
 import helper from 'think-helper';
 import Validator from '../index.js';
 import defaultCtx from './ctx.js';
+const NOERROR = ' valid failed';
+
 
 test('rule-required, required = true', t => {
   let rules = {
@@ -2647,56 +2649,7 @@ test('rule-ip-no-required', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-name-custom-message', t => {
-  let rules = {
-    arg: {
-      required: true
-    },
-    arg2: {
-      required: true
-    },
-    arg3: {
-      object: true,
-      children: {
-        int: true
-      }
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      arg3: {
-        a: 'aaa',
-        b: 'abc',
-        c: 'vvv',
-        d: 'abc'
-      }
-    }
-  });
 
-  let msgs = {
-    required: 'must required',
-    arg: 'arg must required',
-    arg2: {
-      required: 'arg2 must required'
-    },
-    arg3: {
-      'a,b': 'this is wrong for a,b',
-      c: 'this is wrong for c',
-      d: {
-        int: 'this wrong for d'
-      }
-    }
-  }
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules, msgs);
-  t.true(
-    ret.arg === msgs.arg &&
-    ret.arg2 === msgs.arg2.required &&
-    ret['arg3.a'] === msgs.arg3['a,b'] &&
-    ret['arg3.c'] === msgs.arg3.c &&
-    ret['arg3.d'] === msgs.arg3.d.int
-  );
-});
 
 test('rule-object-message', t => {
   let rules = {
@@ -2720,30 +2673,7 @@ test('rule-object-message', t => {
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules, msgs);
-  t.true(ret['arg3.a'] === 'arg3 valid failed');
-});
-
-test('rule-array-message', t => {
-  let rules = {
-    arg3: {
-      array: true,
-      children: {
-        int: true
-      }
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      arg3: ['1a']
-    }
-  });
-
-  let msgs = {
-    int: 'wrong valid'
-  }
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules, msgs);
-  t.true(ret['arg3[0]'] === msgs.int);
+  t.true(ret['arg3.a'] === 'arg3' + NOERROR);
 });
 
 test('rule-ip-default', t => {
@@ -2772,7 +2702,7 @@ test('rule-name-no-message', t => {
 
   let instance = new Validator(ctx);
   let ret = instance.validate(rules, msgs);
-  t.true(ret.arg === 'arg valid failed');
+  t.true(ret.arg === 'arg' + NOERROR);
 });
 
 test('rule-add-method', t => {
@@ -2782,7 +2712,7 @@ test('rule-add-method', t => {
       eqlushijie: true
     }
   }
-  let wrongMsg = 'eqlushijie valid failed';
+  let wrongMsg = 'eqlushijie error';
 
   Validator.add('eqlushijie', function(value, parsedValue) {
     return parsedValue === 'lushijie';
@@ -2914,4 +2844,156 @@ test('rule\'method not match this.ctx.method', t => {
   let instance = new Validator(helper.extend({}, defaultCtx));
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length === 0);
+});
+
+
+
+test('rule-name-custom-message', t => {
+  let rules = {
+    arg: {
+      required: true
+    },
+    arg2: {
+      required: true
+    },
+    arg3: {
+      object: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: {
+        a: 'aaa',
+        b: 'abc',
+        c: 'vvv',
+        d: 'abc'
+      }
+    }
+  });
+
+  let msgs = {
+    required: 'must required',
+    arg: 'arg must required',
+    arg2: {
+      required: 'arg2 must required'
+    },
+    arg3: {
+      'a,b': 'this is wrong for a,b',
+      c: 'this is wrong for c',
+      d: {
+        int: 'this is wrong for d'
+      }
+    }
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(
+    ret.arg === msgs.arg &&
+    ret.arg2 === msgs.arg2.required &&
+    ret['arg3.a'] === msgs.arg3['a,b'] &&
+    ret['arg3.c'] === msgs.arg3.c &&
+    ret['arg3.d'] === msgs.arg3.d.int
+  );
+});
+
+test('rule-name-custom-message-else', t => {
+  let rules = {
+    arg: {
+      required: true
+    },
+    arg2: {
+      required: true
+    },
+    arg3: {
+      object: true,
+      children: {
+        int: true
+      }
+    },
+    arg4: {
+      object: true,
+      children: {
+        int: true
+      }
+    },
+    arg5: {
+      object: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: {
+        a: 'aaa',
+        b: 'abc',
+        c: 'vvv',
+        d: 'abc'
+      },
+      arg4: {
+        e: 'aaa',
+      },
+      arg5: {
+        f: 'aaa'
+      }
+    }
+  });
+
+  let msgs = {
+    required: null,
+    arg: null,
+    arg2: {
+      required: null
+    },
+    arg3: {
+      'a,b': null,
+      c: null,
+      d: {
+        int: null
+      }
+    },
+    arg4: 'arg4 custom error',
+    arg5: []
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+
+  t.true(
+    ret.arg === `arg${NOERROR}` &&
+    ret.arg2 === `arg2${NOERROR}` &&
+    ret['arg3.a'] === `arg3${NOERROR}` &&
+    ret['arg3.b'] === `arg3${NOERROR}` &&
+    ret['arg3.c'] === `arg3${NOERROR}` &&
+    ret['arg3.d'] === `arg3${NOERROR}` &&
+    ret['arg4.e'] === 'arg4 custom error' &&
+    ret['arg5.f'] === `arg5${NOERROR}`
+  );
+});
+
+
+test('rule-array-message', t => {
+  let rules = {
+    arg3: {
+      array: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: ['1a']
+    }
+  });
+
+  let msgs = {
+    arg3: 'this is array custom message'
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret['arg3[0]'] === msgs.arg3);
 });

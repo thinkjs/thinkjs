@@ -2,17 +2,19 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 14:37:31
+* @Last Modified time: 2017-05-20 15:48:31
 */
+const helper = require('think-helper');
+const ARRAY_SP = '__array__';
+const OBJECT_SP = '__object__';
+const NOERROR = ' valid failed';
+const METHOD_MAP = {
+  GET: 'param',
+  POST: 'post',
+  FILE: 'file'
+};
 let preRules = require('./rules.js');
 let preErrors = require('./errors.js');
-const helper = require('think-helper');
-const ARRAY_SP = '__array__', OBJECT_SP = '__object__';
-const METHOD_MAP = {
-  get: 'param',
-  post: 'post',
-  file: 'file'
-};
 
 class Validator {
   constructor(ctx) {
@@ -29,6 +31,7 @@ class Validator {
     ];
     this.skippedValidNames = ['value', 'default', 'trim', 'method'].concat(this.requiredValidNames);
     this.basicType = ['int', 'string', 'float', 'array', 'object', 'boolean'];
+    this.errors = helper.extend({}, preErrors);
   }
 
   /**
@@ -55,44 +58,57 @@ class Validator {
    * @param  {Object} rule            [description]
    * @param  {String} validName       [description]
    * @param  {Mixed} parsedValidArgs [description]
-   * @param  {Object} msgs            [description]
    * @return {String}                 [description]
    */
-  _getErrorMessage(argName, rule, validName, parsedValidArgs, msgs) {
-    let errMsg = helper.extend({}, preErrors)[validName];
-    if(helper.isObject(msgs)) {
+  _getErrorMessage(argName, rule, validName, parsedValidArgs) {
+    let errMsg;
+
+    // cacl argName first, array use normal custom error style
+    if(argName.indexOf(ARRAY_SP) > -1) {
+      argName = argName.split(ARRAY_SP)[0];
+    }
+
+    // set valid and arg error
+    let validNameError = this.errors[validName];
+    let argNameError = this.errors[argName];
+
+    if(argName.indexOf(OBJECT_SP) === -1) {
       // eg int: 'error message'
-      errMsg = msgs[validName];
-
-      let msgs_RuleName = msgs[argName];
-      // eg name: 'error message'
-      if(msgs_RuleName && helper.isString(msgs_RuleName)) {
-        errMsg = msgs_RuleName;
+      if(helper.isString(validNameError)) {
+        errMsg = validNameError;
       }
 
-      // eg name: {int: 'error message'}
-      if(msgs_RuleName && helper.isObject(msgs_RuleName) && helper.isString(msgs_RuleName[validName])) {
-        errMsg = msgs_RuleName[validName];
+      //eg name: 'error message'
+      if(helper.isString(argNameError)) {
+        errMsg = argNameError;
       }
 
-      // eg name: {name1,name2: 'error message'}
-      // eg name: {name1,name2: {int: 'error message'}}
-      if(argName.indexOf(OBJECT_SP) > -1) {
-        let parsedResult = argName.split(OBJECT_SP);
-        argName = parsedResult[0];
-        let msgs_RuleName = msgs[argName];
-        let subRuleName = parsedResult[1];
-        if(msgs_RuleName) {
-          for(let i in msgs_RuleName) {
-            if(i.split(',').indexOf(subRuleName) > -1){
-              if(helper.isObject(msgs_RuleName[i])){
-                errMsg = msgs_RuleName[i][validName];
-              }else {
-                errMsg = msgs_RuleName[i]
-              }
+      //eg name: {int: 'error message'}
+      if(helper.isObject(argNameError) && helper.isString(argNameError[validName])) {
+        errMsg = this.errors[argName][validName];
+      }
+    }
+
+    // eg name: {name1,name2: 'error message'}
+    // eg name: {name1,name2: {int: 'error message'}}
+    if(argName.indexOf(OBJECT_SP) > -1) {
+      let parsedResult = argName.split(OBJECT_SP);
+      let subRuleName = parsedResult[1];
+      argName = parsedResult[0];
+      argNameError = this.errors[argName];
+
+      if(helper.isObject(argNameError)) {
+        for(let i in argNameError) {
+          if(i.split(',').indexOf(subRuleName) > -1){
+            if(helper.isObject(argNameError[i])){
+              errMsg = argNameError[i][validName];
+            }else if(helper.isString(argNameError[i])){
+              errMsg = argNameError[i];
             }
           }
         }
+      }else if(helper.isString(argNameError)) {
+        errMsg = argNameError;
       }
     }
 
@@ -101,7 +117,7 @@ class Validator {
 
     // set defalut error message
     if(!errMsg) {
-      return originRuleName + ' valid failed';
+      return originRuleName + NOERROR;
     }
 
     // argName validName validArgs parsedValidArgs
@@ -179,11 +195,11 @@ class Validator {
    */
   _getQueryMethod(rule) {
     let methodName;
-    let ctxMethod = this.ctx.method.toLowerCase();
+    let ctxMethod = this.ctx.method.toUpperCase();
     if(typeof rule.method === 'undefined' || rule.method === '') {
       methodName = ctxMethod;
     }else {
-      methodName = rule.method.toLowerCase();
+      methodName = rule.method.toUpperCase();
     }
     rule.method = methodName;
     return METHOD_MAP[methodName];
@@ -205,7 +221,7 @@ class Validator {
 
       let queryMethod = this._getQueryMethod(rule);
       // skip rule.method not match this.ctx.method
-      if(this.ctx.method.toLowerCase() !== rule.method.toLowerCase()) {
+      if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
         continue;
       }
       // set this.ctxQuery
@@ -298,13 +314,14 @@ class Validator {
   validate(rules, msgs) {
     let ret = {};
     let parsedRules = this._preTreatRules(rules);
+    this.errors = helper.extend(this.errors, msgs);
 
     outerLoop:
     for(let argName in parsedRules){
       let rule = parsedRules[argName];
 
       // skip rule.method not match this.ctx.method
-      if(this.ctx.method.toLowerCase() !== rule.method.toLowerCase()) {
+      if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
         continue;
       }
 
@@ -313,7 +330,7 @@ class Validator {
       if(isRequired && helper.isTrueEmpty(rule.value)) {
         let validName = 'required';
         let parsedValidArgs = this._parseValidArgs(validName, rule);
-        let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs, msgs);
+        let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
         ret[argName] = errMsg;
         continue;
       }else if(!isRequired && helper.isTrueEmpty(rule.value)){
@@ -337,7 +354,7 @@ class Validator {
 
         let result = fn(rule.value, parsedValidArgs);
         if(!result){
-          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs, msgs);
+          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
 
           // format error message's rule name
           let newRuleName = this._formatNestedRuleName(argName);
