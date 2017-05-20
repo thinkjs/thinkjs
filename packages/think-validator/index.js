@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 15:48:31
+* @Last Modified time: 2017-05-20 16:01:16
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -300,9 +300,8 @@ class Validator {
    * @param {Function} callback  [description]
    * @param {String}   msg       [description]
    */
-  static add(validName, callback, msg) {
+  static addRule(validName, callback) {
     preRules[validName] = callback;
-    preErrors[validName] = msg;
   }
 
   /**
