@@ -2,16 +2,14 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-19 14:21:19
+* @Last Modified time: 2017-05-20 14:35:15
 */
 'use strict';
 const helper = require('think-helper');
 const validator = require('validator');
 const errors = require('./errors.js');
 const assert = require('assert');
-
-let Validator = {}
-Validator.errors = errors;
+let Rules = {}
 
 /**
  * check value is set
@@ -19,7 +17,7 @@ Validator.errors = errors;
  * @param  {Boolean} validValue []
  * @return {Boolean}       []
  */
-Validator.required = (value, validValue) => {
+Rules.required = (value, validValue) => {
   return validValue;
 };
 
@@ -29,7 +27,7 @@ Validator.required = (value, validValue) => {
  * @param  {Object} query []
  * @return {Array}  []
  */
-Validator._requiredIf = (validValue, query) => {
+Rules._requiredIf = (validValue, query) => {
   assert(helper.isArray(validValue), 'requiredIf\'s value should be array');
   validValue = validValue.slice();
 
@@ -45,7 +43,7 @@ Validator._requiredIf = (validValue, query) => {
  * @param  {Array}     parsedValue     [description]
  * @return {Boolean}               [description]
  */
-Validator.requiredIf = (value, parsedValue) => {
+Rules.requiredIf = (value, parsedValue) => {
   let first = parsedValue[0];
   let others = parsedValue.slice(1);
   return others.indexOf(first) > -1;
@@ -57,9 +55,9 @@ Validator.requiredIf = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredNotIf = (validValue, query) => {
+Rules._requiredNotIf = (validValue, query) => {
   assert(helper.isArray(validValue), 'requiredNotIf\'s value should be array');
-  return Validator._requiredIf(validValue, query);
+  return Rules._requiredIf(validValue, query);
 };
 
 /**
@@ -68,7 +66,7 @@ Validator._requiredNotIf = (validValue, query) => {
  * @param  {Array}     parsedValue       []
  * @return {Boolean}                 []
  */
-Validator.requiredNotIf = (value, parsedValue) => {
+Rules.requiredNotIf = (value, parsedValue) => {
   let first = parsedValue[0];
   let others = parsedValue.slice(1);
   return (others.indexOf(first) === -1);
@@ -80,7 +78,7 @@ Validator.requiredNotIf = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWith = (validValue, query) => {
+Rules._requiredWith = (validValue, query) => {
   assert(helper.isArray(validValue), 'requiredWith\'s value should be array');
   validValue = validValue.slice();
 
@@ -96,7 +94,7 @@ Validator._requiredWith = (validValue, query) => {
  * @param  {Array}  parsedValue  []
  * @return {Boolean}              []
  */
-Validator.requiredWith = (value, parsedValue) => {
+Rules.requiredWith = (value, parsedValue) => {
   return parsedValue.some(item => {
     return !helper.isTrueEmpty(item);
   });
@@ -108,9 +106,9 @@ Validator.requiredWith = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWithAll = (validValue, query) => {
+Rules._requiredWithAll = (validValue, query) => {
   assert(helper.isArray(validValue), 'requiredWithAll\'s value should be array');
-  return Validator._requiredWith(validValue, query);
+  return Rules._requiredWith(validValue, query);
 };
 
 /**
@@ -119,7 +117,7 @@ Validator._requiredWithAll = (validValue, query) => {
  * @param  {Array}     parsedValue       []
  * @return {Boolean}                 []
  */
-Validator.requiredWithAll = (value, parsedValue) => {
+Rules.requiredWithAll = (value, parsedValue) => {
   return parsedValue.every(item => {
     return !helper.isTrueEmpty(item);
   });
@@ -131,9 +129,9 @@ Validator.requiredWithAll = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWithOut = (validValue, query) => {
+Rules._requiredWithOut = (validValue, query) => {
   assert(helper.isArray(validValue), 'requiredWithOut\'s value should be array');
-  return Validator._requiredWith(validValue, query);
+  return Rules._requiredWith(validValue, query);
 };
 
 /**
@@ -142,7 +140,7 @@ Validator._requiredWithOut = (validValue, query) => {
  * @param  {Array} parsedValue            []
  * @return {Boolean}                  []
  */
-Validator.requiredWithOut = (value, parsedValue) => {
+Rules.requiredWithOut = (value, parsedValue) => {
   return parsedValue.some(item => {
     return helper.isTrueEmpty(item);
   });
@@ -154,9 +152,9 @@ Validator.requiredWithOut = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {Array}      []
  */
-Validator._requiredWithOutAll = (validValue, query) => {
+Rules._requiredWithOutAll = (validValue, query) => {
   assert(helper.isArray(validValue), 'requiredWithOutAll\'s value should be array');
-  return Validator._requiredWith(validValue, query);
+  return Rules._requiredWith(validValue, query);
 };
 
 /**
@@ -165,7 +163,7 @@ Validator._requiredWithOutAll = (validValue, query) => {
  * @param  {Array}     parsedValue []
  * @return {Boolean}                  []
  */
-Validator.requiredWithOutAll = (value, parsedValue) => {
+Rules.requiredWithOutAll = (value, parsedValue) => {
   return parsedValue.every(item => {
     return helper.isTrueEmpty(item);
   });
@@ -177,7 +175,7 @@ Validator.requiredWithOutAll = (value, parsedValue) => {
  * @param  {Object} query  [description]
  * @return {String}      [description]
  */
-Validator._contains = (validValue, query) => {
+Rules._contains = (validValue, query) => {
   let item = query[validValue];
   return !helper.isTrueEmpty(item) ? item : validValue;
 }
@@ -187,7 +185,7 @@ Validator._contains = (validValue, query) => {
  * @param  {String} parsedValue   []
  * @return {Boolean}       []
  */
-Validator.contains = (value, parsedValue) => {
+Rules.contains = (value, parsedValue) => {
   value = validator.toString(value);
   return validator.contains(value, parsedValue);
 };
@@ -198,7 +196,7 @@ Validator.contains = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {String}      []
  */
-Validator._equals = (validValue, query) => {
+Rules._equals = (validValue, query) => {
   let item = query[validValue];
   return !helper.isTrueEmpty(item) ? item : validValue;
 };
@@ -209,7 +207,7 @@ Validator._equals = (validValue, query) => {
  * @param  {String} parsedValue []
  * @return {Boolean}            []
  */
-Validator.equals = (value, parsedValue) => {
+Rules.equals = (value, parsedValue) => {
   value = validator.toString(value);
   return validator.equals(value, parsedValue);
 };
@@ -220,8 +218,8 @@ Validator.equals = (value, parsedValue) => {
  * @param  {Object} query []
  * @return {Array}  []
  */
-Validator._different = (validValue, query) => {
-  return Validator._equals(validValue, query);
+Rules._different = (validValue, query) => {
+  return Rules._equals(validValue, query);
 };
 
 /**
@@ -230,7 +228,7 @@ Validator._different = (validValue, query) => {
  * @param  {String} parsedValue [description]
  * @return {Boolean}            [description]
  */
-Validator.different = (value, parsedValue) => {
+Rules.different = (value, parsedValue) => {
   value = validator.toString(value);
   return !validator.equals(value, parsedValue);
 };
@@ -240,7 +238,7 @@ Validator.different = (value, parsedValue) => {
  * @param  {Date String|true} validValue []
  * @return {Array}      []
 */
-Validator._before = (validValue) => {
+Rules._before = (validValue) => {
  if(validValue === true) {
     let now = new Date();
     let nowTime = now.getFullYear() + '-' +
@@ -251,7 +249,7 @@ Validator._before = (validValue) => {
                   now.getSeconds();
     return nowTime;
   }
-  assert(Validator.date(validValue), 'validValue should be date');
+  assert(Rules.date(validValue), 'validValue should be date');
   return validValue;
 };
 
@@ -261,7 +259,7 @@ Validator._before = (validValue) => {
  * @param  {Date String} parsedValue  []
  * @return {Boolean}       []
 */
-Validator.before = (value, parsedValue) => {
+Rules.before = (value, parsedValue) => {
   value = validator.toString(value);
   return validator.isBefore(value, parsedValue);
 };
@@ -271,8 +269,8 @@ Validator.before = (value, parsedValue) => {
  * @param  {Date String | true} validValue []
  * @return {Array}      []
 */
-Validator._after = (validValue) => {
-  return Validator._before(validValue);
+Rules._after = (validValue) => {
+  return Rules._before(validValue);
 };
 
 /*
@@ -281,7 +279,7 @@ Validator._after = (validValue) => {
  * @param  {Date String} parsedValue  []
  * @return {Boolean}       []
 */
-Validator.after = (value, parsedValue) => {
+Rules.after = (value, parsedValue) => {
   value = validator.toString(value);
   return validator.isAfter(value, parsedValue);
 };
@@ -291,7 +289,7 @@ Validator.after = (value, parsedValue) => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.alpha = value => {
+Rules.alpha = value => {
   value = validator.toString(value);
   return validator.isAlpha(value);
 };
@@ -301,7 +299,7 @@ Validator.alpha = value => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.alphaDash = value => {
+Rules.alphaDash = value => {
   value = validator.toString(value);
   return /^[A-Z_]+$/i.test(value)
 };
@@ -311,7 +309,7 @@ Validator.alphaDash = value => {
  * @param  {Boolean} value []
  * @return {Boolean}       []
  */
-Validator.alphaNumeric = value => {
+Rules.alphaNumeric = value => {
   value = validator.toString(value);
   return validator.isAlphanumeric(value);
 };
@@ -322,7 +320,7 @@ Validator.alphaNumeric = value => {
  * @param  {String|true} locale default:en-US
  * @return {Boolean}       []
  */
-Validator.alphaNumericDash = value => {
+Rules.alphaNumericDash = value => {
   value = validator.toString(value);
   return /^\w+$/i.test(value);
 };
@@ -332,7 +330,7 @@ Validator.alphaNumericDash = value => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.ascii = value => {
+Rules.ascii = value => {
   value = validator.toString(value);
   return validator.isAscii(value);
 };
@@ -342,7 +340,7 @@ Validator.ascii = value => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.base64 = value => {
+Rules.base64 = value => {
   value = validator.toString(value);
   return validator.isBase64(value);
 };
@@ -353,7 +351,7 @@ Validator.base64 = value => {
  * @param  {Object} validValue []
  * @return {Boolean}       []
  */
-Validator.byteLength = (value, validValue) => {
+Rules.byteLength = (value, validValue) => {
   assert(helper.isObject(validValue), 'byteLength\'s value should be object');
   value = validator.toString(value);
   return validator.isByteLength(value, {min: validValue.min | 0, max: validValue.max});
@@ -363,7 +361,7 @@ Validator.byteLength = (value, validValue) => {
  * check if the string not matches the comparison.
  * @type {Boolean}
  */
-Validator.creditCard = value => {
+Rules.creditCard = value => {
   value = validator.toString(value);
   return validator.isCreditCard(value);
 };
@@ -374,7 +372,7 @@ Validator.creditCard = value => {
  * @param  {Object|true} validValue []
  * @return {Boolean}         []
  */
-Validator.currency = (value, validValue) => {
+Rules.currency = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'currency\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -390,7 +388,7 @@ Validator.currency = (value, validValue) => {
  * @param  {Number} min   []
  * @return {Boolean}       []
  */
-Validator.date = value => {
+Rules.date = value => {
   if(isNaN(Date.parse(value))){
     return false;
   }
@@ -402,7 +400,7 @@ Validator.date = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.decimal = value => {
+Rules.decimal = value => {
   value = validator.toString(value);
   return validator.isDecimal(value);
 };
@@ -414,7 +412,7 @@ Validator.decimal = value => {
  * @param  {Number} validValue [description]
  * @return {Boolean}        [description]
  */
-Validator.divisibleBy = (value, validValue) => {
+Rules.divisibleBy = (value, validValue) => {
   value = validator.toString(value);
   return validator.isDivisibleBy(value, validValue);
 };
@@ -425,7 +423,7 @@ Validator.divisibleBy = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.email = (value, validValue) => {
+Rules.email = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'email\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -441,7 +439,7 @@ Validator.email = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.fqdn = (value, validValue) => {
+Rules.fqdn = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'fqdn\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -457,7 +455,7 @@ Validator.fqdn = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.float = (value, validValue) => {
+Rules.float = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'float\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -472,7 +470,7 @@ Validator.float = (value, validValue) => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.fullWidth = value => {
+Rules.fullWidth = value => {
   value = validator.toString(value);
   return validator.isFullWidth(value);
 };
@@ -482,7 +480,7 @@ Validator.fullWidth = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.halfWidth = value => {
+Rules.halfWidth = value => {
   value = validator.toString(value);
   return validator.isHalfWidth(value);
 };
@@ -492,7 +490,7 @@ Validator.halfWidth = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.hexColor = value => {
+Rules.hexColor = value => {
   value = validator.toString(value);
   return validator.isHexColor(value);
 };
@@ -502,7 +500,7 @@ Validator.hexColor = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.hex = value => {
+Rules.hex = value => {
   value = validator.toString(value);
   return validator.isHexadecimal(value);
 };
@@ -512,7 +510,7 @@ Validator.hex = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.ip = value => {
+Rules.ip = value => {
   value = validator.toString(value);
   return validator.isIP(value, 4) || validator.isIP(value, 6);
 };
@@ -522,7 +520,7 @@ Validator.ip = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.ip4 = value => {
+Rules.ip4 = value => {
   value = validator.toString(value);
   return validator.isIP(value, 4);
 };
@@ -532,7 +530,7 @@ Validator.ip4 = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.ip6 = value => {
+Rules.ip6 = value => {
   value = validator.toString(value);
   return validator.isIP(value, 6);
 };
@@ -542,7 +540,7 @@ Validator.ip6 = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.isbn = value => {
+Rules.isbn = value => {
   value = validator.toString(value);
   return validator.isISBN(value, 10) || validator.isISBN(value, 13);
 };
@@ -552,7 +550,7 @@ Validator.isbn = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.isin = value => {
+Rules.isin = value => {
   value = validator.toString(value);
   return validator.isISIN(value);
 };
@@ -562,7 +560,7 @@ Validator.isin = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.iso8601 = value => {
+Rules.iso8601 = value => {
   value = validator.toString(value);
   return validator.isISO8601(value);
 };
@@ -573,7 +571,7 @@ Validator.iso8601 = value => {
  * @param  {Array} validValue [description]
  * @return {Boolean}       [description]
  */
-Validator.in = (value, validValue) => {
+Rules.in = (value, validValue) => {
   assert(helper.isArray(validValue), 'in\'s value should be array');
   value = validator.toString(value);
   return validator.isIn(value, validValue);
@@ -585,7 +583,7 @@ Validator.in = (value, validValue) => {
  * @param  {Array} validValue [description]
  * @return {Boolean}       [description]
  */
-Validator.notIn = (value, validValue) => {
+Rules.notIn = (value, validValue) => {
   assert(helper.isArray(validValue), 'notIn\'s value should be array');
 
   value = validator.toString(value);
@@ -598,7 +596,7 @@ Validator.notIn = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.int = (value, validValue) => {
+Rules.int = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'int\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -614,7 +612,7 @@ Validator.int = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.length = (value, validValue) => {
+Rules.length = (value, validValue) => {
   assert(helper.isObject(validValue), 'length\'s value should be object');
   value = validator.toString(value);
   return validator.isLength(value, {min: validValue.min | 0, max: validValue.max});
@@ -625,7 +623,7 @@ Validator.length = (value, validValue) => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.lowercase = value => {
+Rules.lowercase = value => {
   value = validator.toString(value);
   return validator.isLowercase(value);
 };
@@ -635,7 +633,7 @@ Validator.lowercase = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.uppercase = value => {
+Rules.uppercase = value => {
   value = validator.toString(value);
   return validator.isUppercase(value);
 };
@@ -646,7 +644,7 @@ Validator.uppercase = value => {
  * @param  {String} validValue [description]
  * @return {Boolean}        [description]
  */
-Validator.mobile = (value, validValue) => {
+Rules.mobile = (value, validValue) => {
   value = validator.toString(value);
   if(validValue === true) {
     return validator.isMobilePhone(value, 'zh-CN');
@@ -660,7 +658,7 @@ Validator.mobile = (value, validValue) => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.mongoId = value => {
+Rules.mongoId = value => {
   value = validator.toString(value);
   return validator.isMongoId(value);
 };
@@ -671,7 +669,7 @@ Validator.mongoId = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.multibyte = value => {
+Rules.multibyte = value => {
   value = validator.toString(value);
   return validator.isMultibyte(value);
 };
@@ -683,7 +681,7 @@ Validator.multibyte = value => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Validator.url = (value, validValue) => {
+Rules.url = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'url\'s validValue should be object or true');
 
   value = validator.toString(value);
@@ -699,7 +697,7 @@ Validator.url = (value, validValue) => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.order = value => {
+Rules.order = value => {
   return value.split(/\s*,\s*/).every(item => {
     return /^\w+\s+(?:ASC|DESC)$/i.test(item);
   });
@@ -710,7 +708,7 @@ Validator.order = value => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.field = value => {
+Rules.field = value => {
   return value.split(/\s*,\s*/).every(item => {
     return item === '*' || /^\w+$/.test(item);
   });
@@ -722,7 +720,7 @@ Validator.field = value => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.image = value => {
+Rules.image = value => {
   if(helper.isObject(value)){
     value = value.originalFilename;
   }
@@ -735,7 +733,7 @@ Validator.image = value => {
  * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Validator.startWith = (value, validValue) => {
+Rules.startWith = (value, validValue) => {
   return value.indexOf(validValue) === 0;
 };
 
@@ -745,7 +743,7 @@ Validator.startWith = (value, validValue) => {
  * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Validator.endWith = (value, validValue) => {
+Rules.endWith = (value, validValue) => {
   return value.lastIndexOf(validValue) === (value.length - validValue.length);
 };
 
@@ -754,7 +752,7 @@ Validator.endWith = (value, validValue) => {
  * @param  {String} value []
  * @return {Boolean}       []
  */
-Validator.string = value => {
+Rules.string = value => {
   return helper.isString(value);
 };
 
@@ -763,7 +761,7 @@ Validator.string = value => {
  * @param  {Array} value []
  * @return {Boolean}       []
  */
-Validator.array = value => {
+Rules.array = value => {
   return helper.isArray(value);
 };
 
@@ -772,7 +770,7 @@ Validator.array = value => {
  * @param  {Boolean} value []
  * @return {Boolean}       []
  */
-Validator.boolean = value => {
+Rules.boolean = value => {
   return helper.isBoolean(value);
 };
 
@@ -781,7 +779,7 @@ Validator.boolean = value => {
  * @param  {Object} value []
  * @return {Boolean}       []
  */
-Validator.object = value => {
+Rules.object = value => {
   return helper.isObject(value);
 };
 
@@ -791,7 +789,7 @@ Validator.object = value => {
  * @param  {RegExp} validValue   []
  * @return {Boolean}       []
  */
-Validator.regexp = (value, validValue) => {
+Rules.regexp = (value, validValue) => {
   assert(helper.isRegExp(validValue), 'argument should be regexp');
   return validValue.test(value);
 };
@@ -802,7 +800,7 @@ Validator.regexp = (value, validValue) => {
  * @param  {Object|true} value [description]
  * @return {Boolean}       [description]
  */
-Validator.issn = (value, validValue) => {
+Rules.issn = (value, validValue) => {
   assert((helper.isObject(validValue) || validValue === true), 'issn\'s validValue should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -817,7 +815,7 @@ Validator.issn = (value, validValue) => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.uuid = value => {
+Rules.uuid = value => {
   value = validator.toString(value);
   return validator.isUUID(value, 3) || validator.isUUID(value, 4) || validator.isUUID(value, 5);
 };
@@ -827,7 +825,7 @@ Validator.uuid = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.md5 = value => {
+Rules.md5 = value => {
   value = validator.toString(value);
   return validator.isMD5(value);
 };
@@ -838,7 +836,7 @@ Validator.md5 = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.macAddress = value => {
+Rules.macAddress = value => {
   value = validator.toString(value);
   return validator.isMACAddress(value);
 };
@@ -848,7 +846,7 @@ Validator.macAddress = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.numeric = value => {
+Rules.numeric = value => {
   value = validator.toString(value);
   return validator.isNumeric(value);
 };
@@ -858,7 +856,7 @@ Validator.numeric = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.dataURI = value => {
+Rules.dataURI = value => {
   value = validator.toString(value);
   return validator.isDataURI(value);
 };
@@ -868,9 +866,9 @@ Validator.dataURI = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Validator.variableWidth = value => {
+Rules.variableWidth = value => {
   value = validator.toString(value);
   return validator.isVariableWidth(value);
 };
 
-module.exports = Validator;
+module.exports = Rules;

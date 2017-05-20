@@ -2,9 +2,10 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-19 13:52:08
+* @Last Modified time: 2017-05-20 14:37:31
 */
-const validator = require('./rules.js');
+let preRules = require('./rules.js');
+let preErrors = require('./errors.js');
 const helper = require('think-helper');
 const ARRAY_SP = '__array__', OBJECT_SP = '__object__';
 const METHOD_MAP = {
@@ -58,7 +59,7 @@ class Validator {
    * @return {String}                 [description]
    */
   _getErrorMessage(argName, rule, validName, parsedValidArgs, msgs) {
-    let errMsg = validator.errors[validName];
+    let errMsg = helper.extend({}, preErrors)[validName];
     if(helper.isObject(msgs)) {
       // eg int: 'error message'
       errMsg = msgs[validName];
@@ -119,7 +120,7 @@ class Validator {
    */
   _parseValidArgs(validName, rule) {
     let ruleArgs = rule[validName];
-    let pfn = validator['_' + validName];
+    let pfn = preRules['_' + validName];
     if(helper.isFunction(pfn)){
       // support rewrite back, so just pass this.ctxQuery without clone
       ruleArgs = pfn(ruleArgs, this.ctxQuery);
@@ -160,7 +161,7 @@ class Validator {
     for(let i = 0; i <= this.requiredValidNames.length; i++) {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
-        let fn = validator[validName];
+        let fn = preRules[validName];
         let parsedValidArgs = this._parseValidArgs(validName, rule);
         if(fn(rule.value, parsedValidArgs)) {
           isRequired = true;
@@ -284,8 +285,8 @@ class Validator {
    * @param {String}   msg       [description]
    */
   static add(validName, callback, msg) {
-    validator[validName] = callback;
-    validator.errors[validName] = msg;
+    preRules[validName] = callback;
+    preErrors[validName] = msg;
   }
 
   /**
@@ -326,7 +327,7 @@ class Validator {
         }
 
         // check if the valid method is exsit
-        let fn = validator[validName];
+        let fn = preRules[validName];
         if (!helper.isFunction(fn)) {
           throw new Error(validName + ' valid method is not been configed');
         }
