@@ -1,4 +1,5 @@
 const fileCache = require('think-cache-file');
+const path = require('path');
 
 module.exports = {
   type: 'file',
@@ -7,7 +8,7 @@ module.exports = {
   },
   file: {
     handle: fileCache,
-    cachePath: '/Users/lushijie/usr',  // absoulte path is necessarily required
+    cachePath: path.join(think.ROOT_PATH, 'runtime/cache'),  // absoulte path is necessarily required
     pathDepth: 1,
     gcInterval: 24 * 60 * 60 * 1000 // gc
   }
