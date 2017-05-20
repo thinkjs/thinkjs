@@ -19,6 +19,15 @@ module.exports = class IndexLogic extends think.Logic {
 
   }
 
+  newAction() {
+    let rules = {
+      username: {
+        newrule: 'hello'
+      }
+    }
+    output(this, rules);
+  }
+
   indexAction() {
     let rules = {
       username: {
