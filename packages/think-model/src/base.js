@@ -73,21 +73,14 @@ module.exports = class {
   /**
    * get model instance
    * @param  {String} name    [model name]
-   * @param  {Object} options [options]
    * @return {Object}         []
    */
-  // model(name, options, module){
-  //   if(helper.isString(options)){
-  //     module = options;
-  //     options = {};
-  //   }
-    
-  //   if(helper.isString(options)){
-  //     options = {type: options};
-  //   }
-  //   options = helper.extend({}, this.config, options);
-  //   return think.model(name, options, module);
-  // }
+  model(name) {
+    if(!name || !helper.isObject(this.config.models)) {
+      return this;
+    }
+    return this.config.models[name];
+  }
   /**
    * get table prefix
    * @return {String} []

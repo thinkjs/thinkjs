@@ -19,7 +19,7 @@ module.exports = class extends Base {
     let config = helper.extend({
       sql: sql
     }, this.config);
-    this._socket = new MysqlSocket(config);
+    this._socket = MysqlSocket.getInstance(config);
     return this._socket;
   }
   /**

@@ -45,10 +45,7 @@ class Relation extends Base {
    * @param {String} name []
    */
   findModel(name) {
-    if(!name || !helper.isObject(this.config.models)) {
-      return this;
-    }
-    return this.config.models[name];
+    return this.model(name);
   }
   /**
    * set relation
