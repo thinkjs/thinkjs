@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const helper = require('think-helper');
 const commander  = require('commander');
 const directiveCollector = require('./directives/directiveCollector');

@@ -22,7 +22,9 @@
     }
   ],
   "main": "index.js",
-  "bin":"index.js",
+  "bin": {
+    "thinkjs": "index.js"
+  },
   "dependencies": {
     "colors": "^1.1.2",
     "commander": "^2.9.0",
