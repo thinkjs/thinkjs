@@ -1,11 +1,11 @@
 let METHOD_MAP = {
-  'get': 'param',
-  'post': 'post',
-  'file': 'file'
+  'GET': 'param',
+  'POST': 'post',
+  'FILE': 'file'
 };
 
 let output = (that, rules, msgs) => {
-  let ctxMethod = that.ctx.method.toLowerCase();
+  let ctxMethod = that.ctx.method.toUpperCase();
   let ret = msgs ? that.validate(rules, msgs) : that.validate(rules);
   if(!ret) {
     console.log(that.validateErrors);
