@@ -10,7 +10,7 @@
 <dl>
   <dt>
     <input type="text" id="text"><br />
-    <input type="file" id="file" multiple="multiple">file upload (support multi file upload)<br />
+    <input type="file" id="file" name="image" multiple="multiple">file upload (support multi file upload)<br />
     <button id="submit">submit</button>
   </dt>
   <dd>
@@ -56,7 +56,7 @@
       }
 
       var self = this;
-      fetch('/payload/demo', {
+      fetch('/payload/demo' + location.search, {
         method: 'post',
         body: data
       }).then(function (res) {
