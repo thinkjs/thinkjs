@@ -21,6 +21,7 @@ awesome projects for `ThinkJS 3.x`
 ### session
 * [think-session-cookie](https://github.com/thinkjs/think-session-cookie) use cookie to store session data
 * [think-session-file](https://github.com/thinkjs/think-session-file) use file to store session data
+* [think-session-redis](https://github.com/thinkjs/think-session-redis) use redis to store session data
 
 ### cache
 * [think-cache-file](https://github.com/thinkjs/think-cache-file) use file to store cache data
