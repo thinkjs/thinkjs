@@ -1,6 +1,6 @@
 {
   "name": "think-model",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An adapter-based ORM for ThinkJS 3.x",
   "main": "./lib",
   "scripts": {
