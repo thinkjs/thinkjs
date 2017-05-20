@@ -3,6 +3,6 @@ module.exports = class WebsocketController extends think.Controller {
 
   }
   closeAction(){
-    
+
   }
 }

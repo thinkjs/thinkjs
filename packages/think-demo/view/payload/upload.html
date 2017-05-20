@@ -9,9 +9,9 @@
 {% block body %}
 <dl>
   <dt>
-    <p>file upload (support multi file upload)</p>
-    <input type="text" id="text">
-    <input type="file" id="file" multiple="multiple">
+    <input type="text" id="text"><br />
+    <input type="file" id="file" multiple="multiple">file upload (support multi file upload)<br />
+    <button id="submit">submit</button>
   </dt>
   <dd>
     <h3>请求信息</h3>
@@ -29,18 +29,25 @@
 
     this.eventMap = {
       'change:#file': 'upload',
+      'click:#submit': 'submit'
     };
 
     this.eles = {
       result: '#result',
       text: '#text'
     };
+
+    this.state = {};
     this.initialization();
   }
 
   Request.prototype = Object.assign(Request.prototype, {
     upload: function (ev) {
-      var files = ev.target.files;
+      this.state.files = ev.target.files;
+    },
+
+    submit: function () {
+      var files = this.state.files;
       var data = new FormData();
       data.append('text', this.text.val());
 
