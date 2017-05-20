@@ -155,20 +155,22 @@ module.exports = class {
    * @param  {Number} timeout []
    * @return {}         []
    */
-  cache(key, timeout = this.config.cache.timeout){
+  cache(key, config){
     if (key === undefined) {
       return this;
     }
-    let options;
-    if(!helper.isObject(key)){
-      if(helper.isNumber(key)){
-        timeout = key;
-        key = '';
-      }
-      options = helper.extend({}, this.config.cache, {key, timeout});
-    }else{
-      options = key;
+    
+    if(helper.isNumber(key)) {
+      [key, config] = ['', key];
     }
+
+    if(helper.isNumber(config)) {
+      config = {timeout: config};
+    }
+    
+    let options = helper.parseAdapterConfig(this.config.cache, config);
+    options.key = key;
+    
     this._options.cache = options;
     return this;
   }

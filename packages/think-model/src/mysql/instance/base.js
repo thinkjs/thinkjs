@@ -1,5 +1,6 @@
 const helper = require('think-helper');
 const Debounce = require('think-debounce');
+const thinkCache = require('think-cache/cache');
 
 const Parser = require('./parser');
 const debounceInstance = new Debounce();
@@ -139,10 +140,9 @@ module.exports = class extends Parser {
     }else{
       sql = options;
     }
-    if (!helper.isEmpty(cache) && this.config.cache.on) {
-      // let key = cache.key || helper.md5(sql);
-      return this.query(sql);
-      // return think.cache(key, () => this.query(sql), cache);
+    if (!helper.isEmpty(cache) && !(cache.enable === false)) {
+      let key = cache.key || helper.md5(sql);
+      return thinkCache(key, () => this.query(sql), cache);
     }
     return this.query(sql);
   }
