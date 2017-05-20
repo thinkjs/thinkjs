@@ -12,6 +12,10 @@ module.exports = class PayloadController extends think.Controller {
   }
 
   async demoAction() {
-    this.ctx.body = this.ctx.request.body;
+    this.ctx.body = {
+      query: this.query(),
+      file: this.file(),
+      post: this.post()
+    };
   }
 }
