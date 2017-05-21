@@ -162,9 +162,16 @@ var privateFunc = {
   switchModel: function(csp) {
     const regtots = /.+\.ts$/;
     const regtojs = /.+\.js$/;
-    if(regtots.test(csp) && model === 'typescript') {
-      return true;
+
+    if(regtojs.test(csp) && model === 'typescript') {
+      return false;
+    } else if(regtots.test(csp) && model === 'es6') {
+      return false;
     } else if(regtojs.test(csp) && model === 'es6') {
+      return true;
+    }else if(regtots.test(csp) && model === 'typescript') {
+      return true;
+    } else {
       return true;
     }
   }
