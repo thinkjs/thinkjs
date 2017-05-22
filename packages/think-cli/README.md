@@ -11,15 +11,9 @@
 Using npm:
 
 ```sh
-npm install think-cli
+npm install -g think-cli
 ```
 
-In Node.js:
-
-```js
-import helper from 'think-cli';
-
-```
 Commands:
 
     new [options] <projectPath>  create project
