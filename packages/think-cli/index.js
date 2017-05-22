@@ -345,13 +345,10 @@ let createController = controller => {
 
   let controllerPath = getPath(m, 'controller');
   let file = 'index.js';
-  if(commander.rest){
-    file = 'rest.js';
-  }
-  copyFile('controller/' + file, controllerPath + '/' + controller + '.js');
+  copyFile('src/controller/' + file, controllerPath + '/' + controller + '.js');
 
   let logicPath = getPath(m, 'logic');
-  copyFile('logic/index.js', logicPath + '/' + controller + '.js');
+  copyFile('src/logic/index.js', logicPath + '/' + controller + '.js');
 
   console.log();
 };
@@ -378,7 +375,7 @@ let createService = service => {
   }
 
   let servicePath = getPath(module, 'service');
-  copyFile('service/index.js', servicePath + '/' + service + '.js');
+  copyFile('src/service/index.js', servicePath + '/' + service + '.js');
 
   console.log();
 };
@@ -403,14 +400,8 @@ let createModel = model => {
     createModule(module);
   }
 
-  let file = 'index.js';
-  if(commander.relation){
-    file = 'relation.js';
-  }else if(commander.mongo){
-    file = 'mongo.js';
-  }
-  let controllerPath = getPath(module, 'model');
-  copyFile('model/' + file, controllerPath + '/' + model + '.js');
+  let modelPath = getPath(module, 'model');
+  copyFile('src/model/index.js', modelPath + '/' + model + '.js');
 
   console.log();
 };
@@ -425,7 +416,7 @@ let createMiddleware = middleware => {
   let midlewarePath = getPath('common', 'middleware');
   let filepath = midlewarePath + '/' + middleware + '.js';
   mkdir(midlewarePath);
-  copyFile('middleware/base.js', filepath);
+  copyFile('src/middleware/base.js', filepath);
 
   console.log();
 };
@@ -445,7 +436,7 @@ let createAdapter = adapter => {
 
   let adapterPath = getPath('common', 'adapter');
 
-  copyFile('adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
+  copyFile('src/adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
 
   console.log();
 };
