@@ -48,7 +48,7 @@
     "think-controller": "^1.0.1",
     "think-crontab": "^1.0.0",
     "think-helper": "^1.0.0",
-    "think-loader": "thinkjs/think-loader",
+    "think-loader": "^1.0.0",
     "think-logger3": "^1.0.0",
     "think-logic": "^1.0.0",
     "think-meta": "^1.0.1",
