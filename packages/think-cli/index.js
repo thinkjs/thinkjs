@@ -229,6 +229,7 @@ let _copyWwwFiles = () => {
     '<APP_NAME>': getAppName()
   });
 
+  copyFile('eslintrc.log', projectRootPath + '/.eslintrc');
   copyFile('gitignore.log', projectRootPath + '/.gitignore');
   copyFile('README.md', projectRootPath + '/README.md');
 
