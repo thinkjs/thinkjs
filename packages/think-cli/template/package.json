@@ -12,7 +12,7 @@
     "think-session-file": "^1.0.5",
     "think-view": "^1.0.0",
     "think-view-nunjucks": "^1.0.1",
-    "thinkjs": "thinkjs/thinkjs#3.0"
+    "thinkjs": "^3.0.0-alpha1"
   },
   "devDependencies": {
     "babel-preset-think-node": "^1.0.0",
