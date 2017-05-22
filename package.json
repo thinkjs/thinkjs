@@ -43,7 +43,7 @@
     "depd": "^1.1.0",
     "koa": "^2.2.0",
     "think-cache": "^1.0.0",
-    "think-cluster": "thinkjs/think-cluster",
+    "think-cluster": "^1.0.0",
     "think-config": "^1.0.0",
     "think-controller": "^1.0.1",
     "think-crontab": "^1.0.0",
