@@ -55,18 +55,28 @@ test('load config isMultiModule === true', t=>{
   let paths2 = [
     path.join('appPath', 'common')
   ];
-
-  t.deepEqual(depsCalledParams, [
-    paths, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
-    paths, 'env', 'adapter',  // loadConfig adapter
-    path.join('appPath', 'common/adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
-    {type: 'load adapter'}, 'load adapter result', // formatAdapter has been called with 'adapter call result'
-
-    paths2, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
-    paths2, 'env', 'adapter',  // loadConfig adapter
-    path.join('appPath', 'common/adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
-    {type: 'load adapter'}, 'load adapter result' // formatAdapter has been called with 'adapter call result'
-  ]);
+  t.deepEqual(depsCalledParams, [ [ 'thinkPath/lib/config',
+    'appPath/common/config',
+    'appPath/dir1/config' ],
+  'env',
+  undefined,
+  [ 'thinkPath/lib/config',
+    'appPath/common/config',
+    'appPath/dir1/config' ],
+  'env',
+  'adapter',
+  'appPath/common/adapter',
+  { type: 'load adapter' },
+  'load adapter result',
+  [ 'thinkPath/lib/config', 'appPath/common/config' ],
+  'env',
+  undefined,
+  [ 'thinkPath/lib/config', 'appPath/common/config' ],
+  'env',
+  'adapter',
+  'appPath/common/adapter',
+  { type: 'load adapter' },
+  'load adapter result' ]);
 
   const expect = {
     thinkConfig: 'value of thinkConfig',

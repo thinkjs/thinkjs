@@ -122,18 +122,19 @@ class Config {
       modules.forEach(dir => {
         //merge common & module config
         let paths = [
-          path.join(appPath, 'common')
+          path.join(thinkPath, 'lib/config'),
+          path.join(appPath, 'common/config')
         ];
 
         if(dir !== 'common'){
-          paths.push(path.join(appPath, dir));
+          paths.push(path.join(appPath, dir, 'config'));
         }
         let config = this.loadConfig(paths, env);
         let adapterConfig = this.loadConfig(paths, env, 'adapter');
         let adapter = this.loadAdapter(path.join(appPath, 'common/adapter'));
         result[dir] = helper.extend({}, thinkConfig, config, this.formatAdapter(adapterConfig, adapter));
       });
-       return result;
+      return result;
     }else{
       let configPath = [path.join(appPath, 'config')];
       let config = this.loadConfig(configPath, env);
