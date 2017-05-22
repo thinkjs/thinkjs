@@ -533,7 +533,7 @@ commander.option('-v, --version', 'output the version number', () => {
 commander.option('-V', 'output the version number', () => {
   displayVersion();
 });
-commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is normal, used in `new` command', m => {
+commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is normal, using in `new` command', m => {
   mode = m;
 });
 
