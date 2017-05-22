@@ -1,52 +1,66 @@
 {
-  "name": "think-cli",
-  "description": "command line interface for ThinkJS",
-  "version": "1.0.0",
+  "name": "thinkjs",
+  "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
+  "version": "3.0.0-alpha1",
   "author": {
-    "name": "songguangyu",
-    "email": "522963130@qq.com"
+    "name": "welefen",
+    "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "start": "node development.js"
   },
   "ava": {
     "require": [
       "babel-core/register"
     ]
   },
-  "contributors": [
-    {
-      "name": "songguangyu",
-      "email": "522963130@qq.com"
-    }
-  ],
+  "contributors": [],
   "main": "index.js",
-  "bin":"index.js",
   "dependencies": {
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "think-helper": "^1.0.0"
+    "babel-preset-think-node": "^1.0.0",
+    "node-notifier": "^5.0.2",
+    "think-cache-file": "~1.0.8",
+    "think-fetch": "^1.0.0",
+    "think-i18n": "~1.0.2",
+    "think-model": "*",
+    "think-session-cookie": "^1.0.1",
+    "think-session-file": "^1.0.5",
+    "think-view": "^1.0.0",
+    "think-view-nunjucks": "^1.0.1",
+    "think-watcher": "^3.0.0",
+    "thinkjs": "thinkjs/thinkjs#3.0"
   },
   "devDependencies": {
-    "ava": "^0.18.0",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
-    "codecov": "^1.0.1",
-    "coveralls": "^2.11.16",
-    "eslint": "2.8.0",
-    "nyc": "^7.1.0"
+    "think-inspect": "0.0.2",
+    "think-babel": "^1.0.3"
   },
-  "keywords": [],
+  "keywords": [
+    "thinkjs",
+    "framework",
+    "web",
+    "rest",
+    "restful",
+    "router",
+    "api",
+    "es6",
+    "es7",
+    "async",
+    "await",
+    "yield",
+    "websocket",
+    "generator-function",
+    "typescript"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-cli"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=0.12.0"
   },
+  "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-cli/issues"
+    "url": "https://github.com/thinkjs/thinkjs/issues"
   }
 }
