@@ -31,9 +31,10 @@ const CommonLoader = {
     if(modules.length){
       let cache = {};
       modules.forEach(item => {
+        cache[item] = {};
         let itemCache = CommonLoader.loadFiles(path.join(appPath, item, type));
         for(let name in itemCache){
-          cache[path.join(item, name)] = itemCache[name];
+          cache[item][name] = itemCache[name];
         }
       });
       return cache;

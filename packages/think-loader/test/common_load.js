@@ -31,12 +31,12 @@ test('common loader when isMultiModule is true', t=>{
     path.join('appPath', 'other', 'type')
   ]);
 
-  t.is(cache[path.join('user', 'a')], 1);
-  t.is(cache[path.join('user', 'b')], 2);
-  t.is(cache[path.join('admin', 'a')], 1);
-  t.is(cache[path.join('admin', 'b')], 2);
-  t.is(cache[path.join('other', 'a')], 1);
-  t.is(cache[path.join('other', 'b')], 2);
+  t.is(cache.user.a, 1);
+  t.is(cache.user.b, 2);
+  t.is(cache.admin.a, 1);
+  t.is(cache.admin.b, 2);
+  t.is(cache.other.a, 1);
+  t.is(cache.other.b, 2);
 });
 
 test('common.load when isMultiModule is false', t=>{
