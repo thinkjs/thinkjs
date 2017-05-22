@@ -17,7 +17,13 @@ var projectRootPath = cwd; //project root path
 var model = 'es6';
 
 function errlog(msg) {
-  console.log(colors.red.underline(msg));
+  console.log('  '+colors.red.underline(msg));
+}
+
+function log() {
+  var arr = Array.prototype.slice.call(arguments);
+  arr.unshift('  ');
+  console.log.apply(console, arr);
 }
 /**
  * copyProject
@@ -27,7 +33,22 @@ function errlog(msg) {
 function copyProject(source, target) {
   helper.mkdir(projectRootPath);
   copyDir(source, target);
-  console.log(colors.green('project create succeed'));
+
+  log(colors.green('project create succeed'));
+  log();
+  log('enter path:');
+  log('$ cd ' + path.relative(cwd, projectRootPath));
+  log();
+
+  log('install dependencies:');
+  log('$ npm install');
+  log();
+
+  log('run the app:');
+  log('$ npm start');
+
+  log();
+
 }
 /**
  * copyFile
@@ -45,7 +66,8 @@ function copyFile(source, target) {
  * target
  */
 function copyDir(source, target) {
-  fs.readdir(source, function(err, files) {
+    var filesNum = 0;
+    var files = fs.readdirSync(source);
     files.forEach((filePath)=>{
       let currentSourcePath = path.resolve(source, filePath);
       let targetSourcePath = path.resolve(target, filePath);
@@ -58,16 +80,16 @@ function copyDir(source, target) {
       } else {
         if(helper.isDirectory(currentSourcePath)) {
           helper.mkdir(targetSourcePath);
+          log(colors.cyan('create') + ' : ' + path.relative(cwd, targetSourcePath));
           return copyDir(currentSourcePath, targetSourcePath);
         } else {
           if(privateFunc.switchModel(currentSourcePath, targetSourcePath)) {
+            log(colors.cyan('create') + ' : ' + path.relative(cwd, targetSourcePath));
             return copyFile(currentSourcePath, targetSourcePath);
           }
         }
       }
-      //}
-    })  
-  })
+    })
 }
 /**
  * copyDir
