@@ -14,19 +14,6 @@ let mode = 'normal';
 let appPath = '';
 
 /**
- * get date time
- * @return {} []
- */
-let getDateTime = () => {
-  let fn = d => {
-    return ('0' + d).slice(-2);
-  };
-  let d = new Date();
-  let date = d.getFullYear() + '-' + fn(d.getMonth() + 1) + '-' + fn(d.getDate());
-  let time = fn(d.getHours()) + ':' + fn(d.getMinutes()) + ':' + fn(d.getSeconds());
-  return date + ' ' + time;
-};
-/**
  * log
  * @param  {Function} fn []
  * @return {}      []
@@ -164,8 +151,8 @@ let isThinkApp = projectRootPath => {
  * @param  {String}  module []
  * @return {Boolean}        []
  */
-let isModuleExist = module => {
-  let modelPath = getPath(module, 'model');
+let isModuleExist = m => {
+  let modelPath = getPath(m, 'model');
   return helper.isDirectory(modelPath);
 };
 /**
@@ -174,14 +161,10 @@ let isModuleExist = module => {
  * @return {}             []
  */
 let parseAppConfig = () => {
-  let filepath = projectRootPath + '/.thinkjsrc';
-  let content = fs.readFileSync(filepath, 'utf8');
-  let data = JSON.parse(content);
-
-  commander.ts = data.ts;
-  //commander.es = data.es || data.es6; //compatible with 2.0.x
-  mode = 'normal';
-
+  let filepath = path.join(projectRootPath, 'src/common');
+  if(helper.isDirectory(filepath)){
+    mode = 'module';
+  }
   appPath = getProjectAppPath();
 };
 
@@ -189,7 +172,10 @@ let parseAppConfig = () => {
  * get view root path;
  * @return {String}             []
  */
-let getProjectViewPath = () => {
+let getProjectViewPath = (m) => {
+  if(mode === 'module'){
+    return path.join(projectRootPath, 'view', m);
+  }
   return path.join(projectRootPath, 'view');
 };
 
@@ -281,43 +267,43 @@ let _copyCommonBootstrapFiles = () => {
  * @param  {String} module      []
  * @return {}             []
  */
-let _createModule = module => {
-  if(mode !== 'module' && module !== 'home'){
+let _createModule = m => {
+  if(mode !== 'module' && m !== 'home'){
     log(colors => {
       return colors.red('app mode is not module, can not create module.\n');
     });
     process.exit();
   }
-  if(isModuleExist(module)){
+  if(isModuleExist(m)){
     log(colors => {
-      return colors.red('module `' + module + '` is exist.\n');
+      return colors.red('module `' + m + '` is exist.\n');
     });
     process.exit();
   }
   
   //config files
-  let configPath = getPath(module, 'config');
+  let configPath = getPath(m, 'config');
   mkdir(configPath);
   copyFile('src/config/config.js', configPath + '/config.js', false);
 
   //controller files
-  let controllerPath = getPath(module, 'controller');
+  let controllerPath = getPath(m, 'controller');
   mkdir(controllerPath);
   copyFile('src/controller/base.js', controllerPath + '/base.js');
   copyFile('src/controller/index.js', controllerPath + '/index.js');
 
   //logic files
-  let logicPath = getPath(module, 'logic');
+  let logicPath = getPath(m, 'logic');
   mkdir(logicPath);
   copyFile('src/logic/index.js', logicPath + '/index.js');
 
   //model files
-  let modelPath = getPath(module, 'model');
+  let modelPath = getPath(m, 'model');
   mkdir(modelPath);
   copyFile('src/model/index.js', modelPath + '/index.js', false);
 
   //view files
-  let viewPath = getProjectViewPath(module);
+  let viewPath = getProjectViewPath(m);
   mkdir(viewPath);
   copyFile('view/index_index.html', viewPath + '/index_index.html');
 };
@@ -345,26 +331,26 @@ let createController = controller => {
   _checkEnv();
 
   controller = controller.split('/');
-  let module = 'common';
+  let m = 'common';
   if(controller.length >= 2){
-    module = controller[0];
+    m = controller[0];
     controller = controller.slice(1).join('/');
   }else{
     controller = controller[0];
   }
 
-  if(!isModuleExist(module)){
-    createModule(module);
+  if(!isModuleExist(m)){
+    createModule(m);
   }
 
-  let controllerPath = getPath(module, 'controller');
+  let controllerPath = getPath(m, 'controller');
   let file = 'index.js';
   if(commander.rest){
     file = 'rest.js';
   }
   copyFile('controller/' + file, controllerPath + '/' + controller + '.js');
 
-  let logicPath = getPath(module, 'logic');
+  let logicPath = getPath(m, 'logic');
   copyFile('logic/index.js', logicPath + '/' + controller + '.js');
 
   console.log();
