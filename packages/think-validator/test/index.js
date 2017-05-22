@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 15:45:57
+* @Last Modified time: 2017-05-22 10:31:46
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2714,10 +2714,10 @@ test('rule-add-method', t => {
   }
   let wrongMsg = 'eqlushijie error';
 
-  Validator.add('eqlushijie', function(value, parsedValue) {
+  Validator.addRule('eqlushijie', function(value, parsedValue) {
     return parsedValue === 'lushijie';
   }, wrongMsg);
-  Validator.add('_eqlushijie', function(validValue, query) {
+  Validator.addRule('_eqlushijie', function(validValue, query) {
     return query.arg + 'shijie';
   });
   let instance = new Validator(helper.extend({}, defaultCtx));
