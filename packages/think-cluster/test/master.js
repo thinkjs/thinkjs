@@ -4,73 +4,31 @@ const cluster = require('cluster');
 const http = require('http');
 const path = require('path');
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
-function getClusterMaster() {
-  return mock.reRequire('../index').Master;
-}
-
-test('test case', async t => {
-  let scriptPath = path.join(__dirname,'script','master.js');
-  const exec = require('child_process').exec;
-  const child = exec(`node ${scriptPath}`,
-    (error, stdout, stderr) => {
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
-      if (error !== null) {
-        console.log(`exec error: ${error}`);
-      }
-    });
-  await sleep(5000);
-  child.kill();
-  await sleep(5000);
+const spawn = require('child_process').spawn;
+const helper = require('think-helper');
 
 
-
-  // let options = {
-  //   workers: 1,
-  //   // reloadSignal: 'SIGUSR2',
-  //   // enableAgent: false
-  // };
-  // let ClusterMaster = getClusterMaster();
-  // if(cluster.isMaster){
-  //   let instance = new ClusterMaster(options);
-  //   instance.forkWorkers().then(()=>{console.log(1)});
-  // }else{
-  //   console.log('worker running');
-  //   try {
-  //     http.Server((req, res) => {
-  //       res.writeHead(200);
-  //       res.end('hello world\n');
-  //       process.send({cmd: 'notifyRequest'});
-  //     }).listen(8000);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-  // await sleep(5000);
+let masterProcess = null;
+test.afterEach.always(() => {
+  if (masterProcess) {
+    masterProcess.kill();
+  }
 });
 
+function executeProcess(fileName, options,callback) {
+  let scriptPath = path.join(__dirname, 'script', fileName);
+  masterProcess = spawn(`node`, [scriptPath,JSON.stringify(options)]);
 
+  masterProcess.stdout.on('data',(data)=>{
+    callback(JSON.parse(data.toString('utf-8')));
+  })
+}
 
-// let options = {
-//   workers: 1,
-//   // reloadSignal: 'SIGUSR2',
-//   // enableAgent: false
-// };
-// let ClusterMaster = getClusterMaster();
-// if(cluster.isMaster){
-//   let instance = new ClusterMaster(options);
-//   instance.forkWorkers().then(()=>{console.log(1)});
-// }else{
-//   console.log('worker running');
-//   try {
-//     http.Server((req, res) => {
-//       res.writeHead(200);
-//       res.end('hello world\n');
-//       process.send({cmd: 'notifyRequest'});
-//     }).listen(8000);
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
-//
+test.serial('test case', async t => {
+  let result = {};
+  executeProcess('master.js',{},(output)=>{
+    Object.assign(result,output);
+  });
+  await sleep(5000);
+  t.is(result.isForked,true);
+});

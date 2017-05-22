@@ -11,19 +11,17 @@ try {
   if (cluster.isMaster) {
     let instance = new ClusterMaster(options);
     instance.forkWorkers().then(() => {
-      console.log(1)
+      let result = {
+        isForked:true
+      };
+      console.log(JSON.stringify(result));
     });
   } else {
-    console.log('worker running');
-    try {
-      http.Server((req, res) => {
-        res.writeHead(200);
-        res.end('hello world\n');
-        process.send({cmd: 'notifyRequest'});
-      }).listen(8000);
-    } catch (e) {
-      console.log(e);
-    }
+    http.Server((req, res) => {
+      res.writeHead(200);
+      res.end('hello world\n');
+      process.send({cmd: 'notifyRequest'});
+    }).listen(8000);
   }
 } catch (e) {
   console.log(e);
