@@ -16,12 +16,26 @@ npm install -g think-cli
 
 Commands:
 
-    new [options] <projectPath>  create project
-    create <mode> [name]        create all kinds of modes in your project
+```
+Usage: thinkjs [command] <options ...>
+
+
+  Commands:
+
+    new <projectPath>            create project
+    module <moduleName>          add module
+    controller <controllerName>  add controller
+    service <serviceName>        add service
+    model <modelName>            add model
+    middleware <middlewareName>  add middleware
+    adapter <adapterName>        add adapter
 
   Options:
 
-    -h, --help     output usage information
-    -v, --version  output the version number
+    -h, --help         output usage information
+    -v, --version      output the version number
+    -V                 output the version number
+    -m, --mode <mode>  project mode type(normal, module), default is normal, using in `new` command
+```
 
 
