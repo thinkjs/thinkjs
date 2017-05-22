@@ -1,203 +1,61 @@
 #!/usr/bin/env node
 
-const helper = require('think-helper');
-const commander  = require('commander');
-const directiveCollector = require('./directives/directiveCollector');
-const tsDirective = require('./directives/tsDirective');
 const fs = require('fs');
 const path = require('path');
-const colors = require('colors/safe');
-const cwd = process.cwd();
-const templatePath = path.join(__dirname, 'template');
-//const excludeFile = /^\./;
-const configTreeFile = /.file$/;
-const configTreeDir = /.dir$/;
-var excludeDir = [];
-var projectRootPath = cwd; //project root path
-var model = 'es6';
+const commander = require('commander');
+const colors = require('colors');
+const helper = require('think-helper');
 
-function errlog(msg) {
-  console.log('  '+colors.red.underline(msg));
-}
+let cwd = process.cwd();
+let templatePath = path.join(__dirname, 'template');
+let projectRootPath = cwd; //project root path
 
-function log() {
-  var arr = Array.prototype.slice.call(arguments);
-  arr.unshift('  ');
-  console.log.apply(console, arr);
-}
-/**
- * copyProject
- * source
- * target
- */
-function copyProject(source, target) {
-  helper.mkdir(projectRootPath);
-  copyDir(source, target);
-
-  log(colors.green('project create succeed'));
-  log();
-  log('enter path:');
-  log('$ cd ' + path.relative(cwd, projectRootPath));
-  log();
-
-  log('install dependencies:');
-  log('$ npm install');
-  log();
-
-  log('run the app:');
-  log('$ npm start');
-
-  log();
-
-}
-/**
- * copyFile
- * source
- * target
- */
-function copyFile(source, target) {
-  let content = fs.readFileSync(source, 'utf8');
-  fs.writeFileSync(target, content);
-}
+let mode = 'normal';
+let appPath = '';
 
 /**
- * copyDir
- * source
- * target
+ * get date time
+ * @return {} []
  */
-function copyDir(source, target) {
-    var filesNum = 0;
-    var files = fs.readdirSync(source);
-    files.forEach((filePath)=>{
-      let currentSourcePath = path.resolve(source, filePath);
-      let targetSourcePath = path.resolve(target, filePath);
-      //if(!excludeFile.test(filePath)) {
+let getDateTime = () => {
+  let fn = d => {
+    return ('0' + d).slice(-2);
+  };
+  let d = new Date();
+  let date = d.getFullYear() + '-' + fn(d.getMonth() + 1) + '-' + fn(d.getDate());
+  let time = fn(d.getHours()) + ':' + fn(d.getMinutes()) + ':' + fn(d.getSeconds());
+  return date + ' ' + time;
+};
+/**
+ * log
+ * @param  {Function} fn []
+ * @return {}      []
+ */
+let log = fn => {
+  console.log('  ' + fn(colors));
+};
 
-      let handleResult = excludeHandle(targetSourcePath);
-
-      if(handleResult) {
-        privateFunc[handleResult.directive](currentSourcePath, targetSourcePath);
-      } else {
-        if(helper.isDirectory(currentSourcePath)) {
-          helper.mkdir(targetSourcePath);
-          log(colors.cyan('create') + ' : ' + path.relative(cwd, targetSourcePath));
-          return copyDir(currentSourcePath, targetSourcePath);
-        } else {
-          if(privateFunc.switchModel(currentSourcePath, targetSourcePath)) {
-            log(colors.cyan('create') + ' : ' + path.relative(cwd, targetSourcePath));
-            return copyFile(currentSourcePath, targetSourcePath);
-          }
-        }
-      }
-    })
+let getPath = (m, type) => {
+  if(mode === 'module'){
+    return path.join(appPath, m, type);
+  }
+  return path.join(appPath, type);
 }
 /**
- * copyDir
- * filePath
+ * mkdir
+ * @param  {String} dir []
+ * @return {}     []
  */
-function excludeHandle(filePath) {
-  return excludeDir.filter((item)=>{
-    if(item.path === filePath) {
-      return item;
-    }
-  })[0];
-}
-/**
- * createProject
- * projectPath
- */
-function createProject(projectPath) {
-  if(helper.isDirectory(projectRootPath)) {
-    errlog(projectPath +' is already exist in current path');
+let mkdir = dir => {
+  if(helper.isDirectory(dir)){
     return;
   }
-  copyProject(templatePath, projectRootPath);
-}
+  helper.mkdir(dir);
+  log(colors => {
+    return colors.cyan('create') + ' : ' + path.relative(cwd, dir);
+  });
+};
 
-
-/**
- * privateFunc use in cli
- */
-var privateFunc = {
-  createConfig: function(currentSourcePath, targetSourcePath) {
-     var configFilePath = path.resolve(cwd, 'think.json');
-
-     fs.readFile(configFilePath, function(err, data) {
-      if(err) {
-        errlog(err);
-        return;
-      }
-
-      try{
-        var configTree = JSON.parse(data);
-      }catch(e){
-        errlog(e);
-        return;
-      }
-
-      function handleConfig(currentSourcePath, targetSourcePath, config) {
-        
-        targetSourcePath = targetSourcePath.replace(configTreeDir, '');
-        helper.mkdir(targetSourcePath);
-        
-        for(var i in config) {
-          let fileName = i.replace(configTreeFile, '');
-          var source = path.resolve(currentSourcePath, fileName);
-          var target = path.resolve(targetSourcePath, fileName);
-
-          if(helper.isString(config[i])) {
-            fs.writeFileSync(target, config[i], 'utf8');
-          } else {
-            handleConfig(source, target, config[i]);
-          }
-        }
-      }
-      handleConfig(currentSourcePath, targetSourcePath, configTree);
-     })
-  },
-
-  handleConfig: function() {
-    let configPath = path.join(projectRootPath, 'src/config');
-
-    excludeDir.push({
-      'path': configPath,
-      'directive': 'createConfig'
-    });
-  },
-
-  createTsConfig: function(currentSourcePath, targetSourcePath) {
-    tsDirective(currentSourcePath, targetSourcePath);
-  },
-
-  handleTsConfig: function() {
-    let entryFileList = ['development.js', 'production.js', 'testing.js'];
-
-    entryFileList.forEach((item)=>{
-      let configPath = path.join(projectRootPath, item);
-
-      excludeDir.push({
-        'path': configPath,
-        'directive': 'createTsConfig'
-      });
-    })
-  },
-  switchModel: function(csp) {
-    const regtots = /.+\.ts$/;
-    const regtojs = /.+\.js$/;
-
-    if(regtojs.test(csp) && model === 'typescript') {
-      return false;
-    } else if(regtots.test(csp) && model === 'es6') {
-      return false;
-    } else if(regtojs.test(csp) && model === 'es6') {
-      return true;
-    }else if(regtots.test(csp) && model === 'typescript') {
-      return true;
-    } else {
-      return true;
-    }
-  }
-}
 /**
  * get version
  * @return {String} []
@@ -207,11 +65,465 @@ let getVersion = () => {
   let version = JSON.parse(fs.readFileSync(filepath)).version;
   return version;
 };
+
+/**
+ * get app root path
+ * @return {} []
+ */
+let getProjectAppPath = () => {
+  return path.join(projectRootPath, 'src');
+};
+/**
+ * get app name
+ * @return {} []
+ */
+let getAppName = () => {
+  let filepath = path.normalize(cwd + '/' + projectRootPath).replace(/\\/g, '');
+  let matched = filepath.match(/([^\/]+)\/?$/);
+  return matched[1];
+};
+
+/**
+ * copy file
+ * @param  {String} source []
+ * @param  {String} target []
+ * @return {}        []
+ */
+let copyFile = (source, target, replace, showWarning) => {
+
+  if(showWarning === undefined){
+    showWarning = true;
+  }
+
+  if(helper.isBoolean(replace)){
+    showWarning = replace;
+    replace = '';
+  }
+
+  //if target file is exist, ignore it
+  if(helper.isFile(target)){
+    if(showWarning){
+      log(colors => {
+        return colors.yellow('exist') + ' : ' + path.normalize(target);
+      });
+    }
+    return;
+  }
+
+  mkdir(path.dirname(target));
+
+  
+  //if source file is not exist
+  if(!helper.isFile(templatePath + path.sep + source)){
+    return;
+  }
+
+  let content = fs.readFileSync(templatePath + path.sep + source, 'utf8');
+  //replace content 
+  if(helper.isObject(replace)){
+    for(let key in replace){
+      /*eslint-disable no-constant-condition*/
+      while(1){ 
+        let content1 = content.replace(key, replace[key]);
+        if(content1 === content){
+          content = content1;
+          break;
+        }
+        content = content1;
+      }
+    }
+  }
+
+  fs.writeFileSync(target, content);
+  log(colors => {
+    return colors.cyan('create') + ' : ' + path.relative(cwd, target);
+  });
+};
+
+/**
+ * check is thinkjs app
+ * @param  {String}  projectRootPath []
+ * @return {Boolean}             []
+ */
+let isThinkApp = projectRootPath => {
+  if(helper.isDirectory(projectRootPath)){
+    let filepath = projectRootPath + '/src';
+    if(helper.isFile(filepath)){
+      return true;
+    }
+    const list = ['src', 'view', 'development.js', 'production.js'];
+    return list.every(item => {
+      const filepath = path.join(projectRootPath, item);
+      return helper.isFile(filepath) || helper.isDirectory(filepath);
+    })
+  }
+  return false;
+};
+/**
+ * is module exist
+ * @param  {String}  module []
+ * @return {Boolean}        []
+ */
+let isModuleExist = module => {
+  let modelPath = getPath(module, 'model');
+  return helper.isDirectory(modelPath);
+};
+/**
+ * parse app config
+ * @param  {} projectRootPath []
+ * @return {}             []
+ */
+let parseAppConfig = () => {
+  let filepath = projectRootPath + '/.thinkjsrc';
+  let content = fs.readFileSync(filepath, 'utf8');
+  let data = JSON.parse(content);
+
+  commander.ts = data.ts;
+  //commander.es = data.es || data.es6; //compatible with 2.0.x
+  mode = 'normal';
+
+  appPath = getProjectAppPath();
+};
+
+/**
+ * get view root path;
+ * @return {String}             []
+ */
+let getProjectViewPath = () => {
+  return path.join(projectRootPath, 'view');
+};
+
+/**
+ * check env
+ * @return {} []
+ */
+let _checkEnv = () => {
+  if(!isThinkApp('./')){
+    console.log();
+    log(colors => {
+      return colors.red('current path is not thinkjs project.\n');
+    });
+    process.exit();
+  }
+  parseAppConfig();
+  console.log();
+};
+
+/**
+ * copy common files
+ * @param  {String} projectRootPath []
+ * @return {}             []
+ */
+let _copyWwwFiles = () => {
+  mkdir(projectRootPath);
+
+  copyFile('package.json', projectRootPath + '/package.json');
+
+  let ROOT_PATH = projectRootPath + '/www';
+  copyFile('nginx.conf', projectRootPath + '/nginx.conf', {
+    '<ROOT_PATH>': ROOT_PATH
+  });
+
+  copyFile('pm2.json', projectRootPath + '/pm2.json', {
+    '<ROOT_PATH>': path.dirname(ROOT_PATH),
+    '<APP_NAME>': getAppName()
+  });
+
+  copyFile('gitignore.log', projectRootPath + '/.gitignore');
+  copyFile('README.md', projectRootPath + '/README.md');
+
+
+  mkdir(projectRootPath + '/www');
+  copyFile('development.js', projectRootPath + '/development.js');
+  copyFile('production.js', projectRootPath + '/production.js');
+
+  mkdir(projectRootPath + '/www/static/');
+  mkdir(projectRootPath + '/www/static/js');
+  mkdir(projectRootPath + '/www/static/css');
+  mkdir(projectRootPath + '/www/static/img');
+};
+
+/**
+ * copy common config files
+ * @return {}             []
+ */
+let _copyCommonConfigFiles = () => {
+  let rootPath = getPath('common', 'config');
+  mkdir(rootPath);
+
+  copyFile('src/config/config.js', rootPath + '/config.js', false);
+  copyFile('src/config/adapter.js', rootPath + '/adapter.js');
+  copyFile('src/config/config.production.js', rootPath + '/config.production.js');
+  copyFile('src/config/extend.js', rootPath + '/extend.js');
+  copyFile('src/config/middleware.js', rootPath + '/middleware.js');
+  copyFile('src/config/router.js', rootPath + '/router.js');
+  copyFile('src/config/adapter/cache.js', rootPath + '/adapter/cache.js');
+  copyFile('src/config/adapter/model.js', rootPath + '/adapter/model.js');
+  copyFile('src/config/adapter/session.js', rootPath + '/adapter/session.js');
+  copyFile('src/config/adapter/view.js', rootPath + '/adapter/view.js');
+};
+/**
+ * copy bootstrap files
+ * @return {}             []
+ */
+let _copyCommonBootstrapFiles = () => {
+  let rootPath = getPath('common', 'bootstrap');
+  mkdir(rootPath);
+
+  copyFile('src/bootstrap/master.js', rootPath + '/master.js');
+  copyFile('src/bootstrap/worker.js', rootPath + '/worker.js');
+};
+
+
+/**
+ * create module
+ * @param  {String} module      []
+ * @return {}             []
+ */
+let _createModule = module => {
+  if(mode !== 'module' && module !== 'home'){
+    log(colors => {
+      return colors.red('app mode is not module, can not create module.\n');
+    });
+    process.exit();
+  }
+  if(isModuleExist(module)){
+    log(colors => {
+      return colors.red('module `' + module + '` is exist.\n');
+    });
+    process.exit();
+  }
+  
+  //config files
+  let configPath = getPath(module, 'config');
+  mkdir(configPath);
+  copyFile('src/config/config.js', configPath + '/config.js', false);
+
+  //controller files
+  let controllerPath = getPath(module, 'controller');
+  mkdir(controllerPath);
+  copyFile('src/controller/base.js', controllerPath + '/base.js');
+  copyFile('src/controller/index.js', controllerPath + '/index.js');
+
+  //logic files
+  let logicPath = getPath(module, 'logic');
+  mkdir(logicPath);
+  copyFile('src/logic/index.js', logicPath + '/index.js');
+
+  //model files
+  let modelPath = getPath(module, 'model');
+  mkdir(modelPath);
+  copyFile('src/model/index.js', modelPath + '/index.js', false);
+
+  //view files
+  let viewPath = getProjectViewPath(module);
+  mkdir(viewPath);
+  copyFile('view/index_index.html', viewPath + '/index_index.html');
+};
+
+/**
+ * create module
+ * @param  {} module []
+ * @return {}        []
+ */
+let createModule = module => {
+  _checkEnv();
+
+  if(module === 'common'){
+    return;
+  }
+  
+  _createModule(module);
+};
+/**
+ * create controller
+ * @param  {} controller []
+ * @return {}            []
+ */
+let createController = controller => {
+  _checkEnv();
+
+  controller = controller.split('/');
+  let module = 'common';
+  if(controller.length >= 2){
+    module = controller[0];
+    controller = controller.slice(1).join('/');
+  }else{
+    controller = controller[0];
+  }
+
+  if(!isModuleExist(module)){
+    createModule(module);
+  }
+
+  let controllerPath = getPath(module, 'controller');
+  let file = 'index.js';
+  if(commander.rest){
+    file = 'rest.js';
+  }
+  copyFile('controller/' + file, controllerPath + '/' + controller + '.js');
+
+  let logicPath = getPath(module, 'logic');
+  copyFile('logic/index.js', logicPath + '/' + controller + '.js');
+
+  console.log();
+};
+
+/**
+ * create service
+ * @param  {} controller []
+ * @return {}            []
+ */
+let createService = service => {
+  _checkEnv();
+
+  service = service.split('/');
+  let module = 'common';
+  if(service.length === 2){
+    module = service[0];
+    service = service[1];
+  }else{
+    service = service[0];
+  }
+
+  if(!isModuleExist(module)){
+    createModule(module);
+  }
+
+  let servicePath = getPath(module, 'service');
+  copyFile('service/index.js', servicePath + '/' + service + '.js');
+
+  console.log();
+};
+/**
+ * create model file
+ * @param  {String} model []
+ * @return {}       []
+ */
+let createModel = model => {
+  _checkEnv();
+
+  model = model.split('/');
+  let module = 'common';
+  if(model.length === 2){
+    module = model[0];
+    model = model[1];
+  }else{
+    model = model[0];
+  }
+
+  if(!isModuleExist(module)){
+    createModule(module);
+  }
+
+  let file = 'index.js';
+  if(commander.relation){
+    file = 'relation.js';
+  }else if(commander.mongo){
+    file = 'mongo.js';
+  }
+  let controllerPath = getPath(module, 'model');
+  copyFile('model/' + file, controllerPath + '/' + model + '.js');
+
+  console.log();
+};
+
+/**
+ * create middleware
+ * @param  {String} middleware []
+ * @return {[type]}            []
+ */
+let createMiddleware = middleware => {
+  _checkEnv();
+  let midlewarePath = getPath('common', 'middleware');
+  let filepath = midlewarePath + '/' + middleware + '.js';
+  mkdir(midlewarePath);
+  copyFile('middleware/base.js', filepath);
+
+  console.log();
+};
+
+/**
+ * create adapter
+ * @param  {String} adatper []
+ * @return {}         []
+ */
+let createAdapter = adapter => {
+  _checkEnv();
+
+  adapter = adapter.split('/');
+
+  let type = adapter[0];
+  let name = adapter[1] || 'base';
+
+  let adapterPath = getPath('common', 'adapter');
+
+  copyFile('adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
+
+  console.log();
+};
+
+/**
+ * module app
+ * @param  {} projectRootPath []
+ * @return {}             []
+ */
+let _createProject = () => {
+
+  _copyWwwFiles();
+
+  mkdir(appPath);
+
+  _copyCommonBootstrapFiles();
+  _copyCommonConfigFiles();
+
+  _createModule('home');
+
+};
+/**
+ * create project
+ * @param  {String} projectRootPath []
+ * @return {}             []
+ */
+let createProject = () => {
+  if(isThinkApp(projectRootPath)){
+    console.log();
+    log(colors => {
+      return colors.red('path `' + projectRootPath + '` is already a thinkjs project.\n');
+    });
+    return;
+  }
+  console.log();
+
+  appPath = getProjectAppPath();
+  _createProject();
+
+
+  let p = projectRootPath.slice(cwd.length);
+  if(p[0] === path.sep){
+    p = p.slice(1);
+  }
+
+  console.log();
+  console.log('  enter path:');
+  console.log('  $ cd ' + p);
+  console.log();
+
+  console.log('  install dependencies:');
+  console.log('  $ npm install');
+  console.log();
+
+  console.log('  run the app:');
+  console.log('  $ npm start');
+
+  console.log();
+};
+
 /**
  * display thinkjs version
  * @return {} []
  */
-var displayVersion = () => {
+let displayVersion = () => {
   let version = getVersion();
   let chars = [
     ' _______ _     _       _        _  _____ ',
@@ -226,30 +538,53 @@ var displayVersion = () => {
   console.log(chars);
 };
 
+
+commander.usage('[command] <options ...>');
 commander.option('-v, --version', 'output the version number', () => {
   displayVersion();
 });
+commander.option('-V', 'output the version number', () => {
+  displayVersion();
+});
+commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is normal, used in `new` command', m => {
+  mode = m;
+});
+
+//create project
+commander.command('new <projectPath>').description('create project').action(projectPath => {
+  projectRootPath = path.resolve(projectRootPath, projectPath);
+  createProject();
+});
+
+//create module
+commander.command('module <moduleName>').description('add module').action(m => {
+  createModule(m.toLowerCase());
+});
+
+//create controlelr
+commander.command('controller <controllerName>').description('add controller').action(controller => {
+  createController(controller.toLowerCase());
+});
+
+//create service
+commander.command('service <serviceName>').description('add service').action(service => {
+  createService(service.toLowerCase());
+});
+
+//create model
+commander.command('model <modelName>').description('add model').action(model => {
+  createModel(model.toLowerCase());
+});
+
+//create middleware
+commander.command('middleware <middlewareName>').description('add middleware').action(middleware => {
+  createMiddleware(middleware.toLowerCase());
+});
+
+//create adapter
+commander.command('adapter <adapterName>').description('add adapter').action(adapter => {
+  createAdapter(adapter.toLowerCase());
+});
 
 
-commander.command('new <projectPath>')
-         .description('create project')
-         .option('-c --config', 'use config create project')
-         .option('-t --ts','create project in typescript')
-         .action((projectPath, option) => {
-            projectRootPath = path.join(projectRootPath, projectPath);
-            if(option.config === true) {
-              privateFunc.handleConfig();
-            }
-            if(option.ts === true) {
-              model = 'typescript';
-              privateFunc.handleTsConfig();
-            }
-            createProject(projectPath);
-        });
-
-commander.command('create <mode> [name]')
-         .description('create all kinds of modes in your project')
-         .action((mode, name) => {
-            directiveCollector(mode, name, projectRootPath, templatePath);
-        });
-commander.parse(process.argv);
+commander.parse(process.argv);  
