@@ -124,24 +124,12 @@ class Worker {
     });
   }
   /**
-   * capture SIGINT
-   */
-  captureSigint(){
-    process.on('SIGINT', () => {
-      this.options.logger(`process recieve SIGINT, pid:${process.pid}`);
-      this.disconnectWorker();
-    });
-  }
-  /**
    * capture events
    */
   captureEvents(){
     assert(this.options.server, 'options.server required');
     this.uncaughtException();
     this.unhandledRejection();
-    if(this.options.captureSigint){
-      this.captureSigint();
-    }
     if(this.options.disableKeepAlive){
       this.disableKeepAlive();
     }

@@ -75,7 +75,7 @@ class Agent {
     server.on('error', () => {
       server.close();
     });
-    server.listen('', '127.0.0.1');
+    server.listen(0, '127.0.0.1');
     return server;
   }
   /**

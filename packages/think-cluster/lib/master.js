@@ -76,9 +76,9 @@ class Master {
    * kill worker
    */
   killWorker(worker){
-    worker.kill('SIGQUIT');
+    worker.kill('SIGINT'); //windows don't support SIGQUIT
     setTimeout(function () {
-      worker.process.kill('SIGQUIT');
+      worker.process.kill('SIGINT');
     }, 100);
   }
    /**
