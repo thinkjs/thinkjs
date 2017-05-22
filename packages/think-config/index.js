@@ -68,7 +68,7 @@ function getConfigFn(configs, isMultiModule){
   }else{
     configInstances.common = new Config(configs);
   }
-  return (name, value, m) => {
+  return (name, value, m = 'common') => {
     let conf = configInstances.common;
     if(isMultiModule && m){
       conf = configInstances[m];
