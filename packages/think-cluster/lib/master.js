@@ -52,6 +52,7 @@ class Master {
       let promises = [];
       while(index++ < workers){
         env = Object.assign(env, this.getForkEnv());
+        console.log(env);
         let promise = util.forkWorker(env).then(data => {
           if(address){
             data.worker.send({act: util.THINK_AGENT_OPTIONS, address});
