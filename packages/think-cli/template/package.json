@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node development.js",
-    "compile": "babel src/ --out-dir app/"
+    "compile": "babel src/ --presets think-node --out-dir app/"
   },
   "dependencies": {
     "think-cache-file": "~1.0.8",
