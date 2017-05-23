@@ -1,18 +1,14 @@
 try {
   const cluster = require('cluster');
   const http = require('http');
-
-  let options = {
-    workers: 1,
-    // reloadSignal: 'SIGUSR2',
-    // enableAgent: false
-  };
+  let options = Object.assign({}, JSON.parse(process.argv[2]));
   let ClusterMaster = require('../../index').Master;
   if (cluster.isMaster) {
     let instance = new ClusterMaster(options);
     instance.forkWorkers().then(() => {
       let result = {
-        isForked:true
+        options,
+        isForked: true
       };
       console.log(JSON.stringify(result));
     });
