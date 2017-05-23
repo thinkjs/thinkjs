@@ -7,7 +7,6 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 const spawn = require('child_process').spawn;
 const helper = require('think-helper');
 
-
 let masterProcess = null;
 test.afterEach.always(() => {
   if (masterProcess) {
@@ -19,8 +18,8 @@ function executeProcess(fileName, options,callback) {
   let scriptPath = path.join(__dirname, 'script', fileName);
   masterProcess = spawn(`node`, [scriptPath,JSON.stringify(options)]);
 
-  masterProcess.stdout.on('data',(data)=>{
-    callback(JSON.parse(data.toString('utf-8')));
+  masterProcess.stdout.on('data',(buf)=>{
+    callback(JSON.parse(buf.toString('utf-8')));
   })
 }
 
