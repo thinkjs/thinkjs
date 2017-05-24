@@ -72,6 +72,9 @@ const RouterLoader = {
     }
     assert(helper.isArray(router), 'router must be an array');
     return router.map(item => {
+      if(helper.isArray(item)){
+        item = {match: item[0], path: item[1], method: item[2], statusCode: item[3]};
+      }
       item.query = [];
       //convert string match to RegExp
       item.match = pathToRegexp(item.match, item.query);
