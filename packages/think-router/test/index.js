@@ -529,6 +529,10 @@ test.serial.cb('rules method equal redirect without statusCode', t => {
   });
 });
 
+
+
+
+
 test.serial.cb('rules path with query not empty', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
@@ -701,14 +705,14 @@ test.serial.cb('app modules is empty', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
-    modules: []
+    modules: ['admin']
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
-      module: '',
-      controller: 'admin',
-      action: 'article'
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
     });
     t.end();
   });

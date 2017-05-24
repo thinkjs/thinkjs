@@ -6,6 +6,10 @@ const assert = require('assert');
  * rules = [
  *  {match: '', path: '', method: ''}
  * ]
+ * 
+ * rules = [
+ *    ['/index', 'test', 'get']
+ * ]
  *
  * rules = {
  *  admin: {
@@ -84,42 +88,12 @@ class Router {
   }
 
   /**
-   * get path match
-   */
-  // getPathMatch(pathname, match){
-  //   if(helper.isRegExp(match)){
-  //     return pathname.match(match);
-  //   }
-  //   // /name/:id
-  //   if(match.indexOf(':') > -1){
-  //     match = match.split('/');
-  //     pathname = path.split(/\/+/);
-  //     let ret = {};
-  //     let flag = match.every((item, index) => {
-  //       if(!item) return true;
-  //       if(item[0] === ':'){
-  //         if(pathname[index]){
-  //           ret[item.slice(1)] = pathname[index];
-  //           return true;
-  //         }
-  //       }else{
-  //         if(item === pathname[index]){
-  //           return true;
-  //         }
-  //       }
-  //     });
-  //     return flag ? ret : false;
-  //   }
-  //   return pathname.replace(/^\/|\/$/g, '') === match.replace(/^\/|\/$/g, '');
-  // }
-
-  /**
    * get router rules
    */
   getRules(){
     let rules = this.rules;
     if(this.modules.length === 0) {
-      return [];
+      return this.rules;
     }else if(this.modules.length && helper.isObject(rules)){
       for(let m in rules){
         let match = rules[m].match;
@@ -127,7 +101,7 @@ class Router {
           assert(helper.isRegExp(match), 'router.match must be a RegExp');
           if(match.test(this.pathname)){
             this.ctx.module = m;
-            return rules[m].rules || []
+            return rules[m].rules || [];
           }
         }
       }
@@ -142,7 +116,7 @@ class Router {
     let rule;
     let specialMethods = ['REDIRECT', 'REST'];
     rules.some(item => {
-      let itemMethod = item.method.toUpperCase();
+      let itemMethod = item.method && item.method.toUpperCase();
       if(itemMethod && specialMethods.indexOf(item.method) === -1){
         //check method matched
         if(itemMethod !== this.ctxMethod) return;
@@ -160,8 +134,7 @@ class Router {
           query[queryItem.name] = match[index + 1];
         }
       });
-      item.query = query;
-      rule = item;
+      rule = Object.assign({}, item, {query});
       return true;
     });
     return rule;
