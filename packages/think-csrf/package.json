@@ -1,0 +1,28 @@
+{
+  "name": "think-csrf",
+  "version": "1.0.0",
+  "description": "CSRF for ThinkJS 3.x",
+  "main": "index.js",
+  "dependencies": {
+    "think-helper": "^1.0.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-csrf.git"
+  },
+  "keywords": [
+    "csrf",
+    "thinkjs3",
+    "think-middleware"
+  ],
+  "author": "Berwin <liubowen.niubi@gmail.com> (https://github.com/berwin)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-csrf/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-csrf#readme"
+}
