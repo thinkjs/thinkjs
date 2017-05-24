@@ -42,6 +42,7 @@
     "debug": "^2.6.1",
     "depd": "^1.1.0",
     "koa": "^2.2.0",
+    "source-map-support": "^0.4.15",
     "think-cache": "^1.0.0",
     "think-cluster": "^1.0.0",
     "think-config": "^1.0.0",
@@ -52,14 +53,14 @@
     "think-logger3": "^1.0.0",
     "think-logic": "^1.0.0",
     "think-meta": "^1.0.1",
+    "think-mock-http": "^1.0.0",
     "think-payload": "^1.0.0",
     "think-pm2": "^1.0.0",
     "think-resource": "^1.0.0",
     "think-router": "^1.0.0",
     "think-session": "^1.0.0",
     "think-trace": "^1.0.2",
-    "think-validator": "^1.0.2",
-    "think-mock-http": "^1.0.0"
+    "think-validator": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.0",
