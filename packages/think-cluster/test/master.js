@@ -18,9 +18,9 @@ test.afterEach.always(() => {
   }
 });
 
-function executeProcess(fileName, options, callback) {
+function executeProcess(fileName, options, funcName, callback) {
   let scriptPath = path.join(__dirname, 'script', fileName);
-  masterProcess = spawn(`node`, [scriptPath, JSON.stringify(options)]);
+  masterProcess = spawn(`node`, [scriptPath, funcName , JSON.stringify(options)]);
 
   masterProcess.stdout.on('data', (buf) => {
     try{
@@ -40,7 +40,7 @@ test.serial('normal case', async t => {
     let options = {
       workers: 1
     };
-    executeProcess('master.js', options, (output) => {
+    executeProcess('master.js', options,'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(10000);
@@ -58,7 +58,7 @@ test.serial('options.workers >= 2 && enableAgent is true', async t => {
       reloadSignal: 'SIGUSR2',
       enableAgent: true
     };
-    executeProcess('master.js', options, (output) => {
+    executeProcess('master.js', options,'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -76,7 +76,7 @@ test.serial('if options.workers < 2,enableAgent is false', async t => {
       reloadSignal: 'SIGUSR2',
       enableAgent: true
     };
-    executeProcess('master.js', options, (output) => {
+    executeProcess('master.js', options,'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -93,7 +93,7 @@ test.serial('trigger SIGUSR2 signal', async t => {
     let options = {
       reloadSignal: 'SIGUSR2',
     };
-    let masterProcess = executeProcess('master.js', options, (output) => {
+    let masterProcess = executeProcess('master.js', options,'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -110,6 +110,18 @@ test.serial('trigger SIGUSR2 signal', async t => {
     });
     await sleep(interval);
 
+  } catch (e) {
+  }
+});
+
+test.serial('reloadWorkers', async t => {
+  try {
+    let result = {};
+    executeProcess('master.js',{},'reloadWorkers',(output)=>{
+      Object.assign(result, output);
+    });
+    await sleep(interval*2);
+    t.notDeepEqual(result.beforeWorkers,result.afterWorkers);
   } catch (e) {
   }
 });
