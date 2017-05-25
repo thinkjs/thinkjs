@@ -74,8 +74,9 @@ class Master {
   /**
    * kill worker
    */
-  killWorker(worker){
+  killWorker(worker, reload){
     worker.kill('SIGINT'); //windows don't support SIGQUIT
+    if(reload) worker.hasGracefulReload = true;
     setTimeout(function () {
       worker.process.kill('SIGINT');
     }, 100);
@@ -96,9 +97,9 @@ class Master {
     const firstWorker = aliveWorkers.shift();
     util.forkWorker(this.getForkEnv()).then(() => {
       //http://man7.org/linux/man-pages/man7/signal.7.html
-      this.killWorker(firstWorker);
+      this.killWorker(firstWorker, true);
       aliveWorkers.forEach(worker => {
-        this.killWorker(worker);
+        this.killWorker(worker, true);
         return util.forkWorker(this.getForkEnv());
       });
     });

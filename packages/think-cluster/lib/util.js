@@ -65,9 +65,8 @@ exports.forkWorker = function(env = {}){
     }
   });
   worker.once('exit', (code, signal) => {
-    if(signal === 'SIGINT') return;
-    debug(`worker exit, code:${code}, signal:${signal}, pid: ${process.pid}`);
     if(worker.hasGracefulReload) return;
+    debug(`worker exit, code:${code}, signal:${signal}, pid: ${process.pid}`);
     exports.forkWorker(env);
   });
   worker.once('listening', address => {
