@@ -9,6 +9,7 @@ const KEEP_ALIVE = Symbol('think-graceful-keepalive');
  * default options
  */
 const defaultOptions = {
+  debug: false,
   logger: console.error.bind(console),
   disableKeepAlive: false, //disabled connect keep alive
   onUncaughtException: () => {},
@@ -107,7 +108,7 @@ class Worker {
       this.options.onUncaughtException(err);
       this.options.logger(`uncaughtException, times: ${errTimes}, pid: ${process.pid}`);
       this.options.logger(err.stack);
-      if(errTimes === 1){
+      if(errTimes === 1 && !this.options.debug){
         this.disconnectWorker(true);
       }
     });
