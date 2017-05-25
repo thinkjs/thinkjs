@@ -93,7 +93,7 @@ class Worker {
    */
   captureReloadSignal(){
     process.once('message', message => {
-      if(message === 'think-reload-signal'){
+      if(message === util.THINK_RELOAD_SIGNAL){
         this.disconnectWorker(true);
       }
     });
