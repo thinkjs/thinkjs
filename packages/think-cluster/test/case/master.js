@@ -19,7 +19,7 @@ test.afterEach.always(() => {
 });
 
 function executeProcess(fileName, options, funcName, callback) {
-  let scriptPath = path.join(__dirname, 'script', fileName);
+  let scriptPath = path.join(__dirname, '../script', fileName);
   masterProcess = spawn(`node`, [scriptPath, funcName , JSON.stringify(options)]);
 
   masterProcess.stdout.on('data', (buf) => {
@@ -43,7 +43,7 @@ test.serial('normal case', async t => {
     executeProcess('master.js', options,'forkWorkers', (output) => {
       Object.assign(result, output);
     });
-    await sleep(10000);
+    await sleep(interval);
     t.is(result.isForked, true);
     t.is(result.options.workers, 1);
   } catch (e) {
@@ -87,6 +87,19 @@ test.serial('if options.workers < 2,enableAgent is false', async t => {
   }
 });
 
+test.serial('reloadWorkers', async t => {
+  try {
+    let result = {};
+    executeProcess('master.js',{},'reloadWorkers',(output)=>{
+      Object.assign(result, output);
+    });
+    await sleep(interval*2);
+    console.log(result);
+    t.notDeepEqual(result.beforeWorkers,result.afterWorkers);
+  } catch (e) {
+  }
+});
+
 test.serial('trigger SIGUSR2 signal', async t => {
   try {
     let result = {};
@@ -96,12 +109,12 @@ test.serial('trigger SIGUSR2 signal', async t => {
     let masterProcess = executeProcess('master.js', options,'forkWorkers', (output) => {
       Object.assign(result, output);
     });
-    await sleep(interval);
+    await sleep(interval*2);
     t.is(result.isForked, true);
 
     console.log(`master process id is ${masterProcess.pid}`);
 
-    exec(`KILL -SIGUSR2 ${masterProcess.pid}`,(error, stdout, stderr)=>{
+    exec(`KILL -SIGUSR2 ${masterProcess.pid}`,{shell:'/bin/sh'},(error, stdout, stderr)=>{
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
       if (error !== null) {
@@ -114,14 +127,3 @@ test.serial('trigger SIGUSR2 signal', async t => {
   }
 });
 
-test.serial('reloadWorkers', async t => {
-  try {
-    let result = {};
-    executeProcess('master.js',{},'reloadWorkers',(output)=>{
-      Object.assign(result, output);
-    });
-    await sleep(interval*2);
-    t.notDeepEqual(result.beforeWorkers,result.afterWorkers);
-  } catch (e) {
-  }
-});
