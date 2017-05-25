@@ -42,7 +42,6 @@
     "debug": "^2.6.1",
     "depd": "^1.1.0",
     "koa": "^2.2.0",
-    "source-map-support": "^0.4.15",
     "think-cache": "^1.0.0",
     "think-cluster": "^1.0.0",
     "think-config": "^1.0.0",
