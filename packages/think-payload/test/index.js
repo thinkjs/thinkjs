@@ -1,5 +1,4 @@
 const path = require('path');
-const http = require('http');
 const test = require('ava');
 const request = require('supertest');
 const payload = require('../index.js');
