@@ -6,9 +6,15 @@
   "dependencies": {
     "think-helper": "^1.0.9"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-eslint": "^7.2.1",
+    "coveralls": "^2.13.0",
+    "eslint": "^3.18.0",
+    "nyc": "^10.2.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint index.js && nyc ava test/index.js"
   },
   "repository": {
     "type": "git",
