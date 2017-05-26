@@ -94,6 +94,9 @@ class Master {
       aliveWorkers.push(worker);
     }
     if(!aliveWorkers.length) return;
+    if(aliveWorkers.length > this.options.workers){
+      console.error(`workers fork has leak, alive workers: ${aliveWorkers.length}, need workers: ${this.options.workers}`);
+    }
     const firstWorker = aliveWorkers.shift();
     util.forkWorker(this.getForkEnv()).then(() => {
       //http://man7.org/linux/man-pages/man7/signal.7.html
