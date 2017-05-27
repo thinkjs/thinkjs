@@ -11,7 +11,12 @@
     "babel-eslint": "^7.2.1",
     "coveralls": "^2.13.0",
     "eslint": "^3.18.0",
-    "nyc": "^10.2.0"
+    "koa": "^2.2.0",
+    "nyc": "^10.2.0",
+    "supertest": "^3.0.0",
+    "think-payload": "^1.0.1",
+    "think-session": "^1.0.1",
+    "think-session-file": "^1.0.5"
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js"
