@@ -35,7 +35,7 @@ module.exports = [{
 ## Options
 
 | Name | Description | Default | 
-| :------: | :------: | :------: |
+| :------ | :------ | :------ |
 | `session_name` | csrf token's session name | `'csrf_token'` |
 | `form_name` | request csrf token's name in body and query | `'_csrf'` |
 | `header_name` | request csrf token's name in header | `'x-csrf-token'` |
