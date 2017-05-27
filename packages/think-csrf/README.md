@@ -25,7 +25,7 @@ module.exports = [{
 }];
 ```
 
-** Usage **
+**Usage**
 
 `ctx.csrf` getter for CSRF token
 
