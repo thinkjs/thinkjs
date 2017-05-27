@@ -1,5 +1,7 @@
 # think-csrf
 
+[![Build Status](https://travis-ci.org/thinkjs/think-csrf.svg?branch=master)](https://travis-ci.org/thinkjs/think-csrf)
+
 CSRF for Thinkjs 3.0
 
 ## Install
