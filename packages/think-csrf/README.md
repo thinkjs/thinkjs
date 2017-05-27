@@ -1,6 +1,7 @@
 # think-csrf
-
+[![npm](https://img.shields.io/npm/v/think-csrf.svg)](https://www.npmjs.com/package/think-csrf)
 [![Build Status](https://travis-ci.org/thinkjs/think-csrf.svg?branch=master)](https://travis-ci.org/thinkjs/think-csrf)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-csrf/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-csrf?branch=master)
 
 CSRF for Thinkjs 3.0
 
