@@ -29,8 +29,6 @@
   ],
   "dependencies": {
     "debug": "^2.6.1",
-    "methods": "^1.1.2",
-    "path-to-regexp": "^1.7.0",
     "think-helper": "^1.0.0"
   },
   "devDependencies": {
