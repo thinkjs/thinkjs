@@ -67,6 +67,9 @@ let defaultCtx = {
 };
 
 let defaultApp = {
+  once: function(event, cb){
+    setTimeout(cb, 100);
+  },
   modules: ['admin', 'home'],
   controllers: {
     admin: {
@@ -588,6 +591,9 @@ test.serial.cb('multiple layer controller and match', t => {
   let ctx = helper.extend({}, defaultCtx);
   let app = {
     modules: ['admin', 'home'],
+    once: function(event, cb){
+      setTimeout(cb, 100)
+    },
     controllers: {
       admin: {
         'article/page': {},
@@ -616,6 +622,9 @@ test.serial.cb('rest multiple layer controller and match', t => {
   let ctx = helper.extend({}, defaultCtx);
   let app = {
     modules: ['admin', 'home'],
+    once: function(event, cb){
+      setTimeout(cb, 100)
+    },
     controllers: {
       admin: {
         'article/page': {},
@@ -644,6 +653,9 @@ test.serial.cb('multiple layer controller and not match', t => {
   let ctx = helper.extend({}, defaultCtx);
   let app = {
     modules: ['admin', 'home'],
+    once: function(event, cb){
+      setTimeout(cb, 100)
+    },
     controllers: {
       admin: {
         'article/page': {},

@@ -3,9 +3,6 @@ const debug = require('debug')('think-router');
 const querystring = require('querystring');
 const assert = require('assert');
 /**
- * rules = [
- *  {match: '', path: '', method: ''}
- * ]
  * 
  * rules = [
  *    ['/index', 'test', 'get']

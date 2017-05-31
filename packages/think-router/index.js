@@ -1,6 +1,6 @@
 const Router = require('./router.js');
 const helper = require('think-helper');
-
+const pathToRegexp = require('path-to-regexp');
 /**
  * default options
  */
@@ -14,6 +14,33 @@ const defaultOptions = {
   subdomainOffset: 2, 
   subdomain: {}, //subdomain
   denyModules: [] //deny module, enable in multi module mode
+}
+
+/**
+ * format routers
+ * @param {Array|Object} routers 
+ */
+const formatRouters = routers => {
+  if(helper.isArray(routers)){
+    return routers.map(item => {
+      let query = [];
+      let match = pathToRegexp(item[0], query);
+      return {
+        match, 
+        path: item[1], 
+        method: item[2], 
+        options: item[3] || {}, 
+        query
+      };
+    });
+  }
+  for(let m in routers){
+    if(routers[m].match){
+      routers[m].match = pathToRegexp(routers[m].match);
+    }
+    routers[m].rules = formatRouters(routers[m].rules);
+  }
+  return routers;
 }
 
 /**
@@ -34,6 +61,10 @@ module.exports = function parseRouter(options, app){
     });
     options.subdomain = subdomain;
   }
+  //format routers when app ready
+  app.once('appReady', () => {
+    app.routers = formatRouters(app.routers);
+  });
   return (ctx, next) => {
     let instance = new Router(ctx, next, options, app);
     return instance.run();
