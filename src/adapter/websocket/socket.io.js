@@ -1,6 +1,7 @@
 'use strict';
 
 import Base from './base.js';
+import url from 'url';
 /**
  * websocket adapter for socket.io
  */
@@ -71,6 +72,12 @@ export default class extends Base {
 
       //open connection
       if(open){
+
+        let request = socket.request;
+        if(request && request.url) {
+          let urlParse = url.parse(request.url);
+          open = `${open}${urlParse.search}`;
+        }
         this.message(open, undefined, socket);
       }
       //listen disonnection event
@@ -120,7 +127,7 @@ export default class extends Base {
   async message(url, data, socket){
     let request = socket.request;
     if(url[0] !== '/'){
-      url = `/${url}`;
+        url = `/${url}`;
     }
     request.url = url;
     let http;
