@@ -1,7 +1,7 @@
 'use strict';
 
 import Base from './base.js';
-import Url from 'url';
+import url from 'url';
 /**
  * websocket adapter for socket.io
  */
@@ -73,7 +73,7 @@ export default class extends Base {
       //open connection
       if(open){
         let request = socket.request;
-        let urlParse = Url.parse(request.url);
+        let urlParse = url.parse(request.url);
         open = `${open}${urlParse.search}`;
         this.message(open, undefined, socket);
       }
