@@ -156,7 +156,7 @@ export default class extends think.base {
       }
       return result;
     }
-    return where || {};
+    return (where === undefined ? {} : where);
   }
   /**
    * parse distinct
