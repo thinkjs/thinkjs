@@ -72,9 +72,12 @@ export default class extends Base {
 
       //open connection
       if(open){
+
         let request = socket.request;
-        let urlParse = url.parse(request.url);
-        open = `${open}${urlParse.search}`;
+        if(request && request.url) {
+          let urlParse = url.parse(request.url);
+          open = `${open}${urlParse.search}`;
+        }
         this.message(open, undefined, socket);
       }
       //listen disonnection event
