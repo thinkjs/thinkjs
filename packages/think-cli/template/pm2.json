@@ -1,7 +1,7 @@
 {
   "apps": [{
     "name": "<APP_NAME>",
-    "script": "www/production.js",
+    "script": "production.js",
     "cwd": "<ROOT_PATH>",
     "exec_mode": "cluster",
     "instances": 0,
