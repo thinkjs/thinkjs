@@ -78,6 +78,7 @@ class Master {
     worker.kill('SIGINT'); //windows don't support SIGQUIT
     if(reload) worker.hasGracefulReload = true;
     setTimeout(function () {
+      if(!worker.isConnected()) return;
       worker.process.kill('SIGINT');
     }, 100);
   }
