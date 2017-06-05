@@ -3,6 +3,6 @@ const model = require('think-model');
 
 module.exports = [
   view, //make application support view
-  model
+  model(think.app)
 ];
 
