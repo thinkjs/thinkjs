@@ -29,5 +29,8 @@
     "no-unreachable": "warn", // more rule
     "no-unused-vars": "warn", // more rule 
     "valid-typeof": "warn" // more rule
+  },
+  "globals": {
+    "think": true
   }
 }
