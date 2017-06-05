@@ -458,11 +458,9 @@ export default class {
    * @return {} []
    */
   preload(){
-    let startTime = Date.now();
     for(let name in thinkData.alias){
       think.require(thinkData.alias[name]);
     }
-    //think.log('preload packages finished', 'PRELOAD', startTime);
   }
   /**
    * run

@@ -1742,6 +1742,16 @@ describe('core/think.js', function(){
     var msg = think.validate(data);
     assert.deepEqual(Object.keys(msg), ['welefen'])
   })
+  it('think.validate with args, int, value is 0', function(){
+    var data = {
+      welefen: {
+        value: 0,
+        int: true 
+      }
+    }
+    var msg = think.validate(data);
+    assert.deepEqual(Object.keys(msg), [])
+  })
   it('think.validate with args, equal, fail', function(){
     var data = {
       welefen: {

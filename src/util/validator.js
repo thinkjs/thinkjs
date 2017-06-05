@@ -17,7 +17,7 @@ let Validator = {};
  * @return {Boolean}       []
  */
 Validator.required = value => {
-  return !think.isEmpty(value);
+  return !think.isEmpty(value) || value === 0;
 };
 /**
  * The field under validation must be present if the anotherfield field is equal to any value.
