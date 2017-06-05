@@ -28,7 +28,7 @@ const i18n =  createI18n({
 module.exports = [
   view, //make application support view
   fetch, // HTTP request client
-  model,
+  model(think.app),
   i18n
 ];
 
