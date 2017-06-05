@@ -314,6 +314,13 @@ export default class {
       if (name === undefined) {
         return this._get;
       }else if (think.isString(name)) {
+        if(name.indexOf(',') > -1){
+          let ret = {};
+          name.split(',').forEach(item => {
+            ret[item] = this.get(item);
+          });
+          return ret;
+        }
         //may be value is false or 0
         value = this._get[name];
         if(value === undefined){
@@ -336,6 +343,13 @@ export default class {
       if (name === undefined) {
         return this._post;
       }else if (think.isString(name)) {
+        if(name.indexOf(',') > -1){
+          let ret = {};
+          name.split(',').forEach(item => {
+            ret[item] = this.post(item);
+          });
+          return ret;
+        }
         //may be value is false or 0
         value = this._post[name];
         if(value === undefined){

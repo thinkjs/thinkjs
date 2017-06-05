@@ -202,6 +202,15 @@ describe('core/http.js', function() {
       done();
     });
   });
+  it('GET, get multi', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&2');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http.get({ name: 'thinkjs', test: 'aaa', dd: 'www' });
+      assert.deepEqual(http.get('name,test'), {name: 'thinkjs', test: 'aaa'});
+      done();
+    });
+  });
 
   it('param', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&3');
@@ -811,6 +820,17 @@ describe('core/http.js', function() {
       done();
     });
   });
+  it('get post data, name, multi', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {name: 'test', aaa: 'b'};
+      var data = http.post('name,aaa');
+      assert.deepEqual(data, {name: 'test', 'aaa': 'b'});
+      done();
+    });
+  });
+
   it('get post data, 0', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
     var instance = new Http(defaultHttp.req, defaultHttp.res);
