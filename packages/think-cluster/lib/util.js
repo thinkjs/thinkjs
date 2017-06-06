@@ -59,9 +59,7 @@ exports.forkWorker = function(env = {}){
     if(message === exports.THINK_GRACEFUL_DISCONNECT){
       debug(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
       worker.hasGracefulReload = true;
-      exports.forkWorker(env, () => {
-        worker.send(exports.THINK_GRACEFUL_FORK);
-      });
+      exports.forkWorker(env);
     }
   });
   worker.once('exit', (code, signal) => {
