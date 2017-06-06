@@ -52,7 +52,9 @@ module.exports = function (opts = {}) {
   }
 
   function parseBody(ctx) {
-    if (ctx.method === 'GET' || ctx.method === 'HEAD' || ctx.method === 'OPTIONS' || ctx.method === 'TRACE') {
+    const methods = ['POST', 'PUT', 'DELETE', 'PATCH', 'LINK', 'UNLINK'];
+
+    if (methods.every(method => ctx.method !== method)) {
       return Promise.resolve({});
     }
     
