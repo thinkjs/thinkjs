@@ -11,12 +11,12 @@ app.use((ctx) => {
 
 test.cb('should skip middleware', t => {
   request(app.callback())
-  .get('/')
+  .post('/')
   .set('Content-Type', 'text/plain')
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
-    t.is(res.text, '{}');
+    t.is(res.text, '');
     t.end();
   });
 });
@@ -51,7 +51,7 @@ test.cb('should be able to receive form type requests', t => {
 
 test.cb('should be able to receive text type requests', t => {
   request(app.callback())
-  .get('/')
+  .post('/')
   .set('Content-Type', 'text/plain')
   .send('Berwin')
   .expect(200)

@@ -52,6 +52,10 @@ module.exports = function (opts = {}) {
   }
 
   function parseBody(ctx) {
+    if (ctx.method === 'GET' || ctx.method === 'HEAD' || ctx.method === 'OPTIONS' || ctx.method === 'TRACE') {
+      return Promise.resolve({});
+    }
+    
     if (ctx.request.is(jsonTypes)) {
       return parse.json(ctx);
     }

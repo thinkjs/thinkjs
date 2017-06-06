@@ -1,6 +1,6 @@
 {
   "name": "think-payload",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Payload for ThinkJS 3.x",
   "main": "index.js",
   "dependencies": {
