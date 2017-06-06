@@ -75,21 +75,14 @@ module.exports = class {
    * @return {Object}         []
    */
   model(name) {
-    if(!name || !helper.isObject(this.config.models)) {
+    if(!name) {
       return this;
     }
-
     let model = this.config.models[name];
     if(model) {
-      return model;
+      return new model(name, this.config);
     }
-
-    let handle = this.config.handle;
-    if(!helper.isFunction(handle)) {
-      handle = this.constructor;
-    }
-
-    return new handle(name, this.config);
+    return new this.constructor(name, this.config);
   }
   /**
    * get table prefix

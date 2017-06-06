@@ -14,7 +14,7 @@ const DBConfig = {
   password: 'root'
 };
 DBConfig.models = {
-  cate: new Relation('cate', DBConfig)
+  cate: class extends Relation{}
 }
 
 test('init', t => {
