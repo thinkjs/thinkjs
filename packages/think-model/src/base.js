@@ -3,7 +3,6 @@ const helper = require('think-helper');
 const values = require('./lib/values');
 const MysqlInstance = require('./mysql/instance');
 
-let forceNewNum = 1;
 
 module.exports = class {
   /**
@@ -110,24 +109,17 @@ module.exports = class {
    * get db instance
    * @return {Object} []
    */
-  db(forceNew = false){
+  db(db){
     // set db
-    if(helper.isObject(forceNew)){
-      this._db = forceNew;
+    if(db){
+      this._db = db;
       return this;
     }
-    if (this._db && !forceNew && !this.config.parser) {
+    if (this._db && !this.config.parser) {
       return this._db;
     }
     let DB = this.getDB();
-    let config = this.config;
-    if(forceNewNum > (Number.MAX_SAFE_INTEGER - 1)){
-      forceNewNum = 1;
-    }
-    if(forceNew){
-      config = helper.extend({}, config, {forceNewNum: forceNewNum++});
-    }
-    this._db = new DB(config);
+    this._db = new DB(this.config);
     return this._db;
   }
   /**
