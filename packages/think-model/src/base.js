@@ -32,16 +32,15 @@ module.exports = class {
        * }
        */
       schema: {}, //table schema
-      /**
-       * table indexes
-       * {
-       *   name: {name: 1, $unique: true}, //single indexes
-       *   test1: {name1: 1, title1: 1, $unique: 1}, //compound indexes
-       * }
-       * @type {Object}
-       */
-      indexes: {}
-      //readonlyFields: []// readonly fields
+      // /**
+      //  * table indexes
+      //  * {
+      //  *   name: {name: 1, $unique: true}, //single indexes
+      //  *   test1: {name1: 1, title1: 1, $unique: 1}, //compound indexes
+      //  * }
+      //  * @type {Object}
+      //  */
+      // indexes: {}
     };
     //if is set in subclass, can't be override
     for(let key in options){
