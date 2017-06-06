@@ -11,7 +11,13 @@ const CommonLoader = {
     let cache = files.map(file => {
       // replace \\ to / in windows
       let name = file.replace(/\\/g, '/').replace(/\.js$/, '');
-      return {name, export: interopRequire(path.join(dir, file))}
+      let filepath = path.join(dir, file);
+      let fileExport = interopRequire(filepath);
+      //add __filename to export when is class
+      if(helper.isFunction(fileExport)){
+        fileExport.prototype.__filename = filepath;
+      }
+      return {name, export: fileExport}
     }).sort((a, b) => {
       let al = a.name.split('/').length;
       let bl = b.name.split('/').length;
