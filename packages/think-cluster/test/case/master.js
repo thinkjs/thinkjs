@@ -34,98 +34,98 @@ function executeProcess(fileName, options, funcName, callback) {
   return masterProcess;
 }
 
-// test.serial('normal case', async t => {
-//   try {
-//     let result = {};
-//     let options = {
-//       workers: 1
-//     };
-//     executeProcess('master.js', options,'forkWorkers', (output) => {
-//       Object.assign(result, output);
-//     });
-//     await sleep(interval);
-//     t.is(result.isForked, true);
-//     t.is(result.options.workers, 1);
-//   } catch (e) {
-//   }
-// });
-//
-// test.serial('options.workers >= 2 && enableAgent is true', async t => {
-//   try {
-//     let result = {};
-//     let options = {
-//       workers: 2,
-//       reloadSignal: 'SIGUSR2',
-//       enableAgent: true
-//     };
-//     executeProcess('master.js', options,'forkWorkers', (output) => {
-//       Object.assign(result, output);
-//     });
-//     await sleep(interval);
-//     t.is(result.isForked, true);
-//     t.is(result.options.enableAgent, true);
-//   } catch (e) {
-//   }
-// });
-//
-// test.serial('if options.workers < 2,enableAgent is false', async t => {
-//   try {
-//     let result = {};
-//     let options = {
-//       workers: 1,
-//       reloadSignal: 'SIGUSR2',
-//       enableAgent: true
-//     };
-//     executeProcess('master.js', options,'forkWorkers', (output) => {
-//       Object.assign(result, output);
-//     });
-//     await sleep(interval);
-//     t.is(result.isForked, true);
-//     // if workers < 2, set enableAgent false
-//     t.is(result.options.enableAgent, false);
-//   } catch (e) {
-//   }
-// });
-//
-// test.serial('reloadWorkers', async t => {
-//   try {
-//     let result = {};
-//     executeProcess('master.js', {workers:4}, 'reloadWorkers', (output) => {
-//       Object.assign(result, output);
-//     });
-//     await sleep(interval * 2);
-//     console.log(result);
-//     t.notDeepEqual(result.beforeWorkers, result.afterWorkers);
-//   } catch (e) {
-//   }
-// });
-//
-// test.serial('trigger SIGUSR2 signal', async t => {
-//   try {
-//     let result = {};
-//     let options = {
-//       reloadSignal: 'SIGUSR2',
-//     };
-//     let masterProcess = executeProcess('master.js', options,'forkWorkers', (output) => {
-//       Object.assign(result, output);
-//     });
-//     await sleep(interval);
-//     t.is(result.isForked, true);
-//     console.log(`master process id is ${masterProcess.pid}`);
-//     await sleep(interval);
-//
-//     exec(`KILL -SIGUSR2 ${masterProcess.pid}`,{shell:'/bin/sh'},(error, stdout, stderr)=>{
-//       console.log(`stdout: ${stdout}`);
-//       console.log(`stderr: ${stderr}`);
-//       if (error !== null) {
-//         console.log(`exec error: ${error}`);
-//       }
-//     });
-//     await sleep(interval);
-//
-//   } catch (e) {
-//   }
-// });
+test.serial('normal case', async t => {
+  try {
+    let result = {};
+    let options = {
+      workers: 1
+    };
+    executeProcess('master.js', options,'forkWorkers', (output) => {
+      Object.assign(result, output);
+    });
+    await sleep(interval);
+    t.is(result.isForked, true);
+    t.is(result.options.workers, 1);
+  } catch (e) {
+  }
+});
+
+test.serial('options.workers >= 2 && enableAgent is true', async t => {
+  try {
+    let result = {};
+    let options = {
+      workers: 2,
+      reloadSignal: 'SIGUSR2',
+      enableAgent: true
+    };
+    executeProcess('master.js', options,'forkWorkers', (output) => {
+      Object.assign(result, output);
+    });
+    await sleep(interval);
+    t.is(result.isForked, true);
+    t.is(result.options.enableAgent, true);
+  } catch (e) {
+  }
+});
+
+test.serial('if options.workers < 2,enableAgent is false', async t => {
+  try {
+    let result = {};
+    let options = {
+      workers: 1,
+      reloadSignal: 'SIGUSR2',
+      enableAgent: true
+    };
+    executeProcess('master.js', options,'forkWorkers', (output) => {
+      Object.assign(result, output);
+    });
+    await sleep(interval);
+    t.is(result.isForked, true);
+    // if workers < 2, set enableAgent false
+    t.is(result.options.enableAgent, false);
+  } catch (e) {
+  }
+});
+
+test.serial('reloadWorkers', async t => {
+  try {
+    let result = {};
+    executeProcess('master.js', {workers:4}, 'reloadWorkers', (output) => {
+      Object.assign(result, output);
+    });
+    await sleep(interval * 2);
+    console.log(result);
+    t.notDeepEqual(result.beforeWorkers, result.afterWorkers);
+  } catch (e) {
+  }
+});
+
+test.serial('trigger SIGUSR2 signal', async t => {
+  try {
+    let result = {};
+    let options = {
+      reloadSignal: 'SIGUSR2',
+    };
+    let masterProcess = executeProcess('master.js', options,'forkWorkers', (output) => {
+      Object.assign(result, output);
+    });
+    await sleep(interval);
+    t.is(result.isForked, true);
+    console.log(`master process id is ${masterProcess.pid}`);
+    await sleep(interval);
+
+    exec(`KILL -SIGUSR2 ${masterProcess.pid}`,{shell:'/bin/sh'},(error, stdout, stderr)=>{
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+      if (error !== null) {
+        console.log(`exec error: ${error}`);
+      }
+    });
+    await sleep(interval);
+
+  } catch (e) {
+  }
+});
 
 test.serial('trigger worker unHandleRejection ', async t => {
   try {

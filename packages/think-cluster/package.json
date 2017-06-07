@@ -7,7 +7,7 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint lib/ && nyc ava test/case/",
+    "test": "eslint lib/ && nyc ava test/mock-test/",
     "coverage": "nyc report --reporter=html"
   },
   "contributors": [
