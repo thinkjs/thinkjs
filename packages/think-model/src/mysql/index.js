@@ -478,20 +478,20 @@ module.exports = class extends Base {
     options.limit = options.limit || [0, this.config.pagesize || 10];
     //recover the deleted possible order
     options.order = order;
-    let numsPerPage = options.limit[1];
+    let pagesize = options.limit[1];
     //get page options
-    let data = {numsPerPage: numsPerPage};
-    let totalPage = Math.ceil(count / data.numsPerPage);
+    let data = {pagesize};
+    let totalPage = Math.ceil(count / data.pagesize);
 
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
 
     if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
       if(pageFlag){
         data.currentPage = 1;
-        options.limit = [0, numsPerPage];
+        options.limit = [0, pagesize];
       }else{
         data.currentPage = totalPage;
-        options.limit = [(totalPage - 1) * numsPerPage, numsPerPage];
+        options.limit = [(totalPage - 1) * pagesize, pagesize];
       }
     }
     let result = helper.extend({count: count, totalPages: totalPage}, data);
