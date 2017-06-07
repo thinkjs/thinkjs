@@ -192,7 +192,7 @@ module.exports = class {
    * @param  {} listRows []
    * @return {}          []
    */
-  page(page, listRows = this.config.nums_per_page){
+  page(page, listRows = this.config.pagesize){
     if (page === undefined) {
       return this;
     }

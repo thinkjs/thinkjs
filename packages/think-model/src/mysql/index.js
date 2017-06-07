@@ -475,7 +475,7 @@ module.exports = class extends Base {
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
-    options.limit = options.limit || [0, this.config.nums_per_page || 10];
+    options.limit = options.limit || [0, this.config.pagesize || 10];
     //recover the deleted possible order
     options.order = order;
     let numsPerPage = options.limit[1];
