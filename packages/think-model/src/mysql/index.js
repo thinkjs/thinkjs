@@ -437,7 +437,7 @@ module.exports = class extends Base {
    */
   async selectAdd(options){
     let promise = Promise.resolve(options);
-    let Class = module.exports.default || module.exports;
+    let Class = this.constructor;
     if (options instanceof Class) {
       promise = options.parseOptions();
     }
