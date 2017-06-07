@@ -1,9 +1,7 @@
 const helper = require('think-helper');
-const Debounce = require('think-debounce');
 const thinkCache = require('think-cache/cache');
 
 const Parser = require('./parser');
-const debounceInstance = new Debounce();
 /**
  * db base class
  * @type {Class}
@@ -18,7 +16,6 @@ module.exports = class extends Parser {
     this.sql = '';
     this.lastInsertId = 0;
     this._socket = null;
-    this.transTimes = 0; //transaction times
   }
   /**
    * get socket instance, override by sub class
@@ -47,7 +44,7 @@ module.exports = class extends Parser {
     sql += ' INTO ' + this.parseTable(options.table) + ' (' + fields.join(',') + ')';
     sql += ' VALUES (' + values.join(',') + ')';
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
-    return this.execute(sql);
+    return this.execute(sql, options.connection);
   }
   /**
    * insert multi data
@@ -73,7 +70,7 @@ module.exports = class extends Parser {
     sql += ' INTO ' + this.parseTable(options.table) + '(' + fields + ')';
     sql += ' VALUES ' + values;
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
-    return this.execute(sql);
+    return this.execute(sql, options.connection);
   }
   /**
    * select data
@@ -89,7 +86,7 @@ module.exports = class extends Parser {
     fields = fields.map(item => this.parseKey(item));
     let sql = 'INSERT INTO ' + this.parseTable(table) + ' (' + fields.join(',') + ') ';
     sql += this.buildSelectSql(options);
-    return this.execute(sql);
+    return this.execute(sql, options.connection);
   }
   /**
    * delete data
@@ -106,7 +103,7 @@ module.exports = class extends Parser {
       this.parseLock(options.lock),
       this.parseComment(options.comment)
     ].join('');
-    return this.execute(sql);
+    return this.execute(sql, options.connection);
   }
   /**
    * update data
@@ -125,7 +122,7 @@ module.exports = class extends Parser {
       this.parseLock(options.lock),
       this.parseComment(options.comment)
     ].join('');
-    return this.execute(sql);
+    return this.execute(sql, options.connection);
   }
   /**
    * select
@@ -135,7 +132,7 @@ module.exports = class extends Parser {
   select(options, cache){
     let sql;
     if(helper.isObject(options)){
-      sql = this.buildSelectSql(options);
+      sql = options.sql ? options.sql : this.buildSelectSql(options);
       cache = options.cache || cache;
     }else{
       sql = options;
@@ -144,7 +141,7 @@ module.exports = class extends Parser {
       let key = cache.key || helper.md5(sql);
       return thinkCache(key, () => this.query(sql), cache);
     }
-    return this.query(sql);
+    return this.query(sql, options.connection);
   }
   /**
    * escape string
@@ -193,11 +190,9 @@ module.exports = class extends Parser {
    * @param  string str
    * @return promise
    */
-  query(sql){
+  query(sql, connection){
     this.sql = sql;
-    return debounceInstance.debounce(sql, () => 
-      this.socket().query(sql).then(this.bufferToString.bind(this))
-    );
+    return this.socket().query(sql, connection).then(this.bufferToString.bind(this));
   }
   /**
    * buffer to string
@@ -205,7 +200,7 @@ module.exports = class extends Parser {
    * @return {Array}      []
    */
   bufferToString(data){
-    if (!this.config.buffer_tostring || !helper.isArray(data)) {
+    if (!this.config.bufferToString || !helper.isArray(data)) {
       return data;
     }
     for(let i = 0, length = data.length; i < length; i++){
@@ -222,9 +217,9 @@ module.exports = class extends Parser {
    * @param  {String} sql []
    * @return {}     []
    */
-  execute(sql){
+  execute(sql, connection){
     this.sql = sql;
-    return this.socket().execute(sql).then(data => {
+    return this.socket().execute(sql, connection).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }

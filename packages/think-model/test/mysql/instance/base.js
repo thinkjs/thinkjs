@@ -7,7 +7,6 @@ ava.test('get instance', t => {
   t.is(instance.sql, '');
   t.is(instance.lastInsertId, 0);
   t.is(instance._socket, null);
-  t.is(instance.transTimes, 0);
 });
 
 ava.test('socket is function', t => {
@@ -338,13 +337,13 @@ ava.test('execute, empty return', async t => {
 });
 
 ava.test('bufferToString', t => {
-  let instance = new Base({buffer_tostring: true});
+  let instance = new Base({bufferToString: true});
   let data = instance.bufferToString([{name: new Buffer('lizheming'), title: 'sss'}]);
   t.deepEqual(data, [{name: 'lizheming', title: 'sss'}]);
 });
 
 ava.test('close', t => {
-  let instance = new Base({buffer_tostring: true});
+  let instance = new Base({bufferToString: true});
   let flag = false;
   instance._socket = {
     close: t => {
@@ -356,7 +355,7 @@ ava.test('close', t => {
 });
 
 ava.test('close', t => {
-  let instance = new Base({buffer_tostring: true});
+  let instance = new Base({bufferToString: true});
   let flag = false;
   instance.close();
   t.is(flag, false);

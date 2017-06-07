@@ -4,7 +4,7 @@ const Mysql = require('../../../src/mysql/instance/index');
 
 ava.test('get instance', t => {
   let instance = new Mysql();
-  t.is(instance.transTimes, 0);
+  t.is(instance.lastInsertId, 0);
 });
 ava.test('socket', t => {
   let instance = new Mysql();

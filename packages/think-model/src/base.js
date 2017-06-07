@@ -104,7 +104,11 @@ module.exports = class {
   db(db){
     // set db
     if(db){
-      this._db = db;
+      if('lastInsertId' in db){
+        this._db = db;
+      }else{
+        this.options.connection = db;
+      }
       return this;
     }
     if (this._db && !this.config.parser) {
