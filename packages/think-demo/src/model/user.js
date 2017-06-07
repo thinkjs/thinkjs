@@ -1,11 +1,12 @@
-module.exports = class extends think.Model {
+module.exports = class extends think.Model.Relation {
   constructor(...args) {
     super(...args);
-
-    this.tableName = 'user';
+    this.relation = {
+      post: think.Model.Relation.HAS_MANY
+    }
   }
 
-  getUser(id) {
+  async getUser(id) {
     return this.where({id}).find();
   }
 

@@ -2,7 +2,7 @@ module.exports = class extends think.Controller {
   async indexAction() {
     let user = await this.model('user').getUser(1);
     if( think.isEmpty(user) ) {
-      return this.fail();
+      return this.fail(3000, 'www');
     }
 
     return this.success(user);
