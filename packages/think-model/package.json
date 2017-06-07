@@ -4,6 +4,7 @@
   "description": "An adapter-based ORM for ThinkJS 3.x",
   "main": "./lib",
   "scripts": {
+    "watch": "babel ./src --out-dir ./lib --watch",
     "compile": "babel ./src --out-dir ./lib",
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
