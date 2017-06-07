@@ -19,6 +19,7 @@ module.exports = [
   },
   {
     handle: 'trace',
+    enable: !think.isCli,
     options: {
       debug: isDev
     }
