@@ -61,11 +61,13 @@ class ThinkMysql {
    * @param {Object} connection 
    */
   startTrans(connection){
-    return this.query({
-      sql: 'START TRANSACTION',
-      transaction: TRANSACTION.start,
-      debounce: false
-    }, connection);
+    return this.getConnection(connection).then(connection => {
+      return this.query({
+        sql: 'START TRANSACTION',
+        transaction: TRANSACTION.start,
+        debounce: false
+      }, connection).then(() => connection);
+    });
   }
   /**
    * commit transaction
