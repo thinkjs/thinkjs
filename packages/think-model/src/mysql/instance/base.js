@@ -196,7 +196,7 @@ module.exports = class extends Parser {
   query(sql){
     this.sql = sql;
     return debounceInstance.debounce(sql, () => 
-      this.socket(sql).query(sql).then(this.bufferToString.bind(this))
+      this.socket().query(sql).then(this.bufferToString.bind(this))
     );
   }
   /**
@@ -224,7 +224,7 @@ module.exports = class extends Parser {
    */
   execute(sql){
     this.sql = sql;
-    return this.socket(sql).execute(sql).then(data => {
+    return this.socket().execute(sql).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }
@@ -235,35 +235,30 @@ module.exports = class extends Parser {
    * start transaction
    * @return {Promise} []
    */
-  startTrans(){
-    if (this.transTimes === 0) {
-      this.transTimes++;
-      return this.execute('START TRANSACTION');
-    }
-    this.transTimes++;
-    return Promise.resolve();
+  startTrans(connection){
+    return this.socket().startTrans(connection);
   }
   /**
    * commit
    * @return {Promise} []
    */
-  commit(){
-    if (this.transTimes > 0) {
-      this.transTimes = 0;
-      return this.execute('COMMIT');
-    }
-    return Promise.resolve();
+  commit(connection){
+    return this.socket().commit(connection);
   }
   /**
    * rollback
    * @return {Promise} []
    */
-  rollback(){
-    if (this.transTimes > 0) {
-      this.transTimes = 0;
-      return this.execute('ROLLBACK');
-    }
-    return Promise.resolve();
+  rollback(connection){
+    return this.socket().rollback(connection);
+  }
+  /**
+   * transaction
+   * @param {Function} fn 
+   * @param {*} connection 
+   */
+  transaction(fn, connection){
+    return this.socket().transaction(fn, connection);
   }
   /**
    * close connect

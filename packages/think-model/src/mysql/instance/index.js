@@ -12,14 +12,11 @@ module.exports = class extends Base {
    * @param  {Object} config []
    * @return {}        []
    */
-  socket(sql){
+  socket(){
     if(this._socket){
       return this._socket;
     }
-    let config = helper.extend({
-      sql: sql
-    }, this.config);
-    this._socket = MysqlSocket.getInstance(config);
+    this._socket = MysqlSocket.getInstance(this.config);
     return this._socket;
   }
   /**

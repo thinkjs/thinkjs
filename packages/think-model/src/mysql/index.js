@@ -475,7 +475,7 @@ module.exports = class extends Base {
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
-    options.limit = options.limit || [0, this.config.nums_per_page];
+    options.limit = options.limit || [0, this.config.nums_per_page || 10];
     //recover the deleted possible order
     options.order = order;
     let numsPerPage = options.limit[1];
@@ -631,43 +631,29 @@ module.exports = class extends Base {
    * start transaction
    * @return {Promise} []
    */
-  startTrans(){
-    return this.db(true).startTrans();
+  startTrans(connection){
+    return this.db().startTrans(connection);
   }
   /**
    * commit transcation
    * @return {Promise} []
    */
-  async commit(){
-    let data = await this.db().commit();
-    this.close();
-    this._db = null;
-    return data;
+  commit(connection){
+    return this.db().commit(connection);
   }
   /**
    * rollback transaction
    * @return {Promise} []
    */
-  async rollback(){
-    let data = await this.db().rollback();
-    this.close();
-    this._db = null;
-    return data;
+  rollback(connection){
+    return this.db().rollback(connection);
   }
   /**
    * transaction exec functions
    * @param  {Function} fn [async exec function]
    * @return {Promise}      []
    */
-  async transaction(fn){
-    let result;
-    await this.startTrans();
-    try{
-      result = await fn();
-      await this.commit();
-    }catch(e){
-      await this.rollback();
-    }
-    return result;
+  transaction(fn, connection){
+    return this.db().transaction(fn, connection);
   }
 };

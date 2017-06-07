@@ -362,83 +362,83 @@ ava.test('close', t => {
   t.is(flag, false);
 });
 
-ava.test('startTrans', async t => {
-  let instance = new Base();
-  let flag = false;
-  instance.execute = function(sql){
-    t.is(sql, 'START TRANSACTION');
-    flag = true;
-    return Promise.resolve();
-  }
-  let data = await instance.startTrans();
-  t.is(flag, true);
-  instance.transTimes = 1;
-});
+// ava.test('startTrans', async t => {
+//   let instance = new Base();
+//   let flag = false;
+//   instance.execute = function(sql){
+//     t.is(sql, 'START TRANSACTION');
+//     flag = true;
+//     return Promise.resolve();
+//   }
+//   let data = await instance.startTrans();
+//   t.is(flag, true);
+//   instance.transTimes = 1;
+// });
 
-ava.test('startTrans, is started', async t => {
-  let instance = new Base();
-  instance.transTimes = 1;
-  let flag = false;
-  instance.execute = function(sql){
-    t.is(sql, 'START TRANSACTION');
-    flag = true;
-    return Promise.resolve();
-  }
-  let data = await instance.startTrans();
-  t.is(flag, false);
-  instance.transTimes = 1;
-});
+// ava.test('startTrans, is started', async t => {
+//   let instance = new Base();
+//   instance.transTimes = 1;
+//   let flag = false;
+//   instance.execute = function(sql){
+//     t.is(sql, 'START TRANSACTION');
+//     flag = true;
+//     return Promise.resolve();
+//   }
+//   let data = await instance.startTrans();
+//   t.is(flag, false);
+//   instance.transTimes = 1;
+// });
 
-ava.test('commit, not start', async t => {
-  let instance = new Base();
-  let flag = false;
-  instance.execute = function(sql){
-    t.is(sql, 'ROLLBACK');
-    flag = true;
-    return Promise.resolve();
-  }
-  let data = await instance.commit();
-  t.false(flag);
-  instance.transTimes = 0;
-});
+// ava.test('commit, not start', async t => {
+//   let instance = new Base();
+//   let flag = false;
+//   instance.execute = function(sql){
+//     t.is(sql, 'ROLLBACK');
+//     flag = true;
+//     return Promise.resolve();
+//   }
+//   let data = await instance.commit();
+//   t.false(flag);
+//   instance.transTimes = 0;
+// });
 
-ava.test('commit', async t => {
-  let instance = new Base();
-  instance.transTimes = 1;
-  let flag = false;
-  instance.execute = function(sql){
-    t.is(sql, 'COMMIT');
-    flag = true;
-    return Promise.resolve();
-  }
-  let data = await instance.commit();
-  t.true(flag);
-  instance.transTimes = 0;
-});
+// ava.test('commit', async t => {
+//   let instance = new Base();
+//   instance.transTimes = 1;
+//   let flag = false;
+//   instance.execute = function(sql){
+//     t.is(sql, 'COMMIT');
+//     flag = true;
+//     return Promise.resolve();
+//   }
+//   let data = await instance.commit();
+//   t.true(flag);
+//   instance.transTimes = 0;
+// });
 
-ava.test('rollback, not start', async t => {
-  let instance = new Base();
-  let flag = false;
-  instance.execute = function(sql){
-    t.is(sql, 'ROLLBACK');
-    flag = true;
-    return Promise.resolve();
-  }
-  let data = await instance.rollback();
-  t.false(flag);
-  instance.transTimes = 0;
-});
+// ava.test('rollback, not start', async t => {
+//   let instance = new Base();
+//   let flag = false;
+//   instance.execute = function(sql){
+//     t.is(sql, 'ROLLBACK');
+//     flag = true;
+//     return Promise.resolve();
+//   }
+//   let data = await instance.rollback();
+//   t.false(flag);
+//   instance.transTimes = 0;
+// });
 
-ava.test('rollback', async t => {
-  let instance = new Base();
-  instance.transTimes = 1;
-  let flag = false;
-  instance.execute = function(sql){
-    t.is(sql, 'ROLLBACK');
-    flag = true;
-    return Promise.resolve();
-  }
-  let data = await instance.rollback();
-  t.true(flag);
-  instance.transTimes = 0;
-});
+// ava.test('rollback', async t => {
+//   let instance = new Base();
+//   instance.transTimes = 1;
+//   let flag = false;
+//   instance.execute = function(sql){
+//     t.is(sql, 'ROLLBACK');
+//     flag = true;
+//     return Promise.resolve();
+//   }
+//   let data = await instance.rollback();
+//   t.true(flag);
+//   instance.transTimes = 0;
+// });
