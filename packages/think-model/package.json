@@ -29,13 +29,13 @@
   },
   "homepage": "https://github.com/thinkjs/think-model#readme",
   "dependencies": {
-    "ava": "^0.19.1",
     "think-cache": "^1.0.3",
     "think-debounce": "^1.0.3",
     "think-helper": "^1.0.5",
-    "think-mysql": "github:thinkjs/think-mysql"
+    "think-mysql": "^1.0.2"
   },
   "devDependencies": {
+    "ava": "^0.19.1",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
