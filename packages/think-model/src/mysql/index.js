@@ -3,6 +3,10 @@ const helper = require('think-helper');
 const Base = require('../base');
 
 /**
+ * schema cache
+ */
+let schemaCache = {};
+/**
  * base model class
  */
 module.exports = class extends Base {
@@ -11,14 +15,15 @@ module.exports = class extends Base {
    * @param  {String} table [table name]
    * @return {}       []
    */
-  async getSchema(table){
-    table = table || this.getTableName();
-    let schema = await this.db().getSchema(table);
-
+  async getSchema(table = this.getTableName()){
+    let schema = schemaCache[table];
+    if(!schema){
+      schema = await this.db().getSchema(table);
+      schemaCache[table] = schema;
+    }
     if(table !== this.getTableName()){
       return schema;
     }
-    
     //get primary key
     for(let name in schema){
       if(schema[name].primary){
@@ -26,7 +31,6 @@ module.exports = class extends Base {
         break;
       }
     }
-
     //merge user set schema config
     this.schema = helper.extend({}, schema, this.schema);
     return this.schema;
