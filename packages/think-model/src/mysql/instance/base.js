@@ -16,6 +16,7 @@ module.exports = class extends Parser {
     this.sql = '';
     this.lastInsertId = 0;
     this._socket = null;
+    this.connection = null;
   }
   /**
    * get socket instance, override by sub class
@@ -44,7 +45,7 @@ module.exports = class extends Parser {
     sql += ' INTO ' + this.parseTable(options.table) + ' (' + fields.join(',') + ')';
     sql += ' VALUES (' + values.join(',') + ')';
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
-    return this.execute(sql, options.connection);
+    return this.execute(sql);
   }
   /**
    * insert multi data
@@ -70,7 +71,7 @@ module.exports = class extends Parser {
     sql += ' INTO ' + this.parseTable(options.table) + '(' + fields + ')';
     sql += ' VALUES ' + values;
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
-    return this.execute(sql, options.connection);
+    return this.execute(sql);
   }
   /**
    * select data
@@ -86,7 +87,7 @@ module.exports = class extends Parser {
     fields = fields.map(item => this.parseKey(item));
     let sql = 'INSERT INTO ' + this.parseTable(table) + ' (' + fields.join(',') + ') ';
     sql += this.buildSelectSql(options);
-    return this.execute(sql, options.connection);
+    return this.execute(sql);
   }
   /**
    * delete data
@@ -103,7 +104,7 @@ module.exports = class extends Parser {
       this.parseLock(options.lock),
       this.parseComment(options.comment)
     ].join('');
-    return this.execute(sql, options.connection);
+    return this.execute(sql);
   }
   /**
    * update data
@@ -122,7 +123,7 @@ module.exports = class extends Parser {
       this.parseLock(options.lock),
       this.parseComment(options.comment)
     ].join('');
-    return this.execute(sql, options.connection);
+    return this.execute(sql);
   }
   /**
    * select
@@ -141,7 +142,7 @@ module.exports = class extends Parser {
       let key = cache.key || helper.md5(sql);
       return thinkCache(key, () => this.query(sql), cache);
     }
-    return this.query(sql, options.connection);
+    return this.query(sql);
   }
   /**
    * escape string
@@ -190,7 +191,7 @@ module.exports = class extends Parser {
    * @param  string str
    * @return promise
    */
-  query(sql, connection){
+  query(sql, connection = this.connection){
     this.sql = sql;
     return this.socket().query(sql, connection).then(this.bufferToString.bind(this));
   }
@@ -217,7 +218,7 @@ module.exports = class extends Parser {
    * @param  {String} sql []
    * @return {}     []
    */
-  execute(sql, connection){
+  execute(sql, connection = this.connection){
     this.sql = sql;
     return this.socket().execute(sql, connection).then(data => {
       if (data.insertId) {
@@ -230,8 +231,11 @@ module.exports = class extends Parser {
    * start transaction
    * @return {Promise} []
    */
-  startTrans(connection){
-    return this.socket().startTrans(connection);
+  async startTrans(connection){
+    return this.socket().startTrans(connection).then(connection => {
+      this.connection = connection;
+      return connection;
+    });
   }
   /**
    * commit
@@ -253,7 +257,10 @@ module.exports = class extends Parser {
    * @param {*} connection 
    */
   transaction(fn, connection){
-    return this.socket().transaction(fn, connection);
+    return this.socket().transaction(connection => {
+      this.connection = connection;
+      return fn(connection);
+    }, connection);
   }
   /**
    * close connect

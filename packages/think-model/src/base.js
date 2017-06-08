@@ -91,31 +91,19 @@ module.exports = class {
     return this.tablePrefix || '';
   }
   /**
-   * get db lib
-   * @return {Object} []
-   */
-  getDB() {
-    return MysqlInstance;
-  }
-  /**
    * get db instance
    * @return {Object} []
    */
   db(db){
     // set db
     if(db){
-      if('lastInsertId' in db){
-        this._db = db;
-      }else{
-        this.options.connection = db;
-      }
+      this._db = db;
       return this;
     }
     if (this._db && !this.config.parser) {
       return this._db;
     }
-    let DB = this.getDB();
-    this._db = new DB(this.config);
+    this._db = new MysqlInstance(this.config);
     return this._db;
   }
   /**
