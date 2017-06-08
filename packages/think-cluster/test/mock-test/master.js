@@ -15,7 +15,7 @@ function getMaster() {
 function mockCluster(){
   mock('cluster',{
     workers:[],
-    fork(){
+    fork(env={}){
       let worker = {
         on(evtName,cb){
           this[evtName] = cb;
@@ -38,8 +38,9 @@ function mockCluster(){
             cluster.workers = workers;
           }
           this[evtName](args);
-        }
+        },
       };
+      worker = Object.assign(worker,env);
       let cluster = require('cluster');
       cluster.workers.push(worker)
       return worker;
@@ -85,4 +86,15 @@ test.serial('normal case', async t => {
   await instance.forkWorkers();
   cluster.trigger('exit');
   t.is(cluster.workers.length,require('os').cpus().length)
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master();
+  await instance.forkWorkers({isAgent:true});
+  console.log(cluster.workers);
+  // cluster.trigger('exit');
+  // t.is(cluster.workers.length,require('os').cpus().length)
 });
