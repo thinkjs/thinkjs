@@ -1,3 +1,4 @@
+const assert = require('assert');
 const helper = require('think-helper');
 const MysqlSocket = require('think-mysql');
 const Base = require('./base');
@@ -15,6 +16,8 @@ module.exports = class extends Base {
   socket(sql){
     //has parser
     if(sql && this.config.parser){
+      assert(typeof(this.config.parser) === 'function', 'parser should be a function');
+      
       let config = Object.assign({}, this.config, this.config.parser(sql));
       delete config.parser;
       return MysqlSocket.getInstance(config);
