@@ -193,7 +193,7 @@ module.exports = class extends Parser {
    */
   query(sql, connection = this.connection){
     this.sql = sql;
-    return this.socket().query(sql, connection).then(this.bufferToString.bind(this));
+    return this.socket(sql).query(sql, connection).then(this.bufferToString.bind(this));
   }
   /**
    * buffer to string
@@ -220,7 +220,7 @@ module.exports = class extends Parser {
    */
   execute(sql, connection = this.connection){
     this.sql = sql;
-    return this.socket().execute(sql, connection).then(data => {
+    return this.socket(sql).execute(sql, connection).then(data => {
       if (data.insertId) {
         this.lastInsertId = data.insertId;
       }

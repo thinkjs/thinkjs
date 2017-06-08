@@ -12,7 +12,11 @@ module.exports = class extends Base {
    * @param  {Object} config []
    * @return {}        []
    */
-  socket(){
+  socket(sql){
+    //has parser
+    if(sql && this.config.parser){
+      return MysqlSocket.getInstance(this.config.parser(sql));
+    }
     if(this._socket){
       return this._socket;
     }
