@@ -15,7 +15,9 @@ module.exports = class extends Base {
   socket(sql){
     //has parser
     if(sql && this.config.parser){
-      return MysqlSocket.getInstance(this.config.parser(sql));
+      let config = Object.assign({}, this.config, this.config.parser(sql));
+      delete config.parser;
+      return MysqlSocket.getInstance(config);
     }
     if(this._socket){
       return this._socket;
