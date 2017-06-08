@@ -7,7 +7,16 @@ module.exports = class extends think.Controller {
 
     return this.success(user);
   }
-
+  async transactionAction(){
+    let user = this.model('user');
+    await user.transaction(async () => {
+      let post = this.model('post');
+      post.db(user.db());
+      await user.add({name: 'test1'});
+      await post.add({title: 'title1', user_id: 1});
+    });
+    this.success();
+  }
   async addTransAction() {
     let userModel = this.model('user');
     try {
