@@ -30,6 +30,11 @@ module.exports = function(reqArgs, app){
     req[name] = args[name];
   }
   const res = new ServerResponse(req);
+  //rewrite end method, exit process when invoke end method
+  res.end = msg => {
+    console.log(msg);
+    process.exit();
+  }
   if(!app) return {req, res};
   let fn = app.callback();
   return fn(req, res);
