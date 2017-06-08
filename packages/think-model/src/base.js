@@ -100,7 +100,7 @@ module.exports = class {
       this._db = db;
       return this;
     }
-    if (this._db && !this.config.parser) {
+    if (this._db) {
       return this._db;
     }
     this._db = new MysqlInstance(this.config);
