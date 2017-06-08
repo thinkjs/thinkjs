@@ -69,21 +69,6 @@ module.exports = class {
     }
   }
   /**
-   * get model instance
-   * @param  {String} name    [model name]
-   * @return {Object}         []
-   */
-  model(name) {
-    if(!name) {
-      return this;
-    }
-    let model = this.config.models[name];
-    if(model) {
-      return new model(name, this.config);
-    }
-    return new this.constructor(name, this.config);
-  }
-  /**
    * get table prefix
    * @return {String} []
    */

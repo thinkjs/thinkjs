@@ -9,7 +9,22 @@ let schemaCache = {};
 /**
  * base model class
  */
-module.exports = class extends Base {
+module.exports = class MysqlModel extends Base {
+  /**
+   * get model instance
+   * @param  {String} name    [model name]
+   * @return {Object}         []
+   */
+  model(name) {
+    if(!name) {
+      return this;
+    }
+    let model = this.config.models[name];
+    if(model) {
+      return new model(name, this.config);
+    }
+    return new MysqlModel(name, this.config);
+  }
   /**
    * get table schema
    * @param  {String} table [table name]
