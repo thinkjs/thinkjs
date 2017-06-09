@@ -210,6 +210,7 @@ class Router {
     const rules = this.getRules();
     const matchedRule = this.getMatchedRule(rules);
     if(matchedRule){
+      debug(`matchedRule: ${matchedRule}`);
       return this.parseRule(matchedRule);
     }
     if(this.options.enableDefaultRouter){

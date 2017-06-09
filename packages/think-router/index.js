@@ -1,6 +1,8 @@
 const Router = require('./router.js');
 const helper = require('think-helper');
 const pathToRegexp = require('path-to-regexp');
+const debug = require('debug')('think-router');
+
 /**
  * default options
  */
@@ -63,6 +65,7 @@ module.exports = function parseRouter(options, app){
   }
   //format routers when app ready
   app.once('appReady', () => {
+    debug('router listen appReady event');
     app.routers = formatRouters(app.routers);
   });
   return (ctx, next) => {
