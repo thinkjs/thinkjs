@@ -143,7 +143,7 @@ class Router {
     let ruleMethod = rule.method;
     // redirect url
     if(ruleMethod === 'REDIRECT'){
-      if(rule.options.statusCode){
+      if(rule.options && rule.options.statusCode){
         this.ctx.status = rule.options.statusCode;
       }
       return this.ctx.redirect(rule.path);
@@ -209,7 +209,7 @@ class Router {
     const rules = this.getRules();
     const matchedRule = this.getMatchedRule(rules);
     if(matchedRule){
-      debug(`matchedRule: ${matchedRule}`);
+      debug(`matchedRule: ${JSON.stringify(matchedRule)}`);
       return this.parseRule(matchedRule);
     }
     if(this.options.enableDefaultRouter){

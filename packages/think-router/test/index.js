@@ -222,7 +222,7 @@ test.serial.cb('options with subdomain is an Object', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: '/admin/article/list',
-          method: 'get',
+          method: 'GET',
           query: []
         }]
       }
@@ -254,7 +254,7 @@ test.serial.cb('options with subdomain is an Array', t => {
         rules: [{
           match: /^admin\/article\/list/,
           path: 'admin/article/list',
-          method: 'get',
+          method: 'GET',
           query: []
         }]
       }
@@ -287,7 +287,7 @@ test.serial.cb('options with subdomain not match ', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: 'admin/article/list/',
-          method: 'get',
+          method: 'GET',
           query: []
         }]
       }
@@ -378,7 +378,7 @@ test.serial.cb('rules is an Array and not match', t => {
     routers: [{
       match: /^\/admin\/article\/matchnothing/,
       path: 'admin/article/list/',
-      method: 'get',
+      method: 'GET',
       query: []
     }]
   });
@@ -439,7 +439,7 @@ test.serial.cb('rules match with query name is number', t => {
         rules: [{
           match: /^\/admin\/article\/list\/(\w+)/,
           path: 'admin/article/:1',
-          method: 'get',
+          method: 'GET',
           query: [{ name: 0 }]
         }]
       }
@@ -468,7 +468,7 @@ test.serial.cb('rules match with query name is string', t => {
         rules: [{
           match: /^\/admin\/article\/list\/(.*)/,
           path: 'admin/article/list',
-          method: 'get',
+          method: 'GET',
           query: [{ name: 'id' }]
         }]
       }
@@ -546,7 +546,7 @@ test.serial.cb('rules path with query not empty', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: 'admin/article/list?page=1',
-          method: 'get',
+          method: 'GET',
           query: []
         }]
       }
@@ -573,7 +573,7 @@ test.serial.cb('rules path with query empty', t => {
         rules: [{
           match: /^\/admin\/article\/list/,
           path: 'admin/article/list?page',
-          method: 'get',
+          method: 'GET',
           query: []
         }]
       }
@@ -602,7 +602,7 @@ test.serial.cb('multiple layer controller and match', t => {
     routers: [{
       match: /^\/admin\/article\/list/,
       path: 'admin/article/page/list',
-      method: 'get',
+      method: 'GET',
       query: [{ name: 0 }]
     }]
   };
@@ -664,7 +664,7 @@ test.serial.cb('multiple layer controller and not match', t => {
     routers: [{
       match: /^\/admin\/article\/matchnothing/,
       path: 'admin/article/page/list',
-      method: 'get',
+      method: 'GET',
       query: []
     }]
   };
