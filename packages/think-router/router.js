@@ -113,8 +113,8 @@ class Router {
     let rule;
     let specialMethods = ['REDIRECT', 'REST'];
     rules.some(item => {
-      let itemMethod = item.method && item.method.toUpperCase();
-      if(itemMethod && specialMethods.indexOf(item.method) === -1){
+      let itemMethod = item.method;
+      if(itemMethod && specialMethods.indexOf(itemMethod) === -1){
         //check method matched
         if(itemMethod !== this.ctxMethod) return;
       }
@@ -140,12 +140,11 @@ class Router {
    * parser item rule
    */
   parseRule(rule){
-    let ruleMethod = rule.method && rule.method.toUpperCase();
-
+    let ruleMethod = rule.method;
     // redirect url
     if(ruleMethod === 'REDIRECT'){
-      if(rule.statusCode){
-        this.ctx.status = rule.statusCode;
+      if(rule.options.statusCode){
+        this.ctx.status = rule.options.statusCode;
       }
       return this.ctx.redirect(rule.path);
     }

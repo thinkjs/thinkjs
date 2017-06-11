@@ -30,7 +30,7 @@ const formatRouters = routers => {
       return {
         match, 
         path: item[1], 
-        method: item[2], 
+        method: item[2] && item[2].toUpperCase(), 
         options: item[3] || {}, 
         query
       };
