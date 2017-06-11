@@ -199,7 +199,7 @@ class Router {
     this.ctx.action = action || this.options.defaultAction;
     //add query to context
     this.ctx.param(query);
-    debug(`RouterParser: path=${this.ctx.path}, module=${this.ctx.module}, controller=${this.ctx.controller}, action=${this.ctx.action}`);
+    debug(`RouterParser: path=${this.ctx.path}, module=${this.ctx.module}, controller=${this.ctx.controller}, action=${this.ctx.action}, query=${JSON.stringify(query)}`);
     return this.next();
   }
   /**
