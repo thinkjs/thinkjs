@@ -18,6 +18,7 @@ class Commander{
 		this.cwd = process.cwd();
 		this.templatePath = path.join(__dirname, 'template');
 		this.projectRootPath = this.cwd;
+		this.rest = false;
 	}
 
 	parseArgv (argv) {
@@ -40,7 +41,7 @@ class Commander{
 	 * @return {}     []
 	 */
 
-	getPath (m, type){
+	getPath (m, type) {
 	  if(this.mode === 'module'){
 	    return path.join(this.appPath, m, type);
 	  }
@@ -362,7 +363,13 @@ class Commander{
 
 	  let controllerPath = this.getPath(m, 'controller');
 	  let file = 'index.js';
-	  this.copyFile('src/controller/' + file, controllerPath + '/' + controller + '.js');
+	  //this.copyFile('src/controller/' + file, controllerPath + '/' + controller + '.js');
+	  if(this.rest) {
+	    this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
+	    this.copyFile('src/controller/restIndex.js', controllerPath + '/' + controller + '.js');
+	  } else {
+	    this.copyFile('src/controller/index.js', controllerPath + '/' + controller + '.js');
+	  }
 
 	  let logicPath = getPath(m, 'logic');
 	  this.copyFile('src/logic/index.js', logicPath + '/' + controller + '.js');
@@ -575,6 +582,11 @@ class Commander{
 		//create middleware
 		commander.command('middleware <middlewareName>').description('add middleware').action(middleware => {
 		  this.createMiddleware(middleware.toLowerCase());
+		});
+
+		//create rest controller
+		commander.option('-r', 'create rest controller', () => {
+		  this.rest = true;
 		});
 
 		//create adapter
