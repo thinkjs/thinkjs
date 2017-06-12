@@ -147,3 +147,41 @@ test.serial('normal case', async t => {
   t.is(cluster.workers[0].isKilled,true);
   t.is(cluster.workers[0].hasGracefulReload,true);
 });
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master();
+  await instance.forkWorkers();
+  instance.forceReloadWorkers();
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  cluster.workers[0].state = 'disconnected';
+  instance.forceReloadWorkers();
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  instance.forceReloadWorkers();
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  cluster.workers = [];
+  instance.forceReloadWorkers();
+});
