@@ -12,6 +12,7 @@ let projectRootPath = cwd; //project root path
 
 let mode = 'normal';
 let appPath = '';
+let rest = false;
 
 /**
  * log
@@ -343,9 +344,14 @@ let createController = controller => {
     createModule(m);
   }
 
+  
   let controllerPath = getPath(m, 'controller');
-  let file = 'index.js';
-  copyFile('src/controller/' + file, controllerPath + '/' + controller + '.js');
+  if(rest){
+    copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
+    copyFile('src/controller/restIndex.js', controllerPath + '/' + controller + '.js');
+  }else{
+    copyFile('src/controller/index.js', controllerPath + '/' + controller + '.js');
+  }
 
   let logicPath = getPath(m, 'logic');
   copyFile('src/logic/index.js', logicPath + '/' + controller + '.js');
@@ -526,6 +532,10 @@ commander.option('-V', 'output the version number', () => {
 });
 commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is normal, using in `new` command', m => {
   mode = m;
+});
+
+commander.option('-r', 'create rest controller', () => {
+  rest = true;
 });
 
 //create project
