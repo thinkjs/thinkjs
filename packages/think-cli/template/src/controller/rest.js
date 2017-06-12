@@ -7,7 +7,7 @@ module.exports = class extends think.Controller {
     this.resource = this.getResource();
     this.id = this.getId();
     assert(think.isFunction(this.model), 'this.model must be a function');
-    this.modelInstance = this.modelInstance(this.resource);
+    this.modelInstance = this.model(this.resource);
   }
   __before(){}
   /**
