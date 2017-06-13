@@ -361,7 +361,6 @@ class Commander {
     }
 
     let controllerPath = this.getPath(m, 'controller');
-    let file = 'index.js';
     //this.copyFile('src/controller/' + file, controllerPath + '/' + controller + '.js');
     if (this.rest) {
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
@@ -370,7 +369,7 @@ class Commander {
       this.copyFile('src/controller/index.js', controllerPath + '/' + controller + '.js');
     }
 
-    let logicPath = getPath(m, 'logic');
+    let logicPath = this.getPath(m, 'logic');
     this.copyFile('src/logic/index.js', logicPath + '/' + controller + '.js');
 
     console.log();
