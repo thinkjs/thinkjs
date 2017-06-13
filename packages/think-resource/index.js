@@ -19,7 +19,8 @@ const defaultOptions = {
   gzip: false,
   extensions: false,
   maxage: 0,
-  setHeaders: false
+  setHeaders: false,
+  notFoundNext: false
 }
 
 /**
@@ -71,6 +72,8 @@ module.exports = function (options) {
   let publicPath = options.publicPath;
   assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string')
   options.publicPath = prefixPath(publicPath);
+  
+  const notFoundNext = options.notFoundNext;
 
   /**
    * serve
@@ -78,7 +81,7 @@ module.exports = function (options) {
   return function serve (ctx, next) {
     if (matchRoute(ctx.path, options.publicPath) && (ctx.method === 'HEAD' || ctx.method === 'GET')) {
       return send(ctx, prefixPath(ctx.path), options).then(done => {
-        if (!done) {
+        if (!done && notFoundNext) {
           return next();
         }
       });

@@ -36,7 +36,8 @@ module.exports = [
            maxage: 0,
            setHeaders: function(res, path, stats) {
               ...
-           }
+           },
+           notFoundClose: true
       }
   }
 ]
@@ -53,6 +54,7 @@ module.exports = [
 - `maxage`: Function to set custom headers on response. Browser cache max-age in milliseconds, default is `0`.
 - `publicPath`: Public path for route-match. default is `/`.
 - `setHeaders`: Function to set custom headers on response. default is `false`. usage: `setHeaders: function(res, path, stats){}`
+- `notFoundNext`: If it can't find target file, will continue excuting `next` function.  default is `false`.
 
 ## Contributing
 

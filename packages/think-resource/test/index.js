@@ -379,5 +379,33 @@ test.cb('serve by hidden file', t => {
     });
 });
 
+test.cb('serve by notFoundNext', t => {
+  t.plan(1)
+  request(createServer({ root: 'test/assets', notFoundNext: true }))
+    .get('/1.txt')
+    .expect(200)
+    .expect('txt hello', (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
 
-
+test.cb('serve by notFoundNext', t => {
+  t.plan(1)
+  request(createServer({ root: 'test/assets', notFoundNext: true }))
+    .get('/1.txt1')
+    .expect(404, (err, res) => {
+      if (err) {
+        t.fail();
+      }
+      else {
+        t.pass();
+      }
+      t.end();
+    });
+});
