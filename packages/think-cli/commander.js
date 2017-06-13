@@ -3,12 +3,6 @@ const path = require('path');
 const colors = require('colors');
 const helper = require('think-helper');
 
-// let cwd = process.cwd();
-// let templatePath = path.join(__dirname, 'template');
-// let projectRootPath = cwd; //project root path
-
-// let mode = 'normal';
-// let appPath = '';
 
 class Commander {
   constructor(commander) {
@@ -35,23 +29,13 @@ class Commander {
     console.log('  ' + fn(colors));
   }
 
-/**
- * mkdir
- * @param  {String} dir []
- * @return {}     []
- */
-
   getPath(m, type) {
     if (this.mode === 'module') {
       return path.join(this.appPath, m, type);
     }
     return path.join(this.appPath, type);
   }
-/**
- * mkdir
- * @param  {String} dir []
- * @return {}     []
- */
+
   mkdir(dir) {
     if (helper.isDirectory(dir)) {
       return;
@@ -90,12 +74,12 @@ class Commander {
     return matched[1];
   }
 
-/**
- * copy file
- * @param  {String} source []
- * @param  {String} target []
- * @return {}        []
- */
+  /**
+   * copy file
+   * @param  {String} source []
+   * @param  {String} target []
+   * @return {}        []
+   */
   copyFile(source, target, replace, showWarning) {
     if (showWarning === undefined) {
       showWarning = true;
@@ -148,10 +132,6 @@ class Commander {
 
   isThinkApp(projectRootPath) {
     if (helper.isDirectory(projectRootPath)) {
-      let filepath = projectRootPath + '/src';
-      if (helper.isFile(filepath)) {
-        return true;
-      }
       const list = ['src', 'view', 'development.js', 'production.js'];
       return list.every(item => {
         const filepath = path.join(projectRootPath, item);
@@ -329,14 +309,14 @@ class Commander {
    * @param  {} module []
    * @return {}        []
    */
-  createModule(module) {
+  createModule(m) {
     this._checkEnv();
 
-    if (module === 'common') {
+    if (m === 'common') {
       return;
     }
 
-    this._createModule(module);
+    this._createModule(m);
   }
 
   /**
@@ -361,7 +341,6 @@ class Commander {
     }
 
     let controllerPath = this.getPath(m, 'controller');
-    //this.copyFile('src/controller/' + file, controllerPath + '/' + controller + '.js');
     if (this.rest) {
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
       this.copyFile('src/controller/restIndex.js', controllerPath + '/' + controller + '.js');
@@ -411,19 +390,19 @@ class Commander {
     this._checkEnv();
 
     model = model.split('/');
-    let module = 'common';
+    let m = 'common';
     if (model.length === 2) {
-      module = model[0];
+      m = model[0];
       model = model[1];
     } else {
       model = model[0];
     }
 
-    if (!this.isModuleExist(module)) {
-      this.createModule(module);
+    if (!this.isModuleExist(m)) {
+      this.createModule(m);
     }
 
-    let modelPath = this.getPath(module, 'model');
+    let modelPath = this.getPath(m, 'model');
     this.copyFile('src/model/index.js', modelPath + '/' + model + '.js');
 
     console.log();
