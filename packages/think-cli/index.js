@@ -1,5 +1,4 @@
 #!/usr/bin/env node 
-const Cmd = require('./commander');
-const commander = require('commander');
-const cmdInstance = new Cmd(commander);
-cmdInstance.parseArgv(process.argv);
+const Commander = require('./commander');
+const instance = new Commander();
+instance.parseArgv(process.argv);

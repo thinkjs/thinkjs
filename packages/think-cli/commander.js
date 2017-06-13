@@ -2,11 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const colors = require('colors');
 const helper = require('think-helper');
-
+const commander = require('commander');
 
 class Commander {
-  constructor(commander) {
-    this.commander = commander;
+  constructor() {
     this.mode = 'normal';
     this.appPath = '';
     this.cwd = process.cwd();
@@ -16,8 +15,8 @@ class Commander {
   }
 
   parseArgv(argv) {
-    this.bindDirective(this.commander);
-    this.commander.parse(argv);
+    this.bindDirective();
+    commander.parse(argv);
   }
 
 /**
@@ -518,7 +517,7 @@ class Commander {
     console.log(chars);
   }
 
-  bindDirective(commander) {
+  bindDirective() {
     commander.usage('[command] <options ...>');
     commander.option('-v, --version', 'output the version number', () => {
       this.displayVersion();
