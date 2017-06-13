@@ -44,10 +44,7 @@ module.exports = function (opts = {}) {
 
     return parseBody(ctx).then(body => {
       ctx.request.body = body;
-    }).then(() => {
       return next();
-    }).catch(err => {
-      throw err;
     });
   }
 
