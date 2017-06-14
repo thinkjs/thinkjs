@@ -14,9 +14,10 @@ module.exports = {
   [getViewInstance](){
     if(!this[viewInstance]){
       const instance = new View(this.ctx);
-      instance.assign('controller', this);
-      instance.assign('config', this.config());
-      instance.assign('ctx', this.ctx);
+      instance.assign('controller', this); //controller
+      instance.assign('config', this.config()); //config
+      instance.assign('ctx', this.ctx); //context
+      instance.assign('__', this.__); //i18n
       this[viewInstance] = instance;
     }
     return this[viewInstance];
