@@ -77,6 +77,7 @@ class Master {
   killWorker(worker, reload){
     worker.kill('SIGINT'); //windows don't support SIGQUIT
     if(reload) worker.hasGracefulReload = true;
+    worker.needKilled = true;
     setTimeout(function () {
       if(!worker.isConnected()) return;
       worker.process.kill('SIGINT');
@@ -89,7 +90,7 @@ class Master {
     let aliveWorkers = [];
     for(let id in cluster.workers){
       let worker = cluster.workers[id];
-      if(worker.state === 'disconnected'){
+      if(worker.state === 'disconnected' || worker.needKilled){
         continue;
       }
       aliveWorkers.push(worker);
