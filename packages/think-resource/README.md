@@ -37,7 +37,7 @@ module.exports = [
            setHeaders: function(res, path, stats) {
               ...
            },
-           notFoundClose: true
+           notFoundNext: false
       }
   }
 ]
