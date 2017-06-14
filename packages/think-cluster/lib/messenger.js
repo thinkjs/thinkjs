@@ -60,9 +60,7 @@ class Messenger extends events {
     }else{
       process.on('message', message => {
         if(message && message.act === MESSENGER){
-          let action = message.action;
-          console.log('action', action)
-          this.emit(action, message.data);
+          this.emit(message.action, message.data);
         }
       });
     }
