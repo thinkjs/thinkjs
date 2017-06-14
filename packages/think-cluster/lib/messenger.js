@@ -60,8 +60,7 @@ class Messenger extends events {
     }else{
       process.on('message', message => {
         if(message && message.act === MESSENGER){
-          let action = message.action;
-          process.emit(action, message.data);
+          this.emit(message.action, message.data);
         }
       });
     }
@@ -80,20 +79,12 @@ class Messenger extends events {
    * @return {}        []
    */
   broadcast(action, data){
-    let id = taskId++;
-    let actionName = `think-messenger-${id}`;
     process.send({
       act: MESSENGER, 
-      action: actionName, 
+      action, 
       data, 
       target: 'all'
     });
-    process.once(actionName, data => {
-      if(!helper.isError(data)){
-        this.emit(action, data);
-      }
-    });
-    this.setTimeout(actionName);
   }
   /**
    * run in one worker
@@ -108,7 +99,7 @@ class Messenger extends events {
       action: actionName,
       target: 'one'
     });
-    process.once(actionName, data => {
+    this.once(actionName, data => {
       if(!helper.isError(data) && callback){
         callback();
       }
