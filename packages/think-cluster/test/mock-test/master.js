@@ -2,7 +2,7 @@ const test = require('ava');
 const mock = require('mock-require');
 const path = require('path');
 const helper = require('think-helper');
-
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 function getMaster() {
   return mock.reRequire('../../lib/master');
@@ -23,7 +23,7 @@ function mockCluster(){
         once(evtName,cb){
           this.on(evtName,cb)
           if(evtName === 'listening') {
-            cb()
+            cb('test address')
           }
         },
         trigger(evtName,args){
@@ -39,6 +39,20 @@ function mockCluster(){
           }
           this[evtName](args);
         },
+        send(signal){
+          // console.log(signal);
+        },
+        kill(){
+          // this.isKilled = true;
+        },
+        isConnected(){
+          return !this.isKilled;
+        },
+        process:{
+          kill:()=>{
+            worker.isKilled = true;
+          }
+        }
       };
       worker = Object.assign(worker,env);
       let cluster = require('cluster');
@@ -66,6 +80,7 @@ test.serial('normal case', async t => {
   let instance = new Master();
   await instance.forkWorkers();
   cluster.trigger('message','think-graceful-disconnect');
+  cluster.trigger('message','test');
   t.is(cluster.workers[0].hasGracefulReload,true);
 });
 
@@ -84,6 +99,7 @@ test.serial('normal case', async t => {
   const Master = getMaster();
   let instance = new Master();
   await instance.forkWorkers();
+  cluster.trigger('message','think-graceful-disconnect');
   cluster.trigger('exit');
   t.is(cluster.workers.length,require('os').cpus().length)
 });
@@ -92,9 +108,80 @@ test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
+  let instance = new Master({reloadSignal:'SIGUSR2'});
+  await instance.forkWorkers();
+  await process.kill(process.pid,'SIGUSR2');
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  cluster.trigger('listening')
+  t.is(cluster.workers.length,require('os').cpus().length+1)
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  await instance.killWorker(cluster.workers[0]);
+  await sleep(1000);
+  t.is(cluster.workers[0].isKilled,true);
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  await instance.killWorker(cluster.workers[0],true);
+  await sleep(1000);
+  await instance.killWorker(cluster.workers[0]);
+  await sleep(1000);
+  t.is(cluster.workers[0].isKilled,true);
+  t.is(cluster.workers[0].hasGracefulReload,true);
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
   let instance = new Master();
-  await instance.forkWorkers({isAgent:true});
-  console.log(cluster.workers);
-  // cluster.trigger('exit');
-  // t.is(cluster.workers.length,require('os').cpus().length)
+  await instance.forkWorkers();
+  instance.forceReloadWorkers();
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  cluster.workers[0].state = 'disconnected';
+  instance.forceReloadWorkers();
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  instance.forceReloadWorkers();
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+  const cluster = require('cluster');
+  const Master = getMaster();
+  let instance = new Master({enableAgent:true});
+  await instance.forkWorkers();
+  cluster.workers = [];
+  instance.forceReloadWorkers();
 });
