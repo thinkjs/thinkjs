@@ -1,5 +1,4 @@
 'use strict';
-import contentType from 'content-type'
 /**
  * validate post data
  * @type {}
@@ -25,14 +24,6 @@ export default class extends think.middleware.base {
         http.end();
         return think.prevent();
       }
-    }
-    try {
-      contentType.parse(http.req.headers['content-type'])
-    } catch (e) {
-      think.log(`inValid content-type ${http.req.headers['content-type']}`)
-      http.res.statusCode = 400;
-      http.end(`${e}`);
-      return think.prevent();
     }
   }
 }
