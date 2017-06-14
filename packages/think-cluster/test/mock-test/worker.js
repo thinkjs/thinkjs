@@ -66,15 +66,15 @@ function mockCluster(){
     }
   })
 }
-
-const defaultConfig = {
-  server:{
-    address:'http://localhost:8080'
-  },
-  onUnhandledRejection:(e)=>{
-    console.log(e);
-  }
-};
+//
+// const defaultConfig = {
+//   server:{
+//     address:'http://localhost:8080'
+//   },
+//   onUnhandledRejection:(e)=>{
+//     console.log('aaaa');
+//   }
+// };
 
 function mockAssert(assertCallParams = []) {
   mock('assert', (type, desc) => {
@@ -83,12 +83,35 @@ function mockAssert(assertCallParams = []) {
 }
 
 test.serial('normal case', async t => {
+  let unhandledRejectionDid = false;
+  const config = {
+    server:{
+      address:'http://localhost:8080'
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    }
+  };
   const cluster = require('cluster');
   const Worker = getWorker();
-  let instance = new Worker(defaultConfig);
+  let instance = new Worker(config);
   instance.captureEvents();
 
-  new Promise((resolve, reject) => {
-    throw new Error('test')
-  })
+  const loudRejection = require('loud-rejection')
+
+  loudRejection()
+
+  let myp
+
+  setTimeout(function () {
+    myp = new Promise(function (resolve, reject) {
+      setTimeout(reject, 100, new Error('Silence me'))
+    })
+  }, 100)
+  setTimeout(function () {
+    myp.catch(function (err) {
+      t.is(unhandledRejectionDid,true)
+    })
+  }, 300)
+  await sleep(2000)
 });
