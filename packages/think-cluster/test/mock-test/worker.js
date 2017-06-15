@@ -14,6 +14,7 @@ function getWorker() {
 
 function mockCluster(){
   mock('cluster',{
+    worker:{},
     workers:[],
     fork(env={}){
       let worker = {
@@ -57,6 +58,7 @@ function mockCluster(){
       worker = Object.assign(worker,env);
       let cluster = require('cluster');
       cluster.workers.push(worker)
+      cluster.worker = worker;
       return worker;
     },
     trigger(evtName,args){
@@ -113,5 +115,71 @@ test.serial('normal case', async t => {
       t.is(unhandledRejectionDid,true)
     })
   }, 300)
+
   await sleep(2000)
+
+
 });
+
+test.serial('normal case', async t => {
+  mockCluster();
+
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    }
+  };
+
+  const cluster = require('cluster');
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  cluster.fork();
+  instance.disconnectWorker(true);
+  cluster.trigger('message','think-graceful-fork');
+  config.server.trigger('request')
+
+  console.log(config)
+
+  t.is(config.server.res.Connection,'close');
+});
+
+
+
+// test.serial('onUncaughtException case', async t => {
+//   const config = {
+//     server:{
+//       address:'http://localhost:8080'
+//     },
+//     onUncaughtException:(e)=>{
+//       t.is(true,true)
+//       t.end()
+//       console.log('aaa')
+//     }
+//   };
+//   const Worker = getWorker();
+//   let instance = new Worker(config);
+//   instance.captureEvents();
+//   await sleep(1000)
+//   setTimeout(()=>{
+//     xxx();
+//   },200)
+//   await sleep(2000)
+// });
