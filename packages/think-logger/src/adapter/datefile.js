@@ -11,7 +11,7 @@ module.exports = class DateFileLogger extends Base {
     //combine config for date file appender, common config for log4js
     config = Object.assign({
       appenders: [
-        {type: 'file', level, filename, pattern, alwaysIncludePattern, absolute, layouts}
+        {type: 'dateFile', level, filename, pattern, alwaysIncludePattern, absolute, layouts}
       ]
     }, lConfig);
 
