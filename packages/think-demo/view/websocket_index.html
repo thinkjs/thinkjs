@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <script src="https://s1.ssl.qhres.com/static/c44b5e29d3c4f289.js"></script>
+</head>
+<body>
+<script>
+  var socket = io('http://127.0.0.1:8360/');
+  socket.on('connect', function(){
+      console.log('connect');
+      socket.emit('test', {name: 'test'})
+  });
+  socket.on('hello', function(data){
+    console.log('data', data)
+  });
+  socket.on('disconnect', function(){
+      console.log('disconnect');
+  });
+</script>
+</body>
+</html>

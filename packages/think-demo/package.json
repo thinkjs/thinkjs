@@ -30,7 +30,9 @@
     "think-view": "^1.0.0",
     "think-view-nunjucks": "^1.0.1",
     "think-watcher": "^3.0.0",
-    "thinkjs": "thinkjs/thinkjs#3.0"
+    "thinkjs": "thinkjs/thinkjs#3.0",
+    "think-websocket": "thinkjs/think-websocket",
+    "think-websocket-socket.io": "thinkjs/think-websocket-socket.io"
   },
   "devDependencies": {
     "think-inspect": "0.0.2",

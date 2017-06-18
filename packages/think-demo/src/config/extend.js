@@ -3,6 +3,7 @@ const fetch = require('think-fetch');
 const model = require('think-model');
 const createI18n = require('think-i18n');
 const path = require('path');
+const websocket = require('think-websocket');
 
 var regCn = /^cn.*$/;
 var regEn = /^en.*$/;
@@ -29,6 +30,7 @@ module.exports = [
   view, //make application support view
   fetch, // HTTP request client
   model(think.app),
-  i18n
+  i18n,
+  websocket(think.app)
 ];
 
