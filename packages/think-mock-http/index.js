@@ -23,8 +23,15 @@ module.exports = function(reqArgs, app){
       reqArgs = {url: reqArgs};
     }
   }
-  const socket = new Readable();
-  const req = new IncomingMessage(socket);
+  let req;
+  //has request in reqArgs
+  if(reqArgs.req){
+    req = Object.assign({}, reqArgs.req);
+    delete reqArgs.req;
+  }else{
+    const socket = new Readable();
+    req = new IncomingMessage(socket);
+  }
   const args = Object.assign({}, defaultArgs, reqArgs);
   for(let name in args){
     req[name] = args[name];
