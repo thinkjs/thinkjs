@@ -11,18 +11,51 @@ module.exports = app => {
   return {
     context: {
       get data(){
-
+        return this.req.data;
       },
       get socket(){
-        
+        return this.req.socket;
+      },
+      /**
+       * is websocket request
+       */
+      get isWebsocket(){
+        return this.isMethod('WEBSOCKET');
+      },
+      /**
+       * emit an event
+       */
+      emit: function(event, data) {
+        this.res.statusCode = 200;
+        this.socket.emit(event, data);
+      },
+      /**
+       * broadcast event
+       */
+      broadcast: function(event, data, containSelf) {
+        this.res.statusCode = 200;
+        if(containSelf){
+          this.socket.emit(event, data);
+        }
+        this.socket.broadcast.emit(event, data);
       }
     },
     controller: {
-      get isWebsocket(){
-        return this.isMethod('websocket');
+      get data(){
+        return this.ctx.data;
       },
-      emit: () => {},
-      broadcast: () => {}
+      get socket(){
+        return this.ctx.socket;
+      },
+      get isWebsocket(){
+        return this.ctx.isWebsocket;
+      },
+      emit: function(event, data) {
+        return this.ctx.emit(event, data);
+      },
+      broadcast: function(event, data) {
+        return this.ctx.broadcast(event, data);
+      }
     }
   }
 }
