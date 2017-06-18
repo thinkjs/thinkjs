@@ -23,7 +23,7 @@ module.exports = function(reqArgs, app){
       reqArgs = {url: reqArgs};
     }
   }
-  let req;
+  let req = null;
   //has request in reqArgs
   if(reqArgs.req){
     req = Object.assign({}, reqArgs.req);
@@ -31,11 +31,17 @@ module.exports = function(reqArgs, app){
   }else{
     req = new IncomingMessage(new Readable());
   }
+  let res = null;
+  if(reqArgs.res){
+    res = reqArgs.res;
+    delete reqArgs.res;
+  }else{
+    res = new ServerResponse(req);
+  }
   const args = Object.assign({}, defaultArgs, reqArgs);
   for(let name in args){
     req[name] = args[name];
   }
-  const res = new ServerResponse(req);
   //rewrite end method, exit process when invoke end method
   res.end = msg => {
     console.log(msg);
