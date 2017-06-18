@@ -34,16 +34,11 @@ module.exports = class SocketIO {
   mockRequst(url, data, socket){
     if(url[0] !== '/') url = `/${url}`;
     let request = socket.request;
-    if(!request.res){
-      let args = {url, data, socket};
-      return mockHttp(args, this.app);
-    }else{
-      request.url = url;
-      request.method = 'WEBSOCKET';
-      request.data = data;
-      let fn = this.app.callback();
-      return fn(request, request.res);
+    let args = {res: socket.request, url, data, socket, io: this.io, method: 'WEBSOCKET'};
+    if(request.res){
+      args.res = request.res;
     }
+    return mockHttp(args, this.app);
   }
   /**
    * register socket
