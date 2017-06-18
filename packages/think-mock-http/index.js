@@ -29,8 +29,7 @@ module.exports = function(reqArgs, app){
     req = Object.assign({}, reqArgs.req);
     delete reqArgs.req;
   }else{
-    const socket = new Readable();
-    req = new IncomingMessage(socket);
+    req = new IncomingMessage(new Readable());
   }
   const args = Object.assign({}, defaultArgs, reqArgs);
   for(let name in args){
