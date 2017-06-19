@@ -190,7 +190,7 @@ test('i18n will return i18n object not match locales for moment and numeral', t=
   var moment = {locale(a){this.locale = a;}};
   var numeral = {locale(a){this.locale = a;}};
   var jedParam;
-  var jed = function(param) {jedParam = param;};
+  var jed = function(param) {jedParam = param; this.gettext=function(key){return key}};
   mock('moment', moment);
   mock('numeral', numeral);
   mock('jed', jed);
@@ -204,18 +204,18 @@ test('i18n will return i18n object not match locales for moment and numeral', t=
   t.is(moment.locale, 'en');
   t.is(numeral.locale, 'en');
   t.deepEqual(jedParam, {value: 'value', locale_data: {}});
-  t.deepEqual(result, {
-    moment,
-    numeral,
-    jed: (new jed(jedParam))
-  });
+
+  t.is(result.__('some key'), 'some key');
+  t.is(result.__.moment, moment);
+  t.is(result.__.numeral, numeral);
+  t.deepEqual(result.__.jed, new jed(jedParam));
 });
 
 test('i18n will return i18n object not match locales for moment and numeral no jedOptions', t=>{
   var moment = {locale(a){this.locale = a;}};
   var numeral = {locale(a){this.locale = a;}};
   var jedParam;
-  var jed = function(param) {jedParam = param;};
+  var jed = function(param) {jedParam = param; this.gettext=function(key){return key}};
   mock('moment', moment);
   mock('numeral', numeral);
   mock('jed', jed);
@@ -229,11 +229,12 @@ test('i18n will return i18n object not match locales for moment and numeral no j
   t.is(moment.locale, 'en');
   t.is(numeral.locale, 'en');
   t.deepEqual(jedParam, {locale_data: {}});
-  t.deepEqual(result, {
-    moment,
-    numeral,
-    jed: (new jed(jedParam))
-  });
+
+  t.is(result.__('some key'), 'some key');
+
+  t.is(result.__.moment, moment);
+  t.is(result.__.numeral, numeral);
+  t.deepEqual(result.__.jed, new jed(jedParam));
 });
 
 
@@ -241,7 +242,7 @@ test('i18n will return i18n object and change locale accordingly', t=>{
   var moment = {locale(a){this.locale = a;}};
   var numeral = {locale(a){this.locale = a;}};
   var jedParam;
-  var jed = function(param) {jedParam = param;};
+  var jed = function(param) {jedParam = param; this.gettext=function(key){return key}};
   mock('moment', moment);
   mock('numeral', numeral);
   mock('jed', jed);
@@ -255,11 +256,11 @@ test('i18n will return i18n object and change locale accordingly', t=>{
   t.is(moment.locale, 'someLocale');
   t.is(numeral.locale, 'someLocale');
   t.deepEqual(jedParam, {locale_data: {}});
-  t.deepEqual(result, {
-    moment,
-    numeral,
-    jed: (new jed(jedParam))
-  });
+
+  t.is(result.__('some key'), 'some key');
+  t.is(result.__.moment, moment);
+  t.is(result.__.numeral, numeral);
+  t.deepEqual(result.__.jed, new jed(jedParam));
 });
 
 

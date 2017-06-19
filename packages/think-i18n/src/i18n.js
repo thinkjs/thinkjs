@@ -165,9 +165,13 @@ module.exports = class i18n {
           } else {
             numeral.locale('en');
           }
-          i18n = {jed, moment, numeral};
-
-          return i18n;
+          i18n = function(key) {
+            return jed.gettext(key);
+          }
+          i18n.jed = jed;
+          i18n.moment = moment;
+          i18n.numeral = numeral;
+          return {__: i18n};
         }
       }
     }

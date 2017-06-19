@@ -63,10 +63,10 @@ module.exports = [
 
 ```js
 
-{{ jed.gettext('some key') }}
-{{ jed.dgettext('domain', 'some key') }}
-{{ moment().format('llll') }}
-{{ numeral(1000).format('currency') }}numberFormat.formats)
+{{ __('some key') }}
+{{ __.jed.dgettext('domain', 'some key') }}
+{{ __.moment().format('llll') }}
+{{ __.numeral(1000).format('currency') }}numberFormat.formats)
 
 ```
 
@@ -123,8 +123,8 @@ module.exports = [
 
 总是使用自定义的格式，这样就可以通过配置定制不用locale下有不同的输出格式。同时也方便后期的维护，比如某天我们需要把所有长日期显示修改格式，不用到每个文件里面取修改，只需要改配置就好，相当于一层抽象。
 
-  - 使用 **moment().format('llll')** 而不是 moment().format('YYYY-MM-dd HH:mm').
-  - 使用 **numeral(value).format('customFormat')** 而不是 numeral(value).format('00.00$'), [Numeral](https://github.com/adamwdraper/Numeral-js) 是不支持对每个 locale 自定义格式的，类库里面通过额外的代码支持了这个功能（具体可以看源码），配置方式参考 locale.numeralFormat.formats。
+  - 使用 **__.moment().format('llll')** 而不是 moment().format('YYYY-MM-dd HH:mm').
+  - 使用 **__.numeral(value).format('customFormat')** 而不是 numeral(value).format('00.00$'), [Numeral](https://github.com/adamwdraper/Numeral-js) 是不支持对每个 locale 自定义格式的，类库里面通过额外的代码支持了这个功能（具体可以看源码），配置方式参考 locale.numeralFormat.formats。
 
 
 #### 注

@@ -71,10 +71,10 @@ module.exports = {
 
 ```js
 
-{{ jed.gettext('some key') }} translation
-{{ jed.dgettext('domain', 'some key') }} translation in specify domain
-{{ moment().format('llll') }} datetime format
-{{ numeral(1000).format('currency') }} number format (see numberFormat.formats)
+{{ __('some key') }} translation
+{{ __.jed.dgettext('domain', 'some key') }} translation in specify domain
+{{ __.moment().format('llll') }} datetime format
+{{ __.numeral(1000).format('currency') }} number format (see numberFormat.formats)
 
 ```
 
@@ -114,8 +114,8 @@ module.exports = {
   ```
 
 We should always use customize format.
-  - use **moment().format('llll')**  instead of moment().format('YYYY-MM-dd HH:mm').
-  - use **numeral(value).format('customFormat')** instead of numeral(value).format('00.00$'),
+  - use **__.moment().format('llll')**  instead of moment().format('YYYY-MM-dd HH:mm').
+  - use **__.numeral(value).format('customFormat')** instead of numeral(value).format('00.00$'),
 
 
 #### Notice
