@@ -13,31 +13,33 @@ const defaultOptions = {
   prefix: [], // url prefix
   suffix: ['.html'], // url suffix
   enableDefaultRouter: true,
-  subdomainOffset: 2, 
+  subdomainOffset: 2,
   subdomain: {}, //subdomain
   denyModules: [] //deny module, enable in multi module mode
 }
 
 /**
  * format routers
- * @param {Array|Object} routers 
+ * @param {Array|Object} routers
  */
 const formatRouters = routers => {
   if(helper.isArray(routers)){
     return routers.map(item => {
       let query = [];
+      console.log('---', item[0], query);
       let match = pathToRegexp(item[0], query);
       return {
-        match, 
-        path: item[1], 
-        method: item[2] && item[2].toUpperCase(), 
-        options: item[3] || {}, 
+        match,
+        path: item[1],
+        method: item[2] && item[2].toUpperCase(),
+        options: item[3] || {},
         query
       };
     });
   }
   for(let m in routers){
     if(routers[m].match){
+      console.log('+++', routers[m].match);
       routers[m].match = pathToRegexp(routers[m].match);
     }
     routers[m].rules = formatRouters(routers[m].rules);
@@ -66,10 +68,11 @@ module.exports = function parseRouter(options, app){
   //format routers when app ready
   app.once('appReady', () => {
     debug('router listen appReady event');
+    console.log('appReady---', app.routers);
     app.routers = formatRouters(app.routers);
   });
   return (ctx, next) => {
     let instance = new Router(ctx, next, options, app);
     return instance.run();
-  } 
+  }
 };
