@@ -208,7 +208,6 @@ test('i18n will return i18n object not match locales for moment and numeral', t=
   t.is(result.__('some key'), 'some key');
   t.is(result.__.moment, moment);
   t.is(result.__.numeral, numeral);
-  t.deepEqual(result.__.jed, new jed(jedParam));
 });
 
 test('i18n will return i18n object not match locales for moment and numeral no jedOptions', t=>{
@@ -234,7 +233,6 @@ test('i18n will return i18n object not match locales for moment and numeral no j
 
   t.is(result.__.moment, moment);
   t.is(result.__.numeral, numeral);
-  t.deepEqual(result.__.jed, new jed(jedParam));
 });
 
 
@@ -260,7 +258,6 @@ test('i18n will return i18n object and change locale accordingly', t=>{
   t.is(result.__('some key'), 'some key');
   t.is(result.__.moment, moment);
   t.is(result.__.numeral, numeral);
-  t.deepEqual(result.__.jed, new jed(jedParam));
 });
 
 
