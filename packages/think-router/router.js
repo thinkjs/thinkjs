@@ -123,15 +123,16 @@ class Router {
       if(!match) return;
       assert(helper.isArray(item.query), 'router.query must be an array');
       let query = {};
+      let pathname = item.path;
       item.query.forEach((queryItem, index) => {
         if(/^\d+$/.test(queryItem.name)){
           let index = parseInt(queryItem.name) + 1;
-          item.path = item.path.replace(`:${index}`, match[index]);
+          pathname = pathname.replace(`:${index}`, match[index]);
         }else{
           query[queryItem.name] = match[index + 1];
         }
       });
-      rule = Object.assign({}, item, {query});
+      rule = Object.assign({}, item, {query, path: pathname});
       return true;
     });
     return rule;
