@@ -1,5 +1,5 @@
 module.exports = {
-  localeId: 'en-US',
+  localeId: 'en-us',
   numeralFormat: {
     delimiters: {
       thousands: ',',

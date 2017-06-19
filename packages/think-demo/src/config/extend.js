@@ -9,19 +9,19 @@ var regCn = /^cn.*$/;
 var regEn = /^en.*$/;
 const i18n =  createI18n({
   i18nFolder: path.resolve(__dirname, './locales'),
-  defaultLocale: 'zh-CN',
+  defaultLocale: 'zh-cn',
   getLocale: {by: 'query', name: 'locale'},
   localesMapping(locales) {
     for(l of locales) {
       if(regCn.test(l)) {
-        return 'zh-CN';
+        return 'zh-cn';
       }
       if(regEn.test(l)) {
-        return 'en-US';
+        return 'en-us';
       }
     }
     // default
-    return 'zh-CN';
+    return 'zh-cn';
   },
   // debugLocale: 'cn'
 })
