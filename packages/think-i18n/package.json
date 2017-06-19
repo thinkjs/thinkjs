@@ -1,6 +1,6 @@
 {
   "name": "think-i18n",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "i18n solution in thinkjs 3.0",
   "main": "index.js",
   "scripts": {
