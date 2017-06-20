@@ -24,7 +24,8 @@
   "main": "index.js",
   "dependencies": {
     "debug": "^2.6.3",
-    "think-helper": "^1.0.2"
+    "think-helper": "^1.0.2",
+    "think-mysql": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.2",
