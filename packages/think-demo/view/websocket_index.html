@@ -14,7 +14,10 @@
       socket.emit('test', {name: 'test'})
   });
   socket.on('hello', function(data){
-    console.log('data', data)
+    console.log('hello', data)
+  });
+  socket.on('user', function(data){
+    console.log('user', data)
   });
   socket.on('disconnect', function(){
       console.log('disconnect');

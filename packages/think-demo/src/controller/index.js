@@ -1,5 +1,6 @@
 module.exports = class IndexController extends think.Controller {
   __before(){
+    console.log
   }
   async indexAction(){
     var {jed, numeral, moment} = this.i18n();
