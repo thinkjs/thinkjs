@@ -27,8 +27,7 @@ class MysqlSession {
     this.mysql = mysql.getInstance(this.options);
     this.ctx = ctx;
     this.data = {};
-    this.tableName = options.prefix ? `${(options.prefix || '')}_session` : 'session';
-
+    this.tableName = (options.prefix || '') + 'session';
   }
 
   [initSessionData]() {
