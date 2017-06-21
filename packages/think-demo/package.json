@@ -32,7 +32,8 @@
     "think-watcher": "^3.0.0",
     "thinkjs": "thinkjs/thinkjs#3.0",
     "think-websocket": "thinkjs/think-websocket",
-    "think-websocket-socket.io": "thinkjs/think-websocket-socket.io"
+    "think-websocket-socket.io": "thinkjs/think-websocket-socket.io",
+    "think-session-mysql": "thinkjs/think-session-mysql"
   },
   "devDependencies": {
     "think-inspect": "0.0.2",
