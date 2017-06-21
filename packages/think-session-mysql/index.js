@@ -23,11 +23,12 @@ const initSessionData = Symbol('think-session-mysql-init');
 class MysqlSession {
   constructor(options = {}, ctx) {
     assert(options.cookie, '.cookie required');
-    assert(options.tableName, '.tableName required');
     this.options = options;
     this.mysql = mysql.getInstance(this.options);
     this.ctx = ctx;
     this.data = {};
+    this.tableName = options.prefix ? `${(options.prefix || '')}_session` : 'session';
+
   }
 
   [initSessionData]() {
@@ -39,9 +40,10 @@ class MysqlSession {
     }
 
     this.initPromise = this.mysql.query({
-      sql: `SELECT * FROM ${this.options.tableName} WHERE cookie = ? `,
+      sql: `SELECT * FROM ${this.tableName} WHERE cookie = ? `,
       values: [this.options.cookie]
     }).then(row => {
+      if(row.length === 0) return;
       let content = row[0].data;
       content = JSON.parse(content);
       if (helper.isEmpty(content)) return;
@@ -50,7 +52,7 @@ class MysqlSession {
       err => console.log(err)
     );
 
-    //flush session when request finish
+    // flush session when request finish
     this.ctx.res.once('finish', () => {
       this.flush();
     });
@@ -85,18 +87,18 @@ class MysqlSession {
       this.status = 0;
       // delete data
       this.mysql.execute({
-        sql: `DELETE FROM ${this.options.tableName} WHERE cookie=?`,
+        sql: `DELETE FROM ${this.tableName} WHERE cookie=?`,
         values: [this.options.cookie]
       })
     } else if (this.status === 1) {
       this.status = 0;
       // insert or update data
       const maxAge = this.options.maxAge;
-      let fields = [this.options.cookie, JSON.stringify(this.data), maxAge? helper.ms(maxAge) : undefined];
+      let fields = [this.options.cookie, JSON.stringify(this.data), maxAge ? helper.ms(maxAge) : undefined];
       this.mysql.execute({
-        sql: `INSERT INTO ${this.options.tableName} (cookie, data, expire) VALUES(?, ?, ?) 
-            ON DUPLICATE KEY UPDATE cookie=?, data=?, expire=?`,
-        values: [...fields,...fields]
+        sql: `INSERT INTO ${this.tableName} (cookie, data, expire) VALUES(?, ?, ?) 
+            ON DUPLICATE KEY UPDATE data=?, expire=?`,
+        values: [...fields, fields[1], fields[2]]
       })
     }
     return Promise.resolve();
