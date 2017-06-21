@@ -3,8 +3,22 @@ const helper = require('think-helper');
 const mysql = require('think-mysql');
 const initSessionData = Symbol('think-session-mysql-init');
 
+/*
+ DROP TABLE IF EXISTS `think_session`;
+ CREATE TABLE `think_session` (
+ `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+ `cookie` varchar(255) NOT NULL DEFAULT '',
+ `data` text,
+ `expire` bigint(11) NOT NULL,
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `cookie` (`cookie`),
+ KEY `expire` (`expire`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ */
+
 /**
  * use mysql to store session
+ *
  */
 class MysqlSession {
   constructor(options = {}, ctx) {
@@ -13,6 +27,7 @@ class MysqlSession {
     this.options = options;
     this.mysql = mysql.getInstance(this.options);
     this.ctx = ctx;
+    this.data = {};
   }
 
   [initSessionData]() {
@@ -25,7 +40,6 @@ class MysqlSession {
 
     this.initPromise = this.mysql.query({
       sql: `SELECT * FROM ${this.options.tableName} WHERE cookie = ? `,
-      timeout: 5000,
       values: [this.options.cookie]
     }).then(row => {
       let content = row[0].data;
@@ -37,9 +51,9 @@ class MysqlSession {
     );
 
     //flush session when request finish
-    // this.ctx.res.once('finish', () => {
-    //   this.flush();
-    // });
+    this.ctx.res.once('finish', () => {
+      this.flush();
+    });
 
     return this.initPromise;
   }
@@ -67,12 +81,23 @@ class MysqlSession {
   }
 
   flush() {
-    if(this.status === -1){
+    if (this.status === -1) {
       this.status = 0;
       // delete data
-    }else if(this.status === 1){
+      this.mysql.execute({
+        sql: `DELETE FROM ${this.options.tableName} WHERE cookie=?`,
+        values: [this.options.cookie]
+      })
+    } else if (this.status === 1) {
       this.status = 0;
-      // insert data
+      // insert or update data
+      const maxAge = this.options.maxAge;
+      let fields = [this.options.cookie, JSON.stringify(this.data), maxAge? helper.ms(maxAge) : undefined];
+      this.mysql.execute({
+        sql: `INSERT INTO ${this.options.tableName} (cookie, data, expire) VALUES(?, ?, ?) 
+            ON DUPLICATE KEY UPDATE cookie=?, data=?, expire=?`,
+        values: [...fields,...fields]
+      })
     }
     return Promise.resolve();
   }
