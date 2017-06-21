@@ -23,7 +23,7 @@
     "node-notifier": "^5.0.2",
     "think-cache-file": "~1.0.8",
     "think-fetch": "^1.0.0",
-    "think-i18n": "~1.0.2",
+    "think-i18n": "~1.1.2",
     "think-model": "*",
     "think-session-cookie": "thinkjs/think-session-cookie",
     "think-session-file": "thinkjs/think-session-file",
@@ -32,7 +32,8 @@
     "think-watcher": "^3.0.0",
     "thinkjs": "thinkjs/thinkjs#3.0",
     "think-websocket": "thinkjs/think-websocket",
-    "think-websocket-socket.io": "thinkjs/think-websocket-socket.io"
+    "think-websocket-socket.io": "thinkjs/think-websocket-socket.io",
+    "think-session-mysql": "thinkjs/think-session-mysql"
   },
   "devDependencies": {
     "think-inspect": "0.0.2",

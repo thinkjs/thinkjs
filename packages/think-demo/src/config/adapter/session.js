@@ -1,9 +1,10 @@
 const path = require('path');
 const cookieSession = require('think-session-cookie');
 const fileSession = require('think-session-file');
+const mysqlSession = require('think-session-mysql');
 
 module.exports = {
-  type: 'file',
+  type: 'mysql',
   common: {
     cookie: {
       name: 'test',
@@ -22,5 +23,12 @@ module.exports = {
   file: {
     handle: fileSession,
     sessionPath: path.join(think.ROOT_PATH, 'runtime/session')
-  }
+  },
+  mysql: {
+    handle: mysqlSession,
+    prefix:'think',
+    database:'think_test',
+    user:'root',
+    password:'Hello@123'
+  },
 }
