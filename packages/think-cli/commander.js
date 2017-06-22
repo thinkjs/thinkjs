@@ -210,8 +210,8 @@ class Commander {
       '<APP_NAME>': this.getAppName()
     });
 
-    this.copyFile('eslintrc.log', this.projectRootPath + '/.eslintrc');
-    this.copyFile('gitignore.log', this.projectRootPath + '/.gitignore');
+    this.copyFile('eslintrc', this.projectRootPath + '/.eslintrc');
+    this.copyFile('gitignore', this.projectRootPath + '/.gitignore');
     this.copyFile('README.md', this.projectRootPath + '/README.md');
 
 
