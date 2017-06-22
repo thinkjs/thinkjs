@@ -3,7 +3,7 @@ const mock = require('mock-require');
 const path = require('path');
 const helper = require('think-helper');
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
+const pmock = require('pmock');
 function getWorker() {
   return mock.reRequire('../../lib/worker');
 }
@@ -14,7 +14,17 @@ function getWorker() {
 
 function mockCluster(){
   mock('cluster',{
-    worker:{},
+    worker:{
+      send(){},
+      once(){},
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      trigger(evtName,args){
+        this[evtName](args)
+      },
+      disconnect(){}
+    },
     workers:[],
     fork(env={}){
       let worker = {
@@ -68,7 +78,33 @@ function mockCluster(){
     }
   })
 }
-//
+
+function mockProcess() {
+  process.on = (evtName,cb)=>{
+    process[evtName] = cb;
+  }
+
+  process.once = (evtName,cb)=>{
+    process[evtName] = cb;
+  }
+
+  process.exit = ()=>{
+    process.isKilled = true
+  }
+
+  process.trigger = (evtName,args={}) => {
+    process['is'+evtName] = true;
+    process[evtName](args);
+
+    // if(evtName === 'uncaughtException'){
+    //   process[evtName](args);
+    // }else if(evtName === 'message'){
+    //   process[evtName](args)
+    // }
+  }
+}
+
+
 // const defaultConfig = {
 //   server:{
 //     address:'http://localhost:8080'
@@ -156,30 +192,358 @@ test.serial('normal case', async t => {
   cluster.trigger('message','think-graceful-fork');
   config.server.trigger('request')
 
-  console.log(config)
-
   t.is(config.server.res.Connection,'close');
 });
 
 
+test.serial('normal case', async t => {
+  mockProcess();
+  mockCluster();
 
-// test.serial('onUncaughtException case', async t => {
-//   const config = {
-//     server:{
-//       address:'http://localhost:8080'
-//     },
-//     onUncaughtException:(e)=>{
-//       t.is(true,true)
-//       t.end()
-//       console.log('aaa')
-//     }
-//   };
-//   const Worker = getWorker();
-//   let instance = new Worker(config);
-//   instance.captureEvents();
-//   await sleep(1000)
-//   setTimeout(()=>{
-//     xxx();
-//   },200)
-//   await sleep(2000)
-// });
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    },
+    processKillTimeout:null
+  };
+
+  const cluster = require('cluster');
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  cluster.fork();
+  instance.disconnectWorker(false);
+});
+
+test.serial('normal case', async t => {
+  mockCluster();
+
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    }
+  };
+
+  const cluster = require('cluster');
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  cluster.fork();
+  process.env.THINK_WORKERS = 1;
+  t.is(+instance.getWorkers(),1)
+});
+
+test.serial('onUncaughtException case', async t => {
+  mockCluster();
+  mockProcess();
+  // let triggerException = false;
+
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    },
+  };
+
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  instance.captureEvents();
+
+  process.trigger('uncaughtException');
+  t.is(process['isuncaughtException'],true)
+
+});
+
+test.serial('onUncaughtException case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    },
+    debug:true
+  };
+
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  instance.captureEvents();
+
+  process.trigger('uncaughtException');
+  t.is(process['isuncaughtException'],true)
+});
+
+test.serial('captureReloadSignal case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    onUnhandledRejection:(e)=>{
+      unhandledRejectionDid = true;
+    },
+  };
+
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  instance.captureEvents();
+
+  process.trigger('message','think-reload-signal');
+  process.trigger('message','something');
+  t.is(process['ismessage'],true)
+});
+
+test.serial('closeServer case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+  };
+
+  const Worker = getWorker();
+  let instance = new Worker(config);
+
+  instance.closeServer();
+
+  await sleep(1000)
+
+  t.is(process.isKilled,undefined)
+});
+
+test.serial('closeServer case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    processKillTimeout:50
+  };
+
+  const Worker = getWorker();
+  let instance = new Worker(config);
+
+  instance.closeServer();
+
+  await sleep(1000)
+
+  t.is(process.isKilled,true)
+});
+
+test.serial('closeServer case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(){
+
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    processKillTimeout:50
+  };
+
+  const Worker = getWorker();
+  let instance = new Worker(config);
+
+  instance.closeServer();
+
+  await sleep(1000)
+
+  t.is(process.isKilled,true)
+});
+
+test.serial('closeServer case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(cb){
+        cb()
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    processKillTimeout:null
+  };
+
+  const cluster = require('cluster');
+  const Worker = getWorker();
+  let instance = new Worker(config);
+
+  instance.closeServer();
+
+  cluster.worker.trigger('disconnect')
+  t.is(process.isKilled,true)
+
+});
+
+test.serial('closeServer case', async t => {
+  mockCluster();
+  mockProcess();
+  const config = {
+    server:{
+      address:'http://localhost:8080',
+      req : {},
+      res : {
+        setHeader(key,value){
+          this[key] = value;
+        }
+      },
+      on(evtName,cb){
+        this[evtName] = cb;
+      },
+      close(cb){
+        cb()
+      },
+      trigger(eveName){
+        this[eveName](this.req,this.res);
+      }
+    },
+    disableKeepAlive:true
+  };
+
+  const cluster = require('cluster');
+  const Worker = getWorker();
+  let instance = new Worker(config);
+  instance.captureEvents()
+});
