@@ -3,7 +3,6 @@ const mock = require('mock-require');
 const path = require('path');
 const helper = require('think-helper');
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-const pmock = require('pmock');
 function getWorker() {
   return mock.reRequire('../../lib/worker');
 }
