@@ -26,7 +26,6 @@ const formatRouters = routers => {
   if(helper.isArray(routers)){
     return routers.map(item => {
       let query = [];
-      console.log('---', item[0], query);
       let match = pathToRegexp(item[0], query);
       return {
         match,
@@ -39,7 +38,6 @@ const formatRouters = routers => {
   }
   for(let m in routers){
     if(routers[m].match){
-      console.log('+++', routers[m].match);
       routers[m].match = pathToRegexp(routers[m].match);
     }
     routers[m].rules = formatRouters(routers[m].rules);
@@ -68,7 +66,6 @@ module.exports = function parseRouter(options, app){
   //format routers when app ready
   app.once('appReady', () => {
     debug('router listen appReady event');
-    console.log('appReady---', app.routers);
     app.routers = formatRouters(app.routers);
   });
   return (ctx, next) => {
