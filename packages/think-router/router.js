@@ -12,7 +12,7 @@ const assert = require('assert');
  *  admin: {
  *    match: '',
  *    rules: [
- *      {match: '', path: '', method: '', query: []}
+ *      ['/index', 'test', 'get']
  *    ]
  *  }
  * }
