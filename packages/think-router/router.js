@@ -124,6 +124,7 @@ class Router {
       assert(helper.isArray(item.query), 'router.query must be an array');
       let query = {};
       let pathname = item.path;
+
       item.query.forEach((queryItem, index) => {
         if(/^\d+$/.test(queryItem.name)){
           let index = parseInt(queryItem.name) + 1;
@@ -131,6 +132,7 @@ class Router {
         }else{
           query[queryItem.name] = match[index + 1];
         }
+
       });
       rule = Object.assign({}, item, {query, path: pathname});
       return true;
@@ -160,7 +162,7 @@ class Router {
     }
     //remove when query value is undefined or empty string
     for(let name in query){
-      if(query[name] === undefined || query[name] === ''){
+      if(query[name] === undefined || query[name].trim() === ''){
         delete query[name];
       }
     }

@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 17:44:52
+* @Last Modified time: 2017-06-25 16:10:37
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -47,9 +47,9 @@ let defaultOptions = {
 
 let defaultCtx = {
   path: '/admin/article/list',
-  module: '',
-  controller: '',
-  action: '',
+  module: '', // think-router set
+  controller: '', // think-router set
+  action: '', // think-router set
   method: 'get',
   redirect: function(path) {
     return Promise.resolve();
@@ -68,48 +68,55 @@ let defaultCtx = {
 
 let defaultApp = {
   once: function(event, cb){
-    setTimeout(cb, 100);
-  },
-  modules: ['admin', 'home'],
-  controllers: {
-    admin: {
-      'article': {},
-    }
-  },
-  routers: {
-    admin: {
-      match: /^\/admin/,
-      rules: [
-        {
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list',
-          method: 'get',
-          query: []
-        }
-      ]
-    }
+    cb();
   }
-};
-
-let defaultOutput = {
-  module: 'admin',
-  controller: 'article',
-  action: 'list'
 };
 
 test.serial.afterEach(t => {
   RESULT = {};
 });
 
+test.serial.cb('options default', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+
 test.serial.cb('options with suffix is empty', t => {
   let options = helper.extend({}, defaultOptions, {
     suffix: []
   });
   let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -121,10 +128,20 @@ test.serial.cb('options with suffix is string', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list.html'
   });
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -136,10 +153,20 @@ test.serial.cb('options with suffix is regexp', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list.html'
   });
-  let app = helper.extend({}, defaultApp, {});
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -151,10 +178,20 @@ test.serial.cb('options with prefix is string', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/thinkjs/admin/article/list'
   });
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT,  {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -166,10 +203,20 @@ test.serial.cb('options with prefix is regexp', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/thinkjs/admin/article/list'
   });
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT,  {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -181,10 +228,20 @@ test.serial.cb('options with prefix is regexp and not match', t => {
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list'
   });
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -194,10 +251,20 @@ test.serial.cb('options without subdomainOffset', t => {
     subdomainOffset: 0
   });
   let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -215,22 +282,19 @@ test.serial.cb('options with subdomain is an Object', t => {
     }
   });
   let app = helper.extend({}, defaultApp, {
-    modules: ['admin', 'home'],
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: '/admin/article/list',
-          method: 'GET',
-          query: []
-        }]
-      }
-    }
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -246,26 +310,24 @@ test.serial.cb('options with subdomain is an Array', t => {
       return ['admin'];
     }
   });
-  let app = helper.extend({}, defaultApp, {
-    modules: ['admin', 'home'],
-    routers: {
-      admin: {
-        match: /^admin/,
-        rules: [{
-          match: /^admin\/article\/list/,
-          path: 'admin/article/list',
-          method: 'GET',
-          query: []
-        }]
-      }
-    }
+  let app = helper.extend({}, defaultApp,{
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
+
 
 test.serial.cb('options with subdomain not match ', t => {
   let options = {
@@ -280,39 +342,19 @@ test.serial.cb('options with subdomain not match ', t => {
     }
   });
   let app = helper.extend({}, defaultApp, {
-    modules: ['admin', 'home'],
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list/',
-          method: 'GET',
-          query: []
-        }]
-      }
-    }
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
-    t.end();
-  });
-});
-
-test.serial.cb('router\'s match is null & enableDefaultRouter is true', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: null
-      }
-    }
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT,  {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
     t.end();
   });
 });
@@ -323,11 +365,9 @@ test.serial.cb('router\'s match is null & enableDefaultRouter is false', t => {
   });
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: null
-      }
-    }
+    modules: [],
+    controllers: {},
+    routers: []
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
@@ -336,27 +376,141 @@ test.serial.cb('router\'s match is null & enableDefaultRouter is false', t => {
   });
 });
 
-test.serial.cb('router with match test failed', t => {
+
+test.serial.cb('modules length > 0, but rules is an Array', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('method = CLI', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    method: 'CLI'
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'GET']
+    ]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('rules with specialMethods', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      ['^\/admin\/article\/list', 'admin/article/list', 'REDIRECT']
+    ]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('app.routers is An Object', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
     routers: {
       admin: {
-        match: /^\/matchnothing/
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin/article/list?page=1',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
       }
     }
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list',
+      query: {
+        page: '1'
+      }
+    });
     t.end();
   });
 });
 
-test.serial.cb('router\'s rules is null', t => {
+test.serial.cb('app.routers is An Object not match', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: {
+      admin: {
+        match: /^\/usr/,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin/article/list?page=1',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('app.routers is An Object match and rules = null', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
     routers: {
       admin: {
         match: /^\/admin/,
@@ -366,53 +520,31 @@ test.serial.cb('router\'s rules is null', t => {
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
     t.end();
   });
 });
 
-test.serial.cb('rules is an Array and not match', t => {
+test.serial.cb('app.routers is An Object without match', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
-    routers: [{
-      match: /^\/admin\/article\/matchnothing/,
-      path: 'admin/article/list/',
-      method: 'GET',
-      query: []
-    }]
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
-    t.end();
-  });
-});
-
-test.serial.cb('rules method not equal ctx method', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx, { method: 'post' });
-  let app = helper.extend({}, defaultApp);
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
-    t.end();
-  });
-});
-
-test.serial.cb('rules method equal rest with controller', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
     routers: {
       admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list/',
-          method: 'REST',
-          query: []
-        }]
+        match: null,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin/article/list',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
       }
     }
   });
@@ -421,27 +553,86 @@ test.serial.cb('rules method equal rest with controller', t => {
     t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
-      action: 'get'
+      action: 'list'
     });
     t.end();
   });
 });
 
-test.serial.cb('rules match with query name is number', t => {
+test.serial.cb('REDIRECT with statusCode', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
-    path: '/admin/article/list/detail',
+    path: '/admin/article/list/'
   });
   let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
     routers: {
       admin: {
         match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list\/(\w+)/,
-          path: 'admin/article/:1',
-          method: 'GET',
-          query: [{ name: 0 }]
-        }]
+        rules: [[
+          /^\/admin\/article\/list\//,
+          'admin/article/list/',
+          'REDIRECT', // method
+          {statusCode: 302}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {});
+    t.end();
+  });
+});
+
+test.serial.cb('REDIRECT without statusCode', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: '/admin/article/list/'
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list\//,
+          'admin/article/list/',
+          'REDIRECT', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {});
+    t.end();
+  });
+});
+
+test.serial.cb('pathToRegexp with name is String', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: '/admin/article/list/123456'
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          '/admin/article/list/:id/',
+          'admin/article/list/:id',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
       }
     }
   });
@@ -450,224 +641,36 @@ test.serial.cb('rules match with query name is number', t => {
     t.deepEqual(RESULT, {
       module: 'admin',
       controller: 'article',
-      action: 'detail'
-    });
-    t.end();
-  });
-});
-
-test.serial.cb('rules match with query name is string', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx, {
-    path: '/admin/article/list/123456',
-  });
-  let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list\/(.*)/,
-          path: 'admin/article/list',
-          method: 'GET',
-          query: [{ name: 'id' }]
-        }]
-      }
-    }
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, helper.extend({}, defaultOutput, {
+      action: 'list',
       query: {
         id: '123456'
       }
-    }));
-    t.end();
-  });
-});
-
-test.serial.cb('rules method equal redirect with statusCode', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list/',
-          method: 'REDIRECT',
-          query: [],
-          statusCode: 302
-        }]
-      }
-    }
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, {});
-    t.end();
-  });
-});
-
-test.serial.cb('rules method equal redirect without statusCode', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list/',
-          method: 'REDIRECT',
-          query: []
-        }]
-      }
-    }
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, {});
-    t.end();
-  });
-});
-
-
-
-
-
-test.serial.cb('rules path with query not empty', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list?page=1',
-          method: 'GET',
-          query: []
-        }]
-      }
-    }
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, helper.extend({}, defaultOutput, {
-      query: {
-        page: '1'
-      }
-    }));
-    t.end();
-  });
-});
-
-test.serial.cb('rules path with query empty', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
-    routers: {
-      admin: {
-        match: /^\/admin/,
-        rules: [{
-          match: /^\/admin\/article\/list/,
-          path: 'admin/article/list?page',
-          method: 'GET',
-          query: []
-        }]
-      }
-    }
-  });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, defaultOutput);
-    t.end();
-  });
-});
-
-test.serial.cb('multiple layer controller and match', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = {
-    modules: ['admin', 'home'],
-    once: function(event, cb){
-      setTimeout(cb, 100)
-    },
-    controllers: {
-      admin: {
-        'article/page': {},
-      }
-    },
-    routers: [{
-      match: /^\/admin\/article\/list/,
-      path: 'admin/article/page/list',
-      method: 'GET',
-      query: [{ name: 0 }]
-    }]
-  };
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, {
-      module: 'admin',
-      controller: 'article/page',
-      action: 'list'
     });
     t.end();
   });
 });
 
-test.serial.cb('rest multiple layer controller and match', t => {
+test.serial.cb('pathToRegexp with name is Number', t => {
   let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = {
-    modules: ['admin', 'home'],
-    once: function(event, cb){
-      setTimeout(cb, 100)
-    },
-    controllers: {
-      admin: {
-        'article/page': {},
-      }
-    },
-    routers: [{
-      match: /^\/admin\/article\/list/,
-      path: 'admin/article/page/list',
-      method: 'REST',
-      query: [{ name: 0 }]
-    }]
-  };
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, {
-      module: 'admin',
-      controller: 'article/page',
-      action: 'get'
-    });
-    t.end();
+  let ctx = helper.extend({}, defaultCtx, {
+    path: '/admin/article/list/123456'
   });
-});
-
-test.serial.cb('multiple layer controller and not match', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = {
-    modules: ['admin', 'home'],
-    once: function(event, cb){
-      setTimeout(cb, 100)
-    },
-    controllers: {
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: {
       admin: {
-        'article/page': {},
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list\/(\w+)/,
+          'admin/article/list/:1',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
       }
-    },
-    routers: [{
-      match: /^\/admin\/article\/matchnothing/,
-      path: 'admin/article/page/list',
-      method: 'GET',
-      query: []
-    }]
-  };
+    }
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
@@ -679,12 +682,152 @@ test.serial.cb('multiple layer controller and not match', t => {
   });
 });
 
-test.serial.cb('use defaultController & defaultAction', t => {
+test.serial.cb('pathToRegexp with query empty', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: '/admin/article/list/ '
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          '/admin/article/list/:id/',
+          'admin/article/list/:id',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('use defaultAction', t => {
   let options = helper.extend({}, defaultOptions);
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin'
   });
-  let app = helper.extend({}, defaultApp);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: []
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'index'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('app.routers is An Object pathname without /', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {},
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    // t.deepEqual(RESULT, {
+    //   module: 'admin',
+    //   controller: 'article',
+    //   action: 'list',
+    //   query: {
+    //     page: '1'
+    //   }
+    // });
+    t.end();
+  });
+});
+
+test.serial.cb('use defaultModule', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: []
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['user'],
+    controllers: {},
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    // t.deepEqual(RESULT, {
+    //   module: 'admin',
+    //   controller: 'article',
+    //   action: 'list',
+    //   query: {
+    //     page: '1'
+    //   }
+    // });
+    t.end();
+  });
+});
+
+test.serial.cb('single controllers', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: []
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {
+      admin: {
+        article: {}
+      }
+    },
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
+  });
 
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
@@ -696,28 +839,30 @@ test.serial.cb('use defaultController & defaultAction', t => {
   });
 });
 
-test.serial.cb('the modules not in app.modules', t => {
+test.serial.cb('multiple controllers', t => {
   let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
-  let app = helper.extend({}, defaultApp, {
-    modules: ['home']
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: []
   });
-
-  parseRouter(options, app)(ctx, next).then(data => {
-    t.deepEqual(RESULT, {
-      module: 'home',
-      controller: 'admin',
-      action: 'article'
-    });
-    t.end();
-  });
-});
-
-test.serial.cb('app modules is empty', t => {
-  let options = helper.extend({}, defaultOptions);
-  let ctx = helper.extend({}, defaultCtx);
   let app = helper.extend({}, defaultApp, {
-    modules: ['admin']
+    modules: ['admin'],
+    controllers: {
+      admin: {
+        '/article/list': {}
+      }
+    },
+    routers: {
+      admin: {
+        match: /^\/admin/,
+        rules: [[
+          /^\/admin\/article\/list/,
+          'admin/article/list',
+          'GET', // method
+          {}, //options
+          [], //query
+        ]]
+      }
+    }
   });
 
   parseRouter(options, app)(ctx, next).then(data => {
@@ -725,6 +870,92 @@ test.serial.cb('app modules is empty', t => {
       module: 'admin',
       controller: 'article',
       action: 'list'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('single controllers2', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: []
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {
+      'article/list': {}
+    },
+    routers: [[
+      /^\/admin\/article\/list/,
+      'article/list',
+      'GET', // method
+      {}, //options
+      [], //query
+    ]]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'article/list',
+      action: 'index'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('single controllers REST 1', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: []
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {
+      'article/list': {}
+    },
+    routers: [[
+      /^\/admin\/article\/list/,
+      'article/list',
+      'REST', // method
+      {}, //options
+      [], //query
+    ]]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'article/list',
+      action: 'get'
+    });
+    t.end();
+  });
+});
+test.serial.cb('single controllers REST 2', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: []
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {
+      'article': {}
+    },
+    routers: [[
+      /^\/admin\/article\/list/,
+      'admin/article/list',
+      'REST', // method
+      {}, //options
+      [], //query
+    ]]
+  });
+
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'get'
     });
     t.end();
   });
