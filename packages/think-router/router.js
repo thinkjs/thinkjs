@@ -128,7 +128,7 @@ class Router {
       item.query.forEach((queryItem, index) => {
         if(/^\d+$/.test(queryItem.name)){
           let index = parseInt(queryItem.name) + 1;
-          pathname = pathname.replace(`:${index}`, match[index]);
+          pathname = pathname.replace(`:${index}`, match[index] || '');
         }else{
           query[queryItem.name] = match[index + 1];
         }
