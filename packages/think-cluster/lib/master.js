@@ -75,8 +75,8 @@ class Master {
    * kill worker
    */
   killWorker(worker, reload){
-    worker.kill('SIGINT'); //windows don't support SIGQUIT
     if(reload) worker.hasGracefulReload = true;
+    worker.kill('SIGINT'); //windows don't support SIGQUIT
     worker.needKilled = true;
     setTimeout(function () {
       if(!worker.isConnected()) return;
