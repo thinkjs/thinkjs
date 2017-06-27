@@ -43,6 +43,10 @@ class MysqlSession {
       values: [this.options.cookie]
     }).then(row => {
       if(row.length === 0) return;
+      //session data is expired
+      if(row[0].expire < Date.now()){
+        return this.delete();
+      }
       let content = row[0].data;
       content = JSON.parse(content);
       if (helper.isEmpty(content)) return;
@@ -92,8 +96,8 @@ class MysqlSession {
     } else if (this.status === 1) {
       this.status = 0;
       // insert or update data
-      const maxAge = this.options.maxAge;
-      let fields = [this.options.cookie, JSON.stringify(this.data), maxAge ? helper.ms(maxAge) : undefined];
+      const maxAge = Date.now() + helper.ms(this.options.maxAge || 0);
+      let fields = [this.options.cookie, JSON.stringify(this.data), maxAge];
       this.mysql.execute({
         sql: `INSERT INTO ${this.tableName} (cookie, data, expire) VALUES(?, ?, ?) 
             ON DUPLICATE KEY UPDATE data=?, expire=?`,
