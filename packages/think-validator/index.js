@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 16:01:16
+* @Last Modified time: 2017-06-27 12:23:38
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -11,7 +11,12 @@ const NOERROR = ' valid failed';
 const METHOD_MAP = {
   GET: 'param',
   POST: 'post',
-  FILE: 'file'
+  FILE: 'file',
+  PUT: 'post',
+  DELETE: 'post',
+  PATCH: 'post',
+  LINK: 'post',
+  UNLINK: 'post'
 };
 let preRules = require('./rules.js');
 let preErrors = require('./errors.js');
