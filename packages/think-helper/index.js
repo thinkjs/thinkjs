@@ -247,10 +247,10 @@ function datetime(date, format) {
   }
 
   if(!exports.isDate(date)) {
-    return false;
+    date = new Date();
   }
 
-  let d = date || new Date();
+  let d = date;
 
   format = format || 'YYYY-MM-DD HH:mm:ss';
   let formats = {
