@@ -11,6 +11,7 @@ class events {
   once(evtName,cb){
     cb();
   }
+  emit(){}
 }
 
 function mockEvents(){
@@ -19,6 +20,11 @@ function mockEvents(){
 
 function mockCluster(isMaster){
   mock('cluster',{
+    receiveSignal:false,
+    workers:[
+      {type:'app',isAgent:false,send(){require('cluster').receiveSignal = true}},
+      {type:'agent',isAgent:true,send(){require('cluster').receiveSignal = true}}
+    ],
     isMaster,
     on(evtName,cb){
       this[evtName] = cb;
@@ -34,24 +40,9 @@ function mockProcess() {
     process[evtName] = cb;
   }
 
-  process.once = (evtName,cb)=>{
-    process[evtName] = cb;
-  }
-
-  process.send = (args = {}) => {
-    process.sendObj = args;
-  }
-
-  process.exit = ()=>{
-    process.isKilled = true
-  }
-
   process.trigger = (evtName,args={}) => {
     process['is'+evtName] = true;
     process[evtName](args);
-  }
-  process.emit = ()=>{
-    console.log('emit');
   }
 }
 
@@ -102,3 +93,100 @@ test('bindEvent case', async t => {
   }
   cluster.trigger('message',message,{});
 });
+
+test('bindEvent case', async t => {
+  mockCluster(true);
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  const message = {
+    act:'test',
+    target:'one'
+  }
+  cluster.trigger('message',message,{});
+});
+
+test('bindEvent case', async t => {
+  mockCluster(false);
+  mockProcess();
+  mockEvents();
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  m.bindEvent();
+  const message = {
+    act: 'think-messenger',
+    target: 'one'
+  }
+  process.trigger('message', message)
+  t.is(process['ismessage'],true)
+});
+
+test('bindEvent case', async t => {
+  mockCluster(false);
+  mockProcess();
+  mockEvents();
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  m.bindEvent();
+  const message = {
+    act: 'test',
+    target: 'one'
+  }
+  process.trigger('message', message)
+  t.is(process['ismessage'],true)
+});
+
+
+test('bindEvent case', async t => {
+  mockCluster(true);
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  const message = {
+    act:'think-messenger',
+    target:'all'
+  }
+  cluster.trigger('message',message,{});
+  t.is(cluster.receiveSignal,true)
+});
+
+test('bindEvent case', async t => {
+  mockCluster(true);
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  const message = {
+    act:'think-messenger',
+    target:'app'
+  }
+  cluster.trigger('message',message,{});
+  t.is(cluster.receiveSignal,true)
+});
+
+test('bindEvent case', async t => {
+  mockCluster(true);
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  const message = {
+    act:'think-messenger',
+    target:'agent'
+  }
+  cluster.trigger('message',message,{});
+  t.is(cluster.receiveSignal,true)
+});
+
+test('bindEvent case', async t => {
+  mockCluster(true);
+  const cluster = require('cluster');
+  const Messenger = getMessenger();
+  let m = new Messenger();
+  const message = {
+    act:'think-messenger',
+  }
+  cluster.trigger('message',message,{});
+  t.is(cluster.receiveSignal,true)
+});
+
