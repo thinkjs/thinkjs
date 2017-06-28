@@ -18,7 +18,7 @@ ThinkJS3.x log module, based on log4js.
 ### Basic 
 
   ```js
- const Logger = require('think-logger');
+ const Logger = require('think-logger3');
  let logger = new Logger();
  logger.debug('Hello World');
   ```
