@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-27 12:23:38
+* @Last Modified time: 2017-06-28 11:05:47
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -199,15 +199,12 @@ class Validator {
    * @return {String}      [methodName]
    */
   _getQueryMethod(rule) {
-    let methodName;
-    let ctxMethod = this.ctx.method.toUpperCase();
     if(typeof rule.method === 'undefined' || rule.method === '') {
-      methodName = ctxMethod;
+      rule.method = this.ctx.method.toUpperCase();
     }else {
-      methodName = rule.method.toUpperCase();
+      rule.method = rule.method.toUpperCase();
     }
-    rule.method = methodName;
-    return METHOD_MAP[methodName];
+    return METHOD_MAP[rule.method];
   }
 
   /**
@@ -225,10 +222,12 @@ class Validator {
       let rule = rules[argName];
 
       let queryMethod = this._getQueryMethod(rule);
+
       // skip rule.method not match this.ctx.method
-      if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
-        continue;
-      }
+      // if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
+      //   continue;
+      // }
+
       // set this.ctxQuery
       this.ctxQuery = this.ctx[queryMethod]();
 
@@ -237,7 +236,6 @@ class Validator {
         val = rule[val] ? 1 : 0;
         return acc + val;
       }, 0);
-
       if(containTypeNum > 1) {
         throw new Error('Any rule can\'t contains one more basic type, the param you are validing is ' + argName);
       }
@@ -268,14 +266,15 @@ class Validator {
       }
 
       // write back rule.value to ctx, nested children wait for next round to handle
-      if(typeof rule.value !== 'undefined' && argName.indexOf(ARRAY_SP) === -1 & argName.indexOf(OBJECT_SP) === -1 && queryMethod){
+      if(typeof rule.value !== 'undefined' && argName.indexOf(ARRAY_SP) === -1 && argName.indexOf(OBJECT_SP) === -1 && queryMethod){
         this.ctxQuery[argName] = rule.value;
       }
 
       // array & object children split and set the value
       if(rule.children) {
         let ruleValue = rule.value;
-        let ruleChildren = rules[argName].children;
+        let ruleChildren = rule.children;
+
         // delete the argName, like [array|object]: true
         delete rules[argName];
 
@@ -325,20 +324,22 @@ class Validator {
       let rule = parsedRules[argName];
 
       // skip rule.method not match this.ctx.method
-      if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
-        continue;
-      }
+      // if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
+      //   continue;
+      // }
 
       // required check
       let isRequired = this._checkRequired(rule);
-      if(isRequired && helper.isTrueEmpty(rule.value)) {
-        let validName = 'required';
-        let parsedValidArgs = this._parseValidArgs(validName, rule);
-        let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
-        ret[argName] = errMsg;
-        continue;
-      }else if(!isRequired && helper.isTrueEmpty(rule.value)){
-        continue;
+      if(helper.isTrueEmpty(rule.value)) {
+        if(isRequired) {
+          let validName = 'required';
+          let parsedValidArgs = this._parseValidArgs(validName, rule);
+          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
+          ret[argName] = errMsg;
+          continue;
+        }else {
+          continue;
+        }
       }
 
       // valid check

@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-22 10:31:46
+* @Last Modified time: 2017-06-28 10:36:57
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2841,12 +2841,11 @@ test('rule\'method not match this.ctx.method', t => {
       method: 'POST'
     }
   }
+
   let instance = new Validator(helper.extend({}, defaultCtx));
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length === 0);
+  t.true(Object.keys(ret).length > 0);
 });
-
-
 
 test('rule-name-custom-message', t => {
   let rules = {
