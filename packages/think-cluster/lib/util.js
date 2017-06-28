@@ -56,6 +56,7 @@ exports.forkWorker = function(env = {}){
     worker.isAgent = true;
   }
   worker.on('message', message => {
+    if(worker.hasGracefulReload) return;
     if(message === exports.THINK_GRACEFUL_DISCONNECT){
       debug(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
       worker.hasGracefulReload = true;
