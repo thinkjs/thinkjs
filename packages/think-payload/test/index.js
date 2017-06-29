@@ -30,7 +30,7 @@ test.cb('should be able to receive json type requests', t => {
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
-    t.is(res.body.name, 'Berwin');
+    t.is(res.body.post.name, 'Berwin');
     t.end();
   });
 });
@@ -44,7 +44,7 @@ test.cb('should be able to receive form type requests', t => {
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
-    t.is(res.body.name, 'Berwin');
+    t.is(res.body.post.name, 'Berwin');
     t.end();
   });
 });
@@ -112,7 +112,7 @@ test.cb('should be able to receive xml type requests', t => {
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
-    t.is(res.body.root, 'Hello Berwin!');
+    t.is(res.body.post.root, 'Hello Berwin!');
     t.end();
   });
 });
