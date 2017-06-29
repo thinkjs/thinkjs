@@ -3,6 +3,8 @@ const util = require('./util.js');
 //const helper = require('think-helper');
 //const debug = require('debug')('think-cluster');
 
+let waitReloadWorkerTimes = 0;
+
 /**
  * Master class
  */
@@ -75,8 +77,8 @@ class Master {
    * kill worker
    */
   killWorker(worker, reload){
-    worker.kill('SIGINT'); //windows don't support SIGQUIT
     if(reload) worker.hasGracefulReload = true;
+    worker.kill('SIGINT'); //windows don't support SIGQUIT
     worker.needKilled = true;
     setTimeout(function () {
       if(!worker.isConnected()) return;
@@ -87,6 +89,12 @@ class Master {
    * force reload all workers, in development env
    */
   forceReloadWorkers(){
+    if(waitReloadWorkerTimes){
+      waitReloadWorkerTimes++;
+      return;
+    }
+    waitReloadWorkerTimes = 1;
+
     let aliveWorkers = [];
     for(let id in cluster.workers){
       let worker = cluster.workers[id];
@@ -100,13 +108,21 @@ class Master {
       console.error(`workers fork has leak, alive workers: ${aliveWorkers.length}, need workers: ${this.options.workers}`);
     }
     const firstWorker = aliveWorkers.shift();
-    util.forkWorker(this.getForkEnv()).then(() => {
+    const promise = util.forkWorker(this.getForkEnv()).then(() => {
       //http://man7.org/linux/man-pages/man7/signal.7.html
       this.killWorker(firstWorker, true);
-      aliveWorkers.forEach(worker => {
+      return aliveWorkers.map(worker => {
         this.killWorker(worker, true);
         return util.forkWorker(this.getForkEnv());
       });
+    });
+    return promise.then(() => {
+      if(waitReloadWorkerTimes > 1){
+        waitReloadWorkerTimes = 0;
+        this.forceReloadWorkers();
+      } else {
+        waitReloadWorkerTimes = 0;
+      }
     });
   }
 }
