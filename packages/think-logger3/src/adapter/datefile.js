@@ -18,6 +18,6 @@ module.exports = class DateFileLogger extends Base {
     //check cluster mode
     config = this.isCluster(config, clusterMode);
 
-    this._logger = this.getLogger(config);
+    this.setLogger(config);
   }
 };
