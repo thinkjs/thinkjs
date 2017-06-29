@@ -10,6 +10,6 @@ module.exports = class GelfLogger extends Base {
       appenders: [{type: 'gelf', host, hostname, port, facility}]
     }, lConfig);
 
-    this._logger = this.getLogger(config);
+    this.setLogger(config);
   }
 };
