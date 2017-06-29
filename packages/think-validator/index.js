@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-29 17:37:30
+* @Last Modified time: 2017-06-29 18:53:11
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -332,7 +332,14 @@ class Validator {
       let isRequired = this._checkRequired(rule);
       if(helper.isTrueEmpty(rule.value)) {
         if(isRequired) {
-          let validName = 'required';
+          let validName;
+          for(let i = 0; i < this.requiredValidNames.length; i++) {
+            if(rule[this.requiredValidNames[i]]) {
+              validName = this.requiredValidNames[i];
+              break;
+            }
+          }
+
           let parsedValidArgs = this._parseValidArgs(validName, rule);
           let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
           ret[argName] = errMsg;
