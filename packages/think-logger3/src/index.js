@@ -11,7 +11,7 @@ class Logger {
     this._logger = new handle(config, clusterMode);
     ['debug', 'info', 'warn', 'error'].forEach(level => {
       assert(this._logger[level], `adapter function ${level} not exist!`);
-      this[level] = this._logger[level].bind(this);
+      this[level] = this._logger[level].bind(this._logger);
     });
   }
 }
