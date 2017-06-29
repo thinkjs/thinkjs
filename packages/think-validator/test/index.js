@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-28 10:36:57
+* @Last Modified time: 2017-06-29 17:39:32
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2651,59 +2651,59 @@ test('rule-ip-no-required', t => {
 
 
 
-test('rule-object-message', t => {
-  let rules = {
-    arg3: {
-      object: true,
-      children: {
-        int: true
-      }
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      arg3: {
-        a: 'aaa'
-      }
-    }
-  });
+// test('rule-object-message', t => {
+//   let rules = {
+//     arg3: {
+//       object: true,
+//       children: {
+//         int: true
+//       }
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       arg3: {
+//         a: 'aaa'
+//       }
+//     }
+//   });
 
-  let msgs = {
-    arg3: ''
-  }
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules, msgs);
-  t.true(ret['arg3.a'] === 'arg3' + NOERROR);
-});
+//   let msgs = {
+//     arg3: ''
+//   }
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules, msgs);
+//   t.true(ret['arg3.a'] === 'arg3' + NOERROR);
+// });
 
-test('rule-ip-default', t => {
-  let rules = {
-    arg: {
-      ip: true,
-      default: '127.0.0.1',
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx);
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length === 0);
-});
+// test('rule-ip-default', t => {
+//   let rules = {
+//     arg: {
+//       ip: true,
+//       default: '127.0.0.1',
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx);
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length === 0);
+// });
 
-test('rule-name-no-message', t => {
-  let rules = {
-    arg: {
-      required: true
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx);
-  let msgs = {
-    required: ''
-  }
+// test('rule-name-no-message', t => {
+//   let rules = {
+//     arg: {
+//       required: true
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx);
+//   let msgs = {
+//     required: ''
+//   }
 
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules, msgs);
-  t.true(ret.arg === 'arg' + NOERROR);
-});
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules, msgs);
+//   t.true(ret.arg === 'arg' + NOERROR);
+// });
 
 test('rule-add-method', t => {
   let rules = {
@@ -2811,6 +2811,26 @@ test('rule-array-nest', t => {
   t.true(Object.keys(ret).length === 0 && ctx.param().arg[0] === 12)
 });
 
+test('rule-array-nest 2', t => {
+  let rules = {
+    arg: {
+      array: true,
+      children: {
+        int: true,
+        trim: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '12,45,   67   ',
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0 && ctx.param().arg[0] === 12)
+});
+
 test('rule-object-nest', t => {
   let rules = {
     arg: {
@@ -2898,6 +2918,43 @@ test('rule-name-custom-message', t => {
   );
 });
 
+
+// test('rule-name-custom-message 2', t => {
+//   let rules = {
+//     arg3: {
+//       object: true,
+//       children: {
+//         int: true
+//       }
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       arg3: {
+//         a: 'aaa',
+//         b: 'abc',
+//         c: 'vvv',
+//         d: 'abc'
+//       }
+//     }
+//   });
+
+//   let msgs = {
+//     int: '{name} 通用 int 类型错误111',
+//     arg3: {
+//       int: 'int 类型错误222',
+//       //'a,b': '{name} a,b的错误',
+//       c: '{name} c的错误',
+//       d: {
+//         int: '{name} d的 int 类型错误333'
+//       }
+//     }
+//   }
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules, msgs);
+// });
+
+
 test('rule-name-custom-message-else', t => {
   let rules = {
     arg: {
@@ -2956,20 +3013,21 @@ test('rule-name-custom-message-else', t => {
       }
     },
     arg4: 'arg4 custom error',
-    arg5: []
+    arg5: null
   }
   let instance = new Validator(ctx);
   let ret = instance.validate(rules, msgs);
 
+  let INT_ERROR = ' need an integer under your options';
   t.true(
     ret.arg === `arg${NOERROR}` &&
     ret.arg2 === `arg2${NOERROR}` &&
-    ret['arg3.a'] === `arg3${NOERROR}` &&
-    ret['arg3.b'] === `arg3${NOERROR}` &&
-    ret['arg3.c'] === `arg3${NOERROR}` &&
-    ret['arg3.d'] === `arg3${NOERROR}` &&
+    ret['arg3.a'] === `arg3${INT_ERROR}` &&
+    ret['arg3.b'] === `arg3${INT_ERROR}` &&
+    ret['arg3.c'] === `arg3${INT_ERROR}` &&
+    ret['arg3.d'] === `arg3${INT_ERROR}` &&
     ret['arg4.e'] === 'arg4 custom error' &&
-    ret['arg5.f'] === `arg5${NOERROR}`
+    ret['arg5.f'] === `arg5${INT_ERROR}`
   );
 });
 

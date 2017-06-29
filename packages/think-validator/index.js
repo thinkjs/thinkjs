@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-28 11:05:47
+* @Last Modified time: 2017-06-29 17:37:30
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -77,21 +77,19 @@ class Validator {
     let validNameError = this.errors[validName];
     let argNameError = this.errors[argName];
 
-    if(argName.indexOf(OBJECT_SP) === -1) {
-      // eg int: 'error message'
-      if(helper.isString(validNameError)) {
-        errMsg = validNameError;
-      }
+    // eg int: 'error message'
+    if(helper.isString(validNameError)) {
+      errMsg = validNameError;
+    }
 
-      //eg name: 'error message'
-      if(helper.isString(argNameError)) {
-        errMsg = argNameError;
-      }
+    //eg name: 'error message'
+    if(helper.isString(argNameError)) {
+      errMsg = argNameError;
+    }
 
-      //eg name: {int: 'error message'}
-      if(helper.isObject(argNameError) && helper.isString(argNameError[validName])) {
-        errMsg = this.errors[argName][validName];
-      }
+    //eg name: {int: 'error message'}
+    if(helper.isObject(argNameError) && helper.isString(argNameError[validName])) {
+      errMsg = this.errors[argName][validName];
     }
 
     // eg name: {name1,name2: 'error message'}
@@ -103,6 +101,10 @@ class Validator {
       argNameError = this.errors[argName];
 
       if(helper.isObject(argNameError)) {
+
+        // eg: arg: {int: 'error message', 'a,b': 'error message'}
+        errMsg = argNameError[validName]; // int
+
         for(let i in argNameError) {
           if(i.split(',').indexOf(subRuleName) > -1){
             if(helper.isObject(argNameError[i])){
@@ -113,8 +115,12 @@ class Validator {
           }
         }
       }else if(helper.isString(argNameError)) {
+        // eg: arg: 'arg object valid error'
         errMsg = argNameError;
       }
+
+      // eg: {int: 'error message', arg: {...}}
+      errMsg = errMsg || this.errors[validName]; //int
     }
 
     // format error message rule name
@@ -223,11 +229,6 @@ class Validator {
 
       let queryMethod = this._getQueryMethod(rule);
 
-      // skip rule.method not match this.ctx.method
-      // if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
-      //   continue;
-      // }
-
       // set this.ctxQuery
       this.ctxQuery = this.ctx[queryMethod]();
 
@@ -257,7 +258,11 @@ class Validator {
 
       // array convert
       if(rule.array && !helper.isArray(rule.value)) {
-        rule.value = [rule.value]
+        if(rule.value && helper.isString(rule.value) && rule.value.indexOf(',') > -1) {
+          rule.value = rule.value.split(',');
+        }else {
+          rule.value = [rule.value];
+        }
       }
 
       // boolean convert
@@ -322,11 +327,6 @@ class Validator {
     outerLoop:
     for(let argName in parsedRules){
       let rule = parsedRules[argName];
-
-      // skip rule.method not match this.ctx.method
-      // if(this.ctx.method.toUpperCase() !== rule.method.toUpperCase()) {
-      //   continue;
-      // }
 
       // required check
       let isRequired = this._checkRequired(rule);
