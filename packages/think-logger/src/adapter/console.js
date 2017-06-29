@@ -15,6 +15,6 @@ module.exports = class ConsoleLogger extends Base {
       ]
     }, lConfig);
 
-    this._logger = this.getLogger(config);
+    this.setLogger(config);
   }
 };

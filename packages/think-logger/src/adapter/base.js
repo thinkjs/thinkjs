@@ -1,25 +1,27 @@
 const log4js = require('log4js');
 const cluster = require('cluster');
 
+const _logger = Symbol('_logger');
+
 module.exports = class {
   constructor() {
-    this._logger = {};
+    this[_logger] = {};
   }
   
   debug(...args) {
-    return this._logger.debug(...args);
+    return this[_logger].debug(...args);
   }
 
   info(...args) {
-    return this._logger.info(...args);
+    return this[_logger].info(...args);
   }
 
   warn(...args) {
-    return this._logger.warn(...args);
+    return this[_logger].warn(...args);
   }
 
   error(...args) {
-    return this._logger.error(...args);
+    return this[_logger].error(...args);
   }
   
   /**
@@ -30,11 +32,11 @@ module.exports = class {
   }
 
   /**
-   * log4js getLogger
+   * log4js setLogger
    */
-  getLogger(config, category) {
+  setLogger(config, category) {
     this.configure(config);
-    return log4js.getLogger(category);
+    this[_logger] = log4js.getLogger(category);
   }
 
   /**
