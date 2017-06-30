@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-29 18:53:11
+* @Last Modified time: 2017-06-30 14:55:44
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -131,11 +131,10 @@ class Validator {
       return originRuleName + NOERROR;
     }
 
-    // argName validName validArgs parsedValidArgs
-    let validArgs = rule[argName];
+    let validArgs = rule[validName];
     let lastMsg = errMsg.replace('{name}', originRuleName)
-      .replace('{args}', JSON.stringify(validArgs))
-      .replace('{pargs}', JSON.stringify(parsedValidArgs));
+      .replace('{args}', helper.isString(validArgs) ? validArgs : JSON.stringify(validArgs))
+      .replace('{pargs}', helper.isString(parsedValidArgs) ? parsedValidArgs : JSON.stringify(parsedValidArgs));
     return lastMsg;
   }
 
@@ -150,7 +149,7 @@ class Validator {
     let pfn = preRules['_' + validName];
     if(helper.isFunction(pfn)){
       // support rewrite back, so just pass this.ctxQuery without clone
-      ruleArgs = pfn(ruleArgs, this.ctxQuery);
+      ruleArgs = pfn(ruleArgs, this.ctxQuery, validName);
     }
     return ruleArgs;
   }
@@ -364,7 +363,7 @@ class Validator {
         // get parsed valid options
         let parsedValidArgs = this._parseValidArgs(validName, rule);
 
-        let result = fn(rule.value, parsedValidArgs);
+        let result = fn(rule.value, parsedValidArgs, validName);
         if(!result){
           let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
 
