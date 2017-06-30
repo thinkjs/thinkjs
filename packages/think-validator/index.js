@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-30 14:55:44
+* @Last Modified time: 2017-06-30 19:09:18
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -269,10 +269,16 @@ class Validator {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
-      // write back rule.value to ctx, nested children wait for next round to handle
-      if(typeof rule.value !== 'undefined' && argName.indexOf(ARRAY_SP) === -1 && argName.indexOf(OBJECT_SP) === -1 && queryMethod){
-        this.ctxQuery[argName] = rule.value;
+      // write back rule.value to ctx
+      if(typeof rule.value !== 'undefined' && queryMethod){
+        if(argName.indexOf(ARRAY_SP) !== -1 || argName.indexOf(OBJECT_SP) !== -1) {
+          let parsedRuleName = argName.split(ARRAY_SP);
+          this.ctxQuery[parsedRuleName[0]][parsedRuleName[1]] = rule.value;
+        } else {
+          this.ctxQuery[argName] = rule.value;
+        }
       }
+
 
       // array & object children split and set the value
       if(rule.children) {
