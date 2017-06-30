@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-29 17:39:32
+* @Last Modified time: 2017-06-30 19:34:31
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2917,43 +2917,6 @@ test('rule-name-custom-message', t => {
     ret['arg3.d'] === msgs.arg3.d.int
   );
 });
-
-
-// test('rule-name-custom-message 2', t => {
-//   let rules = {
-//     arg3: {
-//       object: true,
-//       children: {
-//         int: true
-//       }
-//     }
-//   }
-//   let ctx = helper.extend({}, defaultCtx, {
-//     PARAM: {
-//       arg3: {
-//         a: 'aaa',
-//         b: 'abc',
-//         c: 'vvv',
-//         d: 'abc'
-//       }
-//     }
-//   });
-
-//   let msgs = {
-//     int: '{name} 通用 int 类型错误111',
-//     arg3: {
-//       int: 'int 类型错误222',
-//       //'a,b': '{name} a,b的错误',
-//       c: '{name} c的错误',
-//       d: {
-//         int: '{name} d的 int 类型错误333'
-//       }
-//     }
-//   }
-//   let instance = new Validator(ctx);
-//   let ret = instance.validate(rules, msgs);
-// });
-
 
 test('rule-name-custom-message-else', t => {
   let rules = {
