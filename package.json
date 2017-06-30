@@ -66,8 +66,9 @@
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
     "eslint": "2.8.0",
-    "nyc": "^7.0.0",
-    "mock-require": "^2.0.1"
+    "mkdirp": "^0.5.1",
+    "mock-require": "^2.0.1",
+    "nyc": "^7.0.0"
   },
   "keywords": [
     "thinkjs",

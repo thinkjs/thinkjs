@@ -5,31 +5,31 @@ function mockThinkMockHttp() {
   })
 }
 
-function mockCluster(isMaster){
-  mock('cluster',{
+function mockCluster(isMaster) {
+  mock('cluster', {
     isMaster,
-    workers:[],
-    on(evtName,cb){
+    workers: [],
+    on(evtName, cb){
       this[evtName] = cb;
     },
-    fork(env={}){
+    fork(env = {}){
       let worker = {
-        on(evtName,cb){
+        on(evtName, cb){
           this[evtName] = cb;
         },
-        once(evtName,cb){
-          this.on(evtName,cb)
-          if(evtName === 'listening') {
+        once(evtName, cb){
+          this.on(evtName, cb)
+          if (evtName === 'listening') {
             cb('test address')
           }
         },
-        trigger(evtName,args){
+        trigger(evtName, args){
           const cluster = require('cluster');
-          if(evtName === 'exit'){
+          if (evtName === 'exit') {
             let workers = Array.from(cluster.workers);
-            cluster.workers.forEach((item,index)=>{
-              if(item === this){
-                workers.splice(index,1)
+            cluster.workers.forEach((item, index)=> {
+              if (item === this) {
+                workers.splice(index, 1)
               }
             })
             cluster.workers = workers;
@@ -45,13 +45,13 @@ function mockCluster(isMaster){
         isConnected(){
           return !this.isKilled;
         },
-        process:{
-          kill:()=>{
+        process: {
+          kill: ()=> {
             worker.isKilled = true;
           }
         }
       };
-      worker = Object.assign(worker,env);
+      worker = Object.assign(worker, env);
       let cluster = require('cluster');
       cluster.workers.push(worker)
       return worker;
@@ -59,22 +59,35 @@ function mockCluster(isMaster){
   })
 }
 
-function mockThinkCluster(isAgent){
-  mock('think-cluster',{
+function mockThinkCluster(args) {
+  let {agent} = args;
+  let obj = Object.assign({
     isAgent(){
-      return isAgent
+      return agent
     },
-    Master:class Master{},
-    Agent:class Agent{
-      createServer(){
+    Master: class Master {
+    },
+    Worker: class Worker {
+      constructor(options = {}){
+        this.options = options;
+      }
+      getWorkers(){}
+      captureEvents(){
+        require('think-cluster').capturedEvents = true;
+      }
+    },
+    Agent: class Agent {
+      createServer() {
         require('think-cluster').createdServer = true;
       }
     }
-  })
+  }, args);
+
+  mock('think-cluster', obj);
 }
 
-function stop(name){
-  if(!name){
+function stop(name) {
+  if (!name) {
     mock.stopAll()
   }
   mock.stop(name);
