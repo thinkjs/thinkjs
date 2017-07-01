@@ -68,7 +68,10 @@ module.exports = class Tracer {
 
     return this.err500TemplateContent
       .replace('{{error}}', error)
-      .replace('{{errMsg}}', err.toString());
+      .replace(
+        '{{errMsg}}', 
+        err.toString().replace(/[\r\n]+/g, '<br/>')
+      );
   }
 
   /**
