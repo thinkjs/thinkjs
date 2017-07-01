@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-30 19:34:31
+* @Last Modified time: 2017-07-01 12:55:53
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -260,40 +260,40 @@ test('rule-contains success', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-contains parse failure', t => {
-  let rules = {
-    username: {
-      contains: 'abc'
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      username: 'lushijie',
-      abc: '6666'
-    }
-  });
+// test('rule-contains parse failure', t => {
+//   let rules = {
+//     username: {
+//       contains: 'abc'
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       username: 'lushijie',
+//       abc: '6666'
+//     }
+//   });
 
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
-});
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length > 0);
+// });
 
-test('rule-contains parse success', t => {
-  let rules = {
-    username: {
-      contains: 'abc'
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      username: 'lushijie',
-      abc: 'shiji'
-    }
-  });
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length === 0);
-});
+// test('rule-contains parse success', t => {
+//   let rules = {
+//     username: {
+//       contains: 'abc'
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       username: 'lushijie',
+//       abc: 'shiji'
+//     }
+//   });
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length === 0);
+// });
 
 test('rule-equals failure', t => {
   let rules = {
@@ -311,21 +311,21 @@ test('rule-equals failure', t => {
   t.true(Object.keys(ret).length > 0);
 });
 
-test('rule-equals success', t => {
-  let rules = {
-    username: {
-      equals: 'lushijie'
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      username: 'lushijie'
-    }
-  });
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length === 0);
-});
+// test('rule-equals success', t => {
+//   let rules = {
+//     username: {
+//       equals: 'lushijie'
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       username: 'lushijie'
+//     }
+//   });
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length === 0);
+// });
 
 test('rule-equals parse failure', t => {
   let rules = {
@@ -362,21 +362,21 @@ test('rule-equals parse success', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-different failure', t => {
-  let rules = {
-    username: {
-      different: 'lushijie'
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      username: 'lushijie',
-    }
-  });
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
-});
+// test('rule-different failure', t => {
+//   let rules = {
+//     username: {
+//       different: 'lushijie'
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       username: 'lushijie',
+//     }
+//   });
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length > 0);
+// });
 
 test('rule-different success', t => {
   let rules = {
@@ -2394,39 +2394,39 @@ test('rule-macAddress success', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-numeric failure', t => {
-  let rules = {
-    arg: {
-      numeric: true
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      arg: '1.222'
-    }
-  });
+// test('rule-numeric failure', t => {
+//   let rules = {
+//     arg: {
+//       numeric: true
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       arg: '1.222'
+//     }
+//   });
 
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length > 0);
-});
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length > 0);
+// });
 
-test('rule-numeric success', t => {
-  let rules = {
-    arg: {
-      numeric: true
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      arg: '123'
-    }
-  });
+// test('rule-numeric success', t => {
+//   let rules = {
+//     arg: {
+//       numeric: true
+//     }
+//   }
+//   let ctx = helper.extend({}, defaultCtx, {
+//     PARAM: {
+//       arg: '123'
+//     }
+//   });
 
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length === 0);
-});
+//   let instance = new Validator(ctx);
+//   let ret = instance.validate(rules);
+//   t.true(Object.keys(ret).length === 0);
+// });
 
 test('rule-dataURI failure', t => {
   let rules = {

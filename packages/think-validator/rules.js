@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-01 11:05:18
+* @Last Modified time: 2017-07-01 12:54:17
 */
 'use strict';
 const helper = require('think-helper');
@@ -172,16 +172,6 @@ Rules.requiredWithOutAll = (value, parsedValue) => {
 };
 
 /**
- * parse contains rule validValue
- * @param  {String} validValue [description]
- * @param  {Object} query  [description]
- * @return {String}      [description]
- */
-// Rules._contains = (validValue, query) => {
-//   let item = query[validValue];
-//   return !helper.isTrueEmpty(item) ? item : validValue;
-// }
-/**
  * check if the string contains the validValue.
  * @param  {String} value []
  * @param  {String} validValue   []
@@ -199,9 +189,6 @@ Rules.contains = (value, validValue) => {
  * @return {String}      []
  */
 Rules._equals = (validValue, query) => {
-  // let item = query[validValue];
-  // return !helper.isTrueEmpty(item) ? item : validValue;
-
   return query[validValue];
 };
 
@@ -850,10 +837,10 @@ Rules.macAddress = value => {
  * @param  {String} value [description]
  * @return {Boolean}       [description]
  */
-Rules.numeric = value => {
-  value = validator.toString(value);
-  return validator.isNumeric(value);
-};
+// Rules.numeric = value => {
+//   value = validator.toString(value);
+//   return validator.isNumeric(value);
+// };
 
 /**
  * check if the string is a data uri format.

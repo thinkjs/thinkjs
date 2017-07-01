@@ -4,9 +4,9 @@
  */
 module.exports = {
   required: '{name} can not be blank',
-  contains: '{name} need equal {args}',
-  equals: '{name} need match {pargs}',
-  different: '{name} need not match {pargs}',
+  contains: '{name} need contains string {args}',
+  equals: '{name} need equal {pargs}',
+  different: '{name} need not equal {pargs}',
   after: '{name} need a date after {pargs}',
   before: '{name} need a date before {pargs}',
   alpha: '{name} need contains only letters (a-zA-Z)',
