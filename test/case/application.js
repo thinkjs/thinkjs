@@ -1,4 +1,5 @@
 import test from 'ava';
+const mock = require('mock-require');
 const mockie = require('../lib/mockie');
 const utils = require('../lib/utils');
 const thinkCluster = require('think-cluster');
