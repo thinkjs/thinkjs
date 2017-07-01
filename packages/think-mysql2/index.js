@@ -44,7 +44,7 @@ class ThinkMysql {
       if(config.socketPath){
         connectionPath = config.socketPath;
       }else{
-        connectionPath = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
+        connectionPath = `mysql://${config.user}:${config.password}@${config.host}:${config.port || 3306}/${config.database}`;
       }
       config.logger(connectionPath);
     }
