@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-06-30 19:33:44
+* @Last Modified time: 2017-07-01 11:06:11
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -67,6 +67,11 @@ class Validator {
    */
   _getErrorMessage(argName, rule, validName, parsedValidArgs) {
     let errMsg;
+
+    // all required style error map to `requied error message`
+    if(this.requiredValidNames.indexOf(validName) > -1) {
+      validName = 'required';
+    }
 
     // cacl argName first, array use normal custom error style
     if(argName.indexOf(ARRAY_SP) > -1) {

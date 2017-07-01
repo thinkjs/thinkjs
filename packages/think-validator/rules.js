@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 14:35:15
+* @Last Modified time: 2017-07-01 11:05:18
 */
 'use strict';
 const helper = require('think-helper');
@@ -32,8 +32,10 @@ Rules._requiredIf = (validValue, query) => {
   validValue = validValue.slice();
 
   // just parse the first param
-  let arg0 = validValue[0];
-  validValue[0] = !helper.isTrueEmpty(query[arg0]) ? query[arg0] : arg0;
+  //let arg0 = validValue[0];
+  //validValue[0] = !helper.isTrueEmpty(query[arg0]) ? query[arg0] : arg0;
+
+  validValue[0] = query[validValue[0]];
   return validValue;
 };
 
@@ -175,19 +177,19 @@ Rules.requiredWithOutAll = (value, parsedValue) => {
  * @param  {Object} query  [description]
  * @return {String}      [description]
  */
-Rules._contains = (validValue, query) => {
-  let item = query[validValue];
-  return !helper.isTrueEmpty(item) ? item : validValue;
-}
+// Rules._contains = (validValue, query) => {
+//   let item = query[validValue];
+//   return !helper.isTrueEmpty(item) ? item : validValue;
+// }
 /**
- * check if the string contains the parsedValue.
+ * check if the string contains the validValue.
  * @param  {String} value []
- * @param  {String} parsedValue   []
+ * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Rules.contains = (value, parsedValue) => {
+Rules.contains = (value, validValue) => {
   value = validator.toString(value);
-  return validator.contains(value, parsedValue);
+  return validator.contains(value, validValue);
 };
 
 /**
@@ -197,8 +199,10 @@ Rules.contains = (value, parsedValue) => {
  * @return {String}      []
  */
 Rules._equals = (validValue, query) => {
-  let item = query[validValue];
-  return !helper.isTrueEmpty(item) ? item : validValue;
+  // let item = query[validValue];
+  // return !helper.isTrueEmpty(item) ? item : validValue;
+
+  return query[validValue];
 };
 
 /**

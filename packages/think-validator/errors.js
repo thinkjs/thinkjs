@@ -4,7 +4,7 @@
  */
 module.exports = {
   required: '{name} can not be blank',
-  contains: '{name} need contains {pargs}',
+  contains: '{name} need equal {args}',
   equals: '{name} need match {pargs}',
   different: '{name} need not match {pargs}',
   after: '{name} need a date after {pargs}',
