@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const exec = require('child_process').exec;
 const CONFIG_PATH = path.resolve(__dirname, '../runtime/config');
 
 function createFile(dir, filename, content, cb) {
@@ -27,8 +28,17 @@ function touchConfig(config = {}, cb) {
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
+const killByPort = (port)=>{
+  if(!port){
+    return
+  }
+  exec(`kill -9 $(lsof -t -i:${port})`)
+}
+
+
 module.exports = {
   touchConfig,
-  sleep
+  sleep,
+  killByPort
 }
 
