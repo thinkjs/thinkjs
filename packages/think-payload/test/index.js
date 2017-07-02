@@ -7,8 +7,7 @@ const app = new Koa();
 app.use(payload({
   extendTypes: {
     json: ['application/json-patch+json']
-  },
-  uploadDir: '/Users/liubowen/thinkjs/think-payload/test'
+  }
 }));
 app.use((ctx) => {
   ctx.body = ctx.request.body;
