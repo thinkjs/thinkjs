@@ -4,7 +4,12 @@ const request = require('supertest');
 const payload = require('../index.js');
 const Koa = require('koa');
 const app = new Koa();
-app.use(payload());
+app.use(payload({
+  extendTypes: {
+    json: ['application/json-patch+json']
+  },
+  uploadDir: '/Users/liubowen/thinkjs/think-payload/test'
+}));
 app.use((ctx) => {
   ctx.body = ctx.request.body;
 });
@@ -25,6 +30,20 @@ test.cb('should be able to receive json type requests', t => {
   request(app.callback())
   .post('/')
   .set('Content-Type', 'application/json')
+  .send({name: 'Berwin'})
+  .expect('Content-Type', /json/)
+  .expect(200)
+  .end((err, res) => {
+    if (err) throw err;
+    t.is(res.body.post.name, 'Berwin');
+    t.end();
+  });
+});
+
+test.cb('should support extend types requests', t => {
+  request(app.callback())
+  .post('/')
+  .set('Content-Type', 'application/json-patch+json')
   .send({name: 'Berwin'})
   .expect('Content-Type', /json/)
   .expect(200)

@@ -42,33 +42,45 @@ module.exports = function (opts = {}) {
   return function (ctx, next) {
     if (ctx.request.body !== undefined) return next();
 
-    return parseBody(ctx).then(body => {
+    return parseBody(ctx, {
+      opts: {
+        limit: opts.limit,
+        encoding: opts.encoding
+      },
+      multipartOpts: {
+        keepExtensions: opts.keepExtensions,
+        uploadDir: opts.uploadDir,
+        encoding: opts.encoding,
+        hash: opts.hash,
+        multiples: opts.multiples
+      }
+    }).then(body => {
       ctx.request.body = body;
       return next();
     });
   }
 
-  function parseBody(ctx) {
+  function parseBody(ctx, opts) {
     const methods = ['POST', 'PUT', 'DELETE', 'PATCH', 'LINK', 'UNLINK'];
 
     if (methods.every(method => ctx.method !== method)) {
       return Promise.resolve({});
     }
-    
+
     if (ctx.request.is(jsonTypes)) {
-      return parse.json(ctx);
+      return parse.json(ctx, opts.opts);
     }
     if (ctx.request.is(formTypes)) {
-      return parse.form(ctx);
+      return parse.form(ctx, opts.opts);
     }
     if (ctx.request.is(textTypes)) {
-      return parse.text(ctx);
+      return parse.text(ctx, opts.opts);
     }
     if (ctx.request.is(multipartTypes)) {
-      return parse.multipart(ctx);
+      return parse.multipart(ctx, opts.multipartOpts);
     }
     if (ctx.request.is(xmlTypes)) {
-      return parse.xml(ctx);
+      return parse.xml(ctx, opts.opts);
     }
 
     return Promise.resolve({});

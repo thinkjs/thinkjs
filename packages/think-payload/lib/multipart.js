@@ -4,9 +4,9 @@ const formidable = require('formidable');
 const fs_unlink = helper.promisify(fs.unlink, fs);
 const fs_access = helper.promisify(fs.access, fs);
 
-module.exports = (ctx) => {
+module.exports = (ctx, opts = {}) => {
   const req = ctx.req;
-  const form = new formidable.IncomingForm();
+  const form = new formidable.IncomingForm(opts);
 
   ctx.res.once('finish', () => {
     const files = ctx.request.body.file;
