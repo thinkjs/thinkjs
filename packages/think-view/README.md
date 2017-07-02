@@ -50,6 +50,10 @@ assign variable to view
 module.exports = class extends think.Controller {
   indexAction(){
     this.assign('title', 'ThinkJS Application');
+    this.assign({ //assign multi variable
+      title: 'thinkjs',
+      name: 'thinkjs doc'
+    })
   }
 }
 ```
@@ -62,7 +66,9 @@ render file
 module.exports = class extends think.Controller {
   async indexAction(){
     //render file index_index.html
-    let content = await this.render();
+    const content1 = await this.render();
+    const content2 = await this.render('doc'); //render doc.html
+    const content3 = await this.render('doc', 'ejs'); //change view render type to ejs
   }
 }
 ```
@@ -73,9 +79,9 @@ display view file
 
 ```js
 module.exports = class extends think.Controller {
-  async indexAction(){
+  indexAction(){
     //render file index_index.html
-    await this.display();
+    return this.display();
   }
 }
 ```
