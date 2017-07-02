@@ -69,6 +69,7 @@ module.exports = class extends think.Controller {
     const content1 = await this.render();
     const content2 = await this.render('doc'); //render doc.html
     const content3 = await this.render('doc', 'ejs'); //change view render type to ejs
+    const content4 = await this.render('doc', {type: 'ejs', xxx: 'yyy'}); //add other properties
   }
 }
 ```
