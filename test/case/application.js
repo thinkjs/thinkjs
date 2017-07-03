@@ -212,3 +212,19 @@ test.serial('run with exception', t => {
   app.parseArgv = ()=>{return {}};
   app.run();
 })
+
+test.serial('parseArgv with empty args', t => {
+  const App = getApplication();
+  let app = new App(defaultOption);
+  process.argv[2] = '';
+  const result = app.parseArgv();
+  t.deepEqual(result,{});
+})
+
+test.serial('run with port args', t => {
+  const App = getApplication();
+  let app = new App(defaultOption);
+  process.argv[2] = '8360';
+  const result = app.parseArgv();
+  t.deepEqual(result,{port:'8360'});
+})
