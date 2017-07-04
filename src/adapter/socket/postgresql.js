@@ -95,7 +95,7 @@ export default class extends Base {
       this.release();
 
       //when socket is closed, try it
-      if(err.code === 'EPIPE'){
+      if(err.code === 'EPIPE' || err.code === 'ECONNRESET'){
         this.close();
         return this.query(sql);
       }
