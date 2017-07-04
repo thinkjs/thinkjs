@@ -25,7 +25,14 @@ describe('model/base.js', function(){
 
     Base = think.safeRequire(path.resolve(__dirname, '../../lib/model/base.js'));
     var mysqlSocket = think.adapter('socket', 'mysql');
-    var config = think.extend({}, think.config('db'), {prefix: 'think_'});
+    var config = think.parseConfig(think.extend({}, think.config('db'), {
+      type:'mysql',
+      adapter: {
+        mysql: {
+          prefix: 'think_'
+        }
+      }
+    }));
     instance = new Base('user', config);
     var tagCacheKeyNum = 0;
     muk(mysqlSocket.prototype, 'query', function(sql){
@@ -265,7 +272,7 @@ describe('model/base.js', function(){
       assert.equal(name, 'model');
       assert.equal(module, '');
     }
-    var instance = new Base('user', think.config('db'));
+    var instance = new Base('user', think.parseConfig(think.config('db')));
     instance.model('model');
     think.model = model;
     done();
