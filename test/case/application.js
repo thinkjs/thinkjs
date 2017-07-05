@@ -53,8 +53,10 @@ test.serial('runInWorker', async t => {
   const App = getApplication();
   let app = new App(defaultOption);
   app.parseArgv = ()=>{return {}};
+  think.isCli = false
   app.run();
   await utils.sleep(1000)
+  // console.log(think.Controller.toString());
   t.is(require('think-cluster').capturedEvents,true)
 })
 
