@@ -116,7 +116,7 @@ class Router {
       let itemMethod = item.method;
       if(itemMethod && specialMethods.indexOf(itemMethod) === -1){
         //check method matched
-        if(itemMethod !== this.ctxMethod) return;
+        if(itemMethod.indexOf(this.ctxMethod) === -1) return;
       }
       assert(helper.isRegExp(item.match), 'router.match must be a RegExp');
       let match = item.match.exec(this.pathname);
