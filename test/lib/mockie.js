@@ -59,13 +59,18 @@ function mockCluster(isMaster) {
   })
 }
 
-function mockThinkCluster(args) {
+function mockThinkCluster(args = {}) {
   let {agent} = args;
   let obj = Object.assign({
     isAgent(){
       return agent
     },
     Master: class Master {
+      forkWorkers(){
+        return Promise.resolve();
+      }
+      forceReloadWorkers(){
+      }
     },
     Worker: class Worker {
       constructor(options = {}){
@@ -86,6 +91,10 @@ function mockThinkCluster(args) {
   mock('think-cluster', obj);
 }
 
+function mockThinkPm2(args = {}) {
+  mock('think-pm2', args);
+}
+
 function stop(name) {
   if (!name) {
     mock.stopAll()
@@ -98,5 +107,6 @@ module.exports = {
   mockThinkMockHttp,
   mockCluster,
   mockThinkCluster,
+  mockThinkPm2,
   stop
 }
