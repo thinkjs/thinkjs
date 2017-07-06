@@ -239,10 +239,6 @@ class Commander {
     this.copyFile('src/config/extend.js', rootPath + '/extend.js');
     this.copyFile('src/config/middleware.js', rootPath + '/middleware.js');
     this.copyFile('src/config/router.js', rootPath + '/router.js');
-    this.copyFile('src/config/adapter/cache.js', rootPath + '/adapter/cache.js');
-    this.copyFile('src/config/adapter/model.js', rootPath + '/adapter/model.js');
-    this.copyFile('src/config/adapter/session.js', rootPath + '/adapter/session.js');
-    this.copyFile('src/config/adapter/view.js', rootPath + '/adapter/view.js');
   }
 
   /**
