@@ -70,7 +70,7 @@ class Messenger extends events {
    * @param {Number} timeout []
    */
   setTimeout(actionName, timeout = 3000){
-    setTimeout(() => process.emit(actionName, new Error('timeout')), timeout);
+    setTimeout(() => this.emit(actionName, new Error('timeout')), timeout);
   }
   /**
    * broadcast
