@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-05 14:17:25
+* @Last Modified time: 2017-07-06 15:22:41
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -60,7 +60,7 @@ let defaultCtx = {
       RESULT.query = query;
     }
   },
-  subdomains: function() {
+  get subdomains() {
     return []; // default subdomains is empty
   },
   status: 200
@@ -277,7 +277,7 @@ test.serial.cb('options with subdomain is an Object', t => {
   };
   let ctx = helper.extend({}, defaultCtx, {
     path: '/article/list',
-    subdomains: function() {
+    get subdomains() {
       return ['m1', 'm2']; // multiple layer subdomains
     }
   });
@@ -306,7 +306,7 @@ test.serial.cb('options with subdomain is an Array', t => {
   };
   let ctx = helper.extend({}, defaultCtx, {
     path: '/article/list',
-    subdomains: function() {
+    get subdomains() {
       return ['admin'];
     }
   });
@@ -336,7 +336,7 @@ test.serial.cb('options with subdomain not match ', t => {
   };
   let ctx = helper.extend({}, defaultCtx, {
     path: '/admin/article/list',
-    subdomains: function() {
+    get subdomains() {
       return ['m1', 'm2'];
     }
   });

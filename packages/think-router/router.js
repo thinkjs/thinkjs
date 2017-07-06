@@ -72,7 +72,7 @@ class Router {
     //deal subdomain
     let subdomain = this.options.subdomain;
     if(!helper.isEmpty(subdomain)){
-      let subdomainStr = this.ctx.subdomains().join(',');
+      let subdomainStr = this.ctx.subdomains.join(',');
       if(subdomainStr && subdomain[subdomainStr]){
         if(pathname[0] === '/'){
           pathname = '/' + subdomain[subdomainStr] + pathname;
