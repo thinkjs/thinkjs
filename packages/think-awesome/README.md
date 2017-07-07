@@ -1,8 +1,8 @@
 # think-awesome
 
-awesome projects for `ThinkJS 3.x`
+Awesome projects for `ThinkJS 3.x`
 
-## middlewares
+## Middlewares
 
 | Package  | Author  | Version  |  Status | Coverage  | Description |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@ awesome projects for `ThinkJS 3.x`
 | [think-controller](https://github.com/thinkjs/think-controller)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-controller.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-controller/badge.svg)  | Invoke controller action |
 
 
-## adapters
+## Adapters
 
 ### view
 * [think-view-pug](https://github.com/thinkjs/think-view-pug) use pug to render view files (pug is rename from jade)
@@ -31,10 +31,10 @@ awesome projects for `ThinkJS 3.x`
 * [think-cache-redis](https://github.com/thinkjs/think-cache-redis) use redis to store cache data
 * [think-cache-memcache](https://github.com/thinkjs/think-cache-memchache) use memcache to store cache data
 
-## extends
+## Extends
 
 * [think-view](https://github.com/thinkjs/think-view) make controller support render view files
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. **already built in framework!**
 * [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller. **already built in framework!**
 
-## projects by ThinkJS
+## Projects by ThinkJS
