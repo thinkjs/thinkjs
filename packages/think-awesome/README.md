@@ -1,6 +1,6 @@
 # think-awesome
 
-Awesome projects for `ThinkJS 3.x`
+awesome projects for `ThinkJS 3.x`
 
 ## Middlewares
 
@@ -8,6 +8,7 @@ Awesome projects for `ThinkJS 3.x`
 |---|---|---|---|---|---|
 | [think-router](https://github.com/thinkjs/think-router) | [@lushijie](https://github.com/lushijie)  | ![version](https://img.shields.io/npm/v/think-router.svg)  |  ![](https://travis-ci.org/thinkjs/think-router.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-router/badge.svg)  | Router Parser |
 | [think-trace](https://github.com/thinkjs/think-trace)  | [@lizheming](https://github.com/lizheming)  | ![version](https://img.shields.io/npm/v/think-trace.svg)  |  ![](https://travis-ci.org/thinkjs/think-trace.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-trace/badge.svg)  | Error trace |
+| [think-payload](https://github.com/thinkjs/think-payload)  | [@berwin](https://github.com/berwin)  | ![version](https://img.shields.io/npm/v/think-payload.svg)  |  ![](https://travis-ci.org/thinkjs/think-payload.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-payload/badge.svg)  | Parse body data |
 | [think-meta](https://github.com/thinkjs/think-meta)  | [@welefen](https://github.com/welefen)  | ![version](https://img.shields.io/npm/v/think-meta.svg)  |  ![](https://travis-ci.org/thinkjs/think-meta.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-meta/badge.svg)  | Show meta info |
 | [think-logic](https://github.com/thinkjs/think-logic)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-logic.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-logic/badge.svg)  | Invoke logic action |
 | [think-controller](https://github.com/thinkjs/think-controller)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-controller.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-controller/badge.svg)  | Invoke controller action |
