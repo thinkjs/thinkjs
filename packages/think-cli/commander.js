@@ -12,6 +12,7 @@ class Commander {
     this.templatePath = path.join(__dirname, 'template');
     this.projectRootPath = this.cwd;
     this.rest = false;
+    this.withoutCompile = false;
   }
 
   parseArgv(argv) {
@@ -198,7 +199,12 @@ class Commander {
   _copyWwwFiles() {
     this.mkdir(this.projectRootPath);
 
-    this.copyFile('package.json', this.projectRootPath + '/package.json');
+    if(this.withoutCompile) {
+      this.copyFile('package.wc.json', this.projectRootPath + '/package.json');
+    }else {
+      this.copyFile('package.json', this.projectRootPath + '/package.json');
+    }
+    
 
     let ROOT_PATH = this.projectRootPath + '/www';
     this.copyFile('nginx.conf', this.projectRootPath + '/nginx.conf', {
@@ -216,7 +222,12 @@ class Commander {
 
 
     this.mkdir(this.projectRootPath + '/www');
-    this.copyFile('development.js', this.projectRootPath + '/development.js');
+    if(this.withoutCompile){
+      this.copyFile('development.wc.js', this.projectRootPath + '/development.js');
+    }else {
+      this.copyFile('development.js', this.projectRootPath + '/development.js');
+    }
+    
     this.copyFile('production.js', this.projectRootPath + '/production.js');
 
     this.mkdir(this.projectRootPath + '/www/static/');
@@ -559,6 +570,10 @@ class Commander {
     //create rest controller
     commander.option('-r', 'create rest controller', () => {
       this.rest = true;
+    });
+
+    commander.option('-w', 'without babel compile', () => {
+      this.withoutCompile = true;
     });
 
     //create adapter
