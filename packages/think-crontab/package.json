@@ -43,13 +43,13 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-watcher"
+    "url": "https://github.com/thinkjs/think-crontab"
   },
   "engines": {
     "node": ">=6.0.0"
   },
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-watcher/issues"
+    "url": "https://github.com/thinkjs/think-crontab/issues"
   }
 }
