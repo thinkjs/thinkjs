@@ -1,5 +1,88 @@
 const test = require('ava');
+const {isDirectory, rmdir} = require('think-helper');
+const Commander = require('../commander');
+const path = require('path');
 
-test.serial('test', async t => {
-  t.is(1, 1);
+process.cwd = function() {
+    return __dirname;
+}
+const instance = new Commander();
+
+test.serial('version', t => {
+  let processArgv = [ '/usr/local/bin/node', __filename, '-v' ];
+  instance.parseArgv(processArgv);
+  processArgv = [ '/usr/local/bin/node', __filename, '-V' ];
+  instance.parseArgv(processArgv);
+  processArgv = [ '/usr/local/bin/node', __filename, '--version' ];
+  instance.parseArgv(processArgv);
+})
+
+test.serial('new test1', t => {
+  const processArgv = [ '/usr/local/bin/node', __filename, 'new', 'test1', '-m', 'module'];
+  instance.parseArgv(processArgv);
+  t.is(isDirectory(path.resolve(__dirname, 'test1')), true);
+})
+
+test.serial('create controlelr', t => {
+  
+  process.cwd = function() {
+      return path.join(__dirname, 'test1');
+  }
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'abc' ];
+  instance.parseArgv(processArgv);
+})
+
+test.serial('create service', t => {
+  process.cwd = function() {
+      return path.join(__dirname, 'test1');
+  }
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'service', 'abc' ];
+  instance.parseArgv(processArgv);
+})
+
+test.serial('create model', t => {
+  process.cwd = function() {
+      return path.join(__dirname, 'test1');
+  }
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'model', 'abc' ];
+  instance.parseArgv(processArgv);
+})
+
+test.serial('create middleware', t => {
+  process.cwd = function() {
+      return path.join(__dirname, 'test1');
+  }
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'middleware', 'abc' ];
+  instance.parseArgv(processArgv);
+})
+
+test.serial('create adapter', t => {
+  process.cwd = function() {
+      return path.join(__dirname, 'test1');
+  }
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'adapter', 'abc' ];
+  instance.parseArgv(processArgv);
+})
+
+test.serial('create module', t => {
+  process.cwd = function() {
+      return path.join(__dirname, 'test1');
+  }
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'module', 'abc' ];
+  instance.parseArgv(processArgv);
+})
+// test.serial('new test2', t => {
+//   process.cwd = function() {
+//       return __dirname;
+//   }
+//   console.log(__dirname);
+//   const processArgv = [ '/usr/local/bin/node', __filename, 'new', 'test2', '-m', 'normal'];
+//   instance.parseArgv(processArgv);
+//   t.is(isDirectory(path.resolve(__dirname, 'test2')), true);
+// })
+
+test.after('cleanup', function() {
+  console.log('begin gc');
+  rmdir(path.join(__dirname, 'test1'));
+  rmdir(path.join(__dirname, 'test2'));
 })

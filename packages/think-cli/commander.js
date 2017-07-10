@@ -180,7 +180,8 @@ class Commander {
    * @return {} []
    */
   _checkEnv() {
-    if (!this.isThinkApp('./')) {
+    // console.log(path.resolve('./'), 'thinkjs');
+    if (!this.isThinkApp(path.resolve('./'))) {
       console.log();
       this.log(colors => {
         return colors.red('current path is not thinkjs project.\n');
