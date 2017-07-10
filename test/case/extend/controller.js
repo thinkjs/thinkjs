@@ -148,7 +148,7 @@ test('get isPost', async t => {
 });
 
 test('isCli method', async t => {
-  t.is(controller.isCli, true)
+  t.is(controller.isCli, false)
 });
 
 test('isAjax method', async t => {
