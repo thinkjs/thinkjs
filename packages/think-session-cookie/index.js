@@ -14,7 +14,7 @@ class CookieSession {
   constructor(options = {}, ctx){
     if(options.encrypt){
       assert(options.keys && helper.isArray(options.keys), '.keys required and must be an array when encrypt is set');
-      options.sign = false; //disable sign when set encrypt
+      options.signed = false; //disable signed when set encrypt
       this.keygrip = new Keygrip(options.keys);
     }
     options.overwrite = true; 
@@ -28,7 +28,7 @@ class CookieSession {
    * init session data
    */
   initSessionData(){
-    let data = this.ctx.cookie(this.options.name);
+    let data = this.ctx.cookie(this.options.name, undefined, this.options);
     if(data){
       if(this.keygrip){
         data = new Buffer(data, 'base64');
@@ -78,7 +78,7 @@ class CookieSession {
    */
   delete(){
     if(!this.fresh){
-      this.ctx.cookie(this.options.name, '');
+      this.ctx.cookie(this.options.name, null, this.options);
       this.data = {};
     }
     return Promise.resolve();
