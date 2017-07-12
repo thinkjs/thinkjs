@@ -7,11 +7,11 @@ const is = require('core-util-is');
 const uuid = require('uuid');
 const ms = require('ms');
 
-const fs_rmdir = promisify(fs.rmdir, fs);
-const fs_unlink = promisify(fs.unlink, fs);
-const fs_readdir = promisify(fs.readdir, fs);
+const fsRmdir = promisify(fs.rmdir, fs);
+const fsUnlink = promisify(fs.unlink, fs);
+const fsReaddir = promisify(fs.readdir, fs);
 
-const numberReg = /^((\-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
+const numberReg = /^((-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
 const toString = Object.prototype.toString;
 
 exports.isIP = net.isIP;
@@ -19,7 +19,7 @@ exports.isIPv4 = net.isIPv4;
 exports.isIPv6 = net.isIPv6;
 exports.isMaster = cluster.isMaster;
 
-for(let name in is){
+for (const name in is) {
   exports[name] = is[name];
 }
 
@@ -36,7 +36,7 @@ exports.isObject = obj => {
  * @param  {Object}   receiver []
  * @return {Promise}            []
  */
-function promisify(fn, receiver){
+function promisify(fn, receiver) {
   return (...args) => {
     return new Promise((resolve, reject) => {
       fn.apply(receiver, [...args, (err, res) => {
@@ -53,26 +53,31 @@ exports.promisify = promisify;
  * @return {Object} []
  */
 function extend(target = {}, ...args) {
-  let i = 0, length = args.length, options, name, src, copy;
-  if(!target){
+  let i = 0;
+  const length = args.length;
+  let options;
+  let name;
+  let src;
+  let copy;
+  if (!target) {
     target = exports.isArray(args[0]) ? [] : {};
   }
-  for(; i < length; i++){
+  for (; i < length; i++) {
     options = args[i];
     if (!options) {
       continue;
     }
-    for(name in options){
+    for (name in options) {
       src = target[name];
       copy = options[name];
       if (src && src === copy) {
         continue;
       }
-      if(exports.isArray(copy)){
+      if (exports.isArray(copy)) {
         target[name] = extend([], copy);
-      }else if(exports.isObject(copy)){
+      } else if (exports.isObject(copy)) {
         target[name] = extend(src && exports.isObject(src) ? src : {}, copy);
-      } else{
+      } else {
         target[name] = copy;
       }
     }
@@ -87,8 +92,8 @@ exports.extend = extend;
  * @param  {String} str []
  * @return {String}     []
  */
-function camelCase(str){
-  if(str.indexOf('_') > -1){
+function camelCase(str) {
+  if (str.indexOf('_') > -1) {
     str = str.replace(/_(\w)/g, (a, b) => {
       return b.toUpperCase();
     });
@@ -103,7 +108,7 @@ exports.camelCase = camelCase;
  * @return {String}     []
  */
 function snakeCase(str) {
-  return str.replace(/([^A-Z])([A-Z])/g, function ($0, $1, $2) {
+  return str.replace(/([^A-Z])([A-Z])/g, function($0, $1, $2) {
     return $1 + '_' + $2.toLowerCase();
   });
 };
@@ -114,26 +119,24 @@ exports.snakeCase = snakeCase;
  * @param  {Mixed}  obj []
  * @return {Boolean}     []
  */
-function isNumberString(obj){
-  if(!obj){
+function isNumberString(obj) {
+  if (!obj) {
     return false;
-  } 
+  }
   return numberReg.test(obj);
 }
 exports.isNumberString = isNumberString;
-
-
 
 /**
  * true empty
  * @param  {Mixed} obj []
  * @return {Boolean}     []
  */
-function isTrueEmpty(obj){
-  if(obj === undefined || obj === null || obj === ''){
+function isTrueEmpty(obj) {
+  if (obj === undefined || obj === null || obj === '') {
     return true;
   }
-  if(exports.isNumber(obj) && isNaN(obj)){
+  if (exports.isNumber(obj) && isNaN(obj)) {
     return true;
   }
   return false;
@@ -145,26 +148,26 @@ exports.isTrueEmpty = isTrueEmpty;
  * @param  {[Mixed]}  obj []
  * @return {Boolean}     []
  */
-function isEmpty(obj){
-  if(isTrueEmpty(obj)){
+function isEmpty(obj) {
+  if (isTrueEmpty(obj)) {
     return true;
   }
-  if(exports.isRegExp(obj)) {
-      return false;
-  }else if(exports.isDate(obj)) {
-      return false;
-  }else if(exports.isError(obj)) {
-      return false;
-  }else if (exports.isArray(obj)) {
+  if (exports.isRegExp(obj)) {
+    return false;
+  } else if (exports.isDate(obj)) {
+    return false;
+  } else if (exports.isError(obj)) {
+    return false;
+  } else if (exports.isArray(obj)) {
     return obj.length === 0;
-  }else if (exports.isString(obj)) {
+  } else if (exports.isString(obj)) {
     return obj.length === 0;
-  }else if (exports.isNumber(obj)) {
+  } else if (exports.isNumber(obj)) {
     return obj === 0;
-  }else if (exports.isBoolean(obj)) {
+  } else if (exports.isBoolean(obj)) {
     return !obj;
   } else if (exports.isObject(obj)) {
-    for(let key in obj){
+    for (const key in obj) {
       return false && key; // only for eslint
     }
     return true;
@@ -173,13 +176,12 @@ function isEmpty(obj){
 }
 exports.isEmpty = isEmpty;
 
-
 /**
  * get deferred object
  * @return {Object} []
  */
-function defer(){
-  let deferred = {};
+function defer() {
+  const deferred = {};
   deferred.promise = new Promise((resolve, reject) => {
     deferred.resolve = resolve;
     deferred.reject = reject;
@@ -188,14 +190,13 @@ function defer(){
 }
 exports.defer = defer;
 
-
 /**
  * get content md5
  * @param  {String} str [content]
  * @return {String}     [content md5]
  */
-function md5(str){
-  let instance = crypto.createHash('md5');
+function md5(str) {
+  const instance = crypto.createHash('md5');
   instance.update(str + '', 'utf8');
   return instance.digest('hex');
 }
@@ -206,7 +207,7 @@ exports.md5 = md5;
  * @param  {Number} time []
  * @return {[type]}      []
  */
-function timeout(time = 1000){
+function timeout(time = 1000) {
   return new Promise((resolve) => {
     setTimeout(resolve, time);
   });
@@ -216,9 +217,9 @@ exports.timeout = timeout;
 /**
  * escape html
  */
-function escapeHtml(str){
+function escapeHtml(str) {
   return (str + '').replace(/[<>'"]/g, a => {
-    switch(a){
+    switch (a) {
       case '<':
         return '&lt;';
       case '>':
@@ -238,22 +239,22 @@ exports.escapeHtml = escapeHtml;
  * @return {String}      []
  */
 function datetime(date, format) {
-  let fn = d => {
+  const fn = d => {
     return ('0' + d).slice(-2);
   };
 
-  if(date && exports.isString(date) && Date.parse(date)){
+  if (date && exports.isString(date) && Date.parse(date)) {
     date = new Date(Date.parse(date));
   }
 
-  if(!exports.isDate(date)) {
+  if (!exports.isDate(date)) {
     return false;
   }
 
-  let d = date || new Date();
+  const d = date || new Date();
 
   format = format || 'YYYY-MM-DD HH:mm:ss';
-  let formats = {
+  const formats = {
     YYYY: d.getFullYear(),
     MM: fn(d.getMonth() + 1),
     DD: fn(d.getDate()),
@@ -273,12 +274,12 @@ exports.datetime = datetime;
  * @param  {String} version [uuid RFC version]
  * @return {String}         []
  */
-exports.uuid = function(version){
-  if(version === 'v1'){
+exports.uuid = function(version) {
+  if (version === 'v1') {
     return uuid.v1();
   }
   return uuid.v4();
-}
+};
 
 /**
  * parse adapter config
@@ -286,53 +287,51 @@ exports.uuid = function(version){
 exports.parseAdapterConfig = (config = {}, extConfig) => {
   config = exports.extend({}, config);
   // {handle: ''}
-  if(!config.type) config.type = '_';
+  if (!config.type) config.type = '_';
   // {type: 'xxx', handle: ''}
-  if(config.handle){
-    let type = config.type;
+  if (config.handle) {
+    const type = config.type;
     delete config.type;
     config = {type, [type]: config};
   }
-  if(extConfig){
-    //only change type
+  if (extConfig) {
+    // only change type
     // 'xxx'
-    if(exports.isString(extConfig)){
+    if (exports.isString(extConfig)) {
       extConfig = {type: extConfig};
     }
     // {handle: 'www'}
-    //only add some configs
-    if(!extConfig.type){
+    // only add some configs
+    if (!extConfig.type) {
       extConfig = {[config.type]: extConfig};
     }
     // {type: 'xxx', handle: 'www'}
-    if(extConfig.handle){
-      let type = extConfig.type;
+    if (extConfig.handle) {
+      const type = extConfig.type;
       delete extConfig.type;
       extConfig = {type, [type]: extConfig};
     }
   }
-  //merge config
+  // merge config
   config = exports.extend({}, config, extConfig);
-  let value = config[config.type] || {};
+  const value = config[config.type] || {};
   // add type for return value
   value.type = config.type;
   return value;
-}
+};
 /**
  * transform humanize time to ms
  */
-exports.ms = function (time) {
+exports.ms = function(time) {
   if (typeof time === 'number') {
     return time;
   }
-  let result = ms(time);
+  const result = ms(time);
   if (result === undefined) {
     throw new Error(`think-ms('${time}') result is undefined`);
   }
   return result;
-}
-
-
+};
 
 /**
  * check path is exist
@@ -346,7 +345,6 @@ function isExist(dir) {
   } catch (e) {
     return false;
   }
-
 }
 
 exports.isExist = isExist;
@@ -358,11 +356,10 @@ function isFile(filePath) {
   if (!isExist(filePath)) {
     return false;
   }
-  let stat = fs.statSync(filePath);
+  const stat = fs.statSync(filePath);
   return stat.isFile();
 }
 exports.isFile = isFile;
-
 
 /**
  * check path is directory
@@ -371,7 +368,7 @@ function isDirectory(filePath) {
   if (!isExist(filePath)) {
     return false;
   }
-  let stat = fs.statSync(filePath);
+  const stat = fs.statSync(filePath);
   return stat.isDirectory();
 }
 exports.isDirectory = isDirectory;
@@ -382,7 +379,7 @@ exports.isDirectory = isDirectory;
  * @param  {String} mode [path mode]
  * @return {Boolean}      []
  */
-function chmod(p, mode = '0777'){
+function chmod(p, mode = '0777') {
   if (!isExist(p)) {
     return false;
   }
@@ -398,7 +395,7 @@ function mkdir(dir, mode = '0777') {
   if (isExist(dir)) {
     return chmod(dir, mode);
   }
-  let pp = path.dirname(dir);
+  const pp = path.dirname(dir);
   if (isExist(pp)) {
     try {
       fs.mkdirSync(dir, mode);
@@ -421,20 +418,20 @@ exports.mkdir = mkdir;
  * @param  {} prefix []
  * @return {}        []
  */
-function getdirFiles(dir, prefix = ''){
+function getdirFiles(dir, prefix = '') {
   dir = path.normalize(dir);
   if (!fs.existsSync(dir)) {
     return [];
   }
-  let files = fs.readdirSync(dir);
+  const files = fs.readdirSync(dir);
   let result = [];
   files.forEach(item => {
-    let currentDir = path.join(dir, item);
-    let stat = fs.statSync(currentDir);
+    const currentDir = path.join(dir, item);
+    const stat = fs.statSync(currentDir);
     if (stat.isFile()) {
       result.push(path.join(prefix, item));
-    }else if(stat.isDirectory()){
-      let cFiles = getdirFiles(currentDir, path.join(prefix, item));
+    } else if (stat.isDirectory()) {
+      const cFiles = getdirFiles(currentDir, path.join(prefix, item));
       result = result.concat(cFiles);
     }
   });
@@ -449,21 +446,21 @@ exports.getdirFiles = getdirFiles;
  * @param  {Boolean} reserve []
  * @return {Promise}         []
  */
-function rmdir(p, reserve){
+function rmdir(p, reserve) {
   if (!isDirectory(p)) {
     return Promise.resolve();
   }
-  return fs_readdir(p).then(files => {
-    let promises = files.map(item => {
-      let filepath = path.join(p, item);
-      if(isDirectory(filepath)){
+  return fsReaddir(p).then(files => {
+    const promises = files.map(item => {
+      const filepath = path.join(p, item);
+      if (isDirectory(filepath)) {
         return rmdir(filepath, false);
       }
-      return fs_unlink(filepath);
+      return fsUnlink(filepath);
     });
     return Promise.all(promises).then(() => {
-      if(!reserve){
-        return fs_rmdir(p);
+      if (!reserve) {
+        return fsRmdir(p);
       }
     });
   });
