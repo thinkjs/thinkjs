@@ -8,7 +8,7 @@ const DEFAULT_404_TEMPLATE = path.join(__dirname, '../template/404.html');
 const DEFAULT_500_TEMPLATE = path.join(__dirname, '../template/500.html');
 
 module.exports = class Tracer {
-  constructor(opts = {}) { 
+  constructor(opts = {}) {
     this.ctxLineNumbers = opts.ctxLineNumbers || 10;
     this.debug = opts.debug !== undefined ? opts.debug : true;
     this.err404Template = opts.err404Template || DEFAULT_404_TEMPLATE;
@@ -37,15 +37,15 @@ module.exports = class Tracer {
    * @param {*object} line stack object for every stack
    */
   getFile(line) {
-    let filename = line.getFileName();
-    let lineNumber = line.getLineNumber();
+    const filename = line.getFileName();
+    const lineNumber = line.getLineNumber();
 
     return readFileAsync(filename, {encoding: 'utf-8'}).then(data => {
       let content = data.split('\n');
-      let startLineNumber = Math.max(0, lineNumber - this.ctxLineNumbers);
-      let endLineNumber = Math.min(lineNumber + this.ctxLineNumbers, data.length);
+      const startLineNumber = Math.max(0, lineNumber - this.ctxLineNumbers);
+      const endLineNumber = Math.min(lineNumber + this.ctxLineNumbers, data.length);
       content = content.slice(startLineNumber, endLineNumber);
-      
+
       line.content = content.join('\n');
       line.startLineNumber = Math.max(0, startLineNumber) + 1;
 
@@ -59,7 +59,7 @@ module.exports = class Tracer {
    */
   render500(stacks, err) {
     let error;
-    if( this.debug ) {
+    if (this.debug) {
       error = JSON.stringify(stacks, null, '\t');
     } else {
       error = '[]';
@@ -69,7 +69,7 @@ module.exports = class Tracer {
     return this.err500TemplateContent
       .replace('{{error}}', error)
       .replace(
-        '{{errMsg}}', 
+        '{{errMsg}}',
         err.toString()
           .replace(/[\r\n]+/g, '<br/>')
           .replace(/"/g, '\\"')
@@ -81,7 +81,7 @@ module.exports = class Tracer {
    * @param {*Error} err Error instance
    */
   render404(ctx, err) {
-    if( !this.debug ) {
+    if (!this.debug) {
       err = '';
     }
 
@@ -97,15 +97,17 @@ module.exports = class Tracer {
     this.ctx = ctx;
 
     // 404 not found error
-    if( err.status === 404 ) {
+    if (err.status === 404) {
       ctx.body = this.render404(ctx, err);
       return true;
     }
-    
-    let stack = stackTrace.parse(err);
-    return Promise.all( 
-      stack.map(this.getFile.bind(this)) 
+
+    const stack = stackTrace.parse(err);
+    return Promise.all(
+      stack.map(this.getFile.bind(this))
     ).then(stacks => stacks.filter(stack => stack))
-    .then(stacks => ctx.body = this.render500(stacks, err));
+      .then(stacks => {
+        ctx.body = this.render500(stacks, err);
+      });
   }
-}
+};
