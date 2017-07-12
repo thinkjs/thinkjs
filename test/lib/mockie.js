@@ -91,6 +91,29 @@ function mockThinkCluster(args = {}) {
   mock('think-cluster', obj);
 }
 
+let instance = null;
+
+function mockCookies() {
+  mock('cookies', class Cookies{
+    constructor(req,res,options){
+      if(!instance){
+        instance = this;
+        instance.cookie = {};
+        instance.req = req;
+        instance.res = res;
+        instance.options = options;
+      }
+      return instance;
+    }
+    set(name,value,options){
+      this.cookie[name] = value;
+    }
+    get(name,options){
+      return this.cookie[name] || ''
+    }
+  });
+}
+
 function mockThinkPm2(args = {}) {
   mock('think-pm2', args);
 }
@@ -108,5 +131,6 @@ module.exports = {
   mockCluster,
   mockThinkCluster,
   mockThinkPm2,
+  mockCookies,
   stop
 }
