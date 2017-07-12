@@ -28,7 +28,7 @@ test.serial('create controlelr', t => {
   process.cwd = function() {
       return path.join(__dirname, 'test1');
   }
-  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'abc' ];
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'abc', '-m', 'module' ];
   instance.parseArgv(processArgv);
 })
 
@@ -71,18 +71,9 @@ test.serial('create module', t => {
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'module', 'abc' ];
   instance.parseArgv(processArgv);
 })
-// test.serial('new test2', t => {
-//   process.cwd = function() {
-//       return __dirname;
-//   }
-//   console.log(__dirname);
-//   const processArgv = [ '/usr/local/bin/node', __filename, 'new', 'test2', '-m', 'normal'];
-//   instance.parseArgv(processArgv);
-//   t.is(isDirectory(path.resolve(__dirname, 'test2')), true);
-// })
+
 
 test.after('cleanup', function() {
   console.log('begin gc');
   rmdir(path.join(__dirname, 'test1'));
-  rmdir(path.join(__dirname, 'test2'));
 })

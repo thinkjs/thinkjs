@@ -13,10 +13,10 @@ class Commander {
     this.projectRootPath = this.cwd;
     this.rest = false;
     this.withoutCompile = false;
+    this.bindDirective();
   }
 
   parseArgv(argv) {
-    this.bindDirective();
     commander.parse(argv);
   }
 
@@ -348,6 +348,7 @@ class Commander {
     }
 
     let controllerPath = this.getPath(m, 'controller');
+
     if (this.rest) {
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
       this.copyFile('src/controller/restIndex.js', controllerPath + '/' + controller + '.js');
