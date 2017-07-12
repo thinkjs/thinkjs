@@ -20,11 +20,11 @@ class Commander {
     commander.parse(argv);
   }
 
-/**
- * log
- * @param  {Function} fn []
- * @return {}      []
- */
+  /**
+   * log
+   * @param  {Function} fn []
+   * @return {}      []
+   */
   log(fn) {
     console.log('  ' + fn(colors));
   }
@@ -51,8 +51,8 @@ class Commander {
    * @return {String} []
    */
   getVersion() {
-    let filepath = path.resolve(__dirname, './package.json');
-    let version = JSON.parse(fs.readFileSync(filepath)).version;
+    const filepath = path.resolve(__dirname, './package.json');
+    const version = JSON.parse(fs.readFileSync(filepath)).version;
     return version;
   }
 
@@ -69,8 +69,8 @@ class Commander {
    * @return {} []
    */
   getAppName() {
-    let filepath = path.normalize(this.cwd + '/' + this.projectRootPath).replace(/\\/g, '');
-    let matched = filepath.match(/([^\/]+)\/?$/);
+    const filepath = path.normalize(this.cwd + '/' + this.projectRootPath).replace(/\\/g, '');
+    const matched = filepath.match(/([^\/]+)\/?$/);
     return matched[1];
   }
 
@@ -90,7 +90,7 @@ class Commander {
       replace = '';
     }
 
-    //if target file is exist, ignore it
+    // if target file is exist, ignore it
     if (helper.isFile(target)) {
       if (showWarning) {
         this.log(colors => {
@@ -102,19 +102,18 @@ class Commander {
 
     this.mkdir(path.dirname(target));
 
-
-    //if source file is not exist
+    // if source file is not exist
     if (!helper.isFile(this.templatePath + path.sep + source)) {
       return;
     }
 
     let content = fs.readFileSync(this.templatePath + path.sep + source, 'utf8');
-    //replace content 
+    // replace content 
     if (helper.isObject(replace)) {
-      for (let key in replace) {
-        /*eslint-disable no-constant-condition*/
+      for (const key in replace) {
+        /* eslint-disable no-constant-condition */
         while (1) {
-          let content1 = content.replace(key, replace[key]);
+          const content1 = content.replace(key, replace[key]);
           if (content1 === content) {
             content = content1;
             break;
@@ -136,7 +135,7 @@ class Commander {
       return list.every(item => {
         const filepath = path.join(projectRootPath, item);
         return helper.isFile(filepath) || helper.isDirectory(filepath);
-      })
+      });
     }
     return false;
   }
@@ -147,7 +146,7 @@ class Commander {
    * @return {Boolean}        []
    */
   isModuleExist(m) {
-    let modelPath = this.getPath(m, 'model');
+    const modelPath = this.getPath(m, 'model');
     return helper.isDirectory(modelPath);
   }
 
@@ -157,7 +156,7 @@ class Commander {
    * @return {}             []
    */
   parseAppConfig() {
-    let filepath = path.join(this.projectRootPath, 'src/common');
+    const filepath = path.join(this.projectRootPath, 'src/common');
     if (helper.isDirectory(filepath)) {
       this.mode = 'module';
     }
@@ -200,14 +199,13 @@ class Commander {
   _copyWwwFiles() {
     this.mkdir(this.projectRootPath);
 
-    if(this.withoutCompile) {
+    if (this.withoutCompile) {
       this.copyFile('package.wc.json', this.projectRootPath + '/package.json');
-    }else {
+    } else {
       this.copyFile('package.json', this.projectRootPath + '/package.json');
     }
-    
 
-    let ROOT_PATH = this.projectRootPath + '/www';
+    const ROOT_PATH = this.projectRootPath + '/www';
     this.copyFile('nginx.conf', this.projectRootPath + '/nginx.conf', {
       '<ROOT_PATH>': ROOT_PATH
     });
@@ -221,14 +219,13 @@ class Commander {
     this.copyFile('gitignore', this.projectRootPath + '/.gitignore');
     this.copyFile('README.md', this.projectRootPath + '/README.md');
 
-
     this.mkdir(this.projectRootPath + '/www');
-    if(this.withoutCompile){
+    if (this.withoutCompile) {
       this.copyFile('development.wc.js', this.projectRootPath + '/development.js');
-    }else {
+    } else {
       this.copyFile('development.js', this.projectRootPath + '/development.js');
     }
-    
+
     this.copyFile('production.js', this.projectRootPath + '/production.js');
 
     this.mkdir(this.projectRootPath + '/www/static/');
@@ -242,7 +239,7 @@ class Commander {
    * @return {}             []
    */
   _copyCommonConfigFiles() {
-    let rootPath = this.getPath('common', 'config');
+    const rootPath = this.getPath('common', 'config');
     this.mkdir(rootPath);
 
     this.copyFile('src/config/config.js', rootPath + '/config.js', false);
@@ -258,7 +255,7 @@ class Commander {
    * @return {}             []
    */
   _copyCommonBootstrapFiles() {
-    let rootPath = this.getPath('common', 'bootstrap');
+    const rootPath = this.getPath('common', 'bootstrap');
     this.mkdir(rootPath);
 
     this.copyFile('src/bootstrap/master.js', rootPath + '/master.js');
@@ -284,29 +281,29 @@ class Commander {
       process.exit();
     }
 
-    //config files
-    let configPath = this.getPath(m, 'config');
+    // config files
+    const configPath = this.getPath(m, 'config');
     this.mkdir(configPath);
     this.copyFile('src/config/config.js', configPath + '/config.js', false);
 
-    //controller files
-    let controllerPath = this.getPath(m, 'controller');
+    // controller files
+    const controllerPath = this.getPath(m, 'controller');
     this.mkdir(controllerPath);
     this.copyFile('src/controller/base.js', controllerPath + '/base.js');
     this.copyFile('src/controller/index.js', controllerPath + '/index.js');
 
-    //logic files
-    let logicPath = this.getPath(m, 'logic');
+    // logic files
+    const logicPath = this.getPath(m, 'logic');
     this.mkdir(logicPath);
     this.copyFile('src/logic/index.js', logicPath + '/index.js');
 
-    //model files
-    let modelPath = this.getPath(m, 'model');
+    // model files
+    const modelPath = this.getPath(m, 'model');
     this.mkdir(modelPath);
     this.copyFile('src/model/index.js', modelPath + '/index.js', false);
 
-    //view files
-    let viewPath = this.getProjectViewPath(m);
+    // view files
+    const viewPath = this.getProjectViewPath(m);
     this.mkdir(viewPath);
     this.copyFile('view/index_index.html', viewPath + '/index_index.html');
   }
@@ -347,7 +344,7 @@ class Commander {
       this.createModule(m);
     }
 
-    let controllerPath = this.getPath(m, 'controller');
+    const controllerPath = this.getPath(m, 'controller');
     if (this.rest) {
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
       this.copyFile('src/controller/restIndex.js', controllerPath + '/' + controller + '.js');
@@ -355,7 +352,7 @@ class Commander {
       this.copyFile('src/controller/index.js', controllerPath + '/' + controller + '.js');
     }
 
-    let logicPath = this.getPath(m, 'logic');
+    const logicPath = this.getPath(m, 'logic');
     this.copyFile('src/logic/index.js', logicPath + '/' + controller + '.js');
 
     console.log();
@@ -382,7 +379,7 @@ class Commander {
       this.createModule(module);
     }
 
-    let servicePath = this.getPath(module, 'service');
+    const servicePath = this.getPath(module, 'service');
     this.copyFile('src/service/index.js', servicePath + '/' + service + '.js');
 
     console.log();
@@ -409,7 +406,7 @@ class Commander {
       this.createModule(m);
     }
 
-    let modelPath = this.getPath(m, 'model');
+    const modelPath = this.getPath(m, 'model');
     this.copyFile('src/model/index.js', modelPath + '/' + model + '.js');
 
     console.log();
@@ -422,8 +419,8 @@ class Commander {
    */
   createMiddleware(middleware) {
     this._checkEnv();
-    let midlewarePath = this.getPath('common', 'middleware');
-    let filepath = midlewarePath + '/' + middleware + '.js';
+    const midlewarePath = this.getPath('common', 'middleware');
+    const filepath = midlewarePath + '/' + middleware + '.js';
     this.mkdir(midlewarePath);
     this.copyFile('src/middleware/base.js', filepath);
 
@@ -440,10 +437,10 @@ class Commander {
 
     adapter = adapter.split('/');
 
-    let type = adapter[0];
-    let name = adapter[1] || 'base';
+    const type = adapter[0];
+    const name = adapter[1] || 'base';
 
-    let adapterPath = this.getPath('common', 'adapter');
+    const adapterPath = this.getPath('common', 'adapter');
 
     this.copyFile('src/adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
 
@@ -456,7 +453,6 @@ class Commander {
    * @return {}             []
    */
   _createProject() {
-
     this._copyWwwFiles();
 
     this.mkdir(this.appPath);
@@ -485,7 +481,6 @@ class Commander {
     this.appPath = this.getProjectAppPath();
     this._createProject();
 
-
     let p = this.projectRootPath.slice(this.cwd.length);
     if (p[0] === path.sep) {
       p = p.slice(1);
@@ -511,8 +506,8 @@ class Commander {
    * @return {} []
    */
   displayVersion() {
-    let version = this.getVersion();
-    let chars = [
+    const version = this.getVersion();
+    const chars = [
       ' _______ _     _       _        _  _____ ',
       '|__   __| |   (_)     | |      | |/ ____|',
       '   | |  | |__  _ _ __ | | __   | | (___  ',
@@ -537,38 +532,38 @@ class Commander {
       this.mode = m;
     });
 
-    //create project
+    // create project
     commander.command('new <projectPath>').description('create project').action(projectPath => {
       this.projectRootPath = path.resolve(this.projectRootPath, projectPath);
       this.createProject();
     });
 
-    //create module
+    // create module
     commander.command('module <moduleName>').description('add module').action(m => {
       this.createModule(m.toLowerCase());
     });
 
-    //create controlelr
+    // create controlelr
     commander.command('controller <controllerName>').description('add controller').action(controller => {
       this.createController(controller.toLowerCase());
     });
 
-    //create service
+    // create service
     commander.command('service <serviceName>').description('add service').action(service => {
       this.createService(service.toLowerCase());
     });
 
-    //create model
+    // create model
     commander.command('model <modelName>').description('add model').action(model => {
       this.createModel(model.toLowerCase());
     });
 
-    //create middleware
+    // create middleware
     commander.command('middleware <middlewareName>').description('add middleware').action(middleware => {
       this.createMiddleware(middleware.toLowerCase());
     });
 
-    //create rest controller
+    // create rest controller
     commander.option('-r', 'create rest controller', () => {
       this.rest = true;
     });
@@ -577,12 +572,11 @@ class Commander {
       this.withoutCompile = true;
     });
 
-    //create adapter
+    // create adapter
     commander.command('adapter <adapterName>').description('add adapter').action(adapter => {
       this.createAdapter(adapter.toLowerCase());
     });
   }
-
 }
 
 module.exports = Commander;
