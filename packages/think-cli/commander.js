@@ -70,7 +70,7 @@ class Commander {
    */
   getAppName() {
     const filepath = path.normalize(this.cwd + '/' + this.projectRootPath).replace(/\\/g, '');
-    const matched = filepath.match(/([^\/]+)\/?$/);
+    const matched = filepath.match(/([^/]+)\/?$/);
     return matched[1];
   }
 

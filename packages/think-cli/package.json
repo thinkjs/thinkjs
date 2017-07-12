@@ -9,8 +9,8 @@
   "scripts": {
     "test": "npm run lint & nyc ava test/",
     "coverage": "nyc report --reporter=html",
-    "lint": "eslint commander.js && eslint template/**/*.js",
-    "lint-fix": "eslint --fix template/**/*.js"
+    "lint": "eslint commander.js & eslint template/**/*.js",
+    "lint-fix": "eslint --fix commander.js & eslint --fix template/**/*.js"
   },
   "ava": {
     "require": [
