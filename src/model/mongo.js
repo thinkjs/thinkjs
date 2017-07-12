@@ -187,12 +187,15 @@ export default class extends Base {
       ignoreDefault = options;
       options = {};
     }
-    options = await this.parseOptions(options);
+
     let pk = await this.getPk();
     if(data[pk]){
       this.where({[pk]: data[pk]});
       delete data[pk];
     }
+
+    options = await this.parseOptions(options);
+
     if(ignoreDefault !== true){
       data = await this.beforeUpdate(data, options);
     }
