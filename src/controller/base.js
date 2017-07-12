@@ -351,7 +351,7 @@ export default class extends think.http.base {
     }
     this.type(contentType, false);
 
-    this.header('Content-Disposition', 'attachment; filename="' + (filename || path.basename(filepath)) + '"');
+    this.header('Content-Disposition', 'attachment; filename="' + encodeURIComponent(filename || path.basename(filepath)) + '"');
     return think.middleware('output_resource', this.http, filepath);
   }
   /**
