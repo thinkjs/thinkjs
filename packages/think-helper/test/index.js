@@ -263,6 +263,13 @@ test('ms 1y', t => {
   var value = ms('1y');
   t.is(value, 31557600000);
 })
+test('ms 1b', t => {
+  try{
+    var value = ms('1b');
+  }catch(e) {
+    t.is(e.toString(), "Error: think-ms('1b') result is undefined");
+  }
+})
 
 
 test('datetime', t => {
