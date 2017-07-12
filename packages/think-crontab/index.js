@@ -13,7 +13,7 @@ class Crontab {
    * @param {Object|String} options 
    * @param {Object} app koa app
    */
-  constructor(options, app){
+  constructor(options, app) {
     this.options = this.parseOptions(options);
     this.app = app;
   }
@@ -21,24 +21,24 @@ class Crontab {
    * parse options
    * @param {Object|String} options 
    */
-  parseOptions(options){
-    if(helper.isString(options)){
+  parseOptions(options) {
+    if (helper.isString(options)) {
       options = [{
         handle: options,
         type: 'one'
       }];
-    }else if(!helper.isArray(options)){
+    } else if (!helper.isArray(options)) {
       options = [options];
     }
     options = options.map(item => {
       item.type = item.type || 'one';
-      if(!helper.isFunction(item.handle)){
-        let handle = item.handle;
+      if (!helper.isFunction(item.handle)) {
+        const handle = item.handle;
         item.handle = () => mockHttp(handle, this.app);
       }
       return item;
     }).filter(item => {
-      if(item.enable !== undefined) return !!item.enable;
+      if (item.enable !== undefined) return !!item.enable;
       return true;
     });
     return options;
@@ -46,11 +46,11 @@ class Crontab {
   /**
    * run item task
    */
-  runItemTask(item){
-    if(item.type === 'all'){
+  runItemTask(item) {
+    if (item.type === 'all') {
       item.handle(this.app);
       debug(`run task ${item.taskName}, pid:${process.pid}`);
-    }else{
+    } else {
       messenger.runInOne(() => {
         item.handle(this.app);
         debug(`run task ${item.taskName}, pid:${process.pid}`);
@@ -60,28 +60,28 @@ class Crontab {
   /**
    * run task
    */
-  runTask(){
+  runTask() {
     this.options.forEach(item => {
       item.taskName = `${item.name ? ', name:' + item.name : ''}`;
-      //immediate run task
-      if(item.immediate){
+      // immediate run task
+      if (item.immediate) {
         this.app.on('appReady', () => {
           this.runItemTask(item);
         });
       }
-      if(item.interval){
-        let interval = helper.ms(item.interval);
-        let timer = setInterval(() => {
+      if (item.interval) {
+        const interval = helper.ms(item.interval);
+        const timer = setInterval(() => {
           this.runItemTask(item);
         }, interval);
         timer.unref();
         item.taskName += `interval: ${item.interval}`;
-      }else if(item.cron){
+      } else if (item.cron) {
         schedule.scheduleJob(item.cron, () => {
           this.runItemTask(item);
         });
         item.taskName += `, cron: ${item.cron}`;
-      }else{
+      } else {
         throw new Error('.interval or .cron need be set');
       }
     });
