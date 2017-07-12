@@ -20,7 +20,7 @@ class FileSession {
    * @param {Object} options 
    * @param {Object} ctx 
    */
-  constructor(options, ctx){
+  constructor(options, ctx) {
     assert(options.sessionPath && path.isAbsolute(options.sessionPath), '.sessionPath required');
     assert(options.cookie, '.cookie required');
 
@@ -33,7 +33,7 @@ class FileSession {
     this.gcType = `session_${options.sessionPath}`;
     gc(this, this.options.gcInterval);
     
-    //flush session when request finish
+    // flush session when request finish
     this.ctx.res.once('finish', () => {
       this.flush();
     });
@@ -41,18 +41,19 @@ class FileSession {
   /**
    * init session data
    */
-  [initSessionData](){
-    if(this.initPromise){
+  [initSessionData]() {
+    if (this.initPromise) {
       return this.initPromise;
     }
-    if(this.options.fresh || this.status === -1){
-      return this.initPromise = Promise.resolve();
+    if (this.options.fresh || this.status === -1) {
+      this.initPromise = Promise.resolve();
+      return this.initPromise;
     }
     this.initPromise = this.fileStore.get(this.options.cookie).then(content => {
       content = JSON.parse(content);
-      if(helper.isEmpty(content)) return;
-      //session data is expired
-      if(content.expires < Date.now()){
+      if (helper.isEmpty(content)) return;
+      // session data is expired
+      if (content.expires < Date.now()) {
         return this.delete();
       }
       this.data = content.data || {};
@@ -63,9 +64,9 @@ class FileSession {
    * get session data
    * @param {String} name 
    */
-  get(name){
+  get(name) {
     return this[initSessionData]().then(() => {
-      if(this.options.autoUpdate){
+      if (this.options.autoUpdate) {
         this.status = 1;
       }
       return name ? this.data[name] : this.data;
@@ -76,7 +77,7 @@ class FileSession {
    * @param {String} name 
    * @param {Mixed} value 
    */
-  set(name, value){
+  set(name, value) {
     return this[initSessionData]().then(() => {
       this.status = 1;
       this.data[name] = value;
@@ -85,7 +86,7 @@ class FileSession {
   /**
    * delete session data
    */
-  delete(){
+  delete() {
     this.status = -1;
     this.data = {};
     return Promise.resolve();
@@ -93,11 +94,11 @@ class FileSession {
   /**
    * flush session data to store
    */
-  flush(){
-    if(this.status === -1){
+  flush() {
+    if (this.status === -1) {
       this.status = 0;
       return this.fileStore.delete(this.options.cookie);
-    }else if(this.status === 1){
+    } else if (this.status === 1) {
       this.status = 0;
       return this.fileStore.set(this.options.cookie, JSON.stringify({
         expires: Date.now() + helper.ms(this.options.maxAge || 0),
@@ -109,14 +110,14 @@ class FileSession {
   /**
    * gc
    */
-  gc(){
-    let files = helper.getdirFiles(this.options.sessionPath);
+  gc() {
+    const files = helper.getdirFiles(this.options.sessionPath);
     files.forEach(file => {
-      let filePath = path.join(this.options.sessionPath, file);
+      const filePath = path.join(this.options.sessionPath, file);
       readFile(filePath, 'utf8').then(content => {
-        if(!content) return Promise.reject(new Error('content empty'));
+        if (!content) return Promise.reject(new Error('content empty'));
         content = JSON.parse(content);
-        if(Date.now() > content.expires){
+        if (Date.now() > content.expires) {
           return Promise.reject(new Error('session file expired'));
         }
       }).catch(() => {
