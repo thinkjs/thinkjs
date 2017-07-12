@@ -21,7 +21,7 @@ const defaultOptions = {
   maxage: 0,
   setHeaders: false,
   notFoundNext: false
-}
+};
 
 /**
  * prefix "/" for path
@@ -33,7 +33,7 @@ const prefixPath = (path) => {
     path = '/' + path;
   }
   return path;
-}
+};
 
 /**
  * match route
@@ -61,7 +61,7 @@ const matchRoute = (path, route) => {
  * @param options
  * @returns {serve}
  */
-module.exports = function (options) {
+module.exports = function(options) {
   options = helper.extend({}, defaultOptions, options || {});
 
   const root = options.root;
@@ -69,16 +69,16 @@ module.exports = function (options) {
   debug('static "%s" %j', root, options);
   options.root = resolve(root);
 
-  let publicPath = options.publicPath;
-  assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string')
+  const publicPath = options.publicPath;
+  assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string');
   options.publicPath = prefixPath(publicPath);
-  
+
   const notFoundNext = options.notFoundNext;
 
   /**
    * serve
    */
-  return function serve (ctx, next) {
+  return function serve(ctx, next) {
     if (matchRoute(ctx.path, options.publicPath) && (ctx.method === 'HEAD' || ctx.method === 'GET')) {
       return send(ctx, prefixPath(ctx.path), options).then(done => {
         if (!done && notFoundNext) {
@@ -88,4 +88,4 @@ module.exports = function (options) {
     }
     return next();
   };
-}
+};

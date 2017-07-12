@@ -36,6 +36,7 @@
     "babel-preset-think-node": "^1.0.1",
     "coveralls": "^2.13.0",
     "eslint": "^3.19.0",
+    "eslint-config-think": "^1.0.1",
     "koa": "^2.2.0",
     "nyc": "^10.2.0",
     "supertest": "^3.0.0",
