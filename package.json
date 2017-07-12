@@ -6,6 +6,9 @@
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
+  "pre-commit": [
+    "test"
+  ],
   "publishConfig": {
     "tag": "next"
   },
@@ -40,7 +43,6 @@
     "bluebird": "3.3.5",
     "cookies": "^0.7.0",
     "debug": "^2.6.1",
-    "depd": "^1.1.0",
     "koa": "^2.2.0",
     "think-cache": "^1.0.0",
     "think-cluster": "^1.0.0",
@@ -63,12 +65,12 @@
   },
   "devDependencies": {
     "ava": "^0.18.0",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
-    "eslint": "2.8.0",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.0",
     "mkdirp": "^0.5.1",
     "mock-require": "^2.0.1",
-    "nyc": "^7.0.0"
+    "nyc": "^7.0.0",
+    "pre-commit": "^1.2.2"
   },
   "keywords": [
     "thinkjs",
