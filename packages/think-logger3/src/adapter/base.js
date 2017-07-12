@@ -5,7 +5,7 @@ module.exports = class {
   constructor() {
     this._logger = {};
   }
-  
+
   debug(...args) {
     return this._logger.debug(...args);
   }
@@ -21,7 +21,7 @@ module.exports = class {
   error(...args) {
     return this._logger.error(...args);
   }
-  
+
   /**
    * log4js configure
    */
@@ -41,12 +41,12 @@ module.exports = class {
    * use clustered type if in cluster mode
    */
   isCluster(config, clusterMode) {
-    let lConfig = Object.assign({}, config);
-    let appenders = config.appenders;
+    const lConfig = Object.assign({}, config);
+    const appenders = config.appenders;
     delete lConfig.appenders;
 
-    if( cluster.isWorker ) {
-      //worker log4js config
+    if (cluster.isWorker) {
+      // worker log4js config
       return Object.assign({
         appenders: [
           {type: 'clustered'}
@@ -54,14 +54,14 @@ module.exports = class {
       }, lConfig);
     }
 
-    //Master process
-    if(typeof(clusterMode) === 'undefined') {
+    // Master process
+    if (typeof (clusterMode) === 'undefined') {
       clusterMode = Object.keys(cluster.workers).length;
     }
-    if(!clusterMode) {
+    if (!clusterMode) {
       return config;
     }
-    
+
     return Object.assign({
       appenders: [
         {

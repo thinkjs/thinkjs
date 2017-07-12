@@ -29,8 +29,8 @@
   },
   "devDependencies": {
     "ava": "^0.18.2",
-    "babel-eslint": "^7.1.1",
-    "eslint": "^3.16.1",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
     "nyc": "^10.1.2",
     "sandboxed-module": "^2.0.3"
   }
