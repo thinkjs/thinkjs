@@ -4,7 +4,7 @@
  * but within think-debounce, it will only be run once before it's finished.
  */
 class Debounce {
-  constructor(){
+  constructor() {
     this.queues = {};
   }
   /**
@@ -12,8 +12,8 @@ class Debounce {
    * @param {String} key 
    * @param {Function} fn 
    */
-  debounce(key, fn){
-    if(!(key in this.queues)){
+  debounce(key, fn) {
+    if (!(key in this.queues)) {
       this.queues[key] = [];
       return Promise.resolve(fn()).then(data => {
         process.nextTick(() => {
@@ -28,7 +28,7 @@ class Debounce {
         });
         return Promise.reject(err);
       });
-    }else{
+    } else {
       return new Promise((resolve, reject) => {
         this.queues[key].push({
           resolve,
