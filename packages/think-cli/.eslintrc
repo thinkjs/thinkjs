@@ -1,3 +1,10 @@
 {
+<<<<<<< HEAD
   "extends": "think"
+=======
+  "extends": "think",
+  "rules": {
+    "no-console": ["error", {"allow": ["warn", "error", "log"]}]
+  }
+>>>>>>> b5280e71e3205a3497d8b8dedec34dd40992cd00
 }

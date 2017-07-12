@@ -3,7 +3,9 @@
   "description": "application created by thinkjs",
   "version": "1.0.0",
   "scripts": {
-    "start": "node development.js"
+    "start": "node development.js",
+    "lint": "eslint src/",
+    "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
     "think-cache-file": "~1.0.8",
@@ -14,7 +16,9 @@
     "thinkjs": "next"
   },
   "devDependencies": {
-    "think-watcher": "^3.0.0"
+    "think-watcher": "^3.0.0",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.0"
   },
   "repository": "",
   "license": "MIT",

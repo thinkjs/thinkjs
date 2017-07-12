@@ -1,14 +1,16 @@
 {
   "name": "think-cli",
   "description": "command line interface for ThinkJS",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "author": {
     "name": "songguangyu",
     "email": "522963130@qq.com"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=html"
+    "test": "npm run lint & nyc ava test/",
+    "coverage": "nyc report --reporter=html",
+    "lint": "eslint commander.js & eslint template/**/*.js",
+    "lint-fix": "eslint --fix commander.js & eslint --fix template/**/*.js"
   },
   "ava": {
     "require": [

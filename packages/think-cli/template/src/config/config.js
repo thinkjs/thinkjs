@@ -1,4 +1,4 @@
-//default config
+// default config
 module.exports = {
-  
-}
+
+};

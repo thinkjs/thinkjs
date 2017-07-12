@@ -2,38 +2,38 @@ const path = require('path');
 const assert = require('assert');
 
 module.exports = class extends think.Controller {
-  constructor(ctx){
+  constructor(ctx) {
     super(ctx);
     this.resource = this.getResource();
     this.id = this.getId();
     assert(think.isFunction(this.model), 'this.model must be a function');
     this.modelInstance = this.model(this.resource);
   }
-  __before(){}
+  __before() {}
   /**
    * get resource
    * @return {String} [resource name]
    */
-  getResource(){
-    let filename = this.__filename || __filename;
-    let last = filename.lastIndexOf(path.sep);
+  getResource() {
+    const filename = this.__filename || __filename;
+    const last = filename.lastIndexOf(path.sep);
     return filename.substr(last + 1, filename.length - last - 4);
   }
-  getId(){
-    let id = this.get('id');
-    if(id && think.isString(id) || think.isNumber(id)){
+  getId() {
+    const id = this.get('id');
+    if (id && (think.isString(id) || think.isNumber(id))) {
       return id;
     }
-    let last = this.ctx.path.split('/').slice(-1)[0];
-    if(last !== this.resource){
+    const last = this.ctx.path.split('/').slice(-1)[0];
+    if (last !== this.resource) {
       return last;
     }
     return '';
   }
-  async getAction(){
+  async getAction() {
     let data;
     if (this.id) {
-      let pk = await this.modelInstance.getPk();
+      const pk = await this.modelInstance.getPk();
       data = await this.modelInstance.where({[pk]: this.id}).find();
       return this.success(data);
     }
@@ -44,46 +44,46 @@ module.exports = class extends think.Controller {
    * put resource
    * @return {Promise} []
    */
-  async postAction(){
-    let pk = await this.modelInstance.getPk();
-    let data = this.post();
+  async postAction() {
+    const pk = await this.modelInstance.getPk();
+    const data = this.post();
     delete data[pk];
-    if(think.isEmpty(data)){
+    if (think.isEmpty(data)) {
       return this.fail('data is empty');
     }
-    let insertId = await this.modelInstance.add(data);
+    const insertId = await this.modelInstance.add(data);
     return this.success({id: insertId});
   }
   /**
    * delete resource
    * @return {Promise} []
    */
-  async deleteAction(){
+  async deleteAction() {
     if (!this.id) {
       return this.fail('params error');
     }
-    let pk = await this.modelInstance.getPk();
-    let rows = await this.modelInstance.where({[pk]: this.id}).delete();
+    const pk = await this.modelInstance.getPk();
+    const rows = await this.modelInstance.where({[pk]: this.id}).delete();
     return this.success({affectedRows: rows});
   }
   /**
    * update resource
    * @return {Promise} []
    */
-  async putAction(){
+  async putAction() {
     if (!this.id) {
       return this.fail('params error');
     }
-    let pk = await this.modelInstance.getPk();
-    let data = this.post();
+    const pk = await this.modelInstance.getPk();
+    const data = this.post();
     delete data[pk];
     if (think.isEmpty(data)) {
       return this.fail('data is empty');
     }
-    let rows = await this.modelInstance.where({[pk]: this.id}).update(data);
+    const rows = await this.modelInstance.where({[pk]: this.id}).update(data);
     return this.success({affectedRows: rows});
   }
-  __call(){
-    
+  __call() {
+
   }
-}
+};

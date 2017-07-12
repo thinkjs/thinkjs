@@ -11,15 +11,15 @@ const isDev = think.env === 'development';
 exports.cache = {
   type: 'file',
   common: {
-    timeout: 24 * 60 * 60 * 1000, // millisecond
+    timeout: 24 * 60 * 60 * 1000 // millisecond
   },
   file: {
     handle: fileCache,
-    cachePath: path.join(think.ROOT_PATH, 'runtime/cache'),  // absoulte path is necessarily required
+    cachePath: path.join(think.ROOT_PATH, 'runtime/cache'), // absoulte path is necessarily required
     pathDepth: 1,
     gcInterval: 24 * 60 * 60 * 1000 // gc interval
   }
-}
+};
 
 /**
  * model adapter config
@@ -52,16 +52,16 @@ exports.session = {
   type: 'file',
   common: {
     cookie: {
-      name: 'thinkjs',
-      //keys: ['werwer', 'werwer'],
-      //signed: true
+      name: 'thinkjs'
+      // keys: ['werwer', 'werwer'],
+      // signed: true
     }
   },
   file: {
     handle: fileSession,
     sessionPath: path.join(think.ROOT_PATH, 'runtime/session')
   }
-}
+};
 
 /**
  * view adapter config
@@ -77,4 +77,4 @@ exports.view = {
   nunjucks: {
     handle: nunjucks
   }
-}
+};
