@@ -322,7 +322,24 @@ class Commander {
 
     this._createModule(m);
   }
-
+  parseCSMName(name) {
+    if (/\.js$/.test(name)) {
+      name = name.slice(0, -3);
+    }
+    if (this.mode === 'normal') return {m: '', name};
+    name = name.split('/');
+    let m = 'common';
+    if (name.length >= 2) {
+      m = name[0];
+      name = name.slice(1).join('/');
+    } else {
+      name = name[0];
+    }
+    if (!this.isModuleExist(m)) {
+      this.createModule(m);
+    }
+    return {m, name};
+  }
   /**
    * create controller
    * @param  {} controller []
@@ -331,29 +348,18 @@ class Commander {
   createController(controller) {
     this._checkEnv();
 
-    controller = controller.split('/');
-    let m = 'common';
-    if (controller.length >= 2) {
-      m = controller[0];
-      controller = controller.slice(1).join('/');
-    } else {
-      controller = controller[0];
-    }
-
-    if (!this.isModuleExist(m)) {
-      this.createModule(m);
-    }
+    const {m, name} = this.parseCSMName(controller);
 
     const controllerPath = this.getPath(m, 'controller');
     if (this.rest) {
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
-      this.copyFile('src/controller/restIndex.js', controllerPath + '/' + controller + '.js');
+      this.copyFile('src/controller/restIndex.js', controllerPath + '/' + name + '.js');
     } else {
-      this.copyFile('src/controller/index.js', controllerPath + '/' + controller + '.js');
+      this.copyFile('src/controller/index.js', controllerPath + '/' + name + '.js');
     }
 
     const logicPath = this.getPath(m, 'logic');
-    this.copyFile('src/logic/index.js', logicPath + '/' + controller + '.js');
+    this.copyFile('src/logic/index.js', logicPath + '/' + name + '.js');
 
     console.log();
   }
@@ -366,21 +372,10 @@ class Commander {
   createService(service) {
     this._checkEnv();
 
-    service = service.split('/');
-    let module = 'common';
-    if (service.length === 2) {
-      module = service[0];
-      service = service[1];
-    } else {
-      service = service[0];
-    }
+    const {m, name} = this.parseCSMName(service);
 
-    if (!this.isModuleExist(module)) {
-      this.createModule(module);
-    }
-
-    const servicePath = this.getPath(module, 'service');
-    this.copyFile('src/service/index.js', servicePath + '/' + service + '.js');
+    const servicePath = this.getPath(m, 'service');
+    this.copyFile('src/service/index.js', servicePath + '/' + name + '.js');
 
     console.log();
   }
@@ -393,21 +388,10 @@ class Commander {
   createModel(model) {
     this._checkEnv();
 
-    model = model.split('/');
-    let m = 'common';
-    if (model.length === 2) {
-      m = model[0];
-      model = model[1];
-    } else {
-      model = model[0];
-    }
-
-    if (!this.isModuleExist(m)) {
-      this.createModule(m);
-    }
+    const {m, name} = this.parseCSMName(model);
 
     const modelPath = this.getPath(m, 'model');
-    this.copyFile('src/model/index.js', modelPath + '/' + model + '.js');
+    this.copyFile('src/model/index.js', modelPath + '/' + name + '.js');
 
     console.log();
   }
