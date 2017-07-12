@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node development.js",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
     "think-cache-file": "~1.0.8",

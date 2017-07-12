@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node development.js",
     "compile": "babel src/ --presets think-node --out-dir app/",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
     "think-cache-file": "~1.0.8",
