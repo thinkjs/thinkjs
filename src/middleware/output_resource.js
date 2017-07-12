@@ -78,7 +78,7 @@ export default class extends think.middleware.base {
     
     let fd = fs.openSync(file, 'r');
     let buffer = new Buffer(to - from + 1);
-    fs.readSync(fd, buffer, 0, to - from, from);
+    fs.readSync(fd, buffer, 0, to - from + 1, from);
     fs.closeSync(fd);
     http.end(buffer);
 
