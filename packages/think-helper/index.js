@@ -238,17 +238,13 @@ exports.escapeHtml = escapeHtml;
  * @param  {Date} date []
  * @return {String}      []
  */
-function datetime(date, format) {
+function datetime(date = new Date(), format) {
   const fn = d => {
     return ('0' + d).slice(-2);
   };
 
   if (date && exports.isString(date) && Date.parse(date)) {
     date = new Date(Date.parse(date));
-  }
-
-  if (!exports.isDate(date)) {
-    return false;
   }
 
   const d = date || new Date();
