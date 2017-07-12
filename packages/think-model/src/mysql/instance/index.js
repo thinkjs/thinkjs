@@ -13,16 +13,16 @@ module.exports = class extends Base {
    * @param  {Object} config []
    * @return {}        []
    */
-  socket(sql){
-    //has parser
-    if(sql && this.config.parser){
-      assert(typeof(this.config.parser) === 'function', 'parser should be a function');
-      
-      let config = Object.assign({}, this.config, this.config.parser(sql));
+  socket(sql) {
+    // has parser
+    if (sql && this.config.parser) {
+      assert(typeof (this.config.parser) === 'function', 'parser should be a function');
+
+      const config = Object.assign({}, this.config, this.config.parser(sql));
       delete config.parser;
       return MysqlSocket.getInstance(config);
     }
-    if(this._socket){
+    if (this._socket) {
       return this._socket;
     }
     this._socket = MysqlSocket.getInstance(this.config);
@@ -33,15 +33,15 @@ module.exports = class extends Base {
    * @param  {String} table [table name]
    * @return {Promise}       []
    */
-  async getSchema(table){
-    let data = await this.query(`SHOW COLUMNS FROM ${this.parseKey(table)}`);
-    let ret = {};
+  async getSchema(table) {
+    const data = await this.query(`SHOW COLUMNS FROM ${this.parseKey(table)}`);
+    const ret = {};
     data.forEach(item => {
       ret[item.Field] = {
         'name': item.Field,
         'type': item.Type,
         'required': item.Null === '',
-        //'default': item.Default,
+        // 'default': item.Default,
         'primary': item.Key === 'PRI',
         'unique': item.Key === 'UNI',
         'auto_increment': item.Extra.toLowerCase() === 'auto_increment'
@@ -54,17 +54,17 @@ module.exports = class extends Base {
    * @param  {String} key []
    * @return {String}     []
    */
-  parseKey(key = ''){
+  parseKey(key = '') {
     key = key.trim();
-    if(helper.isEmpty(key)){
+    if (helper.isEmpty(key)) {
       return '';
     }
-    if(helper.isNumberString(key)){
+    if (helper.isNumberString(key)) {
       return key;
     }
-    if (!(/[,\'\"\*\(\)`.\s]/.test(key))) {
+    if (!(/[,'"*()`.\s]/.test(key))) {
       key = '`' + key + '`';
     }
     return key;
   }
-}
+};

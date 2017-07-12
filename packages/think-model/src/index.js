@@ -4,9 +4,8 @@ const MysqlRelation = require('./mysql/relation');
 
 Mysql.Relation = MysqlRelation;
 module.exports = app => {
-
-  const getClass = function (type, name, m) {
-    let mcls = app[type];
+  const getClass = function(type, name, m) {
+    const mcls = app[type];
     let cls = null;
     if (app.modules.length) {
       if (mcls[m]) {
@@ -21,7 +20,7 @@ module.exports = app => {
     return cls;
   };
 
-  const getModels = function (m) {
+  const getModels = function(m) {
     if (app.modules.length) {
       return helper.extend({}, app.models.common, app.models[m]);
     } else {
@@ -29,14 +28,14 @@ module.exports = app => {
     }
   };
 
-  const model = function (name, config, m = 'common') {
-    const cls = getClass('models', name, m);
-    let commonConfig = helper.parseAdapterConfig(this.config('model'));
+  const model = function(name, config, m = 'common') {
+    const Cls = getClass('models', name, m);
+    const commonConfig = helper.parseAdapterConfig(this.config('model'));
     config = Object.assign({}, commonConfig, config);
-    //add models in config, it's need in model when get relation model instance
+    // add models in config, it's need in model when get relation model instance
     config.models = getModels(m) || {};
-    if (cls) {
-      return new cls(name, config);
+    if (Cls) {
+      return new Cls(name, config);
     }
     return new Mysql(name, config);
   };
@@ -54,7 +53,7 @@ module.exports = app => {
     context: {
       model: function(name, config, m = this.module) {
         config = helper.parseAdapterConfig(this.config('model'), config);
-        //add adapter cache config
+        // add adapter cache config
         config.cache = helper.parseAdapterConfig(this.config('cache'), config.cache);
         return model.bind(this)(name, config, m);
       }

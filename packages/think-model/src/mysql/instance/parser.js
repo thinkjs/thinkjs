@@ -9,9 +9,9 @@ module.exports = class {
    * constructor
    * @return {} []
    */
-  constructor(config = {}){
+  constructor(config = {}) {
     this.config = config;
-    //operate
+    // operate
     this.comparison = {
       'EQ': '=',
       'NEQ': '!=',
@@ -33,7 +33,7 @@ module.exports = class {
    * @return {String}         []
    */
   parseExplain(explain) {
-    if(!explain){
+    if (!explain) {
       return '';
     }
     return 'EXPLAIN ';
@@ -43,15 +43,15 @@ module.exports = class {
    * @param  {Object} data []
    * @return {String}      []
    */
-  parseSet(data = {}){
-    let set = [];
-    for(let key in data){
-      let value = this.parseValue(data[key]);
+  parseSet(data = {}) {
+    const set = [];
+    for (const key in data) {
+      const value = this.parseValue(data[key]);
       if (helper.isString(value) || helper.isNumber(value)) {
         set.push(this.parseKey(key) + '=' + value);
       }
     }
-    if(set.length){
+    if (set.length) {
       return ' SET ' + set.join(',');
     }
     return '';
@@ -61,7 +61,7 @@ module.exports = class {
    * @param  {String} key []
    * @return {String}     []
    */
-  parseKey(key){
+  parseKey(key) {
     return key;
   }
   /**
@@ -69,18 +69,18 @@ module.exports = class {
    * @param  {Mixed} value []
    * @return {Mixed}       []
    */
-  parseValue(value){
+  parseValue(value) {
     if (helper.isString(value)) {
       value = '\'' + this.escapeString(value) + '\'';
-    }else if(helper.isArray(value)){
+    } else if (helper.isArray(value)) {
       if (/^exp$/.test(value[0])) {
         value = value[1];
-      }else{
+      } else {
         value = value.map(item => this.parseValue(item));
       }
-    }else if(helper.isBoolean(value)){
+    } else if (helper.isBoolean(value)) {
       value = value ? '1' : '0';
-    }else if (value === null) {
+    } else if (value === null) {
       value = 'null';
     }
     return value;
@@ -95,25 +95,25 @@ module.exports = class {
    * })
    * @return {String} []
    */
-  parseField(fields){
+  parseField(fields) {
     if (helper.isString(fields)) {
-      //fields('id, instr('30,35,31,',id+',') as d')
-      if(fields.indexOf('(') > -1 && fields.indexOf(')') > -1){
+      // fields('id, instr('30,35,31,',id+',') as d')
+      if (fields.indexOf('(') > -1 && fields.indexOf(')') > -1) {
         return fields;
       }
-      if(fields.indexOf(',') > -1){
+      if (fields.indexOf(',') > -1) {
         fields = fields.split(/\s*,\s*/);
       }
     }
     if (helper.isArray(fields)) {
       return fields.map(item => this.parseKey(item)).join(',');
-    }else if(helper.isObject(fields)){
-      let data = [];
-      for(let key in fields){
+    } else if (helper.isObject(fields)) {
+      const data = [];
+      for (const key in fields) {
         data.push(this.parseKey(key) + ' AS ' + this.parseKey(fields[key]));
       }
       return data.join(',');
-    }else if(helper.isString(fields) && fields){
+    } else if (helper.isString(fields) && fields) {
       return this.parseKey(fields);
     }
     return '*';
@@ -123,15 +123,15 @@ module.exports = class {
    * @param  {Mixed} tables []
    * @return {}        []
    */
-  parseTable(table){
+  parseTable(table) {
     if (helper.isString(table)) {
       table = table.split(/\s*,\s*/);
     }
     if (helper.isArray(table)) {
       return table.map(item => this.parseKey(item)).join(',');
-    }else if (helper.isObject(table)) {
-      let data = [];
-      for(let key in table){
+    } else if (helper.isObject(table)) {
+      const data = [];
+      for (const key in table) {
         data.push(this.parseKey(key) + ' AS ' + this.parseKey(table[key]));
       }
       return data.join(',');
@@ -144,18 +144,18 @@ module.exports = class {
    * @param  {String} _default []
    * @return {String}          []
    */
-  getLogic(logic, _default = 'AND'){
-    let list = ['AND', 'OR', 'XOR'];
-    if(helper.isObject(logic)){
-      let _logic = logic._logic;
+  getLogic(logic, _default = 'AND') {
+    const list = ['AND', 'OR', 'XOR'];
+    if (helper.isObject(logic)) {
+      const _logic = logic._logic;
       delete logic._logic;
       logic = _logic;
     }
-    if(!logic || !helper.isString(logic)){
+    if (!logic || !helper.isString(logic)) {
       return _default;
     }
     logic = logic.toUpperCase();
-    if(list.indexOf(logic) > -1){
+    if (list.indexOf(logic) > -1) {
       return logic;
     }
     return _default;
@@ -165,43 +165,41 @@ module.exports = class {
    * @param  {Mixed} where []
    * @return {String}       []
    */
-  parseWhere(where){
-    if(helper.isEmpty(where)){
+  parseWhere(where) {
+    if (helper.isEmpty(where)) {
       return '';
-    }else if (helper.isString(where)) {
+    } else if (helper.isString(where)) {
       return ` WHERE ${where}`;
     }
-    let logic = this.getLogic(where);
-    //safe key regexp
-    let keySafeRegExp = /^[\w\|\&\-\.\(\)\,]+$/;
-    let multi = where._multi;
+    const logic = this.getLogic(where);
+    // safe key regexp
+    const keySafeRegExp = /^[\w|&-.(),]+$/;
+    const multi = where._multi;
     delete where._multi;
 
+    // eslint-disable-next-line one-var
     let key, val, result = [], str = '';
 
-    let fn = (item, i) => {
-      let v = multi ? val[i] : val;
+    const fn = (item, i) => {
+      const v = multi ? val[i] : val;
       return '(' + this.parseWhereItem(this.parseKey(item), v) + ')';
     };
-    
-    for(key in where){
+
+    for (key in where) {
       val = where[key];
       str = '( ';
-      //_string: ''
+      // _string: ''
       if (['_string', '_complex', '_query'].indexOf(key) > -1) {
         str += this.parseThinkWhere(key, val);
-      }
-      else if (!keySafeRegExp.test(key)) {
+      } else if (!keySafeRegExp.test(key)) {
         throw new Error('INVALID_WHERE_CONDITION_KEY');
-      }
-      //title|content
-      else if (key.indexOf('|') > -1) {
+      // title|content
+      } else if (key.indexOf('|') > -1) {
         str += key.split('|').map(fn).join(' OR ');
-      }
-      //title&content
-      else if (key.indexOf('&') > -1) {
+      // title&content
+      } else if (key.indexOf('&') > -1) {
         str += key.split('&').map(fn).join(' AND ');
-      }else{
+      } else {
         str += this.parseWhereItem(this.parseKey(key), val);
       }
       str += ' )';
@@ -210,51 +208,46 @@ module.exports = class {
     result = result.join(` ${logic} `);
     return result ? (` WHERE ` + result) : '';
   }
- /**
+  /**
   * parse where item
   * @param  {String} key []
   * @param  {Mixed} val []
   * @return {String}     []
   */
-  parseWhereItem(key, val){
+  parseWhereItem(key, val) {
     // {id: null}
-    if(val === null){
+    if (val === null) {
       return `${key} IS NULL`;
-    }
-    // {id: {'<': 10, '>': 1}}
-    else if (helper.isObject(val)) { 
-      let logic = this.getLogic(val);
-      let result = [];
-      for(let opr in val){
+    } else if (helper.isObject(val)) {
+      // {id: {'<': 10, '>': 1}}
+      const logic = this.getLogic(val);
+      const result = [];
+      for (const opr in val) {
         let nop = opr.toUpperCase();
         nop = this.comparison[nop] || nop;
-        let parsedValue = this.parseValue(val[opr]);
-        //{id: {IN: [1, 2, 3]}}
-        if(helper.isArray(parsedValue)){
+        const parsedValue = this.parseValue(val[opr]);
+        // {id: {IN: [1, 2, 3]}}
+        if (helper.isArray(parsedValue)) {
           result.push(`${key} ${nop} (${parsedValue.join(', ')})`);
-        }
-        else if(parsedValue === 'null'){
+        } else if (parsedValue === 'null') {
           result.push(key + ' ' + (nop === '!=' ? 'IS NOT NULL' : 'IS NULL'));
-        }
-        else{
+        } else {
           result.push(key + ' ' + nop + ' ' + parsedValue);
         }
       }
       return result.join(' ' + logic + ' ');
-    }
-    // where({id: [1, 2, 3]})
-    else if(helper.isArray(val)){
+    } else if (helper.isArray(val)) {
+      // where({id: [1, 2, 3]})
       let flag = helper.isNumber(val[0]) || helper.isNumberString(val[0]);
-      if(flag){
-        flag = val.every(item => 
+      if (flag) {
+        flag = val.every(item =>
           helper.isNumber(item) || helper.isNumberString(item)
         );
-        if(flag){
+        if (flag) {
           return `${key} IN ( ${val.join(', ')} )`;
         }
       }
-    }
-    else {
+    } else {
       return key + ' = ' + this.parseValue(val);
     }
 
@@ -265,32 +258,29 @@ module.exports = class {
       val0 = this.comparison[val0] || val0;
       // compare
       if (/^(=|!=|>|>=|<|<=)$/.test(val0)) {
-        if(val[1] === null){
+        if (val[1] === null) {
           whereStr += key + ' ' + (val[0] === '!=' ? 'IS NOT NULL' : 'IS NULL');
-        }else{
+        } else {
           whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
         }
-      }
-      // like or not like
-      else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) { 
+      } else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) {
+        // like or not like
         if (helper.isArray(val[1])) {
-          //get like logic, default is OR
-          let likeLogic = this.getLogic(val[2], 'OR');
-          let like = val[1].map(item => key + ' ' + val0 + ' ' + this.parseValue(item)).join(' ' + likeLogic + ' ');
+          // get like logic, default is OR
+          const likeLogic = this.getLogic(val[2], 'OR');
+          const like = val[1].map(item => key + ' ' + val0 + ' ' + this.parseValue(item)).join(' ' + likeLogic + ' ');
           whereStr += '(' + like + ')';
-        }else{
+        } else {
           whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
         }
-      }
-      // exp
-      else if(val0 === 'EXP'){ 
+      } else if (val0 === 'EXP') {
+        // exp
         whereStr += '(' + key + ' ' + val[1] + ')';
-      }
-      // in or not in
-      else if(val0 === 'IN' || val0 === 'NOT IN'){
+      } else if (val0 === 'IN' || val0 === 'NOT IN') {
+        // in or not in
         if (val[2] === 'exp') {
           whereStr += key + ' ' + val0 + ' ' + val[1];
-        }else{
+        } else {
           if (helper.isString(val[1])) {
             val[1] = val[1].split(',');
           }
@@ -300,40 +290,38 @@ module.exports = class {
           val[1] = this.parseValue(val[1]);
           if (val[1].length === 1) {
             whereStr += key + (val0 === 'IN' ? ' = ' : ' != ') + val[1];
-          }else{
+          } else {
             whereStr += key + ' ' + val0 + ' (' + val[1].join(',') + ')';
           }
         }
-      }
-      //between
-      else if(val0 === 'BETWEEN'){
+      } else if (val0 === 'BETWEEN') {
+        // between
         data = helper.isString(val[1]) ? val[1].split(',') : val[1];
         if (!helper.isArray(data) || data.length === 1) {
           data = [val[1], val[2]];
         }
         whereStr += ' (' + key + ' ' + val0 + ' ' + this.parseValue(data[0]);
         whereStr += ' AND ' + this.parseValue(data[1]) + ')';
-      }else{
+      } else {
         throw new Error(`WHERE_CONDITION_${key}:${JSON.stringify(val)}_INVALID`);
       }
-    }else{
-
+    } else {
       let length = val.length;
       let logic = this.getLogic(val[length - 1], '');
-      if(logic){
+      if (logic) {
         length--;
-      }else{
+      } else {
         logic = 'AND';
       }
-      let result = [];
-      for(let i = 0; i < length; i++){
-        let isArr = helper.isArray(val[i]);
+      const result = [];
+      for (let i = 0; i < length; i++) {
+        const isArr = helper.isArray(val[i]);
         data = isArr ? val[i][1] : val[i];
-        let exp = ((isArr ? val[i][0] : '') + '').toUpperCase();
+        const exp = ((isArr ? val[i][0] : '') + '').toUpperCase();
         if (exp === 'EXP') {
           result.push(`(${key} ${data})`);
-        }else{
-          let op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
+        } else {
+          const op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
           result.push(`(${key} ${op} ${this.parseValue(data)})`);
         }
       }
@@ -347,17 +335,17 @@ module.exports = class {
    * @param  {Mixed} val []
    * @return {String}     []
    */
-  parseThinkWhere(key, val){
-    switch(key){
+  parseThinkWhere(key, val) {
+    switch (key) {
       case '_string':
         return val;
       case '_complex':
         return this.parseWhere(val).substr(6);
       case '_query':
-        let where = helper.isString(val) ? querystring.parse(val) : val;
-        let logic = this.getLogic(where);
-        let arr = [];
-        for(let name in where){
+        const where = helper.isString(val) ? querystring.parse(val) : val;
+        const logic = this.getLogic(where);
+        const arr = [];
+        for (const name in where) {
           val = this.parseKey(name) + ' = ' + this.parseValue(where[name]);
           arr.push(val);
         }
@@ -370,19 +358,19 @@ module.exports = class {
    * @param  {String} limit []
    * @return {}       []
    */
-  parseLimit(limit){
+  parseLimit(limit) {
     if (helper.isEmpty(limit)) {
       return '';
     }
-    if(helper.isNumber(limit)){
+    if (helper.isNumber(limit)) {
       limit = Math.max(limit, 0);
       return ` LIMIT ${limit}`;
     }
-    if(helper.isString(limit)){
+    if (helper.isString(limit)) {
       limit = limit.split(/\s*,\s*/);
     }
-    let data = [Math.max(limit[0] | 0, 0)];
-    if(limit[1]){
+    const data = [Math.max(limit[0] | 0, 0)];
+    if (limit[1]) {
       data.push(Math.max(limit[1] | 0, 0));
     }
     return ' LIMIT ' + data.join(',');
@@ -392,52 +380,52 @@ module.exports = class {
    * @param  {String} join []
    * @return {String}      []
    */
-  parseJoin(join, options = {}){
+  parseJoin(join, options = {}) {
     if (helper.isEmpty(join)) {
       return '';
     }
     let joinStr = '';
-    let defaultJoin = ' LEFT JOIN ';
+    const defaultJoin = ' LEFT JOIN ';
     if (helper.isArray(join)) {
-      let joins = {
+      const joins = {
         'left': ' LEFT JOIN ',
         'right': ' RIGHT JOIN ',
         'inner': ' INNER JOIN '
       };
       join.forEach(val => {
         if (helper.isString(val)) {
-          let hasJoin = val.toLowerCase().indexOf(' join ') > -1;
+          const hasJoin = val.toLowerCase().indexOf(' join ') > -1;
           joinStr += (hasJoin ? ' ' : defaultJoin) + val;
-        }else if (helper.isObject(val)) {
-          let ret = [];
+        } else if (helper.isObject(val)) {
+          const ret = [];
           if (!('on' in val)) {
-            for(let key in val){
-              let v = val[key];
-              if(helper.isObject(v)){
+            for (const key in val) {
+              const v = val[key];
+              if (helper.isObject(v)) {
                 v.table = key;
                 ret.push(v);
-              }else{
+              } else {
                 ret.push(val);
                 break;
               }
             }
-          }else{
+          } else {
             ret.push(val);
           }
           ret.forEach(item => {
-            let joinType = joins[item.join] || item.join || defaultJoin;
+            const joinType = joins[item.join] || item.join || defaultJoin;
             let table = item.table.trim();
-            //table is sql
-            if( table.indexOf(' ') > -1 ) {
-              if( table.indexOf('(') !== 0 ) {
+            // table is sql
+            if (table.indexOf(' ') > -1) {
+              if (table.indexOf('(') !== 0) {
                 table = '(' + table + ')';
               }
               joinStr += joinType + table;
             } else {
               table = options.tablePrefix + table;
-              if(table.indexOf('.') === -1){
+              if (table.indexOf('.') === -1) {
                 joinStr += joinType + '`' + table + '`';
-              }else{
+              } else {
                 joinStr += joinType + table;
               }
             }
@@ -446,16 +434,16 @@ module.exports = class {
             }
             if (item.on) {
               let mTable = options.alias || options.table;
-              if(mTable.indexOf('.') === -1){
+              if (mTable.indexOf('.') === -1) {
                 mTable = '`' + mTable + '`';
               }
               let jTable = item.as || table;
-              if(jTable.indexOf('.') === -1){
+              if (jTable.indexOf('.') === -1) {
                 jTable = '`' + jTable + '`';
               }
               if (helper.isObject(item.on)) {
-                let where = [];
-                for(let key in item.on){
+                const where = [];
+                for (const key in item.on) {
                   where.push([
                     key.indexOf('.') > -1 ? key : (mTable + '.`' + key + '`'),
                     '=',
@@ -463,7 +451,7 @@ module.exports = class {
                   ].join(''));
                 }
                 joinStr += ' ON (' + where.join(' AND ') + ')';
-              }else{
+              } else {
                 if (helper.isString(item.on)) {
                   item.on = item.on.split(/\s*,\s*/);
                 }
@@ -474,7 +462,7 @@ module.exports = class {
           });
         }
       });
-    }else{
+    } else {
       joinStr += defaultJoin + join;
     }
     return joinStr;
@@ -484,15 +472,15 @@ module.exports = class {
    * @param  {String} order []
    * @return {String}       []
    */
-  parseOrder(order){
-    if(helper.isEmpty(order)){
+  parseOrder(order) {
+    if (helper.isEmpty(order)) {
       return '';
     }
     if (helper.isArray(order)) {
       order = order.map(item => this.parseKey(item)).join(',');
-    }else if (helper.isObject(order)) {
-      let arr = [];
-      for(let key in order){
+    } else if (helper.isObject(order)) {
+      const arr = [];
+      for (const key in order) {
         let val = order[key];
         val = this.parseKey(key) + ' ' + val;
         arr.push(val);
@@ -506,23 +494,23 @@ module.exports = class {
    * @param  {String} group []
    * @return {String}       []
    */
-  parseGroup(group){
+  parseGroup(group) {
     if (helper.isEmpty(group)) {
       return '';
     }
     if (helper.isString(group)) {
-      //group may be `date_format(create_time,'%Y-%m-%d')`
-      if(group.indexOf('(') !== -1){
+      // group may be `date_format(create_time,'%Y-%m-%d')`
+      if (group.indexOf('(') !== -1) {
         return ' GROUP BY ' + group;
       }
       group = group.split(/\s*,\s*/);
     }
-    let result = group.map(item => {
+    const result = group.map(item => {
       if (item.indexOf('.') === -1) {
         return '`' + item + '`';
-      }else{
+      } else {
         item = item.split('.');
-        return item[0] + '.`' + item[1] + '`'; 
+        return item[0] + '.`' + item[1] + '`';
       }
     });
     return ' GROUP BY ' + result.join(',');
@@ -532,7 +520,7 @@ module.exports = class {
    * @param  {String} having []
    * @return {}        []
    */
-  parseHaving(having){
+  parseHaving(having) {
     return having ? ` HAVING ${having}` : '';
   }
   /**
@@ -540,15 +528,15 @@ module.exports = class {
    * @param  {String} comment []
    * @return {String}         []
    */
-  parseComment(comment){
-    return comment ? (` /*${comment}*/`) : '';   
+  parseComment(comment) {
+    return comment ? (` /*${comment}*/`) : '';
   }
   /**
    * parse distinct
    * @param  {} distinct []
    * @return {}          []
    */
-  parseDistinct(distinct){
+  parseDistinct(distinct) {
     return distinct ? ' DISTINCT' : '';
   }
   /**
@@ -556,7 +544,7 @@ module.exports = class {
    * @param  {String} union []
    * @return {}       []
    */
-  parseUnion(union){
+  parseUnion(union) {
     if (helper.isEmpty(union)) {
       return '';
     }
@@ -567,8 +555,8 @@ module.exports = class {
         sql += '(' + (helper.isObject(item.union) ? this.buildSelectSql(item.union) : item.union) + ')';
       });
       return sql;
-    }else{
-      return ' UNION (' + (helper.isObject(union) ? this.buildSelectSql(union) : union) + ')'; 
+    } else {
+      return ' UNION (' + (helper.isObject(union) ? this.buildSelectSql(union) : union) + ')';
     }
   }
   /**
@@ -576,7 +564,7 @@ module.exports = class {
    * @param  {Boolean} lock []
    * @return {}      []
    */
-  parseLock(lock){
+  parseLock(lock) {
     if (!lock) {
       return '';
     }
@@ -588,11 +576,11 @@ module.exports = class {
    * @param  {Object} options []
    * @return {String}         []
    */
-  parseSql(sql, options){
-    return sql.replace(/\%([A-Z]+)\%/g, (a, type) => {
+  parseSql(sql, options) {
+    return sql.replace(/%([A-Z]+)%/g, (a, type) => {
       type = type.toLowerCase();
-      let ucfirst = type[0].toUpperCase() + type.slice(1);
-      if(helper.isFunction(this['parse' + ucfirst])){
+      const ucfirst = type[0].toUpperCase() + type.slice(1);
+      if (helper.isFunction(this['parse' + ucfirst])) {
         return this['parse' + ucfirst](options[type] || '', options);
       }
       return a;
@@ -605,7 +593,7 @@ module.exports = class {
    * @param  {String} str []
    * @return {String}     []
    */
-  escapeString(str){
+  escapeString(str) {
     return str;
   }
   /**
@@ -613,7 +601,7 @@ module.exports = class {
    * @param  {Object} options []
    * @return {String}         [sql string]
    */
-  buildSelectSql(options){
+  buildSelectSql(options) {
     return this.parseSql(this.selectSql, options) + this.parseLock(options.lock);
   }
-}
+};

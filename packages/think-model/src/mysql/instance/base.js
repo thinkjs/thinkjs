@@ -11,7 +11,7 @@ module.exports = class extends Parser {
    * constructor
    * @return {} []
    */
-  constructor(config){
+  constructor(config) {
     super(config);
     this.sql = '';
     this.lastInsertId = 0;
@@ -22,7 +22,7 @@ module.exports = class extends Parser {
    * get socket instance, override by sub class
    * @return {Object} [socket instance]
    */
-  socket(){}
+  socket() {}
   /**
    * insert data
    * @param  {Object} data    []
@@ -30,10 +30,10 @@ module.exports = class extends Parser {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  add(data, options, replace){
-    let values = [];
-    let fields = [];
-    for(let key in data){
+  add(data, options, replace) {
+    const values = [];
+    const fields = [];
+    for (const key in data) {
       let val = data[key];
       val = this.parseValue(val);
       if (helper.isString(val) || helper.isBoolean(val) || helper.isNumber(val)) {
@@ -54,11 +54,11 @@ module.exports = class extends Parser {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  addMany(data, options, replace){
-    let fields = Object.keys(data[0]).map(item => this.parseKey(item)).join(',');
-    let values = data.map(item => {
-      let value = [];
-      for(let key in item){
+  addMany(data, options, replace) {
+    const fields = Object.keys(data[0]).map(item => this.parseKey(item)).join(',');
+    const values = data.map(item => {
+      const value = [];
+      for (const key in item) {
         let val = item[key];
         val = this.parseValue(val);
         if (helper.isString(val) || helper.isBoolean(val) || helper.isNumber(val)) {
@@ -80,7 +80,7 @@ module.exports = class extends Parser {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  selectAdd(fields, table, options = {}){
+  selectAdd(fields, table, options = {}) {
     if (helper.isString(fields)) {
       fields = fields.split(/\s*,\s*/);
     }
@@ -94,8 +94,8 @@ module.exports = class extends Parser {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  delete(options){
-    let sql = [
+  delete(options) {
+    const sql = [
       'DELETE FROM ',
       this.parseTable(options.table),
       this.parseWhere(options.where),
@@ -112,8 +112,8 @@ module.exports = class extends Parser {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  update(data, options){
-    let sql = [
+  update(data, options) {
+    const sql = [
       'UPDATE ',
       this.parseTable(options.table),
       this.parseSet(data),
@@ -130,16 +130,16 @@ module.exports = class extends Parser {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  select(options, cache){
+  select(options, cache) {
     let sql;
-    if(helper.isObject(options)){
+    if (helper.isObject(options)) {
       sql = options.sql ? options.sql : this.buildSelectSql(options);
       cache = options.cache || cache;
-    }else{
+    } else {
       sql = options;
     }
     if (!helper.isEmpty(cache) && !(cache.enable === false)) {
-      let key = cache.key || helper.md5(sql);
+      const key = cache.key || helper.md5(sql);
       return thinkCache(key, () => this.query(sql), cache);
     }
     return this.query(sql);
@@ -149,25 +149,25 @@ module.exports = class extends Parser {
    * @param  {String} str []
    * @return {String}     []
    */
-  escapeString(str){
+  escapeString(str) {
     if (!str) {
       return '';
     }
-    return str.replace(/[\0\n\r\b\t\\\'\"\x1a]/g, s => {
-      switch(s) {
-        case '\0': 
+    return str.replace(/[\0\n\r\b\t\\'"\x1a]/g, s => {
+      switch (s) {
+        case '\0':
           return '\\0';
-        case '\n': 
+        case '\n':
           return '\\n';
-        case '\r': 
+        case '\r':
           return '\\r';
-        case '\b': 
+        case '\b':
           return '\\b';
-        case '\t': 
+        case '\t':
           return '\\t';
-        case '\x1a': 
+        case '\x1a':
           return '\\Z';
-        default:   
+        default:
           return '\\' + s;
       }
     });
@@ -176,14 +176,14 @@ module.exports = class extends Parser {
    * get last sql
    * @return {String}       []
    */
-  getLastSql(){
+  getLastSql() {
     return this.sql;
   }
   /**
    * get last insert id
    * @return {String} []
    */
-  getLastInsertId(){
+  getLastInsertId() {
     return this.lastInsertId;
   }
   /**
@@ -191,7 +191,7 @@ module.exports = class extends Parser {
    * @param  string str
    * @return promise
    */
-  query(sql, connection = this.connection){
+  query(sql, connection = this.connection) {
     this.sql = sql;
     return this.socket(sql).query(sql, connection).then(this.bufferToString.bind(this));
   }
@@ -200,13 +200,13 @@ module.exports = class extends Parser {
    * @param  {Array} data []
    * @return {Array}      []
    */
-  bufferToString(data){
+  bufferToString(data) {
     if (!this.config.bufferToString || !helper.isArray(data)) {
       return data;
     }
-    for(let i = 0, length = data.length; i < length; i++){
-      for(let key in data[i]){
-        if(helper.isBuffer(data[i][key])){
+    for (let i = 0, length = data.length; i < length; i++) {
+      for (const key in data[i]) {
+        if (helper.isBuffer(data[i][key])) {
           data[i][key] = data[i][key].toString();
         }
       }
@@ -218,7 +218,7 @@ module.exports = class extends Parser {
    * @param  {String} sql []
    * @return {}     []
    */
-  execute(sql, connection = this.connection){
+  execute(sql, connection = this.connection) {
     this.sql = sql;
     return this.socket(sql).execute(sql, connection).then(data => {
       if (data.insertId) {
@@ -231,7 +231,7 @@ module.exports = class extends Parser {
    * start transaction
    * @return {Promise} []
    */
-  async startTrans(connection){
+  async startTrans(connection) {
     return this.socket().startTrans(connection).then(connection => {
       this.connection = connection;
       return connection;
@@ -241,14 +241,14 @@ module.exports = class extends Parser {
    * commit
    * @return {Promise} []
    */
-  commit(connection){
+  commit(connection) {
     return this.socket().commit(connection);
   }
   /**
    * rollback
    * @return {Promise} []
    */
-  rollback(connection){
+  rollback(connection) {
     return this.socket().rollback(connection);
   }
   /**
@@ -256,7 +256,7 @@ module.exports = class extends Parser {
    * @param {Function} fn 
    * @param {*} connection 
    */
-  transaction(fn, connection){
+  transaction(fn, connection) {
     return this.socket().transaction(connection => {
       this.connection = connection;
       return fn(connection);
@@ -266,10 +266,10 @@ module.exports = class extends Parser {
    * close connect
    * @return {} []
    */
-  close(){
+  close() {
     if (this._socket) {
       this._socket.close();
       this._socket = null;
     }
   }
-}
+};

@@ -6,10 +6,10 @@ const helper = require('think-helper');
  * @return {Object}       []
  */
 function Values(rules) {
-  let ret = {};
-  let values = Values._getRuleValues(rules);
-  for(let name in rules){
-    let itemValue = Values._getItemValue(rules[name], values, true);
+  const ret = {};
+  const values = Values._getRuleValues(rules);
+  for (const name in rules) {
+    const itemValue = Values._getItemValue(rules[name], values, true);
     ret[name] = itemValue;
   }
   return ret;
@@ -30,8 +30,8 @@ Values._toBoolean = value => {
  * @return {Object}       []
  */
 Values._getRuleValues = rules => {
-  let ret = {};
-  for(let name in rules){
+  const ret = {};
+  for (const name in rules) {
     ret[name] = rules[name].value;
   }
   return ret;
@@ -44,11 +44,11 @@ Values._getRuleValues = rules => {
  * @return {Mixed}       []
  */
 Values._parseValue = (value, item) => {
-  if(item.int || item.type === 'int'){
+  if (item.int || item.type === 'int') {
     return parseInt(value);
-  }else if(item.float || item.type === 'float'){
+  } else if (item.float || item.type === 'float') {
     return parseFloat(value);
-  }else if(item.boolean || item.type === 'boolean'){
+  } else if (item.boolean || item.type === 'boolean') {
     return Values._toBoolean(value);
   }
   return value;
@@ -61,48 +61,46 @@ Values._parseValue = (value, item) => {
  * @return {Mixed}        []
  */
 Values._getItemValue = (item, values, parse) => {
-  //get item value
-  //avoid default is undefined, but check type is string
+  // get item value
+  // avoid default is undefined, but check type is string
   let itemValue = item.value;
-  //trim value
-  if(item.trim && itemValue && itemValue.trim){
+  // trim value
+  if (item.trim && itemValue && itemValue.trim) {
     itemValue = itemValue.trim();
   }
-  let _default = item.default;
-  if(!itemValue && !helper.isTrueEmpty(_default)){
+  const _default = item.default;
+  if (!itemValue && !helper.isTrueEmpty(_default)) {
     itemValue = item.default;
   }
-  if(helper.isFunction(itemValue)){
+  if (helper.isFunction(itemValue)) {
     itemValue = itemValue.call(values);
   }
 
-  //make data to array when type is array
-  if(item.value && item.array && !helper.isArray(item.value)){
-    if(helper.isString(itemValue)){
-      try{
+  // make data to array when type is array
+  if (item.value && item.array && !helper.isArray(item.value)) {
+    if (helper.isString(itemValue)) {
+      try {
         itemValue = JSON.parse(itemValue);
-      }catch(e){
+      } catch (e) {
         itemValue = itemValue.split(/\s*,\s*/);
       }
-    }else{
+    } else {
       itemValue = [itemValue];
     }
-  }
-  //make data to object when type is object
-  else if(item.value && item.object && helper.isString(itemValue)){
-    try{
+  // make data to object when type is object
+  } else if (item.value && item.object && helper.isString(itemValue)) {
+    try {
       itemValue = JSON.parse(itemValue);
-    }catch(e){}
-  }
-  else if(item.boolean){
+    } catch (e) {}
+  } else if (item.boolean) {
     itemValue = Values._toBoolean(itemValue);
   }
 
-  //parse value
-  if(parse){
-    if(item.array){
+  // parse value
+  if (parse) {
+    if (item.array) {
       itemValue = itemValue.map(it => Values._parseValue(it, item));
-    }else{
+    } else {
       itemValue = Values._parseValue(itemValue, item);
     }
   }

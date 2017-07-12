@@ -2,7 +2,7 @@ const helper = require('think-helper');
 
 const Base = require('./index');
 
-//model relation type
+// model relation type
 const HAS_ONE = 1;
 const BELONG_TO = 2;
 const HAS_MANY = 3;
@@ -19,7 +19,7 @@ class Relation extends Base {
    * @param  {Object} config []
    * @return {}        []
    */
-  constructor(name = '', config = {}){
+  constructor(name = '', config = {}) {
     super(name, config);
     /**
      * @example
@@ -35,7 +35,7 @@ class Relation extends Base {
         limit: ''
       }
      */
-    if(this.relation === undefined){
+    if (this.relation === undefined) {
       this.relation = {};
     }
     this._relationName = true;
@@ -51,33 +51,33 @@ class Relation extends Base {
    * set relation
    * @param {String} name []
    */
-  setRelation(name, value){
-    //ignore undefined name
-    if(name === undefined){
+  setRelation(name, value) {
+    // ignore undefined name
+    if (name === undefined) {
       return this;
     }
 
-    //config relation data
+    // config relation data
     if (helper.isObject(name) || !helper.isEmpty(value)) {
-      let obj = helper.isObject(name) ? name : {[name]: value};
+      const obj = helper.isObject(name) ? name : {[name]: value};
       helper.extend(this.relation, obj);
       return this;
     }
 
-    if(helper.isBoolean(name)){
+    if (helper.isBoolean(name)) {
       this._relationName = name;
       return this;
     }
 
-    //enable relation
+    // enable relation
     if (helper.isString(name)) {
       name = name.split(/\s*,\s*/);
     }
 
     name = name || [];
-    //filter relation name
-    if(value === false){
-      let filterRelations = Object.keys(this.relation).filter(item => {
+    // filter relation name
+    if (value === false) {
+      const filterRelations = Object.keys(this.relation).filter(item => {
         return name.indexOf(item) === -1;
       });
       name = filterRelations;
@@ -91,7 +91,7 @@ class Relation extends Base {
    * @param  {Object} data []
    * @return {Promise}      []
    */
-  afterFind(data, options){
+  afterFind(data, options) {
     return this.getRelation(data, options);
   }
   /**
@@ -99,7 +99,7 @@ class Relation extends Base {
    * @param  {Object} data []
    * @return {}      []
    */
-  afterSelect(data, options){
+  afterSelect(data, options) {
     return this.getRelation(data, options);
   }
   /**
@@ -108,13 +108,13 @@ class Relation extends Base {
    * @param  Boolean isDataList 
    * @return {}
    */
-  async getRelation(data, options = {}){
+  async getRelation(data, options = {}) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this._relationName)) {
       return data;
     }
-    let pk = await this.getPk();
-    let promises = Object.keys(this.relation).map(key => {
-      //relation is disabled
+    const pk = await this.getPk();
+    const promises = Object.keys(this.relation).map(key => {
+      // relation is disabled
       if (this._relationName !== true && this._relationName.indexOf(key) === -1) {
         return;
       }
@@ -122,7 +122,7 @@ class Relation extends Base {
       if (!helper.isObject(item)) {
         item = {type: item};
       }
-      //get relation model options
+      // get relation model options
       let opts = helper.extend({
         name: key,
         type: HAS_ONE,
@@ -131,10 +131,10 @@ class Relation extends Base {
         relation: true
       }, item);
 
-      //relation data is exist
-      let itemData = helper.isArray(data) ? data[0] : data;
-      let relData = itemData[opts.name];
-      if(helper.isArray(relData) || helper.isObject(relData)){
+      // relation data is exist
+      const itemData = helper.isArray(data) ? data[0] : data;
+      const relData = itemData[opts.name];
+      if (helper.isArray(relData) || helper.isObject(relData)) {
         return;
       }
 
@@ -145,35 +145,35 @@ class Relation extends Base {
       // if(modelOpts.cache && modelOpts.cache.key){
       //   delete modelOpts.cache.key;
       // }
-      let modelOpts = {};
+      const modelOpts = {};
 
       ['where', 'field', 'order', 'limit', 'page'].forEach(optItem => {
-        if(helper.isFunction(item[optItem])){
+        if (helper.isFunction(item[optItem])) {
           modelOpts[optItem] = item[optItem](this);
-        }else{
+        } else {
           modelOpts[optItem] = item[optItem];
         }
       });
-      //get relation model instance
-      let model = this.findModel(item.model || key).options(modelOpts);
+      // get relation model instance
+      const model = this.findModel(item.model || key).options(modelOpts);
 
-      //set relation to relate model
-      if(model.setRelation){
+      // set relation to relate model
+      if (model.setRelation) {
         model.setRelation(opts.relation, false);
       }
 
       opts.model = model;
 
-      switch(item.type){
+      switch (item.type) {
         case BELONG_TO:
           // if(item.model) {
           //   delete item.model;
           // }
           opts = helper.extend(opts, {
             key: opts.model.getModelName() + '_id',
-            fKey: 'id' 
+            fKey: 'id'
           }, item);
-          opts.model = model; //get ref back
+          opts.model = model; // get ref back
           return this._getBelongsToRelation(data, opts, options);
         case HAS_MANY:
           return this._getHasManyRelation(data, opts, options);
@@ -192,12 +192,12 @@ class Relation extends Base {
    * @param  {Object} mapOpts []
    * @return {Promise}         []
    */
-  async _getHasOneRelation(data, mapOpts/*, options*/){
-    let where = this.parseRelationWhere(data, mapOpts);
+  async _getHasOneRelation(data, mapOpts/*, options */) {
+    const where = this.parseRelationWhere(data, mapOpts);
     // if (where === false) {
     //   return {};
     // }
-    let mapData = await mapOpts.model.where(where).select();
+    const mapData = await mapOpts.model.where(where).select();
     return this.parseRelationData(data, mapData, mapOpts);
   }
   /**
@@ -206,9 +206,9 @@ class Relation extends Base {
    * @param  {Object} mapOpts []
    * @return {Promise}         []
    */
-  async _getBelongsToRelation(data, mapOpts/*, options*/){
-    let where = this.parseRelationWhere(data, mapOpts);
-    let mapData = await mapOpts.model.where(where).select();
+  async _getBelongsToRelation(data, mapOpts/*, options */) {
+    const where = this.parseRelationWhere(data, mapOpts);
+    const mapData = await mapOpts.model.where(where).select();
     return this.parseRelationData(data, mapData, mapOpts);
   }
   /**
@@ -217,12 +217,12 @@ class Relation extends Base {
    * @param  {Object} mapOpts []
    * @return {Promise}         []
    */
-  async _getHasManyRelation(data, mapOpts/*, options*/){
-    let where = this.parseRelationWhere(data, mapOpts);
+  async _getHasManyRelation(data, mapOpts/*, options */) {
+    const where = this.parseRelationWhere(data, mapOpts);
     // if (where === false) {
     //   return [];
     // }
-    let mapData = await mapOpts.model.where(where).select();
+    const mapData = await mapOpts.model.where(where).select();
     return this.parseRelationData(data, mapData, mapOpts, true);
   }
   /**
@@ -232,27 +232,27 @@ class Relation extends Base {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  async _getManyToManyRelation(data, mapOpts, options){
-    let where = this.parseRelationWhere(data, mapOpts);
+  async _getManyToManyRelation(data, mapOpts, options) {
+    const where = this.parseRelationWhere(data, mapOpts);
     let sql = 'SELECT %s, a.%s FROM %s as a, %s as b %s AND a.%s=b.%s %s';
-    let field = this.db().parseField(mapOpts.field).split(',').map(item => `b.${item}`).join(',');
-    let pk = await mapOpts.model.getPk();
+    const field = this.db().parseField(mapOpts.field).split(',').map(item => `b.${item}`).join(',');
+    const pk = await mapOpts.model.getPk();
 
     let table = mapOpts.rModel;
-    if(table){
-      if(this.tablePrefix && table.indexOf(this.tablePrefix) !== 0){
+    if (table) {
+      if (this.tablePrefix && table.indexOf(this.tablePrefix) !== 0) {
         table = this.tablePrefix + table;
       }
-    }else{
-     table = this.getRelationTableName(mapOpts.model);
+    } else {
+      table = this.getRelationTableName(mapOpts.model);
     }
 
-    let table1 = mapOpts.model.getTableName();
-    let where1 = this.db().parseWhere(where);
-    let rkey = mapOpts.rfKey || (mapOpts.model.getModelName() + '_id');
-    let where2 = mapOpts.where ? (' AND ' + this.db().parseWhere(mapOpts.where).trim().slice(6)) : '';
+    const table1 = mapOpts.model.getTableName();
+    const where1 = this.db().parseWhere(where);
+    const rkey = mapOpts.rfKey || (mapOpts.model.getModelName() + '_id');
+    const where2 = mapOpts.where ? (' AND ' + this.db().parseWhere(mapOpts.where).trim().slice(6)) : '';
     sql = this.parseSql(sql, field, mapOpts.fKey, table, table1, where1, rkey, pk, where2);
-    let mapData = await this.db().select(sql, options.cache);
+    const mapData = await this.db().select(sql, options.cache);
     return this.parseRelationData(data, mapData, mapOpts, true);
   }
   /**
@@ -260,8 +260,8 @@ class Relation extends Base {
    * @param  {Object} model []
    * @return {}       []
    */
-  getRelationTableName(model){
-    let table = [
+  getRelationTableName(model) {
+    const table = [
       this.tablePrefix,
       this.tableName || this.name,
       '_',
@@ -274,8 +274,8 @@ class Relation extends Base {
    * @param  {} model []
    * @return {}       []
    */
-  getRelationModel(model){
-    let name = (this.tableName || this.name) + '_' + model.getModelName();
+  getRelationModel(model) {
+    const name = (this.tableName || this.name) + '_' + model.getModelName();
     return this.findModel(name);
   }
   /**
@@ -284,13 +284,13 @@ class Relation extends Base {
    * @param  {Object} mapOpts []
    * @return {}         []
    */
-  parseRelationWhere(data, mapOpts){
+  parseRelationWhere(data, mapOpts) {
     if (helper.isArray(data)) {
-      let keys = {};
+      const keys = {};
       data.forEach(item => {
         keys[item[mapOpts.key]] = 1;
       });
-      let value = Object.keys(keys);
+      const value = Object.keys(keys);
       return {
         [mapOpts.fKey]: ['IN', value]
       };
@@ -307,7 +307,7 @@ class Relation extends Base {
    * @param  {Boolean} isArrMap []
    * @return {}           []
    */
-  parseRelationData(data, mapData, mapOpts, isArrMap){
+  parseRelationData(data, mapData, mapOpts, isArrMap) {
     if (helper.isArray(data)) {
       if (isArrMap) {
         data.forEach((item, i) => {
@@ -321,12 +321,12 @@ class Relation extends Base {
           }
           if (isArrMap) {
             data[i][mapOpts.name].push(mapItem);
-          }else{
+          } else {
             data[i][mapOpts.name] = mapItem;
           }
         });
       });
-    }else{
+    } else {
       data[mapOpts.name] = isArrMap ? mapData : (mapData[0] || {});
     }
     return data;
@@ -337,7 +337,7 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  afterAdd(data, options){
+  afterAdd(data, options) {
     return this.postRelation('ADD', data, options);
   }
   /**
@@ -346,7 +346,7 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  afterDelete(options = {}){
+  afterDelete(options = {}) {
     return this.postRelation('DELETE', options.where, options);
   }
   /**
@@ -355,7 +355,7 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  afterUpdate(data, options){
+  afterUpdate(data, options) {
     return this.postRelation('UPDATE', data, options);
   }
   /**
@@ -365,17 +365,17 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  async postRelation(postType, data/*, parsedOptions*/){
+  async postRelation(postType, data/*, parsedOptions */) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this._relationName)) {
       return data;
     }
-    let pk = await this.getPk();
-    let promises = Object.keys(this.relation).map(key => {
+    const pk = await this.getPk();
+    const promises = Object.keys(this.relation).map(key => {
       let item = this.relation[key];
       if (!helper.isObject(item)) {
         item = {type: item};
       }
-      let opts = helper.extend({
+      const opts = helper.extend({
         type: HAS_ONE,
         postType: postType,
         name: key,
@@ -385,17 +385,17 @@ class Relation extends Base {
       if (this._relationName !== true && this._relationName.indexOf(opts.name) === -1) {
         return;
       }
-      if(postType === 'DELETE'){
+      if (postType === 'DELETE') {
         opts.data = data;
-      }else{
-        let mapData = data[opts.name];
+      } else {
+        const mapData = data[opts.name];
         if (helper.isEmpty(mapData)) {
           return;
         }
         opts.data = mapData;
       }
       opts.model = this.findModel(item.model || key).where(item.where);
-      switch(item.type){
+      switch (item.type) {
         case BELONG_TO:
           return this._postBelongsToRelation(data, opts);
         case HAS_MANY:
@@ -417,9 +417,9 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  _postHasOneRelation(data, mapOpts){
+  _postHasOneRelation(data, mapOpts) {
     let where;
-    switch(mapOpts.postType){
+    switch (mapOpts.postType) {
       case 'ADD':
         mapOpts.data[mapOpts.fKey] = data[mapOpts.key];
         return mapOpts.model.add(mapOpts.data);
@@ -436,7 +436,7 @@ class Relation extends Base {
    * @param  {} data []
    * @return {}      []
    */
-  _postBelongsToRelation(data){
+  _postBelongsToRelation(data) {
     return data;
   }
   /**
@@ -447,13 +447,13 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  _postHasManyRelation(data, mapOpts){
+  _postHasManyRelation(data, mapOpts) {
     let mapData = mapOpts.data;
-    let model = mapOpts.model;
+    const model = mapOpts.model;
     if (!helper.isArray(mapData)) {
       mapData = [mapData];
     }
-    switch(mapOpts.postType){
+    switch (mapOpts.postType) {
       case 'ADD':
         mapData = mapData.map(item => {
           item[mapOpts.fKey] = data[mapOpts.key];
@@ -462,20 +462,20 @@ class Relation extends Base {
         return model.addMany(mapData);
       case 'UPDATE':
         return model.getSchema().then(() => {
-          let pk = model.getPk();
-          let promises = mapData.map(item => {
+          const pk = model.getPk();
+          const promises = mapData.map(item => {
             if (item[pk]) {
               return model.update(item);
-            }else{
+            } else {
               item[mapOpts.fKey] = data[mapOpts.key];
-              //ignore error when add data
+              // ignore error when add data
               return model.add(item).catch(() => {});
             }
           });
           return Promise.all(promises);
         });
       case 'DELETE':
-        let where = {[mapOpts.fKey]: data[mapOpts.key]};
+        const where = {[mapOpts.fKey]: data[mapOpts.key]};
         return model.where(where).delete();
     }
   }
@@ -487,16 +487,16 @@ class Relation extends Base {
    * @param  {} parsedOptions []
    * @return {}               []
    */
-  async _postManyToManyRelation(data, mapOpts){
-    let model = mapOpts.model;
+  async _postManyToManyRelation(data, mapOpts) {
+    const model = mapOpts.model;
     await model.getSchema();
-    let rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
-    let relationModel = mapOpts.rModel ? this.findModel(mapOpts.rModel) : this.getRelationModel(model);
+    const rfKey = mapOpts.rfKey || (model.getModelName().toLowerCase() + '_id');
+    const relationModel = mapOpts.rModel ? this.findModel(mapOpts.rModel) : this.getRelationModel(model);
 
-    let type = mapOpts.postType;
+    const type = mapOpts.postType;
     if (type === 'DELETE' || type === 'UPDATE') {
-      let where = {[mapOpts.fKey]: data[mapOpts.key]};
-      await relationModel.where(where).delete(); 
+      const where = {[mapOpts.fKey]: data[mapOpts.key]};
+      await relationModel.where(where).delete();
     }
 
     if (type === 'ADD' || type === 'UPDATE') {
@@ -504,19 +504,19 @@ class Relation extends Base {
       if (!helper.isArray(mapData)) {
         mapData = helper.isString(mapData) ? mapData.split(',') : [mapData];
       }
-      let firstItem = mapData[0];
+      const firstItem = mapData[0];
       if (helper.isNumberString(firstItem) || (helper.isObject(firstItem) && (rfKey in firstItem))) {
-        let postData = mapData.map(item => {
+        const postData = mapData.map(item => {
           return {[mapOpts.fKey]: data[mapOpts.key], [rfKey]: item[rfKey] || item};
         });
         await relationModel.addMany(postData);
-      }else{ 
-        let unqiueField = await model.getUniqueField();
+      } else {
+        const unqiueField = await model.getUniqueField();
         if (!unqiueField) {
           return Promise.reject(new Error('table `' + model.tableName + '` has no unqiue field'));
         }
-        let ids = await this._getRalationAddIds(mapData, model, unqiueField);
-        let postData = ids.map(id => {
+        const ids = await this._getRalationAddIds(mapData, model, unqiueField);
+        const postData = ids.map(id => {
           return {[mapOpts.fKey]: data[mapOpts.key], [rfKey]: id};
         });
         await relationModel.addMany(postData);
@@ -530,21 +530,21 @@ class Relation extends Base {
    * @param  {String} unqiueField []
    * @return {Promise}             []
    */
-  async _getRalationAddIds(dataList, model, unqiueField){
-    let ids = [];
-    let pk = await model.getPk();
-    let promises = dataList.map(item => {
+  async _getRalationAddIds(dataList, model, unqiueField) {
+    const ids = [];
+    const pk = await model.getPk();
+    const promises = dataList.map(item => {
       if (!helper.isObject(item)) {
         item = {[unqiueField]: item};
       }
-      let value = item[unqiueField];
-      let where = {[unqiueField]: value};
+      const value = item[unqiueField];
+      const where = {[unqiueField]: value};
       return model.where(where).field(pk).find().then(data => {
         if (helper.isEmpty(data)) {
           return model.add(item).then(insertId => {
             ids.push(insertId);
           });
-        }else{
+        } else {
           ids.push(data[pk]);
         }
       });

@@ -3,7 +3,6 @@ const helper = require('think-helper');
 const values = require('./lib/values');
 const MysqlInstance = require('./mysql/instance');
 
-
 module.exports = class {
   /**
    * constructor
@@ -11,13 +10,12 @@ module.exports = class {
    * @param  {} config []
    * @return {}        []
    */
-  constructor(name = '', config = {}){
-
-    let options = {
-      pk: 'id', //primary key
-      name: '', //model name
-      tablePrefix: undefined, //table prefix
-      tableName: '', //table name, without prefix
+  constructor(name = '', config = {}) {
+    const options = {
+      pk: 'id', // primary key
+      name: '', // model name
+      tablePrefix: undefined, // table prefix
+      tableName: '', // table name, without prefix
       /**
        * schema
        * {
@@ -31,7 +29,7 @@ module.exports = class {
        *   }
        * }
        */
-      schema: {}, //table schema
+      schema: {} // table schema
       // /**
       //  * table indexes
       //  * {
@@ -42,14 +40,14 @@ module.exports = class {
       //  */
       // indexes: {}
     };
-    //if is set in subclass, can't be override
-    for(let key in options){
-      if(this[key] === undefined){
+    // if is set in subclass, can't be override
+    for (const key in options) {
+      if (this[key] === undefined) {
         this[key] = options[key];
       }
     }
 
-    if(helper.isObject(name)){
+    if (helper.isObject(name)) {
       config = name;
       name = '';
     }
@@ -59,8 +57,8 @@ module.exports = class {
     this._data = {};
     this._options = {};
 
-    //model name
-    if(name){
+    // model name
+    if (name) {
       this.name = name;
     }
     // get table prefix from config
@@ -72,16 +70,16 @@ module.exports = class {
    * get table prefix
    * @return {String} []
    */
-  getTablePrefix(){
+  getTablePrefix() {
     return this.tablePrefix || '';
   }
   /**
    * get db instance
    * @return {Object} []
    */
-  db(db){
+  db(db) {
     // set db
-    if(db){
+    if (db) {
       this._db = db;
       return this;
     }
@@ -95,12 +93,12 @@ module.exports = class {
    * get model name
    * @return {String} []
    */
-  getModelName(){
+  getModelName() {
     if (this.name) {
       return this.name;
     }
-    let filename = this.__filename || __filename;
-    let last = filename.lastIndexOf(path.sep);
+    const filename = this.__filename || __filename;
+    const last = filename.lastIndexOf(path.sep);
     this.name = filename.substr(last + 1, filename.length - last - 4);
     return this.name;
   }
@@ -108,8 +106,8 @@ module.exports = class {
    * get table name
    * @return {String} []
    */
-  getTableName(){
-    if(!this.tableName){
+  getTableName() {
+    if (!this.tableName) {
       this.tableName = this.getModelName();
     }
     return this.getTablePrefix() + this.tableName;
@@ -120,21 +118,21 @@ module.exports = class {
    * @param  {Number} timeout []
    * @return {}         []
    */
-  cache(key, config){
+  cache(key, config) {
     if (key === undefined) {
       return this;
     }
-    
-    if(!helper.isString(key)) {
+
+    if (!helper.isString(key)) {
       [key, config] = ['', key];
     }
 
-    if(helper.isNumber(config)) {
+    if (helper.isNumber(config)) {
       config = {timeout: config};
     }
-    
-    let options = helper.parseAdapterConfig(this.config.cache, config);
-    if(!options.key) { options.key = key; }
+
+    const options = helper.parseAdapterConfig(this.config.cache, config);
+    if (!options.key) { options.key = key }
     this._options.cache = options;
     return this;
   }
@@ -144,16 +142,16 @@ module.exports = class {
    * @param  {Number} length []
    * @return {}        []
    */
-  limit(offset, length){
+  limit(offset, length) {
     if (offset === undefined) {
       return this;
     }
-    if(helper.isArray(offset)){
+    if (helper.isArray(offset)) {
       length = offset[1] || length;
       offset = offset[0];
     }
     offset = Math.max(parseInt(offset) || 0, 0);
-    if(length){
+    if (length) {
       length = Math.max(parseInt(length) || 0, 0);
     }
     this._options.limit = [offset, length];
@@ -165,11 +163,11 @@ module.exports = class {
    * @param  {} listRows []
    * @return {}          []
    */
-  page(page, listRows = this.config.pagesize){
+  page(page, listRows = this.config.pagesize) {
     if (page === undefined) {
       return this;
     }
-    if(helper.isArray(page)){
+    if (helper.isArray(page)) {
       listRows = page[1] || listRows;
       page = page[0];
     }
@@ -182,15 +180,15 @@ module.exports = class {
    * set where options
    * @return {} []
    */
-  where(where){
+  where(where) {
     if (!where) {
       return this;
     }
     if (helper.isString(where)) {
       where = {_string: where};
     }
-    let options = this._options;
-    if(options.where && helper.isString(options.where)){
+    const options = this._options;
+    if (options.where && helper.isString(options.where)) {
       options.where = {_string: options.where};
     }
     options.where = helper.extend({}, options.where, where);
@@ -202,12 +200,12 @@ module.exports = class {
    * @param  {Boolean} reverse []
    * @return {}         []
    */
-  field(field, reverse = false){
-    if(!field){
+  field(field, reverse = false) {
+    if (!field) {
       return this;
     }
     if (helper.isString(field)) {
-      if(field.indexOf(')') === -1){
+      if (field.indexOf(')') === -1) {
         field = field.split(/\s*,\s*/);
       }
     }
@@ -220,7 +218,7 @@ module.exports = class {
    * @param  {String} field [field list]
    * @return {Object}       []
    */
-  fieldReverse(field){
+  fieldReverse(field) {
     return this.field(field, true);
   }
   /**
@@ -228,12 +226,12 @@ module.exports = class {
    * @param  {String} table []
    * @return {}       []
    */
-  table(table, hasPrefix){
+  table(table, hasPrefix) {
     if (!table) {
       return this;
     }
     table = table.trim();
-    //table is sql, `SELECT * FROM`
+    // table is sql, `SELECT * FROM`
     if (table.indexOf(' ') > -1) {
       hasPrefix = true;
     }
@@ -246,7 +244,7 @@ module.exports = class {
    * @param  {} all   []
    * @return {}       []
    */
-  union(union, all = false){
+  union(union, all = false) {
     if (!union) {
       return this;
     }
@@ -270,7 +268,7 @@ module.exports = class {
    * @param  {[type]} join [description]
    * @return {[type]}      [description]
    */
-  join(join){
+  join(join) {
     if (!join) {
       return this;
     }
@@ -279,7 +277,7 @@ module.exports = class {
     }
     if (helper.isArray(join)) {
       this._options.join = this._options.join.concat(join);
-    }else{
+    } else {
       this._options.join.push(join);
     }
     return this;
@@ -289,7 +287,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  order(value){
+  order(value) {
     this._options.order = value;
     return this;
   }
@@ -298,7 +296,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  alias(value){
+  alias(value) {
     this._options.alias = value;
     return this;
   }
@@ -307,7 +305,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  having(value){
+  having(value) {
     this._options.having = value;
     return this;
   }
@@ -316,7 +314,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  group(value){
+  group(value) {
     this._options.group = value;
     return this;
   }
@@ -325,7 +323,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  lock(value){
+  lock(value) {
     this._options.lock = value;
     return this;
   }
@@ -334,7 +332,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  auto(value){
+  auto(value) {
     this._options.auto = value;
     return this;
   }
@@ -343,7 +341,7 @@ module.exports = class {
    * @param  {String} value []
    * @return {}       []
    */
-  filter(value){
+  filter(value) {
     this._options.filter = value;
     return this;
   }
@@ -352,7 +350,7 @@ module.exports = class {
    * @param  {String} data []
    * @return {}      []
    */
-  distinct(data){
+  distinct(data) {
     this._options.distinct = data;
     if (helper.isString(data)) {
       this._options.field = data;
@@ -364,7 +362,7 @@ module.exports = class {
    * @param  {Boolean} explain []
    * @return {}         []
    */
-  explain(explain){
+  explain(explain) {
     this._options.explain = explain;
     return this;
   }
@@ -373,7 +371,7 @@ module.exports = class {
    * @param  {Object} options []
    * @return {}         []
    */
-  optionsFilter(options){
+  optionsFilter(options) {
     return options;
   }
   /**
@@ -381,7 +379,7 @@ module.exports = class {
    * @param  {Object} data []
    * @return {}      []
    */
-  dataFilter(data){
+  dataFilter(data) {
     return data;
   }
   /**
@@ -389,41 +387,40 @@ module.exports = class {
    * @param  {Object} data []
    * @return {}      []
    */
-  beforeAdd(data, options, schema){
-     
-    //for addMany invoked
-    if(helper.isArray(data)){
+  beforeAdd(data, options, schema) {
+    // for addMany invoked
+    if (helper.isArray(data)) {
       return data.map(item => this.beforeAdd(item, options));
     }
 
     let ret = {};
-    let extRet = {};
+    const extRet = {};
     schema = schema || this.schema;
-    //fields in schema
-    for(let field in schema){
-      let fieldSchema = schema[field];
-      let _default = fieldSchema.default;
-      //default value is setted
-      if(!helper.isTrueEmpty(_default)){
+    // fields in schema
+    for (const field in schema) {
+      const fieldSchema = schema[field];
+      const _default = fieldSchema.default;
+      // default value is setted
+      if (!helper.isTrueEmpty(_default)) {
         ret[field] = {
           value: data[field],
           default: _default
         };
-      }else{
-        if(this._isSubSchema(fieldSchema)){
+      } else {
+        if (this._isSubSchema(fieldSchema)) {
           extRet[field] = this.beforeAdd(data[field] || {}, options, fieldSchema);
         }
       }
     }
-    for(let field in data){
-      if(!ret[field] && !extRet[field]){
+    for (const field in data) {
+      if (!ret[field] && !extRet[field]) {
         ret[field] = {
           value: data[field]
         };
       }
     }
     ret = values(ret);
-    if(!helper.isEmpty(extRet)){
+    if (!helper.isEmpty(extRet)) {
       ret = helper.extend(ret, extRet);
     }
     return ret;
@@ -441,11 +438,11 @@ module.exports = class {
    * @param  {Mixed}  schema []
    * @return {Boolean}        []
    */
-  _isSubSchema(schema){
-    if(!schema || !helper.isObject(schema)){
+  _isSubSchema(schema) {
+    if (!schema || !helper.isObject(schema)) {
       return false;
     }
-    let keys = Object.keys(schema);
+    const keys = Object.keys(schema);
     return keys.length && keys.every(key => helper.isObject(schema[key]));
   }
   /**
@@ -453,13 +450,13 @@ module.exports = class {
    * @param  {} data []
    * @return {}      []
    */
-  afterAdd(data){
+  afterAdd(data) {
     return data;
   }
   /**
    * before delete
    */
-  beforeDelete(options){
+  beforeDelete(options) {
     return options;
   }
   /**
@@ -467,7 +464,7 @@ module.exports = class {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  afterDelete(data){
+  afterDelete(data) {
     return data;
   }
   /**
@@ -475,44 +472,44 @@ module.exports = class {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  beforeUpdate(data, options, schema){
+  beforeUpdate(data, options, schema) {
     let ret = {};
-    let extRet = {};
+    const extRet = {};
     schema = schema || this.schema;
 
-    for(let field in data){
-      let fieldSchema = schema[field];
-      if(!fieldSchema){
+    for (const field in data) {
+      const fieldSchema = schema[field];
+      if (!fieldSchema) {
         ret[field] = {value: data[field]};
-      }else{
-        if(this._isSubSchema(fieldSchema)){
-          let result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
-          if(!helper.isEmpty(result)){
+      } else {
+        if (this._isSubSchema(fieldSchema)) {
+          const result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
+          if (!helper.isEmpty(result)) {
             extRet[field] = result;
           }
-        }else if(!fieldSchema.readonly){
+        } else if (!fieldSchema.readonly) {
           ret[field] = {value: data[field]};
         }
       }
     }
 
-    for(let field in schema){
-      let fieldSchema = schema[field];
-      let _default = fieldSchema.default;
-      if(!helper.isTrueEmpty(_default) && !fieldSchema.readonly && fieldSchema.update){
+    for (const field in schema) {
+      const fieldSchema = schema[field];
+      const _default = fieldSchema.default;
+      if (!helper.isTrueEmpty(_default) && !fieldSchema.readonly && fieldSchema.update) {
         ret[field] = {
           value: data[field],
           default: _default
         };
-      }else if(this._isSubSchema(fieldSchema)){
-        let result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
-        if(!helper.isEmpty(result)){
+      } else if (this._isSubSchema(fieldSchema)) {
+        const result = this.beforeUpdate(data[field] || {}, options, fieldSchema);
+        if (!helper.isEmpty(result)) {
           extRet[field] = result;
         }
       }
     }
     ret = values(ret);
-    if(!helper.isEmpty(extRet)){
+    if (!helper.isEmpty(extRet)) {
       ret = helper.extend(ret, extRet);
     }
     return ret;
@@ -523,26 +520,26 @@ module.exports = class {
    * @param  {} options []
    * @return {}         []
    */
-  afterUpdate(data){
+  afterUpdate(data) {
     return data;
   }
   /**
    * before find
    */
-  beforeFind(options){
+  beforeFind(options) {
     return options;
   }
   /**
    * after find
    * @return {} []
    */
-  afterFind(data){
+  afterFind(data) {
     return data;
   }
   /**
    * before select
    */
-  beforeSelect(options){
+  beforeSelect(options) {
     return options;
   }
   /**
@@ -550,7 +547,7 @@ module.exports = class {
    * @param  {Mixed} result []
    * @return {}        []
    */
-  afterSelect(data){
+  afterSelect(data) {
     return data;
   }
   /**
@@ -558,7 +555,7 @@ module.exports = class {
    * @param  {Mixed} data []
    * @return {}      []
    */
-  data(data){
+  data(data) {
     if (data === true) {
       return this._data;
     }
@@ -570,13 +567,13 @@ module.exports = class {
    * @param  {Mixed} options []
    * @return {}         []
    */
-  options(options){
+  options(options) {
     if (!options) {
       return this._options;
     }
     this._options = options;
-    //page to limit
-    if(options.page){
+    // page to limit
+    if (options.page) {
       this.page(options.page);
     }
     return this;
@@ -585,11 +582,10 @@ module.exports = class {
    * close db socket
    * @return {} []
    */
-  close(){
+  close() {
     if (this._db) {
       this._db.close();
       this._db = null;
     }
   }
-  
-}
+};

@@ -5,7 +5,7 @@ const Base = require('../base');
 /**
  * schema cache
  */
-let schemaCache = {};
+const schemaCache = {};
 /**
  * base model class
  */
@@ -16,12 +16,12 @@ module.exports = class MysqlModel extends Base {
    * @return {Object}         []
    */
   model(name) {
-    if(!name) {
+    if (!name) {
       return this;
     }
-    let model = this.config.models[name];
-    if(model) {
-      return new model(name, this.config);
+    const Model = this.config.models[name];
+    if (Model) {
+      return new Model(name, this.config);
     }
     return new MysqlModel(name, this.config);
   }
@@ -30,23 +30,23 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} table [table name]
    * @return {}       []
    */
-  async getSchema(table = this.getTableName()){
+  async getSchema(table = this.getTableName()) {
     let schema = schemaCache[table];
-    if(!schema){
+    if (!schema) {
       schema = await this.db().getSchema(table);
       schemaCache[table] = schema;
     }
-    if(table !== this.getTableName()){
+    if (table !== this.getTableName()) {
       return schema;
     }
-    //get primary key
-    for(let name in schema){
-      if(schema[name].primary){
+    // get primary key
+    for (const name in schema) {
+      if (schema[name].primary) {
         this.pk = name;
         break;
       }
     }
-    //merge user set schema config
+    // merge user set schema config
     this.schema = helper.extend({}, schema, this.schema);
     return this.schema;
   }
@@ -55,10 +55,10 @@ module.exports = class MysqlModel extends Base {
    * @param  {Object} data []
    * @return {Promise}      []
    */
-  async getUniqueField(data){
-    let schema = await this.getSchema();
-    for(let name in schema){
-      if(schema[name].unique && (!data || data[name])){
+  async getUniqueField(data) {
+    const schema = await this.getSchema();
+    for (const name in schema) {
+      if (schema[name].unique && (!data || data[name])) {
         return name;
       }
     }
@@ -67,15 +67,15 @@ module.exports = class MysqlModel extends Base {
    * get last sql
    * @return {Promise} []
    */
-  getLastSql(){
+  getLastSql() {
     return this.db().getLastSql();
   }
   /**
    * get primary key
    * @return {Promise} []
    */
-  getPk(){
-    if(this.pk !== 'id'){
+  getPk() {
+    if (this.pk !== 'id') {
       return Promise.resolve(this.pk);
     }
     return this.getSchema().then(() => this.pk);
@@ -85,10 +85,10 @@ module.exports = class MysqlModel extends Base {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  async buildSql(options, noParentheses){
+  async buildSql(options, noParentheses) {
     options = await this.parseOptions(options);
-    let sql = this.db().buildSelectSql(options).trim();
-    if(noParentheses){
+    const sql = this.db().buildSelectSql(options).trim();
+    if (noParentheses) {
       return sql;
     }
     return '( ' + sql + ' )';
@@ -99,97 +99,96 @@ module.exports = class MysqlModel extends Base {
    * @param extraOptions 
    * @param flag 
    */
-  async parseOptions(oriOpts, extraOptions, flag = false){
+  async parseOptions(oriOpts, extraOptions, flag = false) {
     let options = helper.extend({}, this._options);
-    if(helper.isObject(oriOpts)) {
+    if (helper.isObject(oriOpts)) {
       options = helper.extend(options, oriOpts);
     }
-    if(extraOptions){
+    if (extraOptions) {
       options = helper.extend(options, extraOptions);
     }
-    //clear options
+    // clear options
     this._options = {};
-    //get table name
+    // get table name
     options.table = options.table || this.getTableName();
 
     options.tablePrefix = this.getTablePrefix();
     options.model = this.getModelName();
 
-    //get table schema can not use table alias
-    let schema = await this.getSchema(options.table);
+    // get table schema can not use table alias
+    const schema = await this.getSchema(options.table);
 
-    //table alias
+    // table alias
     if (options.alias) {
       options.table += ' AS ' + options.alias;
     }
 
-    if(oriOpts !== undefined && !helper.isObject(oriOpts)){
+    if (oriOpts !== undefined && !helper.isObject(oriOpts)) {
       options = helper.extend(options, this.parseWhereOptions(oriOpts));
     }
-    //check where key
-    if(options.where && !helper.isEmpty(schema)){
-      let keyReg = /^[\w\.\|\&]+$/;
-      for(let key in options.where){
-        if(!keyReg.test(key)){
+    // check where key
+    if (options.where && !helper.isEmpty(schema)) {
+      const keyReg = /^[\w.|&]+$/;
+      for (const key in options.where) {
+        if (!keyReg.test(key)) {
           // let msg = new Error(think.locale('FIELD_KEY_NOT_VALID', key));
           // return Promise.reject(msg);
         }
       }
     }
 
-    //field reverse
-    if(options.field && options.fieldReverse){
-      //reset fieldReverse value
+    // field reverse
+    if (options.field && options.fieldReverse) {
+      // reset fieldReverse value
       options.fieldReverse = false;
-      let optionsField = options.field;
+      const optionsField = options.field;
       options.field = Object.keys(schema).filter(item => {
-        if(optionsField.indexOf(item) === -1){
+        if (optionsField.indexOf(item) === -1) {
           return item;
         }
       });
     }
 
-
-    if(flag){
-      let camelCase = this.config.camel_case || false;
-      if(camelCase){
-        if(helper.isEmpty(options.field)){
+    if (flag) {
+      const camelCase = this.config.camel_case || false;
+      if (camelCase) {
+        if (helper.isEmpty(options.field)) {
           options.field = [];
-          let keyArray = Object.keys(schema);
-          for (let key of keyArray) {
+          const keyArray = Object.keys(schema);
+          for (const key of keyArray) {
             options.field.push(util.format('`%s` AS `%s`', key, helper.camelCase(key)));
           }
         } else {
           // make field camelCase
-          let fields = options.field;
+          const fields = options.field;
           options.field = [];
-          for (let field of fields) {
+          for (const field of fields) {
             options.field.push(util.format('`%s` AS `%s`', field, helper.camelCase(field)));
           }
         }
 
         // make field camelCase in where condition
-        let where = options.where;
+        const where = options.where;
         options.where = {};
-        if(!helper.isEmpty(where)){
-          let keyArray = Object.keys(where);
-          for (let key of keyArray) {
+        if (!helper.isEmpty(where)) {
+          const keyArray = Object.keys(where);
+          for (const key of keyArray) {
             options.where[helper.snakeCase(key)] = where[key];
           }
         }
       }
     }
-    
+
     return this.optionsFilter(options, schema);
   }
   /**
    * parse where options
    * @return {Object}
    */
-  parseWhereOptions(options){
+  parseWhereOptions(options) {
     if (helper.isNumber(options) || helper.isString(options)) {
       options += '';
-      let where = {
+      const where = {
         [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
       };
       return {where: where};
@@ -202,16 +201,16 @@ module.exports = class MysqlModel extends Base {
    * @param  {} key  []
    * @return {}      []
    */
-  parseType(key, value){
-    let fieldType = (this.schema[key].type || '').toLowerCase();
-    if(fieldType.indexOf('enum') > -1 || fieldType.indexOf('set') > -1){
+  parseType(key, value) {
+    const fieldType = (this.schema[key].type || '').toLowerCase();
+    if (fieldType.indexOf('enum') > -1 || fieldType.indexOf('set') > -1) {
       return value;
     }
     if (fieldType.indexOf('bigint') === -1 && fieldType.indexOf('int') > -1) {
       return parseInt(value, 10) || 0;
-    }else if(fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1 || fieldType.indexOf('decimal') > -1){
+    } else if (fieldType.indexOf('double') > -1 || fieldType.indexOf('float') > -1 || fieldType.indexOf('decimal') > -1) {
       return parseFloat(value) || 0.0;
-    }else if(fieldType.indexOf('bool') > -1){
+    } else if (fieldType.indexOf('bool') > -1) {
       return !!value;
     }
     return value;
@@ -221,24 +220,24 @@ module.exports = class MysqlModel extends Base {
    * @param  {} data []
    * @return {}      []
    */
-  parseData(data){
-    let camelCase = this.config.camel_case;
-    if(camelCase){
-      let tmpData = helper.extend({}, data);
+  parseData(data) {
+    const camelCase = this.config.camel_case;
+    if (camelCase) {
+      const tmpData = helper.extend({}, data);
       data = {};
-      let keyArray = Object.keys(tmpData);
-      for (let key of keyArray) {
+      const keyArray = Object.keys(tmpData);
+      for (const key of keyArray) {
         data[helper.snakeCase(key)] = tmpData[key];
       }
     }
-    //deep clone data
+    // deep clone data
     data = helper.extend({}, data);
-    for(let key in data){
-      let val = data[key];
-      //remove data not in fields
+    for (const key in data) {
+      const val = data[key];
+      // remove data not in fields
       if (!this.schema[key]) {
         delete data[key];
-      }else if(helper.isNumber(val) || helper.isString(val) || helper.isBoolean(val)){
+      } else if (helper.isNumber(val) || helper.isString(val) || helper.isBoolean(val)) {
         data[key] = this.parseType(key, val);
       }
     }
@@ -250,14 +249,14 @@ module.exports = class MysqlModel extends Base {
    * @param {Object} options []
    * @param {} replace []
    */
-  async add(data, options, replace){
+  async add(data, options, replace) {
     if (options === true) {
       replace = true;
       options = {};
     }
-    //copy data
+    // copy data
     data = helper.extend({}, this._data, data);
-    //clear data
+    // clear data
     this._data = {};
 
     options = await this.parseOptions(options, {}, true);
@@ -268,10 +267,10 @@ module.exports = class MysqlModel extends Base {
       throw new Error('DATA_EMPTY');
     }
 
-    let db = this.db();
+    const db = this.db();
     await db.add(parsedData, options, replace);
-    let insertId = parsedData[this.pk] = db.getLastInsertId();
-    let copyData = helper.extend({}, data, parsedData, {[this.pk]: insertId});
+    const insertId = parsedData[this.pk] = db.getLastInsertId();
+    const copyData = helper.extend({}, data, parsedData, {[this.pk]: insertId});
     await this.afterAdd(copyData, options);
     return insertId;
   }
@@ -281,21 +280,21 @@ module.exports = class MysqlModel extends Base {
    * @param  {Object} where      []
    * @return {}            []
    */
-  async thenAdd(data, where){
-    let findData = await this.where(where).find();
-    if(!helper.isEmpty(findData)){
+  async thenAdd(data, where) {
+    const findData = await this.where(where).find();
+    if (!helper.isEmpty(findData)) {
       return {[this.pk]: findData[this.pk], type: 'exist'};
     }
-    let insertId = await this.add(data);
+    const insertId = await this.add(data);
     return {[this.pk]: insertId, type: 'add'};
   }
   /**
    * update data when exist, otherwise add data
    * @return {id}
    */
-  async thenUpdate(data, where){
-    let findData = await this.where(where).find();
-    if(helper.isEmpty(findData)){
+  async thenUpdate(data, where) {
+    const findData = await this.where(where).find();
+    if (helper.isEmpty(findData)) {
       return this.add(data);
     }
     await this.where(where).update(data);
@@ -307,7 +306,7 @@ module.exports = class MysqlModel extends Base {
    * @param {} options []
    * @param {} replace []
    */
-  async addMany(data, options, replace){
+  async addMany(data, options, replace) {
     if (!helper.isArray(data) || !helper.isObject(data[0])) {
       throw new Error('DATA_MUST_BE_ARRAY');
     }
@@ -321,13 +320,13 @@ module.exports = class MysqlModel extends Base {
       return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
-    let db = this.db();
+    const db = this.db();
     await db.addMany(data, options, replace);
-    let insertId = db.getLastInsertId();
-    let insertIds = [];
+    const insertId = db.getLastInsertId();
+    const insertIds = [];
     promises = data.map((item, i) => {
       let id = insertId + i;
-      if(this.config.type === 'sqlite'){
+      if (this.config.type === 'sqlite') {
         id = insertId - data.length + i + 1;
       }
       item[this.pk] = id;
@@ -342,10 +341,10 @@ module.exports = class MysqlModel extends Base {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  async delete(options){
+  async delete(options) {
     options = await this.parseOptions(options, {}, true);
     options = await this.beforeDelete(options);
-    let rows = await this.db().delete(options);
+    const rows = await this.db().delete(options);
     await this.afterDelete(options);
     return rows;
   }
@@ -356,36 +355,35 @@ module.exports = class MysqlModel extends Base {
    * @param  {Boolean} ignoreWhere []
    * @return {Promise}          []
    */
-  async update(data, options){
-
+  async update(data, options) {
     data = helper.extend({}, this._data, data);
-    //clear data
+    // clear data
     this._data = {};
 
     options = await this.parseOptions(options, {}, true);
 
     let parsedData = this.parseData(data);
 
-    //check where condition
-    if(helper.isEmpty(options.where)){
-      //get where condition from data
-      let pk = await this.getPk();
-      if(parsedData[pk]){
+    // check where condition
+    if (helper.isEmpty(options.where)) {
+      // get where condition from data
+      const pk = await this.getPk();
+      if (parsedData[pk]) {
         options.where = {[pk]: parsedData[pk]};
         delete parsedData[pk];
-      }else{
+      } else {
         throw new Error('MISS_WHERE_CONDITION');
       }
     }
 
     parsedData = await this.beforeUpdate(parsedData, options);
-    //check data is empty
+    // check data is empty
     if (helper.isEmpty(parsedData)) {
       throw new Error('DATA_EMPTY');
     }
 
-    let rows = await this.db().update(parsedData, options);
-    let copyData = helper.extend({}, data, parsedData);
+    const rows = await this.db().update(parsedData, options);
+    const copyData = helper.extend({}, data, parsedData);
     await this.afterUpdate(copyData, options);
     return rows;
   }
@@ -394,15 +392,15 @@ module.exports = class MysqlModel extends Base {
    * @param  {Array} dataList []
    * @return {Promise}          []
    */
-  updateMany(dataList, options){
+  updateMany(dataList, options) {
     if (!helper.isArray(dataList)) {
-      //empty data and options
+      // empty data and options
       this._options = {};
       this._data = {};
 
       throw new Error('DATA_MUST_BE_ARRAY');
     }
-    let promises = dataList.map(data => {
+    const promises = dataList.map(data => {
       return this.update(data, options);
     });
     return Promise.all(promises).then(data => {
@@ -413,8 +411,8 @@ module.exports = class MysqlModel extends Base {
    * increment field data
    * @return {Promise} []
    */
-  increment(field, step = 1){
-    let data = {
+  increment(field, step = 1) {
+    const data = {
       [field]: ['exp', `\`${field}\`+${step}`]
     };
     return this.update(data);
@@ -423,8 +421,8 @@ module.exports = class MysqlModel extends Base {
    * decrement field data
    * @return {} []
    */
-  decrement(field, step = 1){
-    let data = {
+  decrement(field, step = 1) {
+    const data = {
       [field]: ['exp', `\`${field}\`-${step}`]
     };
     return this.update(data);
@@ -433,20 +431,20 @@ module.exports = class MysqlModel extends Base {
    * find data
    * @return Promise
    */
-  async find(options){
+  async find(options) {
     options = await this.parseOptions(options, {limit: 1}, true);
     options = await this.beforeFind(options);
-    let data = await this.db().select(options);
+    const data = await this.db().select(options);
     return this.afterFind(data[0] || {}, options);
   }
   /**
    * select
    * @return Promise
    */
-  async select(options){
+  async select(options) {
     options = await this.parseOptions(options, {}, true);
     options = await this.beforeSelect(options);
-    let data = await this.db().select(options);
+    const data = await this.db().select(options);
     return this.afterSelect(data, options);
   }
   /**
@@ -454,14 +452,14 @@ module.exports = class MysqlModel extends Base {
    * @param  {} options []
    * @return {Promise}         []
    */
-  async selectAdd(options){
+  async selectAdd(options) {
     let promise = Promise.resolve(options);
-    let Class = this.constructor;
+    const Class = this.constructor;
     if (options instanceof Class) {
       promise = options.parseOptions();
     }
-    let data = await Promise.all([this.parseOptions(), promise]);
-    let fields = data[0].field || Object.keys(this.schema);
+    const data = await Promise.all([this.parseOptions(), promise]);
+    const fields = data[0].field || Object.keys(this.schema);
     return this.db().selectAdd(fields, data[0].table, data[1]);
   }
   /**
@@ -470,52 +468,52 @@ module.exports = class MysqlModel extends Base {
    * @param  pageFlag
    * @return promise
    */
-  async countSelect(options, pageFlag){
+  async countSelect(options, pageFlag) {
     let count;
     if (helper.isBoolean(options)) {
       pageFlag = options;
       options = {};
-    }else if(helper.isNumber(options)){
+    } else if (helper.isNumber(options)) {
       count = options;
       options = {};
     }
 
     options = await this.parseOptions(options);
-    let pk = this.pk;
-    let table = options.alias || this.getTableName();
+    const pk = this.pk;
+    const table = options.alias || this.getTableName();
 
-    //delete table options avoid error when has alias
+    // delete table options avoid error when has alias
     delete options.table;
-    //reserve and delete the possible order option
-    let order = options.order;
+    // reserve and delete the possible order option
+    const order = options.order;
     delete options.order;
 
-    if(!count){
+    if (!count) {
       count = await this.options(options).count(`${table}.${pk}`);
     }
 
     options.limit = options.limit || [0, this.config.pagesize || 10];
-    //recover the deleted possible order
+    // recover the deleted possible order
     options.order = order;
-    let pagesize = options.limit[1];
-    //get page options
-    let data = {pagesize};
-    let totalPage = Math.ceil(count / data.pagesize);
+    const pagesize = options.limit[1];
+    // get page options
+    const data = {pagesize};
+    const totalPage = Math.ceil(count / data.pagesize);
 
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
 
     if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
-      if(pageFlag){
+      if (pageFlag) {
         data.currentPage = 1;
         options.limit = [0, pagesize];
-      }else{
+      } else {
         data.currentPage = totalPage;
         options.limit = [(totalPage - 1) * pagesize, pagesize];
       }
     }
-    let result = helper.extend({count: count, totalPages: totalPage}, data);
+    const result = helper.extend({count: count, totalPages: totalPage}, data);
 
-    if(options.cache && options.cache.key){
+    if (options.cache && options.cache.key) {
       options.cache.key += '_count';
     }
     result.data = count ? await this.select(options) : [];
@@ -525,33 +523,35 @@ module.exports = class MysqlModel extends Base {
    * get field data
    * @return {[type]} [description]
    */
-  async getField(field, one){
-    let options = await this.parseOptions({'field': field});
+  async getField(field, one) {
+    const options = await this.parseOptions({'field': field});
     if (helper.isNumber(one)) {
       options.limit = one;
-    }else if (one === true) {
+    } else if (one === true) {
       options.limit = 1;
     }
     let data = await this.db().select(options);
-    let multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
+    const multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
     if (multi) {
-      let fields = field.split(/\s*,\s*/);
-      let result = {};
-      fields.forEach(item => result[item] = []);
+      const fields = field.split(/\s*,\s*/);
+      const result = {};
+      fields.forEach(item => {
+        result[item] = [];
+      });
       data.every(item => {
         fields.forEach(fItem => {
           if (one === true) {
             result[fItem] = item[fItem];
-          }else{
+          } else {
             result[fItem].push(item[fItem]);
           }
         });
         return one !== true;
       });
       return result;
-    }else{
+    } else {
       data = data.map(item => {
-        for(let key in item){
+        for (const key in item) {
           return item[key];
         }
       });
@@ -563,8 +563,8 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} field []
    * @return {String}       []
    */
-  async _getQuoteField(field){
-    if(field){
+  async _getQuoteField(field) {
+    if (field) {
       return /^\w+$/.test(field) ? '`' + field + '`' : field;
     }
     return await this.getPk() || '*';
@@ -574,7 +574,7 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async count(field){
+  async count(field) {
     field = await this._getQuoteField(field);
     return this.getField('COUNT(' + field + ') AS think_count', true);
   }
@@ -583,7 +583,7 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async sum(field){
+  async sum(field) {
     field = await this._getQuoteField(field);
     return this.getField('SUM(' + field + ') AS think_sum', true);
   }
@@ -592,7 +592,7 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async min(field){
+  async min(field) {
     field = await this._getQuoteField(field);
     return this.getField('MIN(' + field + ') AS think_min', true);
   }
@@ -601,7 +601,7 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async max(field){
+  async max(field) {
     field = await this._getQuoteField(field);
     return this.getField('MAX(' + field + ') AS think_max', true);
   }
@@ -610,7 +610,7 @@ module.exports = class MysqlModel extends Base {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async avg(field){
+  async avg(field) {
     field = await this._getQuoteField(field);
     return this.getField('AVG(' + field + ') AS think_avg', true);
   }
@@ -618,8 +618,8 @@ module.exports = class MysqlModel extends Base {
    * query
    * @return {Promise} []
    */
-  query(...args){
-    let sql = this.parseSql(...args);
+  query(...args) {
+    const sql = this.parseSql(...args);
     return this.db().select(sql, this._options.cache);
   }
   /**
@@ -628,19 +628,19 @@ module.exports = class MysqlModel extends Base {
    * @param  {[type]} parse [description]
    * @return {[type]}       [description]
    */
-  execute(...args){
-    let sql = this.parseSql(...args);
+  execute(...args) {
+    const sql = this.parseSql(...args);
     return this.db().execute(sql);
   }
   /**
    * parse sql
    * @return promise [description]
    */
-  parseSql(...args){
-    let sql = util.format(...args);
-    //replace table name
+  parseSql(...args) {
+    const sql = util.format(...args);
+    // replace table name
     return sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
-      if(b === 'TABLE'){
+      if (b === 'TABLE') {
         return ' `' + this.getTableName() + '` ';
       }
       return ' `' + this.getTablePrefix() + b.toLowerCase() + '` ';
@@ -650,21 +650,21 @@ module.exports = class MysqlModel extends Base {
    * start transaction
    * @return {Promise} []
    */
-  startTrans(connection){
+  startTrans(connection) {
     return this.db().startTrans(connection);
   }
   /**
    * commit transcation
    * @return {Promise} []
    */
-  commit(connection){
+  commit(connection) {
     return this.db().commit(connection);
   }
   /**
    * rollback transaction
    * @return {Promise} []
    */
-  rollback(connection){
+  rollback(connection) {
     return this.db().rollback(connection);
   }
   /**
@@ -672,7 +672,7 @@ module.exports = class MysqlModel extends Base {
    * @param  {Function} fn [async exec function]
    * @return {Promise}      []
    */
-  transaction(fn, connection){
+  transaction(fn, connection) {
     return this.db().transaction(fn, connection);
   }
 };
