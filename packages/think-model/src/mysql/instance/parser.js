@@ -173,7 +173,7 @@ module.exports = class {
     }
     const logic = this.getLogic(where);
     // safe key regexp
-    const keySafeRegExp = /^[\w|&-.(),]+$/;
+    const keySafeRegExp = /^[\w|&\-.(),]+$/;
     const multi = where._multi;
     delete where._multi;
 
