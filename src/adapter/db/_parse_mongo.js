@@ -1,5 +1,17 @@
 'use strict';
 
+const isMayBeObjectID = id => {
+  if(!think.isObject(id)) return false
+  try{
+    const str = id.toHexString()
+    const validator = think.require('validator');
+    if(validator.mongoId(str)){
+      return true
+    }
+  }catch(e){}
+  return false
+}
+
 export default class extends think.base {
   /**
    * init
@@ -140,10 +152,14 @@ export default class extends think.base {
       let result = {};
       for(let key in where){
         let value = where[key];
-        let {ObjectID} = think.require('mongodb');
-        if(key === '_id' && think.isString(value) || ObjectID(value) === ObjectID(value)){
+        if(isMayBeObjectID(value)) {
+          result[key] = value;
+          continue
+        }
+        if(key === '_id' && think.isString(value)){
           let validator = think.require('validator');
           if(validator.mongoId(value)){
+            let {ObjectID} = think.require('mongodb');
             result[key] = ObjectID(value);
             continue;
           }
