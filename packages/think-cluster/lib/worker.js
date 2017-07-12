@@ -11,10 +11,10 @@ const KEEP_ALIVE = Symbol('think-graceful-keepalive');
 const defaultOptions = {
   debug: false,
   logger: console.error.bind(console),
-  disableKeepAlive: false, //disabled connect keep alive
+  disableKeepAlive: false, // disabled connect keep alive
   onUncaughtException: () => {},
   onUnhandledRejection: () => {},
-  processKillTimeout: 10 * 1000 //10s
+  processKillTimeout: 10 * 1000 // 10s
 };
 /**
  * Worker
@@ -24,15 +24,15 @@ class Worker {
    * constructor
    * @param {Object} options 
    */
-  constructor(options){
+  constructor(options) {
     options = util.parseOptions(options);
     this.options = Object.assign({}, defaultOptions, options);
   }
   /**
    * disable keep alive
    */
-  disableKeepAlive(){
-    if(this[KEEP_ALIVE]) return;
+  disableKeepAlive() {
+    if (this[KEEP_ALIVE]) return;
     this[KEEP_ALIVE] = true;
     const server = this.options.server;
     server.on('request', (req, res) => {
@@ -46,12 +46,12 @@ class Worker {
   /**
    * close server
    */
-  closeServer(){
+  closeServer() {
     this.disableKeepAlive();
     const logger = this.options.logger;
 
     const killTimeout = this.options.processKillTimeout;
-    if(killTimeout){
+    if (killTimeout) {
       const timer = setTimeout(() => {
         logger(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
         process.exit(1);
@@ -63,7 +63,7 @@ class Worker {
       logger(`process exit by disconnect event, pid: ${process.pid}`);
       process.exit(0);
     });
-    
+
     const server = this.options.server;
     logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
     server.close(() => {
@@ -75,25 +75,25 @@ class Worker {
    * disconnect worker
    * @param {Boolean} sendSignal 
    */
-  disconnectWorker(sendSignal){
+  disconnectWorker(sendSignal) {
     const worker = cluster.worker;
-    if(sendSignal){
+    if (sendSignal) {
       worker.send(util.THINK_GRACEFUL_DISCONNECT);
       worker.once('message', message => {
-        if(message === util.THINK_GRACEFUL_FORK){
+        if (message === util.THINK_GRACEFUL_FORK) {
           this.closeServer();
         }
       });
-    }else{
+    } else {
       this.closeServer();
     }
   }
   /**
    * capture reload signal
    */
-  captureReloadSignal(){
+  captureReloadSignal() {
     process.once('message', message => {
-      if(message === util.THINK_RELOAD_SIGNAL){
+      if (message === util.THINK_RELOAD_SIGNAL) {
         this.disconnectWorker(true);
       }
     });
@@ -101,14 +101,14 @@ class Worker {
   /**
    * uncaughtException
    */
-  uncaughtException(){
+  uncaughtException() {
     let errTimes = 0;
     process.on('uncaughtException', err => {
       errTimes++;
       this.options.onUncaughtException(err);
       this.options.logger(`uncaughtException, times: ${errTimes}, pid: ${process.pid}`);
       this.options.logger(err.stack);
-      if(errTimes === 1 && !this.options.debug){
+      if (errTimes === 1 && !this.options.debug) {
         this.disconnectWorker(true);
       }
     });
@@ -116,7 +116,7 @@ class Worker {
   /**
    * unhandledRejection
    */
-  unhandledRejection(){
+  unhandledRejection() {
     let rejectTimes = 0;
     process.on('unhandledRejection', err => {
       rejectTimes++;
@@ -127,11 +127,11 @@ class Worker {
   /**
    * capture events
    */
-  captureEvents(){
+  captureEvents() {
     assert(this.options.server, 'options.server required');
     this.uncaughtException();
     this.unhandledRejection();
-    if(this.options.disableKeepAlive){
+    if (this.options.disableKeepAlive) {
       this.disableKeepAlive();
     }
     this.captureReloadSignal();
@@ -140,7 +140,7 @@ class Worker {
   /**
    * get workers
    */
-  getWorkers(){
+  getWorkers() {
     return process.env.THINK_WORKERS;
   }
 }

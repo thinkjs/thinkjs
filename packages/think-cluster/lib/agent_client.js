@@ -12,12 +12,12 @@ class AgentClient {
   /**
    * constructor
    */
-  constructor(){
+  constructor() {
     this.client = null;
     this.tasks = {};
-    //get agent server address
+    // get agent server address
     process.on('message', message => {
-      if(message && message.act === util.THINK_AGENT_OPTIONS){
+      if (message && message.act === util.THINK_AGENT_OPTIONS) {
         debug(`receive agent worker address: ${JSON.stringify(message.address)}, pid:${process.pid}`);
         this.createConnection(message.address);
       }
@@ -26,34 +26,34 @@ class AgentClient {
   /**
    * get status
    */
-  get status(){
+  get status() {
     return this[STATUS] || 'waiting';
   }
   /**
    * set status
    */
-  set status(status){
-    if(this.status === status) return;
+  set status(status) {
+    if (this.status === status) return;
     this[STATUS] = status;
-    if(status === 'connected'){
+    if (status === 'connected') {
       this.captureData();
-      for(let taskId in this.tasks){
-        let data = this.tasks[taskId].data;
+      for (const taskId in this.tasks) {
+        const data = this.tasks[taskId].data;
         this.sendData(data);
       }
-    }else if(status === 'closed'){
-      //process.emit(util.THINK_AGENT_CLOSED);
-      //this.doLeaveTask();
+    } else if (status === 'closed') {
+      // process.emit(util.THINK_AGENT_CLOSED);
+      // this.doLeaveTask();
     }
   }
   /**
    * do leave task
    */
-  doLeaveTask(){
-    for(let taskId in this.tasks){
-      let item = this.tasks[taskId];
-      let options = item.options;
-      let args = item.data.mArgs;
+  doLeaveTask() {
+    for (const taskId in this.tasks) {
+      const item = this.tasks[taskId];
+      const options = item.options;
+      const args = item.data.mArgs;
       options.method.apply(options.ctx, args).then(data => {
         item.resolve(data);
       }).catch(err => {
@@ -65,8 +65,8 @@ class AgentClient {
   /**
    * capture data
    */
-  captureData(){
-    //let pinTimes = 0;
+  captureData() {
+    // let pinTimes = 0;
     this.client.on('data', data => {
       // if(data === util.PIN){
       //   pinTimes--;
@@ -87,17 +87,17 @@ class AgentClient {
    * handle client data
    * @param {String} data 
    */
-  handleData(data){
-    try{
+  handleData(data) {
+    try {
       data = JSON.parse(data);
-    }catch(err){
+    } catch (err) {
       return;
     }
-    let deferred = this.tasks[data.taskId];
-    if(!deferred) return;
-    if(data.err){
+    const deferred = this.tasks[data.taskId];
+    if (!deferred) return;
+    if (data.err) {
       deferred.reject(new Error(data.err));
-    }else{
+    } else {
       deferred.resolve(data.data);
     }
     delete this.tasks[data.taskId];
@@ -105,19 +105,19 @@ class AgentClient {
   /**
    * client is connected
    */
-  get isConnected(){
+  get isConnected() {
     return this.status === 'connected';
   }
   /**
    * agent is closed
    */
-  get isClosed(){
+  get isClosed() {
     return this.status === 'closed';
   }
   /**
    * createConnection
    */
-  createConnection(options){
+  createConnection(options) {
     const client = net.connect(options, () => {
       debug(`connect agent server success, pid: ${process.pid}`);
       this.status = 'connected';
@@ -139,21 +139,21 @@ class AgentClient {
    * send data to agent
    * @param {Object} data 
    */
-  sendData(data){
+  sendData(data) {
     this.client.write(JSON.stringify(data));
   }
   /**
    * send task
    * @param {Object} data 
    */
-  send(data, options){
+  send(data, options) {
     const taskId = helper.uuid().slice(0, 8);
     data.taskId = taskId;
-    let deferred = helper.defer();
+    const deferred = helper.defer();
     deferred.options = options;
-    if(this.isConnected){
+    if (this.isConnected) {
       this.sendData(data);
-    }else{
+    } else {
       deferred.data = data;
     }
     this.tasks[taskId] = deferred;
@@ -162,8 +162,8 @@ class AgentClient {
   /**
    * get instance
    */
-  static getInstance(){
-    if(this[INSTANCE]) return this[INSTANCE];
+  static getInstance() {
+    if (this[INSTANCE]) return this[INSTANCE];
     this[INSTANCE] = new AgentClient();
     return this[AgentClient];
   }

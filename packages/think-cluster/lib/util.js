@@ -18,67 +18,67 @@ exports.PIN = 'PIN';
 /**
  * check worker is first
  */
-exports.isFirstWorker = function(){
+exports.isFirstWorker = function() {
   return +process.env.THINK_PROCESS_ID === 1;
-}
+};
 
 /**
  * check is agent worker
  */
-exports.isAgent = function(){
+exports.isAgent = function() {
   return !!process.env.THINK_AGENT_WORKER;
-}
+};
 /**
  * enable agent
  */
-exports.enableAgent = function(){
-  return !! process.env.THINK_ENABLE_AGENT;
-}
+exports.enableAgent = function() {
+  return !!process.env.THINK_ENABLE_AGENT;
+};
 /**
  * parse options
  */
-exports.parseOptions = function(options = {}){
+exports.parseOptions = function(options = {}) {
   options.workers = options.workers || cpus;
-  if(options.workers < 2){
+  if (options.workers < 2) {
     options.enableAgent = false;
   }
   return options;
-}
+};
 
 /**
  * fork worker
  */
-exports.forkWorker = function(env = {}){
-  let deferred = helper.defer();
+exports.forkWorker = function(env = {}) {
+  const deferred = helper.defer();
   env.THINK_PROCESS_ID = env.THINK_AGENT_WORKER ? 0 : thinkProcessId++;
   const worker = cluster.fork(env);
-  if(env.THINK_AGENT_WORKER){
+  if (env.THINK_AGENT_WORKER) {
     worker.isAgent = true;
   }
   worker.on('message', message => {
-    if(worker.hasGracefulReload) return;
-    if(message === exports.THINK_GRACEFUL_DISCONNECT){
+    if (worker.hasGracefulReload) return;
+    if (message === exports.THINK_GRACEFUL_DISCONNECT) {
       debug(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
       worker.hasGracefulReload = true;
       exports.forkWorker(env);
     }
   });
   worker.once('exit', (code, signal) => {
-    if(worker.hasGracefulReload) return;
+    if (worker.hasGracefulReload) return;
     debug(`worker exit, code:${code}, signal:${signal}, pid: ${process.pid}`);
     exports.forkWorker(env);
   });
   worker.once('listening', address => {
-    if(worker.isAgent){
+    if (worker.isAgent) {
       debug(`agent worker is listening, address:${JSON.stringify(address)}`);
-      //send agent server address to workers
-      for(let id in cluster.workers){
-        let item = cluster.workers[id];
-        if(item.isAgent) continue;
+      // send agent server address to workers
+      for (const id in cluster.workers) {
+        const item = cluster.workers[id];
+        if (item.isAgent) continue;
         item.send({act: util.THINK_AGENT_OPTIONS, address});
       }
     }
     deferred.resolve({worker, address});
   });
   return deferred.promise;
-}
+};
