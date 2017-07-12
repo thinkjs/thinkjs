@@ -4,10 +4,10 @@ module.exports = class ConsoleLogger extends Base {
   constructor(config) {
     super(config);
 
-    let lConfig = Object.assign({}, config);
+    const lConfig = Object.assign({}, config);
     let {level, layout} = lConfig;
     level = level ? level.toUpperCase() : 'ALL';
-    layout = layout ? layout : {type: 'pattern', pattern: '%[[%d] [%p]%] - %m'};
+    layout = layout || {type: 'pattern', pattern: '%[[%d] [%p]%] - %m'};
 
     config = Object.assign({
       appenders: [
