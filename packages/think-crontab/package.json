@@ -44,7 +44,8 @@
     "mkdirp": "^0.5.1",
     "mock-require": "^2.0.1",
     "nyc": "^7.0.0",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "pre-commit": "^1.2.2"
   },
   "keywords": [],
   "repository": {
