@@ -6,7 +6,12 @@
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
+  "pre-commit": [
+    "test"
+  ],
   "scripts": {
+    "lint": "eslint index.js",
+    "lint-fix": "eslint --fix index.js",
     "test": "eslint index.js && nyc ava test/",
     "coverage": "nyc report --reporter=html"
   },
@@ -32,8 +37,10 @@
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.12.0",
     "eslint": "^3.16.1",
+    "eslint-config-think": "^1.0.1",
     "mock-require": "^2.0.1",
-    "nyc": "^7.0.0"
+    "nyc": "^7.0.0",
+    "pre-commit": "^1.2.2"
   },
   "keywords": [],
   "repository": {
