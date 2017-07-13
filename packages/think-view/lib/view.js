@@ -10,7 +10,7 @@ class View {
    * constructor
    * @param {Object} ctx
    */
-  constructor(ctx){
+  constructor(ctx) {
     this.ctx = ctx;
     this.viewData = {};
   }
@@ -19,18 +19,18 @@ class View {
    * @param {String | Object} name
    * @param {Mixed} value
    */
-  assign(name, value){
+  assign(name, value) {
     if (name === undefined) {
       return this.viewData;
-    }else if (value === undefined) {
+    } else if (value === undefined) {
       if (helper.isString(name)) {
         return this.viewData[name];
-      }else{
-        for(let key in name){
+      } else {
+        for (const key in name) {
           this.viewData[key] = name[key];
         }
       }
-    }else{
+    } else {
       this.viewData[name] = value;
     }
   }
@@ -41,7 +41,7 @@ class View {
    */
   parseFilePath(file, config = {}) {
     if (!file) {
-      //can not assert ctx.module, ctx.module may be empty
+      // can not assert ctx.module, ctx.module may be empty
 
       assert(this.ctx.controller, 'ctx.controller required');
       assert(this.ctx.action, 'ctx.action required');
@@ -64,15 +64,15 @@ class View {
    * @param {String} file
    * @param {Object} config
    */
-  render(file, config = {}){
+  render(file, config = {}) {
     assert(helper.isFunction(config.handle), 'config.handle must be a function');
     file = this.parseFilePath(file, config);
     if (config.beforeRender) {
       assert(helper.isFunction(config.beforeRender), 'config.beforeRender must be a function');
     }
-    const handle = config.handle;
+    const Handle = config.handle;
     delete config.handle;
-    const instance = new handle(file, this.viewData, config);
+    const instance = new Handle(file, this.viewData, config);
     return Promise.resolve(instance.render());
   }
 }

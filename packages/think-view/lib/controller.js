@@ -11,13 +11,13 @@ module.exports = {
   /**
    * get view instance
    */
-  [getViewInstance](){
-    if(!this[viewInstance]){
+  [getViewInstance]() {
+    if (!this[viewInstance]) {
       const instance = new View(this.ctx);
-      instance.assign('controller', this); //controller
-      instance.assign('config', this.config()); //config
-      instance.assign('ctx', this.ctx); //context
-      instance.assign('__', this.__); //i18n
+      instance.assign('controller', this); // controller
+      instance.assign('config', this.config()); // config
+      instance.assign('ctx', this.ctx); // context
+      instance.assign('__', this.__); // i18n
       this[viewInstance] = instance;
     }
     return this[viewInstance];
@@ -27,7 +27,7 @@ module.exports = {
    * @param {String} name 
    * @param {Mixed} value 
    */
-  assign(name, value){
+  assign(name, value) {
     return this[getViewInstance]().assign(name, value);
   },
   /**
@@ -35,8 +35,8 @@ module.exports = {
    * @param {String} file 
    * @param {Mixed} config 
    */
-  render(file, config){
-    if(helper.isObject(file)){
+  render(file, config) {
+    if (helper.isObject(file)) {
       config = file;
       file = '';
     }
@@ -48,9 +48,9 @@ module.exports = {
    * @param {String} file 
    * @param {Object} config 
    */
-  display(file, config){
+  display(file, config) {
     return this.render(file, config).then(content => {
       this.ctx.body = content;
     });
   }
-}
+};

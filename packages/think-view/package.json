@@ -10,9 +10,9 @@
     "test"
   ],
   "scripts": {
-    "lint": "eslint index.js",
-    "lint-fix": "eslint --fix index.js",
-    "test": "eslint index.js && nyc ava test/",
+    "lint": "eslint lib/",
+    "lint-fix": "eslint --fix lib/",
+    "test": "eslint lib/ && nyc ava test/",
     "coverage": "nyc report --reporter=html"
   },
   "ava": {
