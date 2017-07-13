@@ -11,37 +11,37 @@ class CookieSession {
    * @param {Object} options cookie options
    * @param {Object} ctx koa ctx
    */
-  constructor(options = {}, ctx){
-    if(options.encrypt){
+  constructor(options = {}, ctx) {
+    if (options.encrypt) {
       assert(options.keys && helper.isArray(options.keys), '.keys required and must be an array when encrypt is set');
-      options.signed = false; //disable signed when set encrypt
+      options.signed = false; // disable signed when set encrypt
       this.keygrip = new Keygrip(options.keys);
     }
-    options.overwrite = true; 
+    options.overwrite = true;
     this.options = options;
     this.ctx = ctx;
-    this.fresh = true; //session data is fresh
-    this.data = {}; //session data
+    this.fresh = true; // session data is fresh
+    this.data = {}; // session data
     this.initSessionData();
   }
   /**
    * init session data
    */
-  initSessionData(){
+  initSessionData() {
     let data = this.ctx.cookie(this.options.name, undefined, this.options);
-    if(data){
-      if(this.keygrip){
-        data = new Buffer(data, 'base64');
+    if (data) {
+      if (this.keygrip) {
+        data = Buffer.from(data, 'base64');
         data = this.keygrip.decrypt(data);
-        if(data && data[0]){
+        if (data && data[0]) {
           data = data[0].toString();
         }
       }
-      if(data){
-        try{
+      if (data) {
+        try {
           this.data = JSON.parse(data) || {};
           this.fresh = false;
-        }catch(e){}
+        } catch (e) {}
       }
     }
   }
@@ -49,12 +49,12 @@ class CookieSession {
    * get session data
    * @param {String} name 
    */
-  get(name){
-    //auto update cookie when maxAge or expires is set
-    if(this.options.autoUpdate && this.options.maxAge && !this.fresh){
+  get(name) {
+    // auto update cookie when maxAge or expires is set
+    if (this.options.autoUpdate && this.options.maxAge && !this.fresh) {
       this.set();
     }
-    if(name) return Promise.resolve(this.data[name]);
+    if (name) return Promise.resolve(this.data[name]);
     return Promise.resolve(this.data);
   }
   /**
@@ -62,12 +62,12 @@ class CookieSession {
    * @param {String} name 
    * @param {Mixed} value 
    */
-  set(name, value){
-    if(name){
+  set(name, value) {
+    if (name) {
       this.data[name] = value;
     }
     let data = JSON.stringify(this.data);
-    if(this.keygrip){
+    if (this.keygrip) {
       data = this.keygrip.encrypt(data).toString('base64');
     }
     this.ctx.cookie(this.options.name, data, this.options);
@@ -76,8 +76,8 @@ class CookieSession {
   /**
    * delete session data
    */
-  delete(){
-    if(!this.fresh){
+  delete() {
+    if (!this.fresh) {
       this.ctx.cookie(this.options.name, null, this.options);
       this.data = {};
     }
