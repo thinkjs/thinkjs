@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 17:38:23
+* @Last Modified time: 2017-07-13 17:41:27
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -65,7 +65,7 @@ class Validator {
    * @param  {Mixed} parsedValidValue [description]
    * @return {String}                 [description]
    */
-  _getErrorMessage(argName, rule, validName, parsedValidValue) {
+  _getErrorMessage({ argName, rule, validName, parsedValidValue }) {
     let errMsg;
 
     // all required style error map to `requied error message`
@@ -207,7 +207,7 @@ class Validator {
           parsedValidValue,
           ctx: this.ctx,
           currentQuery: this.ctxQuery,
-          rules: helper.extend({}, rules)
+          rules: helper.extend({}, rules) // prevent to write
         })) {
           isRequired = true;
           break;
@@ -365,7 +365,12 @@ class Validator {
           }
 
           let parsedValidValue = this._parseValidArgs(validName, rule);
-          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidValue);
+          let errMsg = this._getErrorMessage({
+            argName,
+            rule,
+            validName,
+            parsedValidValue
+          });
           ret[argName] = errMsg;
           continue;
         }else {
@@ -395,10 +400,15 @@ class Validator {
           parsedValidValue,
           ctx: this.ctx,
           currentQuery: this.ctxQuery,
-          rules: helper.extend({}, rules)
+          rules: helper.extend({}, rules) // prevent to write
         });
         if(!result){
-          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidValue);
+          let errMsg = this._getErrorMessage({
+            argName,
+            rule,
+            validName,
+            parsedValidValue
+          });
 
           // format error message's rule name
           let newRuleName = this._formatNestedRuleName(argName);
