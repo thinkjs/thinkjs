@@ -1,7 +1,12 @@
 let METHOD_MAP = {
-  'GET': 'param',
-  'POST': 'post',
-  'FILE': 'file'
+  GET: 'param',
+  POST: 'post',
+  FILE: 'file',
+  PUT: 'post',
+  DELETE: 'post',
+  PATCH: 'post',
+  LINK: 'post',
+  UNLINK: 'post'
 };
 
 let output = (that, rules, msgs) => {

@@ -1,11 +1,11 @@
 module.exports = {
   rules: {
-    _newrule: function(validValue, query) {
-      console.log('query-->', query);
+    _newrule: function(validValue, { currentQuery }) {
+      console.log('query-->', currentQuery);
       return validValue;
     },
-    newrule: function(value, parsedValue) {
-      return value === parsedValue;
+    newrule: function(value, { parsedValidValue }) {
+      return value === parsedValidValue;
     }
   },
   messages: {
