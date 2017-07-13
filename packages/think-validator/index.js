@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 17:36:18
+* @Last Modified time: 2017-07-13 17:38:23
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -62,10 +62,10 @@ class Validator {
    * @param  {String} argName        [description]
    * @param  {Object} rule            [description]
    * @param  {String} validName       [description]
-   * @param  {Mixed} parsedValidArgs [description]
+   * @param  {Mixed} parsedValidValue [description]
    * @return {String}                 [description]
    */
-  _getErrorMessage(argName, rule, validName, parsedValidArgs) {
+  _getErrorMessage(argName, rule, validName, parsedValidValue) {
     let errMsg;
 
     // all required style error map to `requied error message`
@@ -136,10 +136,10 @@ class Validator {
       return originRuleName + NOERROR;
     }
 
-    let validArgs = rule[validName];
+    let validValue = rule[validName];
     let lastMsg = errMsg.replace('{name}', originRuleName)
-      .replace('{args}', helper.isString(validArgs) ? validArgs : JSON.stringify(validArgs))
-      .replace('{pargs}', helper.isString(parsedValidArgs) ? parsedValidArgs : JSON.stringify(parsedValidArgs));
+      .replace('{args}', helper.isString(validValue) ? validValue : JSON.stringify(validValue))
+      .replace('{pargs}', helper.isString(parsedValidValue) ? parsedValidValue : JSON.stringify(parsedValidValue));
     return lastMsg;
   }
 
@@ -364,8 +364,8 @@ class Validator {
             }
           }
 
-          let parsedValidArgs = this._parseValidArgs(validName, rule);
-          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
+          let parsedValidValue = this._parseValidArgs(validName, rule);
+          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidValue);
           ret[argName] = errMsg;
           continue;
         }else {
