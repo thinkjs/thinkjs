@@ -3,14 +3,19 @@
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-validator/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-validator?branch=master)
 [![npm](https://img.shields.io/npm/v/think-validator.svg?style=flat-square)](https://www.npmjs.com/package/think-validator)
 
+
 - [think-validator](#think-validator)
     + [How to Use in Thinkjs3.0](#how-to-use-in-thinkjs30)
     + [Validation Rules Config](#validation-rules-config)
-    + [Supported Data Type & Auto Convert](#supported-data-type--auto-convert)
+    + [Basic Data Type](#basic-data-type)
+    + [Data Type Auto Convert Before Validation](#data-type-auto-convert-before-validation)
+    + [Data Type Auto Convert After Validation](#data-type-auto-convert-after-validation)
     + [Nested Validation](#nested-validation)
       - [Nested Validation for Array](#nested-validation-for-array)
       - [Nested Validation for Object](#nested-validation-for-object)
     + [Custom Error Message](#custom-error-message)
+      - [For Not Object Type](#for-not-object-type)
+      - [For Object Type](#for-object-type)
     + [Add Custom Valid Method](#add-custom-valid-method)
     + [Supported Validation Type](#supported-validation-type)
       - [requiredIf: [Array]](#requiredif--array)
@@ -73,9 +78,9 @@
       - [uuid: [true]](#uuid--true)
       - [md5: [true]](#md5--true)
       - [macAddress: [true]](#macaddress--true)
-      - [numeric: [true]](#numeric--true)
       - [dataURI: [true]](#datauri--true)
       - [variableWidth: [true]](#variablewidth--true)
+
 
 ### How to Use in Thinkjs3.0
 
@@ -87,7 +92,7 @@ let ret = this.validate(rules, msgs)
 
 * `rules`: the validation rules.
 * `msgs`: the custom error messages.
-* If valid ok, the `ret` is {}, else `ret` is like {param1: 'error message', ...}.
+* If valid ok, the `ret` is `true`, else `ret` is `false`. When valid failed, you can get the error message like {param1: 'error message', ...} in `this.validateErrors`, .
 
 ### Validation Rules Config
 
@@ -108,17 +113,20 @@ let rules = {
 * Param is not `required` by default, so if you need param not empty, you should assign `required` with `true`.
 * If you want `trim` the space for the param you should assign `trim` with `true`,for example, if the id's value is '12   ' and `trim: true` then `id` is an integer, but it won't been an integer with `trim: false`.
 * With `default` you can give the param default value, if param's value is true empty, it will be the default value.
-* By default `mehod` eq ctx.method, only when `method` include the ctx.method validation will be run.
+* By default `method` eq ctx.method, only when `method` include the ctx.method validation will be run.
 
-
-
-### Supported Data Type & Auto Convert
+### Basic Data Type
 
 * The supported data types include boolean,string,int,float,array,object. And the default type is string. Only one basic data type is permit at the same time in one rule.
-* When valid type `int` is true, if pass the validation the param's value will auto convert into integer.
-* When valid type `float` is true, if pass the validation the param's value will auto convert into float.
-* When valid type `boolean` is true, `['yes', 'on', '1', 'true', true]` will auto convert into `true`, and others to `false`.
-* When valid type `array` is true and param's value is not array, it will convert param's value to `[param's value]`.
+
+### Data Type Auto Convert Before Validation
+
+* When valid'type is `boolean`, `['yes', 'on', '1', 'true', true]` will auto convert into `true`, and others to `false`.
+* When valid'type is `array` and param's value is not array: if param's value is string, it will run `split(,)`, else it will convert param's value to `[param's value]`.
+
+### Data Type Auto Convert After Validation
+
+* When valid'type is `int` or `float`, if pass the validation the param's value will auto convert into integer.
 
 
 ### Nested Validation
@@ -153,52 +161,60 @@ let rules = {
 
 ### Custom Error Message
 
+#### For Not Object Type
+
 ```js
+let rules = {
+  username: {
+    required: true,
+    method: 'GET'
+  }
+}
 let msgs = {
-  required: 'must required',
-  arg: 'arg must required',
-  arg2: {
-    required: 'arg2 must required'
-  },
-  arg3: {
-    'a,b': 'this is error message for a,b',
-    c: 'this is error message for c',
-    d: {
-      int: 'this is error message for d.int type'
-    }
+  required: '{name} can not blank',         // rule 1
+  username: '{name} can not blank',         // rule 2
+  username: {
+    required: '{name} can not blank'        // rule 3
   }
 }
 ```
 
-It will find the matched error message when valid failed by order: (argName like `username`, ruleName like `float`).
+It will find the matched error message when valid failed by the order: rule3> rule2 > rule1.
 
-* 1. 'ruleName': 'error message'
-* 2. 'argName': 'error message'
-* 3. 'argName': {
-        ruleName: 'error message'
-     }
-
-
-when the rule is object nested,
-
-* 4. 'param': {
-      'param1[,param2]': 'error message'
-   }
-* 5. 'param': {
-      'param1[,param2]': {
-        int: 'error message'
+#### For Object Type
+```js
+  let rules = {
+    address: {
+      object: true,
+      children: {
+        int: true
       }
-   }
+    }
+  }
+  let msgs = {
+    int: 'this is int error message for all field',             // rule 1
+    address: {
+      int: 'this is int error message for address',             // rule 2
+      a: 'this is int error message for a of address',          // rule 3
+      'b,c': 'this is int error message for b and c of address' // rule 4
+      d: {
+        int: 'this is int error message for d of address'       // rule 5
+      }
+    }
+  }
+  let flag = this.validate(rules, msgs);
+```
 
-And the priority is v > iv > iii > ii > i.
+It will find the matched error message when valid failed by the order: rule5 > rule4 rule3> rule2 > rule1.
 
 ### Add Custom Valid Method
 
 * You can parse the rule's arguments with query before validation.
 *  Just add a _ruleMethodName function for the ruleMethodName.
-* If ctx.method == get, query eq the get query param of ctx,
-if ctx.method == post, query eq the post query param of ctx.
-if ctx.method == file, query eq the file query param of ctx.
+
+* If ctx.method == GET, currentQuery eq the get query param of ctx,
+if ctx.method == POST| PUT | DELETE | PATCH | LINK | UNLINK, currentQuery eq the post query param of ctx.
+if ctx.method == FILE, currentQuery eq the file query param of ctx.
 
 
 ```js
@@ -207,18 +223,18 @@ module.exports = {
   rules: {
     /**
      * @param  {Mixed} validValue  [the origin rule's value]
-     * @param  {Object} query      [the ctx query which match the ctx.method]
+     * @param  {Object}      [the ctx query which match the ctx.method]
      * @return {Mixed}             [the rule's value after parse]
      */
-    _newrule: function(validValue, query) {
+    _newrule: function(validValue, { rule, ctx, validName, currentQuery, rules }) {
       return validValue;
     },
     /**
      * @param  {Mixed} value            [the argument'value need to valid]
-     * @param  {Mixed} parsedValidValue [the rule's value after parse]
+     * @param  {Mixed}  [the rule's value after parse]
      * @return {Boolean}                []
      */
-    newrule: function(value, parsedValidValue) {
+    newrule: function(value, { rule, validName, validValue, parsedValidValue, ctx, currentQuery, rules }) {
       return value === validValue;
     }
   },
@@ -254,12 +270,10 @@ When some items of `requiredWithOut`'s arugument is true empty in request data, 
 When all items of `requiredWithOutAll`'s arugument is true empty in request data, the param's value is required.
 
 ####  contains:  [String]
-If the `contains`'s argument has value in request data, the rule will check if aram's value contains the value(in request data).
 If the `contains`'s argument does not have value in request data, the rule will check if param's value contains `equals`'s argument.
 
 ####  equals:  [String]
 If the `equals`'s argument has value in request data, the rule will check if the value(in request data) equal param's value.
-If the `equals`'s argument does not have value in request data, the rule will check if `equals`'s argument equal param's value.
 
 ####  different:  [String]
 If the `equals`'s argument has value in request data, the rule will check if the value(in request data) not equal param's value.
@@ -428,9 +442,6 @@ Check if param's value is md5.
 
 ####  macAddress:  [true]
 Check if param's value is macaddress.
-
-####  numeric:  [true]
-Check if param's value contains only numbers.
 
 ####  dataURI:  [true]
 Check if param's value is a data uri format.
