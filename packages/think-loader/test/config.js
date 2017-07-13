@@ -55,26 +55,30 @@ test('load config isMultiModule === true', t=>{
   let paths2 = [
     path.join('appPath', 'common')
   ];
-  t.deepEqual(depsCalledParams, [ [ 'thinkPath/lib/config',
+
+  var extendParams1 = [ 'thinkPath/lib/config',
     'appPath/common/config',
-    'appPath/dir1/config' ],
+    'appPath/dir1/config' ].map(p=>path.join(p));
+
+  var extendParams2 = extendParams1.slice(0, 2);
+
+  t.deepEqual(depsCalledParams, [
+  extendParams1,
   'env',
   undefined,
-  [ 'thinkPath/lib/config',
-    'appPath/common/config',
-    'appPath/dir1/config' ],
+  extendParams1,
   'env',
   'adapter',
-  'appPath/common/adapter',
+  path.join('appPath/common/adapter'),
   { type: 'load adapter' },
   'load adapter result',
-  [ 'thinkPath/lib/config', 'appPath/common/config' ],
+  extendParams2,
   'env',
   undefined,
-  [ 'thinkPath/lib/config', 'appPath/common/config' ],
+  extendParams2,
   'env',
   'adapter',
-  'appPath/common/adapter',
+  path.join('appPath/common/adapter'),
   { type: 'load adapter' },
   'load adapter result' ]);
 

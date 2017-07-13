@@ -9,14 +9,14 @@ const RouterLoader = {
   /**
    * route loader
    */
-  load(appPath, modules){
-    if(modules.length){
-      let commonRouterFile = path.join(appPath, 'common/config/router.js');
-      if(!helper.isFile(commonRouterFile)){
+  load(appPath, modules) {
+    if (modules.length) {
+      const commonRouterFile = path.join(appPath, 'common/config/router.js');
+      if (!helper.isFile(commonRouterFile)) {
         return [];
       }
-      let commonRouter = interopRequire(commonRouterFile);
-      if(helper.isArray(commonRouter)){
+      const commonRouter = interopRequire(commonRouterFile);
+      if (helper.isArray(commonRouter)) {
         debug('common/config/router is an array');
         return commonRouter;
       }
@@ -34,32 +34,32 @@ const RouterLoader = {
        * }
        */
       debug('load module router');
-      for(let name in commonRouter){
-        let match = commonRouter[name].match;
-        let moduleRouterFile = path.join(appPath, name, 'config/router.js');
-        //match is not required
-        if(match){
+      for (const name in commonRouter) {
+        const match = commonRouter[name].match;
+        const moduleRouterFile = path.join(appPath, name, 'config/router.js');
+        // match is not required
+        if (match) {
           commonRouter[name].match = match;
         }
-        if(!helper.isFile(moduleRouterFile)){
+        if (!helper.isFile(moduleRouterFile)) {
           commonRouter[name].rules = [];
           continue;
         }
-        let moduleRouter = interopRequire(moduleRouterFile);
+        const moduleRouter = interopRequire(moduleRouterFile);
         assert(helper.isArray(moduleRouter), `${name}/config/router.js must be an array`);
         commonRouter[name].rules = moduleRouter;
       }
       return commonRouter;
-    }else{
-      let routerFile = path.join(appPath, 'config/router.js');
-      if(!helper.isFile(routerFile)){
+    } else {
+      const routerFile = path.join(appPath, 'config/router.js');
+      if (!helper.isFile(routerFile)) {
         return [];
       }
-      let router = interopRequire(routerFile);
+      const router = interopRequire(routerFile);
       assert(helper.isArray(router), 'config/router must be an array');
       return router;
     }
   }
-}
+};
 
 module.exports = RouterLoader;

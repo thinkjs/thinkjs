@@ -1,9 +1,9 @@
 const helper = require('think-helper');
 const path = require('path');
 const fs = require('fs');
-const config = require('./loader/config.js');
+const Config = require('./loader/config.js');
 const bootstrap = require('./loader/bootstrap.js');
-const middleware = require('./loader/middleware.js');
+const Middleware = require('./loader/middleware.js');
 const router = require('./loader/router.js');
 const extend = require('./loader/extend.js');
 const common = require('./loader/common.js');
@@ -18,14 +18,14 @@ class Loader {
   /**
    * constructor
    */
-  constructor(appPath, thinkPath){
+  constructor(appPath, thinkPath) {
     this.appPath = appPath;
     this.thinkPath = thinkPath;
     this.modules = [];
-    let dir = path.join(appPath, 'common/config');
-    if(helper.isDirectory(dir)){
+    const dir = path.join(appPath, 'common/config');
+    if (helper.isDirectory(dir)) {
       this.modules = fs.readdirSync(appPath).filter(item => {
-        let stat = fs.statSync(path.join(appPath, item));
+        const stat = fs.statSync(path.join(appPath, item));
         return stat.isDirectory();
       });
     }
@@ -33,74 +33,74 @@ class Loader {
   /**
    * load config
    */
-  loadConfig(env){
-    return (new config()).load(this.appPath, this.thinkPath, env, this.modules);
+  loadConfig(env) {
+    return (new Config()).load(this.appPath, this.thinkPath, env, this.modules);
   }
   /**
    * load bootstrap
    */
-  loadBootstrap(type){
+  loadBootstrap(type) {
     return bootstrap(this.appPath, this.modules, type);
   }
   /**
    * load controller
    */
-  loadController(){
+  loadController() {
     return common.load(this.appPath, 'controller', this.modules);
   }
   /**
    * load logic
    */
-  loadLogic(){
+  loadLogic() {
     return common.load(this.appPath, 'logic', this.modules);
   }
   /**
    * load model
    */
-  loadModel(){
+  loadModel() {
     return common.load(this.appPath, 'model', this.modules);
   }
   /**
    * load service
    */
-  loadService(){
+  loadService() {
     return common.load(this.appPath, 'service', this.modules);
   }
 
   /**
    * load middleware
    */
-  loadMiddleware(app){
-    return (new middleware()).load(this.appPath, this.thinkPath, this.modules, app);
+  loadMiddleware(app) {
+    return (new Middleware()).load(this.appPath, this.thinkPath, this.modules, app);
   }
   /**
    * load router
    */
-  loadRouter(){
+  loadRouter() {
     return router.load(this.appPath, this.modules);
   }
   /**
    * load extend
    */
-  loadExtend(){
+  loadExtend() {
     return extend.load(this.appPath, this.thinkPath, this.modules);
   }
   /**
    * load crontab
    */
-  loadCrontab(){
+  loadCrontab() {
     return crontab(this.appPath, this.modules);
   }
   /**
    * load use defined file
    */
-  loadCommon(name){
+  loadCommon(name) {
     return common.load(this.appPath, name, this.modules);
   }
   /**
    * load validator
    */
-  loadValidator(){
+  loadValidator() {
     return validator(this.appPath, this.modules);
   }
 }

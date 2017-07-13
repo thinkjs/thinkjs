@@ -11,15 +11,15 @@ class Middleware {
   /**
    * check url matched
    */
-  createRegexp(match){
-    if(helper.isFunction(match)) return match;
-    if(match) return pathToRegexp(match);
+  createRegexp(match) {
+    if (helper.isFunction(match)) return match;
+    if (match) return pathToRegexp(match);
   }
   /**
    * check rule match
    */
-  checkMatch(rule, ctx){
-    if(helper.isFunction(rule)) return rule(ctx);
+  checkMatch(rule, ctx) {
+    if (helper.isFunction(rule)) return rule(ctx);
     return rule.test(ctx.path);
   }
   /**
@@ -35,16 +35,16 @@ class Middleware {
    * },
    * ]
    */
-  parse(middlewares = [], middlewarePkg = {}, app){
+  parse(middlewares = [], middlewarePkg = {}, app) {
     return middlewares.map(item => {
-      if(helper.isString(item)){
+      if (helper.isString(item)) {
         return {handle: item};
       }
       return item;
     }).filter(item => {
       return !('enable' in item) || item.enable;
     }).map(item => {
-      if(helper.isString(item.handle)){
+      if (helper.isString(item.handle)) {
         item.handle = middlewarePkg[item.handle];
       }
       assert(helper.isFunction(item.handle), 'handle must be a function');
@@ -53,7 +53,7 @@ class Middleware {
       assert(helper.isFunction(item.handle), 'handle must return a function');
       return item;
     }).map(item => {
-      if(!item.match && !item.ignore){
+      if (!item.match && !item.ignore) {
         return item.handle;
       }
 
@@ -63,13 +63,13 @@ class Middleware {
 
       // has match or ignore
       return (ctx, next) => {
-        if(match && !this.checkMatch(match, ctx) ||
-            ignore && this.checkMatch(ignore, ctx) ) {
+        if ((match && !this.checkMatch(match, ctx)) ||
+            (ignore && this.checkMatch(ignore, ctx))) {
           return next();
         }
         return item.handle(ctx, next);
-      }
-    })
+      };
+    });
   }
 
   /**
@@ -77,14 +77,14 @@ class Middleware {
    * * [THINKJS_LIB_PATH]/lib/middleware
    * * [APP_PATH]/middleware or [APP_PATH]/common/middleware
    */
-  getFiles(middlewarePath){
-    let ret = {};
+  getFiles(middlewarePath) {
+    const ret = {};
     helper.getdirFiles(middlewarePath).forEach(file => {
-      if(!/\.(?:js|es)$/.test(file)){
+      if (!/\.(?:js|es)$/.test(file)) {
         return;
       }
-      let match = file.match(/(\w+)\.\w+$/);
-      if(match && match[1]){
+      const match = file.match(/(\w+)\.\w+$/);
+      if (match && match[1]) {
         ret[match[1]] = this.interopRequire(path.join(middlewarePath, file));
       }
     });
@@ -94,22 +94,22 @@ class Middleware {
   /**
    * load sys and app middlewares
    */
-  loadFiles(appPath, isMultiModule, thinkPath){
-    let sysMiddlewares = this.getFiles(path.join(thinkPath, 'lib/middleware'));
-    let appMiddlewarePath = path.join(appPath, isMultiModule ? 'common/middleware' : 'middleware');
-    let appMiddlewares = this.getFiles(appMiddlewarePath);
-    let middlewares = Object.assign({}, sysMiddlewares, appMiddlewares);
+  loadFiles(appPath, isMultiModule, thinkPath) {
+    const sysMiddlewares = this.getFiles(path.join(thinkPath, 'lib/middleware'));
+    const appMiddlewarePath = path.join(appPath, isMultiModule ? 'common/middleware' : 'middleware');
+    const appMiddlewares = this.getFiles(appMiddlewarePath);
+    const middlewares = Object.assign({}, sysMiddlewares, appMiddlewares);
     return middlewares;
   }
 
-  load(appPath, thinkPath, modules, app){
+  load(appPath, thinkPath, modules, app) {
     let filepath = '';
-    if(modules.length){
+    if (modules.length) {
       filepath = path.join(appPath, 'common/config/middleware.js');
-    }else{
+    } else {
       filepath = path.join(appPath, 'config/middleware.js');
     }
-    if(!helper.isFile(filepath)){
+    if (!helper.isFile(filepath)) {
       return [];
     }
     const middlewares = this.interopRequire(filepath);

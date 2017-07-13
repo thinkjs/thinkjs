@@ -4,18 +4,17 @@ const path = require('path');
 /**
  * load bootstrap files
  */
-function loadBootstrap(appPath, modules, type = 'worker'){
+function loadBootstrap(appPath, modules, type = 'worker') {
   let bootstrapPath = '';
-  if(modules.length){
+  if (modules.length) {
     bootstrapPath = path.join(appPath, 'common/bootstrap');
-  }else{
+  } else {
     bootstrapPath = path.join(appPath, 'bootstrap');
   }
-  let filepath = path.join(bootstrapPath, `${type}.js`);
-  if(helper.isFile(filepath)){
+  const filepath = path.join(bootstrapPath, `${type}.js`);
+  if (helper.isFile(filepath)) {
     return require(filepath);
   }
 }
 
 module.exports = loadBootstrap;
-

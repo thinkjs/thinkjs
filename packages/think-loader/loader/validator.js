@@ -4,13 +4,13 @@ const interopRequire = require('./util.js').interopRequire;
 /**
  * load validator
  */
-module.exports = function load(appPath, modules){
+module.exports = function load(appPath, modules) {
   let filepath = '';
-  if(modules.length){
+  if (modules.length) {
     filepath = path.join(appPath, 'common/config/validator.js');
-  }else{
+  } else {
     filepath = path.join(appPath, 'config/validator.js');
   }
-  let data = interopRequire(filepath, true) || {};
+  const data = interopRequire(filepath, true) || {};
   return data;
-}
+};
