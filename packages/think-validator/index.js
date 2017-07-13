@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-01 11:06:11
+* @Last Modified time: 2017-07-13 17:36:18
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -146,17 +146,23 @@ class Validator {
   /**
    * parse valid args by _validName method
    * @param  {String} validName [description]
-   * @param  {Mixed} ruleArgs  [description]
+   * @param  {Mixed} validValue  [description]
    * @return {Mixed}           [description]
    */
   _parseValidArgs(validName, rule) {
-    let ruleArgs = rule[validName];
-    let pfn = preRules['_' + validName];
-    if(helper.isFunction(pfn)){
-      // support rewrite back, so just pass this.ctxQuery without clone
-      ruleArgs = pfn(ruleArgs, this.ctxQuery, validName);
+    let validValue = rule[validName];
+    let _fn = preRules['_' + validName];
+
+    // support rewrite back, so just pass reference style data without clone
+    if(helper.isFunction(_fn)){
+      validValue = _fn(validValue, {
+        rule: rule,
+        ctx: this.ctx,
+        validName,
+        currentQuery: this.ctxQuery
+      });
     }
-    return ruleArgs;
+    return validValue;
   }
 
   /**
@@ -187,14 +193,22 @@ class Validator {
    * @param  {Object} rule [description]
    * @return {Boolean}      [description]
    */
-  _checkRequired(rule) {
+  _checkRequired(rule, rules) {
     let isRequired = false;
     for(let i = 0; i <= this.requiredValidNames.length; i++) {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
         let fn = preRules[validName];
-        let parsedValidArgs = this._parseValidArgs(validName, rule);
-        if(fn(rule.value, parsedValidArgs)) {
+        let parsedValidValue = this._parseValidArgs(validName, rule);
+        if(fn(rule.value, {
+          rule,
+          validName,
+          validValue: rule[validName],
+          parsedValidValue,
+          ctx: this.ctx,
+          currentQuery: this.ctxQuery,
+          rules: helper.extend({}, rules)
+        })) {
           isRequired = true;
           break;
         };
@@ -339,7 +353,7 @@ class Validator {
       let rule = parsedRules[argName];
 
       // required check
-      let isRequired = this._checkRequired(rule);
+      let isRequired = this._checkRequired(rule, rules);
       if(helper.isTrueEmpty(rule.value)) {
         if(isRequired) {
           let validName;
@@ -372,11 +386,19 @@ class Validator {
         }
 
         // get parsed valid options
-        let parsedValidArgs = this._parseValidArgs(validName, rule);
+        let parsedValidValue = this._parseValidArgs(validName, rule);
 
-        let result = fn(rule.value, parsedValidArgs, validName);
+        let result = fn(rule.value, {
+          rule,
+          validName,
+          validValue: rule[validName],
+          parsedValidValue,
+          ctx: this.ctx,
+          currentQuery: this.ctxQuery,
+          rules: helper.extend({}, rules)
+        });
         if(!result){
-          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidArgs);
+          let errMsg = this._getErrorMessage(argName, rule, validName, parsedValidValue);
 
           // format error message's rule name
           let newRuleName = this._formatNestedRuleName(argName);

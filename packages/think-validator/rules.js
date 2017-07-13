@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-01 12:54:17
+* @Last Modified time: 2017-07-13 17:15:22
 */
 'use strict';
 const helper = require('think-helper');
@@ -24,80 +24,77 @@ Rules.required = (value, validValue) => {
 /**
  * parse requiredIf rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}  []
  */
-Rules._requiredIf = (validValue, query) => {
+Rules._requiredIf = (validValue, { currentQuery }) => {
   assert(helper.isArray(validValue), 'requiredIf\'s value should be array');
   validValue = validValue.slice();
 
   // just parse the first param
-  //let arg0 = validValue[0];
-  //validValue[0] = !helper.isTrueEmpty(query[arg0]) ? query[arg0] : arg0;
-
-  validValue[0] = query[validValue[0]];
+  validValue[0] = currentQuery[validValue[0]];
   return validValue;
 };
 
 /**
  * The field under validation must be present if the otherFields field is equal to any value.
  * @param  {String}    value       [description]
- * @param  {Array}     parsedValue     [description]
+ * @param  {Array}     parsedValidValue     [description]
  * @return {Boolean}               [description]
  */
-Rules.requiredIf = (value, parsedValue) => {
-  let first = parsedValue[0];
-  let others = parsedValue.slice(1);
+Rules.requiredIf = (value, { parsedValidValue }) => {
+  let first = parsedValidValue[0];
+  let others = parsedValidValue.slice(1);
   return others.indexOf(first) > -1;
 };
 
 /**
  * parse requiredNotIf rule validValue
  * @param  {Array} validValue      []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}      []
  */
-Rules._requiredNotIf = (validValue, query) => {
+Rules._requiredNotIf = (validValue, { currentQuery }) => {
   assert(helper.isArray(validValue), 'requiredNotIf\'s value should be array');
-  return Rules._requiredIf(validValue, query);
+  return Rules._requiredIf(validValue, { currentQuery });
 };
 
 /**
  * The field under validation must be present not if the otherFileds field is equal to any value.
  * @param  {String}    value        []
- * @param  {Array}     parsedValue       []
+ * @param  {Array}     parsedValidValue       []
  * @return {Boolean}                 []
  */
-Rules.requiredNotIf = (value, parsedValue) => {
-  let first = parsedValue[0];
-  let others = parsedValue.slice(1);
+Rules.requiredNotIf = (value, { parsedValidValue }) => {
+  let first = parsedValidValue[0];
+  let others = parsedValidValue.slice(1);
   return (others.indexOf(first) === -1);
 };
 
 /**
  * parse required rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}      []
  */
-Rules._requiredWith = (validValue, query) => {
+Rules._requiredWith = (validValue, { currentQuery }) => {
   assert(helper.isArray(validValue), 'requiredWith\'s value should be array');
   validValue = validValue.slice();
 
   // parsed all the param
   return validValue.map(item => {
-    return !helper.isTrueEmpty(query[item]) ? query[item] : '';
+    return !helper.isTrueEmpty(currentQuery[item]) ? currentQuery[item] : '';
   });
 };
 
 /**
  * The field under validation must be present only if any of the other specified fields are present.
  * @param  {String} value         []
- * @param  {Array}  parsedValue  []
+ * @param  {Array}  parsedValidValue  []
  * @return {Boolean}              []
  */
-Rules.requiredWith = (value, parsedValue) => {
-  return parsedValue.some(item => {
+Rules.requiredWith = (value, { parsedValidValue }) => {
+  return parsedValidValue.some(item => {
     return !helper.isTrueEmpty(item);
   });
 };
@@ -105,22 +102,22 @@ Rules.requiredWith = (value, parsedValue) => {
 /**
  * parse requiredWithAll rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}      []
  */
-Rules._requiredWithAll = (validValue, query) => {
+Rules._requiredWithAll = (validValue, { currentQuery }) => {
   assert(helper.isArray(validValue), 'requiredWithAll\'s value should be array');
-  return Rules._requiredWith(validValue, query);
+  return Rules._requiredWith(validValue, { currentQuery });
 };
 
 /**
  * The field under validation must be present only if all of the other specified fields are present.
  * @param  {String}    value         []
- * @param  {Array}     parsedValue       []
+ * @param  {Array}     parsedValidValue       []
  * @return {Boolean}                 []
  */
-Rules.requiredWithAll = (value, parsedValue) => {
-  return parsedValue.every(item => {
+Rules.requiredWithAll = (value, { parsedValidValue }) => {
+  return parsedValidValue.every(item => {
     return !helper.isTrueEmpty(item);
   });
 };
@@ -128,22 +125,22 @@ Rules.requiredWithAll = (value, parsedValue) => {
 /**
  * parse requiredWithOut rule validValue
  * @param  {Array} validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}      []
  */
-Rules._requiredWithOut = (validValue, query) => {
+Rules._requiredWithOut = (validValue, { currentQuery }) => {
   assert(helper.isArray(validValue), 'requiredWithOut\'s value should be array');
-  return Rules._requiredWith(validValue, query);
+  return Rules._requiredWith(validValue, { currentQuery });
 };
 
 /**
  * The field under validation must be present only when any of the other specified fields are not present.
  * @param  {String}    value          []
- * @param  {Array} parsedValue            []
+ * @param  {Array} parsedValidValue            []
  * @return {Boolean}                  []
  */
-Rules.requiredWithOut = (value, parsedValue) => {
-  return parsedValue.some(item => {
+Rules.requiredWithOut = (value, { parsedValidValue }) => {
+  return parsedValidValue.some(item => {
     return helper.isTrueEmpty(item);
   });
 };
@@ -151,22 +148,22 @@ Rules.requiredWithOut = (value, parsedValue) => {
 /**
  * parse requiredWithOutAll rule validValue
  * @param  {Array} validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}      []
  */
-Rules._requiredWithOutAll = (validValue, query) => {
+Rules._requiredWithOutAll = (validValue, { currentQuery }) => {
   assert(helper.isArray(validValue), 'requiredWithOutAll\'s value should be array');
-  return Rules._requiredWith(validValue, query);
+  return Rules._requiredWith(validValue, { currentQuery });
 };
 
 /**
  * The field under validation must be present only when all of the other specified fields are not present.
  * @param  {String}    value         []
- * @param  {Array}     parsedValue []
+ * @param  {Array}     parsedValidValue []
  * @return {Boolean}                  []
  */
-Rules.requiredWithOutAll = (value, parsedValue) => {
-  return parsedValue.every(item => {
+Rules.requiredWithOutAll = (value, { parsedValidValue }) => {
+  return parsedValidValue.every(item => {
     return helper.isTrueEmpty(item);
   });
 };
@@ -177,7 +174,7 @@ Rules.requiredWithOutAll = (value, parsedValue) => {
  * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Rules.contains = (value, validValue) => {
+Rules.contains = (value, { validValue }) => {
   value = validator.toString(value);
   return validator.contains(value, validValue);
 };
@@ -185,43 +182,43 @@ Rules.contains = (value, validValue) => {
 /**
  * parse equal rule validValue
  * @param  {String} validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {String}      []
  */
-Rules._equals = (validValue, query) => {
-  return query[validValue];
+Rules._equals = (validValue, { currentQuery }) => {
+  return currentQuery[validValue];
 };
 
 /**
- * check if the string matches the parsedValue.
+ * check if the string matches the parsedValidValue.
  * @param  {String} value      []
- * @param  {String} parsedValue []
+ * @param  {String} parsedValidValue []
  * @return {Boolean}            []
  */
-Rules.equals = (value, parsedValue) => {
+Rules.equals = (value, { parsedValidValue }) => {
   value = validator.toString(value);
-  return validator.equals(value, parsedValue);
+  return validator.equals(value, parsedValidValue);
 };
 
 /**
  * parse different rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} query []
+ * @param  {Object} currentQuery []
  * @return {Array}  []
  */
-Rules._different = (validValue, query) => {
-  return Rules._equals(validValue, query);
+Rules._different = (validValue, { currentQuery }) => {
+  return Rules._equals(validValue, { currentQuery });
 };
 
 /**
- * check if the string not matches the parsedValue.
+ * check if the string not matches the parsedValidValue.
  * @param  {String} value      [description]
- * @param  {String} parsedValue [description]
+ * @param  {String} parsedValidValue [description]
  * @return {Boolean}            [description]
  */
-Rules.different = (value, parsedValue) => {
+Rules.different = (value, { parsedValidValue }) => {
   value = validator.toString(value);
-  return !validator.equals(value, parsedValue);
+  return !validator.equals(value, parsedValidValue);
 };
 
 /*
@@ -247,12 +244,12 @@ Rules._before = (validValue) => {
 /*
  * check if the string is a date that's before the specified date.
  * @param  {String} value []
- * @param  {Date String} parsedValue  []
+ * @param  {Date String} parsedValidValue  []
  * @return {Boolean}       []
 */
-Rules.before = (value, parsedValue) => {
+Rules.before = (value, { parsedValidValue }) => {
   value = validator.toString(value);
-  return validator.isBefore(value, parsedValue);
+  return validator.isBefore(value, parsedValidValue);
 };
 
 /*
@@ -267,12 +264,12 @@ Rules._after = (validValue) => {
 /*
  * check if the string is a date that's after the specified date (defaults to now).
  * @param  {String} value []
- * @param  {Date String} parsedValue  []
+ * @param  {Date String} parsedValidValue  []
  * @return {Boolean}       []
 */
-Rules.after = (value, parsedValue) => {
+Rules.after = (value, { parsedValidValue }) => {
   value = validator.toString(value);
-  return validator.isAfter(value, parsedValue);
+  return validator.isAfter(value, parsedValidValue);
 };
 
 /**
@@ -342,7 +339,7 @@ Rules.base64 = value => {
  * @param  {Object} validValue []
  * @return {Boolean}       []
  */
-Rules.byteLength = (value, validValue) => {
+Rules.byteLength = (value, { validValue }) => {
   assert(helper.isObject(validValue), 'byteLength\'s value should be object');
   value = validator.toString(value);
   return validator.isByteLength(value, {min: validValue.min | 0, max: validValue.max});
@@ -363,7 +360,7 @@ Rules.creditCard = value => {
  * @param  {Object|true} validValue []
  * @return {Boolean}         []
  */
-Rules.currency = (value, validValue) => {
+Rules.currency = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'currency\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -403,7 +400,7 @@ Rules.decimal = value => {
  * @param  {Number} validValue [description]
  * @return {Boolean}        [description]
  */
-Rules.divisibleBy = (value, validValue) => {
+Rules.divisibleBy = (value, { validValue }) => {
   value = validator.toString(value);
   return validator.isDivisibleBy(value, validValue);
 };
@@ -414,7 +411,7 @@ Rules.divisibleBy = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Rules.email = (value, validValue) => {
+Rules.email = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'email\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -430,7 +427,7 @@ Rules.email = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Rules.fqdn = (value, validValue) => {
+Rules.fqdn = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'fqdn\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -446,7 +443,7 @@ Rules.fqdn = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Rules.float = (value, validValue) => {
+Rules.float = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'float\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -562,7 +559,7 @@ Rules.iso8601 = value => {
  * @param  {Array} validValue [description]
  * @return {Boolean}       [description]
  */
-Rules.in = (value, validValue) => {
+Rules.in = (value, { validValue }) => {
   assert(helper.isArray(validValue), 'in\'s value should be array');
   value = validator.toString(value);
   return validator.isIn(value, validValue);
@@ -574,7 +571,7 @@ Rules.in = (value, validValue) => {
  * @param  {Array} validValue [description]
  * @return {Boolean}       [description]
  */
-Rules.notIn = (value, validValue) => {
+Rules.notIn = (value, { validValue }) => {
   assert(helper.isArray(validValue), 'notIn\'s value should be array');
 
   value = validator.toString(value);
@@ -587,7 +584,7 @@ Rules.notIn = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Rules.int = (value, validValue) => {
+Rules.int = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'int\'s value should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -603,7 +600,7 @@ Rules.int = (value, validValue) => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Rules.length = (value, validValue) => {
+Rules.length = (value, { validValue }) => {
   assert(helper.isObject(validValue), 'length\'s value should be object');
   value = validator.toString(value);
   return validator.isLength(value, {min: validValue.min | 0, max: validValue.max});
@@ -635,7 +632,7 @@ Rules.uppercase = value => {
  * @param  {String} validValue [description]
  * @return {Boolean}        [description]
  */
-Rules.mobile = (value, validValue) => {
+Rules.mobile = (value, { validValue }) => {
   value = validator.toString(value);
   if(validValue === true) {
     return validator.isMobilePhone(value, 'zh-CN');
@@ -672,7 +669,7 @@ Rules.multibyte = value => {
  * @param  {Object|true} validValue [description]
  * @return {Boolean}         [description]
  */
-Rules.url = (value, validValue) => {
+Rules.url = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'url\'s validValue should be object or true');
 
   value = validator.toString(value);
@@ -724,7 +721,7 @@ Rules.image = value => {
  * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Rules.startWith = (value, validValue) => {
+Rules.startWith = (value, { validValue }) => {
   return value.indexOf(validValue) === 0;
 };
 
@@ -734,7 +731,7 @@ Rules.startWith = (value, validValue) => {
  * @param  {String} validValue   []
  * @return {Boolean}       []
  */
-Rules.endWith = (value, validValue) => {
+Rules.endWith = (value, { validValue }) => {
   return value.lastIndexOf(validValue) === (value.length - validValue.length);
 };
 
@@ -780,7 +777,7 @@ Rules.object = value => {
  * @param  {RegExp} validValue   []
  * @return {Boolean}       []
  */
-Rules.regexp = (value, validValue) => {
+Rules.regexp = (value, { validValue }) => {
   assert(helper.isRegExp(validValue), 'argument should be regexp');
   return validValue.test(value);
 };
@@ -791,7 +788,7 @@ Rules.regexp = (value, validValue) => {
  * @param  {Object|true} value [description]
  * @return {Boolean}       [description]
  */
-Rules.issn = (value, validValue) => {
+Rules.issn = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'issn\'s validValue should be object or true');
   value = validator.toString(value);
   if(validValue === true) {
@@ -831,16 +828,6 @@ Rules.macAddress = value => {
   value = validator.toString(value);
   return validator.isMACAddress(value);
 };
-
-/**
- * check if the string contains only numbers.
- * @param  {String} value [description]
- * @return {Boolean}       [description]
- */
-// Rules.numeric = value => {
-//   value = validator.toString(value);
-//   return validator.isNumeric(value);
-// };
 
 /**
  * check if the string is a data uri format.

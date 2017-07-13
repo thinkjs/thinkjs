@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-01 12:55:53
+* @Last Modified time: 2017-07-13 17:16:28
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2649,62 +2649,6 @@ test('rule-ip-no-required', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-
-
-// test('rule-object-message', t => {
-//   let rules = {
-//     arg3: {
-//       object: true,
-//       children: {
-//         int: true
-//       }
-//     }
-//   }
-//   let ctx = helper.extend({}, defaultCtx, {
-//     PARAM: {
-//       arg3: {
-//         a: 'aaa'
-//       }
-//     }
-//   });
-
-//   let msgs = {
-//     arg3: ''
-//   }
-//   let instance = new Validator(ctx);
-//   let ret = instance.validate(rules, msgs);
-//   t.true(ret['arg3.a'] === 'arg3' + NOERROR);
-// });
-
-// test('rule-ip-default', t => {
-//   let rules = {
-//     arg: {
-//       ip: true,
-//       default: '127.0.0.1',
-//     }
-//   }
-//   let ctx = helper.extend({}, defaultCtx);
-//   let instance = new Validator(ctx);
-//   let ret = instance.validate(rules);
-//   t.true(Object.keys(ret).length === 0);
-// });
-
-// test('rule-name-no-message', t => {
-//   let rules = {
-//     arg: {
-//       required: true
-//     }
-//   }
-//   let ctx = helper.extend({}, defaultCtx);
-//   let msgs = {
-//     required: ''
-//   }
-
-//   let instance = new Validator(ctx);
-//   let ret = instance.validate(rules, msgs);
-//   t.true(ret.arg === 'arg' + NOERROR);
-// });
-
 test('rule-add-method', t => {
   let rules = {
     arg: {
@@ -2714,11 +2658,11 @@ test('rule-add-method', t => {
   }
   let wrongMsg = 'eqlushijie error';
 
-  Validator.addRule('eqlushijie', function(value, parsedValue) {
-    return parsedValue === 'lushijie';
+  Validator.addRule('eqlushijie', function(value, { parsedValidValue }) {
+    return parsedValidValue === 'lushijie';
   }, wrongMsg);
-  Validator.addRule('_eqlushijie', function(validValue, query) {
-    return query.arg + 'shijie';
+  Validator.addRule('_eqlushijie', function(validValue, { currentQuery }) {
+    return currentQuery.arg + 'shijie';
   });
   let instance = new Validator(helper.extend({}, defaultCtx));
   let ret = instance.validate(rules);
