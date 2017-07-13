@@ -12,21 +12,20 @@ const Inspector = class {
   checkNodeVersion() {
     const config = this.config;
     const logger = config.logger;
-    let packageFile = path.join(config.THINK_PATH, 'package.json');
+    const packageFile = path.join(config.THINK_PATH, 'package.json');
 
-
-    if(!Helper.isFile(packageFile)){
+    if (!Helper.isFile(packageFile)) {
       return;
     }
-    let {engines} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
-    let needVersion = engines.node.substr(2);
+    const {engines} = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
+    const needVersion = engines.node.substr(2);
 
     let nodeVersion = process.version;
-    if(nodeVersion[0] === 'v'){
+    if (nodeVersion[0] === 'v') {
       nodeVersion = nodeVersion.slice(1);
     }
-   
-    if(needVersion > nodeVersion){
+
+    if (needVersion > nodeVersion) {
       logger.error(`ThinkJS need node version >= ${needVersion}, current version is ${nodeVersion}, please upgrade it.`);
     }
   }
@@ -39,16 +38,16 @@ const Inspector = class {
   checkFileName() {
     const config = this.config;
     const logger = config.logger;
-    let files = Helper.getdirFiles(config.APP_PATH);
+    const files = Helper.getdirFiles(config.APP_PATH);
     const excludePath = `${path.sep}${config.locale}${path.sep}`;
     const excludeReg = new RegExp(excludePath);
     const includeReg = /\.(js|html|tpl)$/;
     const uppercaseReg = /[A-Z]/;
     files.forEach((item) => {
       // inspect filename
-      if(!includeReg.test(item) || excludeReg.test(item)) return;
-      if(uppercaseReg.test(item)) {
-        logger.warn(`filename \`${item}\` has uppercase chars.`);  
+      if (!includeReg.test(item) || excludeReg.test(item)) return;
+      if (uppercaseReg.test(item)) {
+        logger.warn(`filename \`${item}\` has uppercase chars.`);
       }
     });
   }
@@ -58,36 +57,36 @@ const Inspector = class {
   checkDependencies() {
     const config = this.config;
     const logger = config.logger;
-    let packageFile = path.join(config.ROOT_PATH, 'package.json');
-    if(!Helper.isFile(packageFile)){
+    const packageFile = path.join(config.ROOT_PATH, 'package.json');
+    if (!Helper.isFile(packageFile)) {
       return;
     }
 
-    let data = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
+    const data = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
     let dependencies = Helper.extend({}, data.dependencies);
     // merge devDependencies in development env
-    if(config.env === 'development') {
+    if (config.env === 'development') {
       dependencies = Helper.extend(dependencies, data.devDependencies);
     }
 
     // package alias
-    let pkgAlias = {
+    const pkgAlias = {
       'babel-runtime': 'babel-runtime/helpers/inherits'
     };
-    let pkgPath = path.join(config.ROOT_PATH, 'node_modules/');
-    for(let pkg in dependencies) {
+    const pkgPath = path.join(config.ROOT_PATH, 'node_modules/');
+    for (let pkg in dependencies) {
       pkg = pkgAlias[pkg] || pkg;
-      let pkgFilename = path.join(pkgPath, pkg);
-      if(Helper.isDirectory(pkgFilename)) {
+      const pkgFilename = path.join(pkgPath, pkg);
+      if (Helper.isDirectory(pkgFilename)) {
         continue;
       }
-    
+
       try {
         require(pkg);
-      } catch(e) {
+      } catch (e) {
         logger.error(`package \`${pkg}\` is not installed. please run \`npm install\` command before server starts.`);
       }
     }
   }
-}
- module.exports = Inspector;
+};
+module.exports = Inspector;
