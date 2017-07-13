@@ -28,7 +28,7 @@ class Ejs {
    */
   render() {
     const config = this.config;
-    if(config.beforeRender) {
+    if (config.beforeRender) {
       config.beforeRender(ejs, config);
     }
     return renderFile(this.file, this.data, config);
