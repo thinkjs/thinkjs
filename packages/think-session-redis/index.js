@@ -1,4 +1,4 @@
-const thinkRedis = require('think-redis');
+const ThinkRedis = require('think-redis');
 const assert = require('assert');
 const helper = require('think-helper');
 const debug = require('debug')('think-session-redis');
@@ -15,28 +15,29 @@ class RedisSession {
    * @param {Object} options cookie options
    * @param {Object} ctx koa ctx
    */
-  constructor(options = {}, ctx){
+  constructor(options = {}, ctx) {
     assert(options.cookie, '.cookie required');
     this.options = options;
-    this.redis = new thinkRedis(this.options);
+    this.redis = new ThinkRedis(this.options);
     this.ctx = ctx;
     this.data = {};
     this.status = 0;
   }
- 
+
   /**
    * init session data
    */
-  [initSessionData](){
-    if(this.initPromise){
+  [initSessionData]() {
+    if (this.initPromise) {
       return this.initPromise;
     }
-    if(this.options.fresh || this.status === -1){
-      return this.initPromise = Promise.resolve();
+    if (this.options.fresh || this.status === -1) {
+      this.initPromise = Promise.resolve();
+      return this.initPromise;
     }
     this.initPromise = this.redis.get(this.options.cookie).then(content => {
       content = JSON.parse(content);
-      if(helper.isEmpty(content)) return;
+      if (helper.isEmpty(content)) return;
       this.data = content;
     }).catch(err => debug(err));
     this[autoSave]();
@@ -45,23 +46,23 @@ class RedisSession {
   /**
    * auto save session data when it is changed
    */
-  [autoSave](){
+  [autoSave]() {
     this.ctx.res.once('finish', () => {
-      if(this.status === -1){
+      if (this.status === -1) {
         return this.redis.delete(this.options.cookie);
-      }else if(this.status === 1){
+      } else if (this.status === 1) {
         const maxAge = this.options.maxAge;
-        return this.redis.set(this.options.cookie, JSON.stringify(this.data), maxAge? helper.ms(maxAge) : undefined);
+        return this.redis.set(this.options.cookie, JSON.stringify(this.data), maxAge ? helper.ms(maxAge) : undefined);
       }
     });
   }
- /**
+  /**
    * get session data
    * @param {String} name 
    */
-  get(name){
+  get(name) {
     return this[initSessionData]().then(() => {
-      if(this.options.autoUpdate){
+      if (this.options.autoUpdate) {
         this.status = 1;
       }
       return name ? this.data[name] : this.data;
@@ -72,7 +73,7 @@ class RedisSession {
    * @param {String} name 
    * @param {Mixed} value 
    */
-  set(name, value){
+  set(name, value) {
     return this[initSessionData]().then(() => {
       this.status = 1;
       this.data[name] = value;
@@ -81,7 +82,7 @@ class RedisSession {
   /**
    * delete session data
    */
-  delete(){
+  delete() {
     this.status = -1;
     this.data = {};
     return Promise.resolve();

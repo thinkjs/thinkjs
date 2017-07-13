@@ -157,8 +157,6 @@ test.serial('3. set and get session data with fresh param', t => {
       'abc': '123'
     });
 
-    
-
     resolve();
   });
 });

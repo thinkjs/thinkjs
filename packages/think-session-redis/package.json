@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/index.js ",
-    "coverage": "nyc report --reporter=html"
+    "coverage": "nyc report --reporter=html",
+    "lint": "eslint index.js",
+    "lint-fix": "eslint --fix index.js"
   },
   "contributors": [
     {
@@ -25,9 +27,10 @@
   "devDependencies": {
     "ava": "^0.18.2",
     "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
+    "babel-eslint": "^7.2.3",
     "coveralls": "^2.12.0",
-    "eslint": "2.8.0",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
     "mock-require": "^2.0.1",
     "nyc": "^7.0.0"
   },
