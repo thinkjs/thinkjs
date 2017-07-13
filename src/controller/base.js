@@ -351,7 +351,17 @@ export default class extends think.http.base {
     }
     this.type(contentType, false);
 
-    this.header('Content-Disposition', 'attachment; filename="' + encodeURIComponent(filename || path.basename(filepath)) + '"');
+    filename = filename || path.basename(filepath);
+    const userAgent = this.userAgent().toLowerCase();
+    if (userAgent.indexOf('msie') >= 0 || userAgent.indexOf('chrome') >= 0) {
+      this.header('Content-Disposition', 'attachment; filename=' + encodeURIComponent(filename));
+    } else if(userAgent.indexOf('firefox') >= 0) {
+      this.header('Content-Disposition', 'attachment; filename*="utf8\'\'' + encodeURIComponent(filename)+'"');
+    } else {
+      this.header('Content-Disposition', 'attachment; filename=' + new Buffer(filename).toString('binary'));
+    }
+
+
     return think.middleware('output_resource', this.http, filepath);
   }
   /**

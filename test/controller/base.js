@@ -440,7 +440,7 @@ describe('controller/base.js', function(){
         if(type === 'Content-Type'){
           assert.equal(value, 'application/javascript')
         }else if(type === 'Content-Disposition'){
-          assert.equal(value, 'attachment; filename="base.js"')
+          assert.equal(value, 'attachment; filename=base.js')
         }
       },
       end: function(){}
@@ -458,7 +458,7 @@ describe('controller/base.js', function(){
         if(type === 'Content-Type'){
           assert.equal(value, 'text/html')
         }else if(type === 'Content-Disposition'){
-          assert.equal(value, 'attachment; filename="base.js"')
+          assert.equal(value, 'attachment; filename=base.js')
         }
         this._contentTypeIsSend = true;
       },
@@ -476,7 +476,7 @@ describe('controller/base.js', function(){
         if(type === 'Content-Type'){
           assert.equal(value, 'text/html')
         }else if(type === 'Content-Disposition'){
-          assert.equal(value, 'attachment; filename="a.html"')
+          assert.equal(value, 'attachment; filename=a.html')
         }
         this._contentTypeIsSend = true;
       },
@@ -494,7 +494,7 @@ describe('controller/base.js', function(){
         if(type === 'Content-Type'){
           assert.equal(value, 'application/javascript')
         }else if(type === 'Content-Disposition'){
-          assert.equal(value, 'attachment; filename="a.html"')
+          assert.equal(value, 'attachment; filename=a.html')
         }
         this._contentTypeIsSend = true;
       },
