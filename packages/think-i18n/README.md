@@ -106,7 +106,7 @@ module.exports = {
   ```javascript
   // locale setting of en.js
   module.exports = {
-    localeId: 'en_CH',
+    localeId: 'en_ch',
     translation: require('../english.po.json'),
     dateFormat: require('../moment/en.json'),
     numeralFormat: require('../numeral/en.json')
@@ -119,6 +119,7 @@ We should always use customize format.
 
 
 #### Notice
+- locale id must be lower case.
 - If you defined **en** locale, witch will override the default **en** locale in [Numeral](https://github.com/adamwdraper/Numeral-js).
 - In case you also want to use moment and numeral in your system, we isolated the [Moment](https://github.com/moment/moment/) and [Numeral](https://github.com/adamwdraper/Numeral-js) by use bundledDependencies in package.json.
 - [Numeral](https://github.com/adamwdraper/Numeral-js) doesn't not support per locale custom format,  this is done using some tricks and you can config each locale's customFormat in [config](https://github.com/thinkjs/think-i18n/blob/master/i18n_example/en.js).numeralFormat.formats.

@@ -136,7 +136,7 @@ test('loadLocaleSettings', t=>{
   t.deepEqual(locales, {localeId: {}});
   t.deepEqual(result, {
     localeConfigs: {localeId: config},
-    custom_numeral_formats: {localeId: [1,2,3]}
+    customNumeralFormats: {localeId: [1,2,3]}
   });
 });
 
