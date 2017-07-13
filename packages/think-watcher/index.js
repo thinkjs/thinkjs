@@ -11,15 +11,15 @@ const path = require('path');
 const defaultOptions = {
   allowExts: ['js', 'es', 'ts'],
   filter: (fileInfo, options) => {
-    let seps = fileInfo.file.split(path.sep);
-    //filter hidden file
-    let flag = seps.some(item => {
+    const seps = fileInfo.file.split(path.sep);
+    // filter hidden file
+    const flag = seps.some(item => {
       return item[0] === '.';
     });
-    if(flag){
+    if (flag) {
       return false;
     }
-    let ext = path.extname(fileInfo.file).slice(1);
+    const ext = path.extname(fileInfo.file).slice(1);
     return options.allowExts.indexOf(ext) !== -1;
   }
 };
@@ -33,7 +33,7 @@ class Watcher {
    * @param {Object} options  watch options
    * @param {Function} cb callback when files changed
    */
-  constructor(options, cb){
+  constructor(options, cb) {
     assert(helper.isFunction(cb), 'callback must be a function');
     options = this.buildOptions(options);
 
@@ -49,24 +49,24 @@ class Watcher {
    * @param {Object} options 
    */
   buildOptions(options = {}) {
-    if(helper.isString(options)){
+    if (helper.isString(options)) {
       options = {srcPath: options};
     }
     let srcPath = options.srcPath;
     assert(srcPath, 'srcPath can not be blank');
-    if(!helper.isArray(srcPath)){
+    if (!helper.isArray(srcPath)) {
       srcPath = [srcPath];
     }
     let diffPath = options.diffPath || [];
-    if(!helper.isArray(diffPath)){
+    if (!helper.isArray(diffPath)) {
       diffPath = [diffPath];
     }
     options.srcPath = srcPath;
     options.diffPath = diffPath;
-    if(!options.filter){
+    if (!options.filter) {
       options.filter = defaultOptions.filter;
     }
-    if(!options.allowExts){
+    if (!options.allowExts) {
       options.allowExts = defaultOptions.allowExts;
     }
     return options;
@@ -74,43 +74,43 @@ class Watcher {
   /**
    * get changed files
    */
-  getChangedFiles(){
-    let changedFiles = [];
+  getChangedFiles() {
+    const changedFiles = [];
     const options = this.options;
     options.srcPath.forEach((srcPath, index) => {
       assert(path.isAbsolute(srcPath), 'srcPath must be an absolute path');
-      let diffPath = options.diffPath[index];
-      let srcFiles = helper.getdirFiles(srcPath).filter(file => {
+      const diffPath = options.diffPath[index];
+      const srcFiles = helper.getdirFiles(srcPath).filter(file => {
         return options.filter({path: srcPath, file}, options);
       });
       let diffFiles = [];
-      if(diffPath){
+      if (diffPath) {
         diffFiles = helper.getdirFiles(diffPath).filter(file => {
           return options.filter({path: diffPath, file}, options);
         });
         this.removeDeletedFiles(srcFiles, diffFiles, diffPath);
       }
       srcFiles.forEach(file => {
-        let mtime = fs.statSync(path.join(srcPath, file)).mtime.getTime();
-        if(diffPath){
+        const mtime = fs.statSync(path.join(srcPath, file)).mtime.getTime();
+        if (diffPath) {
           let diffFile = '';
           diffFiles.some(dfile => {
-            if(this.removeFileExtName(dfile) === this.removeFileExtName(file)){
+            if (this.removeFileExtName(dfile) === this.removeFileExtName(file)) {
               diffFile = dfile;
               return true;
             }
           });
-          let diffFilePath = path.join(diffPath, diffFile);
-          //compiled file exist
-          if(diffFile && helper.isFile(diffFilePath)){
-            let diffmtime = fs.statSync(diffFilePath).mtime.getTime();
-            //if compiled file mtime is after than source file, return
-            if(diffmtime > mtime){
+          const diffFilePath = path.join(diffPath, diffFile);
+          // compiled file exist
+          if (diffFile && helper.isFile(diffFilePath)) {
+            const diffmtime = fs.statSync(diffFilePath).mtime.getTime();
+            // if compiled file mtime is after than source file, return
+            if (diffmtime > mtime) {
               return;
             }
           }
         }
-        if(!this.lastMtime[file] || mtime > this.lastMtime[file]){
+        if (!this.lastMtime[file] || mtime > this.lastMtime[file]) {
           this.lastMtime[file] = mtime;
           changedFiles.push({path: srcPath, file});
         }
@@ -125,14 +125,14 @@ class Watcher {
    * @param {String} diffPath
    */
   removeDeletedFiles(srcFiles, diffFiles, diffPath) {
-    let srcFilesWithoutExt = srcFiles.map(file => {
+    const srcFilesWithoutExt = srcFiles.map(file => {
       return this.removeFileExtName(file);
     });
     diffFiles.forEach(file => {
-      let fileWithoutExt = this.removeFileExtName(file);
-      if(srcFilesWithoutExt.indexOf(fileWithoutExt) === -1){
-        let filepath = path.join(diffPath, file);
-        if(helper.isFile(filepath)){
+      const fileWithoutExt = this.removeFileExtName(file);
+      if (srcFilesWithoutExt.indexOf(fileWithoutExt) === -1) {
+        const filepath = path.join(diffPath, file);
+        if (helper.isFile(filepath)) {
           fs.unlinkSync(filepath);
         }
       }
@@ -142,16 +142,16 @@ class Watcher {
    * remove file extname
    * @param {String} file
    */
-  removeFileExtName(file){
+  removeFileExtName(file) {
     return file.replace(/\.\w+$/, '');
   }
   /**
    * watch files change
    */
-  watch(){
+  watch() {
     const detectFiles = () => {
-      let changedFiles = this.getChangedFiles();
-      if(changedFiles.length){
+      const changedFiles = this.getChangedFiles();
+      if (changedFiles.length) {
         changedFiles.forEach(item => {
           debug(`file changed: path=${item.path}, file=${item.file}`);
           this.cb(item);
@@ -164,5 +164,3 @@ class Watcher {
 }
 
 module.exports = Watcher;
-
-
