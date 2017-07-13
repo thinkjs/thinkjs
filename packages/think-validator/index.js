@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 17:41:27
+* @Last Modified time: 2017-07-13 17:54:51
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -45,16 +45,16 @@ class Validator {
    * @return {String}          [description]
    */
   _formatNestedRuleName(argName) {
-    let newRuleName = argName;
-    if(newRuleName.indexOf(ARRAY_SP) > -1) {
-      let tmpRuleName = newRuleName.split(ARRAY_SP);
-      newRuleName = tmpRuleName[0] + '[' + tmpRuleName[1]+ ']';
+    let newArgName = argName;
+    if(newArgName.indexOf(ARRAY_SP) > -1) {
+      let tmpRuleName = newArgName.split(ARRAY_SP);
+      newArgName = tmpRuleName[0] + '[' + tmpRuleName[1]+ ']';
     }
-    if(newRuleName.indexOf(OBJECT_SP) > -1) {
-      let tmpRuleName = newRuleName.split(OBJECT_SP);
-      newRuleName = tmpRuleName[0] + '.' + tmpRuleName[1];
+    if(newArgName.indexOf(OBJECT_SP) > -1) {
+      let tmpRuleName = newArgName.split(OBJECT_SP);
+      newArgName = tmpRuleName[0] + '.' + tmpRuleName[1];
     }
-    return newRuleName;
+    return newArgName;
   }
 
   /**
@@ -149,7 +149,7 @@ class Validator {
    * @param  {Mixed} validValue  [description]
    * @return {Mixed}           [description]
    */
-  _parseValidArgs(validName, rule) {
+  _parseValidArgs(validName, rule, cloneRules) {
     let validValue = rule[validName];
     let _fn = preRules['_' + validName];
 
@@ -159,7 +159,8 @@ class Validator {
         rule: rule,
         ctx: this.ctx,
         validName,
-        currentQuery: this.ctxQuery
+        currentQuery: this.ctxQuery,
+        rules: cloneRules
       });
     }
     return validValue;
@@ -195,11 +196,12 @@ class Validator {
    */
   _checkRequired(rule, rules) {
     let isRequired = false;
+    let cloneRules = helper.extend({}, rules);
     for(let i = 0; i <= this.requiredValidNames.length; i++) {
       let validName = this.requiredValidNames[i];
       if(rule[validName]) {
         let fn = preRules[validName];
-        let parsedValidValue = this._parseValidArgs(validName, rule);
+        let parsedValidValue = this._parseValidArgs(validName, rule, cloneRules);
         if(fn(rule.value, {
           rule,
           validName,
@@ -207,7 +209,7 @@ class Validator {
           parsedValidValue,
           ctx: this.ctx,
           currentQuery: this.ctxQuery,
-          rules: helper.extend({}, rules) // prevent to write
+          rules: cloneRules // prevent to write
         })) {
           isRequired = true;
           break;
@@ -345,6 +347,7 @@ class Validator {
    */
   validate(rules, msgs) {
     let ret = {};
+    const cloneRules = helper.extend({}, rules);
     let parsedRules = this._preTreatRules(rules);
     this.errors = helper.extend(this.errors, msgs);
 
@@ -364,13 +367,8 @@ class Validator {
             }
           }
 
-          let parsedValidValue = this._parseValidArgs(validName, rule);
-          let errMsg = this._getErrorMessage({
-            argName,
-            rule,
-            validName,
-            parsedValidValue
-          });
+          let parsedValidValue = this._parseValidArgs(validName, rule, cloneRules);
+          let errMsg = this._getErrorMessage({ argName, rule, validName, parsedValidValue });
           ret[argName] = errMsg;
           continue;
         }else {
@@ -391,7 +389,7 @@ class Validator {
         }
 
         // get parsed valid options
-        let parsedValidValue = this._parseValidArgs(validName, rule);
+        let parsedValidValue = this._parseValidArgs(validName, rule, cloneRules);
 
         let result = fn(rule.value, {
           rule,
@@ -403,12 +401,7 @@ class Validator {
           rules: helper.extend({}, rules) // prevent to write
         });
         if(!result){
-          let errMsg = this._getErrorMessage({
-            argName,
-            rule,
-            validName,
-            parsedValidValue
-          });
+          let errMsg = this._getErrorMessage({ argName, rule, validName, parsedValidValue });
 
           // format error message's rule name
           let newRuleName = this._formatNestedRuleName(argName);
