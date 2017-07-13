@@ -238,18 +238,12 @@ exports.escapeHtml = escapeHtml;
  * @param  {Date} date []
  * @return {String}      []
  */
-function datetime(date = new Date(), format) {
+function datetime(date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') {
   const fn = d => {
     return ('0' + d).slice(-2);
   };
 
-  if (date && exports.isString(date) && Date.parse(date)) {
-    date = new Date(Date.parse(date));
-  }
-
-  const d = date || new Date();
-
-  format = format || 'YYYY-MM-DD HH:mm:ss';
+  const d = new Date(date);
   const formats = {
     YYYY: d.getFullYear(),
     MM: fn(d.getMonth() + 1),
