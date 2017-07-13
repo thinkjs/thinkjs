@@ -2,13 +2,23 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 17:15:22
+* @Last Modified time: 2017-07-13 18:36:03
 */
 'use strict';
 const helper = require('think-helper');
 const validator = require('validator');
 const errors = require('./errors.js');
 const assert = require('assert');
+const METHOD_MAP = {
+  GET: 'param',
+  POST: 'post',
+  FILE: 'file',
+  PUT: 'post',
+  DELETE: 'post',
+  PATCH: 'post',
+  LINK: 'post',
+  UNLINK: 'post'
+};
 let Rules = {}
 
 /**
@@ -24,15 +34,19 @@ Rules.required = (value, validValue) => {
 /**
  * parse requiredIf rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}  []
  */
-Rules._requiredIf = (validValue, { currentQuery }) => {
+Rules._requiredIf = (validValue, { currentQuery, ctx, rules }) => {
   assert(helper.isArray(validValue), 'requiredIf\'s value should be array');
   validValue = validValue.slice();
-
+  let first = validValue[0];
+  if(rules && rules[first] && rules[first]['method']) {
+    currentQuery = helper.extend({}, currentQuery);
+    currentQuery = ctx[rules[first]['method'].toUpperCase()];
+  }
   // just parse the first param
-  validValue[0] = currentQuery[validValue[0]];
+  validValue[0] = currentQuery[first];
   return validValue;
 };
 
@@ -51,12 +65,12 @@ Rules.requiredIf = (value, { parsedValidValue }) => {
 /**
  * parse requiredNotIf rule validValue
  * @param  {Array} validValue      []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}      []
  */
-Rules._requiredNotIf = (validValue, { currentQuery }) => {
+Rules._requiredNotIf = (validValue, { currentQuery, ctx, rules }) => {
   assert(helper.isArray(validValue), 'requiredNotIf\'s value should be array');
-  return Rules._requiredIf(validValue, { currentQuery });
+  return Rules._requiredIf(validValue, { currentQuery, ctx, rules });
 };
 
 /**
@@ -74,15 +88,19 @@ Rules.requiredNotIf = (value, { parsedValidValue }) => {
 /**
  * parse required rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}      []
  */
-Rules._requiredWith = (validValue, { currentQuery }) => {
+Rules._requiredWith = (validValue, { currentQuery, rules, ctx }) => {
   assert(helper.isArray(validValue), 'requiredWith\'s value should be array');
   validValue = validValue.slice();
 
   // parsed all the param
   return validValue.map(item => {
+    if(rules && rules[item] && rules[item]['method']) {
+      currentQuery = helper.extend({}, currentQuery);
+      currentQuery = ctx[rules[item]['method'].toUpperCase()];
+    }
     return !helper.isTrueEmpty(currentQuery[item]) ? currentQuery[item] : '';
   });
 };
@@ -102,12 +120,12 @@ Rules.requiredWith = (value, { parsedValidValue }) => {
 /**
  * parse requiredWithAll rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}      []
  */
-Rules._requiredWithAll = (validValue, { currentQuery }) => {
+Rules._requiredWithAll = (validValue, { currentQuery, rules, ctx }) => {
   assert(helper.isArray(validValue), 'requiredWithAll\'s value should be array');
-  return Rules._requiredWith(validValue, { currentQuery });
+  return Rules._requiredWith(validValue, { currentQuery, rules, ctx });
 };
 
 /**
@@ -125,12 +143,12 @@ Rules.requiredWithAll = (value, { parsedValidValue }) => {
 /**
  * parse requiredWithOut rule validValue
  * @param  {Array} validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}      []
  */
-Rules._requiredWithOut = (validValue, { currentQuery }) => {
+Rules._requiredWithOut = (validValue, { currentQuery, rules, ctx }) => {
   assert(helper.isArray(validValue), 'requiredWithOut\'s value should be array');
-  return Rules._requiredWith(validValue, { currentQuery });
+  return Rules._requiredWith(validValue, { currentQuery, rules, ctx });
 };
 
 /**
@@ -148,12 +166,12 @@ Rules.requiredWithOut = (value, { parsedValidValue }) => {
 /**
  * parse requiredWithOutAll rule validValue
  * @param  {Array} validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}      []
  */
-Rules._requiredWithOutAll = (validValue, { currentQuery }) => {
+Rules._requiredWithOutAll = (validValue, { currentQuery, rules, ctx }) => {
   assert(helper.isArray(validValue), 'requiredWithOutAll\'s value should be array');
-  return Rules._requiredWith(validValue, { currentQuery });
+  return Rules._requiredWith(validValue, { currentQuery, rules, ctx });
 };
 
 /**
@@ -182,10 +200,14 @@ Rules.contains = (value, { validValue }) => {
 /**
  * parse equal rule validValue
  * @param  {String} validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {String}      []
  */
-Rules._equals = (validValue, { currentQuery }) => {
+Rules._equals = (validValue, { currentQuery, rules, ctx }) => {
+  if(rules && rules[validValue] && rules[validValue]['method']) {
+    currentQuery = helper.extend({}, currentQuery);
+    currentQuery = ctx[rules[validValue]['method'].toUpperCase()];
+  }
   return currentQuery[validValue];
 };
 
@@ -203,11 +225,11 @@ Rules.equals = (value, { parsedValidValue }) => {
 /**
  * parse different rule validValue
  * @param  {Array}  validValue []
- * @param  {Object} currentQuery []
+ * @param  {Object} []
  * @return {Array}  []
  */
-Rules._different = (validValue, { currentQuery }) => {
-  return Rules._equals(validValue, { currentQuery });
+Rules._different = (validValue, { currentQuery, rules, ctx }) => {
+  return Rules._equals(validValue, { currentQuery, rules, ctx });
 };
 
 /**
