@@ -11,7 +11,7 @@ const debounceInstance = new Debounce();
  * @param {Mixed} value
  * @param {String|Object} config
  */
-function ThinkCache(name, value, config) {
+function thinkCache(name, value, config) {
   assert(name && helper.isString(name), 'cache.name must be a string');
   if (this.config) {
     config = helper.parseAdapterConfig(this.config('cache'), config);
@@ -55,4 +55,4 @@ function ThinkCache(name, value, config) {
   return Promise.resolve(instance.set(name, value));
 }
 
-module.exports = ThinkCache;
+module.exports = thinkCache;
