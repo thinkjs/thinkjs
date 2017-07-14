@@ -11,14 +11,13 @@ const defaultOptions = {
   port: 6379,
   host: '127.0.0.1',
   password: '',
-  timeout: 24 * 3600 * 1000,
+  timeout: 24 * 3600 * 1000
 };
 
 /**
  * redis cache adapter
  */
 class RedisCache {
-
   constructor(config = {}) {
     config = helper.extend({}, defaultOptions, config);
     this.redis = new Redis(config);
@@ -31,7 +30,7 @@ class RedisCache {
    * @return {Promise}      [description]
    */
   get(key) {
-    return  this.redis.get(key).catch(() => {});
+    return this.redis.get(key).catch(() => {});
   }
 
   /**
@@ -42,7 +41,7 @@ class RedisCache {
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
-    return  this.redis.set(key, content, timeout).catch(() => {});
+    return this.redis.set(key, content, timeout).catch(() => {});
   }
 
   /**
@@ -53,7 +52,6 @@ class RedisCache {
   delete(key) {
     return this.redis.delete(key).catch(() => {});
   }
-
 }
 
 module.exports = RedisCache;
