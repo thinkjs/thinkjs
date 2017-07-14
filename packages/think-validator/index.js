@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 17:54:51
+* @Last Modified time: 2017-07-14 19:09:00
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -347,7 +347,6 @@ class Validator {
     const parsedRules = this._preTreatRules(rules);
     this.errors = helper.extend(this.errors, msgs);
 
-    outerLoop:
     for (const argName in parsedRules) {
       const rule = parsedRules[argName];
 
@@ -398,11 +397,10 @@ class Validator {
         });
         if (!result) {
           const errMsg = this._getErrorMessage({ argName, rule, validName, parsedValidValue });
-
           // format error message's rule name
           const newRuleName = this._formatNestedRuleName(argName);
           ret[newRuleName] = errMsg;
-          continue outerLoop;
+          break; // go to first for loop
         } else {
           // if this is no error, convert the value
           this._convertParamValue(argName, rule);

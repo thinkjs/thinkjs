@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint --fix rules.js & eslint --fix index.js",
-    "test": " nyc ava test/index.js",
+    "test": "npm run lint && nyc ava test/index.js",
     "coverage": "npm test && nyc report --reporter=html"
   },
   "ava": {
