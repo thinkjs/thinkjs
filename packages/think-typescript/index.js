@@ -5,10 +5,11 @@ const ts = require('typescript');
 const lineColumn = require('line-column');
 
 function typescriptTranspile(config) {
-  let {srcPath, outPath, file, options, ext = '.js'} = config;
-  let filePath = path.join(srcPath, file);
-  let pPath = path.dirname(path.join(outPath, file));
-  let relativePath = path.relative(pPath, path.join(srcPath, file));
+  const {srcPath, outPath, file, ext = '.js'} = config;
+  let {options} = config;
+  const filePath = path.join(srcPath, file);
+  const pPath = path.dirname(path.join(outPath, file));
+  const relativePath = path.relative(pPath, path.join(srcPath, file));
 
   // typescript compile options
   options = Object.assign({
@@ -21,28 +22,28 @@ function typescriptTranspile(config) {
     }
   }, options);
 
-  let content = fs.readFileSync(filePath, 'utf8');
-  let data = ts.transpileModule(content, options);
+  const content = fs.readFileSync(filePath, 'utf8');
+  const data = ts.transpileModule(content, options);
 
   // error handle
-  if(data.diagnostics && data.diagnostics.length){
-    let firstDiagnostics = data.diagnostics[0];
-    if(firstDiagnostics.file && firstDiagnostics.start) {
-      let errPos = lineColumn(firstDiagnostics.file.text, firstDiagnostics.start);
+  if (data.diagnostics && data.diagnostics.length) {
+    const firstDiagnostics = data.diagnostics[0];
+    if (firstDiagnostics.file && firstDiagnostics.start) {
+      const errPos = lineColumn(firstDiagnostics.file.text, firstDiagnostics.start);
       return new Error(`${firstDiagnostics.messageText} File: ${path.join(srcPath, firstDiagnostics.file.path)} Line: ${errPos.line} Column: ${errPos.col}`);
-    }else {
+    } else {
       return new Error(`${firstDiagnostics.messageText}`);
     }
   }
 
   // write js file
-  let outFile = path.join(outPath, file).replace(/\.\w+$/, ext);
+  const outFile = path.join(outPath, file).replace(/\.\w+$/, ext);
   helper.mkdir(path.dirname(outFile));
   fs.writeFileSync(outFile, data.outputText);
 
   // write map file
-  if(options && options.compilerOptions && options.compilerOptions.sourceMap) {
-    let sourceMap = JSON.parse(data.sourceMapText);
+  if (options && options.compilerOptions && options.compilerOptions.sourceMap) {
+    const sourceMap = JSON.parse(data.sourceMapText);
     sourceMap.file = sourceMap.sources[0] = relativePath;
     fs.writeFileSync(outFile + '.map', JSON.stringify(sourceMap, undefined, 4));
   }
