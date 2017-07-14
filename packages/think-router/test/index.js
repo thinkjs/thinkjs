@@ -69,6 +69,9 @@ let defaultCtx = {
 let defaultApp = {
   once: function(event, cb){
     cb();
+  },
+  on: function(event, cb) {
+    //cb();
   }
 };
 
