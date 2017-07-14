@@ -10,7 +10,7 @@
 npm install think-redis
 ```
 
-## How to Usage
+## How to Use
 
 ### default options
 
@@ -43,7 +43,7 @@ let g1 = await redisInst.get('name2');
 // delete key
 let d1 = await redisInst.delete(key);
 
-// add event listener, supported event see at https://github.com/luin/ioredis
+// add event listener, supported events see at https://github.com/luin/ioredis
 redisInst.on('connect', function() {
   // todo
 });
