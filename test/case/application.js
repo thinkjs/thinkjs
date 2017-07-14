@@ -8,6 +8,8 @@ function getApplication() {
   return mock.reRequire('../../lib/application');
 }
 
+mockie.mockConsoleError();
+
 const defaultOption = {
   ROOT_PATH: __dirname,
   // APP_PATH: path.resolve(__dirname,'../runtime')

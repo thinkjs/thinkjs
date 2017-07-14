@@ -118,6 +118,12 @@ function mockThinkPm2(args = {}) {
   mock('think-pm2', args);
 }
 
+function mockConsoleError(){
+  console.error = ()=>{
+    console.log('test exception success')
+  }
+}
+
 function stop(name) {
   if (!name) {
     mock.stopAll()
@@ -132,5 +138,6 @@ module.exports = {
   mockThinkCluster,
   mockThinkPm2,
   mockCookies,
+  mockConsoleError,
   stop
 }
