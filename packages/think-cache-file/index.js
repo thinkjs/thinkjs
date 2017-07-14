@@ -12,9 +12,9 @@ const readFile = helper.promisify(fs.readFile, fs);
 const unlink = helper.promisify(fs.unlink, fs);
 const gc = require('think-gc');
 const FileStore = require('think-store-file');
-let _getRelativePath = Symbol('getRelativePath');
+const _getRelativePath = Symbol('getRelativePath');
 
-let defaultOptions = {
+const defaultOptions = {
   timeout: 24 * 3600 * 1000,
   cachePath: '',
   pathDepth: 1,
@@ -33,10 +33,9 @@ class FileCache {
     this.store = new FileStore(this.cachePath);
     assert(this.cachePath && helper.isString(this.cachePath), 'config.cachePath must be set');
 
-    //gc interval by 1 hour
+    // gc interval by 1 hour
     this.gcType = `cache-${this.cachePath}`;
     gc(this, config.gcInterval);
-
   }
 
   /**
@@ -46,7 +45,7 @@ class FileCache {
    */
   [_getRelativePath](key) {
     key = helper.md5(key);
-    let dir = key.slice(0, this.pathDepth).split('').join(path.sep);
+    const dir = key.slice(0, this.pathDepth).split('').join(path.sep);
     return path.join(dir, key);
   }
 
@@ -56,19 +55,19 @@ class FileCache {
    * @return {Promise}      [description]
    */
   get(key) {
-    let relativePath = this[_getRelativePath](key);
+    const relativePath = this[_getRelativePath](key);
     return this.store.get(relativePath).then(content => {
-      if(!content) {
+      if (!content) {
         return;
       }
-      try{
+      try {
         content = JSON.parse(content);
-        if(Date.now() > content.expire){
+        if (Date.now() > content.expire) {
           return this.store.delete(relativePath);
-        }else{
+        } else {
           return content.content;
         }
-      }catch(e){
+      } catch (e) {
         return this.store.delete(relativePath);
       }
     }).catch(() => {});
@@ -82,11 +81,11 @@ class FileCache {
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
-    let relativePath = this[_getRelativePath](key);
-    let tmp = {
+    const relativePath = this[_getRelativePath](key);
+    const tmp = {
       content: content,
       expire: Date.now() + timeout
-    }
+    };
     return this.store.set(relativePath, JSON.stringify(tmp)).catch(() => {});
   }
 
@@ -96,7 +95,7 @@ class FileCache {
    * @return {Promise}     [description]
    */
   delete(key) {
-    let relativePath = this[_getRelativePath](key);
+    const relativePath = this[_getRelativePath](key);
     return this.store.delete(relativePath).catch(() => {});
   }
 
@@ -105,13 +104,13 @@ class FileCache {
    * @return {[type]} [description]
    */
   gc() {
-    let files = helper.getdirFiles(this.cachePath);
+    const files = helper.getdirFiles(this.cachePath);
     files.forEach(file => {
-      let filePath = path.join(this.cachePath, file);
+      const filePath = path.join(this.cachePath, file);
       readFile(filePath, 'utf8').then(content => {
-        if(!content) return Promise.reject(new Error('content empty'));
+        if (!content) return Promise.reject(new Error('content empty'));
         content = JSON.parse(content);
-        if(Date.now() > content.expire){
+        if (Date.now() > content.expire) {
           return Promise.reject(new Error('cache file expired'));
         }
       }).catch(() => {
@@ -119,7 +118,6 @@ class FileCache {
       });
     });
   }
-
 }
 
 module.exports = FileCache;
