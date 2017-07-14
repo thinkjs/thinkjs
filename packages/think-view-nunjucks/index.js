@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 17:14:46
+* @Last Modified time: 2017-07-14 17:42:02
 */
 const helper = require('think-helper');
 const nunjucks = require('nunjucks');
@@ -36,22 +36,23 @@ class Nunjucks {
   /**
    * render view file
    */
-  render(){
-    let env, viewPath = this.config.viewPath;
+  render() {
+    let env;
+    const viewPath = this.config.viewPath;
 
     const viewFile = this.viewFile;
-    if(viewFile.indexOf(viewPath) !== 0 ){
+    if (viewFile.indexOf(viewPath) !== 0) {
       env = nunjucks.configure(this.config);
-    }else{
+    } else {
       env = nunjucks.configure(viewPath, this.config);
     }
 
     const beforeRender = this.config.beforeRender;
-    if(beforeRender){
+    if (beforeRender) {
       beforeRender(env, nunjucks, this.config);
     }
 
-    let fn = helper.promisify(env.render, env);
+    const fn = helper.promisify(env.render, env);
     return fn(viewFile, this.viewData);
   }
 }
