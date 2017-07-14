@@ -10,7 +10,7 @@ npm install think-view-handlebars
 ```
 
 
-## How to Usage
+## Usage
 
 edit config file `src/config/adapter.js`, add options:
 
@@ -18,6 +18,11 @@ edit config file `src/config/adapter.js`, add options:
 const handlebars = require('think-view-handlebars');
 exports.view = {
   type: 'handlebars',
+  common: {
+    viewPath: path.join(think.ROOT_PATH, 'view'),
+    extname: '.html',
+    sep: '_' //seperator between controller and action
+  },
   handlebars: {
     handle: handlebars,
     beforeRender: (handlebars, config) => {
