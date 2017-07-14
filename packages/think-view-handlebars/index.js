@@ -8,7 +8,7 @@ const helper = require('think-helper');
 const handlebars = require('handlebars');
 const fs = require('fs');
 const readFile = helper.promisify(fs.readFile, fs);
-let cacheFn = {};
+const cacheFn = {};
 
 /**
  * handlebars default render options
@@ -26,40 +26,40 @@ const defaultOptions = {
  * handlebars view adapter
  */
 class Handlebars {
-    /**
+  /**
      * constructor
      * @param {String} viewFile view file, the template file path
      * @param {Object} viewData view data for render file
      * @param {Object} config options for handlebars
      */
-    constructor(viewFile, viewData, config) {
-      this.viewFile = viewFile;
-      this.viewData = viewData;
-      this.config = helper.extend({}, defaultOptions, config);
-    }
+  constructor(viewFile, viewData, config) {
+    this.viewFile = viewFile;
+    this.viewData = viewData;
+    this.config = helper.extend({}, defaultOptions, config);
+  }
 
-    /**
+  /**
      * render view file
      */
-    render() {
-      let viewFile = this.viewFile;
+  render() {
+    const viewFile = this.viewFile;
 
-      if(this.config.beforeRender){
-        this.config.beforeRender(handlebars, this.config);
-      }
-
-      if(this.config.cache && cacheFn[viewFile]) {
-        return Promise.resolve(cacheFn[viewFile](this.viewData));
-      }
-
-      return readFile(viewFile, 'utf8').then((data) => {
-        let compileFn = handlebars.compile(data, this.config);
-        if(this.config.cache) {
-          cacheFn[viewFile] = compileFn;
-        }
-        return compileFn(this.viewData);
-      });
+    if (this.config.beforeRender) {
+      this.config.beforeRender(handlebars, this.config);
     }
+
+    if (this.config.cache && cacheFn[viewFile]) {
+      return Promise.resolve(cacheFn[viewFile](this.viewData));
+    }
+
+    return readFile(viewFile, 'utf8').then((data) => {
+      const compileFn = handlebars.compile(data, this.config);
+      if (this.config.cache) {
+        cacheFn[viewFile] = compileFn;
+      }
+      return compileFn(this.viewData);
+    });
+  }
 }
 
 module.exports = Handlebars;
