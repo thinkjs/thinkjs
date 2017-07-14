@@ -1,6 +1,6 @@
 {
   "name": "think-svg-captcha",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "svg captcha for ThinkJS",
   "main": "index.js",
   "scripts": {
