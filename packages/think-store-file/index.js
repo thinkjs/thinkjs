@@ -35,7 +35,7 @@ class FileStore {
    * @return {String}     [description]
    */
   [getFilePath](relativePath) {
-    let filePath = path.join(this.storePath, relativePath);
+    const filePath = path.join(this.storePath, relativePath);
     assert(filePath.indexOf(this.storePath) === 0, 'the file should be in storePath');
     return filePath;
   }
@@ -47,19 +47,19 @@ class FileStore {
    * @return {Promise}       []
    */
   get(relativePath) {
-    let filePath = this[getFilePath](relativePath);
-    if(!helper.isFile(filePath)){
+    const filePath = this[getFilePath](relativePath);
+    if (!helper.isFile(filePath)) {
       return Promise.resolve();
     }
 
-    function getFileContent(times = 1){
+    function getFileContent(times = 1) {
       return readFile(filePath, {encoding: 'utf8'}).then(content => {
-        if(!content && times <= 3){
+        if (!content && times <= 3) {
           return Promise.reject(new Error(`content empty, file path is ${filePath}`));
         }
         return content;
       }).catch(err => {
-        if(times <= 3){
+        if (times <= 3) {
           return helper.timeout(10).then(() => {
             return getFileContent(times + 1);
           });
@@ -77,8 +77,8 @@ class FileStore {
    * @param {String} content []
    */
   set(relativePath, content) {
-    let filePath = this[getFilePath](relativePath);
-    let res = helper.mkdir(path.dirname(filePath));
+    const filePath = this[getFilePath](relativePath);
+    const res = helper.mkdir(path.dirname(filePath));
     assert(res, 'You don\'t have right to create file in the given path!');
     return writeFile(filePath, content).then(() => {
       return helper.chmod(filePath);
@@ -91,8 +91,8 @@ class FileStore {
    * @return {Promise}     []
    */
   delete(relativePath) {
-    let filePath = this[getFilePath](relativePath);
-    if(!helper.isFile(filePath)){
+    const filePath = this[getFilePath](relativePath);
+    if (!helper.isFile(filePath)) {
       return Promise.resolve();
     }
     return unlink(filePath);
