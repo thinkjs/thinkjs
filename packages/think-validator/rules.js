@@ -2,12 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 18:36:03
+* @Last Modified time: 2017-07-14 18:14:45
 */
 'use strict';
 const helper = require('think-helper');
 const validator = require('validator');
-const errors = require('./errors.js');
 const assert = require('assert');
 const METHOD_MAP = {
   GET: 'param',
@@ -19,7 +18,7 @@ const METHOD_MAP = {
   LINK: 'post',
   UNLINK: 'post'
 };
-let Rules = {}
+const Rules = {};
 
 /**
  * check value is set
@@ -40,10 +39,11 @@ Rules.required = (value, validValue) => {
 Rules._requiredIf = (validValue, { currentQuery, ctx, rules }) => {
   assert(helper.isArray(validValue), 'requiredIf\'s value should be array');
   validValue = validValue.slice();
-  let first = validValue[0];
-  if(rules && rules[first] && rules[first]['method']) {
+  const first = validValue[0];
+  if (rules && rules[first] && rules[first]['method']) {
     currentQuery = helper.extend({}, currentQuery);
-    currentQuery = ctx[rules[first]['method'].toUpperCase()];
+    const method = rules[first]['method'].toUpperCase();
+    currentQuery = ctx[METHOD_MAP[method]];
   }
   // just parse the first param
   validValue[0] = currentQuery[first];
@@ -57,8 +57,8 @@ Rules._requiredIf = (validValue, { currentQuery, ctx, rules }) => {
  * @return {Boolean}               [description]
  */
 Rules.requiredIf = (value, { parsedValidValue }) => {
-  let first = parsedValidValue[0];
-  let others = parsedValidValue.slice(1);
+  const first = parsedValidValue[0];
+  const others = parsedValidValue.slice(1);
   return others.indexOf(first) > -1;
 };
 
@@ -80,8 +80,8 @@ Rules._requiredNotIf = (validValue, { currentQuery, ctx, rules }) => {
  * @return {Boolean}                 []
  */
 Rules.requiredNotIf = (value, { parsedValidValue }) => {
-  let first = parsedValidValue[0];
-  let others = parsedValidValue.slice(1);
+  const first = parsedValidValue[0];
+  const others = parsedValidValue.slice(1);
   return (others.indexOf(first) === -1);
 };
 
@@ -97,9 +97,10 @@ Rules._requiredWith = (validValue, { currentQuery, rules, ctx }) => {
 
   // parsed all the param
   return validValue.map(item => {
-    if(rules && rules[item] && rules[item]['method']) {
+    if (rules && rules[item] && rules[item]['method']) {
       currentQuery = helper.extend({}, currentQuery);
-      currentQuery = ctx[rules[item]['method'].toUpperCase()];
+      const method = rules[item]['method'].toUpperCase();
+      currentQuery = ctx[METHOD_MAP[method]];
     }
     return !helper.isTrueEmpty(currentQuery[item]) ? currentQuery[item] : '';
   });
@@ -204,9 +205,10 @@ Rules.contains = (value, { validValue }) => {
  * @return {String}      []
  */
 Rules._equals = (validValue, { currentQuery, rules, ctx }) => {
-  if(rules && rules[validValue] && rules[validValue]['method']) {
+  if (rules && rules[validValue] && rules[validValue]['method']) {
     currentQuery = helper.extend({}, currentQuery);
-    currentQuery = ctx[rules[validValue]['method'].toUpperCase()];
+    const method = rules[validValue]['method'].toUpperCase();
+    currentQuery = ctx[METHOD_MAP[method]];
   }
   return currentQuery[validValue];
 };
@@ -249,9 +251,9 @@ Rules.different = (value, { parsedValidValue }) => {
  * @return {Array}      []
 */
 Rules._before = (validValue) => {
- if(validValue === true) {
-    let now = new Date();
-    let nowTime = now.getFullYear() + '-' +
+  if (validValue === true) {
+    const now = new Date();
+    const nowTime = now.getFullYear() + '-' +
                   (now.getMonth() + 1) + '-' +
                   now.getDate() + ' ' +
                   now.getHours() + ':' +
@@ -311,7 +313,7 @@ Rules.alpha = value => {
  */
 Rules.alphaDash = value => {
   value = validator.toString(value);
-  return /^[A-Z_]+$/i.test(value)
+  return /^[A-Z_]+$/i.test(value);
 };
 
 /**
@@ -385,9 +387,9 @@ Rules.creditCard = value => {
 Rules.currency = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'currency\'s value should be object or true');
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isCurrency(value);
-  }else {
+  } else {
     return validator.isCurrency(value, validValue);
   }
 };
@@ -399,7 +401,7 @@ Rules.currency = (value, { validValue }) => {
  * @return {Boolean}       []
  */
 Rules.date = value => {
-  if(isNaN(Date.parse(value))){
+  if (isNaN(Date.parse(value))) {
     return false;
   }
   return true;
@@ -414,7 +416,6 @@ Rules.decimal = value => {
   value = validator.toString(value);
   return validator.isDecimal(value);
 };
-
 
 /**
  * check if the string is a number that's divisible by another.
@@ -436,9 +437,9 @@ Rules.divisibleBy = (value, { validValue }) => {
 Rules.email = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'email\'s value should be object or true');
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isEmail(value);
-  }else {
+  } else {
     return validator.isEmail(value, validValue);
   }
 };
@@ -452,9 +453,9 @@ Rules.email = (value, { validValue }) => {
 Rules.fqdn = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'fqdn\'s value should be object or true');
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isFQDN(value);
-  }else {
+  } else {
     return validator.isFQDN(value, validValue);
   }
 };
@@ -468,9 +469,9 @@ Rules.fqdn = (value, { validValue }) => {
 Rules.float = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'float\'s value should be object or true');
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isFloat(value);
-  }else {
+  } else {
     return validator.isFloat(value, validValue);
   }
 };
@@ -609,9 +610,9 @@ Rules.notIn = (value, { validValue }) => {
 Rules.int = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'int\'s value should be object or true');
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isInt(value);
-  }else {
+  } else {
     return validator.isInt(value, validValue);
   }
 };
@@ -656,9 +657,9 @@ Rules.uppercase = value => {
  */
 Rules.mobile = (value, { validValue }) => {
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isMobilePhone(value, 'zh-CN');
-  }else {
+  } else {
     return validator.isMobilePhone(value, validValue);
   }
 };
@@ -673,7 +674,6 @@ Rules.mongoId = value => {
   return validator.isMongoId(value);
 };
 
-
 /**
  * check if the string contains one or more multibyte chars.
  * @param  {String} value [description]
@@ -683,7 +683,6 @@ Rules.multibyte = value => {
   value = validator.toString(value);
   return validator.isMultibyte(value);
 };
-
 
 /**
  * check if the string is an URL.
@@ -695,9 +694,9 @@ Rules.url = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'url\'s validValue should be object or true');
 
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isURL(value);
-  }else {
+  } else {
     return validator.isURL(value, validValue);
   }
 };
@@ -724,14 +723,13 @@ Rules.field = value => {
   });
 };
 
-
 /**
  * check is image file
  * @param  {String} value []
  * @return {Boolean}       []
  */
 Rules.image = value => {
-  if(helper.isObject(value)){
+  if (helper.isObject(value)) {
     value = value.originalFilename;
   }
   return /\.(?:jpeg|jpg|png|bmp|gif|svg)$/i.test(value);
@@ -813,9 +811,9 @@ Rules.regexp = (value, { validValue }) => {
 Rules.issn = (value, { validValue }) => {
   assert((helper.isObject(validValue) || validValue === true), 'issn\'s validValue should be object or true');
   value = validator.toString(value);
-  if(validValue === true) {
+  if (validValue === true) {
     return validator.isISSN(value);
-  }else {
+  } else {
     return validator.isISSN(value, validValue);
   }
 };
@@ -839,7 +837,6 @@ Rules.md5 = value => {
   value = validator.toString(value);
   return validator.isMD5(value);
 };
-
 
 /**
  * check if the string is macaddress.

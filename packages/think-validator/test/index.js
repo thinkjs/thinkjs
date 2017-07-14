@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-13 18:34:12
+* @Last Modified time: 2017-07-14 18:54:07
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -169,13 +169,13 @@ test('rule-requiredWith, if more than one in this.query then required = true 2',
     }
   }
   let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
+    POST: {
       name: 'lushijie'
     }
   });
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
-  t.true(Object.keys(ret).length === 0);
+  t.true(Object.keys(ret).length > 0);
 });
 
 test('rule-requiredWith, if zero one in this.query then required = false', t => {
