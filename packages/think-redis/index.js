@@ -2,27 +2,26 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 11:40:38
+* @Last Modified time: 2017-07-14 18:40:02
 */
 const helper = require('think-helper');
 const assert = require('assert');
-const ioredis = require('ioredis');
+const IOredis = require('ioredis');
 const Debounce = require('think-debounce');
 const debounceInstance = new Debounce();
-let _validExpire = Symbol('validExpire');
-let _getConnection = Symbol('_getConnection');
+const _validExpire = Symbol('validExpire');
+const _getConnection = Symbol('_getConnection');
 
-let cacheConn = {};
+const cacheConn = {};
 
 // redis config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
 const defaultConfig = {
   port: 6379,
   host: '127.0.0.1',
-  password: '',
+  password: ''
 };
 
 class thinkRedis {
-
   constructor(config) {
     config = helper.extend({}, defaultConfig, config);
     this.redis = this[_getConnection](config);
@@ -34,9 +33,9 @@ class thinkRedis {
    * @return {Object}        [description]
    */
   [_getConnection](config) {
-    let md5 = helper.md5(JSON.stringify(config));
-    if(!cacheConn[md5] || !cacheConn[md5].connector.connecting) {
-      cacheConn[md5] = new ioredis(config);
+    const md5 = helper.md5(JSON.stringify(config));
+    if (!cacheConn[md5] || !cacheConn[md5].connector.connecting) {
+      cacheConn[md5] = new IOredis(config);
     }
     return cacheConn[md5];
   }
@@ -45,7 +44,7 @@ class thinkRedis {
    * valid expire num
    */
   [_validExpire](num) {
-    let msg = 'expire should be an integer great than zero';
+    const msg = 'expire should be an integer great than zero';
     assert(num && /^[+]?[0-9]+$/.test(num) && num > 0, msg);
   }
 
@@ -68,12 +67,12 @@ class thinkRedis {
    * @return {Promise}      [description]
    */
   set(key, value, type, expire) {
-    if(type) {
-      if(helper.isString(type)) {
+    if (type) {
+      if (helper.isString(type)) {
         assert(type === 'EX' || type === 'PX', 'type should eq "EX" or "PX"');
         this[_validExpire](expire);
         return this.redis.set(key, value, type, expire);
-      }else {
+      } else {
         this[_validExpire](type);
         return this.redis.set(key, value, 'PX', type);
       }
@@ -125,12 +124,10 @@ class thinkRedis {
    * @return {void} [description]
    */
   close() {
-    if(this.redis.connector.connecting) {
+    if (this.redis.connector.connecting) {
       this.redis.disconnect();
     }
   }
 }
 
 module.exports = thinkRedis;
-
-
