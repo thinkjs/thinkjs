@@ -8,7 +8,6 @@ const helper = require('think-helper');
 const pug = require('pug');
 const renderFile = helper.promisify(pug.renderFile, pug);
 
-
 /**
  * pug default render options
  * more options see at https://pugjs.org/api/reference.html
@@ -37,16 +36,15 @@ class Pug {
    * render view file
    */
   render() {
-    let viewPath = this.config.viewPath;
+    const viewPath = this.config.viewPath;
     this.config.basedir = viewPath;
 
-    if(this.config.beforeRender){
+    if (this.config.beforeRender) {
       this.config.beforeRender(pug, this.config);
     }
 
     return renderFile(this.viewFile, this.config);
   }
 }
-
 
 module.exports = Pug;
