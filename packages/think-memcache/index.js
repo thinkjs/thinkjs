@@ -9,16 +9,16 @@ const assert = require('assert');
 const Debounce = require('think-debounce');
 const debounceInstance = new Debounce();
 const Memcached = require('memcache-plus');
-let _getConnection = Symbol('getConnection');
-let _validExpire = Symbol('validExpire');
-let cacheConn = {};
+const _getConnection = Symbol('getConnection');
+const _validExpire = Symbol('validExpire');
+const cacheConn = {};
 
 const defaultOptions = {
   hosts: ['127.0.0.1:11211'],
   maxValueSize: 1048576,
   netTimeout: 5000,
   reconnect: true
-}
+};
 
 class thinkMemcache {
   /**
@@ -30,7 +30,6 @@ class thinkMemcache {
     this.config = helper.extend({}, defaultOptions, config);
     this.memcache = this[_getConnection](this.config);
   }
-
 
   /**
    * valid expire num
@@ -45,8 +44,8 @@ class thinkMemcache {
    * @return {Object}        [description]
    */
   [_getConnection](config) {
-    let md5 = helper.md5(JSON.stringify(config));
-    if(!cacheConn[md5] || Object.keys(cacheConn[md5].connections) === 0) {
+    const md5 = helper.md5(JSON.stringify(config));
+    if (!cacheConn[md5] || Object.keys(cacheConn[md5].connections) === 0) {
       cacheConn[md5] = new Memcached(config);
     }
     return cacheConn[md5];
@@ -62,7 +61,7 @@ class thinkMemcache {
   set(key, value, expire) {
     expire = expire || 0;
     this[_validExpire](expire);
-    if(expire > 0){
+    if (expire > 0) {
       expire = Math.round(Date.now() / 1000 + expire / 1000); // deal with expire greater than 30 days
     }
     return this.memcache.set(key, value, expire);
