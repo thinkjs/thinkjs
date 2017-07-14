@@ -11,48 +11,48 @@ const debounceInstance = new Debounce();
  * @param {Mixed} value
  * @param {String|Object} config
  */
-function thinkCache(name, value, config){
+function ThinkCache(name, value, config) {
   assert(name && helper.isString(name), 'cache.name must be a string');
-  if(this.config){
+  if (this.config) {
     config = helper.parseAdapterConfig(this.config('cache'), config);
-  }else{
+  } else {
     config = helper.parseAdapterConfig(config);
   }
-  const handle = config.handle;
-  assert(helper.isFunction(handle), 'cache.handle must be a function');
+  const Handle = config.handle;
+  assert(helper.isFunction(Handle), 'cache.handle must be a function');
   delete config.handle;
-  const instance = new handle(config);
-  //delete cache
-  if(value === null){
+  const instance = new Handle(config);
+  // delete cache
+  if (value === null) {
     return Promise.resolve(instance.delete(name));
   }
-  //get cache
-  if(value === undefined){
+  // get cache
+  if (value === undefined) {
     return debounceInstance.debounce(name, () => {
       return instance.get(name);
     });
   }
-  //get cache when value is function
-  if(helper.isFunction(value)){
+  // get cache when value is function
+  if (helper.isFunction(value)) {
     return debounceInstance.debounce(name, () => {
       let cacheData;
       return instance.get(name).then(data => {
-        if(data === undefined){
+        if (data === undefined) {
           return value(name);
         }
         cacheData = data;
       }).then(data => {
-        if(data !== undefined){
+        if (data !== undefined) {
           cacheData = data;
           return instance.set(name, data);
         }
       }).then(() => {
         return cacheData;
-      })
+      });
     });
   }
-  //set cache
+  // set cache
   return Promise.resolve(instance.set(name, value));
 }
 
-module.exports = thinkCache;
+module.exports = ThinkCache;
