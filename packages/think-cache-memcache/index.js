@@ -20,7 +20,6 @@ const defaultConfig = {
  * memcache cache adapter
  */
 class MemcacheCache {
-
   constructor(config = {}) {
     config = helper.extend({}, defaultConfig, config);
     this.memcache = new Memcache(config);
@@ -33,7 +32,7 @@ class MemcacheCache {
    * @return {Promise}      [description]
    */
   get(key) {
-    return  this.memcache.get(key).catch(() => {});
+    return this.memcache.get(key).catch(() => {});
   }
 
   /**
@@ -44,7 +43,7 @@ class MemcacheCache {
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
-    return  this.memcache.set(key, content, timeout).catch(() => {});
+    return this.memcache.set(key, content, timeout).catch(() => {});
   }
 
   /**
@@ -55,7 +54,6 @@ class MemcacheCache {
   delete(key) {
     return this.memcache.delete(key).catch(() => {});
   }
-
 }
 
 module.exports = MemcacheCache;

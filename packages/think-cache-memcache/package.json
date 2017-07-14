@@ -4,8 +4,9 @@
   "description": "Redis cache Adapter for ThinkJS'S Cache",
   "main": "index.js",
   "scripts": {
-    "test": "eslint index.js && nyc ava test/index.js",
-    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
+    "lint": "eslint --fix index.js",
+    "test": "npm run lint && nyc ava test/index.js",
+    "coverage": "npm test && nyc report --reporter=html"
   },
   "ava": {
     "files": [
@@ -38,7 +39,8 @@
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",
     "coveralls": "~2.11.16",
-    "eslint": "~3.15.0",
+    "eslint": "~4.2.0",
+    "eslint-config-think": "~1.0.1",
     "nyc": "~10.1.2"
   },
   "dependencies": {
