@@ -67,8 +67,8 @@ module.exports = function parseRouter(options, app) {
     app.routers = formatRouters(app.routers);
   });
   // format routers when routerChange event fired
-  app.on('routerChange', () => {
-    app.routers = formatRouters(app.routers);
+  app.on('routerChange', routers => {
+    app.routers = formatRouters(routers);
   });
   return function router(ctx, next) {
     const instance = new Router(ctx, next, options, app);
