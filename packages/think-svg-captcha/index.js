@@ -20,7 +20,7 @@ const defaultOptions = {
   fontPath: '',
   fontSize: 32, // captcha text size
   charPreset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' // random character preset
-}
+};
 
 class ThinkSvgCaptcha {
   /**
@@ -32,11 +32,11 @@ class ThinkSvgCaptcha {
     this.options = helper.extend({}, defaultOptions, options);
     this.options.charPreset && (svgCaptcha.options.charPreset = this.options.charPreset);
 
-    if(this.options.fontPath) {
-      let theCacheFont = cacheFont[this.options.fontPath];
-      if(theCacheFont) {
+    if (this.options.fontPath) {
+      const theCacheFont = cacheFont[this.options.fontPath];
+      if (theCacheFont) {
         this.options.font = theCacheFont;
-      }else {
+      } else {
         svgCaptcha.loadFont(this.options.fontPath);
         cacheFont[this.options.fontPath] = svgCaptcha.options.font;
       }
@@ -59,9 +59,6 @@ class ThinkSvgCaptcha {
   svgCaptcha(text) {
     return svgCaptcha(text, this.options);
   }
-
 }
 
 module.exports = ThinkSvgCaptcha;
-
-
