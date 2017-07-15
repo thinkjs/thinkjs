@@ -19,5 +19,8 @@ module.exports = function(opts) {
 
         return ctx.throw(404, `url \`${ctx.path}\` not found.`);
       })
-      .catch(err => tracer.run(ctx, err));
+      .catch(err => {
+        tracer.run(ctx, err);
+        console.error(err);
+      });
 };
