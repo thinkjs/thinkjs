@@ -3,6 +3,11 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Internal Server Error - ThinkJS</title>
+	<style>
+	<% htmlWebpackPlugin.files.css.forEach(function(cssFile) { %>
+		<%=compilation.assets[cssFile.substr(htmlWebpackPlugin.files.publicPath.length)].source()%>
+	<% }) %>
+	</style>
 </head>
 <body>
 <div class="header">

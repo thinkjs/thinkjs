@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <title>Not Found - ThinkJS</title>
+  <style type="text/css">
+  <% htmlWebpackPlugin.files.css.forEach(function(cssFile) { %>
+    <%=compilation.assets[cssFile.substr(htmlWebpackPlugin.files.publicPath.length)].source()%>
+  <% }) %>
+  </style>
 </head>
 <body>
 <div class="header">

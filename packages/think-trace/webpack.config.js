@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const base = path.join(__dirname, 'template');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
   entry: {
     '404': path.join(base, 'src/404'),
@@ -32,10 +33,10 @@ module.exports = {
       },
       {
         test: /\.css?$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
       },
       {
         test: /\.(jpg|png)$/,
@@ -48,6 +49,10 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       $: 'zepto'
+    }),
+    new ExtractTextPlugin({
+      filename: getPath => getPath('[name].css'),
+      allChunks: true
     }),
     new HtmlWebpackPlugin({
       template: path.join(base, 'src/404/index.html'),
