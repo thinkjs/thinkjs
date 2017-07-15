@@ -29,7 +29,8 @@ class Pug {
    */
   constructor(viewFile, viewData, config) {
     this.viewFile = viewFile;
-    this.config = helper.extend({}, defaultOptions, config, viewData);
+    this.viewData = viewData;
+    this.config = helper.extend({}, defaultOptions, config);
   }
 
   /**
@@ -42,8 +43,8 @@ class Pug {
     if (this.config.beforeRender) {
       this.config.beforeRender(pug, this.config);
     }
-
-    return renderFile(this.viewFile, this.config);
+    let config = Object.assign(this.config,this.viewData);
+    return renderFile(this.viewFile, config);
   }
 }
 
