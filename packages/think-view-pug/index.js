@@ -43,7 +43,7 @@ class Pug {
     if (this.config.beforeRender) {
       this.config.beforeRender(pug, this.config);
     }
-    let config = Object.assign(this.config,this.viewData);
+    const config = Object.assign(this.config, this.viewData);
     return renderFile(this.viewFile, config);
   }
 }
