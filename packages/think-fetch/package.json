@@ -1,6 +1,6 @@
 {
   "name": "think-fetch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fetch for ThinkJS 3.x",
   "main": "index.js",
   "dependencies": {
@@ -11,10 +11,13 @@
     "babel-eslint": "^7.2.1",
     "coveralls": "^2.13.0",
     "eslint": "^3.18.0",
+    "eslint-config-think": "^1.0.1",
     "nyc": "^10.2.0"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/index.js"
+    "test": "eslint index.js && nyc ava test/index.js",
+    "lint": "eslint index.js",
+    "lint-fix": "eslint --fix index.js"
   },
   "ava": {
     "require": [
