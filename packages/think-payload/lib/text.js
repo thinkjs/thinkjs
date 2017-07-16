@@ -1,11 +1,11 @@
 const raw = require('raw-body');
 const inflate = require('inflation');
 
-module.exports = function (ctx, opts = {}) {
+module.exports = function(ctx, opts = {}) {
   const req = ctx.req;
 
   // defaults
-  let len = req.headers['content-length'];
+  const len = req.headers['content-length'];
   const encoding = req.headers['content-encoding'] || 'identity';
   if (len && encoding === 'identity') opts.length = ~~len;
   opts.encoding = opts.encoding || 'utf8';

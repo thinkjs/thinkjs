@@ -21,7 +21,9 @@
     "supertest": "^3.0.0"
   },
   "scripts": {
-    "test": "eslint index.js && nyc ava test/index.js"
+    "test": "eslint index.js lib/ && nyc ava test/index.js",
+    "lint": "eslint index.js lib/",
+    "lint-fix": "eslint --fix index.js lib/"
   },
   "repository": {
     "type": "git",

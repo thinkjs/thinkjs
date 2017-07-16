@@ -1,8 +1,8 @@
 const fs = require('fs');
 const helper = require('think-helper');
 const formidable = require('formidable');
-const fs_unlink = helper.promisify(fs.unlink, fs);
-const fs_access = helper.promisify(fs.access, fs);
+const fsUnlink = helper.promisify(fs.unlink, fs);
+const fsAccess = helper.promisify(fs.access, fs);
 
 module.exports = (ctx, opts = {}) => {
   const req = ctx.req;
@@ -11,7 +11,7 @@ module.exports = (ctx, opts = {}) => {
   ctx.res.once('finish', () => {
     const files = ctx.request.body.file;
     const unlinks = Object.keys(files).map(key => {
-      return fs_access(files[key].path).then(() => fs_unlink(files[key].path)).catch(() => {});
+      return fsAccess(files[key].path).then(() => fsUnlink(files[key].path)).catch(() => {});
     });
     Promise.all(unlinks);
   });
