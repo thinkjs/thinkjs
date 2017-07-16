@@ -10,7 +10,7 @@ module.exports = {
     return ctx.session(session_name).then(value => {
       if (!value) throw new Error('Verification failed');
 
-      const token = ctx.query[form_name] || ctx.request.body[form_name] || ctx.get(header_name);
+      const token = ctx.query[form_name] || (ctx.request.body.post && ctx.request.body.post[form_name]) || ctx.get(header_name);
       if (token !== value) throw new Error('Verification failed');
     });
   },
