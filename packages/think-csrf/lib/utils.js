@@ -8,10 +8,10 @@ module.exports = {
 
   checkCsrf(ctx, {session_name, form_name, header_name}) {
     return ctx.session(session_name).then(value => {
-      if (!value) return Promise.reject();
+      if (!value) throw new Error('Verification failed');
 
       const token = ctx.query[form_name] || ctx.request.body[form_name] || ctx.get(header_name);
-      if (token !== value) return Promise.reject();
+      if (token !== value) throw new Error('Verification failed');
     });
   },
 
@@ -22,6 +22,6 @@ module.exports = {
           return value;
         }
       });
-    }
+    };
   }
 };

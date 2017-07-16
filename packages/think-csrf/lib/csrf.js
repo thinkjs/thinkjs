@@ -14,5 +14,5 @@ module.exports = (options = {}) => {
       ctx.status = options.errno;
       ctx.message = options.errmsg;
     });
-  }
+  };
 };
