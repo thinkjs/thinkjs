@@ -1,6 +1,6 @@
 const parse = require('./lib/index.js');
 
-module.exports = function (opts = {}) {
+module.exports = function(opts = {}) {
   const extendTypes = Object.assign({
     json: [],
     form: [],
@@ -12,19 +12,19 @@ module.exports = function (opts = {}) {
   // default json types
   const jsonTypes = [
     'application/json',
-    ...extendTypes.json,
+    ...extendTypes.json
   ];
 
   // default form types
   const formTypes = [
     'application/x-www-form-urlencoded',
-    ...extendTypes.form,
+    ...extendTypes.form
   ];
 
   // default text types
   const textTypes = [
     'text/plain',
-    ...extendTypes.text,
+    ...extendTypes.text
   ];
 
   // default multipart-form types
@@ -39,7 +39,7 @@ module.exports = function (opts = {}) {
     ...extendTypes.xml
   ];
 
-  return function (ctx, next) {
+  return function(ctx, next) {
     if (ctx.request.body !== undefined) return next();
 
     return parseBody(ctx, {
@@ -58,7 +58,7 @@ module.exports = function (opts = {}) {
       ctx.request.body = body;
       return next();
     });
-  }
+  };
 
   function parseBody(ctx, opts) {
     const methods = ['POST', 'PUT', 'DELETE', 'PATCH', 'LINK', 'UNLINK'];
