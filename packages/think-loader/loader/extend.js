@@ -42,7 +42,12 @@ const ExtendLoader = {
       }
       assign(type, interopRequire(filepath));
     });
+    // config extend
     extend.forEach(item => {
+      if (helper.isFunction(item)) {
+        console.error(`extend item can not be a function, ${item.name}`);
+        return;
+      }
       for (const type in item) {
         assert(allowExtends.indexOf(type) > -1, `extend type=${type} not allowed, allow types: ${allowExtends.join(', ')}`);
         assign(type, item[type]);
