@@ -40,6 +40,9 @@ class Middleware {
       if (helper.isString(item)) {
         return {handle: item};
       }
+      if (helper.isFunction(item)) {
+        return {handle: () => item};
+      }
       return item;
     }).filter(item => {
       return !('enable' in item) || item.enable;
