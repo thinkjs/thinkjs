@@ -1,0 +1,77 @@
+{
+  "name": "think-monitor-service",
+  "version": "1.0.0",
+  "description": "think monitor service",
+  "main": "server.js",
+  "devDependencies": {
+    "babel-core": "^6.3.26",
+    "babel-eslint": "^4.1.8",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "css-loader": "^0.23.0",
+    "directory-copy": "^0.1.0",
+    "eslint": "^1.10.3",
+    "eslint-loader": "^1.1.1",
+    "eslint-plugin-react": "^3.11.3",
+    "file-loader": "^0.8.4",
+    "glob": "^6.0.0",
+    "imports-loader": "^0.6.5",
+    "lodash": "^3.10.1",
+    "minimist": "^1.2.0",
+    "node-sass": "^3.4.2",
+    "nodemon": "^1.11.0",
+    "postcss-loader": "^0.8.0",
+    "rimraf": "^2.4.3",
+    "sass-loader": "3.2.0",
+    "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "1.12.1"
+  },
+  "dependencies": {
+    "antd": "^2.10.4",
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.3",
+    "express": "^4.15.3",
+    "history": "^2.1.1",
+    "influx": "^5.0.7",
+    "lodash": "^3.10.1",
+    "node-schedule": "^1.2.3",
+    "querystring": "^0.2.0",
+    "rb-component": "^2.0.1",
+    "react": "^0.14.9",
+    "react-dom": "^0.14.9",
+    "react-highcharts": "^12.0.0",
+    "react-router": "^2.4.1",
+    "reqwest": "^2.0.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "web": "webpack --watch",
+    "serve:dev": "webpack-dev-server --config=webpack.config.js --content-base web/ --inline",
+    "serve:dist": "webpack-dev-server --env dist --config=webpack.config.js --content-base web/ --inline",
+    "copy": "node -e \"require('directory-copy')({src: __dirname + '/web',dest: __dirname + '/dist',excludes: [/^\\app/]},function(err){console.log('done!')});\"",
+    "clean": "rimraf web/build/* dist/*",
+    "clean:web": "rimraf web/build/*",
+    "release:dev": "npm run clean && webpack --config=webpack.config.js && npm run copy && npm run clean:web && node postrelease.js",
+    "release:dist": "npm run clean && webpack --env dist --config=webpack.config.js && npm run copy && npm run clean:web && node postrelease.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-monitor-service.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "monitor",
+    "metrics"
+  ],
+  "author": "Sijie Cai <sijie.cai@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-monitor-service/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-monitor-service#readme"
+}
