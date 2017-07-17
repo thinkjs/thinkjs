@@ -124,6 +124,18 @@ function mockConsoleError(){
   }
 }
 
+function mockThinkValidator(){
+  mock('think-validator', class Validator{
+    constructor(ctx){
+      this.ctx = ctx;
+    }
+    validate(rules,msgs){
+      return rules.mockResult
+    }
+    static addRule(){}
+  });
+}
+
 function stop(name) {
   if (!name) {
     mock.stopAll()
@@ -139,5 +151,6 @@ module.exports = {
   mockThinkPm2,
   mockCookies,
   mockConsoleError,
+  mockThinkValidator,
   stop
 }
