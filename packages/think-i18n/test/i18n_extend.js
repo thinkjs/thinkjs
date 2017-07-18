@@ -38,7 +38,9 @@ test('when getLocale is empty read from accept-language', t=>{
   var instance = getInstance();
   mockLocaleConfigs(instance);
   var extend = instance.extend({});
-  var mockController = {ctx: {request: {header: {'accept-language': 'a,b,c,d'}}}};
+  var mockController = {
+    ctx: {request: {header: {'accept-language': 'a,b,c,d'}}}
+  };
   var locales = extend.controller.getLocale.bind(mockController)();
   t.deepEqual(locales, ['a','b','c','d']);
 });
@@ -186,7 +188,7 @@ test('i18n will throw if no matched localeConfig is found', t=>{
   t.is(err.message, 'locale config someLocale not found');
 });
 
-test('i18n will return i18n object not match locales for moment and numeral', t=>{
+test('i18n will return i18n object not match locales for moment and numeral and trigger viewReay event', t=>{
   var moment = {locale(a){this.locale = a;}};
   var numeral = {locale(a){this.locale = a;}};
   var jedParam;
@@ -198,8 +200,19 @@ test('i18n will return i18n object not match locales for moment and numeral', t=
   mockLocaleConfigs(instance, {someLocale: {translation: {}}});
   var extend = instance.extend({jedOptions: {value: 'value'}});
   var controller = extend.controller;
+  var evtListened = false;
+  var mockController = {
+    assign(){
+      evtListened = true;
+    },
+    ctx: {
+      app:{
+        once:(evtName,cb)=>{if(evtName === 'viewReady'){cb()}}
+      }
+    }
+  };
 
-  const result = controller.i18n('someLocale');
+  const result = controller.i18n.bind(mockController)('someLocale');
 
   t.is(moment.locale, 'en');
   t.is(numeral.locale, 'en');
@@ -208,6 +221,7 @@ test('i18n will return i18n object not match locales for moment and numeral', t=
   t.is(result.__('some key'), 'some key');
   t.is(result.__.moment, moment);
   t.is(result.__.numeral, numeral);
+  t.is(evtListened,true);
 });
 
 test('i18n will return i18n object not match locales for moment and numeral no jedOptions', t=>{
@@ -222,8 +236,15 @@ test('i18n will return i18n object not match locales for moment and numeral no j
   mockLocaleConfigs(instance, {someLocale: {translation: {}}});
   var extend = instance.extend({});
   var controller = extend.controller;
-
-  const result = controller.i18n('someLocale');
+  var mockController = {
+    assign(){},
+    ctx: {
+      app:{
+        once:(evtName,cb)=>{if(evtName === 'viewReady'){cb()}}
+      }
+    }
+  };
+  const result = controller.i18n.bind(mockController)('someLocale');
 
   t.is(moment.locale, 'en');
   t.is(numeral.locale, 'en');
@@ -248,8 +269,15 @@ test('i18n will return i18n object and change locale accordingly', t=>{
   mockLocaleConfigs(instance, {someLocale: {dateFormat: {}, numeralFormat: {}, translation: {}}});
   var extend = instance.extend({});
   var controller = extend.controller;
-
-  const result = controller.i18n('someLocale');
+  var mockController = {
+    assign(){},
+    ctx: {
+      app:{
+        once:(evtName,cb)=>{if(evtName === 'viewReady'){cb()}}
+      }
+    }
+  };
+  const result = controller.i18n.bind(mockController)('someLocale');
 
   t.is(moment.locale, 'someLocale');
   t.is(numeral.locale, 'someLocale');
@@ -259,5 +287,3 @@ test('i18n will return i18n object and change locale accordingly', t=>{
   t.is(result.__.moment, moment);
   t.is(result.__.numeral, numeral);
 });
-
-
