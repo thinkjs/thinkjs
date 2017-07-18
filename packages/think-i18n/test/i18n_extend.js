@@ -207,7 +207,7 @@ test('i18n will return i18n object not match locales for moment and numeral and 
     },
     ctx: {
       app:{
-        once:(evtName,cb)=>{if(evtName === 'viewReady'){cb()}}
+        once:(evtName,cb)=>{if(evtName === 'viewInit'){cb()}}
       }
     }
   };
@@ -240,7 +240,7 @@ test('i18n will return i18n object not match locales for moment and numeral no j
     assign(){},
     ctx: {
       app:{
-        once:(evtName,cb)=>{if(evtName === 'viewReady'){cb()}}
+        once:(evtName,cb)=>{if(evtName === 'viewInit'){cb()}}
       }
     }
   };
@@ -273,7 +273,7 @@ test('i18n will return i18n object and change locale accordingly', t=>{
     assign(){},
     ctx: {
       app:{
-        once:(evtName,cb)=>{if(evtName === 'viewReady'){cb()}}
+        once:(evtName,cb)=>{if(evtName === 'viewInit'){cb()}}
       }
     }
   };

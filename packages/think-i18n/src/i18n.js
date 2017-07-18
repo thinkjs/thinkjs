@@ -171,7 +171,7 @@ module.exports = class i18n {
           i18n.__.jed = jed;
           i18n.__.moment = moment;
           i18n.__.numeral = numeral;
-          this.ctx.app.once('viewReady', () => {
+          this.ctx.app.once('viewInit', () => {
             this.assign('__', i18n.__);
           });
           return i18n;
