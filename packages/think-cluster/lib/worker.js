@@ -12,8 +12,8 @@ const defaultOptions = {
   debug: false,
   logger: console.error.bind(console),
   disableKeepAlive: false, // disabled connect keep alive
-  onUncaughtException: () => {},
-  onUnhandledRejection: () => {},
+  onUncaughtException: () => {}, // onUncaughtException event handle
+  onUnhandledRejection: () => {}, // onUnhandledRejection event handle
   processKillTimeout: 10 * 1000 // 10s
 };
 /**
@@ -59,16 +59,15 @@ class Worker {
       timer.unref();
     }
     const worker = cluster.worker;
-    worker.on('disconnect', () => {
-      logger(`process exit by disconnect event, pid: ${process.pid}`);
-      process.exit(0);
-    });
-
     const server = this.options.server;
     logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
     server.close(() => {
       logger(`server closed, pid: ${process.pid}`);
-      worker.disconnect();
+      try {
+        worker.disconnect();
+      } catch (e) {
+        logger(`already disconnect, pid:${process.pid}`);
+      }
     });
   }
   /**

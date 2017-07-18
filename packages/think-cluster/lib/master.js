@@ -24,9 +24,16 @@ class Master {
     process.on(signal, () => {
       for (const id in cluster.workers) {
         const worker = cluster.workers[id];
+        if (!this.isAliveWorker(worker)) continue;
         worker.send(util.THINK_RELOAD_SIGNAL);
       }
     });
+  }
+  isAliveWorker(worker) {
+    if (worker.state === 'disconnected' || worker.needKilled) {
+      return false;
+    }
+    return true;
   }
   /**
    * get fork env
@@ -98,9 +105,7 @@ class Master {
     const aliveWorkers = [];
     for (const id in cluster.workers) {
       const worker = cluster.workers[id];
-      if (worker.state === 'disconnected' || worker.needKilled) {
-        continue;
-      }
+      if (!this.isAliveWorker(worker)) continue;
       aliveWorkers.push(worker);
     }
     if (!aliveWorkers.length) return;
