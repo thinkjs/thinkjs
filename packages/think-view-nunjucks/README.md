@@ -47,13 +47,15 @@ exports.view = {
   type: 'nunjucks',
   nunjucks: {
     handle: nunjucks,
-    tags: {
-      blockStart: '<%',
-      blockEnd: '%>',
-      variableStart: '<$',
-      variableEnd: '$>',
-      commentStart: '<#',
-      commentEnd: '#>'
+    options: {
+      tags: {
+        blockStart: '<%',
+        blockEnd: '%>',
+        variableStart: '<$',
+        variableEnd: '$>',
+        commentStart: '<#',
+        commentEnd: '#>'
+      }
     },
     beforeRender: (env, nunjucks, config) => {}
   }
