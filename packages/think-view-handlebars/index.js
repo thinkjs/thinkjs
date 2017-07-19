@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-19 12:35:24
+* @Last Modified time: 2017-07-19 13:15:52
 */
 const helper = require('think-helper');
 const handlebars = require('handlebars');
@@ -36,7 +36,7 @@ class Handlebars {
     this.viewFile = viewFile;
     this.viewData = viewData;
     this.config = config;
-    this.handleConfig = helper.extend({}, defaultOptions, config.options);
+    this.handleOptions = helper.extend({}, defaultOptions, config.options);
   }
 
   /**
@@ -46,16 +46,16 @@ class Handlebars {
     const viewFile = this.viewFile;
 
     if (this.config.beforeRender) {
-      this.config.beforeRender(handlebars, this.handleConfig);
+      this.config.beforeRender(handlebars, this.handleOptions);
     }
 
-    if (this.handleConfig.cache && cacheFn[viewFile]) {
+    if (this.handleOptions.cache && cacheFn[viewFile]) {
       return Promise.resolve(cacheFn[viewFile](this.viewData));
     }
 
     return readFile(viewFile, 'utf8').then((data) => {
-      const compileFn = handlebars.compile(data, this.handleConfig);
-      if (this.handleConfig.cache) {
+      const compileFn = handlebars.compile(data, this.handleOptions);
+      if (this.handleOptions.cache) {
         cacheFn[viewFile] = compileFn;
       }
       return compileFn(this.viewData);

@@ -25,7 +25,7 @@ exports.view = {
   },
   handlebars: {
     handle: handlebars,
-    beforeRender: (handlebars, config) => {
+    beforeRender: (handlebars, handleOptions) => {
       // todo
     }
   }
@@ -54,7 +54,7 @@ exports.view = {
     options: {
       strict: true
     },
-    beforeRender: (handlebars, config) => {
+    beforeRender: (handlebars, handleOptions) => {
       // todo
     }
   }
@@ -69,7 +69,7 @@ exports.view = {
   type: 'handlebars',
   handlebars: {
     handle: handlebars,
-    beforeRender: (handlebars, config) => {
+    beforeRender: (handlebars, handleOptions) => {
       handlebars.registerHelper("studyStatus", function(passingYear) {
          if(passingYear < 2017) {
             return "passed";
