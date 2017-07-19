@@ -51,7 +51,9 @@ exports.view = {
   type: 'handlebars',
   handlebars: {
     handle: handlebars,
-    strict: true,
+    options: {
+      strict: true
+    },
     beforeRender: (handlebars, config) => {
       // todo
     }

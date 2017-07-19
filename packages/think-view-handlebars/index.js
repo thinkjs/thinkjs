@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 17:08:45
+* @Last Modified time: 2017-07-19 12:35:24
 */
 const helper = require('think-helper');
 const handlebars = require('handlebars');
@@ -30,12 +30,13 @@ class Handlebars {
      * constructor
      * @param {String} viewFile view file, the template file path
      * @param {Object} viewData view data for render file
-     * @param {Object} config options for handlebars
+     * @param {Object} config for handlebars
      */
   constructor(viewFile, viewData, config) {
     this.viewFile = viewFile;
     this.viewData = viewData;
-    this.config = helper.extend({}, defaultOptions, config);
+    this.config = config;
+    this.handleConfig = helper.extend({}, defaultOptions, config.options);
   }
 
   /**
@@ -45,16 +46,16 @@ class Handlebars {
     const viewFile = this.viewFile;
 
     if (this.config.beforeRender) {
-      this.config.beforeRender(handlebars, this.config);
+      this.config.beforeRender(handlebars, this.handleConfig);
     }
 
-    if (this.config.cache && cacheFn[viewFile]) {
+    if (this.handleConfig.cache && cacheFn[viewFile]) {
       return Promise.resolve(cacheFn[viewFile](this.viewData));
     }
 
     return readFile(viewFile, 'utf8').then((data) => {
-      const compileFn = handlebars.compile(data, this.config);
-      if (this.config.cache) {
+      const compileFn = handlebars.compile(data, this.handleConfig);
+      if (this.handleConfig.cache) {
         cacheFn[viewFile] = compileFn;
       }
       return compileFn(this.viewData);

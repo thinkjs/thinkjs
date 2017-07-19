@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-14 10:56:08
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-27 17:05:37
+* @Last Modified time: 2017-07-19 12:25:57
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -53,7 +53,7 @@ test.serial('get content err', async t => {
 });
 
 test.serial('handlebars with cache', async t => {
-  let config = helper.extend({}, defaultOptions, {viewPath: viewBasePath, cache: true});
+  let config = helper.extend({}, defaultOptions, {viewPath: viewBasePath, options: {cache: true}});
   let handlebars = new Handlebars(path.join(viewBasePath, './home.tpl'), viewData, config);
 
   t.is(await handlebars.render(), await handlebars.render());
