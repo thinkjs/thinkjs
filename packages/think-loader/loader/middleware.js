@@ -102,7 +102,7 @@ class Middleware {
     const sysMiddlewares = this.getFiles(path.join(thinkPath, 'lib/middleware'));
     const appMiddlewarePath = path.join(appPath, isMultiModule ? 'common/middleware' : 'middleware');
     const appMiddlewares = this.getFiles(appMiddlewarePath);
-    debug(`load middlewares: ${Object.keys(middlewares).join(', ')}`)
+    debug(`load middlewares: ${Object.keys(middlewares).join(', ')}`);
     const middlewares = Object.assign({}, sysMiddlewares, appMiddlewares);
     return middlewares;
   }
