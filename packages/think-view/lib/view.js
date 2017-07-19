@@ -71,7 +71,6 @@ class View {
       assert(helper.isFunction(config.beforeRender), 'config.beforeRender must be a function');
     }
     const Handle = config.handle;
-    delete config.handle;
     const instance = new Handle(file, this.viewData, config);
     return Promise.resolve(instance.render());
   }
