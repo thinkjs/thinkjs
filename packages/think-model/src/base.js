@@ -164,9 +164,6 @@ module.exports = class {
    * @return {}          []
    */
   page(page, listRows = this.config.pagesize) {
-    if (page === undefined) {
-      return this;
-    }
     if (helper.isArray(page)) {
       listRows = page[1] || listRows;
       page = page[0];
