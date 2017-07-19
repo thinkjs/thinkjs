@@ -57,7 +57,7 @@ exports.view = {
         commentEnd: '#>'
       }
     },
-    beforeRender: (env, nunjucks, config) => {}
+    beforeRender: (env, nunjucks, handleOptions) => {}
   }
 }
 ```
@@ -72,7 +72,7 @@ exports.view = {
   type: 'nunjucks',
   nunjucks: {
     handle: nunjucks,
-    beforeRender: (env, nunjucks, config) => {
+    beforeRender: (env, nunjucks, handleOptions) => {
       env.addGlobal('think', think);
       env.addGlobal('JSON', JSON);
     }
