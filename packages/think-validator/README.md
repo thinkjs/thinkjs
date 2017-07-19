@@ -133,6 +133,7 @@ let rules = {
 
 Nested validation will valid the item in array or object. But it only support one layer child validation and every child'rule should be the same for now.
 
+
 #### Nested Validation for Array
 
 ```js
@@ -157,6 +158,66 @@ let rules = {
     required: true
   }
 }
+```
+
+
+### Alias for Param Name
+
+For example,
+
+```js
+let rules = {
+  user: {
+    required: true
+  }
+}
+this.validate(rules);
+```
+
+If valid failed, the default error would be, {user: 'user can not be blank'}, but sometime you may want 'user' to be '用户名', you can add 'aliasName' for the rule. Just like:
+
+```js
+let rules = {
+  user: {
+    required: true,
+    aliasName: '用户名'
+  }
+}
+
+this.validate(rules);
+```
+
+And the error would be {user: '用户名 can not be blank'}.
+
+If you want use `aliasName` for array or object, please add `aliasName` in children:
+
+```js
+// for array
+let rules = {
+  user: {
+    array: true,
+    children: {
+      aliasName: '用户名'
+    }
+  }
+}
+
+this.validate(rules);
+```
+
+
+```js
+// for object
+let rules = {
+  user: {
+    object: true,
+    children: {
+      aliasName: '用户名'
+    }
+  }
+}
+
+this.validate(rules);
 ```
 
 ### Custom Error Message

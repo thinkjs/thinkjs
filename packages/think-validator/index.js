@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-14 19:09:00
+* @Last Modified time: 2017-07-19 09:52:41
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -128,7 +128,7 @@ class Validator {
     }
 
     // format error message rule name
-    const originRuleName = this._formatNestedRuleName(argName);
+    const originRuleName = rule.aliasName || this._formatNestedRuleName(argName);
 
     // set defalut error message
     if (!errMsg) {
