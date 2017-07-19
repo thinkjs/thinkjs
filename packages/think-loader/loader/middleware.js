@@ -3,6 +3,7 @@ const helper = require('think-helper');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
 const pathToRegexp = require('path-to-regexp');
+const debug = require('debug')('think-loader')
 
 class Middleware {
   interopRequire(path) {
@@ -101,6 +102,7 @@ class Middleware {
     const sysMiddlewares = this.getFiles(path.join(thinkPath, 'lib/middleware'));
     const appMiddlewarePath = path.join(appPath, isMultiModule ? 'common/middleware' : 'middleware');
     const appMiddlewares = this.getFiles(appMiddlewarePath);
+    debug(`load middlewares: ${Object.keys(middlewares).join(', ')}`)
     const middlewares = Object.assign({}, sysMiddlewares, appMiddlewares);
     return middlewares;
   }
