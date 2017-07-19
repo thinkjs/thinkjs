@@ -17,7 +17,7 @@ module.exports = {
       instance.assign('controller', this); // controller
       instance.assign('config', this.config()); // config
       instance.assign('ctx', this.ctx); // context
-      instance.assign('__', this.__); // i18n
+      this.ctx.app.emit('viewInit', instance, this); // pass view controller
       this[viewInstance] = instance;
     }
     return this[viewInstance];
