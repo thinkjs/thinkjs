@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-10 09:38:38
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-28 09:16:20
+* @Last Modified time: 2017-07-19 13:10:49
 */
 const helper = require('think-helper');
 const pug = require('pug');
@@ -25,12 +25,13 @@ class Pug {
    * constructor
    * @param {String} viewFile view file
    * @param {Object} viewData view data for render file
-   * @param {Object} config options for pug
+   * @param {Object} config for pug
    */
   constructor(viewFile, viewData, config) {
     this.viewFile = viewFile;
     this.viewData = viewData;
-    this.config = helper.extend({}, defaultOptions, config);
+    this.config = config;
+    this.handleOptions = helper.extend({}, defaultOptions, config.options);
   }
 
   /**
@@ -41,9 +42,9 @@ class Pug {
     this.config.basedir = viewPath;
 
     if (this.config.beforeRender) {
-      this.config.beforeRender(pug, this.config);
+      this.config.beforeRender(pug, this.handleOptions);
     }
-    const config = Object.assign(this.config, this.viewData);
+    const config = Object.assign(this.handleOptions, this.viewData);
     return renderFile(this.viewFile, config);
   }
 }

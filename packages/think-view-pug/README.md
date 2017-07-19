@@ -25,7 +25,7 @@ exports.view = {
   },
   pug: {
     handle: pug,
-    beforeRender: (pug, config) => {
+    beforeRender: (pug, handleOptions) => {
       // todo
     }
   }
@@ -47,9 +47,11 @@ exports.view = {
   type: 'pug',
   pug: {
     handle: pug,
-    cache: true,
-    self: true,
-    beforeRender: (pug, config) => {
+    options: {
+      cache: true,
+      self: true
+    },
+    beforeRender: (pug, handleOptions) => {
       // todo
     }
   }
@@ -66,7 +68,7 @@ exports.view = {
   type: 'pug',
   pug: {
     handle: pug,
-    beforeRender: (pug, config) => {
+    beforeRender: (pug, handleOptions) => {
       pug.filters['my-own-filter'] = (text, options) => {
         if (options.addStart) text = 'Start\n' + text;
         if (options.addEnd)   text = text + '\nEnd';
