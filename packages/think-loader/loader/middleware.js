@@ -86,7 +86,7 @@ class Middleware {
       if (!/\.(?:js|es)$/.test(file)) {
         return;
       }
-      const match = file.match(/(\w+)\.\w+$/);
+      const match = file.match(/(.+)\.\w+$/);
       if (match && match[1]) {
         ret[match[1]] = this.interopRequire(path.join(middlewarePath, file));
       }
