@@ -3,7 +3,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-validator/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-validator?branch=master)
 [![npm](https://img.shields.io/npm/v/think-validator.svg?style=flat-square)](https://www.npmjs.com/package/think-validator)
 
-
 - [think-validator](#think-validator)
     + [How to Use in Thinkjs3.0](#how-to-use-in-thinkjs30)
     + [Validation Rules Config](#validation-rules-config)
@@ -13,6 +12,7 @@
     + [Nested Validation](#nested-validation)
       - [Nested Validation for Array](#nested-validation-for-array)
       - [Nested Validation for Object](#nested-validation-for-object)
+    + [Alias for Param Name](#alias-for-param-name)
     + [Custom Error Message](#custom-error-message)
       - [For Not Object Type](#for-not-object-type)
       - [For Object Type](#for-object-type)
