@@ -21,6 +21,7 @@ awesome projects for `ThinkJS 3.x`
 * [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) use nunjucks to render view files
 * [think-view-handlebars](https://github.com/thinkjs/think-view-handlebars) use handlebars to render view files
 * [think-view-ejs](https://github.com/thinkjs/think-view-ejs) use ejs to render view files
+* [think-view-xtemplate](https://github.com/lizheming/think-view-xtemplate) use xtemplate to render view files
 
 ### session
 * [think-session-cookie](https://github.com/thinkjs/think-session-cookie) use cookie to store session data
