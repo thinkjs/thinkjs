@@ -15,23 +15,23 @@ class Ejs {
    * @param {Object} data
    * @param {Object} config
    */
-  constructor(file, data, config) {
-    this.file = file;
-    this.data = data;
-    this.config = helper.extend({
-      filename: file
-    }, defaultOptions, config);
+  constructor(viewFile, viewData, config) {
+    this.viewFile = viewFile;
+    this.viewData = viewData;
+    this.config = config;
+    this.handleOptions = helper.extend({
+      filename: viewFile
+    }, defaultOptions, config.options);
   }
   /**
    * render
-   * @return {Promise} 
+   * @return {Promise}
    */
   render() {
-    const config = this.config;
-    if (config.beforeRender) {
-      config.beforeRender(ejs, config);
+    if (this.config.beforeRender) {
+      this.config.beforeRender(ejs, this.handleOptions);
     }
-    return renderFile(this.file, this.data, config);
+    return renderFile(this.viewFile, this.viewData, this.handleOptions);
   }
 }
 

@@ -28,7 +28,7 @@ exports.view = {
   ejs: {
     //options
     handle: ejs,
-    beforeRender: (ejs, config) => {
+    beforeRender: (ejs, handleOptions) => {
       //do something before render the template.
     }
   }
@@ -49,19 +49,21 @@ const defaultOptions = {
 
 You can override it and add other options by editing file  `src/config/adapter.js` :
 
-````js
+```js
 exports.view = {
   type: 'ejs',
   ejs: {
-    //override `cache` option
-    cache: false,
     handle: ejs,
-    beforeRender: (ejs, config) => {
+    options: {
+      //override `cache` option
+      cache: false
+    },
+    beforeRender: (ejs, handleOptions) => {
       //do something before render the template.
     }
   }
 }
-````
+```
 
 Please refer to [https://github.com/mde/ejs#options](https://github.com/mde/ejs#options) for more information on EJS options.
 
@@ -70,5 +72,5 @@ Please refer to [https://github.com/mde/ejs#options](https://github.com/mde/ejs#
 `beforeRender`  is a function that you can handle something before rendering the template file. It exposes 2 parameters:
 
 *  `ejs` — the original `ejs` module
-* `config` — current configure of ejs adapter
+* `handleOptions` — current configure of ejs adapter
 
