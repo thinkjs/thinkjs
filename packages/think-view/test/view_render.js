@@ -57,14 +57,14 @@ test('render function -- beforeRender', t => {
   t.not(promise.then,undefined);
 });
 
-test('render function -- delete config.handle', t => {
-  const View = getView();
-  const view = new View(ctx);
-  const file = 'index.html';
-  let config = getConfig();
-  view.render(file,config);
-  t.is(config.handle,undefined);
-});
+// test('render function -- delete config.handle', t => {
+//   const View = getView();
+//   const view = new View(ctx);
+//   const file = 'index.html';
+//   let config = getConfig();
+//   view.render(file,config);
+//   t.is(config.handle,undefined);
+// });
 
 test('render function -- empty config', t => {
   let assertCallParams = [];
