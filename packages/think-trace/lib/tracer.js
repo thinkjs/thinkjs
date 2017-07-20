@@ -73,6 +73,7 @@ module.exports = class Tracer {
         err.toString()
           .replace(/[\r\n]+/g, '<br/>')
           .replace(/"/g, '\\"')
+          .replace(/\\/g, '\\\\')
       );
   }
 
