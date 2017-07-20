@@ -8,6 +8,7 @@ const websocket = require('think-websocket');
 var regCn = /^cn.*$/;
 var regEn = /^en.*$/;
 const i18n =  createI18n({
+  app: think.app,
   i18nFolder: path.resolve(__dirname, './locales'),
   defaultLocale: 'zh-cn',
   getLocale: {by: 'query', name: 'locale'},
