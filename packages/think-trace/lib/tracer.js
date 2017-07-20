@@ -72,8 +72,8 @@ module.exports = class Tracer {
         '{{errMsg}}',
         err.toString()
           .replace(/[\r\n]+/g, '<br/>')
-          .replace(/"/g, '\\"')
           .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
       );
   }
 
