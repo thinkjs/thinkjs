@@ -30,7 +30,35 @@ test('extend will call loadLocaleConfigs with options', t=>{
   t.is(expectOptions, options);
   t.is(helper.isObject(controller), true);
   t.is(helper.isFunction(controller.getLocale), true);
-  t.is(helper.isFunction(controller.i18n), true);
+  t.is(helper.isFunction(controller.getI18n), true);
+});
+
+
+test('will listen to viewInit event when passed in app', t=>{
+  var expectOptions;
+  var actualFiled, actualInstance, actualEventKey;
+
+  var mockView = {assign(field, result){
+    actualFiled = field;
+    actualInstance = result;
+  }}
+  var mockController = {getI18n(){
+    return 'i18nInstance';
+  }};
+  var options = {app: {on: function(eventKey, action){
+    actualEventKey = eventKey;
+    action(mockView, mockController);
+  }}};
+
+  var instance = getInstance();
+
+  instance.loadLocaleConfigs = function(){};
+
+  var extend = instance.extend(options);
+
+  t.is(actualFiled, '__');
+  t.is(actualEventKey, 'viewInit');
+  t.is(actualInstance, 'i18nInstance');
 });
 
 
@@ -145,9 +173,9 @@ test('i18n will use param if provide', t=>{
   mockLocaleConfigs(instance);
   var extend = instance.extend({});
   var err = t.throws(()=>{
-    extend.controller.i18n({});
+    extend.controller.getI18n({});
   }, Error);
-  t.is(err.message, 'controller.i18n(locale), locale must be string or undefined');
+  t.is(err.message, 'controller.getI18n(locale), locale must be string or undefined');
 });
 
 test('i18n will use debugLocale if provide and param not provided', t=>{
@@ -155,9 +183,9 @@ test('i18n will use debugLocale if provide and param not provided', t=>{
   mockLocaleConfigs(instance);
   var extend = instance.extend({debugLocale: {}});
   var err = t.throws(()=>{
-    extend.controller.i18n();
+    extend.controller.getI18n();
   }, Error);
-  t.is(err.message, 'controller.i18n(locale), locale must be string or undefined');
+  t.is(err.message, 'controller.getI18n(locale), locale must be string or undefined');
 });
 
 
@@ -170,11 +198,11 @@ test('i18n will use getLocale if not provide param and debugLocale', t=>{
   var controller = extend.controller;
   controller.getLocale = function(){callTimes++; return 'getLocale';}
   var err = t.throws(()=>{
-    controller.i18n();
+    controller.getI18n();
   }, Error);
   t.is(callTimes, 1);
   t.is(expectParam, 'getLocale');
-  t.is(err.message, 'controller.i18n(locale), locale must be string or undefined');
+  t.is(err.message, 'controller.getI18n(locale), locale must be string or undefined');
 });
 
 test('i18n will throw if no matched localeConfig is found', t=>{
@@ -183,12 +211,12 @@ test('i18n will throw if no matched localeConfig is found', t=>{
   var extend = instance.extend({});
   var controller = extend.controller;
   var err = t.throws(()=>{
-    controller.i18n('someLocale');
+    controller.getI18n('someLocale');
   }, Error);
   t.is(err.message, 'locale config someLocale not found');
 });
 
-test('i18n will return i18n object not match locales for moment and numeral and trigger viewReay event', t=>{
+test('i18n will return i18n object no match locales for moment and numeral', t=>{
   var moment = {locale(a){this.locale = a;}};
   var numeral = {locale(a){this.locale = a;}};
   var jedParam;
@@ -204,24 +232,18 @@ test('i18n will return i18n object not match locales for moment and numeral and 
   var mockController = {
     assign(){
       evtListened = true;
-    },
-    ctx: {
-      app:{
-        once:(evtName,cb)=>{if(evtName === 'viewInit'){cb()}}
-      }
     }
   };
 
-  const result = controller.i18n.bind(mockController)('someLocale');
+  const __ = controller.getI18n.bind(mockController)('someLocale');
 
   t.is(moment.locale, 'en');
   t.is(numeral.locale, 'en');
   t.deepEqual(jedParam, {value: 'value', locale_data: {}});
 
-  t.is(result.__('some key'), 'some key');
-  t.is(result.__.moment, moment);
-  t.is(result.__.numeral, numeral);
-  t.is(evtListened,true);
+  t.is(__('some key'), 'some key');
+  t.is(__.moment, moment);
+  t.is(__.numeral, numeral);
 });
 
 test('i18n will return i18n object not match locales for moment and numeral no jedOptions', t=>{
@@ -238,22 +260,17 @@ test('i18n will return i18n object not match locales for moment and numeral no j
   var controller = extend.controller;
   var mockController = {
     assign(){},
-    ctx: {
-      app:{
-        once:(evtName,cb)=>{if(evtName === 'viewInit'){cb()}}
-      }
-    }
   };
-  const result = controller.i18n.bind(mockController)('someLocale');
+  const __ = controller.getI18n.bind(mockController)('someLocale');
 
   t.is(moment.locale, 'en');
   t.is(numeral.locale, 'en');
   t.deepEqual(jedParam, {locale_data: {}});
 
-  t.is(result.__('some key'), 'some key');
+  t.is(__('some key'), 'some key');
 
-  t.is(result.__.moment, moment);
-  t.is(result.__.numeral, numeral);
+  t.is(__.moment, moment);
+  t.is(__.numeral, numeral);
 });
 
 
@@ -270,20 +287,15 @@ test('i18n will return i18n object and change locale accordingly', t=>{
   var extend = instance.extend({});
   var controller = extend.controller;
   var mockController = {
-    assign(){},
-    ctx: {
-      app:{
-        once:(evtName,cb)=>{if(evtName === 'viewInit'){cb()}}
-      }
-    }
+    assign(){}
   };
-  const result = controller.i18n.bind(mockController)('someLocale');
+  const __ = controller.getI18n.bind(mockController)('someLocale');
 
   t.is(moment.locale, 'someLocale');
   t.is(numeral.locale, 'someLocale');
   t.deepEqual(jedParam, {locale_data: {}});
 
-  t.is(result.__('some key'), 'some key');
-  t.is(result.__.moment, moment);
-  t.is(result.__.numeral, numeral);
+  t.is(__('some key'), 'some key');
+  t.is(__.moment, moment);
+  t.is(__.numeral, numeral);
 });

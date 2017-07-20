@@ -30,7 +30,7 @@ module.exports = class i18n {
   }
 
   prepareOptions(options) {
-    var {i18nFolder, localesMapping, getLocale} = options;
+    var { i18nFolder, localesMapping, getLocale } = options;
     this.assert('isString', i18nFolder, 'i18nFolder should be type of string');
     this.assert('isDirectory', i18nFolder, 'i18nFolder must be directory path');
     this.assert('isFunction', localesMapping, 'missing configure localesMapping(locales){return locale;}');
@@ -44,7 +44,7 @@ module.exports = class i18n {
     const customNumeralFormats = {};
     localeFiles.map(filePath => {
       var config = require(filePath);
-      const {localeId, dateFormat, numeralFormat, translation} = config;
+      const { localeId, dateFormat, numeralFormat, translation } = config;
       localeConfigs[localeId] = config;
       if (dateFormat) {
         moment.locale(localeId, dateFormat);
@@ -58,7 +58,7 @@ module.exports = class i18n {
 
       assert(helper.isObject(translation), `missing translation in locale ${localeId}, refer to jed locale_data`);
     });
-    return {localeConfigs, customNumeralFormats};
+    return { localeConfigs, customNumeralFormats };
   }
 
   applyNumeralCustomFormat(customNumeralFormats) {
@@ -88,7 +88,7 @@ module.exports = class i18n {
 
   loadLocaleConfigs(options) {
     var localeFiles = this.prepareOptions(options);
-    var {localeConfigs, customNumeralFormats} = this.loadLocaleSettings(localeFiles);
+    var { localeConfigs, customNumeralFormats } = this.loadLocaleSettings(localeFiles);
     this.applyNumeralCustomFormat(customNumeralFormats);
 
     return localeConfigs;
@@ -97,85 +97,91 @@ module.exports = class i18n {
   extend(options) {
     var localeConfigs = this.loadLocaleConfigs(options);
 
-    var {getLocale, localesMapping, debugLocale, jedOptions = {}} = options;
+    var { app, getLocale, localesMapping, debugLocale, jedOptions = {} } = options;
     var curLocale, i18n;
+
+    function _getLocale() {
+      let locale;
+      if (!getLocale) {
+        var header = this.ctx.request.header;
+        if (header && header['accept-language']) {
+          return header['accept-language'].split(',');
+        }
+        return [];
+      }
+      if (helper.isObject(getLocale)) {
+        switch (getLocale.by) {
+          case 'query':
+            if (!getLocale.reg) {
+              getLocale.reg = new RegExp(`${getLocale.name}=([^&]*)`);
+            }
+            locale = (getLocale.reg.exec(decodeURIComponent(this.ctx.request.url)) || {})[1];
+            return locale ? [locale] : [];
+          case 'cookie':
+            var c = this.ctx.request.header.cookie;
+            if (c) {
+              locale = cookie.parse(c)[getLocale.name];
+            }
+            return locale ? [locale] : [];
+          default:
+            throw new Error('getLocale.by must be value of "header", "query" or  "cookie".');
+        }
+      } else if (helper.isFunction(getLocale)) {
+        return getLocale(this.ctx);
+      }
+    }
+
+    function getI18nInstance(locale) {
+      if (!locale) {
+        locale = debugLocale || localesMapping(this.getLocale());
+      }
+
+      if (!helper.isString(locale)) {
+        throw new Error('controller.getI18n(locale), locale must be string or undefined');
+      }
+      if (locale === curLocale && i18n) return i18n;
+      curLocale = locale;
+
+      var localeConfig = localeConfigs[locale];
+      if (!localeConfig) {
+        throw new Error(`locale config ${locale} not found`);
+      }
+
+      // jed
+      var jed = new Jed(Object.assign(jedOptions, { locale_data: localeConfig.translation }));
+
+      // moment
+      if (localeConfig.dateFormat) {
+        moment.locale(locale);
+      } else {
+        moment.locale('en');
+      }
+
+      if (localeConfig.numeralFormat) {
+        numeral.locale(locale);
+      } else {
+        numeral.locale('en');
+      }
+      const __ = function(key) {
+        return jed.gettext(key);
+      };
+      __.jed = jed;
+      __.moment = moment;
+      __.numeral = numeral;
+
+      return __;
+    }
+
+    if (app) {
+      app.on('viewInit', (view, controller) => {
+        view.assign('__', controller.getI18n());
+      });
+    }
+
     return {
       controller: {
-        getLocale() {
-          let locale;
-          if (!getLocale) {
-            var header = this.ctx.request.header;
-            if (header && header['accept-language']) {
-              return header['accept-language'].split(',');
-            }
-            return [];
-          }
-          if (helper.isObject(getLocale)) {
-            switch (getLocale.by) {
-              case 'query':
-                if (!getLocale.reg) {
-                  getLocale.reg = new RegExp(`${getLocale.name}=([^&]*)`);
-                }
-                locale = (getLocale.reg.exec(decodeURIComponent(this.ctx.request.url)) || {})[1];
-                return locale ? [locale] : [];
-              case 'cookie':
-                var c = this.ctx.request.header.cookie;
-                if (c) {
-                  locale = cookie.parse(c)[getLocale.name];
-                }
-                return locale ? [locale] : [];
-              default:
-                throw new Error('getLocale.by must be value of "header", "query" or  "cookie".');
-            }
-          } else if (helper.isFunction(getLocale)) {
-            return getLocale(this.ctx);
-          }
-        },
-        // all i18n provider re-initialization
-        // locale(String);
-        i18n(locale) {
-          if (!locale) {
-            locale = debugLocale || localesMapping(this.getLocale());
-          }
-
-          if (!helper.isString(locale)) {
-            throw new Error('controller.i18n(locale), locale must be string or undefined');
-          }
-          if (locale === curLocale && i18n) return i18n;
-          curLocale = locale;
-
-          var localeConfig = localeConfigs[locale];
-          if (!localeConfig) {
-            throw new Error(`locale config ${locale} not found`);
-          }
-
-          // jed
-          var jed = new Jed(Object.assign(jedOptions, {locale_data: localeConfig.translation}));
-
-          // moment
-          if (localeConfig.dateFormat) {
-            moment.locale(locale);
-          } else {
-            moment.locale('en');
-          }
-
-          if (localeConfig.numeralFormat) {
-            numeral.locale(locale);
-          } else {
-            numeral.locale('en');
-          }
-          i18n = {__: function(key) {
-            return jed.gettext(key);
-          }
-          };
-          i18n.__.jed = jed;
-          i18n.__.moment = moment;
-          i18n.__.numeral = numeral;
-          this.ctx.app.once('viewInit', () => {
-            this.assign('__', i18n.__);
-          });
-          return i18n;
-        }
+        getLocale: _getLocale,
+        getI18n: getI18nInstance
       }
     };
   }

@@ -43,6 +43,7 @@ module.exports = [
 Each locale settings is a javascript file. see [example](https://github.com/thinkjs/think-i18n/blob/master/i18n_example/en.js)
 ```js
 module.exports = {
+    app: think.app, // if not passed in, __ will not be auto `assign` into `think-view` instance
     localeId,
     translation,
     dateFormat, // optional
@@ -62,12 +63,22 @@ module.exports = {
 
 ####  Controller
 
+You can get i18n instance or current `locale` in controller.
+
+```js
+
     async indexAction(){
       this.assign(this.i18n(/*forceLocale*/));
       ...
     }
 
+```
+
 ####  View
+
+If you used [think-view](https://github.com/thinkjs/think-view) ， think-i18n will auto-inject an i18n instance  into `__` field, like
+`this.assign('__', this.getI18n())`.
+
 
 ```js
 
