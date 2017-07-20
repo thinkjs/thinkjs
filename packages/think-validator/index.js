@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-19 09:52:41
+* @Last Modified time: 2017-07-20 16:44:09
 */
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
@@ -34,7 +34,7 @@ class Validator {
       'requiredWithOut',
       'requiredWithOutAll'
     ];
-    this.skippedValidNames = ['value', 'default', 'trim', 'method'].concat(this.requiredValidNames);
+    this.skippedValidNames = ['value', 'default', 'trim', 'method', 'aliasName'].concat(this.requiredValidNames);
     this.basicType = ['int', 'string', 'float', 'array', 'object', 'boolean'];
     this.errors = helper.extend({}, preErrors);
   }
