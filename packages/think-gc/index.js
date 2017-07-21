@@ -33,7 +33,7 @@ function gc(instance, interval = MIN_STEP, MIN_INTERVAL = MIN_STEP){
         gcTypes[type]();
       }
     }, MIN_INTERVAL);
-    timer.unref();
+    timer.unref && timer.unref();
   }
 }
 
