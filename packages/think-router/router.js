@@ -150,7 +150,7 @@ class Router {
       }
       return this.ctx.redirect(rule.path);
     }
-    // remove /
+    // remove needless `/` in pathname
     let pathname = rule.path.replace(/^\/|\/$/g, '').replace(/\/{2,}/g, '/');
     let query = rule.query || {};
     const queryPos = pathname.indexOf('?');
@@ -208,13 +208,23 @@ class Router {
    * parse router
    */
   run() {
+    const enableDefaultRouter = this.options.enableDefaultRouter;
+    const pathname = this.pathname;
+    // ignore user defined rules for home page request, optimize request performance
+    // default home page pathname is `/`, when user define prefix, it may be an empty string
+    if (enableDefaultRouter && (pathname === '' || pathname === '/')) {
+      this.ctx.module = this.modules.length ? this.options.defaultModule : '';
+      this.ctx.controller = this.options.defaultController;
+      this.ctx.action = this.options.defaultAction;
+      return this.next();
+    }
     const rules = this.getRules();
     const matchedRule = this.getMatchedRule(rules);
     if (matchedRule) {
       debug(`matchedRule: ${JSON.stringify(matchedRule)}`);
       return this.parseRule(matchedRule);
     }
-    if (this.options.enableDefaultRouter) {
+    if (enableDefaultRouter) {
       return this.parseRule({path: this.pathname});
     }
     return this.next();
