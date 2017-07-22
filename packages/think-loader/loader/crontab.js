@@ -1,18 +1,28 @@
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
+const helper = require('think-helper');
 const debug = require('debug')(`think-loader-${process.pid}`);
 
 /**
  * load crontab
  */
 module.exports = function loader(appPath, modules) {
-  let filepath = '';
   if (modules.length) {
-    filepath = path.join(appPath, 'common/config/crontab.js');
-  } else {
-    filepath = path.join(appPath, 'config/crontab.js');
+    let crontab = [];
+    modules.forEach(m => {
+      const filepath = path.join(appPath, `${m}/config/crontab.js`);
+      if (helper.isFile(filepath)) {
+        debug(`load file: ${filepath}`);
+        const data = interopRequire(filepath, true) || [];
+        crontab = crontab.concat(data);
+      }
+    });
+    return crontab;
   }
-  debug(`load file: ${filepath}`);
-  const data = interopRequire(filepath, true) || [];
-  return data;
+  const filepath = path.join(appPath, 'config/crontab.js');
+  if (helper.isFile(filepath)) {
+    debug(`load file: ${filepath}`);
+    return interopRequire(filepath, true) || [];
+  }
+  return [];
 };
