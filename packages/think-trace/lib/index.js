@@ -10,8 +10,11 @@ module.exports = function(opts) {
     sourceMapSupport.install();
   }
 
-  if (helper.isFunction(opts.error)) {
-    opts.error = console.error.bind(console);
+  let errorCallback;
+  if (opts && helper.isFunction(opts.error)) {
+    errorCallback = opts.error;
+  } else {
+    errorCallback = console.error.bind(console);
   }
 
   return (ctx, next) =>
@@ -25,7 +28,7 @@ module.exports = function(opts) {
         return ctx.throw(404, `url \`${ctx.path}\` not found.`);
       })
       .catch(err => {
-        opts.error(err);
+        errorCallback(err);
         return tracer.run(ctx, err);
       });
 };
