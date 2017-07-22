@@ -19,6 +19,10 @@ module.exports = class Tracer {
    * get error template file content
    */
   getTemplateContent() {
+    if(!this.debug && this.err404TemplateContent && this.err500TemplateContent) {
+      return Promise.resolve();
+    }
+
     return Promise.all([
       /** 404 */
       readFileAsync(this.err404Template, {encoding: 'utf-8'})
