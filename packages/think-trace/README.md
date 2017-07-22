@@ -23,7 +23,8 @@ npm install think-trace
 ```js
 const traceMiddleware = require('think-trace');
 app.use(traceMiddleware({
-  sourceMap: false
+  sourceMap: false,
+  error: err => console.error(err)
 }));
 ```
 
@@ -35,7 +36,15 @@ Modify `src/config/middleware.js`:
 const trace = require('think-trace');
 
 module.exports = [
-  {handle: trace, options: {}}
+  {
+    handle: trace, 
+    options: {
+      sourceMap: false,
+      error(err) {
+        return console.error(err);
+      }
+    }
+  }
 ];
 ```
 
@@ -46,6 +55,7 @@ module.exports = [
 - `ctxLineNumbers`: How long you want show error line context, default is `10`.
 - `err404Template`: 404 error template path, if you want to specific.
 - `err500Template`: 500 error template path, if you want to specific.
+- `error`: callback function when catch error, it receives Error object as parameter.
 
 ## Contributing
 

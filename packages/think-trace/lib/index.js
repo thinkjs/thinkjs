@@ -1,3 +1,4 @@
+const helper = require('think-helper');
 const sourceMapSupport = require('source-map-support');
 const Tracer = require('./tracer');
 
@@ -7,6 +8,10 @@ module.exports = function(opts) {
   // source map support for compiled file
   if (opts && opts.sourceMap !== false) {
     sourceMapSupport.install();
+  }
+
+  if(helper.isFunction(opts.error)) {
+    opts.error = console.error.bind(console);
   }
 
   return (ctx, next) =>
@@ -20,7 +25,7 @@ module.exports = function(opts) {
         return ctx.throw(404, `url \`${ctx.path}\` not found.`);
       })
       .catch(err => {
-        console.error(err);
+        opts.error(err)
         return tracer.run(ctx, err);
       });
 };
