@@ -4,7 +4,7 @@ const assert = require('assert');
 const util = require('./util.js');
 const interopRequire = util.interopRequire;
 const extendObj = util.extend;
-const debug = require('debug')(`think-loader-${process.pid}`);
+const debug = require('debug')(`think-loader-extend-${process.pid}`);
 
 const ExtendLoader = {
 

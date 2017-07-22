@@ -1,7 +1,7 @@
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
 const helper = require('think-helper');
-const debug = require('debug')(`think-loader-${process.pid}`);
+const debug = require('debug')(`think-loader-crontab-${process.pid}`);
 
 /**
  * load crontab

@@ -2,7 +2,7 @@ const helper = require('think-helper');
 const path = require('path');
 const assert = require('assert');
 const interopRequire = require('./util.js').interopRequire;
-const debug = require('debug')(`think-loader-${process.pid}`);
+const debug = require('debug')(`think-loader-router-${process.pid}`);
 
 const RouterLoader = {
 

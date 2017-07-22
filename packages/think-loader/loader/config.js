@@ -2,7 +2,7 @@ const helper = require('think-helper');
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
-const debug = require('debug')(`think-loader-${process.pid}`);
+const debug = require('debug')(`think-loader-config-${process.pid}`);
 
 /**
  * load config

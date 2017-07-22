@@ -1,6 +1,6 @@
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
-const debug = require('debug')(`think-loader-${process.pid}`);
+const debug = require('debug')(`think-loader-validator-${process.pid}`);
 
 /**
  * load validator

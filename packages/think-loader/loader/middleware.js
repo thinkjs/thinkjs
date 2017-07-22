@@ -3,7 +3,7 @@ const helper = require('think-helper');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
 const pathToRegexp = require('path-to-regexp');
-const debug = require('debug')(`think-loader-${process.pid}`);
+const debug = require('debug')(`think-loader-middleware-${process.pid}`);
 
 class Middleware {
   interopRequire(path) {
