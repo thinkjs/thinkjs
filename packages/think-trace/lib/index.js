@@ -10,7 +10,7 @@ module.exports = function(opts) {
     sourceMapSupport.install();
   }
 
-  if(helper.isFunction(opts.error)) {
+  if (helper.isFunction(opts.error)) {
     opts.error = console.error.bind(console);
   }
 
@@ -25,7 +25,7 @@ module.exports = function(opts) {
         return ctx.throw(404, `url \`${ctx.path}\` not found.`);
       })
       .catch(err => {
-        opts.error(err)
+        opts.error(err);
         return tracer.run(ctx, err);
       });
 };

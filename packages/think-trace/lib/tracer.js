@@ -19,7 +19,7 @@ module.exports = class Tracer {
    * get error template file content
    */
   getTemplateContent() {
-    if(!this.debug && this.err404TemplateContent && this.err500TemplateContent) {
+    if (!this.debug && this.err404TemplateContent && this.err500TemplateContent) {
       return Promise.resolve();
     }
 
