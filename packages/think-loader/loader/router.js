@@ -1,8 +1,8 @@
 const helper = require('think-helper');
-const debug = require('debug')('think-loader@router');
 const path = require('path');
 const assert = require('assert');
 const interopRequire = require('./util.js').interopRequire;
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 const RouterLoader = {
 
@@ -15,9 +15,9 @@ const RouterLoader = {
       if (!helper.isFile(commonRouterFile)) {
         return [];
       }
+      debug(`load file: ${commonRouterFile}`);
       const commonRouter = interopRequire(commonRouterFile);
       if (helper.isArray(commonRouter)) {
-        debug('common/config/router is an array');
         return commonRouter;
       }
       /**
@@ -33,7 +33,6 @@ const RouterLoader = {
        *    }
        * }
        */
-      debug('load module router');
       for (const name in commonRouter) {
         const match = commonRouter[name].match;
         const moduleRouterFile = path.join(appPath, name, 'config/router.js');
@@ -45,6 +44,7 @@ const RouterLoader = {
           commonRouter[name].rules = [];
           continue;
         }
+        debug(`load file: ${moduleRouterFile}`);
         const moduleRouter = interopRequire(moduleRouterFile);
         assert(helper.isArray(moduleRouter), `${name}/config/router.js must be an array`);
         commonRouter[name].rules = moduleRouter;
@@ -55,6 +55,7 @@ const RouterLoader = {
       if (!helper.isFile(routerFile)) {
         return [];
       }
+      debug(`load file: ${routerFile}`);
       const router = interopRequire(routerFile);
       assert(helper.isArray(router), 'config/router must be an array');
       return router;

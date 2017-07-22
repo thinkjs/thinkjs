@@ -3,7 +3,7 @@ const helper = require('think-helper');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
 const pathToRegexp = require('path-to-regexp');
-const debug = require('debug')('think-loader');
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 class Middleware {
   interopRequire(path) {
@@ -89,7 +89,9 @@ class Middleware {
       }
       const match = file.match(/(.+)\.\w+$/);
       if (match && match[1]) {
-        ret[match[1]] = this.interopRequire(path.join(middlewarePath, file));
+        const filepath = path.join(middlewarePath, file);
+        debug(`load file: ${filepath}`);
+        ret[match[1]] = this.interopRequire(filepath);
       }
     });
     return ret;
@@ -103,7 +105,6 @@ class Middleware {
     const appMiddlewarePath = path.join(appPath, isMultiModule ? 'common/middleware' : 'middleware');
     const appMiddlewares = this.getFiles(appMiddlewarePath);
     const middlewares = Object.assign({}, sysMiddlewares, appMiddlewares);
-    debug(`load middlewares: ${Object.keys(middlewares).join(', ')}`);
     return middlewares;
   }
 
@@ -117,6 +118,7 @@ class Middleware {
     if (!helper.isFile(filepath)) {
       return [];
     }
+    debug(`load file: ${filepath}`);
     const middlewares = this.interopRequire(filepath);
     return this.parse(middlewares, this.loadFiles(appPath, modules.length, thinkPath), app);
   }

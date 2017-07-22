@@ -4,6 +4,7 @@ const assert = require('assert');
 const util = require('./util.js');
 const interopRequire = util.interopRequire;
 const extendObj = util.extend;
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 const ExtendLoader = {
 
@@ -25,6 +26,7 @@ const ExtendLoader = {
     let extend = interopRequire(thinkFilePath);
     const filepath = path.join(appPath, modules.length ? 'common/config/extend.js' : 'config/extend.js');
     if (helper.isFile(filepath)) {
+      debug(`load file: ${filepath}`);
       extend = extend.concat(interopRequire(filepath));
     }
     const ret = {};
@@ -40,6 +42,7 @@ const ExtendLoader = {
       if (!helper.isFile(filepath)) {
         return;
       }
+      debug(`load file: ${filepath}`);
       assign(type, interopRequire(filepath));
     });
     // config extend
@@ -59,6 +62,7 @@ const ExtendLoader = {
       if (!helper.isFile(filepath)) {
         return;
       }
+      debug(`load file: ${filepath}`);
       assign(type, interopRequire(filepath));
     });
     return ret;

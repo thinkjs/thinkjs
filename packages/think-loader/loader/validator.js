@@ -1,5 +1,6 @@
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 /**
  * load validator
@@ -11,6 +12,7 @@ module.exports = function load(appPath, modules) {
   } else {
     filepath = path.join(appPath, 'config/validator.js');
   }
+  debug(`load file: ${filepath}`);
   const data = interopRequire(filepath, true) || {};
   return data;
 };

@@ -2,6 +2,7 @@ const helper = require('think-helper');
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 /**
  * load config
@@ -17,6 +18,7 @@ class Config {
     configPaths.forEach(configPath => {
       const filepath = path.join(configPath, name);
       if (helper.isFile(filepath)) {
+        debug(`load file: ${filepath}`);
         config = helper.extend(config, require(filepath));
       }
     });
@@ -51,7 +53,9 @@ class Config {
       if (!ret[item[0]]) {
         ret[item[0]] = {};
       }
-      ret[item[0]][item[1]] = interopRequire(path.join(adapterPath, file));
+      const filepath = path.join(adapterPath, file);
+      debug(`load adapter file: ${filepath}`);
+      ret[item[0]][item[1]] = interopRequire(filepath);
     });
     return ret;
   }

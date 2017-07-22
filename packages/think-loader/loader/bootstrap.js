@@ -1,5 +1,6 @@
 const helper = require('think-helper');
 const path = require('path');
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 /**
  * load bootstrap files
@@ -13,6 +14,7 @@ function loadBootstrap(appPath, modules, type = 'worker') {
   }
   const filepath = path.join(bootstrapPath, `${type}.js`);
   if (helper.isFile(filepath)) {
+    debug(`load file: ${filepath}`);
     return require(filepath);
   }
 }

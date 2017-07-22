@@ -1,6 +1,7 @@
 const helper = require('think-helper');
 const path = require('path');
 const interopRequire = require('./util.js').interopRequire;
+const debug = require('debug')(`think-loader-${process.pid}`);
 
 const CommonLoader = {
   loadFiles(dir) {
@@ -16,6 +17,7 @@ const CommonLoader = {
       if (helper.isFunction(fileExport)) {
         fileExport.prototype.__filename = filepath;
       }
+      debug(`load file: ${filepath}`);
       return {name, export: fileExport};
     }).sort((a, b) => {
       const al = a.name.split('/').length;
