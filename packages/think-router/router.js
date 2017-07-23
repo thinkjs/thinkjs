@@ -23,17 +23,15 @@ class Router {
    * @param {Object} ctx koa ctx
    * @param {Function} next  koa next
    * @param {Object} options middleware options
-   * @param {Object} app  think.app
    */
-  constructor(ctx, next, options, app) {
+  constructor(ctx, next, options) {
     this.ctx = ctx;
     this.next = next;
     this.options = options;
-    this.modules = app.modules;
-    this.controllers = app.controllers;
+    this.modules = this.ctx.app.modules;
+    this.controllers = this.ctx.app.controllers;
     this.pathname = this.getPathname();
-    this.rules = app.routers;
-    this.app = app;
+    this.rules = this.ctx.app.routers;
     this.ctxMethod = ctx.method.toUpperCase();
   }
   /**
@@ -216,6 +214,7 @@ class Router {
       this.ctx.module = this.modules.length ? this.options.defaultModule : '';
       this.ctx.controller = this.options.defaultController;
       this.ctx.action = this.options.defaultAction;
+      debug(`RouterParser: path=${this.ctx.path}, module=${this.ctx.module}, controller=${this.ctx.controller}, action=${this.ctx.action}`);
       return this.next();
     }
     const rules = this.getRules();

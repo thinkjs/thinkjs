@@ -71,7 +71,7 @@ module.exports = function parseRouter(options, app) {
     app.routers = formatRouters(routers);
   });
   return function router(ctx, next) {
-    const instance = new Router(ctx, next, options, app);
+    const instance = new Router(ctx, next, options);
     return instance.run();
   };
 };

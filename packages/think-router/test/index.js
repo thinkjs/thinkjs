@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-06 15:22:41
+* @Last Modified time: 2017-07-23 10:31:45
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -45,6 +45,15 @@ let defaultOptions = {
   denyModules: [] //deny module, enable in multi module mode
 };
 
+let defaultApp = {
+  once: function(event, cb){
+    cb();
+  },
+  on: function(event, cb) {
+    //cb();
+  }
+};
+
 let defaultCtx = {
   path: '/admin/article/list',
   module: '', // think-router set
@@ -66,14 +75,6 @@ let defaultCtx = {
   status: 200
 };
 
-let defaultApp = {
-  once: function(event, cb){
-    cb();
-  },
-  on: function(event, cb) {
-    //cb();
-  }
-};
 
 test.serial.beforeEach(t => {
   RESULT = {};
@@ -90,6 +91,7 @@ test.serial.cb('default options', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -114,6 +116,7 @@ test.serial.cb('options with suffix is empty', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -139,6 +142,7 @@ test.serial.cb('options with suffix is string', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -164,6 +168,7 @@ test.serial.cb('options with suffix is regexp', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -189,6 +194,7 @@ test.serial.cb('options with prefix is string', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT,  {
       module: '',
@@ -214,6 +220,7 @@ test.serial.cb('options with prefix is regexp', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT,  {
       module: '',
@@ -239,6 +246,7 @@ test.serial.cb('options with prefix is regexp and not match', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -262,6 +270,7 @@ test.serial.cb('options without subdomainOffset', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -292,6 +301,7 @@ test.serial.cb('options with subdomain is an Object', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -321,6 +331,7 @@ test.serial.cb('options with subdomain is an Array', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -351,6 +362,7 @@ test.serial.cb('options with subdomain not match ', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT,  {
       module: '',
@@ -372,6 +384,7 @@ test.serial.cb('router\'s match is null & enableDefaultRouter is false', t => {
     routers: []
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {});
     t.end();
@@ -391,6 +404,7 @@ test.serial.cb('method not equal ctxMethod', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -412,6 +426,7 @@ test.serial.cb('rules with specialMethods', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -442,6 +457,7 @@ test.serial.cb('multiple modules', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -466,6 +482,7 @@ test.serial.cb('multiple modules, but rules is an Array', t => {
     ]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -496,6 +513,7 @@ test.serial.cb('multiple modules, not match', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -520,6 +538,7 @@ test.serial.cb('multiple modules, match and rules = null', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -550,6 +569,7 @@ test.serial.cb('multiple modules, without match', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -582,6 +602,7 @@ test.serial.cb('REDIRECT with statusCode', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {});
     t.end();
@@ -610,6 +631,7 @@ test.serial.cb('REDIRECT without statusCode', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {});
     t.end();
@@ -638,6 +660,7 @@ test.serial.cb('pathToRegexp with name is String', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -673,6 +696,7 @@ test.serial.cb('pathToRegexp with name is Number', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -708,6 +732,7 @@ test.serial.cb('pathToRegexp with query empty', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -738,6 +763,7 @@ test.serial.cb('multiple modules, pathname without /', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -759,6 +785,7 @@ test.serial.cb('use defaultAction', t => {
     routers: []
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -791,6 +818,7 @@ test.serial.cb('use defaultModule', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'home',
@@ -827,6 +855,7 @@ test.serial.cb('multiple controllers', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -863,6 +892,7 @@ test.serial.cb('single controllers', t => {
     }
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: 'admin',
@@ -892,6 +922,7 @@ test.serial.cb('single controllers2', t => {
     ]]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -921,6 +952,7 @@ test.serial.cb('single controllers REST 1', t => {
     ]]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
@@ -950,11 +982,52 @@ test.serial.cb('single controllers REST 2', t => {
     ]]
   });
 
+  ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
       module: '',
       controller: 'admin',
       action: 'get'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('enableDefaultRouter', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: ''
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: []
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'index',
+      action: 'index'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('enableDefaultRouter2', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: ''
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin', 'home']
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'home',
+      controller: 'index',
+      action: 'index'
     });
     t.end();
   });
