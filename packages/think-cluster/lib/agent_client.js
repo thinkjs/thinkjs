@@ -81,7 +81,7 @@ class AgentClient {
     //     this.status = 'closed';
     //   }
     // }, 3 * 1000);
-    // timer.unref();
+    // timer.unref && timer.unref();
   }
   /**
    * handle client data

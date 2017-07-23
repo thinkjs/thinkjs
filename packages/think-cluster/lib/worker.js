@@ -56,7 +56,7 @@ class Worker {
         logger(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
         process.exit(1);
       }, killTimeout);
-      timer.unref();
+      timer.unref && timer.unref();
     }
     const worker = cluster.worker;
     const server = this.options.server;
