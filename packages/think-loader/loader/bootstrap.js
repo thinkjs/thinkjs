@@ -1,6 +1,6 @@
 const helper = require('think-helper');
 const path = require('path');
-const debug = require('debug')(`think-loader-boostrap-${process.pid}`);
+const debug = require('debug')(`think-loader-bootstrap-${process.pid}`);
 
 /**
  * load bootstrap files
