@@ -129,6 +129,7 @@ class Router {
           pathname = pathname.replace(`:${index}`, match[index] || '');
         } else {
           query[queryItem.name] = match[index + 1];
+          pathname = pathname.replace(`:${queryItem.name}`, query[queryItem.name]);
         }
       });
       rule = Object.assign({}, item, {query, path: pathname});

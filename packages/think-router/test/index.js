@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-23 10:31:45
+* @Last Modified time: 2017-07-23 17:12:32
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -1020,6 +1020,30 @@ test.serial.cb('enableDefaultRouter2', t => {
   });
   let app = helper.extend({}, defaultApp, {
     modules: ['admin', 'home']
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'home',
+      controller: 'index',
+      action: 'index'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('routerChange', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    path: ''
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: ['admin', 'home'],
+    on: function(event, cb) {
+      //cb();
+      cb(['^\/admin\/article\/list', 'admin/article/list', 'get']);
+    }
   });
 
   ctx.app = app;
