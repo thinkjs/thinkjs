@@ -8,46 +8,46 @@ test.before('404', () => {
   try {
     fs.statSync(filename);
     fs.unlinkSync(filename);
-  } catch(e) {
+  } catch (e) {
 
   } finally {
     fs.writeFileSync(filename, '{{errMsg}}', {encoding: 'utf-8'});
-  }  
+  }
 });
 
 test('404', async t => {
   t.plan(2);
-  let ctx = {
+  const ctx = {
     path: '/index',
     res: {
       statusCode: 404
     },
     throw(statusCode, msg) {
-      let err = new Error(msg);
+      const err = new Error(msg);
       err.status = statusCode;
       throw err;
     }
   };
-  let next = (instance) => {
+  const next = (instance) => {
     return true;
   };
 
   try {
     await Trace({
-      err404Template: filename
+      templates: {404: filename}
     })(ctx, next);
-  } catch(e) {
-    
+  } catch (e) {
+
   }
-  
+
   t.is(ctx.body, 'Error: url `/index` not found.');
 
   try {
     await Trace({
       debug: false,
-      err404Template: filename
+      templates: {404: filename}
     })(ctx, next);
-  } catch(e) {
+  } catch (e) {
 
   }
   t.is(ctx.body, '');

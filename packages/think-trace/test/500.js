@@ -8,46 +8,49 @@ test.before('500', () => {
   try {
     fs.statSync(filename);
     fs.unlinkSync(filename);
-  } catch(e) {
+  } catch (e) {
 
   } finally {
     fs.writeFileSync(filename, '{{errMsg}}{{error}}', {encoding: 'utf-8'});
-  }  
+  }
 });
 
 test('500', async t => {
   t.plan(2);
 
-  let ctx = {
+  const ctx = {
     res: {
       statusCode: 200
     },
+    req: {
+      'content-type': 'html;charset=utf-8'
+    },
     throw(statusCode, msg) {
-      let err = new Error(msg);
+      const err = new Error(msg);
       err.status = statusCode;
       throw err;
     }
   };
-  let next = (instance) => {
+  const next = (instance) => {
     throw new Error('normal trace test');
   };
 
   try {
     await Trace({
-      err500Template: filename
+      templates: {500: filename}
     })(ctx, next);
-  } catch(e) {
-    
+  } catch (e) {
+
   }
-  let result = ctx.body;
+  const result = ctx.body;
   t.true(result.includes('normal trace test'));
 
   try {
     await Trace({
       debug: false,
-      err500Template: filename
+      templates: {500: filename}
     })(ctx, next);
-  } catch(e) {
+  } catch (e) {
 
   }
 
@@ -56,26 +59,26 @@ test('500', async t => {
 
 test.after('500', () => fs.unlinkSync(filename));
 
-
 test('500 not exist file', async t => {
-
-  let ctx = {
+  const ctx = {
     res: {
       statusCode: 200
     }
   };
-  let next = (instance) => {
+  const next = (instance) => {
     throw new Error('normal trace test');
   };
 
   try {
     await Trace({
-      err404Template: __dirname + 'notexist.html',
-      err500Template: __dirname + 'notexist.html'
+      templates: {
+        404: __dirname + 'notexist.html',
+        500: __dirname + 'notexist.html'
+      }
     })(ctx, next);
-  } catch(e) {
-    
+  } catch (e) {
+
   }
-  let result = ctx.body;
+  const result = ctx.body;
   t.true(result.includes('thinkjs'));
 });

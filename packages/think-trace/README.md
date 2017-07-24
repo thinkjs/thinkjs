@@ -53,9 +53,23 @@ module.exports = [
 - `sourceMap`: Whether your project has source map support, default is `true`.
 - `debug`: Whether show error detail in web, default is `true`. 
 - `ctxLineNumbers`: How long you want show error line context, default is `10`.
-- `err404Template`: 404 error template path, if you want to specific.
-- `err500Template`: 500 error template path, if you want to specific.
 - `error`: callback function when catch error, it receives Error object as parameter.
+- `templates`: error status template path, if you want to specific. You can set `templates` as a path string, then module will read all status file named like `404.html`, `502.html` as your customed status page. Or you can set `templates` as an object, for example:
+    ```js
+    {
+      options: {
+        //basic set as string, then put 404.html, 500.html into error folder
+        templates: path.join(__dirname, 'error'),
+
+        //customed set as object
+        templates: {
+          404: path.join(__dirname, 'error/404.html'),
+          500: path.join(__dirname, 'error/500.html'),
+          502: path.join(__dirname, 'error/502.html')
+        }
+      }
+    }
+    ```
 
 ## Contributing
 
