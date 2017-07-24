@@ -7,12 +7,6 @@ export default {
   type: 'mysql',
   adapter: {
     mysql: {
-      host: '127.0.0.1',
-      port: '',
-      database: '',
-      user: '',
-      password: '',
-      prefix: '',
       encoding: 'utf8',
       nums_per_page: 10,
       log_sql: false,
