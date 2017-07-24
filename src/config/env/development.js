@@ -12,10 +12,12 @@ let configs = {
     detail: true
   },
   db: {
-    mysql: {
-      log_sql: true,
-      log_connect: true,
-      schema_force_update: true
+    adapter: {
+      mysql: {
+        log_sql: true,
+        log_connect: true,
+        schema_force_update: true
+      }
     }
   },
   post: {
