@@ -31,6 +31,7 @@ export default {
   SERVICE_UNAVAILABLE: 'Service Unavailable',
   URL_HAS_UPPERCASE: 'url has uppercases(%s), auto convert to lowercase.',
   METHOD_NOT_ALLOWED: 'request method is not allowed.',
+  UNSUPPORTED_MEDIA_TYPE : 'request Content-Type or Content-Encoding is not allowed.',
   METHOD_NOT_EXIST: 'method %s not exist',
 
   validate_required: '{name} can not be blank',

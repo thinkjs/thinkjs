@@ -154,18 +154,23 @@ export default class extends think.controller.base {
    */
   __after(){
     let error = this.config('error');
-    
-    //check request method
-    let allowMethods = this.allowMethods;
-    if(!think.isEmpty(allowMethods)){
-      if(think.isString(allowMethods)){
-        allowMethods = allowMethods.split(',');
-      }
-      let method = this.http.method.toLowerCase();
-      if(allowMethods.indexOf(method) === -1){
-        return this.fail(error.validate_errno, this.locale('METHOD_NOT_ALLOWED')); 
+
+    const checkRequest = (expects, actual, errmsg) => {
+      if (!think.isEmpty(expects)) {
+        if (think.isString(expects)) {
+          expects = expects.split(',');
+        }
+        if (expects.indexOf(actual) === -1) {
+          return this.fail(error.validate_errno, errmsg);
+        }
       }
     }
+
+    //check request method
+    checkRequest(this.allowMethods, this.http.method.toLowerCase(), this.locale('METHOD_NOT_ALLOWED'));
+
+    //check request content-type
+    checkRequest(this.allowContentTypes, this.http.req.headers['content-type'], this.locale('UNSUPPORTED_MEDIA_TYPE'));
 
     //check rules
     if(think.isEmpty(this.rules) || this._validateInvoked){

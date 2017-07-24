@@ -982,4 +982,40 @@ describe('logic/base', function(){
       done();
     })
   })
+  it('__after, has allowMethods', function (done) {
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '',
+        suredy: '2014-11-10'
+      },
+        method: 'PUT'
+    }).then(function (instance) {
+        instance.allowMethods = 'get,post'
+        instance.fail = function (errno, errmsg) {
+          assert.equal(errno, 1001);
+          done();
+        }
+        instance.__after()
+      })
+  })
+  it('__after, has allowContentTypes', function (done) {
+    getInstance({}, {
+      _config: think.config(),
+      _post: {
+        name: '',
+        suredy: '2014-11-10'
+      },
+      headers: {
+        'content-type' : 'application/x-www-form-urlencoded'
+      }
+      }).then(function (instance) {
+        instance.allowContentTypes = 'application/json,application/json;charset=utf-8'
+        instance.fail = function (errno, errmsg) {
+          assert.equal(errno, 1001);
+          done();
+        }
+        instance.__after()
+      })
+  })
 })

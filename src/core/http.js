@@ -184,7 +184,7 @@ export default class {
    * @return {Promise} []
    */
   async parsePayload(){
-    if(this.hasPayload()){
+    if (this.hasPayload()) {
       await think.hook('payload_parse', this);
       await think.hook('payload_validate', this);
     }
