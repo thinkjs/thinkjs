@@ -16,7 +16,7 @@ module.exports = class ManyToManyRelation extends BaseRelation {
     return table.toLowerCase();
   }
   /**
-   * get relation
+   * relation on select or find
    */
   async getRelation() {
     const where = this.parseRelationWhere();
