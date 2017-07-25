@@ -102,7 +102,7 @@ class Relation {
     allowOptions.forEach(allowItem => {
       if (helper.isFunction(opts[allowItem])) {
         allowItem(this.model);
-      } else {
+      } else if (opts[allowItem] !== undefined) {
         model[allowItem](opts[allowItem]);
       }
     });
