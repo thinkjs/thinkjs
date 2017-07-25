@@ -1,4 +1,4 @@
-// const helper = require('think-helper');
+const helper = require('think-helper');
 const {Schema} = require('think-model-abstract');
 const Debounce = require('think-debounce');
 const Query = require('./query.js');
@@ -83,7 +83,7 @@ module.exports = class MysqlSchema extends Schema {
           data.forEach(item => {
             ret[item.Field] = this._parseItemSchema(item);
           });
-          return Object.assign(ret, this.schema);
+          return helper.extend(ret, this.schema);
         });
       });
     };
@@ -102,7 +102,7 @@ module.exports = class MysqlSchema extends Schema {
    * @param {Mixed} value 
    */
   parseType(tinyType, value) {
-    if (tinyType === 'enum' || tinyType === 'set' || 'bigint') return value;
+    if (tinyType === 'enum' || tinyType === 'set' || tinyType === 'bigint') return value;
     if (tinyType.indexOf('int') > -1) return parseInt(value, 10);
     if (['double', 'float', 'decimal'].indexOf(tinyType) > -1) return parseFloat(value, 10);
     if (tinyType === 'bool') return value ? 1 : 0;
