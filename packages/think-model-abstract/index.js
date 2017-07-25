@@ -83,6 +83,40 @@ module.exports = class Abstract {
   parseData(data, isUpdate, table) {
     return this.schema.parseData(data, isUpdate, table);
   }
+
+  /**
+   * startTrans
+   * @param {Object} connection 
+   */
+  startTrans(connection) {
+    return this.query.startTrans(connection);
+  }
+
+  /**
+   * commit transactions
+   * @param {Object} connection 
+   */
+  commit(connection) {
+    return this.query.commit(connection);
+  }
+
+  /**
+   * rollback transactions
+   * @param {Object} connection 
+   */
+  rollback(connection) {
+    return this.query.rollback(connection);
+  }
+
+  /**
+   * transaction
+   * @param {Function} fn 
+   * @param {Object} connection 
+   */
+  transaction(fn, connection) {
+    return this.query.transaction(fn, connection);
+  }
+
   /**
    * close socket
    */
