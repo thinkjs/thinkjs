@@ -9,6 +9,7 @@ const HAS_ONE = 1;
 const BELONG_TO = 2;
 const HAS_MANY = 3;
 const MANY_TO_MANY = 4;
+
 const RelationClass = {
   [HAS_ONE]: HasOne,
   [BELONG_TO]: BelongTo,
@@ -125,3 +126,8 @@ module.exports = class Relation {
     return instance.getRelation();
   }
 };
+
+module.exports.HAS_ONE = HAS_ONE;
+module.exports.HAS_MANY = HAS_MANY;
+module.exports.BELONG_TO = BELONG_TO;
+module.exports.MANY_TO_MANY = MANY_TO_MANY;

@@ -1,6 +1,6 @@
-const AbstractRelation = require('./abstract.js');
+const BaseRelation = require('./base.js');
 
-module.exports = class ManyToManyRelation extends AbstractRelation {
+module.exports = class ManyToManyRelation extends BaseRelation {
   /**
    * get relation table name
    * @param  {Object} model []

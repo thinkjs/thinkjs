@@ -1,6 +1,6 @@
-const AbstractRelation = require('./abstract.js');
+const BaseRelation = require('./base.js');
 
-module.exports = class BelongToRelation extends AbstractRelation {
+module.exports = class BelongToRelation extends BaseRelation {
   async getRelation() {
     const where = this.parseRelationWhere();
     const mapData = await this.options.model.where(where).select();

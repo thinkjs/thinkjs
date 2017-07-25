@@ -2,6 +2,7 @@ const helper = require('think-helper');
 const path = require('path');
 const assert = require('assert');
 const Relation = require('./relation/relation.js');
+const util = require('util');
 
 const MODELS = Symbol('think-models');
 const CONNECTION = Symbol('think-model-connection');
@@ -20,9 +21,6 @@ module.exports = class Model {
     assert(helper.isFunction(config.handle), 'config.handle must be a function');
     this.config = config;
     this.modelName = modelName;
-    if (this.config.prefix) {
-      this.tablePrefix = this.config.prefix;
-    }
     this.options = {};
     this.data = {};
   }
@@ -37,7 +35,7 @@ module.exports = class Model {
     }
     if (this[CONNECTION]) return this[CONNECTION];
     const Handle = this.config.handle;
-    const instance = new Handle(this.config);
+    const instance = new Handle(this);
     this[CONNECTION] = instance;
     return instance;
   }
@@ -383,10 +381,458 @@ module.exports = class Model {
     return relation.afterSelect(data);
   }
   /**
+   * parse options, reset this.options to {}
+   * @param {Object} options 
+   */
+  async parseOptions(options) {
+    if (helper.isNumber(options) || helper.isString(options)) {
+      options += '';
+      const where = {
+        [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
+      };
+      options = {where};
+    }
+    options = Object.assign({}, this.options, options);
+    this.options = {};
+    options.table = options.table || this.tableName;
+    if (options.field && options.fieldReverse) {
+      options.field = await this.connection().getReverseFields(options.field);
+    }
+    return options;
+  }
+  /**
+   * add data
+   * @param {Object} data 
+   * @param {Object} options 
+   */
+  async add(data, options) {
+    options = await this.parseOptions(options);
+    let parsedData = await this.connection().parseData(data, false, options.table);
+    parsedData = await this.beforeAdd(parsedData, options);
+    if (helper.isEmpty(parsedData)) return Promise.reject(new Error('add data is empty'));
+    const lastInsertId = await this.connection().add(parsedData, options);
+    const copyData = Object.assign({}, data, parsedData, {[this.pk]: lastInsertId});
+    await this.afterAdd(copyData, options);
+    return lastInsertId;
+  }
+
+  /**
+   * add data when not exist
+   * @param  {Object} data       []
+   * @param  {Object} where      []
+   * @return {}            []
+   */
+  async thenAdd(data, where) {
+    const findData = await this.where(where).find();
+    if (!helper.isEmpty(findData)) {
+      return {[this.pk]: findData[this.pk], type: 'exist'};
+    }
+    const insertId = await this.add(data);
+    return {[this.pk]: insertId, type: 'add'};
+  }
+
+  /**
+   * update data when exist, otherwise add data
+   * @return {id}
+   */
+  async thenUpdate(data, where) {
+    const findData = await this.where(where).find();
+    if (helper.isEmpty(findData)) {
+      return this.add(data);
+    }
+    await this.where(where).update(data);
+    return findData[this.pk];
+  }
+
+  /**
+   * add multi data
+   * @param {Object} data    []
+   * @param {} options []
+   * @param {} replace []
+   */
+  async addMany(data, options) {
+    if (!helper.isArray(data) || !helper.isObject(data[0])) {
+      return Promise.reject(new Error('data must be an array'));
+    }
+    options = await this.parseOptions(options);
+    let promises = data.map(async item => {
+      item = await this.connection().parseData(item, false, options.table);
+      return this.beforeAdd(item, options);
+    });
+    data = await Promise.all(promises);
+    const insertIds = await this.connection().addMany(data, options);
+    promises = data.map((item, i) => {
+      item[this.pk] = insertIds[i];
+      return this.afterAdd(item, options);
+    });
+    await Promise.all(promises);
+    return insertIds;
+  }
+
+  /**
+   * delete data
+   * @param  {Object} options []
+   * @return {Promise}         []
+   */
+  async delete(options) {
+    options = await this.parseOptions(options);
+    options = await this.beforeDelete(options);
+    const rows = await this.connection().delete(options);
+    await this.afterDelete(options);
+    return rows;
+  }
+
+  /**
+   * update data
+   * @param  {Object} data      []
+   * @param  {Object} options   []
+   * @param  {Boolean} ignoreWhere []
+   * @return {Promise}          []
+   */
+  async update(data, options) {
+    options = await this.parseOptions(options);
+    let parsedData = await this.connection().parseData(data, false, options.table);
+    // check where condition
+    if (helper.isEmpty(options.where)) {
+      if (parsedData[this.pk]) {
+        options.where = {[this.pk]: parsedData[this.pk]};
+        delete parsedData[this.pk];
+      } else {
+        return Promise.reject(new Error('miss where condition on update'));
+      }
+    }
+    parsedData = await this.beforeUpdate(parsedData, options);
+    // check data is empty
+    if (helper.isEmpty(parsedData)) {
+      return Promise.reject(new Error('update data is empty'));
+    }
+    const rows = await this.connection().update(parsedData, options);
+    const copyData = Object.assign({}, data, parsedData);
+    await this.afterUpdate(copyData, options);
+    return rows;
+  }
+
+  /**
+   * update all data
+   * @param  {Array} dataList []
+   * @return {Promise}          []
+   */
+  updateMany(dataList, options) {
+    if (!helper.isArray(dataList)) {
+      this.options = {};
+      return Promise.reject(new Error('updateMany data must be an array'));
+    }
+    const promises = dataList.map(data => {
+      return this.update(data, options);
+    });
+    return Promise.all(promises).then(data => {
+      return data.reduce((a, b) => a + b);
+    });
+  }
+  /**
+   * find data
+   * @return Promise
+   */
+  async find(options) {
+    options = await this.parseOptions(options);
+    options.limit = 1;
+    options = await this.beforeFind(options);
+    const data = await this.connection().select(options);
+    return this.afterFind(data[0] || {}, options);
+  }
+  /**
+   * select
+   * @return Promise
+   */
+  async select(options) {
+    options = await this.parseOptions(options);
+    options = await this.beforeSelect(options);
+    const data = await this.connection().select(options);
+    return this.afterSelect(data, options);
+  }
+  /**
+   * select add
+   * @param  {} options []
+   * @return {Promise}         []
+   */
+  async selectAdd(options) {
+    let promise = Promise.resolve(options);
+    const Class = this.constructor;
+    if (options instanceof Class) {
+      promise = options.parseOptions();
+    }
+    const data = await Promise.all([this.parseOptions(), promise]);
+    let fields = data[0].field;
+    if (!fields) {
+      fields = await this.connection().getSchema();
+    }
+    return this.connection().selectAdd(fields, data[0].table, data[1]);
+  }
+  /**
+   * count select
+   * @param  options
+   * @param  pageFlag
+   * @return promise
+   */
+  async countSelect(options, pageFlag) {
+    let count;
+    if (helper.isBoolean(options)) {
+      [options, pageFlag] = [{}, options];
+    } else if (helper.isNumber(options)) {
+      [count, options] = [options, {}];
+    }
+
+    options = await this.parseOptions(options);
+    const table = options.alias || this.tableName;
+
+    // delete table options avoid error when has alias
+    delete options.table;
+    // reserve and delete the possible order option
+    const order = options.order;
+    delete options.order;
+
+    if (!count) {
+      this.options = options;
+      count = await this.count(`${table}.${this.pk}`);
+    }
+
+    options.limit = options.limit || [0, this.config.pagesize || 10];
+    // recover the deleted possible order
+    options.order = order;
+    const pagesize = options.limit[1];
+    // get page options
+    const data = {pagesize};
+    const totalPage = Math.ceil(count / data.pagesize);
+
+    data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
+
+    if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
+      if (pageFlag) {
+        data.currentPage = 1;
+        options.limit = [0, pagesize];
+      } else {
+        data.currentPage = totalPage;
+        options.limit = [(totalPage - 1) * pagesize, pagesize];
+      }
+    }
+    const result = Object.assign({count: count, totalPages: totalPage}, data);
+
+    if (options.cache && options.cache.key) {
+      options.cache.key += '_count';
+    }
+    result.data = count ? await this.select(options) : [];
+    return result;
+  }
+  /**
+   * get field data
+   * @return {[type]} [description]
+   */
+  async getField(field, one) {
+    const options = await this.parseOptions({'field': field});
+    if (helper.isNumber(one)) {
+      options.limit = one;
+    } else if (one === true) {
+      options.limit = 1;
+    }
+    let data = await this.connection().select(options);
+    const multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
+    if (multi) {
+      const fields = field.split(/\s*,\s*/);
+      const result = {};
+      fields.forEach(item => {
+        result[item] = [];
+      });
+      data.every(item => {
+        fields.forEach(fItem => {
+          if (one === true) {
+            result[fItem] = item[fItem];
+          } else {
+            result[fItem].push(item[fItem]);
+          }
+        });
+        return one !== true;
+      });
+      return result;
+    } else {
+      data = data.map(item => {
+        for (const key in item) {
+          return item[key];
+        }
+      });
+      return one === true ? data[0] : data;
+    }
+  }
+  /**
+   * increment field data
+   * @return {Promise} []
+   */
+  increment(field, step = 1) {
+    let data = {};
+    if (helper.isArray(field)) {
+      field.forEach(item => {
+        data[item] = ['exp', `\`${item}\`+${step}`];
+      });
+    } else if (helper.isObject(field)) {
+      for (const key in field) {
+        data[key] = ['exp', `\`${key}\`+${field[key]}`];
+      }
+    } else {
+      data = {
+        [field]: ['exp', `\`${field}\`+${step}`]
+      };
+    }
+    return this.update(data);
+  }
+  /**
+   * decrement field data
+   * @return {} []
+   */
+  decrement(field, step = 1) {
+    let data = {};
+    if (helper.isArray(field)) {
+      field.forEach(item => {
+        data[item] = ['exp', `\`${item}\`-${step}`];
+      });
+    } else if (helper.isObject(field)) {
+      for (const key in field) {
+        data[key] = ['exp', `\`${key}\`-${field[key]}`];
+      }
+    } else {
+      data = {
+        [field]: ['exp', `\`${field}\`-${step}`]
+      };
+    }
+    return this.update(data);
+  }
+  /**
+   * quote field
+   * @param {String} field 
+   */
+  quoteField(field) {
+    if (field) {
+      return /^\w+$/.test(field) ? '`' + field + '`' : field;
+    }
+    return this.pk || '*';
+  }
+  /**
+   * get count
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  count(field) {
+    field = this.quoteField(field);
+    return this.getField('COUNT(' + field + ') AS think_count', true);
+  }
+  /**
+   * get sum
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  sum(field) {
+    field = this.quoteField(field);
+    return this.getField('SUM(' + field + ') AS think_sum', true);
+  }
+  /**
+   * get min value
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  min(field) {
+    field = this.quoteField(field);
+    return this.getField('MIN(' + field + ') AS think_min', true);
+  }
+  /**
+   * get max valud
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  max(field) {
+    field = this.quoteField(field);
+    return this.getField('MAX(' + field + ') AS think_max', true);
+  }
+  /**
+   * get value average
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  avg(field) {
+    field = this.quoteField(field);
+    return this.getField('AVG(' + field + ') AS think_avg', true);
+  }
+  /**
+   * query
+   * @return {Promise} []
+   */
+  query(...args) {
+    if (helper.isObject(args[0])) {
+      return this.connection().select(args[0], this.options.cache);
+    }
+    const sql = this.parseSql(...args);
+    return this.connection().select(sql, this.options.cache);
+  }
+  /**
+   * execute sql
+   * @param  {[type]} sql   [description]
+   * @param  {[type]} parse [description]
+   * @return {[type]}       [description]
+   */
+  execute(...args) {
+    const sql = this.parseSql(...args);
+    return this.connection().execute(sql);
+  }
+  /**
+   * parse sql
+   * @return promise [description]
+   */
+  parseSql(...args) {
+    const sql = util.format(...args);
+    // replace table name
+    return sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
+      if (b === 'TABLE') {
+        return ' `' + this.tableName + '` ';
+      }
+      return ' `' + this.tablePrefix + b.toLowerCase() + '` ';
+    });
+  }
+  /**
+   * start transaction
+   * @return {Promise} []
+   */
+  startTrans(connection) {
+    return this.connection().startTrans(connection);
+  }
+  /**
+   * commit transcation
+   * @return {Promise} []
+   */
+  commit(connection) {
+    return this.connection().commit(connection);
+  }
+  /**
+   * rollback transaction
+   * @return {Promise} []
+   */
+  rollback(connection) {
+    return this.connection().rollback(connection);
+  }
+  /**
+   * transaction exec functions
+   * @param  {Function} fn [async exec function]
+   * @return {Promise}      []
+   */
+  transaction(fn, connection) {
+    return this.connection().transaction(fn, connection);
+  }
+  /**
    * close socket connection
    * @return {} []
    */
   close() {
-    this.connection().close();
+    return this.connection().close();
   }
 };
+
+module.exports.HAS_ONE = Relation.HAS_ONE;
+module.exports.HAS_MANY = Relation.HAS_MANY;
+module.exports.BELONG_TO = Relation.BELONG_TO;
+module.exports.MANY_TO_MANY = Relation.MANY_TO_MANY;

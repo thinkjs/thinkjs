@@ -2,7 +2,7 @@ const helper = require('think-helper');
 /**
  * Abstract Relation class
  */
-module.exports = class AbstractRelation {
+module.exports = class BaseRelation {
   /**
    * constructor
    * @param {Object|Array} data 
