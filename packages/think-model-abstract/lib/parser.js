@@ -61,7 +61,7 @@ module.exports = class AbstractParser {
    * })
    * @return {String} []
    */
-  parseField(fields, options) {
+  parseField(fields, options = {}) {
     if (helper.isString(fields)) {
       // fields('id, instr('30,35,31,',id+',') as d')
       if (fields.indexOf('(') > -1 && fields.indexOf(')') > -1) {
