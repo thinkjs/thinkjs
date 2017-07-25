@@ -395,6 +395,7 @@ module.exports = class Model {
     options = Object.assign({}, this.options, options);
     this.options = {};
     options.table = options.table || this.tableName;
+    options.tablePrefix = this.tablePrefix;
     if (options.field && options.fieldReverse) {
       options.field = await this.adapter().getReverseFields(options.field);
     }

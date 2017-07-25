@@ -19,13 +19,14 @@ module.exports = class BaseRelation {
    */
   parseRelationWhere() {
     if (helper.isArray(this.data)) {
-      const keys = {};
+      const keys = [];
       this.data.forEach(item => {
-        keys[item[this.options.key]] = 1;
+        if (keys.indexOf(item[this.options.key]) === -1) {
+          keys.push(item[this.options.key]);
+        }
       });
-      const value = Object.keys(keys);
       return {
-        [this.options.fKey]: ['IN', value]
+        [this.options.fKey]: ['IN', keys]
       };
     }
     return {
