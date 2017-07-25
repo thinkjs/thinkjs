@@ -22,23 +22,4 @@ module.exports = class Mysql extends Abstract {
     this[SCHEMA] = new Schema(this.model.config, this.model.schema, this.model.tableName);
     return this[SCHEMA];
   }
-  /**
-   * startTrans
-   * @param {Object} connection 
-   */
-  startTrans(connection) {
-    return this.query.startTrans(connection);
-  }
-
-  commit(connection) {
-    return this.query.commit(connection);
-  }
-
-  rollback(connection) {
-    return this.query.rollback(connection);
-  }
-
-  transaction(fn, connection) {
-    return this.query.transaction(fn, connection);
-  }
 };
