@@ -44,14 +44,19 @@ module.exports = class AbstractSchema {
       const result = {};
       for (const key in schema) {
         if (isUpdate && schema[key].readonly) continue;
+        // add default value
         if (data[key] === undefined) {
           const flag = !isUpdate || (isUpdate && schema[key].update);
-          if (flag && schema.default !== '') {
-            result[key] = schema.default;
+          if (flag && schema[key].default !== '') {
+            let defaultValue = schema[key].default;
+            if (helper.isFunction(defaultValue)) {
+              defaultValue = defaultValue(data);
+            }
+            result[key] = defaultValue;
           }
           continue;
         }
-        if (helper.isNumber(data[key]) || helper.isNumberString(data[key]) || helper.isBoolean(data[key])) {
+        if (helper.isNumber(data[key]) || helper.isString(data[key]) || helper.isBoolean(data[key])) {
           result[key] = this.parseType(schema[key].tinyType, data[key]);
         } else {
           result[key] = data[key];
