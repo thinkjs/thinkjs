@@ -21,9 +21,14 @@ module.exports = class AbstractSchema {
   getReverseFields(fields) {
     if (helper.isString(fields)) fields = fields.split(',');
     return this.getSchema().then(schema => {
-      return Object.keys(schema).filter(field => {
+      const result = Object.keys(schema).filter(field => {
         return fields.indexOf(field) === -1;
       });
+      // if has . in fields, add to result
+      fields.forEach(item => {
+        if (item.indexOf('.') > -1) result.push(item);
+      });
+      return result;
     });
   }
   /**

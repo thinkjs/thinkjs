@@ -2,7 +2,6 @@
   "name": "think-model-abstract",
   "version": "1.0.0",
   "description": "Abstract adapter for ThinkJS 3.x",
-  "main": "./lib",
   "scripts": {
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
@@ -32,9 +31,6 @@
   },
   "devDependencies": {
     "ava": "^0.19.1",
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
-    "babel-eslint": "^7.2.3",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
     "muk": "^0.5.3",

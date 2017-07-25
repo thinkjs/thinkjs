@@ -61,7 +61,7 @@ module.exports = class AbstractParser {
    * })
    * @return {String} []
    */
-  parseField(fields) {
+  parseField(fields, options) {
     if (helper.isString(fields)) {
       // fields('id, instr('30,35,31,',id+',') as d')
       if (fields.indexOf('(') > -1 && fields.indexOf(')') > -1) {
@@ -71,8 +71,13 @@ module.exports = class AbstractParser {
         fields = fields.split(/\s*,\s*/);
       }
     }
+    const alias = options.alias;
     if (helper.isArray(fields)) {
-      return fields.map(item => this.parseKey(item)).join(',');
+      return fields.map(item => {
+        item = this.parseKey(item);
+        if (alias && item.indexOf('.') === -1) return `\`${alias}\`.${item}`;
+        return item;
+      }).join(',');
     } else if (helper.isObject(fields)) {
       const data = [];
       for (const key in fields) {
@@ -80,7 +85,9 @@ module.exports = class AbstractParser {
       }
       return data.join(',');
     } else if (helper.isString(fields) && fields) {
-      return this.parseKey(fields);
+      fields = this.parseKey(fields);
+      if (alias && fields.indexOf('.') === -1) return `\`${alias}\`.${fields}`;
+      return fields;
     }
     return '*';
   }
