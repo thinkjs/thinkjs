@@ -52,4 +52,23 @@ module.exports = class MysqlQuery extends Query {
       return data.affectedRows || 0;
     });
   }
+
+  startTrans(connection) {
+    return this.socket().startTrans(connection).then(connection => {
+      this.connection = connection;
+      return connection;
+    });
+  }
+
+  commit(connection = this.connection) {
+    return this.socket().commit();
+  }
+
+  rollback(connection = this.connection) {
+    return this.socket().rollback(connection);
+  }
+
+  transaction(fn, connection) {
+    return this.socket().transaction(fn, connection);
+  }
 };
