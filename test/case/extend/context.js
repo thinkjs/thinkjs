@@ -1,5 +1,6 @@
 import test from 'ava';
 const helper = require('think-helper');
+const config = require('../../../lib/config/config');
 const mockie = require('../../lib/mockie');
 mockie.mockCookies();
 let context = require('../../../lib/extend/context');
@@ -58,7 +59,10 @@ const mockThink = {
     return this.configuration[name]
   },
   controller(){},
-  service(){}
+  service(){},
+  logger:{
+    error:(err)=>{return err}
+  }
 };
 
 Object.assign(context, mockContext);
@@ -224,4 +228,9 @@ test.serial('cookie', async t => {
 test.serial('controller / service', async t => {
   context.controller();
   context.service();
+});
+
+test.serial('config.onUnhandledRejection/onUncaughtException', async t => {
+  t.is('onUnhandledRejection',config.onUnhandledRejection('onUnhandledRejection'));
+  t.is('onUncaughtException',config.onUncaughtException('onUncaughtException'));
 });
