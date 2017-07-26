@@ -35,7 +35,7 @@ module.exports = class MysqlQuery extends Query {
    * query sql
    */
   query(sqlOptions, connection) {
-    const sql = helper.isNumberString(sqlOptions) ? sqlOptions : sqlOptions.sql;
+    const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
     this.lastSql = sql;
     return this.socket(sql).query(sqlOptions, connection);
   }
@@ -43,7 +43,7 @@ module.exports = class MysqlQuery extends Query {
    * execute sql
    */
   execute(sqlOptions, connection) {
-    const sql = helper.isNumberString(sqlOptions) ? sqlOptions : sqlOptions.sql;
+    const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
     this.lastSql = sql;
     return this.socket(sql).execute(sqlOptions, connection).then(data => {
       if (data.insertId) {
