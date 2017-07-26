@@ -44,6 +44,13 @@ const CommonLoader = {
           cache[item][name] = itemCache[name];
         }
       });
+      // merge common modules to every module
+      if (cache.common) {
+        for (const m in cache) {
+          if (m === 'common') continue;
+          cache[m] = Object.assign({}, cache.common, cache[m]);
+        }
+      }
       return cache;
     } else {
       const dir = path.join(appPath, type);
