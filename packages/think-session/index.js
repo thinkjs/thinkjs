@@ -13,4 +13,4 @@ module.exports = {
       return instance.run(name, value);
     }
   }
-}
+};

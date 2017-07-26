@@ -135,7 +135,8 @@ test.serial('`3. getSessionInstance` when ctx.cookie(name) is undefined', t => {
           handle,
           fresh: true,
           cookie: 'cookie666',
-          maxAge: 'maxAge'
+          maxAge: 'maxAge',
+          type: "cookie",
         });
       }
     }
@@ -213,7 +214,8 @@ test.serial('4. `getSessionInstance` when `cookieOption.autoUpdate && cookieOpti
           handle,
           fresh: false,
           cookie: 'cookie233',
-          maxAge: 'maxAge'
+          maxAge: 'maxAge',
+          type: "cookie",
         });
       }
     }
@@ -293,7 +295,8 @@ test.serial('5. `getSessionInstance` when `cookieOption.autoUpdate && cookieOpti
           handle,
           fresh: false,
           cookie: 'cookie233',
-          maxAge: 'maxAge'
+          maxAge: 'maxAge',
+          type: "cookie",
         });
       }
     }
