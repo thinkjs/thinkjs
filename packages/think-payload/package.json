@@ -6,6 +6,7 @@
   "dependencies": {
     "formidable": "^1.1.1",
     "inflation": "^2.0.0",
+    "on-finished": "^2.3.0",
     "raw-body": "^2.2.0",
     "think-helper": "^1.0.5",
     "xml2js": "^0.4.17"
