@@ -112,7 +112,7 @@ module.exports = class Tracer {
   run(ctx, err) {
     this.ctx = ctx;
     const isJson = helper.isFunction(ctx.is) && ctx.is('application/json');
-    const isJsonp = helper.isFunction(ctx.isJsonp) && ctx.jsJsonp();
+    const isJsonp = helper.isFunction(ctx.isJsonp) && ctx.isJsonp();
     if (isJson || isJsonp) {
       return (isJsonp ? ctx.jsonp : ctx.json)({
         errno: ctx.status,
