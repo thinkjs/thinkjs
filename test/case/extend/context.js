@@ -226,7 +226,7 @@ test.serial('cookie', async t => {
 });
 
 test.serial('controller / service', async t => {
-  context.controller();
+  // context.controller();
   context.service();
 });
 
