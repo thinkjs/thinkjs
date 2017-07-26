@@ -8,7 +8,7 @@ const debug = require('debug')(`think-loader-extend-${process.pid}`);
 
 const ExtendLoader = {
 
-  allowExtends: ['think', 'application', 'context', 'request', 'response', 'controller', 'logic'],
+  allowExtends: ['think', 'application', 'context', 'request', 'response', 'controller', 'logic', 'service'],
   /**
    * const modelExtend = require('think-model').extend;
    *  modelExtend = {
