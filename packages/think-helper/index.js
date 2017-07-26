@@ -3,9 +3,25 @@ const path = require('path');
 const crypto = require('crypto');
 const net = require('net');
 const cluster = require('cluster');
-const is = require('core-util-is');
 const uuid = require('uuid');
 const ms = require('ms');
+const {
+  isArray,
+  isBoolean,
+  isNull,
+  isNullOrUndefined,
+  isNumber,
+  isString,
+  isSymbol,
+  isUndefined,
+  isRegExp,
+  isObject,
+  isDate,
+  isError,
+  isFunction,
+  isPrimitive,
+  isBuffer
+} = require('core-util-is');
 
 const fsRmdir = promisify(fs.rmdir, fs);
 const fsUnlink = promisify(fs.unlink, fs);
@@ -19,9 +35,21 @@ exports.isIPv4 = net.isIPv4;
 exports.isIPv6 = net.isIPv6;
 exports.isMaster = cluster.isMaster;
 
-for (const name in is) {
-  exports[name] = is[name];
-}
+exports.isArray = isArray;
+exports.isBoolean = isBoolean;
+exports.isNull = isNull;
+exports.isNullOrUndefined = isNullOrUndefined;
+exports.isNumber = isNumber;
+exports.isString = isString;
+exports.isSymbol = isSymbol;
+exports.isUndefined = isUndefined;
+exports.isRegExp = isRegExp;
+exports.isObject = isObject;
+exports.isDate = isDate;
+exports.isError = isError;
+exports.isFunction = isFunction;
+exports.isPrimitive = isPrimitive;
+exports.isBuffer = isBuffer;
 
 /**
  * override isObject method in `core-util-is` module
