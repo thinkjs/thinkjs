@@ -5,7 +5,7 @@ const Relation = require('./relation/relation.js');
 const util = require('util');
 
 const MODELS = Symbol('think-models');
-const ADAPTER = Symbol('think-model-adapter');
+const DB = Symbol('think-model-db');
 
 module.exports = class Model {
   /**
@@ -28,15 +28,15 @@ module.exports = class Model {
    * get or set adapter
    * @param {Object} connection 
    */
-  adapter(adapter) {
-    if (adapter) {
-      this[ADAPTER] = adapter;
+  db(db) {
+    if (db) {
+      this[DB] = db;
       return this;
     }
-    if (this[ADAPTER]) return this[ADAPTER];
+    if (this[DB]) return this[DB];
     const Handle = this.config.handle;
     const instance = new Handle(this);
-    this[ADAPTER] = instance;
+    this[DB] = instance;
     return instance;
   }
   /**
@@ -397,7 +397,7 @@ module.exports = class Model {
     options.table = options.table || this.tableName;
     options.tablePrefix = this.tablePrefix;
     if (options.field && options.fieldReverse) {
-      options.field = await this.adapter().getReverseFields(options.field);
+      options.field = await this.db().getReverseFields(options.field);
     }
     return options;
   }
@@ -408,10 +408,10 @@ module.exports = class Model {
    */
   async add(data, options) {
     options = await this.parseOptions(options);
-    let parsedData = await this.adapter().parseData(data, false, options.table);
+    let parsedData = await this.db().parseData(data, false, options.table);
     parsedData = await this.beforeAdd(parsedData, options);
     if (helper.isEmpty(parsedData)) return Promise.reject(new Error('add data is empty'));
-    const lastInsertId = await this.adapter().add(parsedData, options);
+    const lastInsertId = await this.db().add(parsedData, options);
     const copyData = Object.assign({}, data, parsedData, {[this.pk]: lastInsertId});
     await this.afterAdd(copyData, options);
     return lastInsertId;
@@ -457,11 +457,11 @@ module.exports = class Model {
     }
     options = await this.parseOptions(options);
     let promises = data.map(async item => {
-      item = await this.adapter().parseData(item, false, options.table);
+      item = await this.db().parseData(item, false, options.table);
       return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
-    const insertIds = await this.adapter().addMany(data, options);
+    const insertIds = await this.db().addMany(data, options);
     promises = data.map((item, i) => {
       item[this.pk] = insertIds[i];
       return this.afterAdd(item, options);
@@ -478,7 +478,7 @@ module.exports = class Model {
   async delete(options) {
     options = await this.parseOptions(options);
     options = await this.beforeDelete(options);
-    const rows = await this.adapter().delete(options);
+    const rows = await this.db().delete(options);
     await this.afterDelete(options);
     return rows;
   }
@@ -492,7 +492,7 @@ module.exports = class Model {
    */
   async update(data, options) {
     options = await this.parseOptions(options);
-    let parsedData = await this.adapter().parseData(data, false, options.table);
+    let parsedData = await this.db().parseData(data, false, options.table);
     // check where condition
     if (helper.isEmpty(options.where)) {
       if (parsedData[this.pk]) {
@@ -507,7 +507,7 @@ module.exports = class Model {
     if (helper.isEmpty(parsedData)) {
       return Promise.reject(new Error('update data is empty'));
     }
-    const rows = await this.adapter().update(parsedData, options);
+    const rows = await this.db().update(parsedData, options);
     const copyData = Object.assign({}, data, parsedData);
     await this.afterUpdate(copyData, options);
     return rows;
@@ -538,7 +538,7 @@ module.exports = class Model {
     options = await this.parseOptions(options);
     options.limit = 1;
     options = await this.beforeFind(options);
-    const data = await this.adapter().select(options);
+    const data = await this.db().select(options);
     return this.afterFind(data[0] || {}, options);
   }
   /**
@@ -548,7 +548,7 @@ module.exports = class Model {
   async select(options) {
     options = await this.parseOptions(options);
     options = await this.beforeSelect(options);
-    const data = await this.adapter().select(options);
+    const data = await this.db().select(options);
     return this.afterSelect(data, options);
   }
   /**
@@ -565,9 +565,9 @@ module.exports = class Model {
     const data = await Promise.all([this.parseOptions(), promise]);
     let fields = data[0].field;
     if (!fields) {
-      fields = await this.adapter().getSchema();
+      fields = await this.db().getSchema();
     }
-    return this.adapter().selectAdd(fields, data[0].table, data[1]);
+    return this.db().selectAdd(fields, data[0].table, data[1]);
   }
   /**
    * count select
@@ -635,7 +635,7 @@ module.exports = class Model {
     } else if (one === true) {
       options.limit = 1;
     }
-    let data = await this.adapter().select(options);
+    let data = await this.db().select(options);
     const multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
     if (multi) {
       const fields = field.split(/\s*,\s*/);
@@ -766,10 +766,10 @@ module.exports = class Model {
    */
   query(...args) {
     if (helper.isObject(args[0])) {
-      return this.adapter().select(args[0], this.options.cache);
+      return this.db().select(args[0], this.options.cache);
     }
     const sql = this.parseSql(...args);
-    return this.adapter().select(sql, this.options.cache);
+    return this.db().select(sql, this.options.cache);
   }
   /**
    * execute sql
@@ -779,7 +779,7 @@ module.exports = class Model {
    */
   execute(...args) {
     const sql = this.parseSql(...args);
-    return this.adapter().execute(sql);
+    return this.db().execute(sql);
   }
   /**
    * parse sql
@@ -800,21 +800,21 @@ module.exports = class Model {
    * @return {Promise} []
    */
   startTrans(connection) {
-    return this.adapter().startTrans(connection);
+    return this.db().startTrans(connection);
   }
   /**
    * commit transcation
    * @return {Promise} []
    */
   commit(connection) {
-    return this.adapter().commit(connection);
+    return this.db().commit(connection);
   }
   /**
    * rollback transaction
    * @return {Promise} []
    */
   rollback(connection) {
-    return this.adapter().rollback(connection);
+    return this.db().rollback(connection);
   }
   /**
    * transaction exec functions
@@ -822,14 +822,14 @@ module.exports = class Model {
    * @return {Promise}      []
    */
   transaction(fn, connection) {
-    return this.adapter().transaction(fn, connection);
+    return this.db().transaction(fn, connection);
   }
   /**
    * close socket connection
    * @return {} []
    */
   close() {
-    return this.adapter().close();
+    return this.db().close();
   }
 };
 
