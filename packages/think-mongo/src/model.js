@@ -264,5 +264,283 @@ module.exports = class Mongo {
     if (!options.table) {
       options.tabel = this.tableName;
     }
+    options.tablePrefix = this.tablePrefix;
+    options.model = this.modelName;
+    return options;
+  }
+  /**
+   * parse data
+   * @param  {Object} data []
+   * @return {Object}      []
+   */
+  parseData(data) {
+    return data;
+  }
+  /**
+   * add data
+   * @param {Object} data    []
+   * @param {Object} options []
+   */
+  async add(data, options) {
+    // copy data
+    data = Object.assign({}, data);
+    if (helper.isEmpty(data)) {
+      return Promise.reject(new Error('add data is empty'));
+    }
+    options = this.parseOptions(options);
+    data = await this.beforeAdd(data, options);
+    data = this.parseData(data);
+    const insertId = await this.db().add(data, options);
+    const copyData = Object.assign({}, data, {[this.pk]: insertId});
+    await this.afterAdd(copyData, options);
+    return insertId;
+  }
+  /**
+   * then add
+   * @param  {Object} data       []
+   * @param  {Object} where      []
+   * @return {}            []
+   */
+  async thenAdd(data, where) {
+    const findData = await this.where(where).find();
+    if (!helper.isEmpty(findData)) {
+      return {[this.pk]: findData[this.pk], type: 'exist'};
+    }
+    const insertId = await this.add(data);
+    return {[this.pk]: insertId, type: 'add'};
+  }
+  /**
+   * update data when exist, otherwise add data
+   * @return {id}
+   */
+  async thenUpdate(data, where) {
+    const findData = await this.where(where).find();
+    if (helper.isEmpty(findData)) {
+      return this.add(data);
+    }
+    await this.where(where).update(data);
+    return findData[this.pk];
+  }
+  /**
+   * add multi data
+   * @param {Object} data    []
+   * @param {} options []
+   * @param {} replace []
+   */
+  async addMany(data, options) {
+    if (!helper.isArray(data) || !helper.isObject(data[0])) {
+      return Promise.reject(new Error('addMany must be an array'));
+    }
+    options = this.parseOptions(options);
+    data = await this.beforeAdd(data, options);
+    const insertIds = await this.db().addMany(data, options);
+    await this.afterAdd(data, options);
+    return insertIds;
+  }
+  /**
+   * delete data
+   * @return {} []
+   */
+  async delete(options) {
+    options = this.parseOptions(options);
+    options = await this.beforeDelete(options);
+    const data = await this.db().delete(options);
+    await this.afterDelete(options);
+    return data.result.n || 0;
+  }
+  /**
+   * update data
+   * @return {Promise} []
+   */
+  async update(data, options, ignoreDefault) {
+    if (helper.isBoolean(options)) {
+      [ignoreDefault, options] = [options, {}];
+    }
+    const pk = this.pk;
+    if (data[pk]) {
+      this.where({[pk]: data[pk]});
+      delete data[pk];
+    }
+    options = this.parseOptions(options);
+    if (ignoreDefault !== true) {
+      data = await this.beforeUpdate(data, options);
+    }
+    const result = await this.db().update(data, options);
+    await this.afterUpdate(data, options);
+    return result.result.nModified || 0;
+  }
+  /**
+   * update many data
+   * @param  {Promise} dataList []
+   * @return {Promise}          []
+   */
+  async updateMany(dataList, options) {
+    if (!helper.isArray(dataList)) {
+      return Promise.reject(new Error('dataList must be an array'));
+    }
+    const promises = dataList.map(data => {
+      return this.update(data, options);
+    });
+    return Promise.all(promises).then(data => {
+      return data.reduce((a, b) => a + b);
+    });
+  }
+  /**
+   * select data
+   * @return {Promise} []
+   */
+  async select(options) {
+    options = this.parseOptions(options);
+    options = await this.beforeSelect(options);
+    const data = await this.db().select(options);
+    return this.afterSelect(data, options);
+  }
+  /**
+   * count select
+   * @param  {Object} options  []
+   * @param  {Boolean} pageFlag []
+   * @return {Promise}          []
+   */
+  async countSelect(options, pageFlag) {
+    let count;
+    if (helper.isBoolean(options)) {
+      [pageFlag, options] = [options, {}];
+    } else if (helper.isNumber(options)) {
+      [count, options] = [options, {}];
+    }
+
+    options = this.parseOptions(options);
+    if (!count) {
+      // get count
+      this.options = options;
+      count = await this.count();
+    }
+
+    options.limit = options.limit || [0, this.config.pagesize];
+
+    const pagesize = options.limit[1];
+    // get page options
+    const data = {pagesize: pagesize};
+    data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
+    const totalPage = Math.ceil(count / data.numsPerPage);
+    if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
+      if (pageFlag) {
+        data.currentPage = 1;
+        options.limit = [0, pagesize];
+      } else {
+        data.currentPage = totalPage;
+        options.limit = [(totalPage - 1) * pagesize, pagesize];
+      }
+    }
+    const result = Object.assign({count: count, totalPages: totalPage}, data);
+    result.data = count ? await this.select(options) : [];
+    return result;
+  }
+  /**
+   * select one row data
+   * @param  {Object} options []
+   * @return {Promise}         []
+   */
+  async find(options) {
+    this.limit(1);
+    options = this.parseOptions(options);
+    options = await this.beforeFind(options);
+    const data = await this.db().select(options);
+    return this.afterFind(data[0] || {}, options);
+  }
+  /**
+   * increment field data
+   * @param  {String} field []
+   * @param  {Number} step  []
+   * @return {Promise}       []
+   */
+  increment(field, step = 1) {
+    const options = this.parseOptions();
+    return this.db().update({
+      $inc: {
+        [field]: step
+      }
+    }, options).then(data => {
+      return data.result.n;
+    });
+  }
+  /**
+   * decrement field data
+   * @param  {String} field []
+   * @param  {Number} step  []
+   * @return {Promise}       []
+   */
+  decrement(field, step = 1) {
+    const options = this.parseOptions();
+    return this.db().update({
+      $inc: {
+        [field]: 0 - step
+      }
+    }, options).then(data => {
+      return data.result.n;
+    });
+  }
+  /**
+   * get count 
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  async count(field) {
+    this.field(field);
+    const options = this.parseOptions();
+    return this.db().count(options);
+  }
+  /**
+   * get sum
+   * @param  {String} field []
+   * @return {Promise}       []
+   */
+  async sum(field) {
+    this.field(field);
+    const options = await this.parseOptions();
+    return this.db().sum(options);
+  }
+  /**
+   * aggregate
+   * http://docs.mongodb.org/manual/reference/sql-aggregation-comparison/
+   * @param  {} options []
+   * @return {}         []
+   */
+  aggregate(options) {
+    return this.db().aggregate(this.tableName, options);
+  }
+  /**
+   * map reduce
+   * Examples: http://docs.mongodb.org/manual/tutorial/map-reduce-examples/
+   * @param  {Function} map    []
+   * @param  {Function} reduce []
+   * @param  {Object} out    []
+   * @return {Promise}        []
+   */
+  mapReduce(map, reduce, out) {
+    const table = this.tableName;
+    return this.db().socket.autoRelease(connection => {
+      const collection = connection.collection(table);
+      return collection.mapReduce(map, reduce, out);
+    });
+  }
+  /**
+   * create indexes
+   * @param  {Object} indexes []
+   * @return {Promise}         []
+   */
+  createIndex(indexes, options) {
+    return this.db().ensureIndex(this.tableName, indexes, options);
+  }
+  /**
+   * get collection indexes
+   * @return {Promise} []
+   */
+  getIndexes() {
+    const table = this.tableName;
+    return this.db().socket.autoRelease(connection => {
+      const collection = connection.collection(table);
+      return collection.indexes();
+    });
   }
 };
