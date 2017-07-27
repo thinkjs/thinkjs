@@ -38,7 +38,7 @@ class Router {
    * get pathname, remove prefix & suffix
    */
   getPathname() {
-    let pathname = this.ctx.path;
+    let pathname = this.ctx.path || '';
     const prefix = this.options.prefix;
     // remove prefix in pathname
     if (prefix && prefix.length) {
