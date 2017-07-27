@@ -485,7 +485,7 @@ module.exports = class Mongo {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async count(field) {
+  count(field) {
     this.field(field);
     const options = this.parseOptions();
     return this.db().count(options);
@@ -495,9 +495,9 @@ module.exports = class Mongo {
    * @param  {String} field []
    * @return {Promise}       []
    */
-  async sum(field) {
+  sum(field) {
     this.field(field);
-    const options = await this.parseOptions();
+    const options = this.parseOptions();
     return this.db().sum(options);
   }
   /**
