@@ -7,5 +7,6 @@ const extend = {
 module.exports = {
   think: extend,
   context: extend,
-  controller: extend
+  controller: extend,
+  service: extend
 };
