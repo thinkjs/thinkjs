@@ -6,6 +6,7 @@ const util = require('util');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
+const RELATION = Symbol('think-model-relation');
 
 module.exports = class Model {
   /**
@@ -22,7 +23,7 @@ module.exports = class Model {
     this.config = config;
     this.modelName = modelName;
     this.options = {};
-    this.data = {};
+    this[RELATION] = new Relation(this);
   }
   /**
    * get or set adapter
@@ -362,8 +363,7 @@ module.exports = class Model {
    * @return {} []
    */
   afterFind(data) {
-    const relation = new Relation(this);
-    return relation.afterFind(data);
+    return this[RELATION].afterFind(data);
   }
   /**
    * before select
@@ -377,8 +377,7 @@ module.exports = class Model {
    * @return {}        []
    */
   afterSelect(data) {
-    const relation = new Relation(this);
-    return relation.afterSelect(data);
+    return this[RELATION].afterSelect(data);
   }
   /**
    * parse options, reset this.options to {}
