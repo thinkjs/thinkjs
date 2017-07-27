@@ -24,7 +24,7 @@ test.serial('normal test', t => {
   const App = getApplication();
   let app = new App(defaultOption);
   app.run();
-  t.is(think.isCli, true)
+  t.is(think.isCli, undefined)
 })
 
 test.serial('runInMaster', t => {
@@ -55,7 +55,7 @@ test.serial('runInWorker', async t => {
   const App = getApplication();
   let app = new App(defaultOption);
   app.parseArgv = ()=>{return {}};
-  think.isCli = false
+  //think.isCli = false
   app.run();
   await utils.sleep(1000)
   // console.log(think.Controller.toString());
@@ -101,7 +101,7 @@ test.serial('watcher', t => {
   const option = Object.assign({}, defaultOption, {watcher});
   let app = new App(option);
   app.run();
-  t.is(think.isCli, true)
+  t.is(think.isCli, undefined)
 })
 
 test.serial('_watcherCallBack', t => {

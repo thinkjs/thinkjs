@@ -97,7 +97,7 @@ test.serial('isMethod', async t => {
 });
 
 test.serial('get isCli', async t => {
-  t.is(context.isCli, true);
+  t.is(context.isCli, false);
 });
 
 test.serial('isAjax', async t => {
