@@ -1,11 +1,17 @@
 const Query = require('./query.js');
 const path = require('path');
 const helper = require('think-helper');
+const {ObjectID} = require('mongodb');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
 
-module.exports = class Mongo {
+class Mongo {
+  /**
+   * constructor
+   * @param {String} modelName 
+   * @param {Object} config 
+   */
   constructor(modelName, config) {
     if (helper.isObject(modelName)) {
       [modelName, config] = [config, {}];
@@ -544,3 +550,7 @@ module.exports = class Mongo {
     });
   }
 };
+
+Mongo.ObjectID = ObjectID;
+
+module.exports = Mongo;
