@@ -34,7 +34,7 @@ class Crontab {
       item.type = item.type || 'one';
       if (!helper.isFunction(item.handle)) {
         const handle = item.handle;
-        item.handle = () => mockHttp(handle, this.app);
+        item.handle = () => mockHttp({method: 'CLI', url: handle}, this.app);
       }
       return item;
     }).filter(item => {
