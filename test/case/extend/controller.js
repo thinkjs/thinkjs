@@ -15,11 +15,12 @@ const defaultOption = {
 };
 
 const ctx = {
+  app:{modules:''},
   body:'hello thinkjs',
   status:404,
   ip:'10.10.10.10',
   ips: '10.10.10.10,11.11.11.11',
-  module: {},
+  module: '',
   method: 'GET',
   userAgent:'test',
   referrer(onlyHost){
@@ -237,8 +238,24 @@ test('redirect method', async t => {
 });
 
 test('controller method', async t => {
-  think.controller = (name)=>{ return name}
-  t.deepEqual(controller.controller('test'), 'test');
+  think.app = {
+    controllers:{
+      test:class TestController{}
+    }
+  };
+  t.is(controller.controller('test') instanceof think.app.controllers.test,true);
+});
+
+test('controller method in modules', async t => {
+  think.app = {
+    controllers:{
+      common: {
+        test:class TestController{}
+      }
+    }
+  };
+  ctx.app.modules = ['test'];
+  t.is(controller.controller('test') instanceof think.app.controllers.common.test,true);
 });
 
 test('service method', async t => {
