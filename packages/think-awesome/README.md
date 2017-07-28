@@ -39,4 +39,8 @@ awesome projects for `ThinkJS 3.x`
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. **already built in framework!**
 * [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller. **already built in framework!**
 
+## Others
+
+* [think-pagination](https://github.com/thinkjs/think-pagination) Pagination for ThinkJS 3.x
+
 ## Projects by ThinkJS
