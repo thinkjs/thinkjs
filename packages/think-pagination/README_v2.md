@@ -16,7 +16,7 @@ npm install think-pagination@1.6.0
 import pagination from 'think-pagination';
 export default class think.controller.base {
   async indexAction(){
-    let data = await this.model('user').countSelect();
+    let data = await this.model('user').page(this.get('page')).countSelect();
     let html = pagination(data, this.http, {});
     this.assign('pagination', html);
   }

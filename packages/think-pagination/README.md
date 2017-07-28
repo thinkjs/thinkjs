@@ -17,7 +17,7 @@ const pagination = require('think-pagination');
 
 module.exports = class extends think.Controller {
   async indexAction() {
-    const data = await this.model('user').countSelect();
+    const data = await this.model('user').page(this.get('page')).countSelect();
     const html = pagination(data, this.ctx, {});
     this.assign('pagination', html);
   }
