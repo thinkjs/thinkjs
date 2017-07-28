@@ -1,11 +1,11 @@
 # think-pagination
 
-pagination for ThinkJS 3, if you want to in ThinkJS 2.x, please view [README_V2](./README_V2.md)
+pagination for ThinkJS 2
 
 ## install
 
 ```sh
-npm install think-pagination
+npm install think-pagination@1.6.0
 ```
 
 ## how to use
@@ -13,12 +13,11 @@ npm install think-pagination
 ### controller
 
 ```js
-const pagination = require('think-pagination');
-
-module.exports = class extends think.Controller {
-  async indexAction() {
-    const data = await this.model('user').countSelect();
-    const html = pagination(data, this.ctx, {});
+import pagination from 'think-pagination';
+export default class think.controller.base {
+  async indexAction(){
+    let data = await this.model('user').countSelect();
+    let html = pagination(data, this.http, {});
     this.assign('pagination', html);
   }
 }
@@ -38,12 +37,12 @@ module.exports = class extends think.Controller {
 {{pagination | safe}}
 ```
 
-## API
+## api
 
-### pagination(pagerData, ctx, options)
+### pagination(pagerData, http, options)
 
 * `pagerData`  get from by model.countSelect
-* `ctx` ctx object
+* `http` http object
 * `options` options
 
 `options`:
@@ -57,7 +56,7 @@ module.exports = class extends think.Controller {
     text: {
       next: 'Next',
       prev: 'Prev',
-      total: 'count: __COUNT__ , pages: __PAGE__'
+      total: 'count: ${count} , pages: ${pages}'
     }
 }
 ```

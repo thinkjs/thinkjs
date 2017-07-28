@@ -1,36 +1,32 @@
 {
   "name": "think-pagination",
-  "description": "pagination for ThinkJS 2",
-  "version": "1.6.0",
+  "description": "pagination for ThinkJS 3.x",
+  "version": "2.0.0",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "npm run eslint && npm run test-cov",
-    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/",
-    "compile": "babel --presets es2015-loose,stage-1 src/ --out-dir lib/",
-    "watch-compile": "npm run compile -- --watch",
-    "watch": "npm run watch-compile",
-    "prepublish": "npm run compile",
-    "eslint": "eslint src/"
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 2000 --recursive  -R spec test/",
+    "prepublish": "npm run lint",
+    "lint": "eslint index.js"
   },
-  "contributors": [{
-    "name": "welefen",
-    "email": "welefen@gmail.com"
-  }],
-  "main": "lib/index.js",
-  "dependencies": {},
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "think-helper": "^1.0.13"
+  },
   "devDependencies": {
     "mocha": "1.20.1",
     "muk": "0.3.1",
     "istanbul": "0.4.0",
-    "babel-cli": "6.3.17",
-    "babel-preset-es2015-loose": "6.1.4",
-    "babel-preset-stage-1": "6.3.13",
-    "babel-plugin-transform-runtime": "6.3.13",
-    "eslint": "1.10.2",
-    "babel-eslint": "5.0.0-beta4"
+    "eslint": "^4.3.0",
+    "eslint-config-think": "^1.0.1"
   },
   "keywords": [
     "thinkjs",
@@ -41,7 +37,7 @@
     "url": "https://github.com/thinkjs-team/think-pagination"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=6.0.0"
   },
   "license": "MIT",
   "readmeFilename": "README.md",
