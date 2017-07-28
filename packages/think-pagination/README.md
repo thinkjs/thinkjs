@@ -51,13 +51,13 @@ module.exports = class extends think.Controller {
 ```js
 {
   desc: false, //show description
-    pageNum: 2, 
-    url: '', //page url, when not set, it will auto generated
-    class: '', //pagenation extra class
-    text: {
-      next: 'Next',
-      prev: 'Prev',
-      total: 'count: __COUNT__ , pages: __PAGE__'
-    }
+  pageNum: 2, 
+  url: '', //page url, when not set, it will auto generated
+  class: '', //pagenation extra class
+  text: {
+    next: 'Next',
+    prev: 'Prev',
+    total: 'count: __COUNT__ , pages: __PAGE__'
+  }
 }
 ```

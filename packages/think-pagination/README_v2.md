@@ -50,13 +50,13 @@ export default class think.controller.base {
 ```js
 {
   desc: false, //show description
-    pageNum: 2, 
-    url: '', //page url, when not set, it will auto generated
-    class: '', //pagenation extra class
-    text: {
-      next: 'Next',
-      prev: 'Prev',
-      total: 'count: ${count} , pages: ${pages}'
-    }
+  pageNum: 2, 
+  url: '', //page url, when not set, it will auto generated
+  class: '', //pagenation extra class
+  text: {
+    next: 'Next',
+    prev: 'Prev',
+    total: 'count: ${count} , pages: ${pages}'
+  }
 }
 ```
