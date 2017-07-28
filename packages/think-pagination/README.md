@@ -1,6 +1,6 @@
 # think-pagination
 
-pagination for ThinkJS 3, if you want to in ThinkJS 2.x, please view [README_V2](./README_v2.md)
+pagination for ThinkJS 3, if you want to use in ThinkJS 2.x, please view [README_V2](./README_v2.md)
 
 ## install
 
