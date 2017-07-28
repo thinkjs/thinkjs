@@ -1,10 +1,15 @@
 const assert = require('assert');
 const helper = require('think-helper');
 
+const defaultOptions = {
+  emptyController: ''
+};
+
 function invokeController(options, app) {
+  options = Object.assign(defaultOptions, options);
   return (ctx, next) => {
     const isMultiModule = app.modules.length;
-    let controllers = app.controllers;
+    let controllers = app.controllers || {};
 
     if (isMultiModule) {
       assert(ctx.module, 'ctx.module required in multi module');
@@ -13,17 +18,20 @@ function invokeController(options, app) {
     assert(ctx.action, 'ctx.action required');
     // error avoiding
     if (controllers && isMultiModule) {
-      controllers = controllers[ctx.module];
+      controllers = controllers[ctx.module] || {};
     }
-    // controllers empty
-    if (helper.isEmpty(controllers)) {
-      return next();
-    }
-    const Controller = controllers[ctx.controller];
+    let Controller = controllers[ctx.controller];
+
     // controller not exist
     if (helper.isEmpty(Controller)) {
-      return next();
+      const emptyController = options.emptyController;
+      if (emptyController && controllers[emptyController]) {
+        Controller = controllers[emptyController];
+      } else {
+        return next();
+      }
     }
+
     const instance = new Controller(ctx);
     let promise = Promise.resolve();
     if (instance.__before) {
