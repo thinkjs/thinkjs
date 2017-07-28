@@ -1,7 +1,5 @@
 const cluster = require('cluster');
 const util = require('./util.js');
-// const helper = require('think-helper');
-// const debug = require('debug')('think-cluster');
 
 let waitReloadWorkerTimes = 0;
 
@@ -21,14 +19,29 @@ class Master {
    */
   captureReloadSignal() {
     const signal = this.options.reloadSignal;
-    process.on(signal, () => {
+    const reloadWorkers = () => {
       for (const id in cluster.workers) {
         const worker = cluster.workers[id];
         if (!this.isAliveWorker(worker)) continue;
         worker.send(util.THINK_RELOAD_SIGNAL);
       }
+    };
+    if (signal) {
+      process.on(signal, () => {
+        reloadWorkers();
+      });
+    }
+    // if receive message `think-cluster-reload-workers` from worker, restart all workers
+    process.on('message', (worker, message) => {
+      if (message === 'think-cluster-reload-workers') {
+        reloadWorkers();
+      }
     });
   }
+  /**
+   * check worker is alive
+   * @param {Object} worker 
+   */
   isAliveWorker(worker) {
     if (worker.state === 'disconnected' || worker.needKilled) {
       return false;
@@ -70,9 +83,7 @@ class Master {
       }
       return Promise.all(promises);
     };
-    if (this.options.reloadSignal) {
-      this.captureReloadSignal();
-    }
+    this.captureReloadSignal();
     if (this.options.enableAgent) {
       return this.forkAgentWorker().then(data => {
         return forkWorker({THINK_ENABLE_AGENT: 1}, data.address);
