@@ -29,3 +29,22 @@ test.serial('normal test', t => {
   t.is(think.app.env,options.env);
   t.is(think.app.proxy,options.proxy)
 })
+
+test.serial('loadMiddleware', t => {
+  think.loader = {
+    loadMiddleware:()=>{
+      let [fn1,fn2] = [()=>{},()=>{}];
+      return [fn1,fn2]
+    }
+  };
+  think.app = {
+    middleware:[],
+    use : (fn)=>{
+      think.app.middleware.push(fn)
+    }
+  }
+  const Loader = getLoader();
+  let loader = new Loader();
+  loader.loadMiddleware();
+  t.is(think.app.middleware.length,2);
+})

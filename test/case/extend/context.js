@@ -1,4 +1,5 @@
 import test from 'ava';
+const fs = require('fs');
 const helper = require('think-helper');
 const config = require('../../../lib/config/config');
 const mockie = require('../../lib/mockie');
@@ -29,6 +30,12 @@ const mockContext = {
   },
   req:{},
   res:{},
+  response:{
+    get(){}
+  },
+  attachment(){
+
+  }
 };
 
 const mockThink = {
@@ -226,11 +233,27 @@ test.serial('cookie', async t => {
 });
 
 test.serial('controller / service', async t => {
-  // context.controller();
   context.service();
 });
 
 test.serial('config.onUnhandledRejection/onUncaughtException', async t => {
   t.is('onUnhandledRejection',config.onUnhandledRejection('onUnhandledRejection'));
   t.is('onUncaughtException',config.onUncaughtException('onUncaughtException'));
+});
+
+test.serial('download', async t => {
+  context.download(__dirname + '/controller.js');
+  t.is(context.body instanceof fs.ReadStream,true)
+});
+
+test.serial('download with content-type and disposition', async t => {
+  context.response.get = (key)=>{
+    if(key === 'Content-Type'){
+      return 'application/json'
+    }else if(key === 'Content-Disposition'){
+      return 'attachment:xxx'
+    }
+  }
+  context.download(__dirname + '/controller.js');
+  t.is(context.body instanceof fs.ReadStream,true)
 });

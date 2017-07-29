@@ -29,6 +29,9 @@ const ctx = {
   referer(onlyHost){
     return onlyHost
   },
+  download(){
+    return true
+  },
   type: 'text/html; charset=UTF-8',
   isGet: true,
   isPost: false,
@@ -258,7 +261,92 @@ test('controller method in modules', async t => {
   t.is(controller.controller('test') instanceof think.app.controllers.common.test,true);
 });
 
-test('service method', async t => {
-  think.service = (name)=>{ return name}
-  t.deepEqual(controller.service('test'), 'test');
+test.serial('service method with modules', async t => {
+  think.app = {
+    services:{
+      common:{
+        test:class TestService{}
+      }
+    },
+    modules:['test','common']
+  }
+  let ins = controller.service('test');
+  t.is(ins instanceof think.app.services.common.test,true);
 });
+
+test.serial('service method', async t => {
+  think.app = {
+    services:{
+      test:{}
+    },
+    modules:[]
+  }
+  let ins = controller.service('test');
+  t.deepEqual(ins,think.app.services.test);
+});
+
+test('download method', async t => {
+  t.deepEqual(controller.download(), true);
+});
+
+test.serial('action method', async t => {
+  let runAction = false;
+  let runCallAction = false;
+  let runAfterAction = false;
+  think.app = {
+    controllers:{
+      test:class TestController{
+        testAction(){
+          runAction = true;
+        }
+        __call(){
+          runCallAction = true;
+        }
+        __after(){
+          runAfterAction = true;
+        }
+      }
+    }
+  };
+  await controller.action('test','test');
+  t.is(runAction,true);
+  await controller.action('test','none');
+  t.is(runCallAction,true);
+  t.is(runAfterAction,true);
+
+});
+
+test.serial('action with __before and return false', async t => {
+  let runAction = false;
+  think.app = {
+    controllers:{
+      test:class TestController{
+        __before(){
+          return false
+        }
+        testAction(){
+          runAction = true;
+        }
+      }
+    }
+  };
+  await controller.action('test','test');
+  t.is(runAction,false);
+});
+
+test.serial('action with __before', async t => {
+  let runAction = false;
+  think.app = {
+    controllers:{
+      test:class TestController{
+        __before(){
+          return 'test'
+        }
+      }
+    }
+  };
+  await controller.action('test','test');
+  t.is(runAction,false);
+});
+
+
