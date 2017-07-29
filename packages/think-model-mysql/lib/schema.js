@@ -77,7 +77,7 @@ module.exports = class MysqlSchema extends Schema {
    */
   getSchema(table = this.table) {
     const _getSchema = () => {
-      return debounce.debounce('getTableSchema', () => {
+      return debounce.debounce(`getTable${table}Schema`, () => {
         return this.query.query(`SHOW COLUMNS FROM ${this.parser.parseKey(table)}`).catch(() => []).then(data => {
           const ret = {};
           data.forEach(item => {
@@ -87,7 +87,9 @@ module.exports = class MysqlSchema extends Schema {
         });
       });
     };
-    if (this[GET_SCHEMA] && this[GET_SCHEMA][table]) return Promise.resolve(this[GET_SCHEMA][table]);
+    if (this[GET_SCHEMA] && this[GET_SCHEMA][table]) {
+      return Promise.resolve(this[GET_SCHEMA][table]);
+    }
     return _getSchema().then(data => {
       if (!this[GET_SCHEMA]) {
         this[GET_SCHEMA] = {};
