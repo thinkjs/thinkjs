@@ -7,7 +7,7 @@ class Config {
    * constructor
    * @param {config} config data
    */
-  constructor(config = {}){
+  constructor(config = {}) {
     this.config = config;
   }
   /**
@@ -15,19 +15,19 @@ class Config {
    * get(), get('name'), get('foo.bar.xxx')
    * @param {name} undefined|String
    */
-  get(name, config){
-    if(!name){
+  get(name, config) {
+    if (!name) {
       return this.config;
     }
     config = config || this.config;
-    if(name.indexOf('.') === -1){
+    if (name.indexOf('.') === -1) {
       return config[name];
     }
     name = name.split('.');
-    let length = name.length;
+    const length = name.length;
     name.some((item, index) => {
       config = config[item];
-      if(index !== length - 1 && !helper.isObject(config)){
+      if (index !== length - 1 && !helper.isObject(config)) {
         config = undefined;
         return true;
       }
@@ -38,18 +38,18 @@ class Config {
    * set config
    * set('name', 'value'), set('foo.bar', 'value')
    */
-  set(name, value){
-    if(name.indexOf('.') === -1){
+  set(name, value) {
+    if (name.indexOf('.') === -1) {
       this.config[name] = value;
     }
     let config = this.config;
     name = name.split('.');
-    let length = name.length;
+    const length = name.length;
     name.forEach((item, index) => {
-      if(index === length - 1){
+      if (index === length - 1) {
         config[item] = value;
-      }else{
-        if(!helper.isObject(config[item])){
+      } else {
+        if (!helper.isObject(config[item])) {
           config[item] = {};
         }
         config = config[item];
@@ -59,25 +59,26 @@ class Config {
   }
 }
 
-function getConfigFn(configs, isMultiModule){
-  let configInstances = {};
-  if(isMultiModule){
-    for(let name in configs){
+function getConfigFn(configs, isMultiModule) {
+  const configInstances = {};
+  if (isMultiModule) {
+    for (const name in configs) {
       configInstances[name] = new Config(configs[name]);
     }
-  }else{
+  } else {
     configInstances.common = new Config(configs);
   }
   return (name, value, m = 'common') => {
     let conf = configInstances.common;
-    if(isMultiModule && m){
+    if (isMultiModule && m) {
       conf = configInstances[m];
     }
-    if(value === undefined){
+    if (!conf) return;
+    if (value === undefined) {
       return conf.get(name);
     }
     conf.set(name, value);
-  }
+  };
 }
 
 exports.Config = Config;

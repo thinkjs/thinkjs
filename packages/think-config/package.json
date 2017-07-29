@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "lint": "eslint index.js"
   },
   "ava": {
     "require": [
@@ -27,11 +28,10 @@
   },
   "devDependencies": {
     "ava": "^0.18.0",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
     "codecov": "^1.0.1",
     "coveralls": "^2.11.16",
-    "eslint": "2.8.0",
+    "eslint": "^4.3.0",
+    "eslint-config-think": "^1.0.1",
     "nyc": "^7.1.0"
   },
   "keywords": [],
