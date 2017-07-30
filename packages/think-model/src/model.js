@@ -16,7 +16,7 @@ module.exports = class Model {
    */
   constructor(modelName = '', config = {}) {
     if (helper.isObject(modelName)) {
-      [modelName, config] = [config, {}];
+      [modelName, config] = ['', modelName];
     }
     assert(helper.isFunction(config.handle), 'config.handle must be a function');
     this.config = config;
