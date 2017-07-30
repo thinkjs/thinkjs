@@ -71,6 +71,12 @@ module.exports = class Model {
     return this._pk || 'id';
   }
   /**
+   * get last sql
+   */
+  get lastSql() {
+    return this.db().lastSql;
+  }
+  /**
    * get model instance
    * @param {String} name 
    */
