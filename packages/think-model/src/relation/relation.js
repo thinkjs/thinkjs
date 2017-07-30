@@ -106,7 +106,8 @@ class Relation {
         model[allowItem](opts[allowItem]);
       }
     });
-    if (model.setRelation) {
+    // disable relation in sub class
+    if (model.setRelation && opts.relation) {
       model.setRelation(opts.relation, false);
     }
     opts.model = model;
@@ -116,6 +117,9 @@ class Relation {
         Cls = HasMany;
         break;
       case Relation.BELONG_TO:
+        // change default key & fKey
+        opts.key = item.key || `${opts.model.modelName}_id`;
+        opts.fKey = item.fKey || 'id';
         Cls = BelongTo;
         break;
       case Relation.MANY_TO_MANY:

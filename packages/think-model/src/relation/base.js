@@ -18,19 +18,23 @@ module.exports = class BaseRelation {
    * parse where in relation model
    */
   parseRelationWhere() {
+    const key = this.options.key;
+    const fKey = this.options.fKey;
     if (helper.isArray(this.data)) {
       const keys = [];
       this.data.forEach(item => {
-        if (keys.indexOf(item[this.options.key]) === -1) {
-          keys.push(item[this.options.key]);
+        if (keys.indexOf(item[key]) === -1 && item[key]) {
+          keys.push(item[key]);
         }
       });
+      if (keys.length === 0) return false;
       return {
-        [this.options.fKey]: ['IN', keys]
+        [fKey]: ['IN', keys]
       };
     }
+    if (!this.data[key]) return false;
     return {
-      [this.options.fKey]: this.data[this.options.key]
+      [fKey]: this.data[key]
     };
   }
   /**
