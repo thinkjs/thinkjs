@@ -59,7 +59,11 @@ module.exports = class SQLiteQuery extends Query {
    */
   addMany(data, options) {
     return super.addMany(data, options).then(ret => {
-      return ret;
+      const lastInsertId = this.lastInsertId;
+      const length = ret.length;
+      return ret.map((item, index) => {
+        return lastInsertId - length + index + 1;
+      });
     });
   }
 
