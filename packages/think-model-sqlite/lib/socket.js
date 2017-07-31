@@ -159,7 +159,6 @@ class SQLite {
       promise = new Promise((resolve, reject) => {
         connection.run(sqlOptions.sql, function(err) {
           if (err) return reject(err);
-          console.log('this', this)
           resolve({insertId: this.lastID, affectedRows: this.changes});
         });
       });
