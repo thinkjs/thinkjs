@@ -51,7 +51,7 @@ class SQLite {
    */
   [CREATE_POOL]() {
     const factory = {
-      create() {
+      create: () => {
         const deferred = helper.defer();
         const db = new sqlite.Database(this.savePath, err => {
           if (this.config.logConnect) {
@@ -67,7 +67,7 @@ class SQLite {
         }
         return deferred.promise;
       },
-      destroy(client) {
+      destroy: (client) => {
         client.close();
         return Promise.resolve();
       }

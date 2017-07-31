@@ -6,8 +6,8 @@ const Parser = require('./parser.js');
 
 const QUERY = Symbol('think-model-sqlite-query');
 const PARSER = Symbol('think-model-sqlite-parser');
-const GET_SCHEMA = Symbol('think-model-sqlite-schema');
 const debounce = new Debounce();
+const GET_SCHEMA = {};
 
 /**
  * mysql Schema
@@ -60,12 +60,12 @@ module.exports = class MysqlSchema extends Schema {
       unique: item.unique,
       autoIncrement: false
     };
-    const pos = item.Type.indexOf('(');
-    fieldData.tinyType = (pos === -1 ? item.Type : item.Type.slice(0, pos)).toLowerCase();
+    const pos = item.type.indexOf('(');
+    fieldData.tinyType = (pos === -1 ? item.type : item.type.slice(0, pos)).toLowerCase();
     if (fieldData.default && fieldData.tinyType.indexOf('int') > -1) {
       fieldData.default = parseInt(fieldData.default);
     }
-    if (item.Type.indexOf('unsigned') > -1) {
+    if (item.type.indexOf('unsigned') > -1) {
       fieldData.unsigned = true;
     }
     fieldData.validate = this._getItemSchemaValidate(fieldData);
@@ -95,21 +95,18 @@ module.exports = class MysqlSchema extends Schema {
         return Promise.all([fieldsPromise, indexesPromise]).then(([fields, indexes]) => {
           const ret = {};
           fields.forEach(item => {
-            item.unique = indexes[item.name].unique;
+            item.unique = indexes[item.name] && indexes[item.name].unique;
             ret[item.name] = this._parseItemSchema(item);
           });
           return helper.extend(ret, this.schema);
         });
       });
     };
-    if (this[GET_SCHEMA] && this[GET_SCHEMA][table]) {
-      return Promise.resolve(this[GET_SCHEMA][table]);
+    if (GET_SCHEMA[table]) {
+      return Promise.resolve(GET_SCHEMA[table]);
     }
     return _getSchema().then(data => {
-      if (!this[GET_SCHEMA]) {
-        this[GET_SCHEMA] = {};
-      }
-      this[GET_SCHEMA][table] = data;
+      GET_SCHEMA[table] = data;
       return data;
     });
   }
