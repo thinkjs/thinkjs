@@ -19,7 +19,7 @@ module.exports = class AbstractSchema {
    * @param {String} fields 
    */
   getReverseFields(fields) {
-    if (helper.isString(fields)) fields = fields.split(',');
+    if (helper.isString(fields)) fields = fields.trim().split(/\s*,\s*/);
     return this.getSchema().then(schema => {
       const result = Object.keys(schema).filter(field => {
         return fields.indexOf(field) === -1;
