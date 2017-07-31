@@ -801,6 +801,15 @@ module.exports = class Model {
     });
   }
   /**
+   * set relation
+   * @param {String} name 
+   * @param {Mixed} value 
+   */
+  setRelation(name, value) {
+    this[RELATION].setRelation(name, value);
+    return this;
+  }
+  /**
    * start transaction
    * @return {Promise} []
    */
