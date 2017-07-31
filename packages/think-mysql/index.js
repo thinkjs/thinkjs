@@ -16,7 +16,7 @@ const defaultConfig = {
   database: '',
   connectionLimit: 1,
   multipleStatements: true,
-  logger: console.log.bind(console),
+  logger: console.log.bind(console), /* eslint no-console: ["error", { allow: ["log"] }] */
   logConnect: false,
   logSql: false
 };
@@ -27,7 +27,7 @@ const defaultConfig = {
 const TRANSACTION = {
   start: 1,
   end: 2
-}
+};
 
 class ThinkMysql {
   /**
@@ -38,12 +38,12 @@ class ThinkMysql {
     this.config = config;
     this.pool = mysql.createPool(config);
 
-    //log connect
-    if(config.logConnect){
+    // log connect
+    if (config.logConnect) {
       let connectionPath = '';
-      if(config.socketPath){
+      if (config.socketPath) {
         connectionPath = config.socketPath;
-      }else{
+      } else {
         connectionPath = `mysql://${config.user}:${config.password}@${config.host}:${config.port || 3306}/${config.database}`;
       }
       config.logger(connectionPath);
@@ -52,15 +52,15 @@ class ThinkMysql {
   /**
    * get connection
    */
-  getConnection(connection){
-    if(connection) return Promise.resolve(connection);
+  getConnection(connection) {
+    if (connection) return Promise.resolve(connection);
     return helper.promisify(this.pool.getConnection, this.pool)();
   }
   /**
    * start transaction
    * @param {Object} connection 
    */
-  startTrans(connection){
+  startTrans(connection) {
     return this.getConnection(connection).then(connection => {
       return this.query({
         sql: 'START TRANSACTION',
@@ -73,22 +73,22 @@ class ThinkMysql {
    * commit transaction
    * @param {Object} connection 
    */
-  commit(connection){
+  commit(connection) {
     return this.query({
       sql: 'COMMIT',
       transaction: TRANSACTION.end,
-      debounce: false,
+      debounce: false
     }, connection);
   }
   /**
    * rollback transaction
    * @param {Object} connection 
    */
-  rollback(connection){
+  rollback(connection) {
     return this.query({
       sql: 'ROLLBACK',
       transaction: TRANSACTION.end,
-      debounce: false,
+      debounce: false
     }, connection);
   }
   /**
@@ -96,49 +96,49 @@ class ThinkMysql {
    * @param {Function} fn 
    * @param {Object} connection 
    */
-  transaction(fn, connection){
+  transaction(fn, connection) {
     assert(helper.isFunction(fn), 'fn must be a function');
     return this.getConnection(connection).then(connection => {
       return this.startTrans(connection).then(() => {
-         return fn(connection);
+        return fn(connection);
       }).then(data => {
         return this.commit(connection).then(() => data);
       }).catch(err => {
         return this.rollback(connection).then(() => Promise.reject(err));
-      })
+      });
     });
   }
   /**
    * query data
    */
-  [QUERY](sqlOptions, connection, startTime){
+  [QUERY](sqlOptions, connection, startTime) {
     let err = null;
-    let queryFn = helper.promisify(connection.query, connection);
+    const queryFn = helper.promisify(connection.query, connection);
     return queryFn(sqlOptions).catch(e => {
       err = e;
     }).then(data => {
-      //log sql
-      if(this.config.logSql){
-        let endTime = Date.now();
+      // log sql
+      if (this.config.logSql) {
+        const endTime = Date.now();
         this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
       }
       this.releaseConnection(connection);
-      
-      if(err) return Promise.reject(err);
+
+      if (err) return Promise.reject(err);
       return data;
     });
   }
   /**
    * release connection
    */
-  releaseConnection(connection){
-    //if not in transaction, release connection
-    if(connection.transaction !== TRANSACTION.start){
+  releaseConnection(connection) {
+    // if not in transaction, release connection
+    if (connection.transaction !== TRANSACTION.start) {
       debug('release connection, id=' + connection.threadId);
-      //connection maybe already released, so and try for it
-      try{
+      // connection maybe already released, so and try for it
+      try {
         connection.release();
-      }catch(e){}
+      } catch (e) {}
     }
   }
   /**
@@ -151,21 +151,21 @@ class ThinkMysql {
    * @param {Object} connection 
    */
   query(sqlOptions, connection) {
-    if(helper.isString(sqlOptions)){
+    if (helper.isString(sqlOptions)) {
       sqlOptions = {sql: sqlOptions};
     }
-    if(sqlOptions.debounce === undefined){
+    if (sqlOptions.debounce === undefined) {
       sqlOptions.debounce = true;
     }
-    let startTime = Date.now();
+    const startTime = Date.now();
     return this.getConnection(connection).then(connection => {
       debug('get connection, id=' + connection.threadId);
-      //set transaction status to connection
-      if(sqlOptions.transaction){
-        if(sqlOptions.transaction === TRANSACTION.start){
-          if(connection.transaction === TRANSACTION.start) return;
-        }else if(sqlOptions.transaction === TRANSACTION.end){
-          if(connection.transaction !== TRANSACTION.start) {
+      // set transaction status to connection
+      if (sqlOptions.transaction) {
+        if (sqlOptions.transaction === TRANSACTION.start) {
+          if (connection.transaction === TRANSACTION.start) return;
+        } else if (sqlOptions.transaction === TRANSACTION.end) {
+          if (connection.transaction !== TRANSACTION.start) {
             this.releaseConnection(connection);
             return;
           }
@@ -173,12 +173,12 @@ class ThinkMysql {
         connection.transaction = sqlOptions.transaction;
       }
 
-      if(sqlOptions.debounce){
-        let key = JSON.stringify(sqlOptions);
+      if (sqlOptions.debounce) {
+        const key = JSON.stringify(sqlOptions);
         return debounceInstance.debounce(key, () => {
           return this[QUERY](sqlOptions, connection, startTime);
         });
-      }else{
+      } else {
         return this[QUERY](sqlOptions, connection, startTime);
       }
     });
@@ -190,7 +190,7 @@ class ThinkMysql {
    * @returns {Promise}
    */
   execute(sqlOptions, connection) {
-    if(helper.isString(sqlOptions)){
+    if (helper.isString(sqlOptions)) {
       sqlOptions = {sql: sqlOptions};
     }
     sqlOptions.debounce = false;
@@ -200,7 +200,7 @@ class ThinkMysql {
    * close
    * @returns {Promise}
    */
-  close(){
+  close() {
     return helper.promisify(this.pool.end, this.pool)();
   }
 }
