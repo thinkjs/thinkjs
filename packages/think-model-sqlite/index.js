@@ -5,7 +5,7 @@ const Schema = require('./lib/schema.js');
 const QUERY = Symbol('think-model-query');
 const SCHEMA = Symbol('think-model-schema');
 
-module.exports = class SQLite extends Abstract {
+module.exports = class SQLiteAdapter extends Abstract {
   /**
    * get query instance
    */

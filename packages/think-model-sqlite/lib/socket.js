@@ -25,7 +25,7 @@ const TRANSACTION = {
   end: 2
 };
 
-class SQLite {
+class SQLiteSocket {
   constructor(config = {}) {
     this.config = Object.assign({}, defaultOptions, config);
     let savePath = this.config.path;
@@ -244,4 +244,4 @@ class SQLite {
   }
 }
 
-module.exports = thinkInstance(SQLite);
+module.exports = thinkInstance(SQLiteSocket);
