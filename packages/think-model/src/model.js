@@ -403,6 +403,7 @@ module.exports = class Model {
     options.tablePrefix = this.tablePrefix;
     if (options.field && options.fieldReverse) {
       options.field = await this.db().getReverseFields(options.field);
+      delete options.fieldReverse;
     }
     return options;
   }
