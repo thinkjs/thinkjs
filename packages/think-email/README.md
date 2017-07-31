@@ -10,25 +10,20 @@ Email module for ThinkJS 3.x based on [nodemailer](https://github.com/nodemailer
 ```
 npm install think-email
 ```
-## How to config
+## How to use
 
 Set the config in file `src/config.js`
 
 ```js
-module.exports = {
-  // other config
-  email: {
-    transport: {
-    },
-    options: {
-    },
-    callback: (error, info) => {
-    }
-  }
-}
+const thinkEmail = require('think-email');
+thinkEmail(transport, options).then(info => {
+  console.log(info);
+}, err => {
+  console.log(err);
+});
 ```
 
-#### email.transport like:
+#### transport like:
 
 ```js
 {
@@ -40,7 +35,7 @@ module.exports = {
 }
 ```
 
-#### email.options like:
+#### options like:
 
 ```js
 {
@@ -66,35 +61,7 @@ module.exports = {
 }
 ```
 
-#### email.callback like:
-
-```js
-(error, info) => {
-  if(!error) {
-    console.log('send email success!');
-  }
-}
-```
-
 More config options, you can see at [nodemailer doc](https://nodemailer.com/about/).
 
-
-### Send email
-
-```js
-const thinkEmail = require('think-email');
-thinkEmail(); // read email config in src/config.js as options
-```
-
-
-### Send email with dynamic options
-
-If you don't want use the pre config in the `config.js`, you can also pass arguments for `thinkEmail`.
-
-```js
-const thinkEmail = require('think-email');
-let transport = 'your transport';
-let options = 'your send email options';
-let callback= 'your callback after send email';
 thinkEmail(transport, options, callback);
 ```
