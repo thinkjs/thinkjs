@@ -6,8 +6,9 @@ const Parser = require('./parser.js');
 
 const QUERY = Symbol('think-model-mysql-query');
 const PARSER = Symbol('think-model-mysql-parser');
-const GET_SCHEMA = Symbol('think-model-mysql-schema');
 const debounce = new Debounce();
+
+const SCHEMAS = {};
 
 /**
  * mysql Schema
@@ -87,14 +88,11 @@ module.exports = class MysqlSchema extends Schema {
         });
       });
     };
-    if (this[GET_SCHEMA] && this[GET_SCHEMA][table]) {
-      return Promise.resolve(this[GET_SCHEMA][table]);
+    if (SCHEMAS[table]) {
+      return Promise.resolve(SCHEMAS[table]);
     }
     return _getSchema().then(data => {
-      if (!this[GET_SCHEMA]) {
-        this[GET_SCHEMA] = {};
-      }
-      this[GET_SCHEMA][table] = data;
+      SCHEMAS[table] = data;
       return data;
     });
   }
