@@ -373,7 +373,11 @@ function chmod(p, mode = '0777') {
   if (!isExist(p)) {
     return false;
   }
-  fs.chmodSync(p, mode);
+  try {
+    fs.chmodSync(p, mode);
+  } catch (e) {
+    return false;
+  }
   return true;
 }
 exports.chmod = chmod;
