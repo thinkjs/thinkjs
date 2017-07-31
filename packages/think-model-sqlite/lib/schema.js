@@ -7,7 +7,7 @@ const Parser = require('./parser.js');
 const QUERY = Symbol('think-model-sqlite-query');
 const PARSER = Symbol('think-model-sqlite-parser');
 const debounce = new Debounce();
-const GET_SCHEMA = {};
+const SCHEMAS = {};
 
 /**
  * mysql Schema
@@ -102,11 +102,11 @@ module.exports = class MysqlSchema extends Schema {
         });
       });
     };
-    if (GET_SCHEMA[table]) {
-      return Promise.resolve(GET_SCHEMA[table]);
+    if (SCHEMAS[table]) {
+      return Promise.resolve(SCHEMAS[table]);
     }
     return _getSchema().then(data => {
-      GET_SCHEMA[table] = data;
+      SCHEMAS[table] = data;
       return data;
     });
   }
