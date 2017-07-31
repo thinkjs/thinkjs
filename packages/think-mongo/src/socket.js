@@ -5,6 +5,8 @@ const helper = require('think-helper');
 const querystring = require('querystring');
 
 const CREATE_POOL = Symbol('think-mongo-create-pool');
+const POOL = Symbol('think-mongo-pool');
+
 const mongoConnect = helper.promisify(mongodb.MongoClient.connect, mongodb.MongoClient);
 
 const defaultOptions = {
@@ -20,7 +22,14 @@ class MongoSocket {
     if (this.config.logLevel) {
       mongodb.Logger.setLevel(this.config.logLevel);
     }
-    this.pool = this[CREATE_POOL]();
+  }
+  /**
+   * get pool
+   */
+  get pool() {
+    if (this[POOL]) return this[POOL];
+    this[POOL] = this[CREATE_POOL]();
+    return this[POOL];
   }
   /**
    * create pool
@@ -98,7 +107,12 @@ class MongoSocket {
    * @param {Object} connection 
    */
   close(connection) {
-    return this.pool.destroy(connection);
+    if (connection) return this.pool.destroy(connection);
+    return this.pool.drain().then(() => {
+      return this.pool.clear();
+    }).then(() => {
+      this[POOL] = null;
+    });
   }
 };
 
