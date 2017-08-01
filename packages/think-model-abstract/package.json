@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/thinkjs/think-model-abstract#readme",
   "dependencies": {
+    "babel-preset-think-node": "^1.0.2",
     "think-helper": "^1.0.5",
     "think-mysql": "^1.0.2"
   },
@@ -41,5 +42,10 @@
       "babel-register"
     ],
     "babel": "inherit"
+  },
+  "babel": {
+    "presets": [
+      "think-node"
+    ]
   }
 }
