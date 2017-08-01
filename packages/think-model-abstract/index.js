@@ -11,6 +11,12 @@ module.exports = class Abstract {
     this.model = model;
   }
   /**
+   * get last sql
+   */
+  get lastSql() {
+    return this.query.lastSql;
+  }
+  /**
    * execute sql
    * @param {String} sql 
    */
