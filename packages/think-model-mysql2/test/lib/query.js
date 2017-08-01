@@ -105,18 +105,18 @@ ava.test('execute, empty return', async t => {
 //   instance.transTimes = 1;
 // });
 
-ava.test('commit, not start', async t => {
-  const instance = new Base();
-  let flag = false;
-  instance.execute = function(sql) {
-    t.is(sql, 'ROLLBACK');
-    flag = true;
-    return Promise.resolve();
-  };
-  const data = await instance.commit();
-  t.false(flag);
-  instance.transTimes = 0;
-});
+// ava.test('commit, not start', async t => {
+//   const instance = new Base();
+//   let flag = false;
+//   instance.execute = function(sql) {
+//     t.is(sql, 'ROLLBACK');
+//     flag = true;
+//     return Promise.resolve();
+//   };
+//   const data = await instance.commit();
+//   t.false(flag);
+//   instance.transTimes = 0;
+// });
 
 // ava.test('commit', async t => {
 //   const instance = new Base();
@@ -132,18 +132,18 @@ ava.test('commit, not start', async t => {
 //   instance.transTimes = 0;
 // });
 
-ava.test('rollback, not start', async t => {
-  const instance = new Base();
-  let flag = false;
-  instance.execute = function(sql) {
-    t.is(sql, 'ROLLBACK');
-    flag = true;
-    return Promise.resolve();
-  };
-  const data = await instance.rollback();
-  t.false(flag);
-  instance.transTimes = 0;
-});
+// ava.test('rollback, not start', async t => {
+//   const instance = new Base();
+//   let flag = false;
+//   instance.execute = function(sql) {
+//     t.is(sql, 'ROLLBACK');
+//     flag = true;
+//     return Promise.resolve();
+//   };
+//   const data = await instance.rollback();
+//   t.false(flag);
+//   instance.transTimes = 0;
+// });
 
 // ava.test('rollback', async t => {
 //   const instance = new Base();
