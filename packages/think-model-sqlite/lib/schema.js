@@ -41,9 +41,6 @@ module.exports = class MysqlSchema extends Schema {
       case 'int':
         validate.int = {min: fieldData.unsigned ? 0 : -2147483648, max: 2147483647};
         break;
-      // case 'bigint':
-      //   validate.int = {min: fieldData.unique ? 0 : -9223372036854775808, max: 9223372036854775807};
-      //   break;
       case 'date':
         validate.date = true;
         break;
@@ -51,63 +48,63 @@ module.exports = class MysqlSchema extends Schema {
     return validate;
   }
   _parseItemSchema(item) {
-    const fieldData = {
-      name: item.name,
-      type: item.type,
-      required: !!item.notnull,
-      default: item.dflt_value || '',
-      primary: !!item.pk,
-      unique: item.unique,
-      autoIncrement: false
-    };
+    item.type = item.type || '';
     const pos = item.type.indexOf('(');
-    fieldData.tinyType = (pos === -1 ? item.type : item.type.slice(0, pos)).toLowerCase();
-    if (fieldData.default && fieldData.tinyType.indexOf('int') > -1) {
-      fieldData.default = parseInt(fieldData.default);
+    item.tinyType = (pos === -1 ? item.type : item.type.slice(0, pos)).toLowerCase();
+    if (item.default && item.tinyType.indexOf('int') > -1) {
+      item.default = parseInt(item.default);
     }
     if (item.type.indexOf('unsigned') > -1) {
-      fieldData.unsigned = true;
+      item.unsigned = true;
+      item.type = item.type.replace('unsigned', true).trim();
     }
-    fieldData.validate = this._getItemSchemaValidate(fieldData);
-    return fieldData;
+    if (!item.validate) {
+      item.validate = this._getItemSchemaValidate(item);
+    }
+    return item;
   }
   /**
    * get table schema
    * @param {String} table 
    */
   getSchema(table = this.table) {
-    const _getSchema = () => {
-      return debounce.debounce(`getTable${table}Schema`, () => {
-        table = this.parser.parseKey(table);
-        const fieldsPromise = this.query.query(`PRAGMA table_info( ${table} )`);
-        const indexesPromise = this.query.query(`PRAGMA INDEX_LIST( ${table} )`).then(list => {
-          const indexes = {};
-          const promises = list.map(item => {
-            if (item.unique) return;
-            return this.query.query(`PRAGMA index_info( ${item.name} )`).then(data => {
-              data.forEach(item => {
-                indexes[item.name] = {unique: true};
-              });
+    if (SCHEMAS[table]) return Promise.resolve(SCHEMAS[table]);
+    return debounce.debounce(`getTable${table}Schema`, () => {
+      table = this.parser.parseKey(table);
+      const fieldsPromise = this.query.query(`PRAGMA table_info( ${table} )`);
+      const indexesPromise = this.query.query(`PRAGMA INDEX_LIST( ${table} )`).then(list => {
+        const indexes = {};
+        const promises = list.map(item => {
+          if (item.unique) return;
+          return this.query.query(`PRAGMA index_info( ${item.name} )`).then(data => {
+            data.forEach(item => {
+              indexes[item.name] = {unique: true};
             });
           });
-          return Promise.all(promises).then(() => indexes);
         });
-        return Promise.all([fieldsPromise, indexesPromise]).then(([fields, indexes]) => {
-          const ret = {};
-          fields.forEach(item => {
-            item.unique = indexes[item.name] && indexes[item.name].unique;
-            ret[item.name] = this._parseItemSchema(item);
-          });
-          return helper.extend(ret, this.schema);
-        });
+        return Promise.all(promises).then(() => indexes);
       });
-    };
-    if (SCHEMAS[table]) {
-      return Promise.resolve(SCHEMAS[table]);
-    }
-    return _getSchema().then(data => {
-      SCHEMAS[table] = data;
-      return data;
+      return Promise.all([fieldsPromise, indexesPromise]).then(([fields, indexes]) => {
+        let ret = {};
+        fields.forEach(item => {
+          item.unique = indexes[item.name] && indexes[item.name].unique;
+          ret[item.name] = {
+            name: item.name,
+            type: item.type,
+            required: !!item.notnull,
+            default: item.dflt_value || '',
+            primary: !!item.pk,
+            unique: item.unique,
+            autoIncrement: false
+          };
+        });
+        ret = helper.extend(ret, this.schema);
+        for (const key in ret) {
+          ret[key] = this._parseItemSchema(ret[key]);
+        }
+        SCHEMAS[table] = ret;
+        return ret;
+      });
     });
   }
   /**
