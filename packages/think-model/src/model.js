@@ -2,7 +2,6 @@ const helper = require('think-helper');
 const path = require('path');
 const assert = require('assert');
 const Relation = require('./relation/relation.js');
-const util = require('util');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
@@ -401,6 +400,7 @@ module.exports = class Model {
     this.options = {};
     options.table = options.table || this.tableName;
     options.tablePrefix = this.tablePrefix;
+    options.pk = this.pk; // add primary key for options
     if (options.field && options.fieldReverse) {
       options.field = await this.db().getReverseFields(options.field);
       delete options.fieldReverse;
@@ -770,12 +770,9 @@ module.exports = class Model {
    * query
    * @return {Promise} []
    */
-  query(...args) {
-    if (helper.isObject(args[0])) {
-      return this.db().select(args[0], this.options.cache);
-    }
-    const sql = this.parseSql(...args);
-    return this.db().select(sql, this.options.cache);
+  query(sqlOptions) {
+    sqlOptions = this.parseSql(sqlOptions);
+    return this.db().select(sqlOptions, this.options.cache);
   }
   /**
    * execute sql
@@ -783,23 +780,26 @@ module.exports = class Model {
    * @param  {[type]} parse [description]
    * @return {[type]}       [description]
    */
-  execute(...args) {
-    const sql = this.parseSql(...args);
-    return this.db().execute(sql);
+  execute(sqlOptions) {
+    sqlOptions = this.parseSql(sqlOptions);
+    return this.db().execute(sqlOptions);
   }
   /**
    * parse sql
    * @return promise [description]
    */
-  parseSql(...args) {
-    const sql = util.format(...args);
+  parseSql(sqlOptions) {
+    if (helper.isString(sqlOptions)) {
+      sqlOptions = {sql: sqlOptions};
+    }
     // replace table name
-    return sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
+    sqlOptions.sql = sqlOptions.sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
       if (b === 'TABLE') {
         return ' `' + this.tableName + '` ';
       }
       return ' `' + this.tablePrefix + b.toLowerCase() + '` ';
     });
+    return sqlOptions;
   }
   /**
    * set relation
@@ -838,13 +838,6 @@ module.exports = class Model {
    */
   transaction(fn, connection) {
     return this.db().transaction(fn, connection);
-  }
-  /**
-   * close socket connection
-   * @return {} []
-   */
-  close() {
-    return this.db().close();
   }
 };
 
