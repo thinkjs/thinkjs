@@ -48,7 +48,7 @@ test('schema get normal schema', async t => {
   t.deepEqual(result, {
     id: {
       name: 'id',
-      type: 'int(10) unsigned',
+      type: 'int(10)',
       required: false,
       default: '',
       primary: true,

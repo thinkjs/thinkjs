@@ -52,48 +52,49 @@ module.exports = class MysqlSchema extends Schema {
     return validate;
   }
   _parseItemSchema(item) {
-    const fieldData = {
-      name: item.Field,
-      type: item.Type,
-      required: item.Null === '',
-      default: item.Default || '',
-      primary: item.Key === 'PRI',
-      unique: item.Key === 'UNI',
-      autoIncrement: item.Extra.toLowerCase() === 'auto_increment'
-    };
-    const pos = item.Type.indexOf('(');
-    fieldData.tinyType = (pos === -1 ? item.Type : item.Type.slice(0, pos)).toLowerCase();
-    if (fieldData.default && fieldData.tinyType.indexOf('int') > -1) {
-      fieldData.default = parseInt(fieldData.default);
+    item.type = item.type || 'varchar(100)';
+    const pos = item.type.indexOf('(');
+    item.tinyType = (pos === -1 ? item.type : item.type.slice(0, pos)).toLowerCase();
+    if (item.default && item.tinyType.indexOf('int') > -1) {
+      item.default = parseInt(item.default);
     }
-    if (item.Type.indexOf('unsigned') > -1) {
-      fieldData.unsigned = true;
+    if (item.type.indexOf('unsigned') > -1) {
+      item.unsigned = true;
+      item.type = item.type.replace('unsigned', '').trim();
     }
-    fieldData.validate = this._getItemSchemaValidate(fieldData);
-    return fieldData;
+    if (!item.validate) {
+      item.validate = this._getItemSchemaValidate(item);
+    }
+    return item;
   }
   /**
    * get table schema
    * @param {String} table 
    */
   getSchema(table = this.table) {
-    const _getSchema = () => {
-      return debounce.debounce(`getTable${table}Schema`, () => {
-        return this.query.query(`SHOW COLUMNS FROM ${this.parser.parseKey(table)}`).catch(() => []).then(data => {
-          const ret = {};
-          data.forEach(item => {
-            ret[item.Field] = this._parseItemSchema(item);
-          });
-          return helper.extend(ret, this.schema);
+    if (SCHEMAS[table]) return Promise.resolve(SCHEMAS[table]);
+    return debounce.debounce(`getTable${table}Schema`, () => {
+      const columnSql = `SHOW COLUMNS FROM ${this.parser.parseKey(table)}`;
+      return this.query.query(columnSql).catch(() => []).then(data => {
+        let ret = {};
+        data.forEach(item => {
+          ret[item.Field] = {
+            name: item.Field,
+            type: item.Type,
+            required: item.Null === '',
+            default: item.Default || '',
+            primary: item.Key === 'PRI',
+            unique: item.Key === 'UNI',
+            autoIncrement: item.Extra.toLowerCase() === 'auto_increment'
+          };
         });
+        ret = helper.extend(ret, this.schema);
+        for (const key in ret) {
+          ret[key] = this._parseItemSchema(ret[key]);
+        }
+        SCHEMAS[table] = ret;
+        return ret;
       });
-    };
-    if (SCHEMAS[table]) {
-      return Promise.resolve(SCHEMAS[table]);
-    }
-    return _getSchema().then(data => {
-      SCHEMAS[table] = data;
-      return data;
     });
   }
   /**
