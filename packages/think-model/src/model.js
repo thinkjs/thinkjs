@@ -529,12 +529,13 @@ module.exports = class Model {
       this.options = {};
       return Promise.reject(new Error('updateMany data must be an array'));
     }
+    if (!dataList.every(data => data.hasOwnProperty(this.pk))) {
+      return Promise.reject(new Error('updateMany every data must contain primary key'));
+    }
     const promises = dataList.map(data => {
       return this.update(data, options);
     });
-    return Promise.all(promises).then(data => {
-      return data.reduce((a, b) => a + b);
-    });
+    return Promise.all(promises);
   }
   /**
    * find data
