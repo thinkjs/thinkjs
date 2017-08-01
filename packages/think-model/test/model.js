@@ -437,3 +437,177 @@ test('model updateMany data error', async t => {
     t.deepEqual(model.options, {});
   }
 });
+
+test.todo('updateMany');
+
+test('model find data', async t => {
+  t.plan(5);
+
+  const options = {
+    pk: 'id',
+    limit: 1,
+    table: 'post',
+    tablePrefix: '',
+    where: {
+      id: 3
+    }
+  };
+  const data = {title: 'hello', content: 'world'};
+  const model = new Model('post', {handle: class {
+    select(opt) {
+      t.deepEqual(opt, options);
+      return [data];
+    }
+  }});
+
+  model.beforeFind = function(opt) {
+    t.deepEqual(opt, options);
+    return opt;
+  };
+  model.afterFind = function(findData, opt) {
+    t.deepEqual(findData, data);
+    t.deepEqual(opt, options);
+    return findData;
+  };
+  const result = await model.where({id: 3}).limit([0, 10]).find();
+  t.deepEqual(result, data);
+});
+
+test('model select data', async t => {
+  t.plan(5);
+
+  const options = {
+    pk: 'id',
+    table: 'post',
+    tablePrefix: '',
+    where: {
+      id: ['>', 10]
+    }
+  };
+  const data = [{title: 'hello', content: 'world'}];
+  const model = new Model('post', {handle: class {
+    select(opt) {
+      t.deepEqual(opt, options);
+      return data;
+    }
+  }});
+  model.beforeSelect = function(opt) {
+    t.deepEqual(opt, options);
+    return opt;
+  };
+  model.afterSelect = function(selectData, opt) {
+    t.deepEqual(selectData, data);
+    t.deepEqual(opt, options);
+    return selectData;
+  };
+  const result = await model.where({id: ['>', 10]}).select();
+  t.deepEqual(result, data);
+});
+
+test.todo('selectAdd');
+
+test.todo('countSelect');
+
+test.todo('getField');
+
+test('model increment', async t => {
+  t.plan(12);
+  const model = new Model('post', {handle: new Function()});
+
+  const arr = ['count', 'view'];
+  const obj = {count: 3, view: 4};
+  const str = 'count';
+  const arrData = (step = 1) => ({
+    count: ['exp', '`count`+' + step],
+    view: ['exp', '`view`+' + step]
+  });
+  const objData = () => ({
+    count: ['exp', '`count`+3'],
+    view: ['exp', '`view`+4']
+  });
+  const strData = (step = 1) => ({
+    count: ['exp', '`count`+' + step]
+  });
+
+  for (const step of [1, 10]) {
+    let time = 0;
+
+    model.update = function(data) {
+      if (time === 0) {
+        t.deepEqual(data, arrData(step));
+        return arrData(step);
+      } else if (time === 1) {
+        t.deepEqual(data, objData());
+        return objData();
+      } else {
+        t.deepEqual(data, strData(step));
+        return strData(step);
+      }
+    };
+    t.deepEqual(
+      await model.increment(arr, step),
+      arrData(step)
+    );
+    time = 1;
+    t.deepEqual(
+      await model.increment(obj, step),
+      objData()
+    );
+    time = 2;
+    t.deepEqual(
+      await model.increment(str, step),
+      strData(step)
+    );
+  }
+});
+
+test('model decrement', async t => {
+  t.plan(12);
+  const model = new Model('post', {handle: new Function()});
+
+  const arr = ['count', 'view'];
+  const obj = {count: 3, view: 4};
+  const str = 'count';
+  const arrData = (step = 1) => ({
+    count: ['exp', '`count`-' + step],
+    view: ['exp', '`view`-' + step]
+  });
+  const objData = () => ({
+    count: ['exp', '`count`-3'],
+    view: ['exp', '`view`-4']
+  });
+  const strData = (step = 1) => ({
+    count: ['exp', '`count`-' + step]
+  });
+
+  for (const step of [1, 10]) {
+    let time = 0;
+
+    model.update = function(data) {
+      if (time === 0) {
+        t.deepEqual(data, arrData(step));
+        return arrData(step);
+      } else if (time === 1) {
+        t.deepEqual(data, objData());
+        return objData();
+      } else {
+        t.deepEqual(data, strData(step));
+        return strData(step);
+      }
+    };
+    t.deepEqual(
+      await model.decrement(arr, step),
+      arrData(step)
+    );
+    time = 1;
+    t.deepEqual(
+      await model.decrement(obj, step),
+      objData()
+    );
+    time = 2;
+    t.deepEqual(
+      await model.decrement(str, step),
+      strData(step)
+    );
+  }
+});
