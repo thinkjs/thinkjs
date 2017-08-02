@@ -18,8 +18,7 @@ module.exports = class BaseRelation {
    * parse where in relation model
    */
   parseRelationWhere() {
-    const key = this.options.key;
-    const fKey = this.options.fKey;
+    const {key, fKey} = this.options;
     if (helper.isArray(this.data)) {
       const keys = [];
       this.data.forEach(item => {
