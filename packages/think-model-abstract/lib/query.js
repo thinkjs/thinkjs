@@ -1,5 +1,7 @@
 const helper = require('think-helper');
 
+const SOCKET = Symbol('think-model-socket');
+
 module.exports = class AbstractQuery {
   constructor(config) {
     this.config = config;
@@ -18,6 +20,19 @@ module.exports = class AbstractQuery {
    * execute
    */
   execute() {}
+  /**
+   * get socket
+   * @param {String|Object} sql 
+   */
+  socket(sql, Cls) {
+    if (sql && this.config.parser) {
+      const config = Object.assign({}, this.config, this.config.parser(sql));
+      return Cls.getInstance(config);
+    }
+    if (this[SOCKET]) return this[SOCKET];
+    this[SOCKET] = Cls.getInstance(this.config);
+    return this[SOCKET];
+  }
   /**
    * insert data
    * @param {Object} data 
