@@ -508,7 +508,103 @@ test.todo('selectAdd');
 
 test.todo('countSelect');
 
-test.todo('getField');
+test('model get field normal', async t => {
+  t.plan(2);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      t.deepEqual(options, {
+        pk: 'id',
+        table: 'post',
+        tablePrefix: '',
+        field: 'content, title'
+      });
+
+      return [
+        {title: 'hello1', content: 'world1'},
+        {title: 'hello2', content: 'world2'}
+      ];
+    }
+  }});
+
+  const result = await model.getField('content, title');
+  t.deepEqual(result, {
+    title: ['hello1', 'hello2'],
+    content: ['world1', 'world2']
+  });
+});
+
+test('model get field one data', async t => {
+  t.plan(2);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      t.deepEqual(options, {
+        pk: 'id',
+        limit: 1,
+        table: 'post',
+        tablePrefix: '',
+        field: 'content, title'
+      });
+
+      return [
+        {title: 'hello1', content: 'world1'}
+      ];
+    }
+  }});
+
+  const result = await model.getField('content, title', true);
+  t.deepEqual(result, {
+    title: 'hello1',
+    content: 'world1'
+  });
+});
+
+test('model get field one key', async t => {
+  t.plan(2);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      t.deepEqual(options, {
+        pk: 'id',
+        table: 'post',
+        tablePrefix: '',
+        field: 'title'
+      });
+
+      return [
+        {title: 'hello1'},
+        {title: 'hello2'}
+      ];
+    }
+  }});
+
+  const result = await model.getField('title');
+  t.deepEqual(result, ['hello1', 'hello2']);
+});
+
+test('model get field one data one key', async t => {
+  t.plan(2);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      t.deepEqual(options, {
+        pk: 'id',
+        limit: 1,
+        table: 'post',
+        tablePrefix: '',
+        field: 'title,content'
+      });
+
+      return [
+        {title: 'hello2', content: 'world2'}
+      ];
+    }
+  }});
+
+  const result = await model.getField('title,content', true);
+  t.deepEqual(result, {title: 'hello2', content: 'world2'});
+});
 
 test('model increment', async t => {
   t.plan(12);
@@ -610,4 +706,84 @@ test('model decrement', async t => {
       strData(step)
     );
   }
+});
+
+for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
+  test(`model ${logic} empty`, t => {
+    const model = new Model('post', {handle: new Function()});
+    model.getField = function(sql) {
+      t.is(sql, `${logic.toUpperCase()}(id) AS think_${logic}`);
+    };
+    model[logic]();
+  });
+  test(`model ${logic} custom pk`, t => {
+    const model = new Model('post', {handle: new Function()});
+    model._pk = 'post_id';
+    model.getField = function(sql) {
+      t.is(sql, `${logic.toUpperCase()}(post_id) AS think_${logic}`);
+    };
+    model[logic]();
+  });
+  test(`model ${logic} empty pk`, t => {
+    const model = new Model('post', {handle: new Function()});
+    Object.defineProperty(model, 'pk', {value: false});
+    model.getField = function(sql) {
+      t.is(sql, `${logic.toUpperCase()}(*) AS think_${logic}`);
+    };
+    model[logic]();
+  });
+  test(`model ${logic} with field`, t => {
+    const model = new Model('post', {handle: new Function()});
+    Object.defineProperty(model, 'pk', {value: false});
+    model.getField = function(sql) {
+      t.is(sql, `${logic.toUpperCase()}(\`title\`) AS think_${logic}`);
+    };
+    model[logic]('title');
+  });
+}
+
+test('model query method', async t => {
+  t.plan(3);
+
+  const options = {table: 'post', where: {id: ['>', 30]}};
+  const model = new Model('post', {handle: class {
+    select(opt, c) {
+      t.is(opt, options);
+      return 'select return';
+    }
+  }});
+  model.parseSql = function(opt) {
+    t.is(opt, options);
+    return opt;
+  };
+  const result = await model.query(options);
+  t.is(result, 'select return');
+});
+
+test('model excute method', async t => {
+  t.plan(3);
+
+  const options = {table: 'post', where: {id: ['>', 30]}};
+  const model = new Model('post', {handle: class {
+    execute(opt, c) {
+      t.is(opt, options);
+      return 'select return';
+    }
+  }});
+  model.parseSql = function(opt) {
+    t.is(opt, options);
+    return opt;
+  };
+  const result = await model.execute(options);
+  t.is(result, 'select return');
+});
+
+test('model parser sql', t => {
+  const model = new Model('post', {
+    handle: new Function(),
+    prefix: 'fk_'
+  });
+
+  const result = model.parseSql('__TABLE__  __TABLE__  __TITLE__ __title__');
+  t.is(result.sql, ' `fk_post`  `fk_post`  `fk_title` __title__');
 });
