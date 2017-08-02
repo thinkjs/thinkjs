@@ -620,28 +620,16 @@ module.exports = class AbstractParser {
    * @param {Object} options 
    */
   buildDeleteSql(options) {
-    const table = this.parseTable(options.table, options);
-    const where = this.parseWhere(options.where);
-    const order = this.parseOrder(options.order);
-    const limit = this.parseLimit(options.limit);
-    const lock = this.parseLock(options.lock);
-    const comment = this.parseComment(options.comment);
-    const sql = `DELETE FROM ${table}${where}${order}${limit}${lock}${comment}`;
-    return sql;
+    const sql = `DELETE FROM %TABLE%%WHERE%%ORDER%%LIMIT%%LOCK%%COMMENT%`;
+    return this.parseSql(sql, options);
   }
   /**
    * build update sql
    * @param {Object} options 
    */
   buildUpdateSql(data, options) {
-    const table = this.parseTable(options.table, options);
     const set = this.parseSet(data);
-    const where = this.parseWhere(options.where);
-    const order = this.parseOrder(options.order);
-    const limit = this.parseLimit(options.limit);
-    const lock = this.parseLock(options.lock);
-    const comment = this.parseComment(options.comment);
-    const sql = `UPDATE ${table}${set}${where}${order}${limit}${lock}${comment}`;
-    return sql;
+    const sql = `UPDATE %TABLE%${set}%WHERE%%ORDER%%LIMIT%%LOCK%%COMMENT%`;
+    return this.parseSql(sql, options);
   }
 };
