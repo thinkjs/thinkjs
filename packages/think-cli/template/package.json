@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node development.js",
-    "compile": "babel src/ --presets think-node --out-dir app/",
+    "compile": "babel --no-babelrc src/ --presets think-node --out-dir app/",
     "lint": "eslint src/",
     "lint-fix": "eslint --fix src/"
   },
