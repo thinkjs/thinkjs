@@ -96,16 +96,7 @@ module.exports = class AbstractQuery {
    * @return {Promise}         []
    */
   delete(options) {
-    const parser = this.parser;
-    const sql = [
-      'DELETE FROM ',
-      parser.parseTable(options.table, options),
-      parser.parseWhere(options.where),
-      parser.parseOrder(options.order),
-      parser.parseLimit(options.limit),
-      parser.parseLock(options.lock),
-      parser.parseComment(options.comment)
-    ].join('');
+    const sql = this.parser.buildDeleteSql(options);
     return this.execute(sql);
   }
   /**
@@ -115,17 +106,7 @@ module.exports = class AbstractQuery {
    * @return {Promise}         []
    */
   update(data, options) {
-    const parser = this.parser;
-    const sql = [
-      'UPDATE ',
-      parser.parseTable(options.table),
-      parser.parseSet(data),
-      parser.parseWhere(options.where),
-      parser.parseOrder(options.order),
-      parser.parseLimit(options.limit),
-      parser.parseLock(options.lock),
-      parser.parseComment(options.comment)
-    ].join('');
+    const sql = this.parser.buildUpdateSql(data, options);
     return this.execute(sql);
   }
   /**
