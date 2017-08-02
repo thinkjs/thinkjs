@@ -207,11 +207,10 @@ class Router {
    * parse router
    */
   run() {
-    const enableDefaultRouter = this.options.enableDefaultRouter;
     const pathname = this.pathname;
     // ignore user defined rules for home page request, optimize request performance
     // default home page pathname is `/`, when user define prefix, it may be an empty string
-    if (enableDefaultRouter && (pathname === '' || pathname === '/')) {
+    if (this.options.optimizeHomepageRouter && (pathname === '' || pathname === '/')) {
       this.ctx.module = this.modules.length ? this.options.defaultModule : '';
       this.ctx.controller = this.options.defaultController;
       this.ctx.action = this.options.defaultAction;
@@ -224,7 +223,7 @@ class Router {
       debug(`matchedRule: ${JSON.stringify(matchedRule)}`);
       return this.parseRule(matchedRule);
     }
-    if (enableDefaultRouter) {
+    if (this.options.enableDefaultRouter) {
       return this.parseRule({path: this.pathname});
     }
     return this.next();
