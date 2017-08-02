@@ -6,6 +6,7 @@ const Relation = require('./relation/relation.js');
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
 const RELATION = Symbol('think-model-relation');
+const QUOTE_FIELD = Symbol('think-model-quote-field');
 
 module.exports = class Model {
   /**
@@ -716,7 +717,7 @@ module.exports = class Model {
    * quote field
    * @param {String} field 
    */
-  quoteField(field) {
+  [QUOTE_FIELD](field) {
     if (field) {
       return /^\w+$/.test(field) ? '`' + field + '`' : field;
     }
@@ -728,7 +729,7 @@ module.exports = class Model {
    * @return {Promise}       []
    */
   count(field) {
-    field = this.quoteField(field);
+    field = this[QUOTE_FIELD](field);
     return this.getField('COUNT(' + field + ') AS think_count', true);
   }
   /**
@@ -737,7 +738,7 @@ module.exports = class Model {
    * @return {Promise}       []
    */
   sum(field) {
-    field = this.quoteField(field);
+    field = this[QUOTE_FIELD](field);
     return this.getField('SUM(' + field + ') AS think_sum', true);
   }
   /**
@@ -746,7 +747,7 @@ module.exports = class Model {
    * @return {Promise}       []
    */
   min(field) {
-    field = this.quoteField(field);
+    field = this[QUOTE_FIELD](field);
     return this.getField('MIN(' + field + ') AS think_min', true);
   }
   /**
@@ -755,7 +756,7 @@ module.exports = class Model {
    * @return {Promise}       []
    */
   max(field) {
-    field = this.quoteField(field);
+    field = this[QUOTE_FIELD](field);
     return this.getField('MAX(' + field + ') AS think_max', true);
   }
   /**
@@ -764,7 +765,7 @@ module.exports = class Model {
    * @return {Promise}       []
    */
   avg(field) {
-    field = this.quoteField(field);
+    field = this[QUOTE_FIELD](field);
     return this.getField('AVG(' + field + ') AS think_avg', true);
   }
   /**
