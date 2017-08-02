@@ -12,6 +12,7 @@ awesome projects for `ThinkJS 3.x`
 | [think-meta](https://github.com/thinkjs/think-meta)  | [@welefen](https://github.com/welefen)  | ![version](https://img.shields.io/npm/v/think-meta.svg)  |  ![](https://travis-ci.org/thinkjs/think-meta.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-meta/badge.svg)  | Show meta info |
 | [think-logic](https://github.com/thinkjs/think-logic)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-logic.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-logic/badge.svg)  | Invoke logic action |
 | [think-controller](https://github.com/thinkjs/think-controller)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-controller.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-controller/badge.svg)  | Invoke controller action |
+| [think-wechat](https://github.com/akira-cn/think-wechat)  | [@akira-cn](https://github.com/akira-cn)  | ![version](https://img.shields.io/npm/v/think-wechat.svg)  |  ![](https://travis-ci.org/akira-cn/think-wechat.svg) | ![](https://coveralls.io/repos/github/akira-cn/think-wechat/badge.svg)  | Invoke controller action |
 
 
 ## Adapters
