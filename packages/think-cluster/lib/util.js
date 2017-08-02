@@ -63,9 +63,6 @@ exports.forkWorker = function(env = {}) {
       exports.forkWorker(env).then(() => {
         worker.send(util.THINK_GRACEFUL_FORK);
       });
-    } else if (message === 'think-cluster-reload-workers') {
-      // if receive message `think-cluster-reload-workers` from worker, restart all workers
-      worker.send(util.THINK_RELOAD_SIGNAL);
     }
   });
   worker.once('exit', (code, signal) => {

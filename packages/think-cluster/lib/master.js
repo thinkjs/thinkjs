@@ -27,16 +27,14 @@ class Master {
       }
     };
     if (signal) {
-      process.on(signal, () => {
-        reloadWorkers();
-      });
+      process.on(signal, reloadWorkers);
     }
     // if receive message `think-cluster-reload-workers` from worker, restart all workers
-    // process.on('message', (worker, message) => {
-    //   if (message === 'think-cluster-reload-workers') {
-    //     reloadWorkers();
-    //   }
-    // });
+    cluster.on('message', (worker, message) => {
+      if (message === 'think-cluster-reload-workers') {
+        reloadWorkers();
+      }
+    });
   }
   /**
    * check worker is alive
