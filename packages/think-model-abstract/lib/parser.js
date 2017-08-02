@@ -597,4 +597,36 @@ module.exports = class AbstractParser {
   buildSelectSql(options) {
     return this.parseSql(this.selectSql, options) + this.parseLock(options.lock);
   }
+  /**
+   * get insert sql
+   * @param {Object} options 
+   */
+  buildInsertSql(options) {
+    const table = this.parseTable(options.table);
+    const insertSql = `INSERT INTO ${table} (${options.fields})`;
+    if (helper.isString(options.values)) {
+      let values = options.values;
+      if (values[0] !== '(') {
+        values = `(${values})`;
+      }
+      const lock = this.parseLock(options.lock);
+      const comment = this.parseComment(options.comment);
+      return `${insertSql} VALUES ${values}${lock}${comment}`;
+    }
+    return `${insertSql} ${this.buildSelectSql(options.values)}`;
+  }
+  /**
+   * build delete sql
+   * @param {Object} options 
+   */
+  buildDeleteSql(options) {
+
+  }
+  /**
+   * build update sql
+   * @param {Object} options 
+   */
+  buildUpdateSql(options) {
+
+  }
 };

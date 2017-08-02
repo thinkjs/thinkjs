@@ -48,7 +48,7 @@ ava.test('add many', async t => {
   }], {
     table: 'think_user'
   });
-  t.is(instance.lastSql, "INSERT INTO think_user(name,title,key) VALUES ('lizheming','suredy',1111),('lizheming2','suredy2',222)");
+  t.is(instance.lastSql, "INSERT INTO think_user (name,title,key) VALUES ('lizheming','suredy',1111),('lizheming2','suredy2',222)");
 });
 
 ava.test('select add', async t => {

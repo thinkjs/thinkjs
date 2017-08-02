@@ -9,21 +9,15 @@ module.exports = class AbstractQuery {
   /**
    * parser instance
    */
-  get parser() {
-
-  }
+  get parser() {}
   /**
    * query sql
    */
-  query() {
-
-  }
+  query() {}
   /**
    * execute
    */
-  execute() {
-
-  }
+  execute() {}
   /**
    * insert data
    * @param {Object} data 
@@ -41,9 +35,9 @@ module.exports = class AbstractQuery {
         fields.push(parser.parseKey(key));
       }
     }
-    let sql = 'INSERT INTO ' + parser.parseTable(options.table) + ' (' + fields.join(',') + ')';
-    sql += ' VALUES (' + values.join(',') + ')';
-    sql += parser.parseLock(options.lock) + parser.parseComment(options.comment);
+    options.fields = fields.join(',');
+    options.values = values.join(',');
+    const sql = this.parser.buildInsertSql(options);
     return this.execute(sql).then(() => this.lastInsertId);
   }
   /**
@@ -64,11 +58,12 @@ module.exports = class AbstractQuery {
           value.push(val);
         }
       }
-      return '(' + value.join(',') + ')';
+      return `(${value.join(',')})`;
     }).join(',');
-    let sql = 'INSERT INTO ' + parser.parseTable(options.table) + '(' + fields + ')';
-    sql += ' VALUES ' + values;
-    sql += parser.parseLock(options.lock) + parser.parseComment(options.comment);
+
+    options.fields = fields;
+    options.values = values;
+    const sql = this.parser.buildInsertSql(options);
     return this.execute(sql).then(() => {
       return data.map((item, index) => {
         return this.lastInsertId ? this.lastInsertId + index : 0;
@@ -88,8 +83,11 @@ module.exports = class AbstractQuery {
     }
     const parser = this.parser;
     fields = fields.map(item => parser.parseKey(item));
-    let sql = 'INSERT INTO ' + parser.parseTable(table) + ' (' + fields.join(',') + ') ';
-    sql += parser.buildSelectSql(options);
+    const sql = this.parser.buildInsertSql({
+      table,
+      fields: fields.join(','),
+      values: options
+    });
     return this.execute(sql);
   }
   /**
