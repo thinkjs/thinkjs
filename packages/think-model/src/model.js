@@ -795,7 +795,7 @@ module.exports = class Model {
       sqlOptions = {sql: sqlOptions};
     }
     // replace table name
-    sqlOptions.sql = sqlOptions.sql.replace(/\s__([A-Z]+)__\s/g, (a, b) => {
+    sqlOptions.sql = sqlOptions.sql.replace(/(?:^|\s)__([A-Z]+)__(?:$|\s)/g, (a, b) => {
       if (b === 'TABLE') {
         return ' `' + this.tableName + '` ';
       }
