@@ -38,14 +38,20 @@ module.exports = function(reqArgs, app) {
   } else {
     res = new ServerResponse(req);
   }
+
+  // rewrite end method, exit process when invoke end method
+  if (reqArgs.exitOnEnd) {
+    delete reqArgs.exitOnEnd;
+    res.end = msg => {
+      process.exit();
+    };
+  }
+
   const args = Object.assign({}, defaultArgs, reqArgs);
   for (const name in args) {
     req[name] = args[name];
   }
-  // rewrite end method, exit process when invoke end method
-  res.end = msg => {
-    process.exit();
-  };
+
   if (!app) return {req, res};
   const fn = app.callback();
   return fn(req, res);
