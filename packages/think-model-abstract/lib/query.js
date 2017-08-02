@@ -140,4 +140,36 @@ module.exports = class AbstractQuery {
     }
     return this.query(sql);
   }
+  /**
+   * start transaction
+   * @param {Object} connection 
+   */
+  startTrans(connection) {
+    return this.socket().startTrans(connection).then(connection => {
+      this.connection = connection;
+      return connection;
+    });
+  }
+  /**
+   * commit transaction
+   * @param {Object} connection 
+   */
+  commit(connection = this.connection) {
+    return this.socket().commit();
+  }
+  /**
+   * rollback transaction
+   * @param {Object} connection 
+   */
+  rollback(connection = this.connection) {
+    return this.socket().rollback(connection);
+  }
+  /**
+   * wrap transaction
+   * @param {Function} fn 
+   * @param {Object} connection 
+   */
+  transaction(fn, connection) {
+    return this.socket().transaction(fn, connection);
+  }
 };
