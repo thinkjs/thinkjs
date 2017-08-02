@@ -1,6 +1,5 @@
 const helper = require('think-helper');
 const querystring = require('querystring');
-const SELECT_SQL = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
 const COMPARISON = {
   EQ: '=',
   NEQ: '!=',
@@ -23,7 +22,6 @@ module.exports = class AbstractParser {
   constructor(config = {}) {
     this.config = config;
     this.comparison = COMPARISON;
-    this.selectSql = SELECT_SQL;
   }
   /**
    * parse explain
@@ -595,7 +593,8 @@ module.exports = class AbstractParser {
    * @return {String}         [sql string]
    */
   buildSelectSql(options) {
-    return this.parseSql(this.selectSql, options) + this.parseLock(options.lock);
+    const sql = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%LOCK%%COMMENT%';
+    return this.parseSql(sql, options);
   }
   /**
    * get insert sql

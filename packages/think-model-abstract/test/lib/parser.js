@@ -7,7 +7,7 @@ ava.test('init', ('init', t => {
   const instance = new Parser();
   const keys = Object.keys(instance.comparison).sort();
   t.deepEqual(keys, [ '<>', 'EGT', 'ELT', 'EQ', 'GT', 'IN', 'LIKE', 'LT', 'NEQ', 'NOTIN', 'NOTLIKE' ]);
-  t.is(instance.selectSql, '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%');
+  t.is(instance.selectSql, undefined);
 }));
 
 ava.test('parseExplain', t => {
