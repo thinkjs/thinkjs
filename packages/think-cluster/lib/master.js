@@ -32,11 +32,11 @@ class Master {
       });
     }
     // if receive message `think-cluster-reload-workers` from worker, restart all workers
-    process.on('message', (worker, message) => {
-      if (message === 'think-cluster-reload-workers') {
-        reloadWorkers();
-      }
-    });
+    // process.on('message', (worker, message) => {
+    //   if (message === 'think-cluster-reload-workers') {
+    //     reloadWorkers();
+    //   }
+    // });
   }
   /**
    * check worker is alive
