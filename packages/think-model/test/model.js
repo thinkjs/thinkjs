@@ -431,14 +431,54 @@ test('model updateMany data error', async t => {
   }});
 
   try {
-    await model.where({id: 3}).updateMany({title: 'hello'});
+    await model.updateMany({id: 3, title: 'hello'});
     t.fail();
   } catch (e) {
     t.deepEqual(model.options, {});
   }
 });
 
-test.todo('updateMany');
+test('updateMany has no pk', async t => {
+  const model = new Model('post', {handle: class {
+    parseData(data) {
+      return data;
+    }
+    update() {
+      return true;
+    }
+  }});
+
+  try {
+    await model.updateMany([{title: 'hello'}]);
+    t.fail();
+  } catch (e) {
+    t.deepEqual(model.options, {});
+  }
+});
+
+test('updateMany normal', async t => {
+  t.plan(5);
+
+  const model = new Model('post', {handle: class {
+    parseData(data) {
+      return data;
+    }
+  }});
+  model.update = function(data, options) {
+    if (data.id === 3) {
+      t.deepEqual(data, {id: 3, title: 'hello1', content: 'world1'});
+    } else {
+      t.deepEqual(data, {id: 10, title: 'hello2', content: 'world2'});
+    }
+    t.deepEqual(options, {});
+    return data.id;
+  };
+  const result = await model.updateMany([
+    {id: 3, title: 'hello1', content: 'world1'},
+    {id: 10, title: 'hello2', content: 'world2'}
+  ], {});
+  t.deepEqual(result, [3, 10]);
+});
 
 test('model find data', async t => {
   t.plan(5);

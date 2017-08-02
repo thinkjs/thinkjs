@@ -531,6 +531,7 @@ module.exports = class Model {
       return Promise.reject(new Error('updateMany data must be an array'));
     }
     if (!dataList.every(data => data.hasOwnProperty(this.pk))) {
+      this.options = {};
       return Promise.reject(new Error('updateMany every data must contain primary key'));
     }
     const promises = dataList.map(data => {
