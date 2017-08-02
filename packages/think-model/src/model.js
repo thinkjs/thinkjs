@@ -637,39 +637,30 @@ module.exports = class Model {
    * @return {[type]} [description]
    */
   async getField(field, one) {
-    const options = await this.parseOptions({'field': field});
+    const options = await this.parseOptions({field});
     if (helper.isNumber(one)) {
       options.limit = one;
     } else if (one === true) {
       options.limit = 1;
     }
-    let data = await this.db().select(options);
-    const multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
-    if (multi) {
-      const fields = field.split(/\s*,\s*/);
-      const result = {};
-      fields.forEach(item => {
-        result[item] = [];
-      });
-      data.every(item => {
-        fields.forEach(fItem => {
-          if (one === true) {
-            result[fItem] = item[fItem];
-          } else {
-            result[fItem].push(item[fItem]);
-          }
-        });
-        return one !== true;
-      });
-      return result;
-    } else {
-      data = data.map(item => {
-        for (const key in item) {
-          return item[key];
+    const data = await this.db().select(options);
+
+    const result = {};
+    for (const item of data) {
+      for (const field in item) {
+        if (Array.isArray(result[field])) {
+          result[field].push(item[field]);
+        } else {
+          result[field] = one === true ? item[field] : [item[field]];
         }
-      });
-      return one === true ? data[0] : data;
+      }
     }
+
+    const fields = Object.keys(result);
+    if (fields.length === 1) {
+      return result[fields[0]];
+    }
+    return result;
   }
   /**
    * increment field data
