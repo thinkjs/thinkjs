@@ -17,6 +17,7 @@
     "thinkjs": "next"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-preset-think-node": "^1.0.0",
     "node-notifier": "^5.0.2",
     "think-watcher": "^3.0.0",
