@@ -32,6 +32,7 @@ support options:
   prefix: [], // url prefix
   suffix: ['.html'], // url suffix
   enableDefaultRouter: true,
+  optimizeHomepageRouter: true, 
   subdomainOffset: 2,
   subdomain: {}, //subdomain
   denyModules: [] //deny module, enable in multi module mode
