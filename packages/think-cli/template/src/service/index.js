@@ -1,3 +1,3 @@
-module.exports = class {
+module.exports = class extends think.Service {
 
 };

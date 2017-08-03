@@ -4,8 +4,9 @@ const Commander = require('../commander');
 const path = require('path');
 
 process.cwd = function() {
-    return __dirname;
-}
+  return __dirname;
+};
+
 const instance = new Commander();
 
 test.serial('version', t => {
@@ -15,65 +16,62 @@ test.serial('version', t => {
   instance.parseArgv(processArgv);
   processArgv = [ '/usr/local/bin/node', __filename, '--version' ];
   instance.parseArgv(processArgv);
-})
+});
 
 test.serial('new test1', t => {
-  const processArgv = [ '/usr/local/bin/node', __filename, 'new', 'test1', '-m', 'module'];
+  const processArgv = ['/usr/local/bin/node', __filename, 'new', 'test1', '-m', 'module'];
   instance.parseArgv(processArgv);
   t.is(isDirectory(path.resolve(__dirname, 'test1')), true);
-})
+});
 
 test.serial('create controlelr', t => {
-  
   process.cwd = function() {
-      return path.join(__dirname, 'test1');
-  }
+    return path.join(__dirname, 'test1');
+  };
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'abc', '-m', 'module' ];
   instance.parseArgv(processArgv);
-})
+});
 
 test.serial('create service', t => {
   process.cwd = function() {
-      return path.join(__dirname, 'test1');
-  }
+    return path.join(__dirname, 'test1');
+  };
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'service', 'abc' ];
   instance.parseArgv(processArgv);
-})
+});
 
 test.serial('create model', t => {
   process.cwd = function() {
-      return path.join(__dirname, 'test1');
-  }
+    return path.join(__dirname, 'test1');
+  };
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'model', 'abc' ];
   instance.parseArgv(processArgv);
-})
+});
 
 test.serial('create middleware', t => {
   process.cwd = function() {
-      return path.join(__dirname, 'test1');
-  }
+    return path.join(__dirname, 'test1');
+  };
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'middleware', 'abc' ];
   instance.parseArgv(processArgv);
-})
+});
 
 test.serial('create adapter', t => {
   process.cwd = function() {
-      return path.join(__dirname, 'test1');
-  }
+    return path.join(__dirname, 'test1');
+  };
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'adapter', 'abc' ];
   instance.parseArgv(processArgv);
-})
+});
 
 test.serial('create module', t => {
   process.cwd = function() {
-      return path.join(__dirname, 'test1');
-  }
+    return path.join(__dirname, 'test1');
+  };
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'module', 'abc' ];
   instance.parseArgv(processArgv);
-})
-
-
+});
 test.after('cleanup', function() {
   console.log('begin gc');
   rmdir(path.join(__dirname, 'test1'));
-})
+});
