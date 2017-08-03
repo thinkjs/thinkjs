@@ -3,25 +3,37 @@ const helper = require('think-helper');
 const SOCKET = Symbol('think-model-socket');
 
 module.exports = class AbstractQuery {
+  /**
+   * abstract query class
+   * @param {object} config 
+   */
   constructor(config) {
     this.config = config;
     this.lastSql = '';
     this.lastInsertId = 0;
   }
   /**
-   * parser instance
+   * get parser instance, override in sub class
    */
   get parser() {}
   /**
    * query sql
    */
-  query() {}
+  query(sqlOptions, connection) {
+    const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
+    this.lastSql = sql;
+    return this.socket(sql).query(sqlOptions, connection);
+  }
   /**
-   * execute
+   * execute, override in sub class
    */
-  execute() {}
+  execute(sqlOptions, connection) {
+    const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
+    this.lastSql = sql;
+    return this.socket(sql).execute(sqlOptions, connection);
+  }
   /**
-   * get socket
+   * get socket, invoked in sub class
    * @param {String|Object} sql 
    */
   socket(sql, Cls) {
