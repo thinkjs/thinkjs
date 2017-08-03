@@ -3,7 +3,7 @@ const path = require('path');
 const Model = require('./lib/model.js');
 
 module.exports = app => {
-  const model = function(name, config, m = 'common') {
+  function model(name, config, m = 'common') {
     const models = app.modules.length ? (app.models[m] || {}) : app.models;
     const Cls = models[name] || Model;
     const modelName = path.basename(name);
@@ -13,22 +13,27 @@ module.exports = app => {
     return instance;
   };
 
+  function injectModel(name, config, m) {
+    const modelConfig = app.think.config('model', undefined, m);
+    config = helper.parseAdapterConfig(modelConfig, config);
+    return model(name, config, m);
+  }
+
   return {
     think: {
       Mongo: Model,
-      mongo(name, config, m) {
-        const modelConfig = app.think.config('model', undefined, m);
-        config = helper.parseAdapterConfig(modelConfig, config);
-        return model(name, config, m);
-      }
+      mongo: injectModel
+    },
+    service: {
+      mongo: injectModel
     },
     controller: {
-      mongo: function(name, config, m) {
+      mongo(name, config, m) {
         return this.ctx.model(name, config, m);
       }
     },
     context: {
-      mongo: function(name, config, m = this.module) {
+      mongo(name, config, m = this.module) {
         config = helper.parseAdapterConfig(this.config('model'), config);
         return model(name, config, m);
       }
