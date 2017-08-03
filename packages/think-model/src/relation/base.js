@@ -48,18 +48,24 @@ module.exports = class BaseRelation {
           this.data[i][this.options.name] = [];
         });
       }
-      mapData.forEach(mapItem => {
-        this.data.forEach((item, i) => {
-          if (mapItem[this.options.fKey] !== item[this.options.key]) {
-            return;
-          }
-          if (isArrMap) {
-            this.data[i][this.options.name].push(mapItem);
-          } else {
-            this.data[i][this.options.name] = mapItem;
-          }
-        });
-      });
+
+      const dataMap = {};
+      for (const item of mapData) {
+        const key = item[this.options.fKey];
+        if (helper.isArray(dataMap[key])) {
+          dataMap[key].push(item);
+        } else {
+          dataMap[key] = isArrMap ? [item] : item;
+        }
+      }
+
+      for (let i = 0; i < this.data.length; i++) {
+        const key = this.data[i][this.options.key];
+        if (!dataMap[key]) {
+          continue;
+        }
+        this.data[i][this.options.name] = dataMap[key];
+      }
     } else {
       this.data[this.options.name] = isArrMap ? mapData : (mapData[0] || {});
     }
