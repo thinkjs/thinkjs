@@ -4,7 +4,6 @@ const Parser = require('./parser.js');
 const PostgreSQLSocket = require('./socket.js');
 
 const PARSER = Symbol('think-model-sqlite-parser');
-const SOCKET = Symbol('think-model-sqlite-socket');
 
 /**
  * mysql query
@@ -23,13 +22,7 @@ module.exports = class SQLiteQuery extends Query {
    * @param {String|Object} sql 
    */
   socket(sql) {
-    if (sql && this.config.parser) {
-      const config = Object.assign({}, this.config, this.config.parser(sql));
-      return PostgreSQLSocket.getInstance(config);
-    }
-    if (this[SOCKET]) return this[SOCKET];
-    this[SOCKET] = PostgreSQLSocket.getInstance(this.config);
-    return this[SOCKET];
+    return super.socket(sql, PostgreSQLSocket);
   }
   /**
    * query sql
@@ -54,24 +47,5 @@ module.exports = class SQLiteQuery extends Query {
       }
       return data.rowCount || 0;
     });
-  }
-
-  startTrans(connection) {
-    return this.socket().startTrans(connection).then(connection => {
-      this.connection = connection;
-      return connection;
-    });
-  }
-
-  commit(connection = this.connection) {
-    return this.socket().commit();
-  }
-
-  rollback(connection = this.connection) {
-    return this.socket().rollback(connection);
-  }
-
-  transaction(fn, connection) {
-    return this.socket().transaction(fn, connection);
   }
 };
