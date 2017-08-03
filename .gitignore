@@ -39,3 +39,4 @@ jspm_packages
 demo/
 
 test/**/*.json
+.DS_Store
