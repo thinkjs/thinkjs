@@ -17,9 +17,7 @@ module.exports = class SQLiteParser extends Parser {
    */
   parseLimit(limit) {
     if (helper.isEmpty(limit)) return '';
-    if (helper.isNumber(limit)) {
-      return ` LIMIT ${limit}`;
-    }
+    if (helper.isNumber(limit)) return ` LIMIT ${limit}`;
     if (helper.isString(limit)) {
       limit = limit.split(/\s*,\s*/);
     }
