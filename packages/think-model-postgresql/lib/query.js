@@ -25,20 +25,10 @@ module.exports = class SQLiteQuery extends Query {
     return super.socket(sql, PostgreSQLSocket);
   }
   /**
-   * query sql
-   */
-  query(sqlOptions, connection) {
-    const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
-    this.lastSql = sql;
-    return this.socket(sql).query(sqlOptions, connection).then(data => data.rows);
-  }
-  /**
    * execute sql
    */
   execute(sqlOptions, connection) {
-    const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
-    this.lastSql = sql;
-    return this.socket(sql).execute(sqlOptions, connection).then(data => {
+    return super.execute(sqlOptions, connection).then(data => {
       if (data.command === 'INSERT') {
         if (data.rows[0]) {
           const keys = Object.keys(data.rows[0]);
