@@ -3,7 +3,7 @@ const path = require('path');
 const Model = require('./lib/model.js');
 
 module.exports = app => {
-  const model = function(name, config, m = 'common') {
+  function model(name, config, m = 'common') {
     const models = app.models.length ? (app.models[m] || {}) : app.models;
     const Cls = models[name] || Model;
     const modelName = path.basename(name);
@@ -12,17 +12,27 @@ module.exports = app => {
     instance.models = models;
     return instance;
   };
+  /**
+   * inject model method
+   * @param {String} name 
+   * @param {Object} config 
+   * @param {String} m 
+   */
+  function injectModel(name, config, m) {
+    const modelConfig = app.think.config('model', undefined, m);
+    const cacheConfig = app.think.config('cache', undefined, m);
+    config = helper.parseAdapterConfig(modelConfig, config);
+    config.cache = helper.parseAdapterConfig(cacheConfig, config.cache);
+    return model(name, config, m);
+  }
 
   return {
     think: {
       Model: Model,
-      model(name, config, m) {
-        const modelConfig = app.think.config('model', undefined, m);
-        const cacheConfig = app.think.config('cache', undefined, m);
-        config = helper.parseAdapterConfig(modelConfig, config);
-        config.cache = helper.parseAdapterConfig(cacheConfig, config.cache);
-        return model(name, config, m);
-      }
+      model: injectModel
+    },
+    service: {
+      model: injectModel
     },
     controller: {
       model(name, config, m) {
