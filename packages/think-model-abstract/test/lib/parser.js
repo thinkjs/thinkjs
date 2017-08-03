@@ -6,7 +6,7 @@ ava.test('init', ('init', t => {
   t.plan(2);
   const instance = new Parser();
   const keys = Object.keys(instance.comparison).sort();
-  t.deepEqual(keys, [ '<>', 'EGT', 'ELT', 'EQ', 'GT', 'IN', 'LIKE', 'LT', 'NEQ', 'NOTIN', 'NOTLIKE' ]);
+  t.deepEqual(keys, [ '<>', 'EGT', 'ELT', 'EQ', 'GT', 'ILIKE', 'IN', 'LIKE', 'LT', 'NEQ', 'NOTILIKE', 'NOTIN', 'NOTLIKE' ]);
   t.is(instance.selectSql, undefined);
 }));
 
