@@ -7,7 +7,7 @@ module.exports = class AbstractQuery {
    * abstract query class
    * @param {object} config 
    */
-  constructor(config) {
+  constructor(config = {}) {
     this.config = config;
     this.lastSql = '';
     this.lastInsertId = 0;
@@ -167,7 +167,7 @@ module.exports = class AbstractQuery {
    * @param {Object} connection 
    */
   commit(connection = this.connection) {
-    return this.socket().commit();
+    return this.socket().commit(connection);
   }
   /**
    * rollback transaction
