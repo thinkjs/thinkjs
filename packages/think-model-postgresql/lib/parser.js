@@ -32,7 +32,7 @@ module.exports = class PostgreSQLParser extends Parser {
       isDistinct = true;
       key = key.replace(/DISTINCT (.*)/i, '$1');
     }
-    if (/.*\..*/.test(key)) {
+    if (key.indexOf('.') > -1) {
       const k = key.split('.');
       const j = [];
       k.forEach(i => {
