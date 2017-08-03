@@ -1,6 +1,6 @@
 {
   "name": "think-email",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Send email for Thinkjs3",
   "main": "index.js",
   "scripts": {
