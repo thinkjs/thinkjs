@@ -38,6 +38,7 @@
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-think-node": "^1.0.1",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
