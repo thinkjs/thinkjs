@@ -10,6 +10,8 @@ const COMPARISON = {
   ELT: '<=',
   NOTLIKE: 'NOT LIKE',
   LIKE: 'LIKE',
+  NOTILIKE: 'NOT ILIKE',
+  ILIKE: 'ILIKE',
   IN: 'IN',
   NOTIN: 'NOT IN'
 };
@@ -237,7 +239,7 @@ module.exports = class AbstractParser {
         } else {
           whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
         }
-      } else if (/^(NOT\s+LIKE|LIKE)$/.test(val0)) {
+      } else if (/^(NOT\s+LIKE|LIKE|NOT\s+ILIKE|ILIKE)$/.test(val0)) {
         // like or not like
         if (helper.isArray(val[1])) {
           // get like logic, default is OR
