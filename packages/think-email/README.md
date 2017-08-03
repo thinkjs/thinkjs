@@ -62,6 +62,3 @@ thinkEmail(transport, options).then(info => {
 ```
 
 More config options, you can see at [nodemailer doc](https://nodemailer.com/about/).
-
-thinkEmail(transport, options, callback);
-```
