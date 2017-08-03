@@ -52,9 +52,28 @@ class Middleware {
         item.handle = middlewarePkg[item.handle];
       }
       assert(helper.isFunction(item.handle), 'handle must be a function');
-      item.handle = item.handle(item.options || {}, app);
-      // handle also be a function
-      assert(helper.isFunction(item.handle), 'handle must return a function');
+      const options = item.options || {};
+      let handle = item.handle;
+      // if options is a function, maybe want get options async
+      // then hack a middleware handle, when app is ready, then get options & exec handle
+      if (helper.isFunction(options)) {
+        let ret = {};
+        app.think.beforeStartServer(() => {
+          return Promise.resolve(options()).then(data => {
+            ret = data;
+          });
+        });
+        app.on('appReady', () => {
+          handle = handle(ret, app);
+        });
+        item.handle = (ctx, next) => {
+          return handle(ctx, next);
+        };
+      } else {
+        item.handle = handle(options, app);
+        // handle also be a function
+        assert(helper.isFunction(item.handle), 'handle must return a function');
+      }
       return item;
     }).map(item => {
       if (!item.match && !item.ignore) {
