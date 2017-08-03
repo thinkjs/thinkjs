@@ -495,7 +495,7 @@ module.exports = class AbstractParser {
    * @return {String}         []
    */
   parseComment(comment) {
-    return comment ? (` /*${comment}*/`) : '';
+    return comment ? ` /*${comment}*/` : '';
   }
   /**
    * parse distinct
