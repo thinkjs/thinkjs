@@ -1,5 +1,4 @@
 const {Query} = require('think-model-abstract');
-const helper = require('think-helper');
 const Parser = require('./parser.js');
 const PostgreSQLSocket = require('./socket.js');
 
