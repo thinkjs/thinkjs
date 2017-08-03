@@ -25,6 +25,14 @@ module.exports = class SQLiteQuery extends Query {
     return super.socket(sql, PostgreSQLSocket);
   }
   /**
+   * query sql
+   * @param {Object} sqlOptions 
+   * @param {Object} connection 
+   */
+  query(sqlOptions, connection) {
+    return super.query(sqlOptions, connection).then(data => data.rows);
+  }
+  /**
    * execute sql
    */
   execute(sqlOptions, connection) {
