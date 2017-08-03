@@ -25,12 +25,12 @@ module.exports = app => {
       }
     },
     controller: {
-      model: function(name, config, m) {
+      model(name, config, m) {
         return this.ctx.model(name, config, m);
       }
     },
     context: {
-      model: function(name, config, m = this.module) {
+      model(name, config, m = this.module) {
         config = helper.parseAdapterConfig(this.config('model'), config);
         // add adapter cache config
         config.cache = helper.parseAdapterConfig(this.config('cache'), config.cache);
