@@ -13,6 +13,7 @@ awesome projects for `ThinkJS 3.x`
 | [think-logic](https://github.com/thinkjs/think-logic)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-logic.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-logic/badge.svg)  | Invoke logic action |
 | [think-controller](https://github.com/thinkjs/think-controller)  | [@toxic-johann](https://github.com/toxic-johann)  | ![version](https://img.shields.io/npm/v/think-logic.svg)  |  ![](https://travis-ci.org/thinkjs/think-controller.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-controller/badge.svg)  | Invoke controller action |
 | [think-wechat](https://github.com/akira-cn/think-wechat)  | [@akira-cn](https://github.com/akira-cn)  | ![version](https://img.shields.io/npm/v/think-wechat.svg)  |  ![](https://travis-ci.org/akira-cn/think-wechat.svg) | ![](https://coveralls.io/repos/github/akira-cn/think-wechat/badge.svg)  | wechat middleware |
+| [think-swagger](https://github.com/libery/think-swagger)  | [@libery](https://github.com/libery)  | ![version](https://img.shields.io/npm/v/think-swagger.svg)  |  ![](https://travis-ci.org/libery/think-swagger.svg) | ![](https://coveralls.io/repos/github/libery/think-swagger/badge.svg)  | Think swagger middleware |
 
 
 ## Adapters
