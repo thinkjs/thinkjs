@@ -7,54 +7,54 @@ function mockHelper(multiModule, isFile) {
   var params = [];
   helper.isFile = function(p) {
     params.push(p);
-    if(p === path.join('thinkPath', 'lib/config/extend.js')) {
-      return isFile[0]
-    } else if(p === path.join('appPath', multiModule ? 'common/config/extend.js' : 'config/extend.js')) {
-      return isFile[1]
-    } else if(p === path.join('thinkPath', 'lib/extend/think.js') ) {
-      return isFile[2]
-    } else if(p === path.join('thinkPath', 'lib/extend/context.js') ) {
-      return isFile[3]
-    } else if(p === path.join('appPath', (multiModule ? 'common/extend/think.js' : 'extend/think.js'))) {
-      return isFile[4]
-    } else if(p === path.join('appPath', (multiModule ? 'common/extend/context.js' : 'extend/context.js'))) {
-      return isFile[5]
+    if (p === path.join('thinkPath', 'lib/config/extend.js')) {
+      return isFile[0];
+    } else if (p === path.join('appPath', multiModule ? 'common/config/extend.js' : 'config/extend.js')) {
+      return isFile[1];
+    } else if (p === path.join('thinkPath', 'lib/extend/think.js')) {
+      return isFile[2];
+    } else if (p === path.join('thinkPath', 'lib/extend/context.js')) {
+      return isFile[3];
+    } else if (p === path.join('appPath', (multiModule ? 'common/extend/think.js' : 'extend/think.js'))) {
+      return isFile[4];
+    } else if (p === path.join('appPath', (multiModule ? 'common/extend/context.js' : 'extend/context.js'))) {
+      return isFile[5];
     } else {
       throw new Error();
     }
-  }
+  };
   return params;
 }
 
 function mockUtil(multiModule, addNotAllow) {
   const util = require('../loader/util');
   util.interopRequire = function(p) {
-    if(p === path.join('thinkPath', 'lib/config/extend.js')) {
+    if (p === path.join('thinkPath', 'lib/config/extend.js')) {
       var ret = [{
-        think: {a: 1},
+        think: {a: 1}
       }];
-      if(addNotAllow) {
+      if (addNotAllow) {
         ret.push({notallow: {some: 'value'}});
       }
       return ret;
-    } else if(p === path.join('appPath', multiModule ? 'common/config/extend.js' : 'config/extend.js')) {
+    } else if (p === path.join('appPath', multiModule ? 'common/config/extend.js' : 'config/extend.js')) {
       return [{
         context: {a: !!multiModule}
       }];
-    } else if(p === path.join('thinkPath', 'lib/extend/think.js') ) {
+    } else if (p === path.join('thinkPath', 'lib/extend/think.js')) {
       return {
         b: 2
       };
-    } else if(p === path.join('thinkPath', 'lib/extend/context.js') ) {
+    } else if (p === path.join('thinkPath', 'lib/extend/context.js')) {
       return {
         b: 2
       };
-    } else if(p === path.join('appPath',
+    } else if (p === path.join('appPath',
       (multiModule ? 'common/extend/think.js' : 'extend/think.js'))) {
       return {
         c: !!multiModule
       };
-    } else if(p === path.join('appPath',
+    } else if (p === path.join('appPath',
       (multiModule ? 'common/extend/context.js' : 'extend/context.js'))) {
       return {
         c: !!multiModule
@@ -62,7 +62,7 @@ function mockUtil(multiModule, addNotAllow) {
     } else {
       throw new Error();
     }
-  }
+  };
 }
 
 function getLoader(a) {
@@ -73,14 +73,14 @@ function getLoader(a) {
 
 function mockAssert() {
   var params = [];
-  mock('assert', function(a,b) {
-    params.push(a,b);
+  mock('assert', function(a, b) {
+    params.push(a, b);
   });
   return params;
 }
 
 function createTest(modules, isFileArray, expectReturn) {
-  return t=>{
+  return t => {
     mockHelper(modules.length, isFileArray);
     mockUtil(modules.length);
     const load = getLoader(['think', 'context']);
@@ -152,15 +152,15 @@ test('test7', createTest(
   }
 ));
 
-test('assert type must be one of allowExtends', t=>{
+test('assert type must be one of allowExtends', t => {
   mockHelper(false, [true, true, true, true, true, true]);
   mockUtil(false, true);
   var params = mockAssert();
   const load = getLoader(['think', 'context']);
   load('appPath', 'thinkPath', []);
 
-  t.deepEqual(params.slice(2,4), [
+  t.deepEqual(params.slice(2, 4), [
     false,
-    `extend type=notallow not allowed, allow types: ${['think','context'].join(', ')}`
+    `extend type=notallow not allowed, allow types: ${['think', 'context'].join(', ')}`
   ]);
 });

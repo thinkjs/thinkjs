@@ -6,12 +6,12 @@ function mockHelper(isFile) {
 
   helper.isFile = function(filepath) {
     return isFile;
-  }
+  };
 }
 
 function getInstance() {
-  const config = require('../loader/config');
-  return new config();
+  const Config = require('../loader/config');
+  return new Config();
 }
 
 function mockFiles() {
@@ -21,7 +21,7 @@ function mockFiles() {
   mock(path.join('path3', 'config'), {c: 3});
 }
 
-test('foreach configPaths load all file and merge into config object', t=>{
+test('foreach configPaths load all file and merge into config object', t => {
   var isFile = true;
   mockFiles();
   mockHelper(isFile);
@@ -29,10 +29,10 @@ test('foreach configPaths load all file and merge into config object', t=>{
   var config = {};
   instance.loadConfigByName(config, ['path1', 'path2', 'path3'], 'config');
 
-  t.deepEqual(config, {a:1, b:2, c:3});
+  t.deepEqual(config, {a: 1, b: 2, c: 3});
 });
 
-test('if isFile === false, load nothing', t=>{
+test('if isFile === false, load nothing', t => {
   var isFile = false;
   mockFiles();
   mockHelper(isFile);

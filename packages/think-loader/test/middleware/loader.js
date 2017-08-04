@@ -5,22 +5,21 @@ const path = require('path');
 function mockHelper(isFile) {
   var params = [];
   const helper = require('think-helper');
-  helper.isFile = (p)=>{
+  helper.isFile = (p) => {
     params.push(p);
-    return isFile
+    return isFile;
   };
   return params;
 }
 
 function mockDeps(instance) {
-
   var depsCalledParams = [];
 
-  instance.interopRequire = function(p){
-    if(path.join('appPath', 'common/config/middleware.js') === p) {
+  instance.interopRequire = function(p) {
+    if (path.join('appPath', 'common/config/middleware.js') === p) {
       return {value: 'MultiModuleMiddlewares'};
-    } else if(path.join('appPath', 'config/middleware.js') === p) {
-      return {value: 'Middlewares'}
+    } else if (path.join('appPath', 'config/middleware.js') === p) {
+      return {value: 'Middlewares'};
     }
   };
 
@@ -32,18 +31,18 @@ function mockDeps(instance) {
   instance.parse = function(e, f, g) {
     depsCalledParams.push(e, f, g);
     return 'parse call result';
-  }
+  };
 
   return depsCalledParams;
 }
 
 function createInstance() {
-  const middleware = mock.reRequire('../../loader/middleware');
-  return new middleware();
+  const Middleware = mock.reRequire('../../loader/middleware');
+  return new Middleware();
 }
 
 function createTest1(isFile, modules, path) {
-  return t=>{
+  return t => {
     var isFileParams = mockHelper(isFile);
     const instance = createInstance();
     const params = mockDeps(instance);
@@ -53,7 +52,7 @@ function createTest1(isFile, modules, path) {
     t.deepEqual(isFileParams, [path]);
     t.deepEqual(params, []);
     t.deepEqual(result, []);
-  }
+  };
 }
 test('return [] when no middleware.js, isMultiModule = true',
  createTest1(false, ['admin'], path.join('appPath', 'common/config/middleware.js'))
@@ -63,7 +62,7 @@ test('return [] when no middleware.js, isMultiModule = false',
  createTest1(false, [], path.join('appPath', 'config/middleware.js'))
 );
 
-test('load middleware isMultiModule === true', t=>{
+test('load middleware isMultiModule === true', t => {
   mockHelper(true);
   const instance = createInstance();
   const params = mockDeps(instance);
@@ -78,7 +77,7 @@ test('load middleware isMultiModule === true', t=>{
   t.is(result, 'parse call result');
 });
 
-test('load middleware isMultiModule === false', t=>{
+test('load middleware isMultiModule === false', t => {
   mockHelper(true);
   const instance = createInstance();
   const params = mockDeps(instance);

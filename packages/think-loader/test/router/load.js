@@ -2,12 +2,12 @@ const test = require('ava');
 const mock = require('mock-require');
 const path = require('path');
 
-function createLoader(modules = 'modules') {
-  let Loader = mock.reRequire('../../index.js');
-  var loader = new Loader('appPath', 'thinkpath');
-  loader.modules = modules;
-  return loader;
-}
+// function createLoader(modules = 'modules') {
+//   const Loader = mock.reRequire('../../index.js');
+//   var loader = new Loader('appPath', 'thinkpath');
+//   loader.modules = modules;
+//   return loader;
+// }
 
 const paths = [
   path.join('appPath', 'common/config/router.js'),
@@ -19,19 +19,19 @@ const paths = [
 function mockHelper(isFiles) {
   const helper = require('think-helper');
   helper.isFile = function(p) {
-    if(paths[0] === p) {
+    if (paths[0] === p) {
       return isFiles[0];
     }
-    if(paths[1] === p) {
+    if (paths[1] === p) {
       return isFiles[1];
     }
-    if(paths[2] === p) {
+    if (paths[2] === p) {
       return isFiles[2];
     }
-    if(paths[3] === p) {
+    if (paths[3] === p) {
       return isFiles[3];
     }
-  }
+  };
 }
 
 function getRouter() {
@@ -43,31 +43,31 @@ function mockFormatRouter(router) {
   router.formatRouter = function(p) {
     params.push(p);
     return 'formatRouter result';
-  }
+  };
   return params;
 }
 
 function mockUtil(contents) {
   const util = require('../../loader/util');
   util.interopRequire = function(p) {
-    if(paths[0] === p) {
+    if (paths[0] === p) {
       return contents[0];
     }
-    if(paths[1] === p) {
+    if (paths[1] === p) {
       return contents[1];
     }
-    if(paths[2] === p) {
+    if (paths[2] === p) {
       return contents[2];
     }
-    if(paths[3] === p) {
+    if (paths[3] === p) {
       return contents[3];
     }
-  }
+  };
 }
 
 function createTest(modules, isFiles, fileContents,
- formatRouterCallParams, expectResult, expectAssertParams=[]) {
-  return t=>{
+ formatRouterCallParams, expectResult, expectAssertParams = []) {
+  return t => {
     var assertParams = [];
     mock('assert', function(a, b) {
       assertParams.push(a, b);
@@ -79,16 +79,16 @@ function createTest(modules, isFiles, fileContents,
 
     var result = router.load('appPath', modules);
 
-    if(expectAssertParams.length === 0) {
+    if (expectAssertParams.length === 0) {
       t.deepEqual(params, formatRouterCallParams);
       t.deepEqual(result, expectResult);
     } else {
       t.deepEqual(assertParams, expectAssertParams);
     }
-  }
+  };
 }
 
-const handle = function(){};
+// const handle = function() {};
 
 test('test1', createTest(
   ['admin', 'user'],
@@ -130,7 +130,6 @@ test('test1', createTest(
 //   {admin: {match: /^adminmatch(?:\/(?=$))?$/i, rules: []}, user: {match: /^usermatch(?:\/(?=$))?$/i, rules: []}}
 // ));
 
-
 // test('test5', createTest(
 //   ['admin', 'user'],
 //   [true, true, true, true],
@@ -147,7 +146,6 @@ test('test1', createTest(
 //   ['userFile', 'adminFile'], // there are asserts, ignore
 //   {admin: {match: /^usermatch(?:\/(?=$))?$/i, rules: 'formatRouter result'}, user: {rules: 'formatRouter result'}},
 // ));
-
 
 // test('test6', createTest(
 //   [], // single module

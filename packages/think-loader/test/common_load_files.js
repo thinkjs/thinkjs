@@ -9,7 +9,7 @@ function mockHelper() {
   helper.getdirFiles = function(dir) {
     params.push(dir);
     return fileList;
-  }
+  };
   return params;
 }
 
@@ -20,11 +20,11 @@ function mockUtil() {
     params.push(p);
     var length = params.length;
     return length;
-  }
+  };
   return params;
 }
 
-test('common loadFiles will call getdirFiles, rename, repalce and sort', t=>{
+test('common loadFiles will call getdirFiles, rename, repalce and sort', t => {
   var params1 = mockHelper();
   var params2 = mockUtil();
   const common = require('../loader/common.js');
@@ -41,9 +41,9 @@ test('common loadFiles will call getdirFiles, rename, repalce and sort', t=>{
   ]); // 4 match js files
 
   t.deepEqual(ret, {
-    "folder/b2": 1,
-    "a": 2,
-    "folder/b1": 3,
-    "folder/folder2/c": 4
+    'folder/b2': 1,
+    'a': 2,
+    'folder/b1': 3,
+    'folder/folder2/c': 4
   });
 });

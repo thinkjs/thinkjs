@@ -1,6 +1,6 @@
 const test = require('ava');
 const path = require('path');
-const mock = require('mock-require');
+// const mock = require('mock-require');
 
 function getCommon() {
   const common = require('../loader/common.js');
@@ -15,11 +15,11 @@ function mockLoadFiles() {
       a: 1,
       b: 2
     };
-  }
+  };
   return callParams;
 }
 
-test('common loader when isMultiModule is true', t=>{
+test('common loader when isMultiModule is true', t => {
   const params = mockLoadFiles();
   const common = getCommon();
 
@@ -39,7 +39,7 @@ test('common loader when isMultiModule is true', t=>{
   t.is(cache.other.b, 2);
 });
 
-test('common.load when isMultiModule is false', t=>{
+test('common.load when isMultiModule is false', t => {
   const params = mockLoadFiles();
   const common = getCommon();
 

@@ -11,11 +11,11 @@ function mockGetFiles(instance) {
 }
 
 function getInstance() {
-  const middleware = require('../../loader/middleware');
-  return new middleware();
+  const Middleware = require('../../loader/middleware');
+  return new Middleware();
 }
 
-test('loadFiles isMultiModule === true', t=>{
+test('loadFiles isMultiModule === true', t => {
   const middleware = getInstance();
   const params = mockGetFiles(middleware);
   const result = middleware.loadFiles('appPath', true, 'thinkPath');
@@ -30,7 +30,7 @@ test('loadFiles isMultiModule === true', t=>{
   });
 });
 
-test('loadFiles isMultiModule === false', t=>{
+test('loadFiles isMultiModule === false', t => {
   const middleware = getInstance();
   const params = mockGetFiles(middleware);
   const result = middleware.loadFiles('appPath', false, 'thinkPath');

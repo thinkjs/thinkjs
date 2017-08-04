@@ -26,13 +26,27 @@ exports.extend = function(target, source) {
   for (let i = 0; i < length; i++) {
     const property = properties[i];
     const descriptor = Object.getOwnPropertyDescriptor(source, property);
-    if (descriptor.get) {
-      target.__defineGetter__(property, descriptor.get);
-    }
-    if (descriptor.set) {
-      target.__defineSetter__(property, descriptor.set);
-    }
-    if (descriptor.hasOwnProperty('value')) { // could be undefined but writable
+    if (descriptor.get && descriptor.set) {
+      // target.__defineGetter__(property, descriptor.get);
+      // target.__defineSetter__(property, descriptor.set);
+      Object.defineProperty(target, property, {
+        configurable: true,
+        get: descriptor.get,
+        set: descriptor.set
+      });
+    } else if (descriptor.get) {
+      // target.__defineGetter__(property, descriptor.get);
+      Object.defineProperty(target, property, {
+        configurable: true,
+        get: descriptor.get
+      });
+    } else if (descriptor.set) {
+      // target.__defineSetter__(property, descriptor.set);
+      Object.defineProperty(target, property, { /* eslint accessor-pairs: ["error", { "setWithoutGet": false }] */
+        configurable: true,
+        set: descriptor.set
+      });
+    } else if (descriptor.hasOwnProperty('value')) { // could be undefined but writable
       target[property] = descriptor.value;
     }
   }

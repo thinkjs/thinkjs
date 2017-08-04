@@ -1,15 +1,14 @@
 const test = require('ava');
 
 function getInstance() {
-  const config = require('../loader/config');
-  return new config();
+  const Config = require('../loader/config');
+  return new Config();
 }
 
-test('config_load_adapter will call load_config_by_name with right params', t=>{
-
+test('config_load_adapter will call load_config_by_name with right params', t => {
   const instance = getInstance();
-  instance.loadConfigByName = function(a, b, c){
-    a[b+c] = 'value';
+  instance.loadConfigByName = function(a, b, c) {
+    a[b + c] = 'value';
   };
 
   t.deepEqual(instance.loadConfig('configPaths', 'env', 'name'), {
@@ -18,10 +17,10 @@ test('config_load_adapter will call load_config_by_name with right params', t=>{
   });
 });
 
-test('config_load_adapter will call load_config_by_name with right params default name = "config"', t=>{
+test('config_load_adapter will call load_config_by_name with right params default name = "config"', t => {
   const instance = getInstance();
-  instance.loadConfigByName = function(a, b, c){
-    a[b+c] = 'value';
+  instance.loadConfigByName = function(a, b, c) {
+    a[b + c] = 'value';
   };
   t.deepEqual(instance.loadConfig('configPaths', 'env'), {
     'configPathsconfig.js': 'value',

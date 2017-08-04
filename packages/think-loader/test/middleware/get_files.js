@@ -5,7 +5,7 @@ function mockHelper(t, dir) {
   helper.getdirFiles = function(d) {
     t.is(d, dir);
     return ['a.js', 'b.js', 'c.es', 'd.config', 'e.js.etc'];
-  }
+  };
 }
 
 function createInstance() {
@@ -23,7 +23,7 @@ function mockModule(dir) {
   mock(ces, 3);
 }
 
-test('getFiles', t=>{
+test('getFiles', t => {
   mockHelper(t, 'middlewarePath');
   mockModule('middlewarePath');
 

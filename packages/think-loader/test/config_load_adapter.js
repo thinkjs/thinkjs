@@ -1,7 +1,7 @@
 const test = require('ava');
 const path = require('path');
 
-test('config_load_adapter will load adapter and build cache', t=>{
+test('config_load_adapter will load adapter and build cache', t => {
   const mock = require('mock-require');
 
   mock(path.join('adapterPath', 'a.js'), {a: 1});
@@ -16,10 +16,10 @@ test('config_load_adapter will load adapter and build cache', t=>{
       path.join('session', 'b.js'),
       path.join('session', 'session', 'c.js')
     ];
-  }
+  };
 
-  const instance = require('../loader/config');
-  var result = (new instance()).loadAdapter('adapterPath');
+  const Instance = require('../loader/config');
+  var result = (new Instance()).loadAdapter('adapterPath');
   t.deepEqual(result, {
     session: {b: {b: 2}}
   });
