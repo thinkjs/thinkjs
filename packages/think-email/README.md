@@ -3,7 +3,7 @@
 # think-email
 [![npm](https://img.shields.io/npm/v/think-email.svg?style=flat-square)](https://www.npmjs.com/package/think-email)
 
-Email module for ThinkJS 3.x based on [nodemailer](https://github.com/nodemailer/nodemailer).
+Email extend for ThinkJS 3.x based on [nodemailer](https://github.com/nodemailer/nodemailer).
 
 ## Install
 
@@ -12,11 +12,22 @@ npm install think-email
 ```
 ## How to use
 
-Set the config in file `src/config.js`
+Set the extend in `src/config/extend.js`
 
 ```js
-const thinkEmail = require('think-email');
-thinkEmail(transport, options).then(info => {
+const email = require('think-email');
+
+module.exports = [
+  email
+];
+```
+
+And then the `controller`, `context`, `think` will have the method `sendEmail`. For
+example in `controller` you can use like this:
+
+```js
+
+this.sendEmail(transport, options).then(info => {
   console.log(info);
 }, err => {
   console.log(err);
