@@ -5,12 +5,12 @@ const thinkEmail = require('./email.js');
  */
 module.exports = {
   controller: {
-    cache: thinkEmail
+    sendEmail: thinkEmail
   },
   context: {
-    cache: thinkEmail
+    sendEmail: thinkEmail
   },
   think: {
-    cache: thinkEmail
+    sendEmail: thinkEmail
   }
 };
