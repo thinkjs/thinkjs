@@ -59,6 +59,7 @@ function mockCluster(){
       cluster.workers.push(worker)
       return worker;
     },
+    on: () => {},
     trigger(evtName,args){
       this.workers.forEach(worker => {
         worker.trigger(evtName,args)
@@ -120,7 +121,7 @@ test.serial('normal case', async t => {
   let instance = new Master({enableAgent:true});
   await instance.forkWorkers();
   cluster.trigger('listening')
-  t.is(cluster.workers.length,require('os').cpus().length+1)
+  t.is(cluster.workers.length, require('os').cpus().length+1)
 });
 
 test.serial('normal case', async t => {

@@ -1,7 +1,21 @@
 const cluster = require('cluster');
 const util = require('./util.js');
+const net = require('net');
+const stringHash = require('string-hash');
 
 let waitReloadWorkerTimes = 0;
+
+/**
+ * default options
+ */
+const defaultOptions = {
+  port: 0, // server listen port
+  host: '', // server listen host
+  sticky: false, // sticky cluster
+  getRemoteAddress: connection => connection.remoteAddress,
+  workers: 0, // fork worker nums
+  reloadSignal: '' // reload workers signal
+};
 
 /**
  * Master class
@@ -12,7 +26,8 @@ class Master {
    * @param {Object} options 
    */
   constructor(options) {
-    this.options = util.parseOptions(options);
+    options = util.parseOptions(options);
+    this.options = Object.assign({}, defaultOptions, options);
   }
   /**
    * capture reload signal
@@ -22,18 +37,16 @@ class Master {
     const reloadWorkers = () => {
       for (const id in cluster.workers) {
         const worker = cluster.workers[id];
-        if (!this.isAliveWorker(worker)) continue;
+        if (!this.isAliveWorker(worker) || util.isAgent(worker)) continue;
         worker.send(util.THINK_RELOAD_SIGNAL);
       }
     };
-    if (signal) {
-      process.on(signal, reloadWorkers);
-    }
+    if (signal) process.on(signal, reloadWorkers);
+
     // if receive message `think-cluster-reload-workers` from worker, restart all workers
     cluster.on('message', (worker, message) => {
-      if (message === 'think-cluster-reload-workers') {
-        reloadWorkers();
-      }
+      if (message !== 'think-cluster-reload-workers') return;
+      reloadWorkers();
     });
   }
   /**
@@ -41,7 +54,8 @@ class Master {
    * @param {Object} worker 
    */
   isAliveWorker(worker) {
-    if (worker.state === 'disconnected' || worker.needKilled) {
+    const state = worker.state;
+    if (state === 'disconnected' || state === 'dead' || worker.needKilled) {
       return false;
     }
     return true;
@@ -102,7 +116,7 @@ class Master {
     }, 100);
   }
   /**
-   * force reload all workers, in development env
+   * force reload all workers when code is changed, in development env
    */
   forceReloadWorkers() {
     if (waitReloadWorkerTimes) {
@@ -118,9 +132,14 @@ class Master {
       aliveWorkers.push(worker);
     }
     if (!aliveWorkers.length) return;
-    if (aliveWorkers.length > this.options.workers) {
+
+    // check alive workers has leak
+    let allowWorkers = this.options.workers;
+    if (this.options.enableAgent) allowWorkers++;
+    if (aliveWorkers.length > allowWorkers) {
       console.error(`workers fork has leak, alive workers: ${aliveWorkers.length}, need workers: ${this.options.workers}`);
     }
+
     const firstWorker = aliveWorkers.shift();
     const promise = util.forkWorker(this.getForkEnv()).then(() => {
       // http://man7.org/linux/man-pages/man7/signal.7.html
@@ -138,6 +157,39 @@ class Master {
         waitReloadWorkerTimes = 0;
       }
     });
+  }
+  /**
+   * create server with sticky
+   * https://github.com/uqee/sticky-cluster
+   */
+  createServer() {
+    const deferred = think.defer();
+    const server = net.createServer({pauseOnConnect: true}, connection => {
+      const remoteAddress = this.options.getRemoteAddress(connection) || '';
+      const index = stringHash(remoteAddress) % this.options.workers;
+      let idx = -1;
+      for (const id in cluster.workers) {
+        const worker = cluster.workers[id];
+        if (!this.isAliveWorker(worker) || util.isAgent(worker)) continue;
+        if (index === ++idx) {
+          worker.send(util.THINK_STICKY_CLUSTER, connection);
+          break;
+        }
+      }
+    });
+    server.listen(this.options.port, this.options.host, () => {
+      this.forkWorkers().then(() => {
+        deferred.resolve();
+      });
+    });
+    return deferred.promise;
+  }
+  /**
+   * start server, support sticky
+   */
+  startServer() {
+    if (!this.options.sticky) return this.forkWorkers();
+    return this.createServer();
   }
 }
 
