@@ -1,24 +1,16 @@
-const helper = require('think-helper');
-const nodemailer = require('nodemailer');
-const assert = require('assert');
+const thinkEmail = require('./email.js');
 
-function thinkMail(transport, options) {
-
-  assert(helper.isObject(transport), 'think-email transport required an Object');
-  assert(helper.isObject(options), 'think-email send email options required an Object');
-
-  // send email
-  const transporter = nodemailer.createTransport(transport);
-  return new Promise((resolve, reject) => {
-    transporter.sendMail(options, (error, info) => {
-      transporter.close();
-      if(error) {
-        reject(error);
-      }else {
-        resolve(info);
-      }
-    });
-  });
-}
-
-module.exports = thinkMail;
+/**
+ * extends to think, controller, context
+ */
+module.exports = {
+  controller: {
+    cache: thinkEmail
+  },
+  context: {
+    cache: thinkEmail
+  },
+  think: {
+    cache: thinkEmail
+  }
+};
