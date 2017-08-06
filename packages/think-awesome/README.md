@@ -38,7 +38,7 @@ awesome projects for `ThinkJS 3.x`
 ## Extends
 
 * [think-view](https://github.com/thinkjs/think-view) make controller support render view files
-* [think-email](https://github.com/thinkjs/think-email) add `sendEmail` to think, context, controller.
+* [think-email](https://github.com/thinkjs/think-email) add `sendEmail` method to think, context, controller.
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. **already built in framework!**
 * [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller. **already built in framework!**
 
