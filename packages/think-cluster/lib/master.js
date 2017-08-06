@@ -12,7 +12,7 @@ const defaultOptions = {
   port: 0, // server listen port
   host: '', // server listen host
   sticky: false, // sticky cluster
-  getRemoteAddress: connection => connection.remoteAddress,
+  getRemoteAddress: socket => socket.remoteAddress,
   workers: 0, // fork worker nums
   reloadSignal: '' // reload workers signal
 };
@@ -164,15 +164,15 @@ class Master {
    */
   createServer() {
     const deferred = think.defer();
-    const server = net.createServer({pauseOnConnect: true}, connection => {
-      const remoteAddress = this.options.getRemoteAddress(connection) || '';
+    const server = net.createServer({pauseOnConnect: true}, socket => {
+      const remoteAddress = this.options.getRemoteAddress(socket) || '';
       const index = stringHash(remoteAddress) % this.options.workers;
       let idx = -1;
       for (const id in cluster.workers) {
         const worker = cluster.workers[id];
         if (!this.isAliveWorker(worker) || util.isAgent(worker)) continue;
         if (index === ++idx) {
-          worker.send(util.THINK_STICKY_CLUSTER, connection);
+          worker.send(util.THINK_STICKY_CLUSTER, socket);
           break;
         }
       }

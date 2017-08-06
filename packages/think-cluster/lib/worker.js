@@ -141,13 +141,13 @@ class Worker {
         deferred.resolve();
       });
     } else {
-      process.on('message', (message, connection) => {
-        if (!message !== util.THINK_STICKY_CLUSTER) return;
+      process.on('message', (message, socket) => {
+        if (message !== util.THINK_STICKY_CLUSTER) return;
         // emulate a connection event on the server by emitting the
         // event with the connection master sent to us
-        this.server.emit('connection', connection);
+        this.server.emit('connection', socket);
         // resume as we already catched the conn
-        connection.resume();
+        socket.resume();
       });
       // start on random port, accept conn from this host only
       this.server.listen(0, '127.0.0.1', () => {
