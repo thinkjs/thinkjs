@@ -7,10 +7,10 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint lib/ && nyc ava test/mock-test/",
-    "lint": "eslint lib/",
-    "lint-fix": "eslint --fix lib/",
-    "coverage": "nyc report --reporter=html"
+    "test": "npm run lint && npm run test-cov",
+    "test-cov": "nyc ava test/mock-test/ && nyc report --reporter=html",
+    "lint": "eslint ./lib/ index.js",
+    "prepublish": "npm test"
   },
   "contributors": [
     {
