@@ -1,61 +1,69 @@
 const helper = require('think-helper');
+const assert = require('assert');
 
 module.exports = app => {
+  // In cluster environment socket.io requires you to use sticky sessions, 
+  // to ensure that a given client hits the same process every time, 
+  // otherwise its handshake mechanism won't work properly. 
+  // https://github.com/uqee/sticky-cluster
+  process.env.THINK_STICKY_CLUSTER = true;
+
+  const config = helper.parseAdapterConfig(app.think.config('websocket'));
+  const Handle = config.handle;
+  assert(helper.isFunction(Handle), 'websocket.handle must be a function');
+
+  let instance;
   app.on('appReady', () => {
-    const config = helper.parseAdapterConfig(app.think.config('websocket'));
-    const handle = config.handle;
-    delete config.handle;
-    const instance = new handle(app.server, config, app);
+    instance = new Handle(app.server, config, app);
     instance.run();
   });
+
   return {
     context: {
-      get data(){
-        return this.req.data;
-      },
-      get socket(){
-        return this.req.socket;
+      /**
+       * get socket
+       */
+      get websocket() {
+        return this.req.websocket;
       },
       /**
        * is websocket request
        */
-      get isWebsocket(){
+      get isWebsocket() {
         return this.isMethod('WEBSOCKET');
       },
       /**
        * emit an event
+       * @param {String} event 
+       * @param {Mixed} data 
        */
-      emit: function(event, data) {
+      emit(event, data) {
         this.res.statusCode = 200;
-        this.socket.emit(event, data);
+        instance.emit(event, data, this.req.websocket);
       },
       /**
        * broadcast event
+       * @param {String} event 
+       * @param {Mixed} data 
        */
-      broadcast: function(event, data, containSelf) {
+      broadcast(event, data) {
         this.res.statusCode = 200;
-        if(containSelf){
-          this.socket.emit(event, data);
-        }
-        this.socket.broadcast.emit(event, data);
+        instance.broadcast(event, data, this.req.websocket);
       }
     },
     controller: {
-      get data(){
-        return this.ctx.data;
+      get websocket() {
+        return this.ctx.websocket;
       },
-      get socket(){
-        return this.ctx.socket;
-      },
-      get isWebsocket(){
+      get isWebsocket() {
         return this.ctx.isWebsocket;
       },
-      emit: function(event, data) {
+      emit(event, data) {
         return this.ctx.emit(event, data);
       },
-      broadcast: function(event, data) {
+      broadcast(event, data) {
         return this.ctx.broadcast(event, data);
       }
     }
-  }
-}
+  };
+};
