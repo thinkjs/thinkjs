@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
-    "eslint": "eslint ./src",
+    "eslint": "eslint ./lib/ index.js",
     "prepublish": "npm test"
   },
   "repository": {
