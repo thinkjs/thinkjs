@@ -29,7 +29,7 @@ module.exports = app => {
     },
     controller: {
       mongo(name, config, m) {
-        return this.ctx.model(name, config, m);
+        return this.ctx.mongo(name, config, m);
       }
     },
     context: {
