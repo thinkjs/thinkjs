@@ -13,10 +13,10 @@
     "tag": "next"
   },
   "scripts": {
-    "lint": "eslint lib/",
-    "lint-fix": "eslint --fix lib/",
-    "test": "eslint lib/ && nyc ava test/case",
-    "coverage": "nyc report --reporter=html"
+    "test": "npm run lint && npm run test-cov",
+    "test-cov": "nyc ava test/case/ && nyc report --reporter=html",
+    "lint": "eslint ./lib/ index.js",
+    "prepublish": "npm test"
   },
   "contributors": [
     {
