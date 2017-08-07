@@ -1,10 +1,25 @@
 const ava = require('ava');
 const helper = require('think-helper');
 const Base = require('../../lib/query');
+const Parser = require('../../lib/parser');
 
 ava.test('socket is function', t => {
   const instance = new Base();
   t.true(helper.isFunction(instance.socket));
+});
+
+ava.test('parser is getter', t => {
+  const instance = new Base();
+  const parser = instance.parser;
+  t.true(parser instanceof Parser, true);
+});
+
+ava.test('parser is getter 2', t => {
+  const instance = new Base();
+  const parser = instance.parser;
+  const parser2 = instance.parser;
+  t.true(parser instanceof Parser, true);
+  t.true(parser === parser2, true);
 });
 
 ava.test('query', async t => {
