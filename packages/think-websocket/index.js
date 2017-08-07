@@ -20,6 +20,9 @@ module.exports = app => {
 
   return {
     context: {
+      get data() {
+        return this.req.websocketData;
+      },
       /**
        * get socket
        */
@@ -52,6 +55,9 @@ module.exports = app => {
       }
     },
     controller: {
+      get data() {
+        return this.ctx.data;
+      },
       get websocket() {
         return this.ctx.websocket;
       },
