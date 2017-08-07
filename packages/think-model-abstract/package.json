@@ -3,9 +3,9 @@
   "version": "1.0.3",
   "description": "Abstract adapter for ThinkJS 3.x",
   "scripts": {
-    "test": "npm run eslint && npm run test-cov",
+    "test": "npm run lint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
-    "eslint": "eslint ./lib/ index.js",
+    "lint": "eslint ./lib/ index.js",
     "prepublish": "npm test"
   },
   "repository": {
