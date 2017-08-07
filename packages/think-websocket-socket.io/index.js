@@ -6,22 +6,22 @@ module.exports = class SocketIO {
   /**
    * constructor
    */
-  constructor(server, config, app){
+  constructor(server, config, app) {
     this.server = server;
     this.config = config;
     this.app = app;
     this.io = socketio(server);
 
-    //https://socket.io/docs/server-api/#server-adapter-value
-    if(config.adapter){
+    // https://socket.io/docs/server-api/#server-adapter-value
+    if (config.adapter) {
       this.io.adapter(config.adapter(this.io));
     }
-    //https://socket.io/docs/server-api/#server-origins-value
-    if(config.allowOrigin){
+    // https://socket.io/docs/server-api/#server-origins-value
+    if (config.allowOrigin) {
       this.io.origins(config.allowOrigin);
     }
-    //https://socket.io/docs/server-api/#server-path-value
-    if(config.path){
+    // https://socket.io/docs/server-api/#server-path-value
+    if (config.path) {
       this.io.path(this.config.path);
     }
   }
@@ -31,47 +31,69 @@ module.exports = class SocketIO {
    * @param {Object} data 
    * @param {Object} socket 
    */
-  mockRequst(url, data, socket){
-    if(url[0] !== '/') url = `/${url}`;
-    let request = socket.request;
-    let args = {res: socket.request, url, data, socket, io: this.io, method: 'WEBSOCKET'};
-    if(request.res){
-      args.res = request.res;
+  mockRequst(url, data, socket, open) {
+    if (url[0] !== '/') url = `/${url}`;
+
+    const args = {url, websocketData: data, websocket: socket, io: this.io, method: 'WEBSOCKET'};
+    if (open) {
+      args.req = socket.request;
+      if (socket.request.res) {
+        args.res = socket.request.res;
+      }
     }
     return mockHttp(args, this.app);
   }
   /**
    * register socket
    */
-  registerSocket(io, messages = {}){
+  registerSocket(io, messages = {}) {
     io.on('connection', socket => {
-      if(messages.open){
-        this.mockRequst(messages.open, undefined, socket);
+      if (messages.open) {
+        this.mockRequst(messages.open, undefined, socket, true);
       }
-      if(messages.close){
+      if (messages.close) {
         socket.on('disconnect', () => {
           this.mockRequst(messages.close, undefined, socket);
         });
       }
-      for(let key in messages){
-        if(key === 'open' || key === 'close') continue;
+      for (const key in messages) {
+        if (key === 'open' || key === 'close') continue;
         socket.on(key, data => {
           this.mockRequst(messages[key], data, socket);
-        })
+        });
       }
     });
   }
   /**
+   * emit an event
+   * @param {String} event 
+   * @param {Mixed} data 
+   * @param {Object} socket 
+   */
+  emit(event, data, socket) {
+    socket.emit(event, data);
+  }
+  /**
+   * broadcast event
+   * @param {String} event 
+   * @param {Mixed} data 
+   * @param {Object} socket 
+   */
+  broadcast(event, data, socket) {
+    socket.emit(event, data);
+    socket.broadcast.emit(event, data);
+  }
+  /**
    * run
    */
-  run(){
+  run() {
     let messages = this.config.messages || {};
-    if(!helper.isArray(messages)){
+    if (!helper.isArray(messages)) {
       messages = [messages];
     }
     messages.forEach(item => {
-      let sc = item.namespace ? this.io.of(item.namespace) : this.io;
+      const sc = item.namespace ? this.io.of(item.namespace) : this.io;
       this.registerSocket(sc, item);
     });
   }
-}
+};
