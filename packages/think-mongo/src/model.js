@@ -268,7 +268,7 @@ class Mongo {
     options = Object.assign({}, this.options, options);
     this.options = {};
     if (!options.table) {
-      options.tabel = this.tableName;
+      options.table = this.tableName;
     }
     options.tablePrefix = this.tablePrefix;
     options.model = this.modelName;
@@ -296,6 +296,7 @@ class Mongo {
     options = this.parseOptions(options);
     data = await this.beforeAdd(data, options);
     data = this.parseData(data);
+    console.log(options)
     const insertId = await this.db().add(data, options);
     const copyData = Object.assign({}, data, {[this.pk]: insertId});
     await this.afterAdd(copyData, options);
