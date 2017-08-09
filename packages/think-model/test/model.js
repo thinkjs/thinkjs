@@ -74,19 +74,18 @@ test('model get model inline', t => {
   t.is(model.model('admin/user').tableName, 'user');
 });
 test('model set cache option', t => {
-  t.plan(5);
+  t.plan(4);
 
   const model = new Model('post', {
     handle: new Function(),
     cache: {
-      type: 'file'
+      type: 'file',
+      handle: () => {}
     }
   });
 
   model.cache(500);
   t.is(model.options.cache.timeout, 500);
-  model.cache({type: 'session'});
-  t.is(model.options.cache.type, 'session');
   model.cache('page', {timeout: 300});
   t.is(model.options.cache.key, 'page');
   t.is(model.options.cache.timeout, 300);

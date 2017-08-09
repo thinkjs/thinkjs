@@ -22,8 +22,9 @@ module.exports = app => {
     const modelConfig = app.think.config('model', undefined, m);
     const cacheConfig = app.think.config('cache', undefined, m);
     config = helper.parseAdapterConfig(modelConfig, config);
-    config.cache = helper.parseAdapterConfig(cacheConfig, config.cache);
-    return model(name, config, m);
+    const instance = model(name, config, m);
+    instance._cacheConfig = cacheConfig;
+    return instance;
   }
 
   return {
@@ -42,9 +43,10 @@ module.exports = app => {
     context: {
       model(name, config, m = this.module) {
         config = helper.parseAdapterConfig(this.config('model'), config);
+        const instance = model(name, config, m);
         // add adapter cache config
-        config.cache = helper.parseAdapterConfig(this.config('cache'), config.cache);
-        return model(name, config, m);
+        instance._cacheConfig = this.config('cache');
+        return instance;
       }
     }
   };

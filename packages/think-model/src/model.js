@@ -91,6 +91,7 @@ module.exports = class Model {
       instance = new Model(modelName, this.config);
     }
     instance.models = this.models;
+    instance._cacheConfig = this._cacheConfig;
     return instance;
   }
   /**
@@ -100,18 +101,24 @@ module.exports = class Model {
    * @return {}         []
    */
   cache(key, config) {
-    if (key === undefined) {
-      return this;
-    }
+    if (key === undefined) return this;
     if (!helper.isString(key)) {
       [key, config] = ['', key];
     }
     if (helper.isNumber(config)) {
       config = {timeout: config};
     }
-    const options = helper.parseAdapterConfig(this.config.cache, config);
-    if (!options.key) { options.key = key }
-    this.options.cache = options;
+    const cacheConfig = this._cacheConfig;
+    if (cacheConfig) {
+      config = helper.parseAdapterConfig(cacheConfig, this.config.cache, config);
+    } else {
+      config = helper.parseAdapterConfig(this.config.cache, config);
+    }
+    if (!config.key) {
+      config.key = key;
+    }
+    assert(helper.isFunction(config.handle), 'cache.handle must be a function');
+    this.options.cache = config;
     return this;
   }
   /**
@@ -655,8 +662,19 @@ module.exports = class Model {
         }
       }
     }
-
     const fields = Object.keys(result);
+    // result is empty
+    if (fields.length === 0) {
+      const multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
+      if (multi) {
+        field.split(/\s*,\s*/).forEach(item => {
+          result[item] = [];
+        });
+        return result;
+      } else {
+        return [];
+      }
+    }
     if (fields.length === 1) {
       return result[fields[0]];
     }
