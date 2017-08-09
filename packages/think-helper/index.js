@@ -321,7 +321,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
     // {handle: 'www'}
     // only add some configs
     if (!item.type) {
-      item = {[config.type]: item};
+      item = {type: config.type, [config.type]: item};
     }
     // {type: 'xxx', handle: 'www'}
     if (item.handle) {

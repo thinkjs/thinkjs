@@ -456,3 +456,16 @@ test("parseAdapterConfig 5",t=>{
   }, 'test', 'aaa');
   t.deepEqual(value.value, 333);
 })
+
+test("parseAdapterConfig 6",t=>{
+  let value = parseAdapterConfig({
+    type: 'www', 
+    www: {
+      handle: 'www', value: '222'
+    },
+    aaa: {
+      value: 333
+    }
+  }, 'test', {timeout: 20});
+  t.deepEqual(value.timeout, 20);
+})
