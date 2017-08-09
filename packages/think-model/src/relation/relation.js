@@ -103,7 +103,7 @@ class Relation {
       let itemFn = opts[allowItem];
       if (helper.isFunction(itemFn)) {
         itemFn = itemFn(model, this.model);
-      } 
+      }
       if (itemFn !== undefined) {
         model[allowItem](itemFn);
       }
