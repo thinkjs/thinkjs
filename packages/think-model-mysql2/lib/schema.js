@@ -82,7 +82,7 @@ module.exports = class MysqlSchema extends Schema {
             name: item.Field,
             type: item.Type,
             required: item.Null === '',
-            default: item.Default || '',
+            default: '',
             primary: item.Key === 'PRI',
             unique: item.Key === 'UNI',
             autoIncrement: item.Extra.toLowerCase() === 'auto_increment'
