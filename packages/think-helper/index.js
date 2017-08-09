@@ -313,6 +313,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
     config = {type, [type]: config};
   }
   extConfig = extConfig.map(item => {
+    if (!item) return {};
     // only change type
     // 'xxx'
     if (exports.isString(item)) {
