@@ -1,4 +1,5 @@
 const helper = require('think-helper');
+const debug = require('debug')('think-model');
 
 const SOCKET = Symbol('think-model-socket');
 
@@ -146,11 +147,26 @@ module.exports = class AbstractQuery {
     let sql;
     if (helper.isObject(options)) {
       sql = options.sql ? options.sql : parser.buildSelectSql(options);
-      cache = options.cache || cache;
+      cache = cache || options.cache;
     } else {
       sql = options;
     }
-    return this.query(sql);
+    if (!cache) return this.query(sql);
+
+    cache.key = cache.key || helper.md5(sql);
+    const Handle = cache.handle;
+    const instance = new Handle(cache);
+    return instance.get(cache.key).then(data => {
+      if (data !== undefined) {
+        debug(`get data from cache: ${JSON.stringify(cache)}`);
+        return data;
+      }
+      return this.query(sql).then(data => {
+        return instance.set(cache.key, data).then(() => {
+          return data;
+        });
+      });
+    });
   }
   /**
    * start transaction
