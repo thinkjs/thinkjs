@@ -101,13 +101,14 @@ class Relation {
     const model = this.model.model(item.model || relationKey);
     allowOptions.forEach(allowItem => {
       if (helper.isFunction(opts[allowItem])) {
-        allowItem(this.model);
+        const ret = opts[allowItem](this.model);
+        model[allowItem](ret);
       } else if (opts[allowItem] !== undefined) {
         model[allowItem](opts[allowItem]);
       }
     });
     // disable relation in sub class
-    if (model.setRelation && opts.relation) {
+    if (opts.relation !== undefined) {
       model.setRelation(opts.relation, false);
     }
     opts.model = model;
