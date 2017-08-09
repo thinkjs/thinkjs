@@ -439,7 +439,20 @@ test("parseAdapterConfig 3",t=>{
   t.deepEqual(parseAdapterConfig(value).type, "_");
 })
 
-test("parseAdapterConfig 3",t=>{
+test("parseAdapterConfig 4",t=>{
   let value = parseAdapterConfig({handle: 'www', value: '222'});
   t.deepEqual(parseAdapterConfig(value).value, "222");
+})
+
+test("parseAdapterConfig 5",t=>{
+  let value = parseAdapterConfig({
+    type: 'www', 
+    www: {
+      handle: 'www', value: '222'
+    },
+    aaa: {
+      value: 333
+    }
+  }, 'test', 'aaa');
+  t.deepEqual(value.value, 333);
 })

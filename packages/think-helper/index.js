@@ -302,7 +302,7 @@ exports.uuid = function(version) {
 /**
  * parse adapter config
  */
-exports.parseAdapterConfig = (config = {}, extConfig) => {
+exports.parseAdapterConfig = (config = {}, ...extConfig) => {
   config = exports.extend({}, config);
   // {handle: ''}
   if (!config.type) config.type = '_';
@@ -312,26 +312,27 @@ exports.parseAdapterConfig = (config = {}, extConfig) => {
     delete config.type;
     config = {type, [type]: config};
   }
-  if (extConfig) {
+  extConfig = extConfig.map(item => {
     // only change type
     // 'xxx'
-    if (exports.isString(extConfig)) {
-      extConfig = {type: extConfig};
+    if (exports.isString(item)) {
+      item = {type: item};
     }
     // {handle: 'www'}
     // only add some configs
-    if (!extConfig.type) {
-      extConfig = {[config.type]: extConfig};
+    if (!item.type) {
+      item = {[config.type]: item};
     }
     // {type: 'xxx', handle: 'www'}
-    if (extConfig.handle) {
-      const type = extConfig.type;
-      delete extConfig.type;
-      extConfig = {type, [type]: extConfig};
+    if (item.handle) {
+      const type = item.type;
+      delete item.type;
+      item = {type, [type]: item};
     }
-  }
+    return item;
+  });
   // merge config
-  config = exports.extend({}, config, extConfig);
+  config = exports.extend({}, config, ...extConfig);
   const value = config[config.type] || {};
   // add type for return value
   value.type = config.type;
