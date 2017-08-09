@@ -2,6 +2,7 @@ const helper = require('think-helper');
 const path = require('path');
 const assert = require('assert');
 const Relation = require('./relation/relation.js');
+const util = require('util');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
@@ -194,10 +195,8 @@ module.exports = class Model {
   table(table, hasPrefix = false) {
     if (!table) return this;
     table = table.trim();
-    // table is sql, `SELECT * FROM`
-    if (table.indexOf(' ') > -1) {
-      hasPrefix = true;
-    } else if (!hasPrefix) {
+    // table may be a sql, `SELECT * FROM`
+    if (!hasPrefix && table.indexOf(' ') === -1) {
       table = this.tablePrefix + table;
     }
     this.options.table = table;
@@ -782,9 +781,12 @@ module.exports = class Model {
    * parse sql
    * @return promise [description]
    */
-  parseSql(sqlOptions) {
+  parseSql(sqlOptions, ...args) {
     if (helper.isString(sqlOptions)) {
       sqlOptions = {sql: sqlOptions};
+    }
+    if (args.lenth) {
+      sqlOptions.sql = util.format(sqlOptions.sql, ...args);
     }
     // replace table name
     sqlOptions.sql = sqlOptions.sql.replace(/(?:^|\s)__([A-Z]+)__(?:$|\s)/g, (a, b) => {
