@@ -37,8 +37,11 @@ class PostgreSQLSocket {
     // log connect
     const config = this.config;
     if (config.logConnect) {
-      const connectionPath = `postgresql://${config.user}:${config.password}@${config.host}:${config.port || 3211}/${config.database}`;
-      this.config.logger(connectionPath);
+      let connectionString = config.connectionString;
+      if (!connectionString) {
+        connectionString = `postgresql://${config.user}:${config.password}@${config.host}:${config.port || 3211}/${config.database}`;
+      }
+      this.config.logger(connectionString);
     }
     return this[POOL];
   }
