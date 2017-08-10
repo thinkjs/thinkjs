@@ -127,12 +127,94 @@ test('relation get relation false', async t => {
   t.false(await relation.getRelation(false));
 });
 
-test('relation get relation false', async t => {
-  const relation = new Relation({model: 'fake',
+test('relation get relation relation empty', async t => {
+  const relation = new Relation({model: 'fake'});
+
+  t.is(await relation.getRelation(123), 123);
+});
+
+test('relation get relation relationName empty', async t => {
+  const relation = new Relation({model: 'fake'});
+  relation.relationName = null;
+  t.is(await relation.getRelation(233), 233);
+});
+
+// test('relation get relation normal which relation has and relationName false', async t => {
+//   const relation = new Relation({model: 'fake',
+//     relatioin: {
+//       r: 'fake',
+//       a: 'fake2'
+//     }});
+
+//   t.deepEqual(await relation.getRelation({a: 3}), {a: 3});
+// });
+
+test('relation parse item relation with relation data', t => {
+  const relation = new Relation({model: 'post',
     relation: {
-      r: 'fake',
-      a: 'fake2'
+      user: Relation.HAS_ONE
     }});
 
-  t.false(await relation.getRelation(false));
+  const postData = {
+    id: 3,
+    title: 'hello',
+    content: 'world',
+    user: {id: 1, name: 'lizheming'}
+  };
+
+  t.is(relation.parseItemRelation('user', postData), undefined);
+});
+
+test('relation parse item relation without relation data', async t => {
+  const relation = new Relation({model: 'post',
+    relation: {
+      user: Relation.HAS_ONE
+    }});
+
+  relation.model.model = () => new Relation({model: 'user'});
+  t.deepEqual(await relation.parseItemRelation('user', {
+    id: 3,
+    title: 'hello',
+    content: 'world'
+  }), {
+    id: 3,
+    title: 'hello',
+    content: 'world'
+  });
+});
+
+test('relation parse item relation belong to', async t => {
+  const relation = new Relation({model: 'post',
+    relation: {
+      user: Relation.BELONG_TO
+    }});
+
+  relation.model.model = () => new Relation({model: 'user'});
+  t.deepEqual(await relation.parseItemRelation('user', {
+    id: 3,
+    title: 'hello',
+    content: 'world'
+  }), {
+    id: 3,
+    title: 'hello',
+    content: 'world'
+  });
+});
+
+test('relation parse item relation many to many', async t => {
+  const relation = new Relation({model: 'post',
+    relation: {
+      user: Relation.MANY_TO_MANY
+    }});
+
+  relation.model.model = () => new Relation({model: 'user'});
+  t.deepEqual(await relation.parseItemRelation('user', {
+    id: 3,
+    title: 'hello',
+    content: 'world'
+  }), {
+    id: 3,
+    title: 'hello',
+    content: 'world'
+  });
 });

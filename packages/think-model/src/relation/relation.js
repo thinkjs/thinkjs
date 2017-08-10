@@ -98,7 +98,7 @@ class Relation {
     if (helper.isArray(relData) || helper.isObject(relData)) {
       return;
     }
-    const model = this.model.model(item.model);
+    const model = this.model.model(opts.model);
     allowOptions.forEach(allowItem => {
       let itemFn = opts[allowItem];
       if (helper.isFunction(itemFn)) {
