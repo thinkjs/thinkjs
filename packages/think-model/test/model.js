@@ -1,6 +1,10 @@
 const {test} = require('ava');
 const Model = require('../src/model');
 
+const db = {
+  parseKey: key => key
+};
+
 test('model instance normal', t => {
   t.plan(3);
 
@@ -648,20 +652,21 @@ test('model get field one data one key', async t => {
 test('model increment', async t => {
   t.plan(12);
   const model = new Model('post', {handle: new Function()});
+  model.db(db);
 
   const arr = ['count', 'view'];
   const obj = {count: 3, view: 4};
   const str = 'count';
   const arrData = (step = 1) => ({
-    count: ['exp', '`count`+' + step],
-    view: ['exp', '`view`+' + step]
+    count: ['exp', 'count+' + step],
+    view: ['exp', 'view+' + step]
   });
   const objData = () => ({
-    count: ['exp', '`count`+3'],
-    view: ['exp', '`view`+4']
+    count: ['exp', 'count+3'],
+    view: ['exp', 'view+4']
   });
   const strData = (step = 1) => ({
-    count: ['exp', '`count`+' + step]
+    count: ['exp', 'count+' + step]
   });
 
   for (const step of [1, 10]) {
@@ -699,20 +704,21 @@ test('model increment', async t => {
 test('model decrement', async t => {
   t.plan(12);
   const model = new Model('post', {handle: new Function()});
+  model.db(db);
 
   const arr = ['count', 'view'];
   const obj = {count: 3, view: 4};
   const str = 'count';
   const arrData = (step = 1) => ({
-    count: ['exp', '`count`-' + step],
-    view: ['exp', '`view`-' + step]
+    count: ['exp', 'count-' + step],
+    view: ['exp', 'view-' + step]
   });
   const objData = () => ({
-    count: ['exp', '`count`-3'],
-    view: ['exp', '`view`-4']
+    count: ['exp', 'count-3'],
+    view: ['exp', 'view-4']
   });
   const strData = (step = 1) => ({
-    count: ['exp', '`count`-' + step]
+    count: ['exp', 'count-' + step]
   });
 
   for (const step of [1, 10]) {
@@ -750,6 +756,7 @@ test('model decrement', async t => {
 for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
   test(`model ${logic} empty`, t => {
     const model = new Model('post', {handle: new Function()});
+    model.db(db);
     model.getField = function(sql) {
       t.is(sql, `${logic.toUpperCase()}(id) AS think_${logic}`);
     };
@@ -757,6 +764,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
   });
   test(`model ${logic} custom pk`, t => {
     const model = new Model('post', {handle: new Function()});
+    model.db(db);
     model._pk = 'post_id';
     model.getField = function(sql) {
       t.is(sql, `${logic.toUpperCase()}(post_id) AS think_${logic}`);
@@ -765,6 +773,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
   });
   test(`model ${logic} empty pk`, t => {
     const model = new Model('post', {handle: new Function()});
+    model.db(db);
     Object.defineProperty(model, 'pk', {value: false});
     model.getField = function(sql) {
       t.is(sql, `${logic.toUpperCase()}(*) AS think_${logic}`);
@@ -773,9 +782,10 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
   });
   test(`model ${logic} with field`, t => {
     const model = new Model('post', {handle: new Function()});
+    model.db(db);
     Object.defineProperty(model, 'pk', {value: false});
     model.getField = function(sql) {
-      t.is(sql, `${logic.toUpperCase()}(\`title\`) AS think_${logic}`);
+      t.is(sql, `${logic.toUpperCase()}(title) AS think_${logic}`);
     };
     model[logic]('title');
   });
@@ -822,7 +832,8 @@ test('model parser sql', t => {
     handle: new Function(),
     prefix: 'fk_'
   });
+  model.db(db);
 
   const result = model.parseSql('__TABLE__  __TABLE__  __TITLE__ __title__');
-  t.is(result.sql, ' `fk_post`  `fk_post`  `fk_title` __title__');
+  t.is(result.sql, ' fk_post  fk_post  fk_title __title__');
 });
