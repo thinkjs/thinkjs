@@ -1,0 +1,138 @@
+const {test} = require('ava');
+const Relation = require('../../src/relation/relation');
+test('relation instance', t => {
+  t.plan(4);
+
+  const relation = new Relation({model: 'fake'});
+  t.deepEqual(relation.model, {model: 'fake'});
+  t.deepEqual(relation.relation, {});
+  t.true(relation.relationName);
+
+  t.deepEqual(
+    (new Relation({relation: {r: 'fake'}})).relation,
+    {r: 'fake'}
+  );
+});
+
+test('relation set relation undefined', t => {
+  t.plan(2);
+
+  const relation = new Relation({model: 'fake', relation: {r: 'fake'}});
+  relation.setRelation();
+  t.deepEqual(relation.relation, {r: 'fake'});
+  t.true(relation.relationName);
+});
+
+test('relation set relation object', t => {
+  t.plan(2);
+
+  const relation = new Relation({model: 'fake', relation: {r: 'fake', a: 2}});
+  relation.setRelation({r: 'fake2', delay: 'ka905'});
+  t.deepEqual(relation.relation, {a: 2, r: 'fake2', delay: 'ka905'});
+  t.true(relation.relationName);
+});
+
+test('relation set relation two parameter', t => {
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake'
+    }});
+
+  relation.setRelation('r', 3);
+  t.deepEqual(relation.relation, {r: 3});
+});
+
+test('relation set relation two parameter2', t => {
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake'
+    }});
+
+  relation.setRelation('a', 123);
+  t.deepEqual(relation.relation, {r: 'fake', a: 123});
+});
+
+test('relation set relation with boolean', t => {
+  t.plan(2);
+
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake'
+    }});
+
+  relation.setRelation(true);
+  t.deepEqual(relation.relation, {r: 'fake'});
+  t.true(relation.relationName);
+});
+
+test('relation set relation with boolean false', t => {
+  t.plan(2);
+
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake'
+    }});
+
+  relation.setRelation(false);
+  t.deepEqual(relation.relation, {r: 'fake'});
+  t.false(relation.relationName);
+});
+
+test('relation set relation with string', t => {
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake',
+      a: 'fake2'
+    }});
+
+  relation.setRelation('r,a', false);
+  t.deepEqual(relation.relationName, []);
+});
+
+test('relation set relation with string true', t => {
+  t.plan(2);
+
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake',
+      a: 'fake2'
+    }});
+
+  relation.setRelation('r,a', true);
+  t.deepEqual(relation.relation, {r: 'fake', a: 'fake2', 'r,a': true});
+  t.true(relation.relationName);
+});
+
+test('relation set relation with string empty arr', t => {
+  t.plan(2);
+
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake',
+      a: 'fake2'
+    }});
+
+  relation.setRelation('r,a', []);
+  t.deepEqual(relation.relation, {r: 'fake', a: 'fake2'});
+  t.deepEqual(relation.relationName, ['r', 'a']);
+});
+
+test('relation get relation false', async t => {
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake',
+      a: 'fake2'
+    }});
+
+  t.false(await relation.getRelation(false));
+});
+
+test('relation get relation false', async t => {
+  const relation = new Relation({model: 'fake',
+    relation: {
+      r: 'fake',
+      a: 'fake2'
+    }});
+
+  t.false(await relation.getRelation(false));
+});
