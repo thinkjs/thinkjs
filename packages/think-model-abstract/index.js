@@ -11,6 +11,13 @@ module.exports = class Abstract {
     this.model = model;
   }
   /**
+   * parse key
+   * @param {String} field 
+   */
+  parseKey(field) {
+    return this.parser.parseKey(field);
+  }
+  /**
    * get last sql
    */
   get lastSql() {
