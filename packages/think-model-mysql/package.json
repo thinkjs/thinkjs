@@ -1,11 +1,11 @@
 {
   "name": "think-model-mysql",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Mysql adapter for ThinkJS 3.x",
   "scripts": {
-    "test": "npm run eslint && npm run test-cov",
+    "test": "npm run lint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
-    "eslint": "eslint ./lib",
+    "lint": "eslint ./lib index.js",
     "prepublish": "npm test"
   },
   "repository": {
@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/thinkjs/think-model-mysql#readme",
   "dependencies": {
-    "babel-preset-think-node": "^1.0.2",
     "think-debounce": "^1.0.3",
     "think-helper": "^1.0.5",
     "think-model-abstract": "^1.0.5",
