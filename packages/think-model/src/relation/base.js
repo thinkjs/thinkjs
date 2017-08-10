@@ -22,9 +22,10 @@ module.exports = class BaseRelation {
     if (helper.isArray(this.data)) {
       const keys = [];
       this.data.forEach(item => {
-        if (keys.indexOf(item[key]) === -1 && item[key]) {
-          keys.push(item[key]);
-        }
+        let itemValue = item[key];
+        if (!itemValue) return;
+        if (helper.isNumberString) itemValue = parseInt(itemValue, 10);
+        if (keys.indexOf(itemValue) === -1) keys.push(itemValue);
       });
       if (keys.length === 0) return false;
       return {
