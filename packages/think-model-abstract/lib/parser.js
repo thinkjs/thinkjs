@@ -75,7 +75,7 @@ module.exports = class AbstractParser {
     if (helper.isArray(fields)) {
       return fields.map(item => {
         item = this.parseKey(item);
-        if (alias && item.indexOf('.') === -1) return `\`${alias}\`.${item}`;
+        if (alias && item.indexOf('.') === -1) return `${this.parseKey(alias)}.${item}`;
         return item;
       }).join(',');
     } else if (helper.isObject(fields)) {
@@ -86,7 +86,7 @@ module.exports = class AbstractParser {
       return data.join(',');
     } else if (helper.isString(fields) && fields) {
       fields = this.parseKey(fields);
-      if (alias && fields.indexOf('.') === -1) return `\`${alias}\`.${fields}`;
+      if (alias && fields.indexOf('.') === -1) return `${this.parseKey(alias)}.${fields}`;
       return fields;
     }
     return '*';
@@ -182,7 +182,7 @@ module.exports = class AbstractParser {
       result.push(str);
     }
     result = result.join(` ${logic} `);
-    return result ? (` WHERE ` + result) : '';
+    return result ? ` WHERE ${result}` : '';
   }
   /**
   * parse where item
@@ -396,30 +396,24 @@ module.exports = class AbstractParser {
             } else {
               table = options.tablePrefix + table;
               if (table.indexOf('.') === -1) {
-                joinStr += joinType + '`' + table + '`';
+                joinStr += joinType + this.parseKey(table);
               } else {
                 joinStr += joinType + table;
               }
             }
             if (item.as) {
-              joinStr += ' AS `' + item.as + '`';
+              joinStr += ' AS ' + this.parseKey(item.as);
             }
             if (item.on) {
-              let mTable = options.alias || options.table;
-              if (mTable.indexOf('.') === -1) {
-                mTable = '`' + mTable + '`';
-              }
-              let jTable = item.as || table;
-              if (jTable.indexOf('.') === -1) {
-                jTable = '`' + jTable + '`';
-              }
+              const mTable = this.parseKey(options.alias || options.table);
+              const jTable = this.parseKey(item.as || table);
               if (helper.isObject(item.on)) {
                 const where = [];
                 for (const key in item.on) {
                   where.push([
-                    key.indexOf('.') > -1 ? key : (mTable + '.`' + key + '`'),
+                    key.indexOf('.') > -1 ? key : (mTable + '.' + this.parseKey(key)),
                     '=',
-                    item.on[key].indexOf('.') > -1 ? item.on[key] : (jTable + '.`' + item.on[key] + '`')
+                    item.on[key].indexOf('.') > -1 ? item.on[key] : (jTable + '.' + this.parseKey(item.on[key]))
                   ].join(''));
                 }
                 joinStr += ' ON (' + where.join(' AND ') + ')';
@@ -427,8 +421,8 @@ module.exports = class AbstractParser {
                 if (helper.isString(item.on)) {
                   item.on = item.on.split(/\s*,\s*/);
                 }
-                joinStr += ' ON ' + (item.on[0].indexOf('.') > -1 ? item.on[0] : (mTable + '.`' + item.on[0] + '`'));
-                joinStr += ' = ' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.`' + item.on[1] + '`'));
+                joinStr += ' ON ' + (item.on[0].indexOf('.') > -1 ? item.on[0] : (mTable + '.' + this.parseKey(item.on[0])));
+                joinStr += ' = ' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.' + this.parseKey(item.on[1])));
               }
             }
           });
@@ -475,10 +469,10 @@ module.exports = class AbstractParser {
     }
     const result = group.map(item => {
       if (item.indexOf('.') === -1) {
-        return '`' + item + '`';
+        return this.parseKey(item);
       } else {
         item = item.split('.');
-        return item[0] + '.`' + item[1] + '`';
+        return item[0] + '.' + this.parseKey(item[1]);
       }
     });
     return ' GROUP BY ' + result.join(',');
