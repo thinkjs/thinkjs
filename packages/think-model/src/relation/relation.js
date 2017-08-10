@@ -68,7 +68,6 @@ class Relation {
   async getRelation(data) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return data;
     const promises = Object.keys(this.relation).map(key => {
-      if (this.relationName === false) return;
       if (helper.isString(this.relationName) && this.relationName.indexOf(key) === -1) return;
       return this.parseItemRelation(key, data);
     });
@@ -88,6 +87,7 @@ class Relation {
     const opts = Object.assign({
       name: relationKey,
       key: this.model.pk,
+      model: relationKey,
       fKey: `${this.model.modelName}_id`,
       relation: true,
       type: Relation.HAS_ONE
@@ -98,7 +98,7 @@ class Relation {
     if (helper.isArray(relData) || helper.isObject(relData)) {
       return;
     }
-    const model = this.model.model(item.model || relationKey);
+    const model = this.model.model(item.model);
     allowOptions.forEach(allowItem => {
       let itemFn = opts[allowItem];
       if (helper.isFunction(itemFn)) {
