@@ -16,36 +16,6 @@ module.exports = class PostgreSQLParser extends Parser {
     return `"${key}"`;
   }
   /**
-   * parse key
-   * @param  {String} key []
-   * @return {String}     []
-   */
-  parseKey(key) {
-    if (key === undefined) return '';
-    if (helper.isNumber(key) || helper.isNumberString(key)) return key;
-    key = key.trim();
-    if (helper.isEmpty(key)) return '';
-    // EXAMPLE: 'user_age(birthday)' or 'user_age(birthday) AS age' 
-    if (/.*\(.*\)/.test(key)) return key;
-    let isDistinct = false;
-    if (/DISTINCT (.*)/i.test(key)) {
-      isDistinct = true;
-      key = key.replace(/DISTINCT (.*)/i, '$1');
-    }
-    if (key.indexOf('.') > -1) {
-      const k = key.split('.');
-      const j = [];
-      k.forEach(i => {
-        const tmp = this.quoteKey(i.replace(/^"+|"+$/g, ''));
-        j.push(tmp);
-      });
-      key = j.join('.');
-    } else {
-      key = this.quoteKey(key.replace(/^"+|"+$/g, ''));
-    }
-    return `${isDistinct ? 'DISTINCT ' : ''}${key}`;
-  }
-  /**
    * parse group
    * @param  {String} group []
    * @return {String}       []
