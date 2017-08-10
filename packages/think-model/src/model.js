@@ -688,15 +688,15 @@ module.exports = class Model {
     let data = {};
     if (helper.isArray(field)) {
       field.forEach(item => {
-        data[item] = ['exp', `\`${item}\`+${step}`];
+        data[item] = ['exp', `${this[QUOTE_FIELD](item)}+${step}`];
       });
     } else if (helper.isObject(field)) {
       for (const key in field) {
-        data[key] = ['exp', `\`${key}\`+${field[key]}`];
+        data[key] = ['exp', `${this[QUOTE_FIELD](key)}+${field[key]}`];
       }
     } else {
       data = {
-        [field]: ['exp', `\`${field}\`+${step}`]
+        [field]: ['exp', `${this[QUOTE_FIELD](field)}+${step}`]
       };
     }
     return this.update(data);
@@ -709,15 +709,15 @@ module.exports = class Model {
     let data = {};
     if (helper.isArray(field)) {
       field.forEach(item => {
-        data[item] = ['exp', `\`${item}\`-${step}`];
+        data[item] = ['exp', `${this[QUOTE_FIELD](item)}-${step}`];
       });
     } else if (helper.isObject(field)) {
       for (const key in field) {
-        data[key] = ['exp', `\`${key}\`-${field[key]}`];
+        data[key] = ['exp', `${this[QUOTE_FIELD](key)}-${field[key]}`];
       }
     } else {
       data = {
-        [field]: ['exp', `\`${field}\`-${step}`]
+        [field]: ['exp', `${this[QUOTE_FIELD](field)}-${step}`]
       };
     }
     return this.update(data);
@@ -727,9 +727,7 @@ module.exports = class Model {
    * @param {String} field 
    */
   [QUOTE_FIELD](field) {
-    if (field) {
-      return /^\w+$/.test(field) ? '`' + field + '`' : field;
-    }
+    if (field) return this.db().parseKey(field);
     return this.pk || '*';
   }
   /**
@@ -809,9 +807,9 @@ module.exports = class Model {
     // replace table name
     sqlOptions.sql = sqlOptions.sql.replace(/(?:^|\s)__([A-Z]+)__(?:$|\s)/g, (a, b) => {
       if (b === 'TABLE') {
-        return ' `' + this.tableName + '` ';
+        return ' ' + this[QUOTE_FIELD](this.tableName) + ' ';
       }
-      return ' `' + this.tablePrefix + b.toLowerCase() + '` ';
+      return ' ' + this[QUOTE_FIELD](this.tablePrefix + b.toLowerCase()) + ' ';
     });
     return sqlOptions;
   }
