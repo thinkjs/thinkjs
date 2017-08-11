@@ -351,11 +351,22 @@ class Commander {
     const {m, name} = this.parseCSMName(controller);
 
     const controllerPath = this.getPath(m, 'controller');
+
+    let restTpl = 'src/controller/restIndex.js';
+    let baseTpl = 'src/controller/index.js';
+    const hasSubFile = name.indexOf('/') > -1;
+
     if (this.rest) {
+      if (hasSubFile) {
+        restTpl = 'src/controller/restIndex2.js';
+      }
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
-      this.copyFile('src/controller/restIndex.js', controllerPath + '/' + name + '.js');
+      this.copyFile(restTpl, controllerPath + '/' + name + '.js');
     } else {
-      this.copyFile('src/controller/index.js', controllerPath + '/' + name + '.js');
+      if (hasSubFile) {
+        baseTpl = 'src/controller/index2.js';
+      }
+      this.copyFile(baseTpl, controllerPath + '/' + name + '.js');
     }
 
     const logicPath = this.getPath(m, 'logic');
