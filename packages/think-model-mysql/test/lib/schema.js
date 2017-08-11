@@ -7,18 +7,24 @@ test('schema parser and query object', t => {
   t.plan(2);
 
   const schema = new Schema();
+  schema.query = new Query();
+  schema.parser = new Parser();
   t.true(schema.query instanceof Query);
   t.true(schema.parser instanceof Parser);
 });
 
 test('parser is getter', t => {
   const instance = new Schema();
+  instance.query = new Query();
+  instance.parser = new Parser();
   const parser = instance.parser;
   t.true(parser instanceof Parser, true);
 });
 
 test('parser is getter 2', t => {
   const instance = new Schema();
+  instance.query = new Query();
+  instance.parser = new Parser();
   const parser = instance.parser;
   const parser2 = instance.parser;
   t.true(parser instanceof Parser, true);
@@ -27,26 +33,34 @@ test('parser is getter 2', t => {
 
 test('query is getter', t => {
   const instance = new Schema();
-  const parser = instance.query;
-  t.true(parser instanceof Query, true);
+  instance.query = new Query();
+  instance.parser = new Parser();
+  const query = instance.query;
+  t.true(query instanceof Query, true);
 });
 
 test('query is getter 2', t => {
   const instance = new Schema();
-  const parser = instance.query;
-  const parser2 = instance.query;
-  t.true(parser instanceof Query, true);
-  t.true(parser === parser2, true);
+  instance.query = new Query();
+  instance.parser = new Parser();
+  const query = instance.query;
+  const query2 = instance.query;
+  t.true(query instanceof Query, true);
+  t.true(query === query2, true);
 });
 
 test('schema get empty schema', async t => {
   const schema = new Schema({});
+  schema.query = new Query();
+  schema.parser = new Parser();
   const result = await schema.getSchema();
   t.deepEqual(result, {});
 });
 
 test('schema get empty schema 2', async t => {
   const schema = new Schema({});
+  schema.query = new Query();
+  schema.parser = new Parser();
   const result = await schema.getSchema();
   const result2 = await schema.getSchema();
   t.deepEqual(result, {});
@@ -55,6 +69,8 @@ test('schema get empty schema 2', async t => {
 
 test('schema get normal schema', async t => {
   const schema = new Schema({}, {});
+  schema.query = new Query();
+  schema.parser = new Parser();
   const tableFields = [
     {
       Field: 'id',
@@ -119,6 +135,8 @@ test('schema get normal schema 2', async t => {
       default: 'title'
     }
   }, 'test');
+  schema.query = new Query();
+  schema.parser = new Parser();
   const tableFields = [
     {
       Field: 'id',
@@ -183,6 +201,8 @@ test('schema get normal schema 3', async t => {
       default: 'title'
     }
   }, 'test');
+  schema.query = new Query();
+  schema.parser = new Parser();
   const tableFields = [
     {
       Field: 'id',
@@ -251,6 +271,8 @@ test('schema get normal schema 4', async t => {
       default: 'title'
     }
   }, 'test');
+  schema.query = new Query();
+  schema.parser = new Parser();
   const tableFields = [
     {
       Field: 'id',

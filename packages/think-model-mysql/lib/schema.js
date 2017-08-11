@@ -1,11 +1,7 @@
 const helper = require('think-helper');
 const {Schema} = require('think-model-abstract');
 const Debounce = require('think-debounce');
-const Query = require('./query.js');
-const Parser = require('./parser.js');
 
-const QUERY = Symbol('think-model-mysql-query');
-const PARSER = Symbol('think-model-mysql-parser');
 const debounce = new Debounce();
 
 const SCHEMAS = {};
@@ -14,22 +10,6 @@ const SCHEMAS = {};
  * mysql Schema
  */
 module.exports = class MysqlSchema extends Schema {
-  /**
-   * get query instance
-   */
-  get query() {
-    if (this[QUERY]) return this[QUERY];
-    this[QUERY] = new Query(this.config);
-    return this[QUERY];
-  }
-  /**
-   * get parset instance
-   */
-  get parser() {
-    if (this[PARSER]) return this[PARSER];
-    this[PARSER] = new Parser(this.config);
-    return this[PARSER];
-  }
   _getItemSchemaValidate(fieldData) {
     const validate = {};
     switch (fieldData.tinyType) {
