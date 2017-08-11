@@ -14,13 +14,9 @@ module.exports = class AbstractQuery {
     this.lastInsertId = 0;
   }
   /**
-   * get parser instance, override in sub class
-   */
-  get parser() {}
-  /**
    * query sql
    */
-  query(sqlOptions, connection) {
+  query(sqlOptions, connection = this.connection) {
     const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
     this.lastSql = sql;
     return this.socket(sql).query(sqlOptions, connection);
@@ -28,7 +24,7 @@ module.exports = class AbstractQuery {
   /**
    * execute, override in sub class
    */
-  execute(sqlOptions, connection) {
+  execute(sqlOptions, connection = this.connection) {
     const sql = helper.isString(sqlOptions) ? sqlOptions : sqlOptions.sql;
     this.lastSql = sql;
     return this.socket(sql).execute(sqlOptions, connection);

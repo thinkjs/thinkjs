@@ -11,20 +11,20 @@ module.exports = class Abstract {
    * @param {Object} model 
    */
   constructor(model) {
-    this.model = model;
+    // this.model = model;
+    const Parser = this.constructor.Parser;
+    const Query = this.constructor.Query;
+    const Schema = this.constructor.Schema;
+    this.parser = new Parser(model.config);
+    this.query = new Query(model.config);
+    this.schema = new Schema(model.config, model.schema, model.tableName);
+    this.parser.query = this.query;
+    this.parser.schema = this.schema;
+    this.query.parser = this.parser;
+    this.query.schema = this.schema;
+    this.schema.query = this.query;
+    this.schema.parser = this.parser;
   }
-  /**
-   * get parser instance, override in sub class
-   */
-  get parser() {}
-  /**
-   * get query instance, override in sub class
-   */
-  get query() {}
-  /**
-   * get schema instance, override in sub class
-   */
-  get schema() {}
   /**
    * get last sql
    */
