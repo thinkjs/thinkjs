@@ -35,6 +35,7 @@ test.serial('runInMaster', t => {
   let app = new App(defaultOption);
   app.parseArgv = ()=>{return {}}
   app.run();
+  console.log('app.masterInstance', app.masterInstance)
   t.is(app.masterInstance instanceof require('think-cluster').Master,true)
 })
 

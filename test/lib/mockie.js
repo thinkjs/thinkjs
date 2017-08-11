@@ -71,6 +71,7 @@ function mockThinkCluster(args = {}) {
       }
       forceReloadWorkers(){
       }
+      startServer(){return Promise.resolve()}
     },
     Worker: class Worker {
       constructor(options = {}){
@@ -79,6 +80,10 @@ function mockThinkCluster(args = {}) {
       getWorkers(){}
       captureEvents(){
         require('think-cluster').capturedEvents = true;
+      }
+      startServer(){ 
+        this.captureEvents();
+        return Promise.resolve()
       }
     },
     Agent: class Agent {
