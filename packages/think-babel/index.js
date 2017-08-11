@@ -20,7 +20,8 @@ function babelTranspile(config) {
   options = Object.assign({
     filename: file,
     sourceFileName: relativePath,
-    sourceMaps: true
+    sourceMaps: true,
+    babelrc: false
   }, options);
 
   // babel transform
