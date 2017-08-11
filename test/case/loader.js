@@ -26,6 +26,7 @@ test.serial('normal test', t => {
 
   let loader = new Loader(options);
   loader.initPath();
+  t.is(think.env, options.env);
   t.is(think.app.env,options.env);
   t.is(think.app.proxy,options.proxy)
 })
