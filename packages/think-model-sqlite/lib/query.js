@@ -1,21 +1,10 @@
 const {Query} = require('think-model-abstract');
-const Parser = require('./parser.js');
 const SQLiteSocket = require('./socket.js');
-
-const PARSER = Symbol('think-model-sqlite-parser');
 
 /**
  * mysql query
  */
 module.exports = class SQLiteQuery extends Query {
-  /**
-   * get parser instance
-   */
-  get parser() {
-    if (this[PARSER]) return this[PARSER];
-    this[PARSER] = new Parser(this.config);
-    return this[PARSER];
-  }
   /**
    * get socket
    * @param {String|Object} sql 
