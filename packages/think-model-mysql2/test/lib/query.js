@@ -10,12 +10,14 @@ ava.test('socket is function', t => {
 
 ava.test('parser is getter', t => {
   const instance = new Base();
+  instance.parser = new Parser();
   const parser = instance.parser;
   t.true(parser instanceof Parser, true);
 });
 
 ava.test('parser is getter 2', t => {
   const instance = new Base();
+  instance.parser = new Parser();
   const parser = instance.parser;
   const parser2 = instance.parser;
   t.true(parser instanceof Parser, true);
