@@ -1,4 +1,4 @@
-const Base = require('./base.js');
+const Base = require('{path}base.js');
 
 module.exports = class extends Base {
   indexAction() {
