@@ -13,7 +13,7 @@ thinkBabel({
   srcPath,
   outPath,
   file,
-  babelOptions,
+  options,
   ext,
 });
 
@@ -22,7 +22,7 @@ thinkBabel({
 - `srcPath`      {String} the file source path.
 - `outPath`      {String} the directory for output file.
 - `file`         {String} the file path in the 'srcPath'.
-- `[babelOptions]` {Object} the babel options,default `{filename: file, sourceFileName: path.join(srcPath, file), presets: ['es2015'],sourceMaps: true}`.
+- `[options]` {Object} the babel options,default `{filename: file, sourceFileName: path.join(srcPath, file), presets: ['es2015'],sourceMaps: true}`.
 - `[ext]`        {String} the new file extension,default `.js`.
 
 ## Usage
