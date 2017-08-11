@@ -23,9 +23,8 @@ class Relation {
    */
   setRelation(name, value) {
     // ignore undefined name
-    if (name === undefined) {
-      return this;
-    }
+    if (name === undefined) return this;
+
     // add relation config {cate: {}}
     if (helper.isObject(name)) {
       helper.extend(this.relation, name);
@@ -58,13 +57,18 @@ class Relation {
     this.relationName = name;
     return this;
   }
+
   afterFind(data) {
     return this.getRelation(data);
   }
+
   afterSelect(data) {
     return this.getRelation(data);
   }
-
+  /**
+   * get relation data
+   * @param {Array|Object} data 
+   */
   async getRelation(data) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return data;
     const promises = Object.keys(this.relation).map(key => {
@@ -98,7 +102,11 @@ class Relation {
     if (helper.isArray(relData) || helper.isObject(relData)) {
       return;
     }
+
     const model = this.model.model(opts.model);
+    // make model use the same connection when invoked in transactions
+    model.db(this.model.db());
+
     allowOptions.forEach(allowItem => {
       let itemFn = opts[allowItem];
       if (helper.isFunction(itemFn)) {
@@ -119,7 +127,7 @@ class Relation {
         Cls = HasMany;
         break;
       case Relation.BELONG_TO:
-        // change default key & fKey
+        // change the default key & fKey
         opts.key = item.key || `${opts.model.modelName}_id`;
         opts.fKey = item.fKey || 'id';
         Cls = BelongTo;

@@ -166,12 +166,31 @@ test('relation parse item relation with relation data', t => {
 });
 
 test('relation parse item relation without relation data', async t => {
-  const relation = new Relation({model: 'post',
+  const relation = new Relation({
+    model: {
+      db: () => {}
+    },
     relation: {
       user: Relation.HAS_ONE
-    }});
-
-  relation.model.model = () => new Relation({model: 'user'});
+    }
+  });
+  let flag = 1;
+  relation.model.db = () => {
+    flag = 2;
+    return 2;
+  };
+  relation.model.model = () => {
+    const instance = new Relation({
+      model: {
+        db: () => {}
+      }
+    });
+    instance.db = (data) => {
+      t.is(data, 2);
+      flag = 3;
+    };
+    return instance;
+  };
   t.deepEqual(await relation.parseItemRelation('user', {
     id: 3,
     title: 'hello',
@@ -181,15 +200,36 @@ test('relation parse item relation without relation data', async t => {
     title: 'hello',
     content: 'world'
   });
+  t.is(flag, 3);
 });
 
 test('relation parse item relation belong to', async t => {
-  const relation = new Relation({model: 'post',
+  const relation = new Relation({
+    model: {
+      db: () => {}
+    },
     relation: {
       user: Relation.BELONG_TO
-    }});
+    }
+  });
 
-  relation.model.model = () => new Relation({model: 'user'});
+  let flag = 1;
+  relation.model.db = () => {
+    flag = 2;
+    return 2;
+  };
+  relation.model.model = () => {
+    const instance = new Relation({
+      model: {
+        db: () => {}
+      }
+    });
+    instance.db = (data) => {
+      t.is(data, 2);
+      flag = 3;
+    };
+    return instance;
+  };
   t.deepEqual(await relation.parseItemRelation('user', {
     id: 3,
     title: 'hello',
@@ -199,15 +239,36 @@ test('relation parse item relation belong to', async t => {
     title: 'hello',
     content: 'world'
   });
+  t.is(flag, 3);
 });
 
 test('relation parse item relation many to many', async t => {
-  const relation = new Relation({model: 'post',
+  const relation = new Relation({
+    model: {
+      db: () => {}
+    },
     relation: {
       user: Relation.MANY_TO_MANY
-    }});
+    }
+  });
 
-  relation.model.model = () => new Relation({model: 'user'});
+  let flag = 1;
+  relation.model.db = () => {
+    flag = 2;
+    return 2;
+  };
+  relation.model.model = () => {
+    const instance = new Relation({
+      model: {
+        db: () => {}
+      }
+    });
+    instance.db = (data) => {
+      t.is(data, 2);
+      flag = 3;
+    };
+    return instance;
+  };
   t.deepEqual(await relation.parseItemRelation('user', {
     id: 3,
     title: 'hello',
@@ -217,4 +278,5 @@ test('relation parse item relation many to many', async t => {
     title: 'hello',
     content: 'world'
   });
+  t.is(flag, 3);
 });
