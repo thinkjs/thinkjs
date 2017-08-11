@@ -2,6 +2,9 @@ const Parser = require('./lib/parser.js');
 const Query = require('./lib/query.js');
 const Schema = require('./lib/schema.js');
 
+/**
+ * abstract class
+ */
 module.exports = class Abstract {
   /**
    * constructor
@@ -11,12 +14,17 @@ module.exports = class Abstract {
     this.model = model;
   }
   /**
-   * parse key
-   * @param {String} field 
+   * get parser instance, override in sub class
    */
-  parseKey(field) {
-    return this.parser.parseKey(field);
-  }
+  get parser() {}
+  /**
+   * get query instance, override in sub class
+   */
+  get query() {}
+  /**
+   * get schema instance, override in sub class
+   */
+  get schema() {}
   /**
    * get last sql
    */
@@ -80,11 +88,26 @@ module.exports = class Abstract {
   }
   /**
    * get reverse fields
+   * @TODO move code to think-mode
    * @param {String} fields 
    * @return {Promise}
    */
   getReverseFields(fields) {
     return this.schema.getReverseFields(fields);
+  }
+  /**
+   * get table schema
+   * @param {String} table 
+   */
+  getSchema(table) {
+    return this.schema.getSchema(table);
+  }
+  /**
+   * parse key
+   * @param {String} field 
+   */
+  parseKey(field) {
+    return this.parser.parseKey(field);
   }
   /**
    * parse data
@@ -96,7 +119,6 @@ module.exports = class Abstract {
   parseData(data, isUpdate, table) {
     return this.schema.parseData(data, isUpdate, table);
   }
-
   /**
    * startTrans
    * @param {Object} connection 
@@ -104,7 +126,6 @@ module.exports = class Abstract {
   startTrans(connection) {
     return this.query.startTrans(connection);
   }
-
   /**
    * commit transactions
    * @param {Object} connection 
@@ -112,7 +133,6 @@ module.exports = class Abstract {
   commit(connection) {
     return this.query.commit(connection);
   }
-
   /**
    * rollback transactions
    * @param {Object} connection 
@@ -120,7 +140,6 @@ module.exports = class Abstract {
   rollback(connection) {
     return this.query.rollback(connection);
   }
-
   /**
    * transaction
    * @param {Function} fn 
@@ -129,7 +148,6 @@ module.exports = class Abstract {
   transaction(fn, connection) {
     return this.query.transaction(fn, connection);
   }
-
   /**
    * close socket
    */
