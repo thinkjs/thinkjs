@@ -24,11 +24,19 @@ test.serial('new test1', t => {
   t.is(isDirectory(path.resolve(__dirname, 'test1')), true);
 });
 
-test.serial('create controlelr', t => {
+test.serial('create controller', t => {
   process.cwd = function() {
     return path.join(__dirname, 'test1');
   };
-  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'abc', '-m', 'module' ];
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'abc' ];
+  instance.parseArgv(processArgv);
+});
+
+test.serial('create restful controller', t => {
+  process.cwd = function() {
+    return path.join(__dirname, 'test1');
+  };
+  const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'controller', 'home/user/def', '-r' ];
   instance.parseArgv(processArgv);
 });
 
