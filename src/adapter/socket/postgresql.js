@@ -38,17 +38,8 @@ export default class extends Base {
     pg.defaults.poolIdleTimeout = this.config.poolIdleTimeout * 1000 || 8 * 60 * 60 * 1000;
 
     //when has error, close connection
-    pg.on('error', () => {
-      this.close();
-    });
-    pg.on('end', () => {
-      this.close();
-    });
-    pg.on('close', () => {
-      this.close();
-    });
-    this.pg = pg;
-    return pg;
+    this.pg = pg.Pool;
+    return pg.Pool;
   }
   /**
    * get connection
@@ -58,13 +49,15 @@ export default class extends Base {
     if(this.connection){
       return this.connection;
     }
-    let pg = await this.getPG();
+    let Pool = await this.getPG();
+    const pool = new Pool(this.config);
+
     let config = this.config;
     let connectionStr = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
     return think.await(connectionStr, () => {
       let deferred = think.defer();
-      pg.connect(this.config, (err, client, done) => {
+      pool.connect((err, client, done) => {
         this.logConnect(connectionStr, 'postgre');
         if(err){
           deferred.reject(err);
