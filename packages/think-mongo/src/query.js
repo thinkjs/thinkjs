@@ -62,7 +62,7 @@ module.exports = class Query {
    * @return {Object}            []
    */
   limit(collection, limit) {
-    limit = this.parseLimit(limit);
+    limit = this.parser.parseLimit(limit);
     if (limit[0]) {
       collection.skip(limit[0]);
     }
