@@ -1,6 +1,6 @@
 {
   "name": "think-babel",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Use Babel transpile ES6+ file to ES5",
   "main": "index.js",
   "scripts": {
