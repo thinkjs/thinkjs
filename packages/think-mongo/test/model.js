@@ -121,3 +121,36 @@ test.serial('page without pagesize params', async t => {
   t.is(ret.length,2);
   t.is(ret[0].version,manyData[0].version);
 });
+
+test.serial('page with array params', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.page([1]).select();
+  t.is(ret.length,2);
+  t.is(ret[0].version,manyData[0].version);
+});
+
+test.serial('page with no params', async t => {
+  let opt = Object.assign({},defaultOptions,{pagesize:null});
+  let m = new model(defaultTable, opt);
+  await m.addMany(manyData);
+  let ret = await m.page().select();
+  t.is(ret.length,manyData.length);
+  t.is(ret[0].version,manyData[0].version);
+});
+
+//**?
+// test.serial('table', async t => {
+//   let m = new model(defaultTable, defaultOptions);
+//   let otherTable = m.table('think');
+//   await otherTable.addMany(manyData);
+//   let ret = await otherTable.select();
+//   t.is(ret.length,manyData.length)
+// });
+
+test.serial('order', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.where({name:'thinkjs'}).order('version ASC').select();
+  t.is(ret[0].version,'1.0')
+});
