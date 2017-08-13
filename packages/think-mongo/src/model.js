@@ -87,9 +87,7 @@ class Mongo {
    * @return {}        []
    */
   limit(offset, length) {
-    if (offset === undefined) {
-      return this;
-    }
+    if (offset === undefined) return this;
     if (helper.isArray(offset)) {
       length = offset[1] || length;
       offset = offset[0];
@@ -123,13 +121,7 @@ class Mongo {
    */
   where(where) {
     if (!where) return this;
-    if (helper.isString(where)) {
-      where = {_string: where};
-    }
     const options = this.options;
-    if (options.where && helper.isString(options.where)) {
-      options.where = {_string: options.where};
-    }
     options.where = helper.extend({}, options.where, where);
     return this;
   }
@@ -428,7 +420,7 @@ class Mongo {
     // get page options
     const data = {pagesize: pagesize};
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
-    const totalPage = Math.ceil(count / data.numsPerPage);
+    const totalPage = Math.ceil(count / data.pagesize);
     if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
       if (pageFlag) {
         data.currentPage = 1;
