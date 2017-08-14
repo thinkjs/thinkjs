@@ -95,7 +95,7 @@ module.exports = class Query {
    * select data
    * @param {Object} options 
    */
-   select(options) {
+  select(options) {
     const where = this.parser.parseWhere(options.where);
     const distinct = this.parser.parseDistinct(options.distinct);
     const field = this.parser.parseField(options.field);
