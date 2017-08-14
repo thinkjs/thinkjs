@@ -70,7 +70,7 @@
   "devDependencies": {
     "ava": "^0.18.0",
     "eslint": "^4.2.0",
-    "eslint-config-think": "^1.0.0",
+    "eslint-config-think": "^1.0.2",
     "mkdirp": "^0.5.1",
     "mock-require": "^2.0.1",
     "nyc": "^7.0.0",
