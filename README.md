@@ -1,9 +1,9 @@
 <div align="center">
   <a href="https://github.com/thinkjs/thinkjs">
-    <img width="200" heigth="200" src="https://p5.ssl.qhimg.com/t01b20defd549227070.png">
+    <img width="200" heigth="200" src="https://s1.ssl.qhres.com/static/4f0359b9d44a986f.svg">
   </a>  
 
-  <h1>ThinkJS</h1>
+  <h1>ThinkJS</h1>
 
   <div>
     <a href="http://badge.fury.io/js/thinkjs">
