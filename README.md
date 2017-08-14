@@ -1,13 +1,31 @@
-[![thinkjs](https://p.ssl.qhimg.com/d/inn/e270ec1e/logo_large.jpg)](https://thinkjs.org/)
+<div align="center">
+  <a href="https://github.com/thinkjs/thinkjs">
+    <img width="200" heigth="200" src="https://p5.ssl.qhimg.com/t01b20defd549227070.png">
+  </a>  
 
------
+  <h1>ThinkJS</h1>
 
-[![NPM version](https://img.shields.io/npm/v/thinkjs.svg?style=flat-square)](http://badge.fury.io/js/thinkjs)
-[![travis-ci](https://img.shields.io/travis/thinkjs/thinkjs.svg?style=flat-square)](https://travis-ci.org/thinkjs/thinkjs)
-[![Coverage Status](https://img.shields.io/coveralls/thinkjs/thinkjs.svg?style=flat-square)](https://coveralls.io/github/thinkjs/thinkjs)
-[![Dependency Status](https://david-dm.org/thinkjs/thinkjs.svg)](https://david-dm.org/thinkjs/thinkjs)
+  <div>
+    <a href="http://badge.fury.io/js/thinkjs">
+      <img src="https://img.shields.io/npm/v/thinkjs.svg?style=flat-square" alt="NPM version" />
+    </a>
+    <a href="https://travis-ci.org/thinkjs/thinkjs">
+      <img src="https://img.shields.io/travis/thinkjs/thinkjs.svg?style=flat-square" alt="travis-ci" />
+    </a>
+    <a href="https://coveralls.io/github/thinkjs/thinkjs">
+      <img src="https://img.shields.io/coveralls/thinkjs/thinkjs.svg?style=flat-square" alt="Coverage Status" />
+    </a>
+    <a href="https://david-dm.org/thinkjs/thinkjs">
+      <img src="https://david-dm.org/thinkjs/thinkjs.svg" alt="Dependency Status" />
+    </a>
+  </div>
+
+  <p>Use full ES2015+ features to develop Node.js applications, Support TypeScript.</p>
+</div>
+
 
 [简体中文文档](https://github.com/thinkjs/thinkjs/blob/master/README_zh-CN.md)
+
 
 ## Installation
 
