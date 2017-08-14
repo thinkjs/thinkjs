@@ -3,5 +3,5 @@ coverage/
 demo/
 test/
 ISSUE_TEMPLATE.md
+CODE_OF_CONDUCT.md
 appveyor.yml
-README_zh-CN.md

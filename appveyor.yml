@@ -1,8 +1,8 @@
 environment:
   matrix:
-    - nodejs_version: "0.12"
-    - nodejs_version: "4.2"
-    - nodejs_version: "5.2"
+    - nodejs_version: "6.0"
+    - nodejs_version: "7.0"
+    - nodejs_version: "8.0"
 install:
   - ps: Install-Product node $env:nodejs_version
   - set PATH=%APPDATA%\npm;%PATH%
@@ -12,6 +12,5 @@ build: off
 test_script:
   - node --version
   - npm --version
-  - npm install source-map@0.5.3
   - npm run test
 version: "{build}"
