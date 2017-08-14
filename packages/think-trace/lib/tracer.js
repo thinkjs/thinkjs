@@ -24,6 +24,7 @@ module.exports = class Tracer {
       opts.templates = templates;
     }
 
+    this.contentType = opts.contentType;
     this.templatesPath = helper.extend({
       404: DEFAULT_404_TEMPLATE,
       500: DEFAULT_500_TEMPLATE
@@ -111,9 +112,14 @@ module.exports = class Tracer {
    */
   run(ctx, err) {
     this.ctx = ctx;
-    const isJson = helper.isFunction(ctx.is) && ctx.is('application/json');
+    ctx.type = helper.isFunction(this.contentType) ? this.contentType(ctx) : 'html';
+
+    const isJson = helper.isFunction(ctx.response.is) && ctx.response.is('json');
     const isJsonp = helper.isFunction(ctx.isJsonp) && ctx.isJsonp();
     if (isJson || isJsonp) {
+      if (!helper.isFunction(ctx.json)) {
+        ctx.json = res => { ctx.body = JSON.stringify(res) };
+      }
       return (isJsonp ? ctx.jsonp : ctx.json)({
         errno: ctx.status,
         errmsg: err.message

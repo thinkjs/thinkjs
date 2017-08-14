@@ -53,6 +53,18 @@ module.exports = [
 - `sourceMap`: Whether your project has source map support, default is `true`.
 - `debug`: Whether show error detail in web, default is `true`. 
 - `ctxLineNumbers`: How long you want show error line context, default is `10`.
+- `contentType`: Due to think-trace can't get content-type while application throw error, you should set content type by yourself by this parameter. Default value is `ctx => 'html';`. You can set json content type like this:
+    ```js
+    {
+      contentType(ctx) {
+        // All request url starts of /api or request header contains `X-Requested-With: XMLHttpRequest` will output json error
+        const APIRequest = /^\/api/.test(ctx.request.path);
+        const AJAXRequest = ctx.is('X-Requested-With', 'XMLHttpRequest');
+        
+        return APIRequest || AJAXRequest ? 'json' : 'html';
+      }
+    }
+    ```
 - `error`: callback function when catch error, it receives Error object  and ctx as parameter.
 - `templates`: error status template path, if you want to specific. You can set `templates` as a path string, then module will read all status file named like `404.html`, `502.html` as your customed status page. Or you can set `templates` as an object, for example:
     ```js
