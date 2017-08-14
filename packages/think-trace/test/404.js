@@ -26,6 +26,11 @@ test('404', async t => {
       const err = new Error(msg);
       err.status = statusCode;
       throw err;
+    },
+    response: {
+      is() {
+        return false;
+      }
     }
   };
   const next = (instance) => {
@@ -34,7 +39,8 @@ test('404', async t => {
 
   try {
     await Trace({
-      templates: {404: filename}
+      templates: {404: filename},
+      error() {}
     })(ctx, next);
   } catch (e) {
 
@@ -45,7 +51,8 @@ test('404', async t => {
   try {
     await Trace({
       debug: false,
-      templates: {404: filename}
+      templates: {404: filename},
+      error() {}
     })(ctx, next);
   } catch (e) {
 

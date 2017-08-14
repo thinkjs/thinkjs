@@ -29,6 +29,11 @@ test('500', async t => {
       const err = new Error(msg);
       err.status = statusCode;
       throw err;
+    },
+    response: {
+      is() {
+        return false;
+      }
     }
   };
   const next = (instance) => {
@@ -63,6 +68,11 @@ test('500 not exist file', async t => {
   const ctx = {
     res: {
       statusCode: 200
+    },
+    response: {
+      is() {
+        return false;
+      }
     }
   };
   const next = (instance) => {
