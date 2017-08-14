@@ -217,6 +217,60 @@ test.serial('countSelect', async t => {
   t.is(!!ret.currentPage,true)
 });
 
+test.serial('countSelect with limit', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.countSelect({},true,);
+  t.is(!!ret.currentPage,true)
+});
+
+test.serial('countSelect with limit', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.countSelect({limit:[10,2]},true);
+  t.is(!!ret.currentPage,true)
+  ret = await m.countSelect({limit:[10,2]},false);
+  t.is(!!ret.currentPage,true)
+});
+
+test.serial('countSelect with limit', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  let ret = await m.countSelect();
+  t.deepEqual(ret.data,[])
+});
+
+test.serial('increment', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.where({age:1}).increment('age');
+  t.deepEqual(!!ret,true)
+});
+
+test.serial('decrement', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.where({age:3}).decrement('age');
+  t.deepEqual(!!ret,true)
+});
+
+
+test.serial('sum', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.sum('age')
+  let sum = manyData.reduce((s,i)=> s + i.age,0);
+  t.deepEqual(ret,sum)
+});
+
+//**?
+// test.serial('aggregate', async t => {
+//   let m = new model(defaultTable, defaultOptions);
+//   await m.addMany(manyData);
+//   let ret = await m.aggregate({age:1});
+//   console.log(ret)
+//   t.deepEqual(!!ret,true)
+// });
+
 //**?
 // test.serial('distinct', async t => {
 //   let m = new model(defaultTable, defaultOptions);
