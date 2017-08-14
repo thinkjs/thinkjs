@@ -2,7 +2,8 @@ const assert = require('assert');
 const helper = require('think-helper');
 
 const defaultOptions = {
-  emptyController: ''
+  emptyController: '',
+  preSetStatus: 200
 };
 
 function invokeController(options, app) {
@@ -45,6 +46,10 @@ function invokeController(options, app) {
         method = '__call';
       }
       if (instance[method]) {
+        // pre set request status
+        if (ctx.body === undefined && options.preSetStatus) {
+          ctx.status = options.preSetStatus;
+        }
         return instance[method]();
       }
     }).then(data => {
