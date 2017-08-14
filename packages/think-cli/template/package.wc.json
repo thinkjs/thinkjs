@@ -8,6 +8,8 @@
     "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
+    "think-cache": "^1.0.0",
+    "think-session": "^1.0.0",
     "think-cache-file": "~1.0.8",
     "think-model": "*",
     "think-session-file": "^1.0.5",
