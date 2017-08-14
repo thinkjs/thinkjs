@@ -54,13 +54,9 @@ function invokeController(options, app) {
       }
     }).then(data => {
       if (data === false) return false;
-      if (instance.__after) {
-        return instance.__after();
-      }
+      if (instance.__after) return instance.__after();
     }).then(data => {
-      if (data !== false) {
-        return next();
-      }
+      if (data !== false) return next();
     });
   };
 }
