@@ -23,48 +23,46 @@
   <p>Use full ES2015+ features to develop Node.js applications, Support TypeScript.</p>
 </div>
 
-
-[简体中文文档](https://github.com/thinkjs/thinkjs/blob/master/README_zh-CN.md)
-
-
-## Installation
+## 安装 ThinkJS
 
 ```sh
-npm install -g think-cli
+npm install -g thinkjs
 ```
 
-## Create Application
+## 创建项目
 
 ```sh
-thinkjs new demo
+thinkjs new project_path --es6
 ```
 
-## Install dependencies
+## 安装依赖
 
 ```sh
 npm install
 ```
 
-## Start Application
+## 启动服务
 
 ```sh
 npm start
 ```
 
-You will see some messages on console like :
+启动后，会看到类似下面的信息：
 
 ```text
-[2017-05-22 15:54:58.281] [INFO] - Server running at http://127.0.0.1:8360
-[2017-05-22 15:54:58.283] [INFO] - ThinkJS version: 3.0.0-alpha1
-[2017-05-22 15:54:58.283] [INFO] - Enviroment: development
-[2017-05-22 15:54:58.284] [INFO] - Workers: 1
+[2016-01-12 15:09:51] [THINK] Server running at http://127.0.0.1:8360/
+[2016-01-12 15:09:51] [THINK] ThinkJS Version: 2.1.0
+[2016-01-12 15:09:51] [THINK] Cluster Status: closed
+[2016-01-12 15:09:51] [THINK] WebSocket Status: closed
+[2016-01-12 15:09:51] [THINK] File Auto Compile: true
+[2016-01-12 15:09:51] [THINK] File Auto Reload: true
+[2016-01-12 15:09:51] [THINK] App Enviroment: development
 ```
 
+## 文档
 
-## Documentation
-
-[https://thinkjs.org/en](https://thinkjs.org/en)
+<https://thinkjs.org/>
 
 ## License
 
-[MIT](https://github.com/thinkjs/thinkjs/blob/master/LICENSE)
+[MIT](https://github.com/75team/thinkjs/blob/master/LICENSE)
