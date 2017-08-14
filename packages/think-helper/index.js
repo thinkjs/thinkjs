@@ -354,6 +354,23 @@ exports.ms = function(time) {
 };
 
 /**
+ * omit some props in object
+ */
+exports.omit = function(obj, props) {
+  if (exports.isString(props)) {
+    props = props.split(',');
+  }
+  const keys = Object.keys(obj);
+  const result = {};
+  keys.forEach(item => {
+    if (props.indexOf(item) === -1) {
+      result[item] = obj[item];
+    }
+  });
+  return result;
+};
+
+/**
  * check path is exist
  */
 function isExist(dir) {
