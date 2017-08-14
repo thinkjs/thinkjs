@@ -95,7 +95,7 @@ module.exports = class Query {
    * select data
    * @param {Object} options 
    */
-  select(options) {
+  async select(options) {
     const where = this.parser.parseWhere(options.where);
     const distinct = this.parser.parseDistinct(options.distinct);
     const field = this.parser.parseField(options.field);
@@ -175,7 +175,7 @@ module.exports = class Query {
   count(options) {
     const where = this.parser.parseWhere(options.where);
     const aggregate = [];
-    if (!think.isEmpty(where)) {
+    if (!helper.isEmpty(where)) {
       aggregate.push({$match: where});
     }
 
@@ -184,7 +184,7 @@ module.exports = class Query {
     aggregate.push({$group: group});
 
     const order = this.parser.parseOrder(options.order);
-    if (!think.isEmpty(order)) {
+    if (!helper.isEmpty(order)) {
       aggregate.push({$sort: order});
     }
 
@@ -212,14 +212,14 @@ module.exports = class Query {
       aggregate.push({$match: where});
     }
     aggregate.push({$group: group});
-    if (!think.isEmpty(order)) {
+    if (!helper.isEmpty(order)) {
       aggregate.push({$sort: order});
     }
 
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(options.table);
       // make aggregate method to be a promise
-      const fn = think.promisify(collection.aggregate, collection);
+      const fn = helper.promisify(collection.aggregate, collection);
       return fn(aggregate).then(data => {
         return (data[0] && data[0].total) || 0;
       });
@@ -238,7 +238,7 @@ module.exports = class Query {
     if (helper.isString(indexes)) {
       indexes = indexes.split(/\s*,\s*/);
     }
-    if (think.isArray(indexes)) {
+    if (helper.isArray(indexes)) {
       const result = {};
       indexes.forEach(item => {
         result[item] = 1;
@@ -259,7 +259,7 @@ module.exports = class Query {
   aggregate(table, options) {
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(table);
-      const fn = think.promisify(collection.aggregate, collection);
+      const fn = helper.promisify(collection.aggregate, collection);
       return fn(options);
     });
   }
