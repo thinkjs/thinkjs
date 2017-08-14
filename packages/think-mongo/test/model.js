@@ -8,18 +8,19 @@ const defaultOptions = {
 };
 
 const manyData = [
-  {name:'thinkjs',version:'3.0'},
-  {name:'thinkjs',version:'2.0'},
-  {name:'thinkjs',version:'1.0'},
-  {name:'kobe'},
-  {name:'lebron'},
-  {name:'durant'},
-  {name:'curry'},
+  {name:'thinkjs',version:'3.0',age:1},
+  {name:'thinkjs',version:'2.0',age:2},
+  {name:'thinkjs',version:'1.0',age:3},
+  {name:'kobe',age:37},
+  {name:'lebron',age:30},
+  {name:'durant',age:28},
+  {name:'curry',age:28},
 ];
 
-test.afterEach.always(_ => {
+test.afterEach.always(async _ => {
   let m = new model(defaultTable, defaultOptions);
-  m.delete()
+  await m.delete();
+  await m.table('think').delete();
 });
 
 test.serial('model', async t => {
@@ -139,14 +140,13 @@ test.serial('page with no params', async t => {
   t.is(ret[0].version,manyData[0].version);
 });
 
-//**?
-// test.serial('table', async t => {
-//   let m = new model(defaultTable, defaultOptions);
-//   let otherTable = m.table('think');
-//   await otherTable.addMany(manyData);
-//   let ret = await otherTable.select();
-//   t.is(ret.length,manyData.length)
-// });
+
+test.serial('table', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.table('think').addMany(manyData);
+  let ret = await m.table('think').select();
+  t.is(ret.length,manyData.length)
+});
 
 test.serial('order', async t => {
   let m = new model(defaultTable, defaultOptions);
@@ -154,3 +154,74 @@ test.serial('order', async t => {
   let ret = await m.where({name:'thinkjs'}).order('version ASC').select();
   t.is(ret[0].version,'1.0')
 });
+
+test.serial('order', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.group('name').select();
+  t.is(ret.length,manyData.length)
+});
+
+test.serial('thenAdd with exist data', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  await m.thenAdd(manyData[0],manyData[0]);
+  let ret = await m.select();
+  t.is(ret.length,manyData.length)
+});
+
+test.serial('thenAdd with no-exist data', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  await m.thenAdd({name:'harden'},{name:'harden'});
+  let ret = await m.select();
+  t.is(ret.length,manyData.length + 1)
+});
+
+test.serial('thenUpdate with exist', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  await m.thenUpdate({age:100},manyData[0]);
+  let ret = await m.select();
+  t.is(ret[0].age,100)
+});
+
+test.serial('thenUpdate with no-exist', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  await m.thenUpdate({name:'harden'},{name:'harden'});
+  let ret = await m.where({name:'harden'}).find();
+  t.is(!!ret,true)
+});
+
+test.serial('updateMany', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  await m.updateMany([{name:'think'}]);
+  let ret = await m.where({name:'think'}).find();
+  t.is(!!ret,true)
+});
+
+test.serial('update with no-exist', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let d = await m.where({name:'kobe'}).find();
+  let ret = m.where({name:'fake kobe'}).update({name:'kobe bryant',_id:d._id},true);
+  t.is(!!ret,true)
+});
+
+test.serial('countSelect', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.page(1,2).countSelect();
+  t.is(!!ret.currentPage,true)
+});
+
+//**?
+// test.serial('distinct', async t => {
+//   let m = new model(defaultTable, defaultOptions);
+//   await m.addMany(manyData);
+//   let ret = await m.distinct('name').select();
+//   console.log(ret);
+//   t.is(ret.length,manyData.length)
+// });
