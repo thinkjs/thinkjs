@@ -341,6 +341,44 @@ class Commander {
     return {m, name};
   }
   /**
+   * getPrefix form name
+   * @param  {string} name - 文件名
+   * @return {string} prefix - 路径前缀 
+   */
+  getPrefix(name) {
+    let prefix = './';
+    if (name.includes('/')) {
+      let count = 0;
+      name.split('').forEach(char => {
+        if (char === '/') {
+          count++;
+        }
+      });
+      prefix = '../'.repeat(count);
+    }
+    return prefix;
+  }
+  /**
+   * getTplFilePath
+   * @param  {string} filePath - 相对于模板根目录的路径
+   * @return {string} path     - 模板文件的绝对路径
+   */
+  getTplFilePath(filePath) {
+    return path.resolve(this.templatePath, filePath);
+  }
+  /**
+   * 
+   * @param {string} source  - 源文件绝对路径
+   * @param {string} target  - 目标文件绝对路径
+   * @param {string} replace - 要替换的模板字符串
+   * @param {string} content - 替换的内容
+   */
+  replaceFileContent(source, target, replace, content) {
+    let tpl = fs.readFileSync(source, 'utf-8');
+    tpl = tpl.replace(replace, `${content}`);
+    fs.writeFileSync(target, tpl);
+  }
+  /**
    * create controller
    * @param  {} controller []
    * @return {}            []
@@ -351,11 +389,22 @@ class Commander {
     const {m, name} = this.parseCSMName(controller);
 
     const controllerPath = this.getPath(m, 'controller');
+
+    const prefix = this.getPrefix(name);
+
+    const basePath = this.getTplFilePath('src/controller/index.js');
+    const restPath = this.getTplFilePath('src/controller/restIndex.js');
+
+    const baseTplPath = this.getTplFilePath('src/controller/indexTpl.js');
+    const restTplPath = this.getTplFilePath('src/controller/restIndexTpl.js');
+
     if (this.rest) {
+      this.replaceFileContent(restPath, restTplPath, '{path}', prefix);
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
-      this.copyFile('src/controller/restIndex.js', controllerPath + '/' + name + '.js');
+      this.copyFile('src/controller/restIndexTpl.js', controllerPath + '/' + name + '.js');
     } else {
-      this.copyFile('src/controller/index.js', controllerPath + '/' + name + '.js');
+      this.replaceFileContent(basePath, baseTplPath, '{path}', prefix);
+      this.copyFile('src/controller/indexTpl.js', controllerPath + '/' + name + '.js');
     }
 
     const logicPath = this.getPath(m, 'logic');

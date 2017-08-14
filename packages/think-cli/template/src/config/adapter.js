@@ -1,6 +1,7 @@
 const fileCache = require('think-cache-file');
 const nunjucks = require('think-view-nunjucks');
 const fileSession = require('think-session-file');
+const mysql = require('think-model-mysql');
 const path = require('path');
 const isDev = think.env === 'development';
 
@@ -33,6 +34,7 @@ exports.model = {
     logger: msg => think.logger.info(msg)
   },
   mysql: {
+    handle: mysql,
     database: '',
     prefix: 'think_',
     encoding: 'utf8',
