@@ -66,5 +66,6 @@ API | Param | Description
 `rmdir`   | `path`{String}<br> `reserve`{Boolean}<br>`return`{Promise} | remove dir async
 `parseAdapterConfig` | `config`{Object}<br> `extConfig`{Object\|String} | parse adapter config
 `ms` | `time`{String} | transform humanize time to ms
+`omit` | `obj`{obj} <br> `prop` {String|Array} | omit object props
 
 
