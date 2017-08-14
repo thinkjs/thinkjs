@@ -48,7 +48,6 @@
     "destroy": "^1.0.4",
     "koa": "^2.2.0",
     "on-finished": "^2.3.0",
-    "think-cache": "^1.0.0",
     "think-cluster": "^1.0.0",
     "think-config": "^1.0.0",
     "think-controller": "^1.0.1",
@@ -63,7 +62,6 @@
     "think-pm2": "^1.0.0",
     "think-resource": "^1.0.0",
     "think-router": "^1.0.0",
-    "think-session": "^1.0.0",
     "think-trace": "^1.0.2",
     "think-validator": "^1.0.2"
   },
