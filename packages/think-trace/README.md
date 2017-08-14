@@ -40,7 +40,7 @@ module.exports = [
     handle: trace, 
     options: {
       sourceMap: false,
-      error(err) {
+      error(err, ctx) {
         return console.error(err);
       }
     }
@@ -53,7 +53,7 @@ module.exports = [
 - `sourceMap`: Whether your project has source map support, default is `true`.
 - `debug`: Whether show error detail in web, default is `true`. 
 - `ctxLineNumbers`: How long you want show error line context, default is `10`.
-- `error`: callback function when catch error, it receives Error object as parameter.
+- `error`: callback function when catch error, it receives Error object  and ctx as parameter.
 - `templates`: error status template path, if you want to specific. You can set `templates` as a path string, then module will read all status file named like `404.html`, `502.html` as your customed status page. Or you can set `templates` as an object, for example:
     ```js
     {
