@@ -28,10 +28,12 @@ module.exports = function(opts) {
         return ctx.throw(404, `url \`${ctx.path}\` not found.`);
       })
       .catch(err => {
-        if (errorCallback(err) === false) {
+        if (errorCallback(err, ctx) === false) {
           return Promise.resolve();
         }
 
+        // set status to forbidden reset status 200 during set body 
+        ctx.status = ctx.status;
         return tracer.run(ctx, err);
       });
 };
