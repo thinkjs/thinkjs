@@ -11,10 +11,10 @@ const manyData = [
   {name:'thinkjs',version:'3.0',age:1},
   {name:'thinkjs',version:'2.0',age:2},
   {name:'thinkjs',version:'1.0',age:3},
-  {name:'kobe',age:37},
-  {name:'lebron',age:30},
-  {name:'durant',age:28},
-  {name:'curry',age:28},
+  {name:'kobe',age:37,version:1},
+  {name:'lebron',age:30,version:1},
+  {name:'durant',age:28,version:1},
+  {name:'curry',age:28,version:1},
 ];
 
 test.afterEach.always(async _ => {
@@ -253,23 +253,62 @@ test.serial('decrement', async t => {
   t.deepEqual(!!ret,true)
 });
 
+test.serial('mapReduce', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  // Map function
+  var map = function() { emit(this.age, 1); };
+  // Reduce function
+  var reduce = function(k,vals) { return 1; };
+  let ret = await m.mapReduce(map,reduce,{out: {replace : 'tempCollection'}});
+  t.deepEqual(!!ret,true)
+});
+
+test.serial('getIndex', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.getIndexes();
+  t.deepEqual(!!ret,true)
+});
 
 test.serial('sum', async t => {
   let m = new model(defaultTable, defaultOptions);
   await m.addMany(manyData);
-  let ret = await m.sum('age')
+  let ret = await m.sum('age');
   let sum = manyData.reduce((s,i)=> s + i.age,0);
   t.deepEqual(ret,sum)
 });
 
-//**?
-// test.serial('aggregate', async t => {
-//   let m = new model(defaultTable, defaultOptions);
-//   await m.addMany(manyData);
-//   let ret = await m.aggregate({age:1});
-//   console.log(ret)
-//   t.deepEqual(!!ret,true)
-// });
+test.serial('group sum', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.group('name').sum('age');
+  let sum = manyData.filter(item=>item.name==='thinkjs').reduce((s,i)=> s + i.age,0);
+  let thinkSum = ret.filter(item=>item.group === 'thinkjs')[0].total;
+  t.deepEqual(thinkSum,sum);
+});
+
+test.serial('group sum', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.where({name:'thinkjs'}).order('version ASC').group('name,version').sum('age');
+  let think1Sum = ret.filter(item=>item.group.name === 'thinkjs' && item.group.version === '3.0')[0].total;
+  t.deepEqual(think1Sum,1)
+});
+
+test.serial('aggregate', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.aggregate({$unwind: "$tags"},);
+  t.deepEqual(ret, [])
+});
+
+test.serial('createIndex', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.createIndex('think');
+  t.deepEqual(ret, 'think_1')
+});
 
 //**?
 // test.serial('distinct', async t => {
