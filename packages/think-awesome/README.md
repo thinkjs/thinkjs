@@ -1,6 +1,6 @@
 # think-awesome
 
-awesome projects for `ThinkJS 3.x`
+Awesome projects for `ThinkJS 3.x`
 
 ## Middlewares
 
@@ -19,21 +19,21 @@ awesome projects for `ThinkJS 3.x`
 ## Adapters
 
 ### view
-* [think-view-pug](https://github.com/thinkjs/think-view-pug) use pug to render view files (pug is rename from jade)
-* [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) use nunjucks to render view files
-* [think-view-handlebars](https://github.com/thinkjs/think-view-handlebars) use handlebars to render view files
-* [think-view-ejs](https://github.com/thinkjs/think-view-ejs) use ejs to render view files
-* [think-view-xtemplate](https://github.com/lizheming/think-view-xtemplate) use xtemplate to render view files
+* [think-view-pug](https://github.com/thinkjs/think-view-pug) Use pug to render view files (pug is rename from jade)
+* [think-view-nunjucks](https://github.com/thinkjs/think-view-nunjucks) Use nunjucks to render view files
+* [think-view-handlebars](https://github.com/thinkjs/think-view-handlebars) Use handlebars to render view files
+* [think-view-ejs](https://github.com/thinkjs/think-view-ejs) Use ejs to render view files
+* [think-view-xtemplate](https://github.com/lizheming/think-view-xtemplate) Use xtemplate to render view files
 
 ### session
-* [think-session-cookie](https://github.com/thinkjs/think-session-cookie) use cookie to store session data
-* [think-session-file](https://github.com/thinkjs/think-session-file) use file to store session data
-* [think-session-redis](https://github.com/thinkjs/think-session-redis) use redis to store session data
+* [think-session-cookie](https://github.com/thinkjs/think-session-cookie) Use cookie to store session data
+* [think-session-file](https://github.com/thinkjs/think-session-file) Use file to store session data
+* [think-session-redis](https://github.com/thinkjs/think-session-redis) Use redis to store session data
 
 ### cache
-* [think-cache-file](https://github.com/thinkjs/think-cache-file) use file to store cache data
-* [think-cache-redis](https://github.com/thinkjs/think-cache-redis) use redis to store cache data
-* [think-cache-memcache](https://github.com/thinkjs/think-cache-memchache) use memcache to store cache data
+* [think-cache-file](https://github.com/thinkjs/think-cache-file) Use file to store cache data
+* [think-cache-redis](https://github.com/thinkjs/think-cache-redis) Use redis to store cache data
+* [think-cache-memcache](https://github.com/thinkjs/think-cache-memchache) Use memcache to store cache data
 
 ### model
 * [think-model-abstract](https://github.com/thinkjs/think-model-abstract) Model adapter abstract class
