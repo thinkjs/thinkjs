@@ -16,7 +16,7 @@
       <img src="https://img.shields.io/coveralls/thinkjs/thinkjs.svg?style=flat-square" alt="Coverage Status" />
     </a>
     <a href="https://david-dm.org/thinkjs/thinkjs">
-      <img src="https://david-dm.org/thinkjs/thinkjs.svg" alt="Dependency Status" />
+      <img src="https://img.shields.io/david/thinkjs/thinkjs.svg?style=flat-square" alt="Dependency Status" />
     </a>
   </div>
 
