@@ -67,3 +67,4 @@ Awesome projects for `ThinkJS 3.x`
 * [众成翻译](http://zcfy.cc/) - 中国最好的技术翻译社区，最懂译者的翻译平台
 * [爆米兔](http://www.baomitu.com/) - 小而美的 H5 创意制作平台
 * [声享](https://ppt.baomitu.com/) - 免费在线制作有声 PPT
+* [Firekylin](https://github.com/firekylin/firekylin) - A Simple & Fast Node.js Blogging Platform Base On ThinkJS & React & ES2015+
