@@ -47,12 +47,12 @@ Awesome projects for `ThinkJS 3.x`
 
 ## Extends
 
-* [think-view](https://github.com/thinkjs/think-view) make controller support render view files
-* [think-email](https://github.com/thinkjs/think-email) add `sendEmail` method to think, context, controller.
-* [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. 
-* [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller.
-* [think-fetch](https://github.com/thinkjs/think-fetch) add `fetch` method to  think, context, controller, service.
-* [think-model](https://github.com/thinkjs/think-model) add `model` method to  think, context, controller, service. add `Model` to think.
+* [think-view](https://github.com/thinkjs/think-view) Add `display`, `render`, `assign` method to controller.
+* [think-email](https://github.com/thinkjs/think-email) Add `sendEmail` method to think, context, controller.
+* [think-cache](https://github.com/thinkjs/think-cache) Add `cache` method to  think, context, controller. 
+* [think-session](https://github.com/thinkjs/think-session) Add `session` method to  think, context, controller.
+* [think-fetch](https://github.com/thinkjs/think-fetch) Add `fetch` method to  think, context, controller, service.
+* [think-model](https://github.com/thinkjs/think-model) Add `model` method to  think, context, controller, service. add `Model` to think.
 * [think-websocket](https://github.com/thinkjs/think-websocket) Support websocket.
 
 
