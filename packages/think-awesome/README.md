@@ -61,3 +61,6 @@ Awesome projects for `ThinkJS 3.x`
 * [think-pagination](https://github.com/thinkjs/think-pagination) Pagination for ThinkJS 3.x
 
 ## Projects by ThinkJS
+
+* [360 静态资源托管库](https://cdn.baomitu.com/)
+* [360 移动开发者中心](https://dc.360.cn/)
