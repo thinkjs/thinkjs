@@ -35,6 +35,12 @@ awesome projects for `ThinkJS 3.x`
 * [think-cache-redis](https://github.com/thinkjs/think-cache-redis) use redis to store cache data
 * [think-cache-memcache](https://github.com/thinkjs/think-cache-memchache) use memcache to store cache data
 
+### model
+* [think-model-abstract](https://github.com/thinkjs/think-model-abstract) Model adapter abstract class
+* [think-model-mysql](https://github.com/thinkjs/think-model-mysql) Mysql adapter for model
+* [think-model-sqlite](https://github.com/thinkjs/think-model-sqlite) Sqlite adapter for model
+* [think-model-postgresql](https://github.com/thinkjs/think-model-postgresql) Postgresql adapter for model
+
 ## Extends
 
 * [think-view](https://github.com/thinkjs/think-view) make controller support render view files
