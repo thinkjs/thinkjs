@@ -65,5 +65,5 @@ Awesome projects for `ThinkJS 3.x`
 * [360 静态资源托管库](https://cdn.baomitu.com/) - 托管前端常见的静态资源库，支持 HTTP2
 * [360 移动开发者中心](https://dc.360.cn/) - 提供推送、Replugin、代码检查等移动开发服务
 * [众成翻译](http://zcfy.cc/) - 中国最好的技术翻译社区，最懂译者的翻译平台
-* [爆米兔](http://www.baomitu.com/) - 一个小而美的 H5 创意制作平台
+* [爆米兔](http://www.baomitu.com/) - 小而美的 H5 创意制作平台
 * [声享](https://ppt.baomitu.com/) - 免费在线制作有声 PPT
