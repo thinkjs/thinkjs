@@ -6,3 +6,27 @@
 [![devDependency Status](https://david-dm.org/thinkjs/think-controller.svg)](https://david-dm.org/thinkjs/think-controller)
 
 Invoke controller for ThinkJS 3.x
+
+## How To Use
+
+Modify src/config/middleware.js:
+
+```js
+const controller = require('think-controller');
+
+module.exports = [
+  {
+    handle: controller, 
+    options: {
+      emptyController: '',
+      preSetStatus: 200
+    }
+  }
+];
+```
+
+## Options
+
+* `emptyController` {String} default controller when not found
+* `preSetStatus` {Number} preset http status when action exist
+    Koa set http status to 404 before request handling, and will changed when set body or status properties. when `preSetStatus` is set and action exist, it's will preset status before action invoked.
