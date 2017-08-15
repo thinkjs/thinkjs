@@ -206,7 +206,6 @@ module.exports = class Query {
     const group = this.group(options.group);
     group.total = {$sum: `$${options.field}`};
     const order = this.parser.parseOrder(options.order);
-
     const aggregate = [];
     if (!helper.isEmpty(where)) {
       aggregate.push({$match: where});
@@ -221,6 +220,13 @@ module.exports = class Query {
       // make aggregate method to be a promise
       const fn = helper.promisify(collection.aggregate, collection);
       return fn(aggregate).then(data => {
+        if(group){
+          let ret = {};
+          data.forEach(item=>{
+            ret[item._id] = item.total;
+          });
+          return ret;
+        }
         return (data[0] && data[0].total) || 0;
       });
     });
