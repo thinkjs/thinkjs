@@ -220,7 +220,7 @@ module.exports = class Query {
       // make aggregate method to be a promise
       const fn = helper.promisify(collection.aggregate, collection);
       return fn(aggregate).then(data => {
-        if(group){
+        if(group._id){
           let ret = {};
           data.forEach(item=>{
             ret[item._id] = item.total;
