@@ -88,7 +88,8 @@ module.exports = class Query {
       group.forEach(item => {
         result[item] = `$${item}`;
       });
-      return result;
+      // return result
+      return {_id: result};
     }
   }
   /**
@@ -214,16 +215,18 @@ module.exports = class Query {
     if (!helper.isEmpty(order)) {
       aggregate.push({$sort: order});
     }
-
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(options.table);
       // make aggregate method to be a promise
       const fn = helper.promisify(collection.aggregate, collection);
       return fn(aggregate).then(data => {
         if (group._id) {
-          const ret = {};
+          const ret = [];
           data.forEach(item => {
-            ret[item._id] = item.total;
+            ret.push({
+              group: item._id,
+              total: item.total
+            });
           });
           return ret;
         }
