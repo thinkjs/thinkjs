@@ -47,6 +47,7 @@ awesome projects for `ThinkJS 3.x`
 * [think-email](https://github.com/thinkjs/think-email) add `sendEmail` method to think, context, controller.
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. 
 * [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller.
+* [think-fetch](https://github.com/thinkjs/think-fetch) add `fetch` method to  think, context, controller, service.
 
 ## Others
 
