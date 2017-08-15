@@ -62,5 +62,6 @@ Awesome projects for `ThinkJS 3.x`
 
 ## Projects by ThinkJS
 
-* [360 静态资源托管库](https://cdn.baomitu.com/)
-* [360 移动开发者中心](https://dc.360.cn/)
+* [360 静态资源托管库](https://cdn.baomitu.com/) v3
+* [360 移动开发者中心](https://dc.360.cn/) v3
+* [众成翻译](http://zcfy.cc/) v2
