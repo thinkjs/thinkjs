@@ -41,6 +41,10 @@ awesome projects for `ThinkJS 3.x`
 * [think-model-sqlite](https://github.com/thinkjs/think-model-sqlite) Sqlite adapter for model
 * [think-model-postgresql](https://github.com/thinkjs/think-model-postgresql) Postgresql adapter for model
 
+### websocket
+
+* [think-websocket-socket.io](https://github.com/thinkjs/think-websocket-socket.io) Socket.io adapter for websocket
+
 ## Extends
 
 * [think-view](https://github.com/thinkjs/think-view) make controller support render view files
@@ -49,6 +53,8 @@ awesome projects for `ThinkJS 3.x`
 * [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller.
 * [think-fetch](https://github.com/thinkjs/think-fetch) add `fetch` method to  think, context, controller, service.
 * [think-model](https://github.com/thinkjs/think-model) add `model` method to  think, context, controller, service. add `Model` to think.
+* [think-websocket](https://github.com/thinkjs/think-websocket) Support websocket.
+
 
 ## Others
 
