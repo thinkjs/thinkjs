@@ -37,9 +37,6 @@ module.exports = class SocketIO {
     const args = {url, websocketData: data, websocket: socket, io: this.io, method: 'WEBSOCKET'};
     if (open) {
       args.req = socket.request;
-      if (socket.request.res) {
-        args.res = socket.request.res;
-      }
     }
     return mockHttp(args, this.app);
   }
