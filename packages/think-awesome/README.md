@@ -48,6 +48,7 @@ awesome projects for `ThinkJS 3.x`
 * [think-cache](https://github.com/thinkjs/think-cache) add `cache` method to  think, context, controller. 
 * [think-session](https://github.com/thinkjs/think-session) add `session` method to  think, context, controller.
 * [think-fetch](https://github.com/thinkjs/think-fetch) add `fetch` method to  think, context, controller, service.
+* [think-model](https://github.com/thinkjs/think-model) add `model` method to  think, context, controller, service. add `Model` to think.
 
 ## Others
 
