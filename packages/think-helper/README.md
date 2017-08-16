@@ -26,10 +26,11 @@ APIs:
 
 API | Param | Description
 ---|---|---
+`isInt` |  | check integer
 `isIP` |  | check IP
 `isIPv4`   |  | check IPv4
 `isIPv6`   |  | check IPv6
-`isMaster`   | |cluster.isMaster 
+`isMaster`   | |cluster.isMaster
 `isArray`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Array
 `isBoolean`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an Boolean
 `isNull`   | `arg`{mix}<br>`return`{Boolean} | check if a variable is an null
