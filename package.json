@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
-  "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
-  "version": "3.0.0-beta4",
+  "description": "ThinkJS - Use full ES6/7 features to develop web applications",
+  "version": "3.0.0",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -9,9 +9,6 @@
   "pre-commit": [
     "test"
   ],
-  "publishConfig": {
-    "tag": "next"
-  },
   "scripts": {
     "test": "npm run lint && npm run test-cov",
     "test-cov": "nyc ava test/case/ && nyc report --reporter=html",
