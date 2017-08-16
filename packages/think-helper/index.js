@@ -148,9 +148,7 @@ exports.snakeCase = snakeCase;
  * @return {Boolean}     []
  */
 function isNumberString(obj) {
-  if (!obj) {
-    return false;
-  }
+  if (!obj) return false;
   return numberReg.test(obj);
 }
 exports.isNumberString = isNumberString;
@@ -161,12 +159,8 @@ exports.isNumberString = isNumberString;
  * @return {Boolean}     []
  */
 function isTrueEmpty(obj) {
-  if (obj === undefined || obj === null || obj === '') {
-    return true;
-  }
-  if (exports.isNumber(obj) && isNaN(obj)) {
-    return true;
-  }
+  if (obj === undefined || obj === null || obj === '') return true;
+  if (exports.isNumber(obj) && isNaN(obj)) return true;
   return false;
 }
 exports.isTrueEmpty = isTrueEmpty;
@@ -177,9 +171,7 @@ exports.isTrueEmpty = isTrueEmpty;
  * @return {Boolean}     []
  */
 function isEmpty(obj) {
-  if (isTrueEmpty(obj)) {
-    return true;
-  }
+  if (isTrueEmpty(obj)) return true;
   if (exports.isRegExp(obj)) {
     return false;
   } else if (exports.isDate(obj)) {
@@ -224,9 +216,7 @@ exports.defer = defer;
  * @return {String}     [content md5]
  */
 function md5(str) {
-  const instance = crypto.createHash('md5');
-  instance.update(str + '', 'utf8');
-  return instance.digest('hex');
+  return crypto.createHash('md5').update(str + '', 'utf8').digest('hex');
 }
 exports.md5 = md5;
 
@@ -293,9 +283,7 @@ exports.datetime = datetime;
  * @return {String}         []
  */
 exports.uuid = function(version) {
-  if (version === 'v1') {
-    return uuid.v1();
-  }
+  if (version === 'v1') return uuid.v1();
   return uuid.v4();
 };
 
@@ -343,9 +331,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
  * transform humanize time to ms
  */
 exports.ms = function(time) {
-  if (typeof time === 'number') {
-    return time;
-  }
+  if (typeof time === 'number') return time;
   const result = ms(time);
   if (result === undefined) {
     throw new Error(`think-ms('${time}') result is undefined`);
@@ -375,7 +361,6 @@ exports.omit = function(obj, props) {
  */
 function isExist(dir) {
   dir = path.normalize(dir);
-
   try {
     fs.accessSync(dir, fs.R_OK);
     return true;
@@ -390,11 +375,13 @@ exports.isExist = isExist;
  * check filepath is file
  */
 function isFile(filePath) {
-  if (!isExist(filePath)) {
+  if (!isExist(filePath)) return false;
+  try {
+    const stat = fs.statSync(filePath);
+    return stat.isFile();
+  } catch (e) {
     return false;
   }
-  const stat = fs.statSync(filePath);
-  return stat.isFile();
 }
 exports.isFile = isFile;
 
@@ -402,11 +389,13 @@ exports.isFile = isFile;
  * check path is directory
  */
 function isDirectory(filePath) {
-  if (!isExist(filePath)) {
+  if (!isExist(filePath)) return false;
+  try {
+    const stat = fs.statSync(filePath);
+    return stat.isDirectory();
+  } catch (e) {
     return false;
   }
-  const stat = fs.statSync(filePath);
-  return stat.isDirectory();
 }
 exports.isDirectory = isDirectory;
 
@@ -417,15 +406,13 @@ exports.isDirectory = isDirectory;
  * @return {Boolean}      []
  */
 function chmod(p, mode = '0777') {
-  if (!isExist(p)) {
-    return false;
-  }
+  if (!isExist(p)) return false;
   try {
     fs.chmodSync(p, mode);
+    return true;
   } catch (e) {
     return false;
   }
-  return true;
 }
 exports.chmod = chmod;
 
@@ -433,9 +420,7 @@ exports.chmod = chmod;
  * make dir
  */
 function mkdir(dir, mode = '0777') {
-  if (isExist(dir)) {
-    return chmod(dir, mode);
-  }
+  if (isExist(dir)) return chmod(dir, mode);
   const pp = path.dirname(dir);
   if (isExist(pp)) {
     try {
@@ -445,11 +430,8 @@ function mkdir(dir, mode = '0777') {
       return false;
     }
   }
-  if (mkdir(pp, mode)) {
-    return mkdir(dir, mode);
-  } else {
-    return false;
-  }
+  if (mkdir(pp, mode)) return mkdir(dir, mode);
+  return false;
 }
 exports.mkdir = mkdir;
 
@@ -461,9 +443,7 @@ exports.mkdir = mkdir;
  */
 function getdirFiles(dir, prefix = '') {
   dir = path.normalize(dir);
-  if (!fs.existsSync(dir)) {
-    return [];
-  }
+  if (!fs.existsSync(dir)) return [];
   const files = fs.readdirSync(dir);
   let result = [];
   files.forEach(item => {
@@ -488,21 +468,15 @@ exports.getdirFiles = getdirFiles;
  * @return {Promise}         []
  */
 function rmdir(p, reserve) {
-  if (!isDirectory(p)) {
-    return Promise.resolve();
-  }
+  if (!isDirectory(p)) return Promise.resolve();
   return fsReaddir(p).then(files => {
     const promises = files.map(item => {
       const filepath = path.join(p, item);
-      if (isDirectory(filepath)) {
-        return rmdir(filepath, false);
-      }
+      if (isDirectory(filepath)) return rmdir(filepath, false);
       return fsUnlink(filepath);
     });
     return Promise.all(promises).then(() => {
-      if (!reserve) {
-        return fsRmdir(p);
-      }
+      if (!reserve) return fsRmdir(p);
     });
   });
 }

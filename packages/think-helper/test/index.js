@@ -353,7 +353,7 @@ test('isBuffer', t => {
 });
 
 test('isBuffer 2', t => {
-  var value = isBuffer(Buffer.alloc('test'));
+  var value = isBuffer(Buffer.from('test'));
   t.deepEqual(value, true);
 });
 
