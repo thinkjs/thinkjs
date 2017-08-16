@@ -310,11 +310,10 @@ test.serial('createIndex', async t => {
   t.deepEqual(ret, 'think_1')
 });
 
-//**?
-// test.serial('distinct', async t => {
-//   let m = new model(defaultTable, defaultOptions);
-//   await m.addMany(manyData);
-//   let ret = await m.distinct('name').select();
-//   console.log(ret);
-//   t.is(ret.length,manyData.length)
-// });
+test.serial('distinct', async t => {
+  let m = new model(defaultTable, defaultOptions);
+  await m.addMany(manyData);
+  let ret = await m.distinct('name').select();
+  let n = ret.filter(item=>item==='thinkjs').length;
+  t.is(n,1)
+});
