@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-14 18:54:07
+* @Last Modified time: 2017-08-16 15:05:31
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -739,10 +739,42 @@ test('rule-base64 success', t => {
   t.true(Object.keys(ret).length === 0);
 });
 
-test('rule-byteLength failure', t => {
+test('rule-byteLength failure1', t => {
   let rules = {
     arg: {
       byteLength: {min: 0, max: 4}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-byteLength failure2', t => {
+  let rules = {
+    arg: {
+      byteLength: 4
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1234'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-byteLength failure3', t => {
+  let rules = {
+    arg: {
+      byteLength: 4
     }
   }
   let ctx = helper.extend({}, defaultCtx, {
@@ -1738,6 +1770,40 @@ test('rule-length options failure', t => {
   let rules = {
     arg: {
       length: {min: 0, max: 4}
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '123456'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length > 0);
+});
+
+test('rule-length options failure2', t => {
+  let rules = {
+    arg: {
+      length: 4
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg: '1234'
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-length options failure3', t => {
+  let rules = {
+    arg: {
+      length: 4
     }
   }
   let ctx = helper.extend({}, defaultCtx, {

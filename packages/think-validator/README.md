@@ -366,7 +366,7 @@ Check if param's value is ascii.
 ####  base64:  [true]
 Check if param's value is base64.
 
-####  byteLength:  [{min: 0, max: 10}]
+####  byteLength:  [{min: 0, max: 10}] | 10
 Check if param's value length(in bytes) falls in a range.
 
 ####  creditCard:  [true]
@@ -437,7 +437,7 @@ Check if param's value is not in a array of allowed values.
 If `int` = true, check if param's value is an integer.
 If `int` = {min: 0, max: 10}, check if param's value is an integer between `min` and 'max'.
 
-####  length:  [{min: 0, max: 10}]
+####  length:  [{min: 0, max: 10}] | 10
 Check if param's value length falls in a range.
 
 ####  lowercase:  [true]

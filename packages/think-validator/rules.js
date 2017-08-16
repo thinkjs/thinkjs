@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-14 18:14:45
+* @Last Modified time: 2017-08-16 15:06:53
 */
 'use strict';
 const helper = require('think-helper');
@@ -364,9 +364,14 @@ Rules.base64 = value => {
  * @return {Boolean}       []
  */
 Rules.byteLength = (value, { validValue }) => {
-  assert(helper.isObject(validValue), 'byteLength\'s value should be object');
+  assert(helper.isObject(validValue) || helper.isInt(validValue), 'byteLength\'s value should be object or integer');
   value = validator.toString(value);
-  return validator.isByteLength(value, {min: validValue.min | 0, max: validValue.max});
+  if (helper.isObject(validValue)) {
+    return validator.isByteLength(value, {min: validValue.min | 0, max: validValue.max});
+  } else {
+    assert(value > 0, 'byteLength\'s value should be integer larger than zero');
+    return validator.isByteLength(value, {min: validValue, max: validValue});
+  }
 };
 
 /**
@@ -624,9 +629,14 @@ Rules.int = (value, { validValue }) => {
  * @return {Boolean}         [description]
  */
 Rules.length = (value, { validValue }) => {
-  assert(helper.isObject(validValue), 'length\'s value should be object');
+  assert(helper.isObject(validValue) || helper.isInt(validValue), 'length\'s value should be object or integer');
   value = validator.toString(value);
-  return validator.isLength(value, {min: validValue.min | 0, max: validValue.max});
+  if (helper.isObject(validValue)) {
+    return validator.isLength(value, {min: validValue.min | 0, max: validValue.max});
+  } else {
+    assert(value > 0, 'length\'s value should be integer larger than zero');
+    return validator.isLength(value, {min: validValue, max: validValue});
+  }
 };
 
 /**
