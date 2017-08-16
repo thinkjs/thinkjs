@@ -105,7 +105,7 @@ module.exports = class Query {
     return this.socket.autoRelease(connection => {
       let collection = connection.collection(options.table);
       if (distinct) {
-        collection.distinct(distinct, where);
+        return collection.distinct(distinct, where);
       }
       collection = collection.find(where, field);
       collection = this.limit(collection, options.limit);
