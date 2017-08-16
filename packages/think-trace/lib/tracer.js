@@ -127,7 +127,7 @@ module.exports = class Tracer {
     }
 
     // 404 not found error
-    if (err.status === 404) {
+    if (ctx.status === 404) {
       ctx.body = this.renderNotFound(ctx, err);
       return true;
     }
