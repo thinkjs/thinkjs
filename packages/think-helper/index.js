@@ -59,6 +59,19 @@ exports.isObject = obj => {
 };
 
 /**
+ * check value is integer
+ */
+function isInt(value) {
+  if (isNaN(value) || exports.isString(value)) {
+    return false;
+  }
+  var x = parseFloat(value);
+  return (x | 0) === x;
+}
+
+exports.isInt = isInt;
+
+/**
  * make callback function to promise
  * @param  {Function} fn       []
  * @param  {Object}   receiver []

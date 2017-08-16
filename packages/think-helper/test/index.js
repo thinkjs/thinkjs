@@ -1,5 +1,6 @@
 import test from 'ava';
 import {
+  isInt,
   isFunction,
   isExist,
   isFile,
@@ -29,6 +30,59 @@ import {
 } from '../index.js';
 import fs from 'fs';
 import path from 'path';
+
+test('isInt', t => {
+  t.is(isInt(42), true);
+});
+
+test('isInt1', t => {
+  t.is(isInt('42'), false);
+});
+
+test('isInt2', t => {
+  t.is(isInt(4e2), true);
+});
+
+test('isInt3', t => {
+  t.is(isInt('4e2'), false);
+});
+
+test('isInt4', t => {
+  t.is(isInt(' 1 '), false);
+});
+
+test('isInt5', t => {
+  t.is(isInt(''), false);
+});
+
+test('isInt6', t => {
+  t.is(isInt(' '), false);
+});
+
+test('isInt7', t => {
+  t.is(isInt('1a'), false);
+});
+
+test('isInt8', t => {
+  t.is(isInt('42e2a'), false);
+});
+
+test('isInt9', t => {
+  t.is(isInt(null), false);
+});
+
+test('isInt10', t => {
+  t.is(isInt(undefined), false);
+});
+
+test('isInt11', t => {
+  t.is(isInt(NaN), false);
+});
+
+test('isInt12', t => {
+  t.is(isInt(42.1), false);
+});
+
 
 test('isExist', t => {
   t.is(isExist('/www/fasdfasfasdfa'), false);
