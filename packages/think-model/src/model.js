@@ -403,7 +403,7 @@ module.exports = class Model {
       };
       options = {where};
     }
-    options = Object.assign({}, this.options, options);
+    options = helper.extend({}, this.options, options);
     this.options = {};
     options.table = options.table || this.tableName;
     options.tablePrefix = this.tablePrefix;
