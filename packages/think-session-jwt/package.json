@@ -1,0 +1,29 @@
+{
+  "name": "think-session-jwt",
+  "version": "1.0.0",
+  "description": "JsonWebToken for ThinkJS 3.x",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-session-jwt.git"
+  },
+  "keywords": [
+    "JsonWebToken",
+    "ThinkJS",
+    "session"
+  ],
+  "author": "makeco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-session-jwt/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-session-jwt#readme",
+  "devDependencies": {
+    "eslint": "^4.4.1",
+    "eslint-config-think": "^1.0.2",
+    "jsonwebtoken": "^7.4.2"
+  }
+}
