@@ -4,7 +4,7 @@
   "description": "JsonWebToken for ThinkJS 3.x",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec -t 5000 test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -22,8 +22,20 @@
   },
   "homepage": "https://github.com/thinkjs/think-session-jwt#readme",
   "devDependencies": {
+    "chai": "^4.1.1",
+    "coveralls": "^2.13.1",
     "eslint": "^4.4.1",
     "eslint-config-think": "^1.0.2",
-    "jsonwebtoken": "^7.4.2"
+    "istanbul": "^0.4.5",
+    "mocha": "^3.5.0",
+    "muk": "^0.5.3"
+  },
+  "dependencies": {
+    "debug": "^3.0.0",
+    "jsonwebtoken": "^7.4.2",
+    "think-helper": "^1.0.20"
+  },
+  "engines": {
+    "node": ">=7.6.0"
   }
 }
