@@ -4,7 +4,7 @@ const Model = require('./lib/model.js');
 
 module.exports = app => {
   function model(name, config, m = 'common') {
-    const models = app.models.length ? (app.models[m] || {}) : app.models;
+    const models = app.modules.length ? (app.models[m] || {}) : app.models;
     const Cls = models[name] || Model;
     const modelName = path.basename(name);
     const instance = new Cls(modelName, config);
