@@ -392,19 +392,19 @@ class Commander {
 
     const prefix = this.getPrefix(name);
 
-    const basePath = this.getTplFilePath('src/controller/index.js');
-    const restPath = this.getTplFilePath('src/controller/restIndex.js');
+    const baseTplPath = this.getTplFilePath('src/controller/index_tpl.js');
+    const restTplPath = this.getTplFilePath('src/controller/restIndex_tpl.js');
 
-    const baseTplPath = this.getTplFilePath('src/controller/indexTpl.js');
-    const restTplPath = this.getTplFilePath('src/controller/restIndexTpl.js');
+    const baseGenPath = this.getTplFilePath('src/controller/index_gen.js');
+    const restGenPath = this.getTplFilePath('src/controller/restIndex_gen.js');
 
     if (this.rest) {
-      this.replaceFileContent(restPath, restTplPath, '{path}', prefix);
+      this.replaceFileContent(restTplPath, restGenPath, '{path}', prefix);
       this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
-      this.copyFile('src/controller/restIndexTpl.js', controllerPath + '/' + name + '.js');
+      this.copyFile('src/controller/restIndex_gen.js', controllerPath + '/' + name + '.js');
     } else {
-      this.replaceFileContent(basePath, baseTplPath, '{path}', prefix);
-      this.copyFile('src/controller/indexTpl.js', controllerPath + '/' + name + '.js');
+      this.replaceFileContent(baseTplPath, baseGenPath, '{path}', prefix);
+      this.copyFile('src/controller/index_gen.js', controllerPath + '/' + name + '.js');
     }
 
     const logicPath = this.getPath(m, 'logic');
