@@ -727,8 +727,9 @@ module.exports = class Model {
    * @param {String} field 
    */
   [QUOTE_FIELD](field) {
+    field = field || this.pk;
     if (field) return this.db().parseKey(field);
-    return this.pk || '*';
+    return '*';
   }
   /**
    * get count
