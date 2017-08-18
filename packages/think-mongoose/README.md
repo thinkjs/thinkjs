@@ -39,6 +39,7 @@ When add mongoose extend, it will add some below methods:
 * `think.mongoose` {Function} get mongoose instance
 * `ctx.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
 * `controller.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
+* `service.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
 
 ### Config adapter
 
@@ -119,7 +120,7 @@ module.exports = class extends think.Mongoose {
 
 ### Get model instance
 
-You can get mongoose class instance by `think.mongoose`, `ctx.mongoose` or `controller.mongoose`.
+You can get mongoose class instance by `think.mongoose`, `ctx.mongoose`, `service.mongoose` or `controller.mongoose`.
 
 ```js
 module.exports = class extends think.Controller {
