@@ -64,7 +64,7 @@ exports.model = {
 
 ### Create model class
 
-Create model class extends from think.Mongoose, like:
+Create model class extends from `think.Mongoose`, like:
 
 ```js
 // src/model/user.js
