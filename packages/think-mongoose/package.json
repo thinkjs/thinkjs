@@ -1,0 +1,52 @@
+{
+  "name": "think-mongoose",
+  "description": "Wrap mongoose for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "pre-commit": [
+    "test"
+  ],
+  "scripts": {
+    "test": "npm run lint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "lint": "eslint ./lib/ index.js",
+    "prepublish": "npm test"
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "mongoose": "^4.11.7",
+    "think-instance": "^1.0.1"
+  },
+  "devDependencies": {
+    "ava": "^0.18.0",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.2",
+    "mkdirp": "^0.5.1",
+    "mock-require": "^2.0.1",
+    "nyc": "^7.0.0",
+    "pre-commit": "^1.2.2"
+  },
+  "keywords": [
+    "mongoose"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-mongoose"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-mongoose/issues"
+  }
+}

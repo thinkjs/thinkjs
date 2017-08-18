@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - '6'
+  - '7'
+  - '8'
+sudo: false
+script:
+    - "npm run test"
+after_script: "npm install coveralls && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
