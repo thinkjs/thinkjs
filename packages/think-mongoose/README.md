@@ -24,7 +24,7 @@ module.exports = [
 
 When add mongoose extend, it will add some below methods:
 
-* `think.Mongoose` {Class} Base class, model class must be extends this class.
+* `think.Mongoose` {Class} Base class(it's extends from mongoose model), model class must be extends this class.
 * `think.mongoose` {Function} get mongoose instance
 * `ctx.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
 * `controller.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
@@ -80,11 +80,6 @@ module.exports = class extends think.Mongoose {
       mixed:   Schema.Types.Mixed,
       _someId: Schema.Types.ObjectId,
       array:      [],
-      ofString:   [String],
-      ofNumber:   [Number],
-      ofDates:    [Date],
-      ofBuffer:   [Buffer],
-      ofBoolean:  [Boolean],
       ofMixed:    [think.Mongoose.Mixed],
       ofObjectId: [think.Mongoose.ObjectId],
       ofArrays:   [[]]
@@ -123,3 +118,7 @@ module.exports = class extends think.Controller {
   }
 }
 ```
+
+### CRUD
+
+You can use all of mongoose model methods (except `new model & save`) to query or execute documents. Read documents <http://mongoosejs.com/docs/guide.html> get more information.
