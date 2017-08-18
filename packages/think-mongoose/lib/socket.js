@@ -11,15 +11,16 @@ const defaultOptions = {
 };
 
 const CONNECTION = Symbol('think-mongoose-connection');
+const CONNECTION_STRING = Symbol('think-mongoose-connection-string');
 
 class Socket {
   constructor(config) {
     this.config = Object.assign({}, defaultOptions, config);
   }
-  createConnection() {
-    if (this[CONNECTION]) return;
-    this[CONNECTION] = true;
-
+  /**
+   * get connection string
+   */
+  get [CONNECTION_STRING]() {
     const config = this.config;
     let connectionString = config.connectionString;
     if (!connectionString) {
@@ -45,13 +46,24 @@ class Socket {
       }
       connectionString = `mongodb://${auth}${hostStr}/${config.database}${options}`;
     }
+    return connectionString;
+  }
+  /**
+   * create connection, only connected once
+   */
+  createConnection() {
+    if (this[CONNECTION]) return;
+    this[CONNECTION] = true;
 
+    const config = this.config;
+    const connectionString = this[CONNECTION_STRING];
     if (config.logConnect) {
       config.logger(connectionString);
     }
     const opts = config.options || {};
     opts.useMongoClient = true;
-    mongoose.connect(connectionString, opts);
+    const connection = mongoose.createConnection(connectionString, opts);
+    return connection;
   }
 }
 

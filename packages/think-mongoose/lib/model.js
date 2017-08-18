@@ -9,6 +9,12 @@ const MODELS = Symbol('think-mongoose-models');
 const models = {};
 
 class Mongoose {
+  /**
+   * 
+   * @param {String} modelName 
+   * @param {Object} config 
+   * @param {String} name 
+   */
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
@@ -16,13 +22,13 @@ class Mongoose {
     if (models[name]) return models[name];
 
     const socket = Scoket.getInstance(this.config);
-    socket.createConnection();
+    const connection = socket.createConnection();
 
     let schema = this.schema;
     if (!(schema instanceof mongoose.Schema)) {
       schema = new mongoose.Schema(schema);
     }
-    const model = mongoose.model(modelName, schema);
+    const model = connection.model(modelName, schema);
     const Class = class extends model {};
     extendClassMethods(Class, this);
     models[name] = Class;

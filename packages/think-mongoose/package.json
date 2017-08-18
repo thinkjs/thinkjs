@@ -23,6 +23,7 @@
   ],
   "dependencies": {
     "mongoose": "^4.11.7",
+    "think-helper": "^1.0.20",
     "think-instance": "^1.0.1"
   },
   "devDependencies": {
