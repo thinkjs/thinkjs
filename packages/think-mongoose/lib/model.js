@@ -28,11 +28,23 @@ class Mongoose {
     if (!(schema instanceof mongoose.Schema)) {
       schema = new mongoose.Schema(schema);
     }
-    const model = connection.model(modelName, schema);
+    const model = connection.model(this.tableName, schema);
     const Class = class extends model {};
     extendClassMethods(Class, this);
     models[name] = Class;
     return Class;
+  }
+  /**
+   * get table prefix
+   */
+  get tablePrefix() {
+    return this.config.prefix || '';
+  }
+  /**
+   * get table name, with table prefix
+   */
+  get tableName() {
+    return this.tablePrefix + this.modelName;
   }
   /**
    * get all store models

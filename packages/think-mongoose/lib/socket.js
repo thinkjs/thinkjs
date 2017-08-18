@@ -52,8 +52,7 @@ class Socket {
    * create connection, only connected once
    */
   createConnection() {
-    if (this[CONNECTION]) return;
-    this[CONNECTION] = true;
+    if (this[CONNECTION]) return this[CONNECTION];
 
     const config = this.config;
     const connectionString = this[CONNECTION_STRING];
@@ -63,6 +62,7 @@ class Socket {
     const opts = config.options || {};
     opts.useMongoClient = true;
     const connection = mongoose.createConnection(connectionString, opts);
+    this[CONNECTION] = connection;
     return connection;
   }
 }
