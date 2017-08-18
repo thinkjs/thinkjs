@@ -98,7 +98,7 @@ module.exports = class extends think.Mongoose {
 }
 ```
 
-Sometime, you want to add some methods to schema, you can get schema instance by yourself, then return instance:
+Sometime, you want to add some methods to schema, then you can get schema instance by yourself and return instance:
 
 ```js
 module.exports = class extends think.Mongoose {
@@ -120,6 +120,17 @@ You can get mongoose class instance by `think.mongoose`, `ctx.mongoose` or `cont
 module.exports = class extends think.Controller {
   async indexAction() {
     const user = this.mongoose('user');
+    const data = await user.find();
+  }
+}
+```
+
+If default model adapter type is not `mongoose`, must be set second argument when get instance by `think.mongoose`, such as:
+
+```js
+module.exports = class extends think.Controller {
+  async indexAction() {
+    const user = this.mongoose('user', 'mongoose'); // use `mongoose` adapter type
     const data = await user.find();
   }
 }
