@@ -25,6 +25,12 @@ module.exports = [
 When add mongoose extend, it will add some below methods:
 
 * `think.Mongoose` {Class} Base class(it's extends from mongoose model), model class must be extends this class.
+
+  * `think.Mongoose.mongoose` mongoose object
+  * `think.Mongoose.Schema` mongoose Schema class
+  * `think.Mongoose.Mixed` mongoose Schema Mixed type
+  * `think.Mongoose.ObjectId` mongoose Schema ObjectId type
+
 * `think.mongoose` {Function} get mongoose instance
 * `ctx.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
 * `controller.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
