@@ -6,7 +6,7 @@ const helper = require('think-helper');
 const defaultOptions = {
   host: '127.0.0.1',
   port: 27017,
-  logger: console.log.bind(console), /* eslint no-console: ["error", { allow: ["log"] }] */
+  logger: console.log.bind(console), /* eslint no-console: ["error", { allow: ["log", "error"] }] */
   logConnect: true
 };
 
@@ -62,6 +62,12 @@ class Socket {
     const opts = config.options || {};
     opts.useMongoClient = true;
     const connection = mongoose.createConnection(connectionString, opts);
+    connection.on('error', err => {
+      this.config.logger(err);
+    });
+    connection.on('disconnected', () => {
+      this.config.logger(`Mongoose connection disconnected`);
+    });
     this[CONNECTION] = connection;
     return connection;
   }
