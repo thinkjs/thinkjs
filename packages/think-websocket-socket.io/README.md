@@ -11,7 +11,7 @@ Socket.io adapter for websocket
 npm install think-websocket-socket.io
 ```
 
-## How to config
+## How to Config
 
 Edit config file `src/config/adapter.js`, add options:
 
@@ -36,7 +36,7 @@ exports.websocket = {
 }
 ```
 
-### config options
+### Config Options
 
 `path`: The socket.io process path is `/socket.io` by default. You can edit the folloing configuration if you need.
 
@@ -58,7 +58,7 @@ exports.websocket = {
 
 `allowOrigin`: Sets the allowed origins value. Defaults to any origins being allowed. `allowOrigin` can be `string`, `array` or `function`. More detail see at https://socket.io/docs/server-api/#server-origins-value[https://socket.io/docs/server-api/#server-origins-value].
 
-## Work With Action
+## Work with Action
 
 ```js
 // server
@@ -98,9 +98,14 @@ You can emit event to the current socket in Action through `this.emit`:
 
 ```js
   // server
-  openAction() {
-    this.emit('opend', 'This client opened successfully!');
-    return this.success();
+  module.exports = class extends think.Controller {
+    constructor(...arg) {
+      super(...arg);
+    }
+    openAction() {
+      this.emit('opend', 'This client opened successfully!');
+      return this.success();
+    }
   }
 
   // client
@@ -117,9 +122,14 @@ You can broadcast event to all sockets in Action through method `this.broadcast`
 
 ```js
   // server
-  openAction() {
-    this.broadcast('joined', 'There is a new client joined successfully!');
-    return this.success();
+  module.exports = class extends think.Controller {
+    constructor(...arg) {
+      super(...arg);
+    }
+    openAction() {
+      this.broadcast('joined', 'There is a new client joined successfully!');
+      return this.success();
+    }
   }
 
   // client
