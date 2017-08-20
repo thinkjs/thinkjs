@@ -38,16 +38,16 @@ class ThinkMysql {
     this.config = config;
     this.pool = mysql.createPool(config);
 
-    this.pool.on('acquire', function(connection) {
+    this.pool.on('acquire', connection => {
       debug(`acquire: Connection ${connection.threadId} acquired`);
     });
-    this.pool.on('connection', function(connection) {
+    this.pool.on('connection', () => {
       debug('connection: a new connection is made within the pool.');
     });
-    this.pool.on('enqueue', function() {
+    this.pool.on('enqueue', () => {
       debug('enqueue: Waiting for available connection slot');
     });
-    this.pool.on('release', function(connection) {
+    this.pool.on('release', connection => {
       debug(`release: Connection ${connection.threadId} released`);
     });
 
