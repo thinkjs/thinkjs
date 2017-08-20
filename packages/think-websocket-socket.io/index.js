@@ -27,9 +27,9 @@ module.exports = class SocketIO {
   }
   /**
    * mock request
-   * @param {String} url 
-   * @param {Object} data 
-   * @param {Object} socket 
+   * @param {String} url
+   * @param {Object} data
+   * @param {Object} socket
    */
   mockRequst(url, data, socket, open) {
     if (url[0] !== '/') url = `/${url}`;
@@ -63,18 +63,18 @@ module.exports = class SocketIO {
   }
   /**
    * emit an event
-   * @param {String} event 
-   * @param {Mixed} data 
-   * @param {Object} socket 
+   * @param {String} event
+   * @param {Mixed} data
+   * @param {Object} socket
    */
   emit(event, data, socket) {
     socket.emit(event, data);
   }
   /**
    * broadcast event
-   * @param {String} event 
-   * @param {Mixed} data 
-   * @param {Object} socket 
+   * @param {String} event
+   * @param {Mixed} data
+   * @param {Object} socket
    */
   broadcast(event, data, socket) {
     socket.emit(event, data);

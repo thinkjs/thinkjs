@@ -7,15 +7,10 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "npm run lint && npm run test-cov",
+    "test": "npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
     "lint": "eslint index.js",
     "prepublish": "npm test"
-  },
-  "ava": {
-    "require": [
-      "babel-core/register"
-    ]
   },
   "contributors": [
     {
@@ -27,7 +22,8 @@
   "dependencies": {
     "debug": "^2.6.1",
     "socket.io": "^2.0.1",
-    "think-helper": "^1.0.0"
+    "think-helper": "^1.0.0",
+    "think-mock-http": "~1.0.5"
   },
   "devDependencies": {
     "ava": "^0.18.2",
@@ -37,6 +33,7 @@
     "eslint": "~4.2.0",
     "eslint-config-think": "~1.0.1",
     "mock-require": "^2.0.1",
+    "mockery": "~2.1.0",
     "nyc": "^7.0.0"
   },
   "keywords": [],
