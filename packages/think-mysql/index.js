@@ -7,6 +7,7 @@ const thinkInstance = require('think-instance');
 const debug = require('debug')('think-mysql');
 const debounceInstance = new Debounce();
 const QUERY = Symbol('think-mysql-query');
+const CONNECTION_LOST = Symbol('think-mysql-connection-lost');
 
 const defaultConfig = {
   port: 3306,
@@ -52,7 +53,7 @@ class ThinkMysql {
    * get connection
    */
   getConnection(connection) {
-    if (connection) return Promise.resolve(connection);
+    if (connection && !connection[CONNECTION_LOST]) return Promise.resolve(connection);
     return helper.promisify(this.pool.getConnection, this.pool)();
   }
   /**
@@ -111,11 +112,8 @@ class ThinkMysql {
    * query data
    */
   [QUERY](sqlOptions, connection, startTime) {
-    let err = null;
     const queryFn = helper.promisify(connection.query, connection);
-    return queryFn(sqlOptions).catch(e => {
-      err = e;
-    }).then(data => {
+    return queryFn(sqlOptions).catch(err => err).then(data => {
       // log sql
       if (this.config.logSql) {
         const endTime = Date.now();
@@ -123,7 +121,12 @@ class ThinkMysql {
       }
       this.releaseConnection(connection);
 
-      if (err) return Promise.reject(err);
+      if (helper.isError(data)) {
+        if (data.code === 'PROTOCOL_CONNECTION_LOST') {
+          connection[CONNECTION_LOST] = true;
+        }
+        return Promise.reject(data);
+      }
       return data;
     });
   }
