@@ -38,6 +38,19 @@ class ThinkMysql {
     this.config = config;
     this.pool = mysql.createPool(config);
 
+    this.pool.on('acquire', function(connection) {
+      debug(`acquire: Connection ${connection.threadId} acquired`);
+    });
+    this.pool.on('connection', function(connection) {
+      debug('connection: a new connection is made within the pool.');
+    });
+    this.pool.on('enqueue', function() {
+      debug('enqueue: Waiting for available connection slot');
+    });
+    this.pool.on('release', function(connection) {
+      debug(`release: Connection ${connection.threadId} released`);
+    });
+
     // log connect
     if (config.logConnect) {
       let connectionPath = '';
@@ -136,7 +149,6 @@ class ThinkMysql {
   releaseConnection(connection) {
     // if not in transaction, release connection
     if (connection.transaction !== TRANSACTION.start) {
-      debug('release connection, id=' + connection.threadId);
       // connection maybe already released, so and try for it
       try {
         connection.release();
@@ -161,7 +173,6 @@ class ThinkMysql {
     }
     const startTime = Date.now();
     return this.getConnection(connection).then(connection => {
-      debug('get connection, id=' + connection.threadId);
       // set transaction status to connection
       if (sqlOptions.transaction) {
         if (sqlOptions.transaction === TRANSACTION.start) {
