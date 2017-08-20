@@ -15,7 +15,6 @@ const defaultConfig = {
   password: '',
   database: '',
   connectionLimit: 1,
-  multipleStatements: true,
   logger: console.log.bind(console), /* eslint no-console: ["error", { allow: ["log"] }] */
   logConnect: false,
   logSql: false
