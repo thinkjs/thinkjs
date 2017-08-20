@@ -149,7 +149,7 @@ class ThinkMysql {
   releaseConnection(connection) {
     // if not in transaction, release connection
     if (connection.transaction !== TRANSACTION.start) {
-      // connection maybe already released, so and try for it
+      // connection maybe already released, it will throw an Error
       try {
         connection.release();
       } catch (e) {}
