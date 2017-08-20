@@ -36,13 +36,13 @@ class ThinkMysql {
   constructor(config) {
     config = helper.extend({}, defaultConfig, config);
     this.config = config;
-    this.pool = mysql.createPool(config);
+    this.pool = mysql.createPool(helper.omit(config, 'logger,logConnect,logSql'));
 
     this.pool.on('acquire', connection => {
       debug(`acquire: Connection ${connection.threadId} acquired`);
     });
     this.pool.on('connection', () => {
-      debug('connection: a new connection is made within the pool.');
+      debug('connection: A new connection is made within the pool');
     });
     this.pool.on('enqueue', () => {
       debug('enqueue: Waiting for available connection slot');
