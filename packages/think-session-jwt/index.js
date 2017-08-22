@@ -1,9 +1,16 @@
-const assert = require('assert');
-const helper = require('think-helper');
 const jwt = require('jsonwebtoken');
+const helper = require('think-helper');
+const assert = require('assert');
+const debug = require('debug')('think-session-jet');
 
 const sign = helper.promisify(jwt.sign, jwt);
 const verify = helper.promisify(jwt.verify, jwt);
+
+// decode is a sync method, do not use it
+// const decode = jwt.decode;
+
+const initSessionData = Symbol('think-session-jwt-init');
+const autoSave = Symbol('think-session-jwt-save');
 
 class JWTSession {
   /**
@@ -13,32 +20,48 @@ class JWTSession {
    * @param {object} ctx     - koa context
    */
   constructor(options = {}, ctx) {
-    const { secret } = options;
-    assert(helper.isUndefined(secret), 'secret required in jwtsession');
-    if (helper.isArray(secret)) {
-      this.secret = secret.join('');
-    }
-    options.overwrite = true;
-    this.secret = secret.toString();
+    assert(options.name, 'cookie name is required');
+    assert(options.secret, 'jwt secret is required');
     this.options = options;
     this.ctx = ctx;
-    this.fresh = true; // session data is fresh
-    this.data = {}; // session data
-    this.initSessionData();
+    this.data = {};
+    this.status = 0;
   }
 
   /**
    * init session data
    */
-  async initSessionData() {
-    const token = this.ctx.cookie(this.options.name, undefined, this.options);
-    if (token) {
-      try {
-        const decoded = await verify(token, this.secret);
-        this.data = JSON.parse(decoded);
-        this.fresh = false;
-      } catch (err) {}
+  [initSessionData]() {
+    if (this.initPromise) {
+      return this.initPromise;
     }
+    if (this.options.fresh || this.status === -1) {
+      this.initPromise = Promise.resolve();
+      return this.initPromise;
+    }
+    this.initPromise = verify(this.options.cookie, this.options.secret, this.options.verifyOptions).then(content => {
+      content = JSON.parse(content);
+      if (helper.isEmpty(content)) return;
+      this.data = content;
+    }).catch(err => debug(err));
+    this[autoSave]();
+    return this.initPromise;
+  }
+
+  /**
+   * auto save session data when it is change
+   */
+  [autoSave]() {
+    this.ctx.res.once('finish', async function() {
+      if (this.status === -1) {
+        this.ctx.cookie(this.options.name, undefined, this.options);
+      } else if (this.status === 1) {
+        let maxAge = this.options.maxAge;
+        maxAge = this.options.maxAge ? helper.ms(maxAge, { long: true }) : undefined;
+        const token = await sign(this.data, this.options.secret, { maxAge });
+        this.ctx.cookie(this.options.name, token, this.options);
+      }
+    });
   }
 
   /**
@@ -47,11 +70,12 @@ class JWTSession {
    * @return {Promise} value
    */
   get(name) {
-    if (this.options.autoUpdate && this.options.maxAge && !this.fresh) {
-      this.set();
-    }
-    if (name) return Promise.resolve(this.data[name]);
-    return Promise.resolve(this.data);
+    return this[initSessionData]().then(() => {
+      if (this.options.autoUpdate) {
+        this.status = 1;
+      }
+      return name ? this.data[name] : this.data;
+    });
   }
 
   /**
@@ -61,13 +85,10 @@ class JWTSession {
    * @return {Promise} resolved
    */
   set(name, value) {
-    if (name) {
+    return this[initSessionData]().then(() => {
+      this.status = 1;
       this.data[name] = value;
-    }
-    const data = JSON.stringify(this.data);
-    const token = sign(data, this.secret, this.options);
-    this.ctx.cookie(this.options.name, token, this.options);
-    return Promise.resolve();
+    });
   }
 
   /**
@@ -75,10 +96,8 @@ class JWTSession {
    * @return {Promise} resolved
    */
   delete() {
-    if (!this.fresh) {
-      this.ctx.cookie(this.options.name, null, this.options);
-      this.data = {};
-    }
+    this.status = -1;
+    this.data = {};
     return Promise.resolve();
   }
 }

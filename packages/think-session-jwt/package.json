@@ -4,7 +4,10 @@
   "description": "JsonWebToken for ThinkJS 3.x",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec -t 5000 test/*.test.js"
+    "test": "nyc ava test/index.js",
+    "coverage": "nyc report --reporter=html",
+    "pretest": "eslint index.js",
+    "lint-fix": "eslint --fix index.js"
   },
   "repository": {
     "type": "git",
@@ -22,13 +25,14 @@
   },
   "homepage": "https://github.com/thinkjs/think-session-jwt#readme",
   "devDependencies": {
-    "chai": "^4.1.1",
+    "ava": "^0.22.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
     "coveralls": "^2.13.1",
     "eslint": "^4.4.1",
     "eslint-config-think": "^1.0.2",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.5.0",
-    "muk": "^0.5.3"
+    "mock-require": "^2.0.2",
+    "nyc": "^11.1.0"
   },
   "dependencies": {
     "debug": "^3.0.0",
@@ -36,6 +40,6 @@
     "think-helper": "^1.0.20"
   },
   "engines": {
-    "node": ">=7.6.0"
+    "node": ">=6.0.0"
   }
 }
