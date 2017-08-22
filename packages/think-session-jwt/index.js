@@ -1,13 +1,10 @@
 const jwt = require('jsonwebtoken');
 const helper = require('think-helper');
 const assert = require('assert');
-const debug = require('debug')('think-session-jet');
+const debug = require('debug')('think-session-jwt');
 
 const sign = helper.promisify(jwt.sign, jwt);
 const verify = helper.promisify(jwt.verify, jwt);
-
-// decode is a sync method, do not use it
-// const decode = jwt.decode;
 
 const initSessionData = Symbol('think-session-jwt-init');
 const autoSave = Symbol('think-session-jwt-save');
@@ -20,12 +17,13 @@ class JWTSession {
    * @param {object} ctx     - koa context
    */
   constructor(options = {}, ctx) {
-    assert(options.name, 'cookie name is required');
     assert(options.secret, 'jwt secret is required');
     this.options = options;
     this.ctx = ctx;
     this.data = {};
     this.status = 0;
+    this.verifyOptions = options.verify || {};
+    this.signOptions = options.sign || {};
   }
 
   /**
@@ -39,11 +37,13 @@ class JWTSession {
       this.initPromise = Promise.resolve();
       return this.initPromise;
     }
-    this.initPromise = verify(this.options.cookie, this.options.secret, this.options.verifyOptions).then(content => {
-      content = JSON.parse(content);
-      if (helper.isEmpty(content)) return;
+    this.initPromise = verify(this.options.cookie, this.options.secret, this.verifyOptions).then(content => {
+      delete content.iat;
+      delete content.exp;
       this.data = content;
-    }).catch(err => debug(err));
+    }).catch(err => {
+      debug(err);
+    });
     this[autoSave]();
     return this.initPromise;
   }
@@ -52,14 +52,17 @@ class JWTSession {
    * auto save session data when it is change
    */
   [autoSave]() {
-    this.ctx.res.once('finish', async function() {
+    this.ctx.res.once('finish', () => {
       if (this.status === -1) {
         this.ctx.cookie(this.options.name, undefined, this.options);
       } else if (this.status === 1) {
-        let maxAge = this.options.maxAge;
-        maxAge = this.options.maxAge ? helper.ms(maxAge, { long: true }) : undefined;
-        const token = await sign(this.data, this.options.secret, { maxAge });
-        this.ctx.cookie(this.options.name, token, this.options);
+        const maxAge = this.options.maxAge;
+        this.signOptions.expiresIn = maxAge ? helper.ms(maxAge, { long: true }) : undefined;
+        sign(this.data, this.options.secret, this.signOptions).then(token => {
+          this.ctx.cookie(this.options.name, token, this.options);
+        }).catch(err => {
+          debug(err);
+        });
       }
     });
   }

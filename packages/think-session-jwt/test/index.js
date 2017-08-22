@@ -1,15 +1,12 @@
 import test from 'ava';
 import mock from 'mock-require';
+import jwt from 'jsonwebtoken';
 
 const cookieName = ['red_skull', 'norman_osborn', 'loki', 'magneto', 'dr_doom'];
 const cookieStore = {};
 
 function mockRequire() {
   return mock.reRequire('../');
-}
-
-function mockCookie(data) {
-  //  mock cookei
 }
 
 function mockContext(dur = 10) {
@@ -39,21 +36,6 @@ function mockDebug(param = []) {
   mock('debug', debug1);
 }
 
-test.serial('0.options without cookie name', t => {
-  return new Promise(async function(resolve, reject) {
-    const JWTSession = mockRequire();
-    const ctx = mockContext();
-
-    const error = t.throws(() => {
-      // eslint-disable-next-line no-unused-vars
-      const jwtSession = new JWTSession(undefined, ctx);
-    });
-    t.is(error.message, 'cookie name is required');
-
-    resolve();
-  });
-});
-
 test.serial('1.options without jwt secret', t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
@@ -74,10 +56,11 @@ test.serial('1.options without jwt secret', t => {
 test.serial('2.set and get session data without maxAge', t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
-    const ctx = mockContext(10);
+    const ctx = mockContext();
     const options = {
       name: cookieName[1],
       secret: 'secret',
+      cookie: jwt.sign({}, 'secret'),
       autoUpdate: true
     };
     const jwtSession = new JWTSession(options, ctx);
@@ -86,7 +69,6 @@ test.serial('2.set and get session data without maxAge', t => {
       abc: '123'
     });
 
-    await sleep(100);
     const value = await jwtSession.get('abc');
     t.is(value, '123');
 
@@ -107,6 +89,7 @@ test.serial('3.set and get session data with maxAge', t => {
     const options = {
       name: cookieName[2],
       secret: 'secret',
+      cookie: jwt.sign({}, 'secret'),
       maxAge: '1s'
     };
     const jwtSession = new JWTSession(options, ctx);
@@ -146,22 +129,22 @@ test.serial('4.set and get session date with fresh param', t => {
   });
 });
 
-test.serial('5.set and get session data when JSON.parse(content) return error', t => {
+test.serial('5.set and get session data when JsonWebTokenError', t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
     const ctx = mockContext();
     const debugParam = [];
     mockDebug(debugParam);
+
     const options = {
       name: cookieName[4],
       secret: 'secret',
-      fresh: true
+      cookie: 'gg'
     };
-    cookieStore[cookieName[4]] = 'gg';
     const jwtSession = new JWTSession(options, ctx);
-    await jwtSession.get('abc');
+    await jwtSession.set('abc', '123');
 
-    t.is(debugParam.length, 1);
+    t.is(debugParam.length, 0);
     resolve();
   });
 });
