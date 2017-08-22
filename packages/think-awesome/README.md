@@ -60,6 +60,7 @@ Awesome projects for `ThinkJS 3.x`
 
 * [think-pagination](https://github.com/thinkjs/think-pagination) Pagination for ThinkJS 3.x
 * [think-ueditor](https://github.com/uedkx/think-ueditor) Ueditor configuration for ThinkJS 3
+* [think-redis](https://github.com/thinkjs/think-redis) Wrap [ioredis](https://github.com/luin/ioredis)
 
 ## Projects by ThinkJS
 
