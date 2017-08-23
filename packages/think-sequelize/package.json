@@ -1,0 +1,49 @@
+{
+  "name": "think-sequelize",
+  "description": "Sequelize for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "lushijie1218",
+    "email": "lushijie1218@126.com"
+  },
+  "scripts": {
+    "test": "npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "lint": "eslint index.js"
+  },
+  "contributors": [
+    {
+      "name": "lushijie1218",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "debug": "^2.6.1",
+    "mysql": "~2.14.1",
+    "mysql2": "~1.4.1",
+    "sequelize": "~4.6.0",
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "coveralls": "^2.12.0",
+    "nyc": "^7.0.0",
+    "eslint": "~4.2.0",
+    "eslint-config-think": "~1.0.1"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-sequelize"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-sequelize/issue"
+  }
+}
