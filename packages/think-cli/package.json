@@ -1,7 +1,7 @@
 {
   "name": "think-cli",
   "description": "command line interface for ThinkJS",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "author": {
     "name": "songguangyu",
     "email": "522963130@qq.com"
