@@ -76,7 +76,7 @@ module.exports = class extends think.Controller {
   }
   addUserAction() {
     console.log('addUserAction ...');
-    console.log(this.data); // this.req.websocketData, 'thinkjs'
+    console.log(this.wsData); // this.req.websocketData, 'thinkjs'
     console.log(this.websocket); // this.req.websocket, websocket instance
     console.log(this.isWebsocket); // this.isMethod('WEBSOCKET'), true
     return this.success();
