@@ -1,5 +1,7 @@
+/* eslint-disable no-console */
 const jwt = require('jsonwebtoken');
 const helper = require('think-helper');
+const ms = require('ms');
 const assert = require('assert');
 const debug = require('debug')('think-session-jwt');
 
@@ -58,7 +60,7 @@ class JWTSession {
   async autoSave() {
     try {
       const maxAge = this.options.maxAge;
-      this.signOptions.expiresIn = maxAge ? helper.ms(maxAge) : undefined;
+      this.signOptions.expiresIn = maxAge ? ms(maxAge) : '1d';
       const token = await sign(this.data, this.options.secret, this.signOptions);
       const { tokenType, tokenName = 'x-jwt-token' } = this.options;
       switch (tokenType) {
@@ -71,9 +73,7 @@ class JWTSession {
           this.ctx.cookie(this.options.name, token, this.options);
           break;
       }
-    } catch (err) {
-      debug(err);
-    }
+    } catch (err) {}
   }
 
   /**

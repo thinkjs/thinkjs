@@ -37,6 +37,7 @@
   "dependencies": {
     "debug": "^3.0.0",
     "jsonwebtoken": "^7.4.2",
+    "ms": "^2.0.0",
     "think-helper": "^1.0.20"
   },
   "engines": {

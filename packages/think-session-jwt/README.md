@@ -1,6 +1,10 @@
 # think-session-jwt
 JsonWebToken to store session for ThinkJS 3.x base on [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
 
+[![Build Status](https://travis-ci.org/thinkjs/think-session-jwt.svg?branch=master)](https://travis-ci.org/thinkjs/think-session-jwt)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-session-jwt/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-session-jwt?branch=master)
+[![npm version](https://badge.fury.io/js/think-session-jwt.svg)](https://badge.fury.io/js/think-session-jwt)
+
 ## Install
 
 ```bash
@@ -22,8 +26,8 @@ exports.session = {
   jwt: {
     handle: JWTSession,
     cookie: {
-      tokenType: 'cookie', // jwt token type, it could be header, default is 'cookie'
-      tokenName: 'x-jwt-token', // if tokenType not 'cookie', this will be the token name, default is 'x-jwt-token'
+      tokenType: 'cookie', // jwt token type, it could be 'header', 'cookie', 'cookie' is default
+      tokenName: 'x-jwt-token', // if tokenType not 'cookie', this will be token name, 'x-jwt-token' is default
       secret: 'secret' // secret is reqired
       sign: {
           // sign options is not required
