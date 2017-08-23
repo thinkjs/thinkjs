@@ -31,10 +31,16 @@ class JWTSession {
   async initSessionData() {
     if (this.fresh) {
       let token;
-      const { tokenType, tokenName = 'x-jwt-token' } = this.options;
-      switch (tokenType) {
+      const { getType, getTokenName = 'jwt' } = this.options;
+      switch (getType) {
         case 'header':
-          token = this.ctx.get(tokenName);
+          token = this.ctx.headers[getTokenName];
+          break;
+        case 'body':
+          token = this.ctx.request.body[getTokenName];
+          break;
+        case 'query':
+          token = this.ctx.query[getTokenName];
           break;
         default :
           token = this.ctx.cookie(this.options.name, undefined, this.options);
@@ -62,11 +68,11 @@ class JWTSession {
       const maxAge = this.options.maxAge;
       this.signOptions.expiresIn = maxAge ? ms(maxAge) : '1d';
       const token = await sign(this.data, this.options.secret, this.signOptions);
-      const { tokenType, tokenName = 'x-jwt-token' } = this.options;
-      switch (tokenType) {
+      const { setType, setTokenName = 'x-jwt-token' } = this.options;
+      switch (setType) {
         case 'header':
           this.ctx.set({
-            [tokenName]: token
+            [setTokenName]: token
           });
           break;
         default :

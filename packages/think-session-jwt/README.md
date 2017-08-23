@@ -26,9 +26,11 @@ exports.session = {
   jwt: {
     handle: JWTSession,
     cookie: {
-      tokenType: 'cookie', // jwt token type, it could be 'header', 'cookie', 'cookie' is default
-      tokenName: 'x-jwt-token', // if tokenType not 'cookie', this will be token name, 'x-jwt-token' is default
-      secret: 'secret' // secret is reqired
+      secret: 'secret',  // secret is reqired
+      getType: 'cookie', // ['query', 'body', 'header', 'cookie'], 'cookie' is default
+      setType: 'cookie', // ['header', 'cookie'], 'cookie' is default
+      getTokenName: 'jwt', // if getType not 'cookie', this will be token name, 'jwt' is default
+      setTokenName: 'x-jwt-token', // if setType not 'cookie', this will be token name, 'x-jwt-token' is default
       sign: {
           // sign options is not required
       },

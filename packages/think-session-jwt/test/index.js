@@ -2,7 +2,7 @@ import test from 'ava';
 import mock from 'mock-require';
 import jwt from 'jsonwebtoken';
 
-const cookieName = ['red_skull', 'norman_osborn', 'loki', 'magneto', 'dr_doom'];
+const cookieName = ['red_skull', 'norman_osborn', 'loki', 'magneto', 'dr_doom', 'thor'];
 const cookieStore = {};
 const headerStore = {};
 
@@ -20,11 +20,17 @@ function mockContext() {
         headerStore[key] = value;
       }
     },
+    headers: {},
+    query: {},
+    request: {
+      body: {}
+    },
     cookie: function(name, data, options) {
       if (data) {
         cookieStore[name] = data;
+      } else {
+        return cookieStore[name];
       }
-      return cookieStore[name];
     }
   };
 }
@@ -141,13 +147,14 @@ test.serial('4.set and get session data when JsonWebTokenError', t => {
   });
 });
 
-test.serial('5.set and get session date tokenType is header', t => {
+test.serial('5.getType and setType both are header', t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
     const ctx = mockContext();
     const options = {
       secret: 'secret',
-      tokenType: 'header'
+      getType: 'header',
+      setType: 'header'
     };
     const jwtSession = new JWTSession(options, ctx);
     await jwtSession.set('abc', '123');
@@ -156,6 +163,52 @@ test.serial('5.set and get session date tokenType is header', t => {
       abc: '123'
     });
 
+    const token = headerStore['x-jwt-token'];
+    t.is(typeof token, 'string');
+    resolve();
+  });
+});
+
+test.serial('6.getType is query', t => {
+  return new Promise(async function(resolve, reject) {
+    const JWTSession = mockRequire();
+    const ctx = mockContext();
+    const options = {
+      name: cookieName[4],
+      secret: 'secret',
+      getType: 'query'
+    };
+    const jwtSession = new JWTSession(options, ctx);
+    await jwtSession.set('abc', '123');
+
+    t.deepEqual(jwtSession.data, {
+      abc: '123'
+    });
+
+    const token = ctx.cookie(options.name);
+    t.is(typeof token, 'string');
+    resolve();
+  });
+});
+
+test.serial('7.getType is request body', t => {
+  return new Promise(async function(resolve, reject) {
+    const JWTSession = mockRequire();
+    const ctx = mockContext();
+    const options = {
+      name: cookieName[5],
+      secret: 'secret',
+      getType: 'body'
+    };
+    const jwtSession = new JWTSession(options, ctx);
+    await jwtSession.set('abc', '123');
+
+    t.deepEqual(jwtSession.data, {
+      abc: '123'
+    });
+
+    const token = ctx.cookie(options.name);
+    t.is(typeof token, 'string');
     resolve();
   });
 });
