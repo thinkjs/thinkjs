@@ -15,8 +15,12 @@ npm install think-websocket
 
 Edit config file `src/config/extend.js`, add options:
 
+```js
+
 const websocket = require('think-websocket');
 module.exports = [
   // ...
   websocket(think.app),
 ];
+
+```
