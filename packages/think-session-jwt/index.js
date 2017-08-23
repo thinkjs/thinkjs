@@ -6,9 +6,6 @@ const debug = require('debug')('think-session-jwt');
 const sign = helper.promisify(jwt.sign, jwt);
 const verify = helper.promisify(jwt.verify, jwt);
 
-const initSessionData = Symbol('think-session-jwt-init');
-const autoSave = Symbol('think-session-jwt-save');
-
 class JWTSession {
   /**
    * JWTSession class
@@ -21,7 +18,7 @@ class JWTSession {
     this.options = options;
     this.ctx = ctx;
     this.data = {};
-    this.status = 0;
+    this.fresh = true;
     this.verifyOptions = options.verify || {};
     this.signOptions = options.sign || {};
   }
@@ -29,42 +26,54 @@ class JWTSession {
   /**
    * init session data
    */
-  [initSessionData]() {
-    if (this.initPromise) {
-      return this.initPromise;
+  async initSessionData() {
+    if (this.fresh) {
+      let token;
+      const { tokenType, tokenName = 'x-jwt-token' } = this.options;
+      switch (tokenType) {
+        case 'header':
+          token = this.ctx.get(tokenName);
+          break;
+        default :
+          token = this.ctx.cookie(this.options.name, undefined, this.options);
+          break;
+      }
+      if (token) {
+        try {
+          const decoded = await verify(token, this.options.secret, this.verifyOptions);
+          delete decoded.iat;
+          delete decoded.exp;
+          this.data = decoded;
+          this.fresh = false;
+        } catch (err) {
+          debug(err);
+        }
+      }
     }
-    if (this.options.fresh || this.status === -1) {
-      this.initPromise = Promise.resolve();
-      return this.initPromise;
-    }
-    this.initPromise = verify(this.options.cookie, this.options.secret, this.verifyOptions).then(content => {
-      delete content.iat;
-      delete content.exp;
-      this.data = content;
-    }).catch(err => {
-      debug(err);
-    });
-    this[autoSave]();
-    return this.initPromise;
   }
 
   /**
    * auto save session data when it is change
    */
-  [autoSave]() {
-    this.ctx.res.once('finish', () => {
-      if (this.status === -1) {
-        this.ctx.cookie(this.options.name, undefined, this.options);
-      } else if (this.status === 1) {
-        const maxAge = this.options.maxAge;
-        this.signOptions.expiresIn = maxAge ? helper.ms(maxAge, { long: true }) : undefined;
-        sign(this.data, this.options.secret, this.signOptions).then(token => {
+  async autoSave() {
+    try {
+      const maxAge = this.options.maxAge;
+      this.signOptions.expiresIn = maxAge ? helper.ms(maxAge) : undefined;
+      const token = await sign(this.data, this.options.secret, this.signOptions);
+      const { tokenType, tokenName = 'x-jwt-token' } = this.options;
+      switch (tokenType) {
+        case 'header':
+          this.ctx.set({
+            [tokenName]: token
+          });
+          break;
+        default :
           this.ctx.cookie(this.options.name, token, this.options);
-        }).catch(err => {
-          debug(err);
-        });
+          break;
       }
-    });
+    } catch (err) {
+      debug(err);
+    }
   }
 
   /**
@@ -72,13 +81,12 @@ class JWTSession {
    * @param  {string}  name
    * @return {Promise} value
    */
-  get(name) {
-    return this[initSessionData]().then(() => {
-      if (this.options.autoUpdate) {
-        this.status = 1;
-      }
-      return name ? this.data[name] : this.data;
-    });
+  async get(name) {
+    await this.initSessionData();
+    if (this.options.autoUpdate && this.options.maxAge && !this.fresh) {
+      await this.autoSave();
+    }
+    return name ? this.data[name] : this.data;
   }
 
   /**
@@ -87,22 +95,27 @@ class JWTSession {
    * @param  {string} value
    * @return {Promise} resolved
    */
-  set(name, value) {
-    return this[initSessionData]().then(() => {
-      this.status = 1;
+  async set(name, value) {
+    await this.initSessionData();
+    if (name) {
       this.data[name] = value;
-    });
+    }
+    await this.autoSave();
   }
 
   /**
    * delete session
    * @return {Promise} resolved
    */
-  delete() {
-    this.status = -1;
-    this.data = {};
-    return Promise.resolve();
+  async delete() {
+    await this.initSessionData();
+    if (!this.fresh) {
+      this.ctx.cookie(this.options.name, null, this.options);
+      this.data = {};
+    }
   }
 }
+
+JWTSession.onlyCookie = true;
 
 module.exports = JWTSession;
