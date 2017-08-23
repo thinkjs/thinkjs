@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const jwt = require('jsonwebtoken');
 const helper = require('think-helper');
 const ms = require('ms');
@@ -15,8 +14,8 @@ class JWTSession {
    * @param {object} options - config
    * @param {object} ctx     - koa context
    */
-  constructor(options = {}, ctx) {
-    assert(options.secret, 'jwt secret is required');
+  constructor(options, ctx) {
+    assert(options && options.secret, 'jwt secret is required');
     this.options = options;
     this.ctx = ctx;
     this.data = {};
@@ -37,7 +36,7 @@ class JWTSession {
           token = this.ctx.headers[getTokenName];
           break;
         case 'body':
-          token = this.ctx.request.body[getTokenName];
+          token = this.ctx.post(getTokenName);
           break;
         case 'query':
           token = this.ctx.query[getTokenName];
@@ -116,7 +115,17 @@ class JWTSession {
   async delete() {
     await this.initSessionData();
     if (!this.fresh) {
-      this.ctx.cookie(this.options.name, null, this.options);
+      const { setType, setTokenName = 'x-jwt-token' } = this.options;
+      switch (setType) {
+        case 'header':
+          this.ctx.set({
+            [setTokenName]: null
+          });
+          break;
+        default :
+          this.ctx.cookie(this.options.name, null, this.options);
+          break;
+      }
       this.data = {};
     }
   }

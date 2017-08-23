@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 const cookieName = ['red_skull', 'norman_osborn', 'loki', 'magneto', 'dr_doom', 'thor'];
 const cookieStore = {};
 const headerStore = {};
+const postData = {};
 
 function mockRequire() {
   return mock.reRequire('../');
@@ -12,9 +13,6 @@ function mockRequire() {
 
 function mockContext() {
   return {
-    get: function(name) {
-      return headerStore[name];
-    },
     set: function(obj) {
       for (const [key, value] of Object.entries(obj)) {
         headerStore[key] = value;
@@ -22,8 +20,9 @@ function mockContext() {
     },
     headers: {},
     query: {},
-    request: {
-      body: {}
+    post: function(name) {
+      if (name) return postData[name];
+      return postData;
     },
     cookie: function(name, data, options) {
       if (data) {
@@ -91,6 +90,13 @@ test.serial('2.set and get session data without maxAge', t => {
     await jwtSession.delete();
     t.deepEqual(jwtSession.data, {});
 
+    const options1 = {
+      name: cookieName[0],
+      secret: 'secret'
+    };
+    const jwtSession1 = new JWTSession(options1, ctx);
+    await jwtSession1.delete();
+
     resolve();
   });
 });
@@ -156,6 +162,7 @@ test.serial('5.getType and setType both are header', t => {
       getType: 'header',
       setType: 'header'
     };
+    ctx.headers['jwt'] = jwt.sign({}, 'secret');
     const jwtSession = new JWTSession(options, ctx);
     await jwtSession.set('abc', '123');
 
@@ -165,6 +172,8 @@ test.serial('5.getType and setType both are header', t => {
 
     const token = headerStore['x-jwt-token'];
     t.is(typeof token, 'string');
+
+    await jwtSession.delete();
     resolve();
   });
 });
