@@ -329,7 +329,7 @@ think.getPath = (module, type = think.dirname.controller, prefix = '') => {
  */
 let _loadRequire = (name, filepath) => {
   let obj = think.safeRequire(filepath);
-  if (think.isFunction(obj)) {
+  if (think.isFunction(obj) && obj.prototype) {
     obj.prototype.__filename = filepath;
   }
   if(obj){
