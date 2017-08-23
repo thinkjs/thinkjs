@@ -1,5 +1,6 @@
 const helper = require('think-helper');
 const assert = require('assert');
+const deprecate = require('depd')('think-websocket');
 
 module.exports = app => {
   // In cluster environment socket.io requires you to use sticky sessions,
@@ -20,7 +21,17 @@ module.exports = app => {
 
   return {
     context: {
+      /**
+       * get socket data
+       */
       get data() {
+        deprecate('ctx.data is deprecated, use ctx.wsData instead');
+        return this.req.websocketData;
+      },
+      /**
+       * get socket data
+       */
+      get wsData() {
         return this.req.websocketData;
       },
       /**
@@ -56,7 +67,11 @@ module.exports = app => {
     },
     controller: {
       get data() {
+        deprecate('controller.data is deprecated, use controller.wsData instead');
         return this.ctx.data;
+      },
+      get wsData() {
+        return this.ctx.wsData;
       },
       get websocket() {
         return this.ctx.websocket;

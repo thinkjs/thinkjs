@@ -50,6 +50,7 @@ test('websocket', t => {
   result.controller.ctx = helper.extend(result.controller.ctx, result.context);
 
   let c1 = result.context.data === 'websocketData';
+  let c11 = result.context.wsData === 'websocketData';
   let c2 = result.context.websocket === 'websocket';
   let c3 = result.context.isWebsocket === 'WEBSOCKET';
   result.context.emit();
@@ -60,6 +61,7 @@ test('websocket', t => {
   result.context.res.statusCode = '';
 
   let cc1 = result.controller.data === 'websocketData';
+  let cc11 = result.controller.wsData === 'websocketData';
   let cc2 = result.controller.websocket === 'websocket';
   let cc3 = result.controller.isWebsocket === 'WEBSOCKET';
   result.controller.emit();
@@ -69,5 +71,5 @@ test('websocket', t => {
   let cc5 = result.controller.ctx.res.statusCode === 200
   result.controller.ctx.res.statusCode = '';
 
-  t.true(c1 && c2 && c3 && c4 && c5 && cc1 && cc2 && cc3 && cc4 && cc5);
+  t.true(c1 && c11 && c2 && c3 && c4 && c5 && cc1 && cc11 && cc2 && cc3 && cc4 && cc5);
 });
