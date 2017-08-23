@@ -550,6 +550,7 @@ class Commander {
     //   '                                         '
     // ].join('\n');
     console.log('think-cli@' + version);
+    console.log(colors.yellow('Tips:This version means the version of `thinkjs` commander you use in terminal. It doesn\'t equal ThinkJS version you use in project. The version of ThinkJS your project dependent can get quickly by using `npm ls thinkjs` in your project.'));
     // console.log(chars);
   }
 
@@ -597,11 +598,11 @@ class Commander {
     });
 
     // create rest controller
-    commander.option('-r', 'create rest controller', () => {
+    commander.option('-r, --rest', 'create rest controller', () => {
       this.rest = true;
     });
 
-    commander.option('-w', 'without babel compile', () => {
+    commander.option('-w, --no-compile', 'without babel compile', () => {
       this.withoutCompile = true;
     });
 
