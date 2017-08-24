@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Scoket = require('./socket.js');
+const Socket = require('./socket.js');
 const path = require('path');
 const {extendClassMethods} = require('./util.js');
 
@@ -21,7 +21,7 @@ class Mongoose {
 
     if (models[name]) return models[name];
 
-    const socket = Scoket.getInstance(this.config);
+    const socket = Socket.getInstance(this.config);
     const connection = socket.createConnection();
 
     let schema = this.schema;
