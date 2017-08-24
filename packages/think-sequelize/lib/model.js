@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-24 15:32:20
+* @Last Modified time: 2017-08-24 17:52:07
 */
 const Socket = require('./socket.js');
 const {extendClassMethods} = require('./util.js');
@@ -13,8 +13,11 @@ class Sequelize {
     this.modelName = modelName;
     this.config = config;
     if (models[name]) return models[name];
+
+    const socket = Socket.getInstance(this.config);
+    const sequelizeConn = socket.createConnection();
+
     let schema = this.schema;
-    let sequelizeConn = new Socket(this.config).createConnection();
     const model = sequelizeConn.define(this.tableName, schema.attributes, schema.options);
     const Class = class extends model {};
     extendClassMethods(Class, this);

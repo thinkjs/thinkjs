@@ -2,9 +2,10 @@
 * @Author: lushijie
 * @Date:   2017-08-24 10:12:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-24 16:37:54
+* @Last Modified time: 2017-08-24 17:50:41
 */
 const Sequelize = require('sequelize');
+const getInstance = require('think-instance');
 const SEQUELIZE_CONN = Symbol('think-sequelize-connection');
 const CONNECTION_STRING = Symbol('think-sequelize-connection-string');
 
@@ -54,4 +55,4 @@ class Socket {
   }
 }
 
-module.exports = Socket;
+module.exports = getInstance(Socket);
