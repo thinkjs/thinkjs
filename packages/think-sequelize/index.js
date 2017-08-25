@@ -2,11 +2,10 @@
 * @Author: lushijie
 * @Date:   2017-08-23 09:44:20
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-24 14:55:51
+* @Last Modified time: 2017-08-25 09:56:36
 */
 const helper = require('think-helper');
 const path = require('path');
-const sequelize = require('sequelize');
 const Model = require('./lib/model.js');
 
 module.exports = app => {

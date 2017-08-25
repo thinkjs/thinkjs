@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-24 17:52:07
+* @Last Modified time: 2017-08-24 18:01:49
 */
 const Socket = require('./socket.js');
 const {extendClassMethods} = require('./util.js');
@@ -14,6 +14,7 @@ class Sequelize {
     this.config = config;
     if (models[name]) return models[name];
 
+    // connect
     const socket = Socket.getInstance(this.config);
     const sequelizeConn = socket.createConnection();
 
