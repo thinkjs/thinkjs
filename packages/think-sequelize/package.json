@@ -9,7 +9,7 @@
   "scripts": {
     "test": "npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
-    "lint": "eslint index.js"
+    "lint": "eslint index.js lib --fix"
   },
   "contributors": [
     {

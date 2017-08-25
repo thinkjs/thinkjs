@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-24 10:12:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-24 17:50:41
+* @Last Modified time: 2017-08-25 17:08:27
 */
 const Sequelize = require('sequelize');
 const getInstance = require('think-instance');
@@ -14,7 +14,11 @@ const defaultOptions = {
   host: '127.0.0.1',
   port: 3306,
   dialect: 'mysql',
-  logging: console.log.bind(console)
+  logging: function(sql) {
+    /*eslint-disable */
+    console.log.bind(console)(sql);
+    /*eslint-enable */
+  }
 };
 
 class Socket {
@@ -27,7 +31,7 @@ class Socket {
     const config = this.config;
     const options = this.options;
     let connectionString = config.connectionString;
-    if(!connectionString) {
+    if (!connectionString) {
       let auth = '';
       // connect with auth
       if (config.user) {
@@ -39,14 +43,15 @@ class Socket {
   }
 
   createConnection() {
-    if(this[SEQUELIZE_CONN]) return this[SEQUELIZE_CONN];
+    if (this[SEQUELIZE_CONN]) return this[SEQUELIZE_CONN];
 
+    // config
     const config = this.config;
     const options = this.options;
 
     // connectionString
     const connectionString = this[CONNECTION_STRING];
-    if(config.logConnect && options.logging) {
+    if (config.logConnect && options.logging) {
       options.logging(connectionString);
     }
     const sequelizeConn = new Sequelize(connectionString, options);
