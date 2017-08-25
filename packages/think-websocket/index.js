@@ -3,12 +3,6 @@ const assert = require('assert');
 const deprecate = require('depd')('think-websocket');
 
 module.exports = app => {
-  // In cluster environment socket.io requires you to use sticky sessions,
-  // to ensure that a given client hits the same process every time,
-  // otherwise its handshake mechanism won't work properly.
-  // https://github.com/uqee/sticky-cluster
-  process.env.THINK_STICKY_CLUSTER = true;
-
   const config = helper.parseAdapterConfig(app.think.config('websocket'));
   const Handle = config.handle;
   assert(helper.isFunction(Handle), 'websocket.handle must be a function');
