@@ -120,7 +120,7 @@ module.exports = class Tracer {
       if (!helper.isFunction(ctx.json)) {
         ctx.json = res => { ctx.body = JSON.stringify(res) };
       }
-      return (isJsonp ? ctx.jsonp : ctx.json)({
+      return (isJsonp ? ctx.jsonp : ctx.json).bind(ctx)({
         errno: ctx.status,
         errmsg: err.message
       });
