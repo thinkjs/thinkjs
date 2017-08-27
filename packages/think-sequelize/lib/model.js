@@ -2,8 +2,9 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-27 09:22:00
+* @Last Modified time: 2017-08-27 11:22:35
 */
+const path = require('path');
 const sequelize = require('sequelize');
 const Socket = require('./socket.js');
 const {extendClassMethods} = require('./util.js');
@@ -69,14 +70,13 @@ class Sequelize {
    * get model instance
    * @param {String} name
    */
-  //sequelize(name) {
-    // const ModelClass = this.models[name] || Sequelize;
-    // const modelName = path.basename(name);
-    // const instance = new ModelClass(modelName, this.config, name);
-    // instance.models = this.models;
-    // return instance;
-  //}
+  sequelize2(name) {
+    const ModelClass = this.models[name] || Sequelize;
+    const modelName = path.basename(name);
+    const instance = new ModelClass(modelName, this.config, name);
+    instance.models = this.models;
+    return instance;
+  }
 }
 
-// Sequelize.sequelize = sequelize;
 module.exports = Sequelize;

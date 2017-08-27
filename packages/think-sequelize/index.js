@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 09:44:20
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-25 09:56:36
+* @Last Modified time: 2017-08-27 11:22:26
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -27,18 +27,18 @@ module.exports = app => {
   return {
     think: {
       Sequelize: Model,
-      sequelize: injectModel
+      sequelize2: injectModel
     },
     service: {
-      sequelize: injectModel
+      sequelize2: injectModel
     },
     controller: {
-      sequelize(name, config, m) {
-        return this.ctx.sequelize(name, config, m);
+      sequelize2(name, config, m) {
+        return this.ctx.sequelize2(name, config, m);
       }
     },
     context: {
-      sequelize(name, config, m = this.module) {
+      sequelize2(name, config, m = this.module) {
         config = helper.parseAdapterConfig(this.config('model'), config);
         return model(name, config, m);
       }
