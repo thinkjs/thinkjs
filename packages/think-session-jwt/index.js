@@ -18,7 +18,8 @@ class JWTSession {
     assert(options && options.secret, 'jwt secret is required');
     this.options = options;
     this.ctx = ctx;
-    this.data = {};
+    this.decode = {};
+    this.encode = {};
     this.fresh = true;
     this.verifyOptions = options.verify || {};
     this.signOptions = options.sign || {};
@@ -30,27 +31,24 @@ class JWTSession {
   async initSessionData() {
     if (this.fresh) {
       let token;
-      const { getType, getTokenName = 'jwt' } = this.options;
-      switch (getType) {
+      const { tokenType, tokenName = 'jwt' } = this.options;
+      switch (tokenType) {
         case 'header':
-          token = this.ctx.headers[getTokenName];
+          token = this.ctx.headers[tokenName];
           break;
         case 'body':
-          token = this.ctx.post(getTokenName);
+          token = this.ctx.post(tokenName);
           break;
         case 'query':
-          token = this.ctx.query[getTokenName];
+          token = this.ctx.query[tokenName];
           break;
         default :
-          token = this.ctx.cookie(this.options.name, undefined, this.options);
+          token = this.ctx.cookie(tokenName, undefined, this.options);
           break;
       }
       if (token) {
         try {
-          const decoded = await verify(token, this.options.secret, this.verifyOptions);
-          delete decoded.iat;
-          delete decoded.exp;
-          this.data = decoded;
+          this.decode = await verify(token, this.options.secret, this.verifyOptions);
           this.fresh = false;
         } catch (err) {
           debug(err);
@@ -66,19 +64,11 @@ class JWTSession {
     try {
       const maxAge = this.options.maxAge;
       this.signOptions.expiresIn = maxAge ? ms(maxAge) : '1d';
-      const token = await sign(this.data, this.options.secret, this.signOptions);
-      const { setType, setTokenName = 'x-jwt-token' } = this.options;
-      switch (setType) {
-        case 'header':
-          this.ctx.set({
-            [setTokenName]: token
-          });
-          break;
-        default :
-          this.ctx.cookie(this.options.name, token, this.options);
-          break;
-      }
-    } catch (err) {}
+      const token = await sign(this.encode, this.options.secret, this.signOptions);
+      return token;
+    } catch (err) {
+      debug(err);
+    }
   }
 
   /**
@@ -88,10 +78,7 @@ class JWTSession {
    */
   async get(name) {
     await this.initSessionData();
-    if (this.options.autoUpdate && this.options.maxAge && !this.fresh) {
-      await this.autoSave();
-    }
-    return name ? this.data[name] : this.data;
+    return name ? this.decode[name] : this.decode;
   }
 
   /**
@@ -103,9 +90,10 @@ class JWTSession {
   async set(name, value) {
     await this.initSessionData();
     if (name) {
-      this.data[name] = value;
+      this.encode[name] = value;
     }
-    await this.autoSave();
+    const token = await this.autoSave();
+    return token;
   }
 
   /**
@@ -114,23 +102,8 @@ class JWTSession {
    */
   async delete() {
     await this.initSessionData();
-    if (!this.fresh) {
-      const { setType, setTokenName = 'x-jwt-token' } = this.options;
-      switch (setType) {
-        case 'header':
-          this.ctx.set({
-            [setTokenName]: null
-          });
-          break;
-        default :
-          this.ctx.cookie(this.options.name, null, this.options);
-          break;
-      }
-      this.data = {};
-    }
+    this.decode = {};
   }
 }
-
-JWTSession.onlyCookie = true;
 
 module.exports = JWTSession;

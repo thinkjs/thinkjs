@@ -25,22 +25,33 @@ exports.session = {
   },
   jwt: {
     handle: JWTSession,
-    cookie: {
-      secret: 'secret',  // secret is reqired
-      getType: 'cookie', // ['query', 'body', 'header', 'cookie'], 'cookie' is default
-      setType: 'cookie', // ['header', 'cookie'], 'cookie' is default
-      getTokenName: 'jwt', // if getType not 'cookie', this will be token name, 'jwt' is default
-      setTokenName: 'x-jwt-token', // if setType not 'cookie', this will be token name, 'x-jwt-token' is default
-      sign: {
-          // sign options is not required
-      },
-      verify: {
-          // verify options is not required
-      }
+    secret: 'secret',  // secret is reqired
+    tokenType: 'cookie', // ['query', 'body', 'header', 'cookie'], 'cookie' is default
+    tokenName: 'jwt', // if tokenType not 'cookie', this will be token name, 'jwt' is default
+    sign: {
+        // sign options is not required
+    },
+    verify: {
+        // verify options is not required
     }
 }
 ```
 
-### sign and verify options
+1. session数据从token中获取，通过配置tokenType指定token获取方式。
+2. 设置session数据后会返回token字符串。
+
+### Debug
+```bash
+DEBUG=think-session-jwt
+
+# windows
+set DEBUG=think-session-jwt
+
+# powershell
+$env:DEBUG="think-session-jwt"
+
+```
+
+### Sign and verify options
 
 使用[node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)的配置。
