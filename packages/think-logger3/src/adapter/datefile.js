@@ -6,13 +6,13 @@ module.exports = class DateFileLogger extends Base {
 
     const lConfig = Object.assign({}, config);
     // eslint-disable-next-line prefer-const
-    let {level, filename, pattern, alwaysIncludePattern, absolute, layouts} = lConfig;
+    let {level, filename, pattern, alwaysIncludePattern, absolute, layout} = lConfig;
     level = level ? level.toUpperCase() : 'ALL';
 
     // combine config for date file appender, common config for log4js
     config = Object.assign({
       appenders: [
-        {type: 'dateFile', level, filename, pattern, alwaysIncludePattern, absolute, layouts}
+        {type: 'dateFile', level, filename, pattern, alwaysIncludePattern, absolute, layout}
       ]
     }, lConfig);
 
