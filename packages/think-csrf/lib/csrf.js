@@ -6,7 +6,8 @@ module.exports = (options = {}) => {
 
   return (ctx, next) => {
     const method = ctx.method;
-    if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS' || method === 'TRACE') {
+    const methods = ['GET', 'HEAD', 'OPTIONS', 'TRACE', 'WEBSOCKET'];
+    if (methods.some(item => item === method)) {
       return utils.ensureCsrfToken(ctx, options).then(utils.assignCsrf(ctx)).then(() => next());
     }
 
