@@ -70,7 +70,7 @@ Then initial log would create a file called `debug.log`. After this file reached
 - `maxLogSize`: The maximum size (in bytes) for a log file, if not provided then logs won't be rotated.
 - `backups`: The number of log files to keep after logSize has been reached (default 5)
 - `absolute`: If `filename` is a absolute path, the `absolute` value should be `true`.
-- `layouts`: Layout defines the way how a log record is rendered. More layouts can see [here](https://github.com/nomiddlename/log4js-node/wiki/Layouts).
+- `layout`: Layout defines the way how a log record is rendered. More layouts can see [here](https://github.com/nomiddlename/log4js-node/wiki/Layouts).
 
 ### DateFile
 
@@ -103,7 +103,7 @@ Then initial log would create a file called `debug.log`. At midnight, the curren
   - O - timezone (capital letter o)
 - `alwaysIncludePattern`: If `alwaysIncludePattern` is true, then the initial file will be `filename.2017-03-12` and no renaming will occur at midnight, but a new file will be written to with the name `filename.2017-03-13`.
 - `absolute`: If `filename` is a absolute path, the `absolute` value should be `true`.
-- `layouts`: Layout defines the way how a log record is rendered. More layouts can see [here](https://github.com/nomiddlename/log4js-node/wiki/Layouts).
+- `layout`: Layout defines the way how a log record is rendered. More layouts can see [here](https://github.com/nomiddlename/log4js-node/wiki/Layouts).
 
 ### Tips:
 
