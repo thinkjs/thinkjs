@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-27 11:22:35
+* @Last Modified time: 2017-08-27 13:19:10
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -12,7 +12,7 @@ const {extendClassMethods} = require('./util.js');
 const models = {};
 const MODELS = Symbol('think-sequelize-models');
 
-class Sequelize {
+class Model {
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
@@ -70,8 +70,8 @@ class Sequelize {
    * get model instance
    * @param {String} name
    */
-  sequelize2(name) {
-    const ModelClass = this.models[name] || Sequelize;
+  sequel(name) {
+    const ModelClass = this.models[name] || Model;
     const modelName = path.basename(name);
     const instance = new ModelClass(modelName, this.config, name);
     instance.models = this.models;
@@ -79,4 +79,5 @@ class Sequelize {
   }
 }
 
-module.exports = Sequelize;
+Model.sequel = sequelize;
+module.exports = Model;
