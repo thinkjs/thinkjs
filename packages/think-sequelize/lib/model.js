@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-28 20:07:02
+* @Last Modified time: 2017-08-28 22:34:42
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -15,7 +15,7 @@ class Model {
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
-    // if (models[name]) return models[name]; // 影响关系模型
+    // if (models[name]) return models[name]; // affect relation, make it wrong
 
     // connect
     const socket = Socket.getInstance(this.config);
@@ -33,10 +33,11 @@ class Model {
     this.schemaLast = schema;
 
     const model = sequelizeConn.define(this.modelName, schema.attributes, schema.options);
-    const Class = class extends model {};
-    extendClassMethods(Class, this);
-    models[name] = Class;
-    return Class;
+    // const Class = class extends model {}; // make relation name wrong
+    this.modelClassName = class extends model {};
+    extendClassMethods(this.modelClassName, this);
+    models[name] = this.modelClassName;
+    return this.modelClassName;
   }
 
   /**
