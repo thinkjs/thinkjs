@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 09:44:20
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-27 13:19:29
+* @Last Modified time: 2017-08-27 19:36:10
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -15,6 +15,18 @@ module.exports = app => {
     const modelName = path.basename(name);
     const instance = new Cls(modelName, config, name);
     instance.models = models;
+
+    // set relation
+    // let relations = instance.schemaLast.relations;
+    // if(relations) {
+    //   let modelName = Object.keys(relations).filter(e => {
+    //     return e !== 'options';
+    //   })[0];
+    //   let relationInstance = model(modelName, config, m = 'common');
+    //   let relationOptions = helper.extend({}, {as: modelName}, relations.options);
+    //   instance[relations[modelName]](relationInstance, relationOptions);
+    // }
+
     return instance;
   };
 

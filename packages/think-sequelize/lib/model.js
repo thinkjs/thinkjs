@@ -2,13 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-27 13:19:10
+* @Last Modified time: 2017-08-28 20:07:02
 */
 const path = require('path');
 const sequelize = require('sequelize');
 const Socket = require('./socket.js');
 const {extendClassMethods} = require('./util.js');
-
 const models = {};
 const MODELS = Symbol('think-sequelize-models');
 
@@ -16,12 +15,13 @@ class Model {
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
-    if (models[name]) return models[name];
+    // if (models[name]) return models[name]; // 影响关系模型
 
     // connect
     const socket = Socket.getInstance(this.config);
     const sequelizeConn = socket.createConnection();
 
+    // schema
     let schema = this.schema;
     if (!schema.attributes) {
       schema = {
@@ -32,7 +32,7 @@ class Model {
     schema.options = Object.assign({}, this.config.schema, schema.options);
     this.schemaLast = schema;
 
-    const model = sequelizeConn.define(this.tableName, schema.attributes, schema.options);
+    const model = sequelizeConn.define(this.modelName, schema.attributes, schema.options);
     const Class = class extends model {};
     extendClassMethods(Class, this);
     models[name] = Class;
@@ -79,5 +79,11 @@ class Model {
   }
 }
 
-Model.sequel = sequelize;
+Model.Sequel = sequelize;
+Model.Relation = {
+  HAS_ONE: 'hasOne',
+  BELONG_TO: 'belongsTo',
+  HAS_MANY: 'hasMany',
+  MANY_TO_MANY: 'belongsToMany'
+};
 module.exports = Model;
