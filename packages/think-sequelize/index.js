@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 09:44:20
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-27 19:36:10
+* @Last Modified time: 2017-08-29 16:14:47
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -16,16 +16,23 @@ module.exports = app => {
     const instance = new Cls(modelName, config, name);
     instance.models = models;
 
-    // set relation
-    // let relations = instance.schemaLast.relations;
-    // if(relations) {
-    //   let modelName = Object.keys(relations).filter(e => {
-    //     return e !== 'options';
-    //   })[0];
-    //   let relationInstance = model(modelName, config, m = 'common');
-    //   let relationOptions = helper.extend({}, {as: modelName}, relations.options);
-    //   instance[relations[modelName]](relationInstance, relationOptions);
-    // }
+    //set relation
+    let relations = instance.schemaLast.relations;
+    if(relations && helper.isObject(relations)) {
+      relations = [relations];
+    }
+    if(relations) {
+      relations.forEach((ele,index) => {
+        let relationModelName = Object.keys(ele).filter(e => {
+          return e !== 'options';
+        })[0];
+
+        let relationName = ele[relationModelName];
+        let relationInstance = model(relationModelName, config, m = 'common');
+        let relationOptions = Object.assign({}, ele.options);
+        instance[relationName](relationInstance, relationOptions);
+      });
+    }
 
     return instance;
   };

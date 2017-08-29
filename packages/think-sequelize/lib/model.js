@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-29 14:26:14
+* @Last Modified time: 2017-08-29 16:13:53
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -22,11 +22,12 @@ class Model {
     const sequelizeConn = socket.createConnection();
 
     // schema
-    let schema = this.schema;
-    if (!schema.attributes) {
+    let schema = this.schema || {};
+    if(!schema.attributes) {
       schema = {
         attributes: schema,
-        options: {}
+        options: {},
+        relations: []
       };
     }
     schema.options = Object.assign({}, this.config.schema, schema.options);
