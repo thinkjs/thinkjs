@@ -32,3 +32,6 @@ output.tar.gz
 
 runtime/
 app/
+
+config.development.js
+adapter.development.js
