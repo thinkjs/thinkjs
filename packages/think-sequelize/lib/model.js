@@ -2,11 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-29 16:13:53
+* @Last Modified time: 2017-08-29 16:27:59
 */
 const path = require('path');
 const sequelize = require('sequelize');
 const Socket = require('./socket.js');
+const debug = require('debug')('think-sequelize');
 const {extendClassMethods} = require('./util.js');
 const models = {};
 const MODELS = Symbol('think-sequelize-models');
@@ -31,7 +32,8 @@ class Model {
       };
     }
     schema.options = Object.assign({}, this.config.schema, schema.options);
-    this.schemaLast = schema;
+    this.schemaOptions = schema;
+    debug(`ModelName: ${modelName}, Schema: ${JSON.stringify(this.schemaOptions)}`);
 
     const model = sequelizeConn.define(this.modelName, schema.attributes, schema.options);
     // const Class = class extends model {}; // make relation name wrong
@@ -51,8 +53,8 @@ class Model {
    * get table name, with table prefix
    */
   get tableName() {
-    let schemaLast = this.schemaLast;
-    if(schemaLast.options.freezeTableName && schemaLast.options.tableName) return schemaLast.options.tableName;
+    let schemaOptions = this.schemaOptions;
+    if(schemaOptions.options.freezeTableName && schemaOptions.options.tableName) return schemaOptions.options.tableName;
     return this.tablePrefix + this.modelName;
   }
 
