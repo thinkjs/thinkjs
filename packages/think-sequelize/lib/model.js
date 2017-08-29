@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-29 16:27:59
+* @Last Modified time: 2017-08-29 16:48:32
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -16,7 +16,7 @@ class Model {
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
-    // if (models[name]) return models[name]; // affect relation, make it wrong
+    if (models[name]) return models[name];
 
     // connect
     const socket = Socket.getInstance(this.config);
