@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-28 22:34:42
+* @Last Modified time: 2017-08-29 14:26:14
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -34,10 +34,10 @@ class Model {
 
     const model = sequelizeConn.define(this.modelName, schema.attributes, schema.options);
     // const Class = class extends model {}; // make relation name wrong
-    this.modelClassName = class extends model {};
-    extendClassMethods(this.modelClassName, this);
-    models[name] = this.modelClassName;
-    return this.modelClassName;
+    this.modelClass = class extends model {};
+    extendClassMethods(this.modelClass, this);
+    models[name] = this.modelClass;
+    return this.modelClass;
   }
 
   /**
