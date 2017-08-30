@@ -1,7 +1,7 @@
 {
   "name": "think-helper",
   "description": "Helper for ThinkJS",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "author": {
     "name": "songguangyu",
     "email": "522963130@qq.com"
@@ -24,6 +24,7 @@
     }
   ],
   "main": "index.js",
+  "type": "index.d.ts",
   "dependencies": {
     "core-util-is": "^1.0.2",
     "ms": "^1.0.0",
