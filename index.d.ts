@@ -12,11 +12,7 @@ declare namespace ThinkJs {
     think: Think;
   }
 
-  export interface IController { }
-  export interface ILogic { }
-  export interface IService { }
-  export interface IModel {}
-  class Controller implements IController {
+  class Controller {
     constructor(ctx: Koa);
     ctx: Koa;
     assign?(name: string, value: any): any;
@@ -37,11 +33,13 @@ declare namespace ThinkJs {
     session?(name: null): Promise<string>;
   }
 
-  class Logic extends Controller implements ILogic { }
+  class Logic extends Controller {
+    validate(rules: Object, msgs?: Object ): Object;
+    validateErrors?: Object;
+   }
 
-  class Service implements IService { }
-
-  class Model implements IModel {}
+  class Service { }
+  class Model {}
 
   export interface Think extends Helper.Think {
     app: Koa;
@@ -76,7 +74,3 @@ declare namespace ThinkJs {
 }
 
 export = ThinkJs;
-
-
-
-
