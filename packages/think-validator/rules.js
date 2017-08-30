@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-16 15:06:53
+* @Last Modified time: 2017-08-30 18:53:49
 */
 'use strict';
 const helper = require('think-helper');
@@ -740,7 +740,7 @@ Rules.field = value => {
  */
 Rules.image = value => {
   if (helper.isObject(value)) {
-    value = value.originalFilename;
+    value = value.name;
   }
   return /\.(?:jpeg|jpg|png|bmp|gif|svg)$/i.test(value);
 };
