@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "ThinkJS - Use full ES6/7 features to develop web applications",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -38,6 +38,7 @@
     }
   ],
   "main": "lib/application.js",
+  "type": "index.d.ts",
   "dependencies": {
     "bluebird": "3.3.5",
     "cookies": "^0.7.0",
@@ -60,7 +61,8 @@
     "think-resource": "^1.0.0",
     "think-router": "^1.0.0",
     "think-trace": "^1.0.2",
-    "think-validator": "^1.0.2"
+    "think-validator": "^1.0.2",
+    "@types/koa": "*"
   },
   "devDependencies": {
     "ava": "^0.18.0",
