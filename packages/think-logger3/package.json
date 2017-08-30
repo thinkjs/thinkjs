@@ -1,8 +1,9 @@
 {
   "name": "think-logger3",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "logger for ThinkJS 3.x",
   "main": "./src",
+  "type": "index.d.ts",
   "scripts": {
     "test": "npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
