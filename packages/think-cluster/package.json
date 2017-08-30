@@ -1,7 +1,7 @@
 {
   "name": "think-cluster",
   "description": "Cluster manage for ThinkJS",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -19,6 +19,7 @@
     }
   ],
   "main": "index.js",
+  "type": "index.d.ts",
   "dependencies": {
     "think-helper": "^1.0.0"
   },
