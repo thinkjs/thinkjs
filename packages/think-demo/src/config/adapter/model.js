@@ -4,7 +4,15 @@ module.exports = {
   common: {
     logConnect: isDev,
     logSql: isDev,
-    logger: msg => think.logger.info(msg)
+    logger: msg => {
+      think.isError(msg) ?  think.logger.error(msg) :  think.logger.info(msg);
+    }
+  },
+  mongoose: {
+    host: '127.0.0.1',
+    port: 27017,
+    database: 'test',
+    prefix: 'test_'
   },
   mysql: {
     database: 'firekylin13',

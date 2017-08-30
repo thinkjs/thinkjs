@@ -25,15 +25,15 @@
     "think-fetch": "^1.0.0",
     "think-i18n": "^1.2.3",
     "think-model": "*",
-    "think-session-cookie": "thinkjs/think-session-cookie",
-    "think-session-file": "thinkjs/think-session-file",
+    "think-mongoose": "^1.0.1",
+    "think-session-cookie": "^1.0.0",
+    "think-session-file": "^1.0.0",
     "think-view": "^1.0.0",
     "think-view-nunjucks": "^1.0.1",
     "think-watcher": "^3.0.0",
-    "thinkjs": "thinkjs/thinkjs#3.0",
-    "think-websocket": "thinkjs/think-websocket",
-    "think-websocket-socket.io": "thinkjs/think-websocket-socket.io",
-    "think-session-mysql": "thinkjs/think-session-mysql"
+    "think-websocket": "^1.0.0",
+    "think-websocket-socket.io": "^1.0.0",
+    "thinkjs": "^3.0.0"
   },
   "devDependencies": {
     "think-inspect": "0.0.2",

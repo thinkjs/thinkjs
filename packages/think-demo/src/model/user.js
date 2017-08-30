@@ -1,8 +1,7 @@
-module.exports = class extends think.Model.Relation {
-  constructor(...args) {
-    super(...args);
-    this.relation = {
-      post: think.Model.Relation.HAS_MANY
+module.exports = class extends think.Model {
+  get relation() {
+    return {
+      post: think.Model.HAS_MANY
     }
   }
 

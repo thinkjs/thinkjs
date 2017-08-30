@@ -11,7 +11,10 @@
   var socket = io('http://127.0.0.1:8360/');
   socket.on('connect', function(){
       console.log('connect');
-      socket.emit('test', {name: 'test'})
+      socket.emit('test', {name: 'test'});
+      setInterval(() => {
+        socket.emit('test', {name: 'test3333'})
+      }, 1000)
   });
   socket.on('hello', function(data){
     console.log('hello', data)

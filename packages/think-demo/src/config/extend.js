@@ -4,6 +4,7 @@ const model = require('think-model');
 const createI18n = require('think-i18n');
 const path = require('path');
 const websocket = require('think-websocket');
+const mongoose = require('think-mongoose');
 
 var regCn = /^cn.*$/;
 var regEn = /^en.*$/;
@@ -32,6 +33,7 @@ module.exports = [
   fetch, // HTTP request client
   model(think.app),
   i18n,
-  websocket(think.app)
+  websocket(think.app),
+  mongoose(think.app)
 ];
 
