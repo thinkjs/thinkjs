@@ -9,11 +9,22 @@ class Commander {
     this.mode = 'normal';
     this.appPath = '';
     this.cwd = process.cwd();
-    this.templatePath = path.join(__dirname, 'template');
     this.projectRootPath = this.cwd;
     this.rest = false;
     this.withoutCompile = false;
     this.bindDirective();
+  }
+
+  templatePath() {
+    return path.join(__dirname, this.typescript ? 'template-ts' : 'template');
+  }
+
+  isTypescript() {
+    return this.typescript || helper.isFile('tsconfig.json');
+  }
+
+  getExt() {
+    return this.isTypescript() ? 'ts' : 'js';
   }
 
   parseArgv(argv) {
@@ -103,11 +114,11 @@ class Commander {
     this.mkdir(path.dirname(target));
 
     // if source file is not exist
-    if (!helper.isFile(this.templatePath + path.sep + source)) {
+    if (!helper.isFile(this.templatePath() + path.sep + source)) {
       return;
     }
 
-    let content = fs.readFileSync(this.templatePath + path.sep + source, 'utf8');
+    let content = fs.readFileSync(this.templatePath() + path.sep + source, 'utf8');
     // replace content 
     if (helper.isObject(replace)) {
       for (const key in replace) {
@@ -197,7 +208,12 @@ class Commander {
    * @return {}             []
    */
   _copyWwwFiles() {
+    
     this.mkdir(this.projectRootPath);
+
+    if(this.isTypescript()) {
+      this.copyFile('tsconfig.json', this.projectRootPath + '/tsconfig.json');
+    }
 
     if (this.withoutCompile) {
       this.copyFile('package.wc.json', this.projectRootPath + '/package.json');
@@ -239,15 +255,16 @@ class Commander {
    * @return {}             []
    */
   _copyCommonConfigFiles() {
+    const ext = this.getExt();
     const rootPath = this.getPath('common', 'config');
     this.mkdir(rootPath);
 
-    this.copyFile('src/config/config.js', rootPath + '/config.js', false);
-    this.copyFile('src/config/adapter.js', rootPath + '/adapter.js');
-    this.copyFile('src/config/config.production.js', rootPath + '/config.production.js');
-    this.copyFile('src/config/extend.js', rootPath + '/extend.js');
-    this.copyFile('src/config/middleware.js', rootPath + '/middleware.js');
-    this.copyFile('src/config/router.js', rootPath + '/router.js');
+    this.copyFile(`src/config/config.${ext}`, rootPath + `/config.${ext}`, false);
+    this.copyFile(`src/config/adapter.${ext}`, rootPath + `/adapter.${ext}`);
+    this.copyFile(`src/config/config.production.${ext}`, rootPath + `/config.production.${ext}`);
+    this.copyFile(`src/config/extend.${ext}`, rootPath + `/extend.${ext}`);
+    this.copyFile(`src/config/middleware.${ext}`, rootPath + `/middleware.${ext}`);
+    this.copyFile(`src/config/router.${ext}`, rootPath + `/router.${ext}`);
   }
 
   /**
@@ -255,11 +272,13 @@ class Commander {
    * @return {}             []
    */
   _copyCommonBootstrapFiles() {
+
+    const ext = this.getExt();
     const rootPath = this.getPath('common', 'bootstrap');
     this.mkdir(rootPath);
 
-    this.copyFile('src/bootstrap/master.js', rootPath + '/master.js');
-    this.copyFile('src/bootstrap/worker.js', rootPath + '/worker.js');
+    this.copyFile(`src/bootstrap/master.${ext}`, rootPath + `/master.${ext}`);
+    this.copyFile(`src/bootstrap/worker.${ext}`, rootPath + `/worker.${ext}`);
   }
 
   /**
@@ -268,6 +287,7 @@ class Commander {
    * @return {}             []
    */
   _createModule(m) {
+    const ext = this.getExt();
     if (this.mode !== 'module' && m !== 'home') {
       this.log(colors => {
         return colors.red('app mode is not module, can not create module.\n');
@@ -284,23 +304,23 @@ class Commander {
     // config files
     const configPath = this.getPath(m, 'config');
     this.mkdir(configPath);
-    this.copyFile('src/config/config.js', configPath + '/config.js', false);
+    this.copyFile(`src/config/config.${ext}`, configPath + `/config.${ext}`, false);
 
     // controller files
     const controllerPath = this.getPath(m, 'controller');
     this.mkdir(controllerPath);
-    this.copyFile('src/controller/base.js', controllerPath + '/base.js');
-    this.copyFile('src/controller/index.js', controllerPath + '/index.js');
+    this.copyFile(`src/controller/base.${ext}`, controllerPath + `/base.${ext}`);
+    this.copyFile(`src/controller/index.${ext}`, controllerPath + `/index.${ext}`);
 
     // logic files
     const logicPath = this.getPath(m, 'logic');
     this.mkdir(logicPath);
-    this.copyFile('src/logic/index.js', logicPath + '/index.js');
+    this.copyFile(`src/logic/index.${ext}`, logicPath + `/index.${ext}`);
 
     // model files
     const modelPath = this.getPath(m, 'model');
     this.mkdir(modelPath);
-    this.copyFile('src/model/index.js', modelPath + '/index.js', false);
+    this.copyFile(`src/model/index.${ext}`, modelPath + `/index.${ext}`, false);
 
     // view files
     const viewPath = this.getProjectViewPath(m);
@@ -326,7 +346,7 @@ class Commander {
     if (/\.js$/.test(name)) {
       name = name.slice(0, -3);
     }
-    if (this.mode === 'normal') return {m: '', name};
+    if (this.mode === 'normal') return { m: '', name };
     name = name.split('/');
     let m = 'common';
     if (name.length >= 2) {
@@ -338,7 +358,7 @@ class Commander {
     if (!this.isModuleExist(m)) {
       this.createModule(m);
     }
-    return {m, name};
+    return { m, name };
   }
   /**
    * getPrefix form name
@@ -364,7 +384,7 @@ class Commander {
    * @return {string} path     - 模板文件的绝对路径
    */
   getTplFilePath(filePath) {
-    return path.resolve(this.templatePath, filePath);
+    return path.resolve(this.templatePath(), filePath);
   }
   /**
    * 
@@ -385,30 +405,30 @@ class Commander {
    */
   createController(controller) {
     this._checkEnv();
-
-    const {m, name} = this.parseCSMName(controller);
+    const ext = this.getExt();
+    const { m, name } = this.parseCSMName(controller);
 
     const controllerPath = this.getPath(m, 'controller');
 
     const prefix = this.getPrefix(name);
 
-    const baseTplPath = this.getTplFilePath('src/controller/index_tpl.js');
-    const restTplPath = this.getTplFilePath('src/controller/restIndex_tpl.js');
+    const baseTplPath = this.getTplFilePath(`src/controller/index_tpl.${ext}`);
+    const restTplPath = this.getTplFilePath(`src/controller/restIndex_tpl.${ext}`);
 
-    const baseGenPath = this.getTplFilePath('src/controller/index_gen.js');
-    const restGenPath = this.getTplFilePath('src/controller/restIndex_gen.js');
+    const baseGenPath = this.getTplFilePath(`src/controller/index_gen.${ext}`);
+    const restGenPath = this.getTplFilePath(`src/controller/restIndex_gen.${ext}`);
 
     if (this.rest) {
       this.replaceFileContent(restTplPath, restGenPath, '{path}', prefix);
-      this.copyFile('src/controller/rest.js', controllerPath + '/rest.js', false);
-      this.copyFile('src/controller/restIndex_gen.js', controllerPath + '/' + name + '.js');
+      this.copyFile(`src/controller/rest.${ext}`, controllerPath + `/rest.${ext}`, false);
+      this.copyFile(`src/controller/restIndex_gen.${ext}`,`${controllerPath}/${name}.${ext}`);
     } else {
       this.replaceFileContent(baseTplPath, baseGenPath, '{path}', prefix);
-      this.copyFile('src/controller/index_gen.js', controllerPath + '/' + name + '.js');
+      this.copyFile(`src/controller/index_gen.${ext}`, `${controllerPath}/${name}.${ext}`);
     }
 
     const logicPath = this.getPath(m, 'logic');
-    this.copyFile('src/logic/index.js', logicPath + '/' + name + '.js');
+    this.copyFile(`src/logic/index.${ext}`, `${logicPath}/${name}.${ext}`);
 
     console.log();
   }
@@ -421,10 +441,11 @@ class Commander {
   createService(service) {
     this._checkEnv();
 
-    const {m, name} = this.parseCSMName(service);
+    const ext = this.getExt();
+    const { m, name } = this.parseCSMName(service);
 
     const servicePath = this.getPath(m, 'service');
-    this.copyFile('src/service/index.js', servicePath + '/' + name + '.js');
+    this.copyFile(`src/service/index.${ext}`, `${servicePath}/${name}.${ext}`);
 
     console.log();
   }
@@ -437,10 +458,11 @@ class Commander {
   createModel(model) {
     this._checkEnv();
 
-    const {m, name} = this.parseCSMName(model);
+    const ext = this.getExt();
+    const { m, name } = this.parseCSMName(model);
 
     const modelPath = this.getPath(m, 'model');
-    this.copyFile('src/model/index.js', modelPath + '/' + name + '.js');
+    this.copyFile(`src/model/index.${ext}`, `${modelPath}/${name}.${ext}`);
 
     console.log();
   }
@@ -452,10 +474,10 @@ class Commander {
    */
   createMiddleware(middleware) {
     this._checkEnv();
+    const ext = this.getExt();
     const midlewarePath = this.getPath('common', 'middleware');
-    const filepath = midlewarePath + '/' + middleware + '.js';
     this.mkdir(midlewarePath);
-    this.copyFile('src/middleware/base.js', filepath);
+    this.copyFile(`src/middleware/base.${ext}`, `${midlewarePath}/${middleware}.${ext}`);
 
     console.log();
   }
@@ -470,12 +492,13 @@ class Commander {
 
     adapter = adapter.split('/');
 
+    const ext = this.getExt();
     const type = adapter[0];
     const name = adapter[1] || 'base';
 
     const adapterPath = this.getPath('common', 'adapter');
 
-    this.copyFile('src/adapter/base.js', adapterPath + '/' + type + '/' + name + '.js');
+    this.copyFile(`src/adapter/base.${ext}`, `${adapterPath}/${type}/${name}.${ext}`);
 
     console.log();
   }
@@ -564,6 +587,10 @@ class Commander {
     });
     commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is normal, using in `new` command', m => {
       this.mode = m;
+    });
+
+    commander.option('-t, --typescript', 'use typescript, use in new', () => {
+      this.typescript = true;
     });
 
     // create project
