@@ -1,6 +1,6 @@
 const util = require('./util.js');
 const cluster = require('cluster');
-const assert = require('assert');
+const helper = require('think-helper');
 const AgentClient = require('./agent_client.js');
 
 const KEEP_ALIVE = Symbol('think-graceful-keepalive');
@@ -9,11 +9,13 @@ const KEEP_ALIVE = Symbol('think-graceful-keepalive');
  * default options
  */
 const defaultOptions = {
-  debug: false,
-  logger: console.error.bind(console),
-  disableKeepAlive: false, // disabled connect keep alive
-  onUncaughtException: () => {},
-  onUnhandledRejection: () => {},
+  port: 0,
+  host: '',
+  sticky: false,
+  createServer: () => {},
+  logger: () => {},
+  onUncaughtException: () => false, // onUncaughtException event handle
+  onUnhandledRejection: () => false, // onUnhandledRejection event handle
   processKillTimeout: 10 * 1000 // 10s
 };
 /**
@@ -56,19 +58,18 @@ class Worker {
         logger(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
         process.exit(1);
       }, killTimeout);
-      timer.unref();
+      timer.unref && timer.unref();
     }
     const worker = cluster.worker;
-    worker.on('disconnect', () => {
-      logger(`process exit by disconnect event, pid: ${process.pid}`);
-      process.exit(0);
-    });
-
     const server = this.options.server;
     logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
     server.close(() => {
       logger(`server closed, pid: ${process.pid}`);
-      worker.disconnect();
+      try {
+        worker.disconnect();
+      } catch (e) {
+        logger(`already disconnect, pid:${process.pid}`);
+      }
     });
   }
   /**
@@ -105,10 +106,11 @@ class Worker {
     let errTimes = 0;
     process.on('uncaughtException', err => {
       errTimes++;
-      this.options.onUncaughtException(err);
       this.options.logger(`uncaughtException, times: ${errTimes}, pid: ${process.pid}`);
-      this.options.logger(err.stack);
-      if (errTimes === 1 && !this.options.debug) {
+      this.options.logger(err);
+
+      const flag = this.options.onUncaughtException(err);
+      if (errTimes === 1 && flag) {
         this.disconnectWorker(true);
       }
     });
@@ -120,22 +122,55 @@ class Worker {
     let rejectTimes = 0;
     process.on('unhandledRejection', err => {
       rejectTimes++;
-      this.options.onUnhandledRejection(err);
       this.options.logger(`unhandledRejection, times: ${rejectTimes}, pid: ${process.pid}`);
+      this.options.logger(err);
+      const flag = this.options.onUnhandledRejection(err);
+      if (rejectTimes === 1 && flag) {
+        this.disconnectWorker(true);
+      }
     });
+  }
+  /**
+   * listen port
+   */
+  listen() {
+    const deferred = helper.defer();
+    this.server = this.options.createServer();
+    if (!this.options.sticky) {
+      this.server.listen(this.options.port, this.options.host, () => {
+        deferred.resolve();
+      });
+    } else {
+      process.on('message', (message, socket) => {
+        if (message !== util.THINK_STICKY_CLUSTER) return;
+        // emulate a connection event on the server by emitting the
+        // event with the connection master sent to us
+        this.server.emit('connection', socket);
+        // resume as we already catched the conn
+        socket.resume();
+      });
+      // start on random port, accept conn from this host only
+      this.server.listen(0, '127.0.0.1', () => {
+        deferred.resolve();
+      });
+    }
+    return deferred.promise;
   }
   /**
    * capture events
    */
   captureEvents() {
-    assert(this.options.server, 'options.server required');
     this.uncaughtException();
     this.unhandledRejection();
-    if (this.options.disableKeepAlive) {
-      this.disableKeepAlive();
-    }
     this.captureReloadSignal();
     AgentClient.getInstance();
+  }
+  /**
+   * start server
+   */
+  startServer() {
+    this.captureEvents();
+    return this.listen();
   }
   /**
    * get workers

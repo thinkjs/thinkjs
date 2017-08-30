@@ -12,6 +12,7 @@ exports.THINK_GRACEFUL_FORK = 'think-graceful-fork';
 exports.THINK_GRACEFUL_DISCONNECT = 'think-graceful-disconnect';
 exports.THINK_AGENT_OPTIONS = 'think-agent-options';
 exports.THINK_AGENT_CLOSED = 'think-agent-closed';
+exports.THINK_STICKY_CLUSTER = 'think-sticky-cluster';
 
 exports.PIN = 'PIN';
 
@@ -58,14 +59,16 @@ exports.forkWorker = function(env = {}) {
   worker.on('message', message => {
     if (worker.hasGracefulReload) return;
     if (message === exports.THINK_GRACEFUL_DISCONNECT) {
-      debug(`refork worker, receive message 'think-graceful-disconnect', pid: ${process.pid}`);
+      debug(`refork worker, receive message 'think-graceful-disconnect'`);
       worker.hasGracefulReload = true;
-      exports.forkWorker(env);
+      exports.forkWorker(env).then(() => {
+        worker.send(util.THINK_GRACEFUL_FORK);
+      });
     }
   });
   worker.once('exit', (code, signal) => {
     if (worker.hasGracefulReload) return;
-    debug(`worker exit, code:${code}, signal:${signal}, pid: ${process.pid}`);
+    debug(`worker exit, code:${code}, signal:${signal}`);
     exports.forkWorker(env);
   });
   worker.once('listening', address => {
