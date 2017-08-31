@@ -119,7 +119,7 @@ function mockAssert(assertCallParams = []) {
   });
 }
 
-test.serial('normal case', async t => {
+test.serial('normal case 7', async t => {
   let unhandledRejectionDid = false;
   const config = {
     server:{
@@ -156,7 +156,7 @@ test.serial('normal case', async t => {
 
 });
 
-test.serial('normal case', async t => {
+test.serial('normal case 8', async t => {
   mockCluster();
 
   const config = {
@@ -186,16 +186,18 @@ test.serial('normal case', async t => {
   const cluster = require('cluster');
   const Worker = getWorker();
   let instance = new Worker(config);
+  instance.server = config.server;
   cluster.fork();
   instance.disconnectWorker(true);
   cluster.trigger('message','think-graceful-fork');
   config.server.trigger('request')
+  
 
   t.is(config.server.res.Connection,'close');
 });
 
 
-test.serial('normal case', async t => {
+test.serial('normal case 3', async t => {
   mockProcess();
   mockCluster();
 
@@ -227,11 +229,12 @@ test.serial('normal case', async t => {
   const cluster = require('cluster');
   const Worker = getWorker();
   let instance = new Worker(config);
+  instance.server = config.server;
   cluster.fork();
   instance.disconnectWorker(false);
 });
 
-test.serial('normal case', async t => {
+test.serial('normal case 2', async t => {
   mockCluster();
 
   const config = {
@@ -376,7 +379,7 @@ test.serial('captureReloadSignal case', async t => {
   t.is(process['ismessage'],true)
 });
 
-test.serial('closeServer case', async t => {
+test.serial('closeServer case 1', async t => {
   mockCluster();
   mockProcess();
   const config = {
@@ -402,6 +405,7 @@ test.serial('closeServer case', async t => {
 
   const Worker = getWorker();
   let instance = new Worker(config);
+  instance.server = config.server;
 
   instance.closeServer();
 
@@ -410,7 +414,7 @@ test.serial('closeServer case', async t => {
   t.is(process.isKilled,undefined)
 });
 
-test.serial('closeServer case', async t => {
+test.serial('closeServer case 4', async t => {
   mockCluster();
   mockProcess();
   const config = {
@@ -437,6 +441,7 @@ test.serial('closeServer case', async t => {
 
   const Worker = getWorker();
   let instance = new Worker(config);
+  instance.server = config.server;
 
   instance.closeServer();
 
@@ -445,7 +450,7 @@ test.serial('closeServer case', async t => {
   t.is(process.isKilled,true)
 });
 
-test.serial('closeServer case', async t => {
+test.serial('closeServer case 2', async t => {
   mockCluster();
   mockProcess();
   const config = {
@@ -472,6 +477,7 @@ test.serial('closeServer case', async t => {
 
   const Worker = getWorker();
   let instance = new Worker(config);
+  instance.server = config.server;
 
   instance.closeServer();
 
@@ -480,7 +486,7 @@ test.serial('closeServer case', async t => {
   t.is(process.isKilled,true)
 });
 
-test.serial('closeServer case', async t => {
+test.serial('closeServer case 3', async t => {
   mockCluster();
   mockProcess();
   const config = {
@@ -508,6 +514,7 @@ test.serial('closeServer case', async t => {
   const cluster = require('cluster');
   const Worker = getWorker();
   let instance = new Worker(config);
+  instance.server = config.server;
 
   instance.closeServer();
 
@@ -516,7 +523,7 @@ test.serial('closeServer case', async t => {
 
 });
 
-test.serial('closeServer case', async t => {
+test.serial('closeServer case 5', async t => {
   mockCluster();
   mockProcess();
   const config = {

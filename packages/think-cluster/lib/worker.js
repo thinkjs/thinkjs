@@ -36,8 +36,7 @@ class Worker {
   disableKeepAlive() {
     if (this[KEEP_ALIVE]) return;
     this[KEEP_ALIVE] = true;
-    const server = this.options.server;
-    server.on('request', (req, res) => {
+    this.server.on('request', (req, res) => {
       req.shouldKeepAlive = false;
       res.shouldKeepAlive = false;
       if (!res.headersSent) {
@@ -61,9 +60,8 @@ class Worker {
       timer.unref && timer.unref();
     }
     const worker = cluster.worker;
-    const server = this.options.server;
-    logger(`start close server, pid: ${process.pid}, connections: ${server._connections}`);
-    server.close(() => {
+    logger(`start close server, pid: ${process.pid}`);
+    this.server.close(() => {
       logger(`server closed, pid: ${process.pid}`);
       try {
         worker.disconnect();
