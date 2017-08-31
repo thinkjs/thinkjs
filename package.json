@@ -61,8 +61,7 @@
     "think-resource": "^1.0.0",
     "think-router": "^1.0.0",
     "think-trace": "^1.0.2",
-    "think-validator": "^1.0.2",
-    "@types/koa": "*"
+    "think-validator": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.0",
