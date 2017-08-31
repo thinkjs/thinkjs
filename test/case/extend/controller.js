@@ -237,7 +237,7 @@ test('referer method', async t => {
 
 test('redirect method', async t => {
   const url = 'https://thinkjs.org/';
-  t.deepEqual(controller.redirect(url), url);
+  t.deepEqual(controller.redirect(url), false);
 });
 
 test('controller method', async t => {
