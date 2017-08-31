@@ -6,7 +6,17 @@ const notifier = require('node-notifier');
 const instance = new Application({
   ROOT_PATH: __dirname,
   watcher: watcher,
-  transpiler: [typescript],
+  transpiler: [typescript, {
+    compilerOptions: {
+      module: 'commonjs',
+      target: 'es2016',
+      sourceMap: true,
+      noImplicitAny: true,
+      removeComments: true,
+      preserveConstEnums: true,
+      sourceMap: true
+    }
+  }],
   notifier: notifier.notify.bind(notifier),
   env: 'development'
 });

@@ -17,7 +17,7 @@
     "think-view": "^1.0.0",
     "think-view-nunjucks": "^1.0.1",
     "think-model-mysql": "^1.0.0",
-    "thinkjs": "^3.0.0"
+    "thinkjs": "^3.1.0"
   },
   "devDependencies": {
     "@types/koa": "*",
