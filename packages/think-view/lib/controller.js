@@ -51,6 +51,6 @@ module.exports = {
   display(file, config) {
     return this.render(file, config).then(content => {
       this.ctx.body = content;
-    });
+    }).then(() => false);
   }
 };
