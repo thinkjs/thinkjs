@@ -97,8 +97,8 @@ module.exports = class extends think.Mongoose {
       array:      [],
       ofMixed:    [think.Mongoose.Mixed],
       ofObjectId: [think.Mongoose.ObjectId],
-      ofArrays:   [[]]
-      ofArrayOfNumbers: [[Number]]
+      ofArrays:   [[]],
+      ofArrayOfNumbers: [[Number]],
       nested: {
         stuff: { type: String, lowercase: true, trim: true }
       }
