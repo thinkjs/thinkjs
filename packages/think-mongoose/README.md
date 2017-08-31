@@ -7,7 +7,7 @@
 
 Wrap mongoose for ThinkJS 3.x
 
-## Install 
+## Install
 
 ```sh
 npm install think-mongoose --save
@@ -17,7 +17,7 @@ npm install think-mongoose --save
 
 ### Config extend
 
-Change file `src/config/extend.js` (in multi module project, file is `src/common/config/extend.js`), add config: 
+Change file `src/config/extend.js` (in multi module project, file is `src/common/config/extend.js`), add config:
 
 ```js
 const mongoose = require('think-mongoose');
@@ -53,12 +53,15 @@ exports.model = {
     user: '',
     password: '',
     database: 'test',
+    useCollectionPlural: false,
     options: {}
   }
 }
 ```
 
-or config connection string: 
+By default mongoose pluralizes the model name, if you don't want the default action, set `useCollectionPlural: false`.
+
+or config connection string:
 
 ```js
 exports.model = {
@@ -66,7 +69,7 @@ exports.model = {
   mongoose: {
     connectionString: 'mongodb://user:pass@localhost:port/database',
     options: {
-      config: { 
+      config: {
         autoIndex: false
       }
     }

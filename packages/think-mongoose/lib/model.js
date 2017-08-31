@@ -10,15 +10,14 @@ const models = {};
 
 class Mongoose {
   /**
-   * 
-   * @param {String} modelName 
-   * @param {Object} config 
-   * @param {String} name 
+   *
+   * @param {String} modelName
+   * @param {Object} config
+   * @param {String} name
    */
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
-
     if (models[name]) return models[name];
 
     const socket = Socket.getInstance(this.config);
@@ -28,11 +27,11 @@ class Mongoose {
     if (!(schema instanceof mongoose.Schema)) {
       schema = new mongoose.Schema(schema);
     }
-    const model = connection.model(this.tableName, schema);
-    const Class = class extends model {};
-    extendClassMethods(Class, this);
-    models[name] = Class;
-    return Class;
+    const model = connection.model(this.tableName, schema, config.useCollectionPlural ? null : this.tableName);
+    this.modelClass = class extends model {};
+    extendClassMethods(this.modelClass, this);
+    models[name] = this.modelClass;
+    return this.modelClass;
   }
   /**
    * get table prefix
@@ -60,7 +59,7 @@ class Mongoose {
   }
   /**
    * get model instance
-   * @param {String} name 
+   * @param {String} name
    */
   mongoose(name) {
     const ModelClass = this.models[name] || Mongoose;
