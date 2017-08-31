@@ -23,7 +23,7 @@ Change file `src/config/extend.js` (in multi module project, file is `src/common
 const mongoose = require('think-mongoose');
 
 module.exports = [
-  mongoose
+  mongoose(think.app)
 ]
 ```
 
