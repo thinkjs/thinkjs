@@ -17,7 +17,7 @@ const cookie = require('think-session-cookie');
 exports.session = {
   type: 'cookie',
   cookie: {
-
+    handle: cookie
   }
 }
 ```
