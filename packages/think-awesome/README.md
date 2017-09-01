@@ -62,6 +62,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-ueditor](https://github.com/uedkx/think-ueditor) Ueditor configuration for ThinkJS 3
 * [think-redis](https://github.com/thinkjs/think-redis) Wrap [ioredis](https://github.com/luin/ioredis)
 * [think-svg-captcha](https://github.com/thinkjs/think-svg-captcha) Generate svg captcha.
+* [think-memcache](https://github.com/thinkjs/think-memcache) Wrap memcache.
 
 ## Projects by ThinkJS
 
