@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/think-session.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/think-session)
 
 
-Session for ThinkJS 3.x, **it's already built in framework**
+Session for ThinkJS 3.x.
 
 Add `session` method for controller/context.
 
