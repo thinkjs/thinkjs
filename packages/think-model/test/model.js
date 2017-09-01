@@ -758,7 +758,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
     const model = new Model('post', {handle: new Function()});
     model.db(db);
     model.getField = function(sql) {
-      t.is(sql, `${logic.toUpperCase()}(id) AS think_${logic}`);
+      t.is(sql, `${logic.toUpperCase()}(*) AS think_${logic}`);
     };
     model[logic]();
   });
@@ -767,7 +767,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
     model.db(db);
     model._pk = 'post_id';
     model.getField = function(sql) {
-      t.is(sql, `${logic.toUpperCase()}(post_id) AS think_${logic}`);
+      t.is(sql, `${logic.toUpperCase()}(*) AS think_${logic}`);
     };
     model[logic]();
   });
