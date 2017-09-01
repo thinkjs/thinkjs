@@ -35,11 +35,6 @@ function sleep(dur = 100) {
   });
 }
 
-function mockDebug(param = []) {
-  const debug1 = str => err => param.push(err);
-  mock('debug', debug1);
-}
-
 test.serial('1.options without jwt secret', t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
@@ -100,7 +95,7 @@ test.serial('2.set and get session data without maxAge', t => {
   });
 });
 
-test.serial('3.set and get session data with maxAge', t => {
+test.serial('3.set and get session data with maxAge', async t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
     const ctx = mockContext();
@@ -124,9 +119,8 @@ test.serial('3.set and get session data with maxAge', t => {
     ctx.cookie(options.tokenName, token);
     await sleep(1100);
     const jwtSession1 = new JWTSession(options, ctx);
-    const value1 = await jwtSession1.get('abc');
-    t.is(value1, undefined);
-
+    const error = await t.throws(jwtSession1.get('abc'));
+    t.is(error.message, 'jwt expired');
     resolve();
   });
 });
@@ -135,8 +129,6 @@ test.serial('4.set and get session data when JsonWebTokenError', t => {
   return new Promise(async function(resolve, reject) {
     const JWTSession = mockRequire();
     const ctx = mockContext();
-    const debugParam = [];
-    mockDebug(debugParam);
 
     const options = {
       secret: 'secret'
@@ -144,13 +136,16 @@ test.serial('4.set and get session data when JsonWebTokenError', t => {
 
     ctx.cookie('jwt', 'gg');
     const jwtSession = new JWTSession(options, ctx);
-    await jwtSession.set('abc', '123');
+
+    const error = await t.throws(jwtSession.set('abc', '123'));
+    t.is(error.message, 'jwt malformed');
 
     const jwtSession1 = new JWTSession(options, ctx);
     jwtSession1.encode = undefined;
-    jwtSession1.set();
 
-    t.is(debugParam.length, 0);
+    const error1 = await t.throws(jwtSession1.set());
+    t.is(error1.message, 'jwt malformed');
+
     resolve();
   });
 });

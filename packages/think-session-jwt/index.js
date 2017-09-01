@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const helper = require('think-helper');
 const ms = require('ms');
 const assert = require('assert');
-const debug = require('debug')('think-session-jwt');
 
 const sign = helper.promisify(jwt.sign, jwt);
 const verify = helper.promisify(jwt.verify, jwt);
@@ -47,12 +46,8 @@ class JWTSession {
           break;
       }
       if (token) {
-        try {
-          this.decode = await verify(token, this.options.secret, this.verifyOptions);
-          this.fresh = false;
-        } catch (err) {
-          debug(err);
-        }
+        this.decode = await verify(token, this.options.secret, this.verifyOptions);
+        this.fresh = false;
       }
     }
   }
@@ -61,14 +56,10 @@ class JWTSession {
    * auto save session data when it is change
    */
   async autoSave() {
-    try {
-      const maxAge = this.options.maxAge;
-      this.signOptions.expiresIn = maxAge ? ms(maxAge) : '1d';
-      const token = await sign(this.encode, this.options.secret, this.signOptions);
-      return token;
-    } catch (err) {
-      debug(err);
-    }
+    const maxAge = this.options.maxAge;
+    this.signOptions.expiresIn = maxAge ? ms(maxAge) : '1d';
+    const token = await sign(this.encode, this.options.secret, this.signOptions);
+    return token;
   }
 
   /**

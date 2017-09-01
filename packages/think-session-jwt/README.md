@@ -40,18 +40,6 @@ exports.session = {
 1. session数据从token中获取，通过配置tokenType指定token获取方式。
 2. 设置session数据后会返回token字符串。
 
-### Debug
-```bash
-DEBUG=think-session-jwt
-
-# windows
-set DEBUG=think-session-jwt
-
-# powershell
-$env:DEBUG="think-session-jwt"
-
-```
-
 ### Sign and verify options
 
 使用[node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)的配置。
