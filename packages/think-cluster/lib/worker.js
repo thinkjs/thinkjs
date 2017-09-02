@@ -2,7 +2,7 @@ const util = require('./util.js');
 const cluster = require('cluster');
 const helper = require('think-helper');
 const AgentClient = require('./agent_client.js');
-
+const debug = require('debug')('think-cluster');
 const KEEP_ALIVE = Symbol('think-graceful-keepalive');
 
 /**
@@ -14,8 +14,8 @@ const defaultOptions = {
   sticky: false,
   createServer: () => {},
   logger: () => {},
-  onUncaughtException: () => false, // onUncaughtException event handle
-  onUnhandledRejection: () => false, // onUnhandledRejection event handle
+  onUncaughtException: () => true, // onUncaughtException event handle
+  onUnhandledRejection: () => true, // onUnhandledRejection event handle
   processKillTimeout: 10 * 1000 // 10s
 };
 /**
@@ -49,24 +49,22 @@ class Worker {
    */
   closeServer() {
     this.disableKeepAlive();
-    const logger = this.options.logger;
-
     const killTimeout = this.options.processKillTimeout;
     if (killTimeout) {
       const timer = setTimeout(() => {
-        logger(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
+        debug(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
         process.exit(1);
       }, killTimeout);
       timer.unref && timer.unref();
     }
     const worker = cluster.worker;
-    logger(`start close server, pid: ${process.pid}`);
+    debug(`start close server, pid: ${process.pid}`);
     this.server.close(() => {
-      logger(`server closed, pid: ${process.pid}`);
+      debug(`server closed, pid: ${process.pid}`);
       try {
         worker.disconnect();
       } catch (e) {
-        logger(`already disconnect, pid:${process.pid}`);
+        debug(`already disconnect, pid:${process.pid}`);
       }
     });
   }
