@@ -113,7 +113,7 @@ module.exports = class extends think.Sequel {
 }
 ```
 
-schema's attributes and options will be passed to sequelize's define method:
+Schema's attributes and options will be passed to sequelize's define method. For more model definition see at [http://docs.sequelizejs.com/manual/tutorial/models-definition.html](http://docs.sequelizejs.com/manual/tutorial/models-definition.html);
 
 ```js
 sequelize.define('name', {attributes}, {options})
