@@ -56,10 +56,10 @@ exports.model = {
     options: {
       host: '127.0.0.1',
       dialect: 'mysql',
-      logging: false
-    },
-    schema: {
-      timestamps: false
+      logging: false,
+      define: {
+        timestamps: false
+      }
     }
   },
 }
@@ -76,9 +76,6 @@ exports.model = {
     logConnect: false,
     options: {
       logging: false
-    },
-    schema: {
-      timestamps: false
     }
   }
 }
@@ -103,7 +100,7 @@ module.exports = class extends think.Sequel {
         teamId: think.Sequel.Sequel.BIGINT,
         name: think.Sequel.Sequel.STRING(255),
       },
-      options: { // will merge with schema config of sequel in src/config/adapter.js
+      options: { // will merge with options.define config of sequel in src/config/adapter.js
         timestamps: false,
         freezeTableName: true,
         tableName: 'think_player',
@@ -119,9 +116,9 @@ Schema's attributes and options will be passed to sequelize's define method. For
 sequelize.define('name', {attributes}, {options})
 ```
 
-The schema's `options` will merge with `schema` in `src/config/adapter.js`.
+The schema's `options` will merge with `options.define` in `src/config/adapter.js`.
 
-If you want every model's `timestamps: false`, you can write in sequel's `schema` config of `src/config/adapter.js`.
+If you want every model's `timestamps: false`, you can write in sequel's `options.define` config of `src/config/adapter.js`.
 
 And you can rewrite common schema config in every model's schema.
 
