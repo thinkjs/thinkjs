@@ -111,6 +111,11 @@ module.exports = class extends think.Sequel {
 }
 ```
 
+// schema's attributes and options will be passed to sequelize's define method
+```js
+sequelize.define('name', {attributes}, {options})
+```
+
 The schema's `options` will merge with `schema` in `src/config/adapter.js`.
 
 If you want every model's `timestamps: false`, you can write in sequel's `schema` config of `src/config/adapter.js`.
