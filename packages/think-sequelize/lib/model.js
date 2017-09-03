@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-03 20:30:11
+* @Last Modified time: 2017-09-03 21:38:17
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -31,7 +31,7 @@ class Model {
         relations: []
       };
     }
-    // schema.options = Object.assign({}, this.config.schema, schema.options);
+    schema.options = Object.assign({}, schema.options);
     this.schemaOptions = schema;
     debug(`ModelName: ${modelName}, Schema: ${JSON.stringify(this.schemaOptions)}`);
 
