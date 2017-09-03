@@ -1,7 +1,7 @@
 {
   "name": "think-sequelize",
   "description": "Sequelize for ThinkJS",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "lushijie1218",
     "email": "lushijie1218@126.com"
