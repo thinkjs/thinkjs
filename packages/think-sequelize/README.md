@@ -3,7 +3,6 @@
 [![npm](https://img.shields.io/npm/v/think-sequelize.svg?style=flat-square)]()
 [![Travis](https://img.shields.io/travis/thinkjs/think-sequelize.svg?style=flat-square)]()
 [![Coveralls](https://img.shields.io/coveralls/thinkjs/think-sequelize/master.svg?style=flat-square)]()
-[![David](https://img.shields.io/david/thinkjs/think-sequelize.svg?style=flat-square)]()
 
 Wrap sequelize for ThinkJS 3.x
 
@@ -222,7 +221,7 @@ module.exports = class extends think.Sequel {
 
 NOTE: If you want use sequelize model in `schema`, you should use `think.sequel` method instead of `this.sequel`, because `this.sequel` has't been initialized at this time.
 
-Default `tableName` equal `db prefix` +_+ `model name`, If you want custom `tableName`:
+Default `tableName` equal `db prefix` + '_' + `model name`, If you want custom `tableName`:
 
 ```js
 get schema () {
@@ -404,5 +403,5 @@ module.exports = class extends think.Sequel {
 
 ### CURD
 
-You can use sequelize's model methods to execute ORM. Read documents [http://docs.sequelizejs.com/](http://docs.sequelizejs.com/) get more information.
+You can use sequelize's model methods to execute ORM. Read documents [http://docs.sequelizejs.com/](http://docs.sequelizejs.com/) to get more information.
 
