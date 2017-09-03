@@ -84,6 +84,8 @@ exports.model = {
 }
 ```
 
+For more options see at [http://docs.sequelizejs.com/class/lib/sequelize.js~Sequelize.html](http://docs.sequelizejs.com/class/lib/sequelize.js~Sequelize.html).
+
 ### Create Model Class
 
 Create model class extends from `think.Sequel`:
