@@ -6,7 +6,7 @@ module.exports = app => {
   function model(name, config, m = 'common') {
     const models = app.modules.length ? (app.models[m] || {}) : app.models;
     const Cls = models[name] || Model;
-    const modelName = path.basename(name);
+    const modelName = name ? path.basename(name) : name;
     const instance = new Cls(modelName, config);
     // add models in config, it's need in model when get relation model instance
     instance.models = models;
