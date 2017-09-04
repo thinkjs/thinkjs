@@ -26,7 +26,7 @@
 ## 安装 ThinkJS
 
 ```sh
-npm install -g thinkjs
+npm install -g thinkjs-cli
 ```
 
 ## 创建项目
