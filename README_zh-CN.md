@@ -16,7 +16,7 @@
       <img src="https://img.shields.io/coveralls/thinkjs/thinkjs.svg?style=flat-square" alt="Coverage Status" />
     </a>
     <a href="https://david-dm.org/thinkjs/thinkjs">
-      <img src="https://david-dm.org/thinkjs/thinkjs.svg" alt="Dependency Status" />
+      <img src="https://img.shields.io/david/thinkjs/thinkjs.svg?style=flat-square" alt="Dependency Status" />
     </a>
   </div>
 
@@ -26,13 +26,13 @@
 ## 安装 ThinkJS
 
 ```sh
-npm install -g thinkjs
+npm install -g think-cli
 ```
 
 ## 创建项目
 
 ```sh
-thinkjs new project_path --es6
+thinkjs new demo
 ```
 
 ## 安装依赖
@@ -50,13 +50,10 @@ npm start
 启动后，会看到类似下面的信息：
 
 ```text
-[2016-01-12 15:09:51] [THINK] Server running at http://127.0.0.1:8360/
-[2016-01-12 15:09:51] [THINK] ThinkJS Version: 2.1.0
-[2016-01-12 15:09:51] [THINK] Cluster Status: closed
-[2016-01-12 15:09:51] [THINK] WebSocket Status: closed
-[2016-01-12 15:09:51] [THINK] File Auto Compile: true
-[2016-01-12 15:09:51] [THINK] File Auto Reload: true
-[2016-01-12 15:09:51] [THINK] App Enviroment: development
+[2017-05-22 15:54:58.281] [INFO] - Server running at http://127.0.0.1:8360
+[2017-05-22 15:54:58.283] [INFO] - ThinkJS version: 3.0.0-alpha1
+[2017-05-22 15:54:58.283] [INFO] - Enviroment: development
+[2017-05-22 15:54:58.284] [INFO] - Workers: 1
 ```
 
 ## 文档
@@ -65,4 +62,4 @@ npm start
 
 ## License
 
-[MIT](https://github.com/75team/thinkjs/blob/master/LICENSE)
+[MIT](https://github.com/thinkjs/thinkjs/blob/master/LICENSE)
