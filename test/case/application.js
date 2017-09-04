@@ -39,16 +39,16 @@ test.serial('runInMaster', t => {
   t.is(app.masterInstance instanceof require('think-cluster').Master,true)
 })
 
-test.serial('runInAgent', t => {
-  mockie.mockCluster(false);
-  mockie.mockThinkCluster({agent:true});
-  mockie.mockThinkMockHttp();
-  const App = getApplication();
-  let app = new App(defaultOption);
-  app.parseArgv = ()=>{return {}};
-  app.run();
-  t.is(require('think-cluster').createdServer,true)
-})
+// test.serial('runInAgent', t => {
+//   mockie.mockCluster(false);
+//   mockie.mockThinkCluster({agent:true});
+//   mockie.mockThinkMockHttp();
+//   const App = getApplication();
+//   let app = new App(defaultOption);
+//   app.parseArgv = ()=>{return {}};
+//   app.run();
+//   t.is(require('think-cluster').createdServer,true)
+// })
 
 test.serial('runInWorker', async t => {
   mockie.mockCluster(false);
@@ -208,15 +208,15 @@ test.serial('run with pm2 cluster mode', t => {
   t.is(err instanceof Error,true);
 })
 
-test.serial('run with exception', t => {
-  mockie.mockCluster(false);
-  mockie.mockThinkCluster({agent:true,isAgent:undefined});
-  mockie.mockThinkMockHttp();
-  const App = getApplication();
-  let app = new App(defaultOption);
-  app.parseArgv = ()=>{return {}};
-  app.run();
-})
+// test.serial('run with exception', t => {
+//   mockie.mockCluster(false);
+//   mockie.mockThinkCluster({agent:true,isAgent:undefined});
+//   mockie.mockThinkMockHttp();
+//   const App = getApplication();
+//   let app = new App(defaultOption);
+//   app.parseArgv = ()=>{return {}};
+//   app.run();
+// })
 
 test.serial('parseArgv with empty args', t => {
   const App = getApplication();
