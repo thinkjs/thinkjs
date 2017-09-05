@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const chalk = require('chalk')
+
+/**
+ * Usage.
+ */
+
+program
+  .usage('')
+  .option('-r, --rest', 'create rest controller')
+  .parse(process.argv)
+
+/**
+ * Help.
+ */
+
+program.on('--help', function () {
+  console.log()
+  console.log('  Examples:')
+  console.log()
+  console.log(chalk.gray('    # create controller'))
+  console.log('    $ thinkjs controller')
+  console.log()
+  console.log(chalk.gray('    # create rest controller'))
+  console.log('    $ thinkjs controller -r')
+  console.log()
+})
+
+if (program.args.length < 1) return program.help()
+
+/**
+ * Padding.
+ */
+
+console.log()
+process.on('exit', function () {
+  console.log()
+})

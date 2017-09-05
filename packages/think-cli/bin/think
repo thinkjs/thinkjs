@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+
+program
+  .version(require('../package.json').version)
+  .usage('<command> [options]')
+  .command('new', 'generate a new project from a template')
+  .command('list', 'list available official templates')
+  .command('module', 'add module')
+  .command('controller', 'add controller')
+  .command('service', 'add service')
+  .command('model', 'add model')
+  .command('middleware', 'add middleware')
+  .command('adapter', 'add adapter')
+  .parse(process.argv)

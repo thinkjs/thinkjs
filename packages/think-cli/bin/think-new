@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const chalk = require('chalk')
+const inquirer = require('inquirer')
+const path = require('path')
+const utils = require('../lib/utils.js')
+const ThinkInit = require('../lib/init.js')
+const os = require('os')
+
+/**
+ * Usage.
+ */
+
+program
+  .usage('<template-name> [project-name]')
+  .option('-c, --clone', 'use git clone')
+  .option('-m, --mode', 'project mode type(normal, module), default is normal')
+  .parse(process.argv)
+
+/**
+ * Help.
+ */
+
+program.on('--help', function () {
+  console.log('  Examples:')
+  console.log()
+  console.log(chalk.gray('    # create a new project with an official template'))
+  console.log('    $ thinkjs new template my-project')
+  console.log()
+  console.log(chalk.gray('    # create a new project straight from a github template'))
+  console.log('    $ thinkjs new username/repo my-project')
+  console.log()
+  console.log(chalk.gray('    # create a new project straight from a local template'))
+  console.log('    $ thinkjs new ~/fs/path/to-custom-template my-project')
+  console.log()
+})
+
+if (program.args.length < 1) return program.help()
+
+/**
+ * Padding.
+ */
+
+console.log()
+process.on('exit', function () {
+  console.log()
+})
+
+/**
+ * Start.
+ */
+
+const template = program.args[0]
+const rawName = program.args[1]
+const isHere = !rawName || rawName === '.'
+const name = isHere ? path.relative('../', process.cwd()) : rawName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', template.replace(/\//g, '-'))
+const targetPath = path.join(process.cwd(), rawName || '.')
+const clone = program.clone || false
+const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone})
+
+if (utils.isExist(targetPath)) {
+  inquirer.prompt([{
+    type: 'confirm',
+    message: isHere
+      ? 'Generate project in current directory?'
+      : 'Target directory exists. Continue?',
+    name: 'ok'
+  }]).then(function (answers) {
+    if (answers.ok) {
+      init.run()
+    }
+  })
+} else {
+  init.run()
+}
