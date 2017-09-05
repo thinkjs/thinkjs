@@ -12,6 +12,7 @@ exports.THINK_RELOAD_SIGNAL = 'think-reload-signal';
 exports.THINK_GRACEFUL_FORK = 'think-graceful-fork';
 exports.THINK_GRACEFUL_DISCONNECT = 'think-graceful-disconnect';
 exports.THINK_STICKY_CLUSTER = 'think-sticky-cluster';
+exports.WORKER_REALOD = WORKER_REALOD;
 
 /**
  * check worker is first

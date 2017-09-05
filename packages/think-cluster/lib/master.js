@@ -2,6 +2,7 @@ const cluster = require('cluster');
 const util = require('./util.js');
 const net = require('net');
 const stringHash = require('string-hash');
+const NEED_KILLED = Symbol('need-killed');
 
 let waitReloadWorkerTimes = 0;
 
@@ -55,9 +56,8 @@ class Master {
    */
   isAliveWorker(worker) {
     const state = worker.state;
-    if (state === 'disconnected' || state === 'dead' || worker.needKilled) {
-      return false;
-    }
+    if (state === 'disconnected' || state === 'dead') return false;
+    if (worker[NEED_KILLED] || worker[util.WORKER_REALOD]) return false;
     return true;
   }
   /**
@@ -89,7 +89,7 @@ class Master {
   killWorker(worker, reload) {
     if (reload) worker.hasGracefulReload = true;
     worker.kill('SIGINT'); // windows don't support SIGQUIT
-    worker.needKilled = true;
+    worker[NEED_KILLED] = true;
     setTimeout(function() {
       if (!worker.isConnected()) return;
       worker.process.kill('SIGINT');

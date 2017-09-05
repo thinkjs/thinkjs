@@ -3,6 +3,7 @@ const cluster = require('cluster');
 const helper = require('think-helper');
 const debug = require('debug')('think-cluster');
 const KEEP_ALIVE = Symbol('think-graceful-keepalive');
+const WORKER_RELOAD = Symbol('worker-reload');
 
 /**
  * default options
@@ -73,9 +74,9 @@ class Worker {
    */
   disconnectWorker(sendSignal) {
     const worker = cluster.worker;
-    // if worker has `hasGracefulReload` flag, return directly
-    if (worker.hasGracefulReload) return;
-    worker.hasGracefulReload = true;
+    // if worker has diconnect, return directly
+    if (worker[WORKER_RELOAD]) return;
+    worker[WORKER_RELOAD] = true;
 
     if (sendSignal) {
       worker.send(util.THINK_GRACEFUL_DISCONNECT);
