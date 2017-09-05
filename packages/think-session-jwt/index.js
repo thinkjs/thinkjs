@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const helper = require('think-helper');
-const ms = require('ms');
 const assert = require('assert');
 
 const sign = helper.promisify(jwt.sign, jwt);
@@ -56,8 +55,6 @@ class JWTSession {
    * auto save session data when it is change
    */
   async autoSave() {
-    const maxAge = this.options.maxAge;
-    this.signOptions.expiresIn = maxAge ? ms(maxAge) : '1d';
     const token = await sign(this.encode, this.options.secret, this.signOptions);
     return token;
   }

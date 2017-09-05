@@ -102,7 +102,9 @@ test.serial('3.set and get session data with maxAge', async t => {
     const options = {
       tokenName: cookieName[2],
       secret: 'secret',
-      maxAge: 1000
+      sign: {
+        expiresIn: '1s'
+      }
     };
 
     ctx.cookie(options.tokenName, jwt.sign({abc: '123'}, 'secret'));
