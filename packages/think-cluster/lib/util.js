@@ -12,8 +12,6 @@ exports.THINK_GRACEFUL_FORK = 'think-graceful-fork';
 exports.THINK_GRACEFUL_DISCONNECT = 'think-graceful-disconnect';
 exports.THINK_STICKY_CLUSTER = 'think-sticky-cluster';
 
-exports.PIN = 'PIN';
-
 /**
  * check worker is first
  */
