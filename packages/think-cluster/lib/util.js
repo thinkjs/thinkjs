@@ -4,6 +4,7 @@ const helper = require('think-helper');
 
 const cpus = require('os').cpus().length;
 const debug = require('debug')('think-cluster');
+const WORKER_REALOD = Symbol('worker-reload');
 
 let thinkProcessId = 1;
 
@@ -35,18 +36,23 @@ exports.forkWorker = function(env = {}) {
   env.THINK_PROCESS_ID = thinkProcessId++;
   const worker = cluster.fork(env);
   worker.on('message', message => {
-    if (worker.hasGracefulReload) return;
+    if (worker[WORKER_REALOD]) return;
     if (message === exports.THINK_GRACEFUL_DISCONNECT) {
       debug(`refork worker, receive message 'think-graceful-disconnect'`);
-      worker.hasGracefulReload = true;
-      exports.forkWorker(env).then(() => {
-        worker.send(util.THINK_GRACEFUL_FORK);
-      });
+      worker[WORKER_REALOD] = true;
+      exports.forkWorker(env).then(() => worker.send(util.THINK_GRACEFUL_FORK));
     }
   });
+  worker.once('disconnect', () => {
+    if (worker[WORKER_REALOD]) return;
+    debug(`worker disconnect`);
+    worker[WORKER_REALOD] = true;
+    exports.forkWorker(env);
+  });
   worker.once('exit', (code, signal) => {
-    if (worker.hasGracefulReload) return;
+    if (worker[WORKER_REALOD]) return;
     debug(`worker exit, code:${code}, signal:${signal}`);
+    worker[WORKER_REALOD] = true;
     exports.forkWorker(env);
   });
   worker.once('listening', address => {
