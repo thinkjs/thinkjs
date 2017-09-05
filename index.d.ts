@@ -1,14 +1,13 @@
-
-import * as _Koa from 'koa';
-import * as Helper from 'think-helper';
-import * as ThinkCluster from 'think-cluster';
-import * as ThinkLogger from 'think-logger3';
+import * as _Koa from 'koa'
+import * as ThinkCluster from 'think-cluster'
+import * as Helper from 'think-helper'
+import * as ThinkLogger from 'think-logger3'
 
 declare namespace ThinkJs {
 
   export var think: Think;
 
-  export interface Koa extends _Koa {
+  export interface Koa extends _Koa.Context {
     think: Think;
   }
 
