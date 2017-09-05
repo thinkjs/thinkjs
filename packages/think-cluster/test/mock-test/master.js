@@ -82,7 +82,7 @@ test.serial('normal case', async t => {
   await instance.forkWorkers();
   cluster.trigger('message','think-graceful-disconnect');
   cluster.trigger('message','test');
-  t.is(cluster.workers[0].hasGracefulReload,true);
+  t.is(cluster.workers[0].hasGracefulReload, undefined);
 });
 
 test.serial('normal case', async t => {
@@ -146,7 +146,7 @@ test.serial('normal case', async t => {
   await instance.killWorker(cluster.workers[0]);
   await sleep(1000);
   t.is(cluster.workers[0].isKilled,true);
-  t.is(cluster.workers[0].hasGracefulReload,true);
+  t.is(cluster.workers[0].hasGracefulReload,undefined);
 });
 
 test.serial('normal case', async t => {
