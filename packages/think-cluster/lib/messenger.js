@@ -28,12 +28,6 @@ class Messenger extends events {
         case 'all':
           workers.push(worker);
           break;
-        case 'app':
-          if (!worker.isAgent) workers.push(worker);
-          break;
-        case 'agent':
-          if (worker.isAgent) workers.push(worker);
-          break;
         case 'one':
           if (!workers.length) workers.push(worker);
           break;

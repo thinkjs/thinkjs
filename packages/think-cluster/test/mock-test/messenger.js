@@ -159,7 +159,7 @@ test('bindEvent case', async t => {
   let m = new Messenger();
   const message = {
     act:'think-messenger',
-    target:'app'
+    target:'all'
   }
   cluster.trigger('message',message,{});
   t.is(cluster.receiveSignal,true)
@@ -172,7 +172,7 @@ test('bindEvent case', async t => {
   let m = new Messenger();
   const message = {
     act:'think-messenger',
-    target:'agent'
+    target:'all'
   }
   cluster.trigger('message',message,{});
   t.is(cluster.receiveSignal,true)

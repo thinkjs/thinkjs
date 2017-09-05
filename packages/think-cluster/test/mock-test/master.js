@@ -118,17 +118,17 @@ test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
-  let instance = new Master({enableAgent:true});
+  let instance = new Master({});
   await instance.forkWorkers();
   cluster.trigger('listening')
-  t.is(cluster.workers.length, require('os').cpus().length+1)
+  t.is(cluster.workers.length, require('os').cpus().length)
 });
 
 test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
-  let instance = new Master({enableAgent:true});
+  let instance = new Master({});
   await instance.forkWorkers();
   await instance.killWorker(cluster.workers[0]);
   await sleep(1000);
@@ -139,7 +139,7 @@ test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
-  let instance = new Master({enableAgent:true});
+  let instance = new Master({});
   await instance.forkWorkers();
   await instance.killWorker(cluster.workers[0],true);
   await sleep(1000);
@@ -162,7 +162,7 @@ test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
-  let instance = new Master({enableAgent:true});
+  let instance = new Master({});
   await instance.forkWorkers();
   cluster.workers[0].state = 'disconnected';
   instance.forceReloadWorkers();
@@ -172,7 +172,7 @@ test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
-  let instance = new Master({enableAgent:true});
+  let instance = new Master({});
   await instance.forkWorkers();
   instance.forceReloadWorkers();
 });
@@ -181,7 +181,7 @@ test.serial('normal case', async t => {
   mockCluster();
   const cluster = require('cluster');
   const Master = getMaster();
-  let instance = new Master({enableAgent:true});
+  let instance = new Master({});
   await instance.forkWorkers();
   cluster.workers = [];
   instance.forceReloadWorkers();

@@ -1,7 +1,6 @@
 const util = require('./util.js');
 const cluster = require('cluster');
 const helper = require('think-helper');
-const AgentClient = require('./agent_client.js');
 const debug = require('debug')('think-cluster');
 const KEEP_ALIVE = Symbol('think-graceful-keepalive');
 
@@ -74,6 +73,10 @@ class Worker {
    */
   disconnectWorker(sendSignal) {
     const worker = cluster.worker;
+    // if worker has `hasGracefulReload` flag, return directly
+    if (worker.hasGracefulReload) return;
+    worker.hasGracefulReload = true;
+
     if (sendSignal) {
       worker.send(util.THINK_GRACEFUL_DISCONNECT);
       worker.once('message', message => {
@@ -159,7 +162,6 @@ class Worker {
     this.uncaughtException();
     this.unhandledRejection();
     this.captureReloadSignal();
-    AgentClient.getInstance();
   }
   /**
    * start server

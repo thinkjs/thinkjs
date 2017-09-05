@@ -37,7 +37,7 @@ class Master {
     const reloadWorkers = () => {
       for (const id in cluster.workers) {
         const worker = cluster.workers[id];
-        if (!this.isAliveWorker(worker) || util.isAgent(worker)) continue;
+        if (!this.isAliveWorker(worker)) continue;
         worker.send(util.THINK_RELOAD_SIGNAL);
       }
     };
@@ -69,39 +69,19 @@ class Master {
     };
   }
   /**
-   * fork agent worker
-   */
-  forkAgentWorker() {
-    return util.forkWorker({
-      THINK_AGENT_WORKER: 1
-    });
-  }
-  /**
    * fork workers
    */
   forkWorkers() {
-    const forkWorker = (env = {}, address) => {
-      const workers = this.options.workers;
-      let index = 0;
-      const promises = [];
-      while (index++ < workers) {
-        env = Object.assign(env, this.getForkEnv());
-        const promise = util.forkWorker(env).then(data => {
-          if (address) {
-            data.worker.send({act: util.THINK_AGENT_OPTIONS, address});
-          }
-        });
-        promises.push(promise);
-      }
-      return Promise.all(promises);
-    };
     this.captureReloadSignal();
-    if (this.options.enableAgent) {
-      return this.forkAgentWorker().then(data => {
-        return forkWorker({THINK_ENABLE_AGENT: 1}, data.address);
-      });
+    const workers = this.options.workers;
+    let index = 0;
+    const promises = [];
+    while (index++ < workers) {
+      const env = Object.assign({}, this.getForkEnv());
+      const promise = util.forkWorker(env);
+      promises.push(promise);
     }
-    return forkWorker();
+    return Promise.all(promises);
   }
   /**
    * kill worker
@@ -134,8 +114,7 @@ class Master {
     if (!aliveWorkers.length) return;
 
     // check alive workers has leak
-    let allowWorkers = this.options.workers;
-    if (this.options.enableAgent) allowWorkers++;
+    const allowWorkers = this.options.workers;
     if (aliveWorkers.length > allowWorkers) {
       console.error(`workers fork has leak, alive workers: ${aliveWorkers.length}, need workers: ${this.options.workers}`);
     }
@@ -170,7 +149,7 @@ class Master {
       let idx = -1;
       for (const id in cluster.workers) {
         const worker = cluster.workers[id];
-        if (!this.isAliveWorker(worker) || util.isAgent(worker)) continue;
+        if (!this.isAliveWorker(worker)) continue;
         if (index === ++idx) {
           worker.send(util.THINK_STICKY_CLUSTER, socket);
           break;
