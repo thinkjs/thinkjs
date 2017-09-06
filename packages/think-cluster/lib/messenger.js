@@ -64,14 +64,6 @@ class Messenger extends events {
     });
   }
   /**
-   * 
-   * @param {String} action 
-   * @param {Function} callback 
-   */
-  map(action, callback) {
-
-  }
-  /**
    * this method will be deprecated
    * @param {Function} callback 
    */
