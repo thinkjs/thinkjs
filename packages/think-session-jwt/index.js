@@ -16,8 +16,7 @@ class JWTSession {
     assert(options && options.secret, 'jwt secret is required');
     this.options = options;
     this.ctx = ctx;
-    this.decode = {};
-    this.encode = {};
+    this.data = {};
     this.fresh = true;
     this.verifyOptions = options.verify || {};
     this.signOptions = options.sign || {};
@@ -29,7 +28,7 @@ class JWTSession {
   async initSessionData() {
     if (this.fresh) {
       let token;
-      const { tokenType, tokenName = 'jwt' } = this.options;
+      const { tokenType = 'cookie', tokenName = 'jwt' } = this.options;
       switch (tokenType) {
         case 'header':
           token = this.ctx.headers[tokenName];
@@ -45,7 +44,7 @@ class JWTSession {
           break;
       }
       if (token) {
-        this.decode = await verify(token, this.options.secret, this.verifyOptions);
+        this.data = await verify(token, this.options.secret, this.verifyOptions);
         this.fresh = false;
       }
     }
@@ -55,7 +54,16 @@ class JWTSession {
    * auto save session data when it is change
    */
   async autoSave() {
-    const token = await sign(this.encode, this.options.secret, this.signOptions);
+    const data = helper.extend({}, this.data);
+    delete data.exp;
+    delete data.iat;
+    delete data.nbf;
+    delete data.aud;
+    delete data.sub;
+    delete data.iss;
+    delete data.jti;
+    delete data.alg;
+    const token = await sign(data, this.options.secret, this.signOptions);
     return token;
   }
 
@@ -66,7 +74,7 @@ class JWTSession {
    */
   async get(name) {
     await this.initSessionData();
-    return name ? this.decode[name] : this.decode;
+    return name ? this.data[name] : this.data;
   }
 
   /**
@@ -78,7 +86,7 @@ class JWTSession {
   async set(name, value) {
     await this.initSessionData();
     if (name) {
-      this.encode[name] = value;
+      this.data[name] = value;
     }
     const token = await this.autoSave();
     return token;
@@ -90,7 +98,7 @@ class JWTSession {
    */
   async delete() {
     await this.initSessionData();
-    this.decode = {};
+    this.data = {};
   }
 }
 

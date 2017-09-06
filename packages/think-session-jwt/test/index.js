@@ -64,14 +64,10 @@ test.serial('2.set and get session data without maxAge', t => {
     ctx.cookie(options.tokenName, jwt.sign({abc: '123'}, 'secret'));
     const jwtSession = new JWTSession(options, ctx);
     await jwtSession.set('abc', '123');
-    t.deepEqual(jwtSession.encode, {
-      abc: '123'
-    });
+    t.is(jwtSession.data.abc, '123');
 
     await jwtSession.set();
-    t.deepEqual(jwtSession.encode, {
-      abc: '123'
-    });
+    t.is(jwtSession.data.abc, '123');
 
     const value = await jwtSession.get('abc');
     t.is(value, '123');
@@ -82,7 +78,7 @@ test.serial('2.set and get session data without maxAge', t => {
     t.deepEqual(value1, { abc: '123' });
 
     await jwtSession.delete();
-    t.deepEqual(jwtSession.decode, {});
+    t.deepEqual(jwtSession.data, {});
 
     const options1 = {
       tokenName: cookieName[0],
@@ -111,9 +107,7 @@ test.serial('3.set and get session data with maxAge', async t => {
     const jwtSession = new JWTSession(options, ctx);
 
     const token = await jwtSession.set('abc', '123');
-    t.deepEqual(jwtSession.encode, {
-      'abc': '123'
-    });
+    t.is(jwtSession.data.abc, '123');
 
     const value = await jwtSession.get('abc');
     t.is(value, '123');
@@ -143,7 +137,7 @@ test.serial('4.set and get session data when JsonWebTokenError', t => {
     t.is(error.message, 'jwt malformed');
 
     const jwtSession1 = new JWTSession(options, ctx);
-    jwtSession1.encode = undefined;
+    jwtSession1.data = undefined;
 
     const error1 = await t.throws(jwtSession1.set());
     t.is(error1.message, 'jwt malformed');
@@ -165,9 +159,7 @@ test.serial('5.get jwt from request header', t => {
     const jwtSession = new JWTSession(options, ctx);
     const token = await jwtSession.set('abc', '123');
 
-    t.deepEqual(jwtSession.encode, {
-      abc: '123'
-    });
+    t.is(jwtSession.data.abc, '123');
 
     t.is(typeof token, 'string');
 
@@ -188,9 +180,7 @@ test.serial('6.get jwt from query', t => {
     const jwtSession = new JWTSession(options, ctx);
     const token = await jwtSession.set('abc', '123');
 
-    t.deepEqual(jwtSession.encode, {
-      abc: '123'
-    });
+    t.is(jwtSession.data.abc, '123');
 
     t.is(typeof token, 'string');
     resolve();
@@ -209,9 +199,7 @@ test.serial('7.get jwt from request body', t => {
     const jwtSession = new JWTSession(options, ctx);
     const token = await jwtSession.set('abc', '123');
 
-    t.deepEqual(jwtSession.encode, {
-      abc: '123'
-    });
+    t.is(jwtSession.data.abc, '123');
 
     t.is(typeof token, 'string');
     resolve();
