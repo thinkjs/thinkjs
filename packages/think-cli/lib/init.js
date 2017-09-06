@@ -25,14 +25,14 @@ class init {
    * @param {String} template
    */
   [THINK_GENERATE]() {
-    const {name, template: rawTemplate, targetPath} = this.options;
+    const {name, template: rawTemplate, targetPath, isMultiModule} = this.options;
     const template = utils.getLocalTemplatePath(rawTemplate);
     if (!utils.isExist(template)) {
       console.log();
       logger.error('Local template "%s" not found.', template);
       return;
     }
-    generate(name, template, targetPath, (err) => {
+    generate(name, template, targetPath, isMultiModule, (err) => {
       if (err) return logger.error(err);
       console.log();
       logger.success('Generated %s', name);
@@ -44,7 +44,7 @@ class init {
    * @param {String} template
    */
   [THINK_DOWNLOAD_AND_GENERATE]() {
-    const {name, template: rawTemplate, cacheTemplatePath, targetPath, clone} = this.options;
+    const {name, template: rawTemplate, cacheTemplatePath, targetPath, clone, isMultiModule} = this.options;
     const spinner = ora({text: 'downloading template...', spinner: 'arrow3'}).start();
 
     const template = rawTemplate.indexOf('/') > -1
@@ -62,7 +62,7 @@ class init {
         spinner.stop();
         if (err) return logger.error(err);
 
-        generate(name, cacheTemplatePath, targetPath, (err) => {
+        generate(name, cacheTemplatePath, targetPath, isMultiModule, (err) => {
           if (err) return logger.error(err);
           console.log();
           logger.success('Generated %s', name);

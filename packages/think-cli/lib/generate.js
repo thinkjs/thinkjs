@@ -11,7 +11,7 @@ Handlebars.registerHelper('author', function(res) {
   return new Handlebars.SafeString(res.data.root.author);
 });
 
-module.exports = function(name, src, dest, done) {
+module.exports = function(name, src, dest, isMultiModule, done) {
   const metadata = getOptions(name, src);
 
   Metalsmith(path.join(src, 'template'))
@@ -19,8 +19,23 @@ module.exports = function(name, src, dest, done) {
     .destination(dest)
     .use(ask(metadata.prompts))
     .use(template(metadata.skipCompile))
+    .use(multiModule(metadata.paths, metadata.defaultModule, isMultiModule))
     .build(done);
 };
+
+function multiModule(paths, defaultModule, isMultiModule) {
+  return function(files, metalsmith, done) {
+    if (!isMultiModule) return done(null);
+
+    for (const key in paths) {
+      for (const file in files) {
+        files[file.replace(new RegExp('^' + key, 'g'), defaultModule + '/' + key)] = files[file];
+        delete files[file];
+      }
+    }
+    done();
+  };
+}
 
 /**
  * Prompt plugin.

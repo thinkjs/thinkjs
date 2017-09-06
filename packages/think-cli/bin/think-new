@@ -15,7 +15,7 @@ const os = require('os')
 program
   .usage('<template-name> [project-name]')
   .option('-c, --clone', 'use git clone')
-  .option('-m, --mode', 'project mode type(normal, module), default is normal')
+  .option('-m, --module', 'creating projects using multiple module mode')
   .parse(process.argv)
 
 /**
@@ -58,7 +58,8 @@ const name = isHere ? path.relative('../', process.cwd()) : rawName
 const cacheTemplatePath = path.join(os.homedir(), '.think-templates', template.replace(/\//g, '-'))
 const targetPath = path.join(process.cwd(), rawName || '.')
 const clone = program.clone || false
-const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone})
+const isMultiModule = program.module || false
+const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone, isMultiModule})
 
 if (utils.isExist(targetPath)) {
   inquirer.prompt([{
