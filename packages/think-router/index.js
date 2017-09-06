@@ -27,6 +27,11 @@ const formatRouters = routers => {
     return routers.map(item => {
       const query = [];
       const match = pathToRegexp(item[0], query);
+      // [/reg/, 'rest']
+      if (item.length === 2 && item[1].toUpperCase() === 'REST') {
+        item[2] = item[1];
+        item[1] = null;
+      }
       return {
         match,
         path: item[1],

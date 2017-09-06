@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-23 17:12:32
+* @Last Modified time: 2017-09-06 11:20:44
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -987,6 +987,33 @@ test.serial.cb('single controllers REST 2', t => {
     t.deepEqual(RESULT, {
       module: '',
       controller: 'admin',
+      action: 'get'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('single controllers REST 3', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx, {
+    denyModules: [],
+    path: 'restful/api',
+  });
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {
+      'restful/api': {}
+    },
+    routers: [
+      ['restful/api', 'rest']
+    ]
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'restful/api',
       action: 'get'
     });
     t.end();

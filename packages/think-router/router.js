@@ -121,7 +121,7 @@ class Router {
       if (!match) return;
       assert(helper.isArray(item.query), 'router.query must be an array');
       const query = {};
-      let pathname = item.path;
+      let pathname = item.path || this.pathname;
 
       item.query.forEach((queryItem, index) => {
         if (/^\d+$/.test(queryItem.name)) {
