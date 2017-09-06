@@ -7,13 +7,13 @@ declare namespace ThinkJs {
 
   export var think: Think;
 
-  export interface Koa extends _Koa.Context {
+  export interface Koa extends _Koa {
     think: Think;
   }
 
   class Controller {
-    constructor(ctx: Koa);
-    ctx: Koa;
+    constructor(ctx: Koa.Context);
+    ctx: Koa.Context;
     assign?(name: string, value: any): any;
     render?(file: string, config: object): Promise<string>;
     render?(config: object): Promise<string>;
