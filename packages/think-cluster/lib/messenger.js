@@ -4,7 +4,9 @@ const events = require('events');
 const util = require('./util.js');
 const assert = require('assert');
 
+const BIND_EVENT = Symbol('bind-event');
 const MESSENGER = 'think-messenger';
+const mapPromise = new Map();
 
 let taskId = 1;
 
@@ -34,16 +36,50 @@ class Messenger extends events {
    * @return {} []
    */
   bindEvent() {
+    if (process[BIND_EVENT]) return;
+    process[BIND_EVENT] = true;
     if (cluster.isMaster) {
       cluster.on('message', (worker, message) => {
-        if (!message && message.act !== MESSENGER) return;
+        if (!message || message.act !== MESSENGER) return;
         const workers = this.getWorkers(message.target, worker);
-        workers.forEach(worker => worker.send(message));
+        if (message.map) {
+          if (message.mapReturn) {
+            const map = mapPromise.get(message.action);
+            map.get(worker).resolve(message.data);
+          } else {
+            const map = new Map();
+            mapPromise.set(message.action, map);
+            const promises = workers.map(worker => {
+              worker.send(message);
+              const defer = helper.defer();
+              map.set(worker, defer);
+              return defer.promise;
+            });
+            Promise.all(promises).then(data => {
+              mapPromise.delete(message.action);
+              message.data = data;
+              message.action = `${message.action}_ret`;
+              worker.send(message);
+            });
+          }
+        } else {
+          workers.forEach(worker => worker.send(message));
+        }
       });
     } else {
       process.on('message', message => {
         if (!message || message.act !== MESSENGER) return;
-        this.emit(message.action, message.data);
+        if (message.map && !message.data) {
+          const listener = this.listeners(message.action)[0];
+          assert(helper.isFunction(listener), `${message.action} listener must be a function`);
+          message.mapReturn = true;
+          Promise.resolve(listener()).then(data => {
+            message.data = data;
+            process.send(message);
+          });
+        } else {
+          this.emit(message.action, message.data);
+        }
       });
     }
   }
@@ -60,6 +96,32 @@ class Messenger extends events {
       data,
       target: 'all'
     });
+  }
+  /**
+   * map worker task, return worker exec result
+   * @param {String} action 
+   * @param {Function} callback 
+   */
+  map(action, callback) {
+    action = `${action}_map`;
+    if (callback) {
+      assert(helper.isFunction(callback), 'callback must be a function');
+      // remove listeners, only allow one callback
+      this.removeAllListeners(action);
+      this.on(action, callback);
+      return;
+    }
+    const defer = helper.defer();
+    process.send({
+      act: MESSENGER,
+      action,
+      map: true,
+      target: 'all'
+    });
+    this.once(`${action}_ret`, data => {
+      defer.resolve(data);
+    });
+    return defer.promise;
   }
   /**
    * this method will be deprecated
