@@ -50,13 +50,6 @@ class Messenger extends events {
     }
   }
   /**
-   * setTimeout
-   * @param {Number} timeout []
-   */
-  setTimeout(actionName, timeout = 3000) {
-    setTimeout(() => this.emit(actionName, new Error('timeout')), timeout);
-  }
-  /**
    * broadcast
    * @param  {String} action []
    * @param  {Mixed} data   []
@@ -98,12 +91,9 @@ class Messenger extends events {
       action,
       target: 'one'
     });
-    this.once(action, data => {
-      if (!helper.isError(data)) {
-        callback();
-      }
-    });
-    this.setTimeout(action);
+    this.once(action, callback);
+    // remove event callback after timeout, avoid memory leak
+    helper.timeout(10000).then(() => this.removeAllListeners(action));
   }
 }
 
