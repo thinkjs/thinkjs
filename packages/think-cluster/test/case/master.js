@@ -10,7 +10,6 @@ const helper = require('think-helper');
 
 const interval = 5000;
 
-
 let masterProcess = null;
 test.afterEach.always(() => {
   if (masterProcess) {
@@ -19,15 +18,15 @@ test.afterEach.always(() => {
 });
 
 function executeProcess(fileName, options, funcName, callback) {
-  let scriptPath = path.join(__dirname, '../script', fileName);
-  masterProcess = spawn(`node`, [scriptPath, funcName , JSON.stringify(options)]);
+  const scriptPath = path.join(__dirname, '../script', fileName);
+  masterProcess = spawn(`node`, [scriptPath, funcName, JSON.stringify(options)]);
 
   masterProcess.stdout.on('data', (buf) => {
-    try{
-      let json = JSON.parse(buf.toString('utf-8'));
+    try {
+      const json = JSON.parse(buf.toString('utf-8'));
       callback(json);
-    }catch (e){
-      callback({message:buf.toString('utf-8')});
+    } catch (e) {
+      callback({message: buf.toString('utf-8')});
     }
   });
 
@@ -36,11 +35,11 @@ function executeProcess(fileName, options, funcName, callback) {
 
 test.serial('normal case', async t => {
   try {
-    let result = {};
-    let options = {
+    const result = {};
+    const options = {
       workers: 1
     };
-    executeProcess('master.js', options,'forkWorkers', (output) => {
+    executeProcess('master.js', options, 'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -52,13 +51,13 @@ test.serial('normal case', async t => {
 
 test.serial('options.workers >= 2 && enableAgent is true', async t => {
   try {
-    let result = {};
-    let options = {
+    const result = {};
+    const options = {
       workers: 2,
       reloadSignal: 'SIGUSR2',
       enableAgent: true
     };
-    executeProcess('master.js', options,'forkWorkers', (output) => {
+    executeProcess('master.js', options, 'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -70,13 +69,13 @@ test.serial('options.workers >= 2 && enableAgent is true', async t => {
 
 test.serial('if options.workers < 2,enableAgent is false', async t => {
   try {
-    let result = {};
-    let options = {
+    const result = {};
+    const options = {
       workers: 1,
       reloadSignal: 'SIGUSR2',
       enableAgent: true
     };
-    executeProcess('master.js', options,'forkWorkers', (output) => {
+    executeProcess('master.js', options, 'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -89,12 +88,12 @@ test.serial('if options.workers < 2,enableAgent is false', async t => {
 
 test.serial('reloadWorkers', async t => {
   try {
-    let result = {};
-    executeProcess('master.js', {workers:4}, 'reloadWorkers', (output) => {
+    const result = {};
+    executeProcess('master.js', {workers: 4}, 'reloadWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval * 2);
-    console.log(result);
+    // console.log(result);
     t.notDeepEqual(result.beforeWorkers, result.afterWorkers);
   } catch (e) {
   }
@@ -102,11 +101,11 @@ test.serial('reloadWorkers', async t => {
 
 test.serial('trigger SIGUSR2 signal', async t => {
   try {
-    let result = {};
-    let options = {
-      reloadSignal: 'SIGUSR2',
+    const result = {};
+    const options = {
+      reloadSignal: 'SIGUSR2'
     };
-    let masterProcess = executeProcess('master.js', options,'forkWorkers', (output) => {
+    const masterProcess = executeProcess('master.js', options, 'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -114,7 +113,7 @@ test.serial('trigger SIGUSR2 signal', async t => {
     console.log(`master process id is ${masterProcess.pid}`);
     await sleep(interval);
 
-    exec(`KILL -SIGUSR2 ${masterProcess.pid}`,{shell:'/bin/sh'},(error, stdout, stderr)=>{
+    exec(`KILL -SIGUSR2 ${masterProcess.pid}`, {shell: '/bin/sh'}, (error, stdout, stderr) => {
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
       if (error !== null) {
@@ -122,18 +121,17 @@ test.serial('trigger SIGUSR2 signal', async t => {
       }
     });
     await sleep(interval);
-
   } catch (e) {
   }
 });
 
 test.serial('trigger worker unHandleRejection ', async t => {
   try {
-    let result = {};
-    let options = {
+    const result = {};
+    const options = {
       workers: 1
     };
-    executeProcess('worker.js', options,'unHandleRejection', (output) => {
+    executeProcess('worker.js', options, 'unHandleRejection', (output) => {
       Object.assign(result, output);
       console.log(result);
     });
@@ -145,11 +143,11 @@ test.serial('trigger worker unHandleRejection ', async t => {
 
 test.serial('trigger worker unCaughtException', async t => {
   try {
-    let result = {};
-    let options = {
+    const result = {};
+    const options = {
       workers: 1
     };
-    executeProcess('worker.js', options,'unCaughtException', (output) => {
+    executeProcess('worker.js', options, 'unCaughtException', (output) => {
       Object.assign(result, output);
       console.log(result);
     });

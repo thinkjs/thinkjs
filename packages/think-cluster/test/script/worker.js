@@ -1,46 +1,44 @@
 const cluster = require('cluster');
 const http = require('http');
-let ClusterMaster = require('../../index').Master;
-let ClusterWorker = require('../../index').Worker;
+const ClusterMaster = require('../../index').Master;
+const ClusterWorker = require('../../index').Worker;
 
-let mockServer = {
-  on:(evtName)=>{
+const mockServer = {
+  on: (evtName) => {
     console.log(evtName);
   }
 };
 const defaultOption = {
-  onUncaughtException:(err)=>{
+  onUncaughtException: (err) => {
     console.log('onUncaughtException');
   },
-  onUnhandledRejection:(err)=>{
+  onUnhandledRejection: (err) => {
     console.log('onUnhandledRejection');
   },
-  server:mockServer
+  server: mockServer
 };
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-let opt = Object.assign({}, defaultOption,JSON.parse(process.argv[3]));
-let functionName = process.argv[2];
-
-
+const opt = Object.assign({}, defaultOption, JSON.parse(process.argv[3]));
+const functionName = process.argv[2];
 
 function eachWorker(callback) {
-  for (let id in cluster.workers) {
+  for (const id in cluster.workers) {
     callback(cluster.workers[id]);
   }
 }
 
-let app = {
+const app = {
   unHandleRejection: (options) => {
     try {
       if (cluster.isMaster) {
-        let instance = new ClusterMaster(options);
+        const instance = new ClusterMaster(options);
         instance.forkWorkers().then(() => {
-          let workers = [];
+          const workers = [];
           eachWorker((worker) => {
             workers.push(worker.process.pid);
           });
-          let result = {
+          const result = {
             options,
             workers,
             isForked: true
@@ -48,9 +46,9 @@ let app = {
           console.log(JSON.stringify(result));
         });
       } else {
-        let workerInstance = new ClusterWorker(options);
+        const workerInstance = new ClusterWorker(options);
         workerInstance.captureEvents();
-        sleep(3000).then(()=>{
+        sleep(3000).then(() => {
           xxx();
         });
         http.Server((req, res) => {
@@ -63,16 +61,16 @@ let app = {
       console.log(e);
     }
   },
-  unCaughtException:(options)=>{
+  unCaughtException: (options) => {
     try {
       if (cluster.isMaster) {
-        let instance = new ClusterMaster(options);
+        const instance = new ClusterMaster(options);
         instance.forkWorkers().then(() => {
-          let workers = [];
+          const workers = [];
           eachWorker((worker) => {
             workers.push(worker.process.pid);
           });
-          let result = {
+          const result = {
             options,
             workers,
             isForked: true
@@ -80,11 +78,11 @@ let app = {
           console.log(JSON.stringify(result));
         });
       } else {
-        let workerInstance = new ClusterWorker(options);
+        const workerInstance = new ClusterWorker(options);
         workerInstance.captureEvents();
-        setTimeout(()=>{
+        setTimeout(() => {
           xxx();
-        },3000)
+        }, 3000);
         http.Server((req, res) => {
           res.writeHead(200);
           res.end('hello world\n');

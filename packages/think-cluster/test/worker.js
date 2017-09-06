@@ -10,7 +10,6 @@ const helper = require('think-helper');
 
 const interval = 5000;
 
-
 let masterProcess = null;
 test.afterEach.always(() => {
   if (masterProcess) {
@@ -19,15 +18,15 @@ test.afterEach.always(() => {
 });
 
 function executeProcess(fileName, options, funcName, callback) {
-  let scriptPath = path.join(__dirname, '../script', fileName);
-  masterProcess = spawn(`node`, [scriptPath, funcName , JSON.stringify(options)]);
+  const scriptPath = path.join(__dirname, '../script', fileName);
+  masterProcess = spawn(`node`, [scriptPath, funcName, JSON.stringify(options)]);
 
   masterProcess.stdout.on('data', (buf) => {
-    try{
-      let json = JSON.parse(buf.toString('utf-8'));
+    try {
+      const json = JSON.parse(buf.toString('utf-8'));
       callback(json);
-    }catch (e){
-      callback({message:buf.toString('utf-8')});
+    } catch (e) {
+      callback({message: buf.toString('utf-8')});
     }
   });
 
@@ -35,13 +34,13 @@ function executeProcess(fileName, options, funcName, callback) {
 }
 
 test.serial('normal case', async t => {
-  console.log('worker')
+  console.log('worker');
   try {
-    let result = {};
-    let options = {
+    const result = {};
+    const options = {
       workers: 4
     };
-    executeProcess('worker.js', options,'forkWorkers', (output) => {
+    executeProcess('worker.js', options, 'forkWorkers', (output) => {
       Object.assign(result, output);
     });
     await sleep(interval);
@@ -50,4 +49,3 @@ test.serial('normal case', async t => {
   } catch (e) {
   }
 });
-

@@ -5,6 +5,7 @@ const helper = require('think-helper');
 const cpus = require('os').cpus().length;
 const debug = require('debug')('think-cluster');
 const WORKER_REALOD = Symbol('worker-reload');
+const NEED_KILLED = Symbol('need-killed');
 
 let thinkProcessId = 1;
 
@@ -13,6 +14,7 @@ exports.THINK_GRACEFUL_FORK = 'think-graceful-fork';
 exports.THINK_GRACEFUL_DISCONNECT = 'think-graceful-disconnect';
 exports.THINK_STICKY_CLUSTER = 'think-sticky-cluster';
 exports.WORKER_REALOD = WORKER_REALOD;
+exports.NEED_KILLED = NEED_KILLED;
 
 /**
  * check worker is first
@@ -27,6 +29,27 @@ exports.isFirstWorker = function() {
 exports.parseOptions = function(options = {}) {
   options.workers = options.workers || cpus;
   return options;
+};
+/**
+ * check worker is alive
+ */
+exports.isAliveWorker = worker => {
+  const state = worker.state;
+  if (state === 'disconnected' || state === 'dead') return false;
+  if (worker[NEED_KILLED] || worker[WORKER_REALOD]) return false;
+  return true;
+};
+/**
+ * get alive workers
+ */
+exports.getAliveWorkers = () => {
+  const workers = [];
+  for (const id in cluster.workers) {
+    const worker = cluster.workers[id];
+    if (!exports.isAliveWorker(worker)) continue;
+    workers.push(worker);
+  }
+  return workers;
 };
 
 /**

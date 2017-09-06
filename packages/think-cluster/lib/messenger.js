@@ -1,8 +1,9 @@
 const cluster = require('cluster');
 const helper = require('think-helper');
 const events = require('events');
+const util = require('./util.js');
+const assert = require('assert');
 
-const MessengerInit = Symbol('think-messenger-init');
 const MESSENGER = 'think-messenger';
 
 let taskId = 1;
@@ -21,29 +22,18 @@ class Messenger extends events {
    * @return {Array}      []
    */
   getWorkers(type = 'all', cWorker) {
-    const workers = [];
-    for (const id in cluster.workers) {
-      const worker = cluster.workers[id];
-      switch (type) {
-        case 'all':
-          workers.push(worker);
-          break;
-        case 'one':
-          if (!workers.length) workers.push(worker);
-          break;
-      }
+    const aliveWorkers = util.getAliveWorkers();
+    if (type === 'all') return aliveWorkers;
+    if (type === 'one') {
+      if (!aliveWorkers.length || aliveWorkers[0] !== cWorker) return [];
+      return [aliveWorkers[0]];
     }
-    if (type === 'one' && workers[0] !== cWorker) return [];
-    return workers;
   }
   /**
    * bind event
    * @return {} []
    */
   bindEvent() {
-    if (process[MessengerInit]) return;
-    process[MessengerInit] = true;
-
     if (cluster.isMaster) {
       cluster.on('message', (worker, message) => {
         if (message && message.act === MESSENGER) {
@@ -81,24 +71,39 @@ class Messenger extends events {
     });
   }
   /**
+   * 
+   * @param {String} action 
+   * @param {Function} callback 
+   */
+  map(action, callback) {
+
+  }
+  /**
+   * this method will be deprecated
+   * @param {Function} callback 
+   */
+  runInOne(callback) {
+    return this.consume(callback);
+  }
+  /**
    * run in one worker
    * @param  {Function} callback []
    * @return {}            []
    */
-  runInOne(callback) {
-    const id = taskId++;
-    const actionName = `think-messenger-${id}`;
+  consume(callback) {
+    assert(helper.isFunction(callback), 'callback must be a function');
+    const action = `think-messenger-${taskId++}`;
     process.send({
       act: MESSENGER,
-      action: actionName,
+      action,
       target: 'one'
     });
-    this.once(actionName, data => {
-      if (!helper.isError(data) && callback) {
+    this.once(action, data => {
+      if (!helper.isError(data)) {
         callback();
       }
     });
-    this.setTimeout(actionName);
+    this.setTimeout(action);
   }
 }
 

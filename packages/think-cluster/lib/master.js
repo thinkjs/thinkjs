@@ -2,7 +2,6 @@ const cluster = require('cluster');
 const util = require('./util.js');
 const net = require('net');
 const stringHash = require('string-hash');
-const NEED_KILLED = Symbol('need-killed');
 
 let waitReloadWorkerTimes = 0;
 
@@ -36,11 +35,7 @@ class Master {
   captureReloadSignal() {
     const signal = this.options.reloadSignal;
     const reloadWorkers = () => {
-      for (const id in cluster.workers) {
-        const worker = cluster.workers[id];
-        if (!this.isAliveWorker(worker)) continue;
-        worker.send(util.THINK_RELOAD_SIGNAL);
-      }
+      util.getAliveWorkers().forEach(worker => worker.send(util.THINK_RELOAD_SIGNAL));
     };
     if (signal) process.on(signal, reloadWorkers);
 
@@ -49,16 +44,6 @@ class Master {
       if (message !== 'think-cluster-reload-workers') return;
       reloadWorkers();
     });
-  }
-  /**
-   * check worker is alive
-   * @param {Object} worker 
-   */
-  isAliveWorker(worker) {
-    const state = worker.state;
-    if (state === 'disconnected' || state === 'dead') return false;
-    if (worker[NEED_KILLED] || worker[util.WORKER_REALOD]) return false;
-    return true;
   }
   /**
    * get fork env
@@ -89,7 +74,7 @@ class Master {
   killWorker(worker, reload) {
     if (reload) worker[util.WORKER_REALOD] = true;
     worker.kill('SIGINT'); // windows don't support SIGQUIT
-    worker[NEED_KILLED] = true;
+    worker[util.NEED_KILLED] = true;
     setTimeout(function() {
       if (!worker.isConnected()) return;
       worker.process.kill('SIGINT');
@@ -105,12 +90,7 @@ class Master {
     }
     waitReloadWorkerTimes = 1;
 
-    const aliveWorkers = [];
-    for (const id in cluster.workers) {
-      const worker = cluster.workers[id];
-      if (!this.isAliveWorker(worker)) continue;
-      aliveWorkers.push(worker);
-    }
+    const aliveWorkers = util.getAliveWorkers();
     if (!aliveWorkers.length) return;
 
     // check alive workers has leak
@@ -147,14 +127,12 @@ class Master {
       const remoteAddress = this.options.getRemoteAddress(socket) || '';
       const index = stringHash(remoteAddress) % this.options.workers;
       let idx = -1;
-      for (const id in cluster.workers) {
-        const worker = cluster.workers[id];
-        if (!this.isAliveWorker(worker)) continue;
+      util.getAliveWorkers().some(worker => {
         if (index === ++idx) {
           worker.send(util.THINK_STICKY_CLUSTER, socket);
-          break;
+          return true;
         }
-      }
+      });
     });
     server.listen(this.options.port, this.options.host, () => {
       this.forkWorkers().then(() => {
