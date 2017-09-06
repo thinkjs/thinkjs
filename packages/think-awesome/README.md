@@ -15,6 +15,11 @@ Awesome projects for `ThinkJS 3.x`
 | [think-wechat](https://github.com/akira-cn/think-wechat)  | [@akira-cn](https://github.com/akira-cn)  | ![version](https://img.shields.io/npm/v/think-wechat.svg)  |  ![](https://travis-ci.org/akira-cn/think-wechat.svg) | ![](https://coveralls.io/repos/github/akira-cn/think-wechat/badge.svg)  | wechat middleware |
 | [think-swagger](https://github.com/libery/think-swagger)  | [@libery](https://github.com/libery)   | ![version](https://img.shields.io/npm/v/think-swagger-controller.svg)  |  ![](https://travis-ci.org/libery/think-swagger-controller.svg) | ![](https://coveralls.io/repos/github/libery/think-swagger-controller/badge.svg)  | swagger middleware |
 
+## Koa Middlewares 
+
+| Package  | Author  | Version  |  Status | Coverage | Description |
+|---|---|---|---|---|---|
+| [kcors](https://github.com/koajs/cors) | [@fengmk2](https://github.com/fengmk2) | ![version](https://img.shields.io/npm/v/kcors.svg) | ![](https://api.travis-ci.org/koajs/cors.svg) | ![](https://codecov.io/github/koajs/cors.svg) | CORS middleware |
 
 ## Adapters
 
@@ -29,6 +34,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-session-cookie](https://github.com/thinkjs/think-session-cookie) Use cookie to store session data
 * [think-session-file](https://github.com/thinkjs/think-session-file) Use file to store session data
 * [think-session-redis](https://github.com/thinkjs/think-session-redis) Use redis to store session data
+* [think-session-jwt](https://github.com/thinkjs/think-session-jwt) Use jsonwebtoken to store session data
 
 ### cache
 * [think-cache-file](https://github.com/thinkjs/think-cache-file) Use file to store cache data
