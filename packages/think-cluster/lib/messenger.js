@@ -36,16 +36,14 @@ class Messenger extends events {
   bindEvent() {
     if (cluster.isMaster) {
       cluster.on('message', (worker, message) => {
-        if (message && message.act === MESSENGER) {
-          const workers = this.getWorkers(message.target, worker);
-          workers.forEach(worker => worker.send(message));
-        }
+        if (!message && message.act !== MESSENGER) return;
+        const workers = this.getWorkers(message.target, worker);
+        workers.forEach(worker => worker.send(message));
       });
     } else {
       process.on('message', message => {
-        if (message && message.act === MESSENGER) {
-          this.emit(message.action, message.data);
-        }
+        if (!message || message.act !== MESSENGER) return;
+        this.emit(message.action, message.data);
       });
     }
   }
