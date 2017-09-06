@@ -1,8 +1,7 @@
-
-import * as _Koa from 'koa';
-import * as Helper from 'think-helper';
-import * as ThinkCluster from 'think-cluster';
-import * as ThinkLogger from 'think-logger3';
+import * as _Koa from 'koa'
+import * as ThinkCluster from 'think-cluster'
+import * as Helper from 'think-helper'
+import * as ThinkLogger from 'think-logger3'
 
 declare namespace ThinkJs {
 
@@ -13,8 +12,8 @@ declare namespace ThinkJs {
   }
 
   class Controller {
-    constructor(ctx: Koa);
-    ctx: Koa;
+    constructor(ctx: Koa.Context);
+    ctx: Koa.Context;
     assign?(name: string, value: any): any;
     render?(file: string, config: object): Promise<string>;
     render?(config: object): Promise<string>;
