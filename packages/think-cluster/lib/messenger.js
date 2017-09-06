@@ -100,17 +100,8 @@ class Messenger extends events {
   /**
    * map worker task, return worker exec result
    * @param {String} action 
-   * @param {Function} callback 
    */
-  map(action, callback) {
-    action = `${action}_map`;
-    if (callback) {
-      assert(helper.isFunction(callback), 'callback must be a function');
-      // remove listeners, only allow one callback
-      this.removeAllListeners(action);
-      this.on(action, callback);
-      return;
-    }
+  map(action) {
     const defer = helper.defer();
     process.send({
       act: MESSENGER,
