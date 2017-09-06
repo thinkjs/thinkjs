@@ -80,6 +80,8 @@ exports.forkWorker = function(env = {}) {
     exports.forkWorker(env);
   });
   worker.once('listening', address => {
+    // add prev pid to process.env
+    env.THINK_PREV_PID = worker.process.pid;
     deferred.resolve({worker, address});
   });
   return deferred.promise;
