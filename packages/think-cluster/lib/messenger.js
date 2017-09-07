@@ -90,6 +90,8 @@ class Messenger extends events {
    * @return {}        []
    */
   broadcast(action, data) {
+    const length = this.listeners(action).length;
+    assert(length > 0, `can not find \`${action}\` listeners`);
     process.send({
       act: MESSENGER,
       action,
@@ -119,14 +121,6 @@ class Messenger extends events {
    * @param {Function} callback 
    */
   runInOne(callback) {
-    return this.consume(callback);
-  }
-  /**
-   * run in one worker
-   * @param  {Function} callback []
-   * @return {}            []
-   */
-  consume(callback) {
     assert(helper.isFunction(callback), 'callback must be a function');
     const action = `think-messenger-${taskId++}`;
     process.send({
@@ -137,6 +131,20 @@ class Messenger extends events {
     this.once(action, callback);
     // remove event callback after timeout, avoid memory leak
     helper.timeout(10000).then(() => this.removeAllListeners(action));
+  }
+  /**
+   * run in one worker
+   * @param  {Function} callback []
+   * @return {}            []
+   */
+  consume(action) {
+    const length = this.listeners(action).length;
+    assert(length > 0, `can not find \`${action}\` listeners`);
+    process.send({
+      act: MESSENGER,
+      action,
+      target: 'one'
+    });
   }
 }
 
