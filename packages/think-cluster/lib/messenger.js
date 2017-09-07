@@ -135,9 +135,10 @@ class Messenger extends events {
       this.once(action, callback);
       // remove event callback after timeout, avoid memory leak
       helper.timeout(10000).then(() => this.removeAllListeners(action));
+    } else {
+      const length = this.listeners(action).length;
+      assert(length > 0, `can not find \`${action}\` listeners`);
     }
-    const length = this.listeners(action).length;
-    assert(length > 0, `can not find \`${action}\` listeners`);
     process.send({
       act: MESSENGER,
       action,
