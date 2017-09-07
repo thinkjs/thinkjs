@@ -8,11 +8,13 @@ const cacheTemplatePath = path.join(__dirname, '.think-templates')
 const targetDir = 'tmp'
 const targetName = 'think-cli-unit-test'
 const localTargetName = 'think-cli-unit-test-local'
+const multiModuleTargetName = 'think-cli-unit-test-multiModule'
 
 const answers = {
   name: 'think-cli-test',
   author: 'Berwin <liubowen.niubi@gmail.com>',
-  description: 'think-cli unit test'
+  description: 'think-cli unit test',
+  defaultModule: 'home'
 }
 
 test.before(() => {
@@ -88,6 +90,32 @@ test.cb('local template generate project content be equal to answers', t => {
     t.is(json.author, answers.author)
     t.end()
   })
+})
+
+test.cb('should generate multi module project from a local template', t => {
+  const targetPath = path.join(__dirname, targetDir, multiModuleTargetName)
+  const init = new ThinkInit({
+    template: path.join(__dirname, './test-template'),
+    targetPath,
+    name: multiModuleTargetName,
+    isMultiModule: true
+  })
+
+  init.run()
+
+  const timer = setInterval(() => {
+    if (utils.isExist(targetPath)) {
+      clearInterval(timer)
+      t.pass()
+      t.end()
+    }
+  }, 1000)
+})
+
+test.cb('local template generate multi module project content be equal to multiModule', t => {
+  const targetPath = path.join(__dirname, targetDir, multiModuleTargetName)
+  t.true(utils.isExist(path.join(targetPath, 'src/common/bootstrap')), 'The multi module project directory is incorrect')
+  t.end()
 })
 
 test.after(t => {

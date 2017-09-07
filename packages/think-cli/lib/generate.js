@@ -19,30 +19,14 @@ module.exports = function(name, src, dest, isMultiModule, done) {
     .destination(dest)
     .use(ask(metadata.prompts))
     .use(template(metadata.skipCompile))
-    .use(multiModule(metadata.paths, metadata.defaultModule, isMultiModule))
+    .use(multiModule(metadata.paths, metadata.multiModule, isMultiModule))
     .build(done);
 };
-
-function multiModule(paths, defaultModule, isMultiModule) {
-  return function(files, metalsmith, done) {
-    if (!isMultiModule) return done(null);
-
-    for (const key in paths) {
-      for (const file in files) {
-        files[file.replace(new RegExp('^' + key, 'g'), defaultModule + '/' + key)] = files[file];
-        delete files[file];
-      }
-    }
-    done();
-  };
-}
 
 /**
  * Prompt plugin.
  *
- * @param {Object} files
- * @param {Metalsmith} metalsmith
- * @param {Function} done
+ * @param {Object} prompts
  */
 
 function ask(prompts) {
@@ -62,9 +46,7 @@ function ask(prompts) {
 /**
  * Template in place plugin.
  *
- * @param {Object} files
- * @param {Metalsmith} metalsmith
- * @param {Function} done
+ * @param {Object} skip compile
  */
 
 function template(skipCompile) {
@@ -98,5 +80,43 @@ function template(skipCompile) {
     Promise.all(promises).then(() => {
       done(null);
     }, done);
+  };
+}
+
+/**
+ * MultiModule plugin.
+ * In multi module mode, multi module project is generated
+ *
+ * @param {Object} paths
+ * @param {Object} multi module map
+ * @param {Boolean} isMultiModule
+ */
+
+function multiModule(paths, multiModuleMap, isMultiModule) {
+  return function(files, metalsmith, done) {
+    if (!isMultiModule) return done(null);
+
+    const defaultModule = metalsmith.metadata().defaultModule;
+
+    // Add multi module project structure
+    for (const file in files) {
+      for (const name in multiModuleMap) {
+        const tmpPrefixPath = paths[name];
+        const targetPrefixPath = multiModuleMap[name].replace(new RegExp('(\\[defaultModule\\])', 'g'), defaultModule);
+        if (!tmpPrefixPath || !new RegExp('^' + tmpPrefixPath).test(file)) continue;
+        const path = file.replace(new RegExp('^' + tmpPrefixPath), targetPrefixPath);
+        files[path] = files[file];
+      }
+    }
+
+    // Clear single module project structure
+    for (const file in files) {
+      for (const name in multiModuleMap) {
+        const tmpPrefixPath = paths[name];
+        if (!tmpPrefixPath || !new RegExp('^' + tmpPrefixPath).test(file)) continue;
+        delete files[file];
+      }
+    }
+    done();
   };
 }

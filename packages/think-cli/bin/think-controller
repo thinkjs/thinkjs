@@ -8,9 +8,17 @@ const chalk = require('chalk')
  */
 
 program
-  .usage('')
+  .usage('<controller-name> [module-name]')
   .option('-r, --rest', 'create rest controller')
   .parse(process.argv)
+
+/*
+  thinkjs controller c1 =>  home/controller/c1
+  thinkjs controller c1 common => common/controller/c1
+  thinkjs controller c1 home => home/controller/c1
+  thinkjs controller c1 admin => admin/controller/c1
+  thinkjs controller c1/c2 admin => admin/controller/c1/c2
+*/
 
 /**
  * Help.
