@@ -69,11 +69,12 @@ class Messenger extends events {
     } else {
       process.on('message', message => {
         if (!message || message.act !== MESSENGER) return;
-        if (message.map && !message.data) {
+        if (message.map && (typeof message.data === 'undefined')) {
           const listener = this.listeners(message.action)[0];
           assert(helper.isFunction(listener), `${message.action} listener must be a function`);
           message.mapReturn = true;
-          Promise.resolve(listener()).then(data => {
+          Promise.resolve(listener(message.mapData)).then(data => {
+            delete message.mapData;
             message.data = data;
             process.send(message);
           });
@@ -102,11 +103,12 @@ class Messenger extends events {
    * map worker task, return worker exec result
    * @param {String} action 
    */
-  map(action) {
+  map(action, mapData) {
     const defer = helper.defer();
     process.send({
       act: MESSENGER,
       action,
+      mapData,
       map: true,
       target: 'all'
     });
@@ -127,7 +129,7 @@ class Messenger extends events {
    * @param  {Function} callback []
    * @return {}            []
    */
-  consume(action) {
+  consume(action, data) {
     if (helper.isFunction(action)) {
       const callback = action;
       action = `think-messenger-${taskId++}`;
@@ -140,6 +142,7 @@ class Messenger extends events {
     process.send({
       act: MESSENGER,
       action,
+      data,
       target: 'one'
     });
   }
