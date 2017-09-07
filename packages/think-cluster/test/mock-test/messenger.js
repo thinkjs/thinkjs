@@ -12,6 +12,9 @@ class events {
   once(evtName, cb) {
     cb();
   }
+  listenerCount(){
+    return 1;
+  }
   emit() {}
 }
 
@@ -79,7 +82,6 @@ test('broadcast case 8', async t => {
   mockEvents();
   const Messenger = getMessenger();
   const m = new Messenger();
-
   m.broadcast(() => {}, 'test');
 });
 

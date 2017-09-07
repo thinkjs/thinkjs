@@ -90,8 +90,7 @@ class Messenger extends events {
    * @return {}        []
    */
   broadcast(action, data) {
-    const length = this.listeners(action).length;
-    assert(length > 0, `can not find \`${action}\` listeners`);
+    assert(this.listenerCount(action) > 0, `can not find \`${action}\` listeners`);
     process.send({
       act: MESSENGER,
       action,
@@ -136,8 +135,7 @@ class Messenger extends events {
       // remove event callback after timeout, avoid memory leak
       helper.timeout(10000).then(() => this.removeAllListeners(action));
     } else {
-      const length = this.listeners(action).length;
-      assert(length > 0, `can not find \`${action}\` listeners`);
+      assert(this.listenerCount(action) > 0, `can not find \`${action}\` listeners`);
     }
     process.send({
       act: MESSENGER,
