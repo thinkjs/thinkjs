@@ -9,6 +9,11 @@ exports.log = function() {
   console.log(chalk.white(prefix), sep, msg);
 };
 
+exports.warning = function() {
+  const msg = format.apply(format, arguments);
+  console.log(chalk.yellow(prefix), sep, msg);
+};
+
 exports.error = function(err) {
   if (err instanceof Error) err = err.message.trim();
   const msg = format.apply(format, arguments);

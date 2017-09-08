@@ -1,9 +1,8 @@
-const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').execSync;
-const fsReaddir = promisify(fs.readdir, fs);
-const fsRmdir = promisify(fs.rmdir, fs);
-const fsUnlink = promisify(fs.unlink, fs);
+const helper = require('think-helper');
+const chalk = require('chalk');
+const logger = require('./logger')
 
 /**
  * make callback function to promise
@@ -31,55 +30,49 @@ module.exports = {
       ? templatePath
       : path.normalize(path.join(process.cwd(), templatePath));
   },
-  /**
-   * check path is exist
-   *
-   * @param  {String} target path
-   * @return {Boolean}
-   */
-  isExist(target) {
-    target = path.normalize(target);
 
-    try {
-      fs.accessSync(target);
-      return true;
-    } catch (e) {
-      return false;
+  isThinkApp(root) {
+    if (!helper.isDirectory(root)) return false;
+    const filepath = path.join(root, 'package.json')
+    if (!helper.isFile(filepath)) return false;
+    const packageJSON = require(filepath);
+    return !!packageJSON.dependencies.thinkjs
+  },
+
+  mkdir(dir) {
+    if (helper.isDirectory(dir)) return;
+    helper.mkdir(dir);
+    logger.success('create ' + path.relative(this.cwd, dir));
+  }
+
+  copyFile(source, target, replace, showWarning = true) {
+    const {mkdir} = module.exports;
+
+    if (helper.isBoolean(replace)) {
+      showWarning = replace;
+      replace = '';
     }
-  },
 
-  /**
-   * check path is directory
-   * @param {String} path
-   * @param {Boolean}
-   */
-  isDirectory(targetPath) {
-    const {isExist} = module.exports;
-    if (!isExist(targetPath)) return false;
-    return fs.statSync(targetPath).isDirectory();
-  },
+    // if target file is exist, ignore it
+    if (helper.isFile(target)) return showWarning
+      ? logger.warning(`${target} is exist`)
+      : undefined
 
-  /**
-   * Remove directory by path
-   * @param {String} target path
-   */
-  rmdir(targetPath) {
-    const {isDirectory, rmdir} = module.exports;
-    if (!isDirectory(targetPath)) return Promise.resolve();
+    mkdir(path.dirname(target));
 
-    return fsReaddir(targetPath)
-      .then(files => {
-        return files.map(item => {
-          const filepath = path.join(targetPath, item);
-          if (isDirectory(filepath)) {
-            return rmdir(filepath);
-          } else {
-            return fsUnlink(filepath);
-          }
-        });
-      })
-      .then(list => Promise.all(list))
-      .then(() => fsRmdir(targetPath));
+    // if source file is not exist
+    if (!helper.isFile(source)) return;
+
+    let content = fs.readFileSync(source, 'utf8');
+    // replace content 
+    if (helper.isObject(replace)) {
+      for (const key in replace) {
+        content = content.replace(new RegExp(key, 'g'), replace[key]);
+      }
+    }
+
+    fs.writeFileSync(target, content);
+    logger.success(chalk.green('create : '), path.relative(this.cwd, target))
   },
 
   getGitUser() {

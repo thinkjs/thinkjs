@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const helper = require('think-helper');
 const utils = require('./utils.js');
 
 module.exports = function(name, dir) {
@@ -15,12 +16,12 @@ function getMetadata(dir) {
   const json = path.join(dir, 'metadata.json');
   const js = path.join(dir, 'metadata.js');
 
-  if (utils.isExist(json)) {
+  if (helper.isExist(json)) {
     const data = fs.readFileSync(json, 'utf-8');
     return JSON.parse(data);
   }
 
-  if (utils.isExist(js)) {
+  if (helper.isExist(js)) {
     return require(js);
   }
 }

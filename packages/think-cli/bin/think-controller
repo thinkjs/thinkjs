@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 
 const program = require('commander')
+const Metalsmith = require('metalsmith')
+const os = require('os')
 const chalk = require('chalk')
+const path = require('path')
+const helper = require('think-helper')
+const utils = require('../lib/utils')
+const logger = require('../lib/logger')
 
 /**
  * Usage.
@@ -28,11 +34,11 @@ program.on('--help', function () {
   console.log()
   console.log('  Examples:')
   console.log()
-  console.log(chalk.gray('    # create controller'))
-  console.log('    $ thinkjs controller')
+  console.log(chalk.gray('    # create a controller with the name ' + chalk.gray.underline.bold('user')))
+  console.log('    $ thinkjs controller name')
   console.log()
   console.log(chalk.gray('    # create rest controller'))
-  console.log('    $ thinkjs controller -r')
+  console.log('    $ thinkjs controller name -r')
   console.log()
 })
 
@@ -46,3 +52,42 @@ console.log()
 process.on('exit', function () {
   console.log()
 })
+
+/**
+ * Start.
+ */
+
+if (!utils.isThinkApp(path.resolve('./'))) {
+  logger.error(
+    'Please execute the command in the '+
+    chalk.yellow.underline.bold('thinkjs project') +
+    ' root directory'
+  )
+}
+
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates')
+const isMultiModule = helper.isDirectory(path.join('./', 'src/common'))
+const ctrlName  = program.args[0]
+const moduleName = program.args[1]
+const template = utils.isLocalPath(program.args[2])
+  ? program.args[2]
+  : path.join(cacheTemplatePath, program.args[2].replace(/\//g, '-'))
+
+if (isMultiModule && program.args.length < 2) {
+  logger.error(
+    'You must enter the '+
+    chalk.yellow.underline.bold('module name')
+  )
+}
+
+const ctrlPath = path.join(template, 'template', require(path.join(template, 'metadata')).paths.controller)
+const targetPath = path.join('src', isMultiModule ? moduleName : '', 'controller', ctrlName)
+
+Metalsmith(ctrlPath)
+  .source('.')
+  .destination(path.join(path.resolve('./'), targetPath))
+  .build((err) => {
+    console.log()
+    if (err) return logger.error(err)
+    logger.success('Generated %s', targetPath)
+  })

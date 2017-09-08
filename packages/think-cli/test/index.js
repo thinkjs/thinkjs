@@ -3,7 +3,7 @@ const path = require('path')
 const inquirer = require('inquirer')
 const fs = require('fs')
 const ThinkInit = require('../lib/init.js')
-const utils = require('../lib/utils.js')
+const helper = require('think-helper');
 const cacheTemplatePath = path.join(__dirname, '.think-templates')
 const targetDir = 'tmp'
 const targetName = 'think-cli-unit-test'
@@ -41,7 +41,7 @@ test.cb('should generation think-cli-unit-test project', t => {
   init.run()
 
   const timer = setInterval(() => {
-    if (utils.isExist(targetPath)) {
+    if (helper.isExist(targetPath)) {
       clearInterval(timer)
       t.pass()
       t.end()
@@ -72,7 +72,7 @@ test.cb('should generate from a local template', t => {
   init.run()
 
   const timer = setInterval(() => {
-    if (utils.isExist(targetPath)) {
+    if (helper.isExist(targetPath)) {
       clearInterval(timer)
       t.pass()
       t.end()
@@ -104,7 +104,7 @@ test.cb('should generate multi module project from a local template', t => {
   init.run()
 
   const timer = setInterval(() => {
-    if (utils.isExist(targetPath)) {
+    if (helper.isExist(targetPath)) {
       clearInterval(timer)
       t.pass()
       t.end()
@@ -114,11 +114,11 @@ test.cb('should generate multi module project from a local template', t => {
 
 test.cb('local template generate multi module project content be equal to multiModule', t => {
   const targetPath = path.join(__dirname, targetDir, multiModuleTargetName)
-  t.true(utils.isExist(path.join(targetPath, 'src/common/bootstrap')), 'The multi module project directory is incorrect')
+  t.true(helper.isExist(path.join(targetPath, 'src/common/bootstrap')), 'The multi module project directory is incorrect')
   t.end()
 })
 
 test.after(t => {
-  return utils.rmdir(cacheTemplatePath)
-    .then(() => utils.rmdir(path.join(__dirname, targetDir)))
+  return helper.rmdir(cacheTemplatePath)
+    .then(() => helper.rmdir(path.join(__dirname, targetDir)))
 })

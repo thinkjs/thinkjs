@@ -4,7 +4,7 @@ const program = require('commander')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
 const path = require('path')
-const utils = require('../lib/utils.js')
+const helper = require('thinkjs-helper')
 const ThinkInit = require('../lib/init.js')
 const os = require('os')
 
@@ -61,7 +61,7 @@ const clone = program.clone || false
 const isMultiModule = program.module || false
 const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone, isMultiModule})
 
-if (utils.isExist(targetPath)) {
+if (helper.isExist(targetPath)) {
   inquirer.prompt([{
     type: 'confirm',
     message: isHere

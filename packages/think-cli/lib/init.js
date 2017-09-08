@@ -1,5 +1,6 @@
 const ora = require('ora');
 const download = require('download-git-repo');
+const helper = require('think-helper');
 const utils = require('./utils.js');
 const generate = require('./generate.js');
 const logger = require('./logger.js');
@@ -27,7 +28,7 @@ class init {
   [THINK_GENERATE]() {
     const {name, template: rawTemplate, targetPath, isMultiModule} = this.options;
     const template = utils.getLocalTemplatePath(rawTemplate);
-    if (!utils.isExist(template)) {
+    if (!helper.isExist(template)) {
       console.log();
       logger.error('Local template "%s" not found.', template);
       return;
@@ -52,8 +53,8 @@ class init {
       : 'haotech/' + rawTemplate;
 
     function ensureTargetPath(path) {
-      return utils.isExist(path)
-        ? utils.rmdir(path)
+      return helper.isExist(path)
+        ? helper.rmdir(path)
         : Promise.resolve();
     }
 
