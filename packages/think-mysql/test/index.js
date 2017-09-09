@@ -23,6 +23,9 @@ mock('mysql', {
           }
         });
       },
+      on() {
+
+      },
       end(callback) {
         this._closed = true;
         callback(null);
