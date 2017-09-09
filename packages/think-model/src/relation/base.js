@@ -24,7 +24,7 @@ module.exports = class BaseRelation {
       this.data.forEach(item => {
         let itemValue = item[key];
         if (!itemValue) return;
-        if (helper.isNumberString) itemValue = parseInt(itemValue, 10);
+        if (helper.isNumberString(itemValue)) itemValue = parseInt(itemValue, 10);
         if (keys.indexOf(itemValue) === -1) keys.push(itemValue);
       });
       if (keys.length === 0) return false;
