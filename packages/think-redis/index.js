@@ -67,6 +67,7 @@ class thinkRedis {
    * @return {Promise}      [description]
    */
   set(key, value, type, expire) {
+    value = JSON.stringify(value);
     if (type) {
       if (helper.isString(type)) {
         assert(type === 'EX' || type === 'PX', 'type should eq "EX" or "PX"');
@@ -89,7 +90,15 @@ class thinkRedis {
    * @return {Promise}     [description]
    */
   get(key) {
-    return debounceInstance.debounce(key, () => this.redis.get(key));
+    return debounceInstance.debounce(key, () => {
+      return this.redis.get(key).then(data => {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          return data;
+        }
+      });
+    });
   }
 
   /**
