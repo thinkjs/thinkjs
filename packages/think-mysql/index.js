@@ -124,22 +124,26 @@ class ThinkMysql {
   /**
    * query data
    */
-  [QUERY](sqlOptions, connection, startTime) {
+  [QUERY](sqlOptions, connection, startTime, times = 0) {
     const queryFn = helper.promisify(connection.query, connection);
     return queryFn(sqlOptions).catch(err => err).then(data => {
+      this.releaseConnection(connection);
+
+      // if server close connection, then retry it
+      if (helper.isError(data) && data.code === 'PROTOCOL_CONNECTION_LOST') {
+        connection[CONNECTION_LOST] = true;
+        if (times < 3) {
+          return this.getConnection().then(connection => {
+            return this[QUERY](sqlOptions, connection, startTime, times + 1);
+          });
+        }
+      }
       // log sql
       if (this.config.logSql) {
         const endTime = Date.now();
         this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
       }
-      this.releaseConnection(connection);
-
-      if (helper.isError(data)) {
-        if (data.code === 'PROTOCOL_CONNECTION_LOST') {
-          connection[CONNECTION_LOST] = true;
-        }
-        return Promise.reject(data);
-      }
+      if (helper.isError(data)) return Promise.reject(data);
       return data;
     });
   }
