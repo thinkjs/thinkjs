@@ -4,11 +4,13 @@ const formidable = require('formidable');
 const onFinish = require('on-finished');
 
 const fsUnlink = helper.promisify(fs.unlink, fs);
-const fsAccess = helper.promisify(fs.access, fs);
 
 module.exports = (ctx, opts = {}) => {
   const req = ctx.req;
   const form = new formidable.IncomingForm(opts);
+  if (opts.uploadDir && !helper.isDirectory(opts.uploadDir)) {
+    helper.mkdir(opts.uploadDir);
+  }
 
   let uploadFiles = null;
 
@@ -16,7 +18,7 @@ module.exports = (ctx, opts = {}) => {
     if (!uploadFiles) return;
     Object.keys(uploadFiles).forEach(key => {
       const filepath = uploadFiles[key].path;
-      fsAccess(filepath).then(() => fsUnlink(filepath)).catch(() => {});
+      if (helper.isExist(filepath)) fsUnlink(filepath);
     });
   });
 
