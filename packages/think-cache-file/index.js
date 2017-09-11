@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 17:41:37
+* @Last Modified time: 2017-09-11 12:28:55
 */
 const path = require('path');
 const helper = require('think-helper');
@@ -70,7 +70,7 @@ class FileCache {
       } catch (e) {
         return this.store.delete(relativePath);
       }
-    }).catch(() => {});
+    });
   }
 
   /**
@@ -86,7 +86,7 @@ class FileCache {
       content: content,
       expire: Date.now() + timeout
     };
-    return this.store.set(relativePath, JSON.stringify(tmp)).catch(() => {});
+    return this.store.set(relativePath, JSON.stringify(tmp));
   }
 
   /**
@@ -96,7 +96,7 @@ class FileCache {
    */
   delete(key) {
     const relativePath = this[_getRelativePath](key);
-    return this.store.delete(relativePath).catch(() => {});
+    return this.store.delete(relativePath);
   }
 
   /**
