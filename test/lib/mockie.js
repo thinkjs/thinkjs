@@ -66,6 +66,9 @@ function mockThinkCluster(args = {}) {
       return agent
     },
     Master: class Master {
+      constructor(options = {}){
+        this.options = options;
+      }
       forkWorkers(){
         return Promise.resolve();
       }
