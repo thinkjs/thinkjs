@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 17:56:05
+* @Last Modified time: 2017-09-11 12:21:59
 */
 const helper = require('think-helper');
 const Memcache = require('think-memcache');
@@ -32,7 +32,14 @@ class MemcacheCache {
    * @return {Promise}      [description]
    */
   get(key) {
-    return this.memcache.get(key).catch(() => {});
+    // return this.memcache.get(key);
+    return this.memcache.get(key).then((data) => {
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        return data;
+      }
+    });
   }
 
   /**
@@ -43,7 +50,8 @@ class MemcacheCache {
    * @return {Promise}      [description]
    */
   set(key, content, timeout = this.timeout) {
-    return this.memcache.set(key, content, timeout).catch(() => {});
+    content = JSON.stringify(content);
+    return this.memcache.set(key, content, timeout);
   }
 
   /**
@@ -52,7 +60,7 @@ class MemcacheCache {
    * @return {Promise}     [description]
    */
   delete(key) {
-    return this.memcache.delete(key).catch(() => {});
+    return this.memcache.delete(key);
   }
 }
 
