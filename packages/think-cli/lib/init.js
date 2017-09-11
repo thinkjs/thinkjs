@@ -2,7 +2,7 @@ const ora = require('ora');
 const download = require('download-git-repo');
 const helper = require('think-helper');
 const utils = require('./utils.js');
-const generate = require('./generate.js');
+const generate = require('./generateProject.js');
 const logger = require('./logger.js');
 
 const THINK_GENERATE = Symbol('think-cli#generate');

@@ -8,6 +8,7 @@ const path = require('path')
 const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
+const generate = require('../lib/generate')
 
 /**
  * Usage.
@@ -81,13 +82,30 @@ if (isMultiModule && program.args.length < 2) {
 }
 
 const ctrlPath = path.join(template, 'template', require(path.join(template, 'metadata')).paths.controller)
-const targetPath = path.join('src', isMultiModule ? moduleName : '', 'controller', ctrlName)
+const targetPath = path.join('src', isMultiModule ? moduleName : '', 'controller')
 
-Metalsmith(ctrlPath)
-  .source('.')
-  .destination(path.join(path.resolve('./'), targetPath))
-  .build((err) => {
-    console.log()
-    if (err) return logger.error(err)
-    logger.success('Generated %s', targetPath)
+const restPath = path.join(ctrlPath, 'rest.js');
+const restTplPath = path.join(ctrlPath, 'restIndex_tpl.js');
+const baseTplPath = path.join(ctrlPath, 'index_tpl.js');
+
+restTargetPath = path.join(targetPath, 'rest.js');
+baseTplTargetPath = path.join(targetPath, ctrlName + '.js');
+
+let sources = [];
+let targets = [];
+
+if (program.rest) {
+  sources = [restPath, restTplPath];
+  targets = [restTargetPath, baseTplTargetPath];
+} else {
+  sources = [baseTplPath];
+  targets = [baseTplTargetPath];
+}
+
+generate(sources, targets)
+  .then(path => {
+    logger.success('Generated %s', path)
+  })
+  .catch(err => {
+    logger.error(err)
   })
