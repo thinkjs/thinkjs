@@ -194,6 +194,9 @@ module.exports = class AbstractQuery {
    * @param {Object} connection 
    */
   transaction(fn, connection) {
-    return this.socket().transaction(fn, connection);
+    return this.socket().transaction(connection => {
+      this.connection = connection;
+      return fn(connection);
+    }, connection);
   }
 };
