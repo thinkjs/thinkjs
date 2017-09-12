@@ -820,7 +820,7 @@ describe('getPromise', function(){
 describe('getDefer', function(){
   it('getDefer()', function(){
     var deferred = getDefer();
-    assert.equal(isObject(deferred.promise), true);
+    assert.equal(isObject(deferred.promise), false);
     assert.equal(isFunction(deferred.resolve), true);
     assert.equal(isFunction(deferred.reject), true)
     assert.equal(isFunction(deferred.promise.then), true);
