@@ -14,7 +14,7 @@ module.exports = class SocketIO {
 
     // https://socket.io/docs/server-api/#server-adapter-value
     if (config.adapter) {
-      this.io.adapter(config.adapter(this.io));
+      this.io.adapter(config.adapter);
     }
     // https://socket.io/docs/server-api/#server-origins-value
     if (config.allowOrigin) {
