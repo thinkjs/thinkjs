@@ -1,11 +1,13 @@
 const Metalsmith = require('metalsmith');
 const inquirer = require('inquirer');
 const Handlebars = require('handlebars');
-const render = require('consolidate').handlebars.render;
+const renderRaw = require('consolidate').handlebars.render;
 const path = require('path');
 const multimatch = require('multimatch');
 const getOptions = require('./options.js');
 const logger = require('./logger.js');
+const utils = require('./utils');
+const render = utils.promisify(renderRaw, renderRaw);
 
 Handlebars.registerHelper('author', function(res) {
   return new Handlebars.SafeString(res.data.root.author);
@@ -72,19 +74,14 @@ function template(skipCompile) {
         return Promise.resolve();
       }
 
-      return new Promise((resolve, reject) => {
-        const str = files[file].contents.toString();
-
-        render(str, metadata, (err, res) => {
-          if (err) reject(err);
-          try {
-            files[file].contents = Buffer.from(res);
-          } catch (e) {
-            logger.error('"%s" file render failed. Please add the file to the skipCompile key in the metadata.js', file);
-          }
-          resolve();
+      const str = files[file].contents.toString();
+      return render(str, metadata)
+        .then(res => {
+          files[file].contents = Buffer.from(res);
+        })
+        .catch(_ => {
+          logger.error('"%s" file render failed. Please add the file to the skipCompile key in the metadata.js', file);
         });
-      });
     });
 
     Promise.all(promises).then(() => {

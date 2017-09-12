@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const program = require('commander')
+const ora = require('ora')
 const Metalsmith = require('metalsmith')
+const downloadRaw = require('download-git-repo')
 const os = require('os')
 const chalk = require('chalk')
 const path = require('path')
@@ -8,6 +10,7 @@ const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
 const generate = require('../lib/generate')
+const download = utils.promisify(downloadRaw, downloadRaw)
 
 /**
  * Usage.
@@ -73,14 +76,18 @@ const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkCliIn
 if (utils.isLocalPath(template)) {
   generateFn(template)
 } else {
+  const spinner = ora({text: 'downloading template...', spinner: 'arrow3'}).start();
   ensureTargetPath(cacheTemplatePath)
+    .then(downloadFn(template, cacheTemplatePath, {clone: thinkCliInfo.clone}))
     .then(_ => {
-      download(template, cacheTemplatePath, {clone: thinkCliInfo.clone}, err => {
-        spinner.stop();
-        if (err) return logger.error(err);
-        generateFn(cacheTemplatePath);
-      });
+      spinner.stop();
+      generateFn(cacheTemplatePath);
     })
+    .catch(err => logger.error(err))
+}
+
+function downloadFn(template, cacheTemplatePath, {clone: thinkCliInfo.clone}) {
+  return _ => download(template, cacheTemplatePath, {clone: thinkCliInfo.clone})
 }
 
 function ensureTargetPath(path) {
