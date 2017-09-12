@@ -1,6 +1,7 @@
 'use strict';
 
 import querystring from 'querystring';
+import comparison from './comparison.js';
 
 /**
  * sql parse class
@@ -13,19 +14,7 @@ export default class extends think.base {
   init(config = {}){
     this.config = config;
     //operate
-    this.comparison = {
-      'EQ': '=',
-      'NEQ': '!=',
-      '<>': '!=',
-      'GT': '>',
-      'EGT': '>=',
-      'LT': '<',
-      'ELT': '<=',
-      'NOTLIKE': 'NOT LIKE',
-      'LIKE': 'LIKE',
-      'IN': 'IN',
-      'NOTIN': 'NOT IN'
-    };
+    this.comparison = comparison.COMPARISON;
     this.selectSql = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
   }
   /**

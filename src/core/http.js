@@ -4,14 +4,25 @@ import url from 'url';
 import fs from 'fs';
 import mime from 'mime';
 import cookie from '../util/cookie.js';
+import comparison from '../adapter/db/comparison.js';
+
+const escapeComparison = value => {
+  if(!think.isArray(value)) return value;
+  if(!think.isString(value[0])) return value[0];
+  if(comparison.COMPARISON_LIST.indexOf(value[0].toUpperCase()) > -1) {
+    value[0] += ' ';
+  }
+  return value;
+}
+
 
 const PAYLOAD_METHODS = ['POST', 'PUT', 'PATCH'];
-
 /**
  * wrap for request & response
  * @type {Object}
  */
-export default class {
+
+ export default class {
   /**
    * constructor
    * @return {} []
@@ -326,7 +337,7 @@ export default class {
         if(value === undefined){
           value = '';
         }
-        return value;
+        return escapeComparison(value);
       }
       this._get = name;
     }else{
@@ -355,7 +366,7 @@ export default class {
         if(value === undefined){
           value = '';
         }
-        return value;
+        return escapeComparison(value);
       }
       this._post = name;
     }else {
