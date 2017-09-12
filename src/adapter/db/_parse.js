@@ -4,6 +4,17 @@ import querystring from 'querystring';
 import comparison from './comparison.js';
 
 /**
+ * get comparison
+ * @param {String} comparison 
+ */
+const getComparison = value => {
+  let comparisonUpper = value.toUpperCase();
+  comparisonUpper = comparison.COMPARISON[comparisonUpper] || comparisonUpper;
+  if (comparison.COMPARISON_LIST.indexOf(comparisonUpper) > -1) return comparisonUpper;
+  throw new Error(`${value} is not valid`);
+};
+
+/**
  * sql parse class
  */
 export default class extends think.base {
@@ -14,7 +25,7 @@ export default class extends think.base {
   init(config = {}){
     this.config = config;
     //operate
-    this.comparison = comparison.COMPARISON;
+    // this.comparison = comparison.COMPARISON;
     this.selectSql = '%EXPLAIN%SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%%UNION%%COMMENT%';
   }
   /**
@@ -217,7 +228,7 @@ export default class extends think.base {
       let result = [];
       for(let opr in val){
         let nop = opr.toUpperCase();
-        nop = this.comparison[nop] || nop;
+        nop = getComparison(nop);
         let parsedValue = this.parseValue(val[opr]);
         //{id: {IN: [1, 2, 3]}}
         if(think.isArray(parsedValue)){
@@ -252,7 +263,7 @@ export default class extends think.base {
     let data;
     if (think.isString(val[0])) {
       let val0 = val[0].toUpperCase();
-      val0 = this.comparison[val0] || val0;
+      val0 = getComparison(val0);
       // compare
       if (/^(=|!=|>|>=|<|<=)$/.test(val0)) {
         if(val[1] === null){
@@ -323,7 +334,7 @@ export default class extends think.base {
         if (exp === 'EXP') {
           result.push(`(${key} ${data})`);
         }else{
-          let op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
+          let op = isArr ? getComparison(val[i][0]) : '=';
           result.push(`(${key} ${op} ${this.parseValue(data)})`);
         }
       }
