@@ -1,6 +1,7 @@
 const Parser = require('./lib/parser.js');
 const Query = require('./lib/query.js');
 const Schema = require('./lib/schema.js');
+const {COMPARISON_LIST} = require('./lib/comparison.js');
 
 /**
  * abstract class
@@ -159,3 +160,4 @@ module.exports = class Abstract {
 module.exports.Parser = Parser;
 module.exports.Query = Query;
 module.exports.Schema = Schema;
+module.exports.COMPARISON_LIST = COMPARISON_LIST;

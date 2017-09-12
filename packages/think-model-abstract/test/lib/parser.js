@@ -19,9 +19,10 @@ const getParserInstance = config => {
 ava.test('init', ('init', t => {
   t.plan(2);
   const instance = getParserInstance();
-  const keys = Object.keys(instance.comparison).sort();
-  t.deepEqual(keys, [ '<>', 'EGT', 'ELT', 'EQ', 'GT', 'ILIKE', 'IN', 'LIKE', 'LT', 'NEQ', 'NOTILIKE', 'NOTIN', 'NOTLIKE' ]);
+  // const keys = Object.keys(instance.comparison).sort();
+  // t.deepEqual(keys, [ '<>', 'EGT', 'ELT', 'EQ', 'GT', 'ILIKE', 'IN', 'LIKE', 'LT', 'NEQ', 'NOTILIKE', 'NOTIN', 'NOTLIKE' ]);
   t.is(instance.selectSql, undefined);
+  t.is(instance.comparison, undefined);
 }));
 
 ava.test('parseExplain', t => {

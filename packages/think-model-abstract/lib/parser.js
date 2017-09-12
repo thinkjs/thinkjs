@@ -1,19 +1,16 @@
 const helper = require('think-helper');
 const querystring = require('querystring');
-const COMPARISON = {
-  EQ: '=',
-  NEQ: '!=',
-  '<>': '!=',
-  GT: '>',
-  EGT: '>=',
-  LT: '<',
-  ELT: '<=',
-  NOTLIKE: 'NOT LIKE',
-  LIKE: 'LIKE',
-  NOTILIKE: 'NOT ILIKE',
-  ILIKE: 'ILIKE',
-  IN: 'IN',
-  NOTIN: 'NOT IN'
+const {COMPARISON, COMPARISON_LIST} = require('./comparison.js');
+
+/**
+ * get comparison
+ * @param {String} comparison 
+ */
+const getComparison = comparison => {
+  let comparisonUpper = comparison.toUpperCase();
+  comparisonUpper = COMPARISON[comparisonUpper] || comparisonUpper;
+  if (COMPARISON_LIST.indexOf(comparisonUpper)) return comparisonUpper;
+  throw new Error(`${comparison} is not valid`);
 };
 
 module.exports = class AbstractParser {
@@ -23,7 +20,6 @@ module.exports = class AbstractParser {
    */
   constructor(config = {}) {
     this.config = config;
-    this.comparison = COMPARISON;
   }
   /**
    * parse explain
@@ -199,8 +195,7 @@ module.exports = class AbstractParser {
       const logic = this.getLogic(val);
       const result = [];
       for (const opr in val) {
-        let nop = opr.toUpperCase();
-        nop = this.comparison[nop] || nop;
+        const nop = getComparison(opr);
         const parsedValue = this.parseValue(val[opr]);
         // {id: {IN: [1, 2, 3]}}
         if (helper.isArray(parsedValue)) {
@@ -230,8 +225,7 @@ module.exports = class AbstractParser {
     let whereStr = '';
     let data;
     if (helper.isString(val[0])) {
-      let val0 = val[0].toUpperCase();
-      val0 = this.comparison[val0] || val0;
+      const val0 = getComparison(val[0]);
       // compare
       if (/^(=|!=|>|>=|<|<=)$/.test(val0)) {
         if (val[1] === null) {
@@ -297,7 +291,7 @@ module.exports = class AbstractParser {
         if (exp === 'EXP') {
           result.push(`(${key} ${data})`);
         } else {
-          const op = isArr ? (this.comparison[val[i][0].toUpperCase()] || val[i][0]) : '=';
+          const op = isArr ? getComparison(val[i][0]) : '=';
           result.push(`(${key} ${op} ${this.parseValue(data)})`);
         }
       }
