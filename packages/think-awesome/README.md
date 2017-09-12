@@ -17,9 +17,16 @@ Awesome projects for `ThinkJS 3.x`
 
 ## Koa Middlewares 
 
-| Package  | Author  | Version  |  Status | Coverage | Description |
+| Package  | Author  | Version  |  Status | downloads | Description |
 |---|---|---|---|---|---|
-| [kcors](https://github.com/koajs/cors) | [@fengmk2](https://github.com/fengmk2) | ![version](https://img.shields.io/npm/v/kcors.svg) | ![](https://api.travis-ci.org/koajs/cors.svg) | ![](https://codecov.io/github/koajs/cors.svg) | CORS middleware |
+| [kcors](https://github.com/koajs/cors) | [@fengmk2](https://github.com/fengmk2) | ![version](https://img.shields.io/npm/v/kcors.svg) | ![status](https://travis-ci.org/koajs/cors.svg) | ![downloads](https://img.shields.io/npm/dm/kcors.svg) | CORS middleware |
+| [grant](https://github.com/simov/grant) | [@simov](https://github.com/simov) | ![version](https://img.shields.io/npm/v/grant.svg) | ![status](https://travis-ci.org/simov/grant.svg) | ![downloads](https://img.shields.io/npm/dm/grant.svg) | OAuth middleware |
+| [koa-csrf](https://github.com/koajs/csrf) | [@jonathanong](https://github.com/jonathanong) | ![version](https://img.shields.io/npm/v/koa-csrf.svg) | ![status](https://travis-ci.org/koajs/csrf.svg) | ![downloads](https://img.shields.io/npm/dm/koa-csrf.svg) | CSRF tokens |
+| [koa-helmet](https://github.com/venables/helmet) | [@venables](https://github.com/venables) | ![version](https://img.shields.io/npm/v/koa-helmet.svg) | ![status](https://travis-ci.org/venables/koa-helmet.svg) | ![downloads](https://img.shields.io/npm/dm/koa-helmet.svg) | security headers for koa |
+| [koa-ip-filter](https://github.com/charlike/koa-ip-filter) | [@charlike](https://github.com/charlike) | ![version](https://img.shields.io/npm/v/koa-ip-filter.svg) | ![status](https://travis-ci.org/charlike/koa-ip-filter.svg) | ![downloads](https://img.shields.io/npm/dm/koa-ip-filter.svg) | Ip filter middleware for koa |
+| [koa-ratelimit](https://github.com/koajs/ratelimit) | [@dead-horse](https://github.com/dead-horse) | ![version](https://img.shields.io/npm/v/koa-ratelimit.svg) | ![status](https://travis-ci.org/koajs/ratelimit.svg) | ![downloads](https://img.shields.io/npm/dm/koa-ratelimit.svg) | rate limiting middleware |
+| [koa-jwt](https://github.com/koajs/jwt) | [@sdd](https://github.com/sdd) | ![version](https://img.shields.io/npm/v/koa-jwt.svg) | ![status](https://travis-ci.org/koajs/jwt.svg) | ![downloads](https://img.shields.io/npm/dm/koa-jwt.svg) | JWT (JSON Web Tokens) verification |
+| [koa-basic-auth](https://github.com/koajs/basic-auth) | [@tj](https://github.com/tj) | ![version](https://img.shields.io/npm/v/koa-basic-auth.svg) | ![status](https://travis-ci.org/koajs/basic-auth.svg) | ![downloads](https://img.shields.io/npm/dm/koa-basic-auth.svg) | blanket basic auth middleware |
 
 ## Adapters
 
