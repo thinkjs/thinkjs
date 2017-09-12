@@ -8,6 +8,12 @@ const assert = require('assert');
  *    ['/index', 'test', 'get']
  * ]
  *
+ * rules = [ {
+ *    match: /match/,
+ *    rules: [match, path, method, options]
+ *  }
+ * ]
+ *
  * rules = {
  *  admin: {
  *    match: '',
@@ -111,29 +117,35 @@ class Router {
     let rule;
     const specialMethods = ['REDIRECT', 'REST'];
     rules.some(item => {
-      const itemMethod = item.method;
-      if (itemMethod && specialMethods.indexOf(itemMethod) === -1) {
-        // check method matched
-        if (itemMethod.indexOf(this.ctxMethod) === -1) return;
-      }
-      assert(helper.isRegExp(item.match), 'router.match must be a RegExp');
-      const match = item.match.exec(this.pathname);
-      if (!match) return;
-      assert(helper.isArray(item.query), 'router.query must be an array');
-      const query = {};
-      let pathname = item.path || this.pathname;
-
-      item.query.forEach((queryItem, index) => {
-        if (/^\d+$/.test(queryItem.name)) {
-          const index = parseInt(queryItem.name) + 1;
-          pathname = pathname.replace(`:${index}`, match[index] || '');
-        } else {
-          query[queryItem.name] = match[index + 1];
-          pathname = pathname.replace(`:${queryItem.name}`, query[queryItem.name]);
+      if (!item.rules) {
+        const itemMethod = item.method;
+        if (itemMethod && specialMethods.indexOf(itemMethod) === -1) {
+          // check method matched
+          if (itemMethod.indexOf(this.ctxMethod) === -1) return;
         }
-      });
-      rule = Object.assign({}, item, {query, path: pathname});
-      return true;
+        assert(helper.isRegExp(item.match), 'router.match must be a RegExp');
+        const match = item.match.exec(this.pathname);
+        if (!match) return;
+        assert(helper.isArray(item.query), 'router.query must be an array');
+        const query = {};
+        let pathname = item.path || this.pathname;
+
+        item.query.forEach((queryItem, index) => {
+          if (/^\d+$/.test(queryItem.name)) {
+            const index = parseInt(queryItem.name) + 1;
+            pathname = pathname.replace(`:${index}`, match[index] || '');
+          } else {
+            query[queryItem.name] = match[index + 1];
+            pathname = pathname.replace(`:${queryItem.name}`, query[queryItem.name]);
+          }
+        });
+        rule = Object.assign({}, item, {query, path: pathname});
+        return true;
+      } else {
+        const multiMatch = item.match.exec(this.pathname);
+        if (!multiMatch) return;
+        rule = this.getMatchedRule(item.rules);
+      }
     });
     return rule;
   }

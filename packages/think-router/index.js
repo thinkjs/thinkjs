@@ -19,26 +19,44 @@ const defaultOptions = {
 };
 
 /**
+ * format Rule
+ * @param {Array} rule
+ */
+const formatRule = rule => {
+  const query = [];
+  const match = pathToRegexp(rule[0], query);
+
+  // [/match/, 'rest']
+  if (rule.length === 2 && rule[1].toUpperCase() === 'REST') {
+    rule[2] = rule[1];
+    rule[1] = null;
+  }
+
+  return {
+    match,
+    path: rule[1],
+    method: rule[2] && rule[2].toUpperCase(),
+    options: rule[3] || {},
+    query
+  };
+};
+
+/**
  * format routers
  * @param {Array|Object} routers
  */
 const formatRouters = routers => {
   if (helper.isArray(routers)) {
     return routers.map(item => {
-      const query = [];
-      const match = pathToRegexp(item[0], query);
-      // [/reg/, 'rest']
-      if (item.length === 2 && item[1].toUpperCase() === 'REST') {
-        item[2] = item[1];
-        item[1] = null;
+      if (item.match && item.rules) {
+        item.match = pathToRegexp(item.match);
+        item.rules = item.rules.map(rule => {
+          return formatRule(rule);
+        });
+        return item;
+      } else {
+        return formatRule(item);
       }
-      return {
-        match,
-        path: item[1],
-        method: item[2] && item[2].toUpperCase(),
-        options: item[3] || {},
-        query
-      };
     });
   }
   for (const m in routers) {
