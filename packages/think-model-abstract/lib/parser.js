@@ -9,7 +9,7 @@ const {COMPARISON, COMPARISON_LIST} = require('./comparison.js');
 const getComparison = comparison => {
   let comparisonUpper = comparison.toUpperCase();
   comparisonUpper = COMPARISON[comparisonUpper] || comparisonUpper;
-  if (COMPARISON_LIST.indexOf(comparisonUpper)) return comparisonUpper;
+  if (COMPARISON_LIST.indexOf(comparisonUpper) > -1) return comparisonUpper;
   throw new Error(`${comparison} is not valid`);
 };
 
