@@ -2,8 +2,7 @@ const fileCache = require('think-cache-file');
 const nunjucks = require('think-view-nunjucks');
 const fileSession = require('think-session-file');
 const mysql = require('think-model-mysql');
-
-import * as path from 'path';
+const path = require('path');
 import { think } from 'thinkjs';
 const isDev = think.env === 'development';
 

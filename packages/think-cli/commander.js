@@ -16,11 +16,11 @@ class Commander {
   }
 
   templatePath() {
-    return path.join(__dirname, this.typescript ? 'template-ts' : 'template');
+    return path.join(__dirname, this.isTypescript() ? 'template-ts' : 'template');
   }
 
   isTypescript() {
-    return this.typescript || helper.isFile('tsconfig.json');
+    return this.typescript || helper.isFile('./tsconfig.json');
   }
 
   getExt() {
