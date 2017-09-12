@@ -33,6 +33,9 @@ const mockContext = {
   response:{
     get(){}
   },
+  app: {
+    emit() {}
+  },
   attachment(){
 
   }
@@ -55,6 +58,7 @@ const mockThink = {
     return Array.isArray(param)
   },
   app: {
+    emit() {},
     validators: {
       messages: {
         TEST_RULE: [1000, 'test'],
