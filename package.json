@@ -18,6 +18,9 @@
   "bin": {
     "thinkjs": "./bin/index.js"
   },
+  "publishConfig": {    
+    "tag": "v2"   
+  },
   "contributors": [
     {
       "name": "welefen",

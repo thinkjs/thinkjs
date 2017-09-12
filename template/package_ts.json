@@ -7,7 +7,7 @@
     "compile": "node bin/compile.js"
   },
   "dependencies": {
-    "thinkjs": "2.2.x",
+    "thinkjs": "v2",
     "babel-runtime": "6.x.x",
     "source-map-support": "0.4.0",
     "source-map": "0.5.3"

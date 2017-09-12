@@ -7,7 +7,7 @@
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 10000 --recursive  -R spec test/"
   },
   "dependencies": {
-    "thinkjs": "2.2.x",
+    "thinkjs": "v2",
     "mocha": "1.20.1",
     "istanbul": "0.4.0"
   },
