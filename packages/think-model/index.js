@@ -1,8 +1,19 @@
 const helper = require('think-helper');
 const path = require('path');
+const {COMPARISON_LIST} = require('think-model-abstract');
 const Model = require('./lib/model.js');
 
 module.exports = app => {
+  app.on('filterParam', data => {
+    for (const name in data) {
+      if (!helper.isArray(data[name])) continue;
+      const first = data[name][0];
+      if (!helper.isString(first)) continue;
+      if (COMPARISON_LIST.indexOf(first.toUpperCase()) > -1) {
+        data[name][0] += ' ';
+      }
+    }
+  });
   function model(name, config, m = 'common') {
     const models = app.modules.length ? (app.models[m] || {}) : app.models;
     const Cls = models[name] || Model;
