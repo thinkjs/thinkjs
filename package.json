@@ -9,6 +9,9 @@
   "scripts": {
     "test": "make test"
   },
+  "publishConfig": {    
+    "tag": "v1"   
+  },
   "contributors": [
     {
       "name": "welefen",
