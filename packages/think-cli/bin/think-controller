@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const program = require('commander')
 const Metalsmith = require('metalsmith')
 const os = require('os')
@@ -20,11 +19,7 @@ program
   .parse(process.argv)
 
 /*
-  thinkjs controller c1 =>  home/controller/c1
-  thinkjs controller c1 common => common/controller/c1
-  thinkjs controller c1 home => home/controller/c1
-  thinkjs controller c1 admin => admin/controller/c1
-  thinkjs controller c1/c2 admin => admin/controller/c1/c2
+  node ../../think-cli/bin/think controller user home -r
 */
 
 /**
@@ -66,46 +61,56 @@ if (!utils.isThinkApp(path.resolve('./'))) {
   )
 }
 
-const cacheTemplatePath = path.join(os.homedir(), '.think-templates')
-const isMultiModule = helper.isDirectory(path.join('./', 'src/common'))
-const ctrlName  = program.args[0]
-const moduleName = program.args[1]
-const template = utils.isLocalPath(program.args[2])
-  ? program.args[2]
-  : path.join(cacheTemplatePath, program.args[2].replace(/\//g, '-'))
+const isMultiModule = helper.isDirectory(path.join(path.resolve('./'), 'src/common'))
+const thinkCliInfo = require(path.join(path.resolve('./'), 'package.json')).thinkCli;
+const ctrlName = program.args[0]
+const moduleName = program.args[1] || thinkCliInfo.defaultModule
+const template = thinkCliInfo.cacheTemplatePath && helper.isExist(thinkCliInfo.cacheTemplatePath)
+  ? thinkCliInfo.cacheTemplatePath
+  : thinkCliInfo.templateName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkCliInfo.projectName)
 
-if (isMultiModule && program.args.length < 2) {
-  logger.error(
-    'You must enter the '+
-    chalk.yellow.underline.bold('module name')
-  )
-}
-
-const ctrlPath = path.join(template, 'template', require(path.join(template, 'metadata')).paths.controller)
-const targetPath = path.join('src', isMultiModule ? moduleName : '', 'controller')
-
-const restPath = path.join(ctrlPath, 'rest.js');
-const restTplPath = path.join(ctrlPath, 'restIndex_tpl.js');
-const baseTplPath = path.join(ctrlPath, 'index_tpl.js');
-
-restTargetPath = path.join(targetPath, 'rest.js');
-baseTplTargetPath = path.join(targetPath, ctrlName + '.js');
-
-let sources = [];
-let targets = [];
-
-if (program.rest) {
-  sources = [restPath, restTplPath];
-  targets = [restTargetPath, baseTplTargetPath];
+if (utils.isLocalPath(template)) {
+  generateFn(template)
 } else {
-  sources = [baseTplPath];
-  targets = [baseTplTargetPath];
+  ensureTargetPath(cacheTemplatePath)
+    .then(_ => {
+      download(template, cacheTemplatePath, {clone: thinkCliInfo.clone}, err => {
+        spinner.stop();
+        if (err) return logger.error(err);
+        generateFn(cacheTemplatePath);
+      });
+    })
 }
 
-generate(sources, targets)
-  .then(path => {
-    logger.success('Generated %s', path)
-  })
-  .catch(err => {
-    logger.error(err)
-  })
+function ensureTargetPath(path) {
+  return helper.isExist(path)
+    ? helper.rmdir(path)
+    : Promise.resolve();
+}
+
+function generateFn(template) {
+  const metadata = require(path.join(template, 'metadata'))
+  const paths = program.rest
+    ? metadata.controller.rest
+    : metadata.controller.default
+
+  let sources = [];
+  let targets = [];
+
+  for (let i = 0; i < paths.length; i++) {
+    const item = paths[i]
+    item[1] = path.join('src', isMultiModule ? moduleName : '', item[1])
+    item[1] = item[1].replace(/(\[name\])/g, ctrlName)
+    sources.push(item[0])
+    targets.push(item[1])
+  }
+
+  generate(sources, targets)
+    .then(files => {
+      logger.success('Generated %s', files)
+    })
+    .catch(err => {
+      logger.error(err)
+    })
+}

@@ -12,11 +12,6 @@ module.exports = {
     "author": {
       "type": "string",
       "message": "Author"
-    },
-    "defaultModule": {
-      "type": "string",
-      "message": "Please enter a default module name",
-      "default": "home"
     }
   },
   "skipCompile": [

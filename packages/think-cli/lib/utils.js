@@ -42,12 +42,15 @@ module.exports = {
   mkdir(dir) {
     if (helper.isDirectory(dir)) return;
     helper.mkdir(dir);
-    logger.success('create ' + path.relative(this.cwd, dir));
+    logger.success('create ' + path.relative(process.cwd(), dir));
   },
 
   copyFile(source, target) {
     // if source file is not exist
     if (!helper.isFile(source)) return;
+    if (!helper.isExist(path.dirname(target))) {
+      helper.mkdir(path.dirname(target));
+    }
 
     const content = fs.readFileSync(source, 'utf8');
     fs.writeFileSync(target, content);

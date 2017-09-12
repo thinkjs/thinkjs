@@ -4,7 +4,7 @@ const program = require('commander')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
 const path = require('path')
-const helper = require('thinkjs-helper')
+const helper = require('think-helper')
 const ThinkInit = require('../lib/init.js')
 const os = require('os')
 

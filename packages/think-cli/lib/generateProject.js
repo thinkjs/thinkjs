@@ -11,15 +11,17 @@ Handlebars.registerHelper('author', function(res) {
   return new Handlebars.SafeString(res.data.root.author);
 });
 
-module.exports = function(name, src, dest, isMultiModule, done) {
+module.exports = function({name, templateName, cacheTemplatePath, targetPath, clone, isMultiModule}, done) {
+  const src = cacheTemplatePath || templateName;
   const metadata = getOptions(name, src);
 
   Metalsmith(path.join(src, 'template'))
     .source('.')
-    .destination(dest)
-    .use(ask(metadata.prompts))
+    .destination(targetPath)
+    .use(ask(metadata.prompts, isMultiModule))
     .use(template(metadata.skipCompile))
     .use(multiModule(metadata.paths, metadata.multiModule, isMultiModule))
+    .use(insertCliInfoToPackage({name, templateName, cacheTemplatePath, clone, isMultiModule}))
     .build(done);
 };
 
@@ -29,8 +31,16 @@ module.exports = function(name, src, dest, isMultiModule, done) {
  * @param {Object} prompts
  */
 
-function ask(prompts) {
+function ask(prompts, isMultiModule) {
   prompts = Object.keys(prompts).map(key => Object.assign({name: key}, prompts[key]));
+  if (isMultiModule) {
+    prompts.push({
+      name: 'defaultModule',
+      type: 'string',
+      message: 'Please enter a default module name',
+      default: 'home'
+    });
+  }
 
   return function(files, metalsmith, done) {
     const metadata = metalsmith.metadata();
@@ -117,6 +127,27 @@ function multiModule(paths, multiModuleMap, isMultiModule) {
         delete files[file];
       }
     }
+    done();
+  };
+}
+
+function insertCliInfoToPackage({name: projectName, templateName, cacheTemplatePath, clone, isMultiModule}) {
+  return function(files, metalsmith, done) {
+    if (!files['package.json']) return done();
+    const defaultModule = metalsmith.metadata().defaultModule;
+    const str = files['package.json'].contents.toString();
+    const json = JSON.parse(str);
+
+    json.thinkCli = {
+      projectName,
+      templateName,
+      cacheTemplatePath,
+      defaultModule,
+      clone,
+      isMultiModule
+    };
+
+    files['package.json'].contents = Buffer.from(JSON.stringify(json, null, '  '), 'binary');
     done();
   };
 }

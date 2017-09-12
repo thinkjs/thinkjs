@@ -33,7 +33,7 @@ class init {
       logger.error('Local template "%s" not found.', template);
       return;
     }
-    generate(name, template, targetPath, isMultiModule, (err) => {
+    generate({name, templateName: template, targetPath, isMultiModule}, (err) => {
       if (err) return logger.error(err);
       console.log();
       logger.success('Generated %s', name);
@@ -63,7 +63,7 @@ class init {
         spinner.stop();
         if (err) return logger.error(err);
 
-        generate(name, cacheTemplatePath, targetPath, isMultiModule, (err) => {
+        generate({name, templateName: template, cacheTemplatePath, targetPath, clone, isMultiModule}, (err) => {
           if (err) return logger.error(err);
           console.log();
           logger.success('Generated %s', name);
