@@ -64,7 +64,6 @@
     "think-validator": "^1.0.2"
   },
   "devDependencies": {
-    "@types/koa": "^2.0.39",
     "ava": "^0.18.0",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.2",
