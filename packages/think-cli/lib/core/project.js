@@ -5,8 +5,8 @@ const renderRaw = require('consolidate').handlebars.render;
 const path = require('path');
 const multimatch = require('multimatch');
 const getOptions = require('./options.js');
-const logger = require('./logger.js');
-const utils = require('./utils');
+const logger = require('../logger.js');
+const utils = require('../utils');
 const render = utils.promisify(renderRaw, renderRaw);
 
 Handlebars.registerHelper('author', function(res) {

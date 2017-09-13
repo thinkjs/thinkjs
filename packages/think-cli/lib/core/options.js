@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const helper = require('think-helper');
-const utils = require('./utils.js');
+const utils = require('../utils.js');
 
 module.exports = function(name, dir) {
   const metadata = getMetadata(dir);

@@ -43,5 +43,8 @@ module.exports = {
       ["src/controller/restIndex_tpl.js", "/controller/[name].js"],
       ["src/logic/index.js", "/logic/[name].js"]
     ]
-  }
+  },
+  "model": [
+    ["src/model/index.js", "/model/[name].js"]
+  ]
 }

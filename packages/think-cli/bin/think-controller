@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 const program = require('commander')
 const ora = require('ora')
-const Metalsmith = require('metalsmith')
-const downloadRaw = require('download-git-repo')
 const os = require('os')
 const chalk = require('chalk')
 const path = require('path')
 const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
-const generate = require('../lib/generate')
-const download = utils.promisify(downloadRaw, downloadRaw)
+const ThinkAdd = require('../lib/add')
 
 /**
  * Usage.
@@ -21,10 +18,6 @@ program
   .option('-r, --rest', 'create rest controller')
   .parse(process.argv)
 
-/*
-  node ../../think-cli/bin/think controller user home -r
-*/
-
 /**
  * Help.
  */
@@ -34,10 +27,10 @@ program.on('--help', function () {
   console.log('  Examples:')
   console.log()
   console.log(chalk.gray('    # create a controller with the name ' + chalk.gray.underline.bold('user')))
-  console.log('    $ thinkjs controller name')
+  console.log('    $ thinkjs controller user')
   console.log()
   console.log(chalk.gray('    # create rest controller'))
-  console.log('    $ thinkjs controller name -r')
+  console.log('    $ thinkjs controller user -r')
   console.log()
 })
 
@@ -72,52 +65,15 @@ const template = thinkCliInfo.cacheTemplatePath && helper.isExist(thinkCliInfo.c
   ? thinkCliInfo.cacheTemplatePath
   : thinkCliInfo.templateName
 const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkCliInfo.projectName)
+const metadata = require(path.join(template, 'metadata'))
+const paths = program.rest
+  ? metadata.controller.rest
+  : metadata.controller.default
 
-if (utils.isLocalPath(template)) {
-  generateFn(template)
-} else {
-  const spinner = ora({text: 'downloading template...', spinner: 'arrow3'}).start();
-  ensureTargetPath(cacheTemplatePath)
-    .then(downloadFn(template, cacheTemplatePath, {clone: thinkCliInfo.clone}))
-    .then(_ => {
-      spinner.stop();
-      generateFn(cacheTemplatePath);
-    })
-    .catch(err => logger.error(err))
-}
+const add = new ThinkAdd({name: ctrlName, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkCliInfo.clone})
 
-function downloadFn(template, cacheTemplatePath, {clone: thinkCliInfo.clone}) {
-  return _ => download(template, cacheTemplatePath, {clone: thinkCliInfo.clone})
-}
-
-function ensureTargetPath(path) {
-  return helper.isExist(path)
-    ? helper.rmdir(path)
-    : Promise.resolve();
-}
-
-function generateFn(template) {
-  const metadata = require(path.join(template, 'metadata'))
-  const paths = program.rest
-    ? metadata.controller.rest
-    : metadata.controller.default
-
-  let sources = [];
-  let targets = [];
-
-  for (let i = 0; i < paths.length; i++) {
-    const item = paths[i]
-    item[1] = path.join('src', isMultiModule ? moduleName : '', item[1])
-    item[1] = item[1].replace(/(\[name\])/g, ctrlName)
-    sources.push(item[0])
-    targets.push(item[1])
-  }
-
-  generate(sources, targets)
-    .then(files => {
-      logger.success('Generated %s', files)
-    })
-    .catch(err => {
-      logger.error(err)
-    })
-}
+add.run()
+  .then(files => {
+    logger.success('Generated %s', files)
+  })
+  .catch(logger.error)

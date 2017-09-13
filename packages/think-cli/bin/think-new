@@ -5,8 +5,8 @@ const chalk = require('chalk')
 const inquirer = require('inquirer')
 const path = require('path')
 const helper = require('think-helper')
-const ThinkInit = require('../lib/init.js')
 const os = require('os')
+const ThinkInit = require('../lib/init.js')
 
 /**
  * Usage.
