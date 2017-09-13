@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-11 11:20:16
+* @Last Modified time: 2017-09-13 12:05:15
 */
 const helper = require('think-helper');
 const Redis = require('think-redis');
@@ -30,8 +30,8 @@ class RedisCache {
    * @return {Promise}      [description]
    */
   get(key) {
-    // return this.redis.get(key).catch(() => {});
     return this.redis.get(key).then((data) => {
+      if (data === null) return (void 0); // think-cache-file return undefined
       try {
         return JSON.parse(data);
       } catch (e) {
