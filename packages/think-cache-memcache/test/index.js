@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-24 09:34:57
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-04-01 17:20:14
+* @Last Modified time: 2017-09-13 12:00:00
 */
 import test from 'ava';
 import MemcacheCache from '../index';
@@ -16,5 +16,5 @@ test.serial('set key -> get key -> del key', async t => {
   await cachehInst.delete(key);
   let g2 =await cachehInst.get(key);
 
-  t.true(g1 === content && g2 === null)
+  t.true(g1 === content && g2 === void 0)
 });
