@@ -7,7 +7,7 @@ const defaultOptions = {
 };
 
 function invokeController(options, app) {
-  options = Object.assign(defaultOptions, options);
+  options = Object.assign({}, defaultOptions, options);
   return (ctx, next) => {
     const isMultiModule = app.modules.length;
     let controllers = app.controllers || {};
