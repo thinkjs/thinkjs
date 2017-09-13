@@ -46,5 +46,8 @@ module.exports = {
   },
   "model": [
     ["src/model/index.js", "/model/[name].js"]
+  ],
+  "service": [
+    ["src/service/index.js", "/service/[name].js"]
   ]
 }
