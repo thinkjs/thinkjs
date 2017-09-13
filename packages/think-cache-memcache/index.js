@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:23:41
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-13 11:59:22
+* @Last Modified time: 2017-09-13 12:06:23
 */
 const helper = require('think-helper');
 const Memcache = require('think-memcache');
@@ -33,8 +33,8 @@ class MemcacheCache {
    */
   get(key) {
     return this.memcache.get(key).then((data) => {
+      if (data === null) return (void 0); // think-cache-file return undefined
       try {
-        if (data === null) return (void 0); // think-cache-file return undefined
         return JSON.parse(data);
       } catch (e) {
         return data;
