@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-14 19:25:56
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-03-15 10:28:20
+* @Last Modified time: 2017-09-13 11:49:47
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -15,7 +15,7 @@ let cacheDB = thinkCache.think.cache;
 const thisConfig = {
   config(name) {
     return {
-      type: 'cache'
+      type: 'file'
     }
   }
 }
@@ -50,6 +50,7 @@ test('delete by cache name', async t => {
   t.is(1, ret);
 });
 
+
 test('get by cache name', async t => {
   let ret = await cacheDB.apply(thisConfig, ['name', undefined, getConfig()]);
   t.is('thinkjs', ret);
@@ -57,6 +58,19 @@ test('get by cache name', async t => {
 
 test('set cache ', async t => {
   let ret = await cacheDB.apply(thisConfig, ['name', 'thinkjs', getConfig()]);
+  t.true(ret);
+});
+
+test('set cache 2', async t => {
+  const this_Config = {
+    config(name) {
+      return {
+        type: 'file',
+        handle: Redis
+      }
+    }
+  }
+  let ret = await cacheDB.apply(this_Config, ['name', 'thinkjs']);
   t.true(ret);
 });
 

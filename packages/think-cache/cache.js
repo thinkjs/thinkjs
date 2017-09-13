@@ -13,10 +13,10 @@ const debounceInstance = new Debounce();
  */
 function thinkCache(name, value, config) {
   assert(name && helper.isString(name), 'cache.name must be a string');
-  if (this.config) {
+  if (config) {
     config = helper.parseAdapterConfig(this.config('cache'), config);
   } else {
-    config = helper.parseAdapterConfig(config);
+    config = helper.parseAdapterConfig(this.config('cache'));
   }
   const Handle = config.handle;
   assert(helper.isFunction(Handle), 'cache.handle must be a function');
@@ -32,6 +32,7 @@ function thinkCache(name, value, config) {
       return instance.get(name);
     });
   }
+
   // get cache when value is function
   if (helper.isFunction(value)) {
     return debounceInstance.debounce(name, () => {
