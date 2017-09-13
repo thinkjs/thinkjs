@@ -1,6 +1,6 @@
 const {test} = require('ava');
-const Model = require('../../src/model');
-const Relation = require('../../src/relation/belong_to');
+const Model = require('../../lib/model');
+const Relation = require('../../lib/relation/belong_to');
 
 test('belong to get relation no relation where', async t => {
   const relation = new Relation([{

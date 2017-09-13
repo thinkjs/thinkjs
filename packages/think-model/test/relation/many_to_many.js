@@ -1,6 +1,6 @@
 const {test} = require('ava');
-const Model = require('../../src/model');
-const Relation = require('../../src/relation/many_to_many');
+const Model = require('../../lib/model');
+const Relation = require('../../lib/relation/many_to_many');
 
 test('many to many get relation model name', t => {
   const relation = new Relation(

@@ -5,7 +5,7 @@
   "scripts": {
     "watch": "babel ./src --out-dir ./lib --watch",
     "compile": "babel ./src --out-dir ./lib",
-    "test": "npm run eslint && npm run test-cov",
+    "test": "npm run compile && npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
     "eslint": "eslint ./src",
     "prepublish": "npm test && npm run compile"
