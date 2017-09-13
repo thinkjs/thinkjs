@@ -31,7 +31,7 @@ class RedisCache {
    */
   get(key) {
     return this.redis.get(key).then((data) => {
-      if (data === null) return (void 0); // think-cache-file return undefined
+      if (data === null) return undefined; // think-cache-file return undefined
       try {
         return JSON.parse(data);
       } catch (e) {
