@@ -145,6 +145,53 @@ describe('controller/base.js', function(){
       done();
     })
   })
+  it('get post data 2', function(done){
+    getInstance().then(function(instance){
+      instance.http._post.key2 = ['EXP', 2]
+      var data = instance.post('key2');
+      delete instance.http._post.key2;
+      assert.deepEqual(data, ['EXP ', 2]);
+      done();
+    })
+  })
+  it('get post data 3', function(done){
+    getInstance().then(function(instance){
+      instance.http._post.key2 = ['EXP2', 2]
+      var data = instance.post('key2');
+      delete instance.http._post.key2;
+      assert.deepEqual(data, ['EXP2', 2]);
+      done();
+    })
+  })
+  it('get post data 4', function(done){
+    getInstance().then(function(instance){
+      instance.http._post.key2 = {EXP: 2}
+      var data = instance.post('key2');
+      delete instance.http._post.key2;
+      assert.deepEqual(data, {'EXP ': 2});
+      done();
+    })
+  })
+  it('get post data 4.1', function(done){
+    getInstance().then(function(instance){
+      instance.http._post.key2 = {exp: 2}
+      var data = instance.post('key2');
+      delete instance.http._post.key2;
+      assert.deepEqual(data, {'exp ': 2});
+      done();
+    })
+  })
+  it('get post data 5', function(done){
+    getInstance().then(function(instance){
+      instance.http._post.key2 = {EXP2: 2}
+      var data = instance.post('key2');
+      delete instance.http._post.key2;
+      assert.deepEqual(data, {'EXP2': 2});
+      done();
+    })
+  })
+
+
   it('get all param data', function(done){
     getInstance().then(function(instance){
       var data = instance.param();

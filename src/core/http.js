@@ -7,10 +7,21 @@ import cookie from '../util/cookie.js';
 import comparison from '../adapter/db/comparison.js';
 
 const escapeComparison = value => {
-  if(!think.isArray(value)) return value;
-  if(!think.isString(value[0])) return value[0];
-  if(comparison.COMPARISON_LIST.indexOf(value[0].toUpperCase()) > -1) {
-    value[0] += ' ';
+  if(think.isArray(value) && typeof value[0] === 'string') {
+    if(comparison.COMPARISON_LIST.indexOf(value[0].toUpperCase()) > -1) {
+      value[0] += ' ';
+    }
+  }
+  if(think.isObject(value)) {
+    var result = {};
+    for(var key in value) {
+      if(comparison.COMPARISON_LIST.indexOf(key.toUpperCase()) > -1) {
+        result[key + ' '] = value[key];
+      }else{
+        result[key] = value[key];
+      }
+    }
+    return result;
   }
   return value;
 }
