@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const program = require('commander')
-const ora = require('ora')
 const os = require('os')
 const chalk = require('chalk')
 const path = require('path')

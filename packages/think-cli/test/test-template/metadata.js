@@ -49,5 +49,8 @@ module.exports = {
   ],
   "service": [
     ["src/service/index.js", "/service/[name].js"]
+  ],
+  "middleware": [
+    ["src/middleware/base.js", "/middleware/[name].js"]
   ]
 }
