@@ -55,5 +55,13 @@ module.exports = {
   ],
   "adapter": [
     ["src/adapter/base.js", "/adapter/[type]/[name].js"]
+  ],
+  "module": [
+    ["src/config/config.js", "/config/config.js"],
+    ["src/controller/base.js", "/controller/base.js"],
+    ["src/controller/index.js", "/controller/index.js"],
+    ["src/logic/index.js", "/logic/index.js"],
+    ["src/model/index.js", "/model/index.js"],
+    ["view/index_index.html", "/index_index.html", "view"]
   ]
 }

@@ -31,7 +31,7 @@ class add {
 
     for (let i = 0; i < paths.length; i++) {
       const item = paths[i];
-      item[1] = path.join('src', isMultiModule ? moduleName : '', item[1]);
+      item[1] = path.join(item[2] ? item[2] : 'src', isMultiModule ? moduleName : '', item[1]);
       item[1] = item[1].replace(/(\[name\])/g, name);
       sources.push(path.join(template, 'template', item[0]));
       targets.push(item[1]);
