@@ -52,5 +52,8 @@ module.exports = {
   ],
   "middleware": [
     ["src/middleware/base.js", "/middleware/[name].js"]
+  ],
+  "adapter": [
+    ["src/adapter/base.js", "/adapter/[type]/[name].js"]
   ]
 }
