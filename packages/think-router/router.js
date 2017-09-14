@@ -8,11 +8,21 @@ const assert = require('assert');
  *    ['/index', 'test', 'get']
  * ]
  *
- * rules = [ {
+ * rules = [
+ *  {
  *    match: /match/,
  *    rules: [match, path, method, options]
  *  }
  * ]
+ *
+ * rules = [
+ *  {
+ *    match: /match/,
+ *    rules: [match, path, method, options]
+ *  },
+ *  ['/index', 'test', 'get']
+ * ]
+ *
  *
  * rules = {
  *  admin: {

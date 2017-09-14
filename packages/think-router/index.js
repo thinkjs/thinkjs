@@ -26,7 +26,7 @@ const formatRule = rule => {
   const query = [];
   const match = pathToRegexp(rule[0], query);
 
-  // [/match/, 'rest']
+  // [/match/, 'rest'] for simple restful router
   if (rule.length === 2 && rule[1].toUpperCase() === 'REST') {
     rule[2] = rule[1];
     rule[1] = null;
@@ -48,7 +48,7 @@ const formatRule = rule => {
 const formatRouters = routers => {
   if (helper.isArray(routers)) {
     return routers.map(item => {
-      if (item.match && item.rules) {
+      if (item.rules) {
         item.match = pathToRegexp(item.match);
         item.rules = item.rules.map(rule => {
           return formatRule(rule);
@@ -65,6 +65,7 @@ const formatRouters = routers => {
     }
     routers[m].rules = formatRouters(routers[m].rules);
   }
+
   return routers;
 };
 

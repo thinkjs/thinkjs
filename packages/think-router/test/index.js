@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-04-20 09:22:22
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-06 11:20:44
+* @Last Modified time: 2017-09-14 14:27:49
 */
 import test from 'ava';
 import mockery from 'mockery';
@@ -88,6 +88,56 @@ test.serial.cb('default options', t => {
     controllers: {},
     routers: [
       ['^\/admin\/article\/list', 'admin/article/list', 'get']
+    ]
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('default options 2', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      {
+        match: /^\/admin\/article\/list/,
+        rules: ['^\/admin\/article\/list', 'admin/article/list', 'get']
+      }
+    ]
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('default options 3', t => {
+  let options = helper.extend({}, defaultOptions);
+  let ctx = helper.extend({}, defaultCtx);
+  let app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: [
+      {
+        match: /^\/admin\/article\/list123/,
+        rules: ['^\/admin\/article\/list', 'admin/article/list', 'get']
+      }
     ]
   });
 
