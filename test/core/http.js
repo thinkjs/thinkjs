@@ -810,6 +810,63 @@ describe('core/http.js', function() {
       done();
     });
   });
+  it('get post data, all 2', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {a: ['EXP', 2]};
+      var data = http.post();
+      assert.deepEqual(data, {
+        a: ['EXP ', 2]
+      });
+      http._post = {};
+      done();
+    });
+  });
+
+  it('get post data, all 3', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._post = {a: {EXP: 2}};
+      var data = http.post();
+      assert.deepEqual(data, {
+        a: {'EXP ': 2}
+      });
+      http._post = {};
+      done();
+    });
+  });
+
+  it('get get data, all 2', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._get = {a: ['EXP', 2]};
+      var data = http.get();
+      assert.deepEqual(data, {
+        a: ['EXP ', 2]
+      });
+      http._get = {};
+      done();
+    });
+  });
+
+  it('get get data, all 3', function(done) {
+    var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
+    var instance = new Http(defaultHttp.req, defaultHttp.res);
+    instance.run().then(function(http) {
+      http._get = {a: {EXP: 2}};
+      var data = http.get();
+      assert.deepEqual(data, {
+        a: {'EXP ': 2}
+      });
+      http._get = {};
+      done();
+    });
+  });
+
+
   it('get post data, name', function(done) {
     var defaultHttp = getDefaultHttp('/index/index?name=maxzhang&37');
     var instance = new Http(defaultHttp.req, defaultHttp.res);

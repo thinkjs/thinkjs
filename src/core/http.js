@@ -334,7 +334,11 @@ const PAYLOAD_METHODS = ['POST', 'PUT', 'PATCH'];
   get(name, value){
     if (value === undefined) {
       if (name === undefined) {
-        return this._get;
+        let result = {};
+        for(let key in this._get) {
+          result[key] = escapeComparison(this._get[key]);
+        }
+        return result;
       }else if (think.isString(name)) {
         if(name.indexOf(',') > -1){
           let ret = {};
@@ -363,7 +367,11 @@ const PAYLOAD_METHODS = ['POST', 'PUT', 'PATCH'];
   post(name, value){
     if (value === undefined) {
       if (name === undefined) {
-        return this._post;
+        let result = {};
+        for(let key in this._post) {
+          result[key] = escapeComparison(this._post[key]);
+        }
+        return result;
       }else if (think.isString(name)) {
         if(name.indexOf(',') > -1){
           let ret = {};
