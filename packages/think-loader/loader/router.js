@@ -41,7 +41,7 @@ const RouterLoader = {
           commonRouter[name].match = match;
         }
         if (!helper.isFile(moduleRouterFile)) {
-          commonRouter[name].rules = [];
+          commonRouter[name].rules = commonRouter[name].rules || [];
           continue;
         }
         debug(`load file: ${moduleRouterFile}`);
