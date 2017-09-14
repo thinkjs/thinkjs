@@ -15,9 +15,7 @@ module.exports = class extends think.Controller {
    * @return {String} [resource name]
    */
   getResource() {
-    const filename = this.__filename || __filename;
-    const last = filename.lastIndexOf(path.sep);
-    return filename.substr(last + 1, filename.length - last - 4);
+    return this.ctx.controller;
   }
   getId() {
     const id = this.get('id');
@@ -33,7 +31,7 @@ module.exports = class extends think.Controller {
   async getAction() {
     let data;
     if (this.id) {
-      const pk = await this.modelInstance.pk;
+      const pk = this.modelInstance.pk;
       data = await this.modelInstance.where({[pk]: this.id}).find();
       return this.success(data);
     }
@@ -45,7 +43,7 @@ module.exports = class extends think.Controller {
    * @return {Promise} []
    */
   async postAction() {
-    const pk = await this.modelInstance.pk;
+    const pk = this.modelInstance.pk;
     const data = this.post();
     delete data[pk];
     if (think.isEmpty(data)) {
@@ -62,7 +60,7 @@ module.exports = class extends think.Controller {
     if (!this.id) {
       return this.fail('params error');
     }
-    const pk = await this.modelInstance.pk;
+    const pk = this.modelInstance.pk;
     const rows = await this.modelInstance.where({[pk]: this.id}).delete();
     return this.success({affectedRows: rows});
   }
@@ -74,7 +72,7 @@ module.exports = class extends think.Controller {
     if (!this.id) {
       return this.fail('params error');
     }
-    const pk = await this.modelInstance.pk;
+    const pk = this.modelInstance.pk;
     const data = this.post();
     delete data[pk];
     if (think.isEmpty(data)) {
