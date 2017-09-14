@@ -240,6 +240,29 @@ describe('Controller', function(){
       done();
     })
   })
+
+
+  it('instance.get all 2', function(done){
+    promise.then(function(instance){
+      //console.log(JSON.stringify(instance.get()));
+      instance.http.get.key222 = ['EXP', 2];
+      assert.deepEqual(instance.get().key222, ['EXP ', 2]);
+      delete instance.http.get.key222;
+      done();
+    })
+  })
+
+  it('instance.get all 3', function(done){
+    promise.then(function(instance){
+      //console.log(JSON.stringify(instance.get()));
+      instance.http.get.key222 = {EXP: 2}
+      assert.deepEqual(instance.get().key222, {'EXP ': 2});
+      delete instance.http.get.key222;
+      done();
+    })
+  })
+
+
   it('instance.post()', function(done){
     promise.then(function(instance){
       //console.log(JSON.stringify(instance.get()));
@@ -264,11 +287,33 @@ describe('Controller', function(){
       done();
     })
   })
+
+  it('instance.post all 2', function(done){
+    promise.then(function(instance){
+      //console.log(JSON.stringify(instance.get()));
+      instance.http.post.key222 = ['EXP ', 2];
+      assert.deepEqual(instance.post().key222, ['EXP ', 2]);
+      delete instance.http.post.key222;
+      done();
+    })
+  })
+
+
   it('instance.post("xxx") 3', function(done){
     promise.then(function(instance){
       //console.log(JSON.stringify(instance.get()));
       instance.http.post.key333 =  {EXP: 3}
       assert.deepEqual(instance.post('key333'), {'EXP ': 3});
+      delete instance.http.post.key333;
+      done();
+    })
+  })
+
+  it('instance.post all 3', function(done){
+    promise.then(function(instance){
+      //console.log(JSON.stringify(instance.get()));
+      instance.http.post.key333 =  {EXP: 3}
+      assert.deepEqual(instance.post().key333, {'EXP ': 3});
       delete instance.http.post.key333;
       done();
     })
@@ -284,6 +329,16 @@ describe('Controller', function(){
     })
   })
 
+  it('instance.post all 4', function(done){
+    promise.then(function(instance){
+      //console.log(JSON.stringify(instance.get()));
+      instance.http.post.key333 =  {EXP3: 3}
+      assert.deepEqual(instance.post().key333, {'EXP3': 3});
+      delete instance.http.post.key333;
+      done();
+    })
+  })
+
   it('instance.post("xxx") 5', function(done){
     promise.then(function(instance){
       //console.log(JSON.stringify(instance.get()));
@@ -294,6 +349,15 @@ describe('Controller', function(){
     })
   })
 
+  it('instance.post all 5', function(done){
+    promise.then(function(instance){
+      //console.log(JSON.stringify(instance.get()));
+      instance.http.post.key222 = ['EXP2', 2];
+      assert.deepEqual(instance.post().key222, ['EXP2', 2]);
+      delete instance.http.post.key222;
+      done();
+    })
+  })
 
 
   it('instance.param()', function(done){
