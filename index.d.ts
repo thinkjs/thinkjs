@@ -13,9 +13,11 @@ declare namespace ThinkJs {
   }
 
   export interface ContextExtend {
+
+    readonly controller: string;
+    readonly action: string;
     /**
      * get userAgent header
-     * @type {string}
      * @memberOf ContextExtend
      */
     readonly userAgent: string;
@@ -78,7 +80,7 @@ declare namespace ThinkJs {
      * send success data
      * @memberOf ContextExtend
      */
-    success(data?: string, message?: string): any;
+    success(data?: object | string, message?: string): any;
 
     /**
      * send fail data
@@ -297,7 +299,7 @@ declare namespace ThinkJs {
      * send success data
      * @memberOf ControllerExtend
      */
-    success(data?: string, message?: string): any;
+    success(data?: object | string, message?: string): any;
 
     /**
      * send fail data
