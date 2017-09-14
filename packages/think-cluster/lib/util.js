@@ -1,5 +1,4 @@
 const cluster = require('cluster');
-const util = require('./util.js');
 const helper = require('think-helper');
 
 const cpus = require('os').cpus().length;
@@ -64,7 +63,7 @@ exports.forkWorker = function(env = {}) {
     if (message === exports.THINK_GRACEFUL_DISCONNECT) {
       debug(`refork worker, receive message 'think-graceful-disconnect'`);
       worker[WORKER_REALOD] = true;
-      exports.forkWorker(env).then(() => worker.send(util.THINK_GRACEFUL_FORK));
+      exports.forkWorker(env).then(() => worker.send(exports.THINK_GRACEFUL_FORK));
     }
   });
   worker.once('disconnect', () => {
