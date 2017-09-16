@@ -18,7 +18,7 @@ module.exports = [{
 }, {
   cron: '0 */1 * * *',
   handle: 'crontab/test',
-  worker: 'all'
+  type: 'all'
 }]
 ```
 
@@ -26,7 +26,7 @@ module.exports = [{
 
 * `interval` {String|Number} interval task
 * `cron` {String} cron task
-* `worker` {String} task type, *one*/*all*, default is one
+* `type` {String} task type, *one*/*all*, default is one
 * `handle` {Function|String} task handle, required
 * `immediate` {Boolean} immediate to run task, default is false
 * `enable` {Boolean} enable task, default is true
