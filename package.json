@@ -40,9 +40,9 @@
   "main": "lib/application.js",
   "type": "index.d.ts",
   "dependencies": {
-    "bluebird": "3.3.5",
+    "bluebird": "3.5.0",
     "cookies": "^0.7.0",
-    "debug": "^2.6.1",
+    "debug": "^3.0.1",
     "destroy": "^1.0.4",
     "koa": "^2.2.0",
     "on-finished": "^2.3.0",
@@ -64,12 +64,12 @@
     "think-validator": "^1.0.2"
   },
   "devDependencies": {
-    "ava": "^0.18.0",
+    "ava": "^0.22.0",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.2",
     "mkdirp": "^0.5.1",
     "mock-require": "^2.0.1",
-    "nyc": "^7.0.0",
+    "nyc": "^11.2.1",
     "pre-commit": "^1.2.2"
   },
   "keywords": [
