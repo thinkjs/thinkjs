@@ -2,8 +2,18 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-20 16:44:09
+* @Last Modified time: 2017-09-17 18:31:28
 */
+
+// let rules = {             // rules
+//   name: {                 // argName: rule
+//     required: true,       // validName: validValue
+//     method: 'GET'
+//     trim: true,
+//     defalut: 'thinkjs'
+//   }
+// }
+
 const helper = require('think-helper');
 const ARRAY_SP = '__array__';
 const OBJECT_SP = '__object__';
@@ -144,21 +154,20 @@ class Validator {
 
   /**
    * parse valid args by _validName method
-   * @param  {String} validName [description]
-   * @param  {Mixed} validValue  [description]
    * @return {Mixed}           [description]
    */
-  _parseValidArgs(validName, rule, cloneRules) {
+  _parseValidArgs(validName, rule, cloneRules, argName) {
     let validValue = rule[validName];
     const _fn = preRules['_' + validName];
 
     // support rewrite back, so just pass reference style data without clone
     if (helper.isFunction(_fn)) {
       validValue = _fn(validValue, {
-        rule: rule,
-        ctx: this.ctx,
+        argName,
         validName,
         currentQuery: this.ctxQuery,
+        ctx: this.ctx,
+        rule: rule,
         rules: cloneRules
       });
     }
@@ -188,24 +197,24 @@ class Validator {
 
   /**
    * check the value if is required
-   * @param  {Object} rule [description]
    * @return {Boolean}      [description]
    */
-  _checkRequired(rule, rules) {
+  _checkRequired(rule, rules, argName) {
     let isRequired = false;
     const cloneRules = helper.extend({}, rules);
     for (let i = 0; i <= this.requiredValidNames.length; i++) {
       const validName = this.requiredValidNames[i];
       if (rule[validName]) {
         const fn = preRules[validName];
-        const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules);
+        const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules, argName);
         if (fn(rule.value, {
-          rule,
+          argName,
           validName,
           validValue: rule[validName],
           parsedValidValue,
-          ctx: this.ctx,
           currentQuery: this.ctxQuery,
+          ctx: this.ctx,
+          rule,
           rules: cloneRules // prevent to write
         })) {
           isRequired = true;
@@ -351,7 +360,7 @@ class Validator {
       const rule = parsedRules[argName];
 
       // required check
-      const isRequired = this._checkRequired(rule, rules);
+      const isRequired = this._checkRequired(rule, rules, argName);
       if (helper.isTrueEmpty(rule.value)) {
         if (isRequired) {
           let validName;
@@ -362,7 +371,7 @@ class Validator {
             }
           }
 
-          const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules);
+          const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules, argName);
           const errMsg = this._getErrorMessage({ argName, rule, validName, parsedValidValue });
           ret[argName] = errMsg;
           continue;
@@ -384,15 +393,16 @@ class Validator {
         }
 
         // get parsed valid options
-        const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules);
+        const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules, argName);
 
         const result = fn(rule.value, {
-          rule,
+          argName,
           validName,
           validValue: rule[validName],
           parsedValidValue,
-          ctx: this.ctx,
           currentQuery: this.ctxQuery,
+          ctx: this.ctx,
+          rule,
           rules: helper.extend({}, rules) // prevent to write
         });
         if (!result) {
