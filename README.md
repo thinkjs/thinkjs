@@ -29,6 +29,8 @@
 
 ## Installation
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/thinkjs/thinkjs.svg)](https://greenkeeper.io/)
+
 ```sh
 npm install -g think-cli
 ```
