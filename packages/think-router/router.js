@@ -159,6 +159,23 @@ class Router {
     });
     return rule;
   }
+
+  /**
+    parse controllers
+   */
+  parseController(pathname, controllers) {
+    let controller = '';
+    for (const name in controllers) {
+      if (name.indexOf('/') === -1) break;
+      if (name === pathname || pathname.indexOf(`${name}/`) === 0) {
+        controller = name;
+        pathname = pathname.slice(name.length + 1);
+        break;
+      }
+    }
+    return { controller, pathname };
+  }
+
   /**
    * parser item rule
    */
@@ -200,15 +217,17 @@ class Router {
       }
       controllers = controllers[m] || {};
     }
+
     let controller = '';
-    for (const name in controllers) {
-      if (name.indexOf('/') === -1) break;
-      if (name === pathname || pathname.indexOf(`${name}/`) === 0) {
-        controller = name;
-        pathname = pathname.slice(name.length + 1);
-        break;
-      }
+    let parseControllerResult = this.parseController(pathname, controllers);
+    controller = parseControllerResult.controller;
+    pathname = parseControllerResult.pathname;
+    if (!controller) {
+      parseControllerResult = this.parseController(`${pathname}/${this.options.defaultController}`, controllers);
+      controller = parseControllerResult.controller;
+      pathname = parseControllerResult.pathname;
     }
+
     let action = '';
     pathname = pathname.split('/');
     if (controller) {
@@ -217,6 +236,7 @@ class Router {
       controller = pathname[0];
       action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase() : pathname[1];
     }
+
     this.ctx.module = m;
     this.ctx.controller = controller || this.options.defaultController;
     this.ctx.action = action || this.options.defaultAction;
