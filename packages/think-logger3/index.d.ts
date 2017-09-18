@@ -4,11 +4,39 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 declare namespace ThinkLogger {
+  interface Log4jsConfig {
+    levels?: string;
+    appenders: any;
+    categories: any;
+  }
+
+  interface Base {
+    debug(msg: string): void;
+    info(msg: string): void;
+    warn(msg: string): void;
+    error(msg: string): void;
+    configure(config: Log4jsConfig | string): any;
+    setLogger(config: Log4jsConfig | string): any;
+  }
+
+  interface Console extends Base {}
+
+  interface File extends Base {}
+
+  interface DateFile extends Base {}
+
   export interface Logger {
     debug(msg: string): void;
     info(msg: string): void;
     warn(msg: string): void;
     error(msg: string): void;
+  }
+
+  export interface LoggerConstructor {
+    new (config: any, clusterMode: string): Logger;
+    Console: Console;
+    File: File;
+    DateFile: DateFile;
   }
 }
 export = ThinkLogger;
