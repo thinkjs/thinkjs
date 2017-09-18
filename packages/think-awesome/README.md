@@ -68,6 +68,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-model](https://github.com/thinkjs/think-model) Add `model` method to  think, context, controller, service. add `Model` to think.
 * [think-websocket](https://github.com/thinkjs/think-websocket) Support websocket.
 * [think-mongoose](https://github.com/thinkjs/think-mongoose) Wrap mongoose.
+* [think-sequelize](https://github.com/thinkjs/think-sequelize) Wrap sequelize
 
 ## Others
 
