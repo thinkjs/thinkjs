@@ -42,6 +42,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-session-file](https://github.com/thinkjs/think-session-file) Use file to store session data
 * [think-session-redis](https://github.com/thinkjs/think-session-redis) Use redis to store session data
 * [think-session-jwt](https://github.com/thinkjs/think-session-jwt) Use jsonwebtoken to store session data
+* [think-session-mysql](https://github.com/thinkjs/think-session-mysql) Use mysql to store session data
 
 ### cache
 * [think-cache-file](https://github.com/thinkjs/think-cache-file) Use file to store cache data
