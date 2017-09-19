@@ -79,7 +79,7 @@ test.serial('create module', t => {
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test1'), 'module', 'abc' ];
   instance.parseArgv(processArgv);
 });
-test.after('cleanup', function() {
-  console.log('begin gc');
-  rmdir(path.join(__dirname, 'test1'));
+test.after('cleanup', async ()=>{
+  console.log('begin gc', path.join(__dirname, 'test1'));
+  await rmdir(path.join(__dirname, 'test1'));
 });

@@ -30,7 +30,7 @@ test.serial('create restful controller', t => {
   const processArgv = [ '/usr/local/bin/node', path.join(__dirname, 'test2'), 'controller', 'user/def', '-r' ];
   instance.parseArgv(processArgv);
 });
-test.after('cleanup', function() {
+test.after('cleanup', async ()=>{
   console.log('begin gc');
-  rmdir(path.join(__dirname, 'test2'));
+  await rmdir(path.join(__dirname, 'test2'));
 });
