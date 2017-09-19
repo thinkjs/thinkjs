@@ -3,48 +3,41 @@
 // Definitions by: SijieCai <https://github.com/SijieCai>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+/// <reference types="node" />
 declare namespace ThinkLogger {
-  export class Messenger {
+  class Messenger extends NodeJS.EventEmitter {
+    constructor();
     domain: any;
 
-    addListener(type: any, listener: any): any;
+    /**
+     * get one worker
+     *
+     * @memberOf Messenger
+     */
+    getWorkers(type: string, cWorker: number): Array<any>;
 
-    bindEvent(...args: any[]): void;
+    /**
+     * get all workers
+     * @memberOf Messenger
+     */
+    getWorkers(): Array<any>;
 
-    broadcast(...args: any[]): void;
-
-    emit(type: any, ...args: any[]): any;
-
-    eventNames(): any;
-
-    getMaxListeners(): any;
-
-    getWorkers(...args: any[]): void;
-
-    listenerCount(type: any): any;
-
-    listeners(type: any): any;
-
-    on(type: any, listener: any): any;
-
-    once(type: any, listener: any): any;
-
-    prependListener(type: any, listener: any): any;
-
-    prependOnceListener(type: any, listener: any): any;
-
-    removeAllListeners(type: any, ...args: any[]): any;
-
-    removeListener(type: any, listener: any): any;
-
-    runInOne(...args: any[]): void;
-
-    setMaxListeners(n: any): any;
-
-    setTimeout(...args: any[]): void;
-
-
-
+    bindEvent(): any;
+    broadcast(action: string, data: any): void;
+    /**
+     * map worker task, return worker exec result
+     * @param {String} action
+     */
+    map(action: string, mapData: any): Promise<any>;
+    runInOnce(callback: Function): void;
+    /**
+    * run in one worker
+    */
+    consume(action: string, data?: any): void;
+    /**
+     * run in one worker
+     */
+    consume(action: Function, data?: any): void;
   }
 }
 export = ThinkLogger;
