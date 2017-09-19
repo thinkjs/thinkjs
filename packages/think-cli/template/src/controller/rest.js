@@ -1,4 +1,3 @@
-const path = require('path');
 const assert = require('assert');
 
 module.exports = class extends think.Controller {

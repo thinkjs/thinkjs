@@ -1,4 +1,3 @@
-const path = require('path');
 const assert = require('assert');
 import * as Think from 'thinkjs';
 import { think } from 'thinkjs';

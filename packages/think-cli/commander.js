@@ -208,10 +208,9 @@ class Commander {
    * @return {}             []
    */
   _copyWwwFiles() {
-    
     this.mkdir(this.projectRootPath);
 
-    if(this.isTypescript()) {
+    if (this.isTypescript()) {
       this.copyFile('tsconfig.json', this.projectRootPath + '/tsconfig.json');
     }
 
@@ -272,7 +271,6 @@ class Commander {
    * @return {}             []
    */
   _copyCommonBootstrapFiles() {
-
     const ext = this.getExt();
     const rootPath = this.getPath('common', 'bootstrap');
     this.mkdir(rootPath);
@@ -421,7 +419,7 @@ class Commander {
     if (this.rest) {
       this.replaceFileContent(restTplPath, restGenPath, '{path}', prefix);
       this.copyFile(`src/controller/rest.${ext}`, controllerPath + `/rest.${ext}`, false);
-      this.copyFile(`src/controller/restIndex_gen.${ext}`,`${controllerPath}/${name}.${ext}`);
+      this.copyFile(`src/controller/restIndex_gen.${ext}`, `${controllerPath}/${name}.${ext}`);
     } else {
       this.replaceFileContent(baseTplPath, baseGenPath, '{path}', prefix);
       this.copyFile(`src/controller/index_gen.${ext}`, `${controllerPath}/${name}.${ext}`);
