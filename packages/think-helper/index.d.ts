@@ -22,7 +22,7 @@ declare namespace ThinkHelper {
    * @param {string} mode default is '0777'
    * @returns {*}
    */
-  export function chmod(p: string, mode: string): any;
+  export function chmod(p: string, mode?: string): any;
 
   /**
    * get datetime
@@ -32,7 +32,7 @@ declare namespace ThinkHelper {
    * @param {*} format default is 'YYYY-MM-DD HH:mm:ss'
    * @returns {*}
    */
-  export function datetime(date: any, format: string): any;
+  export function datetime(date: any, format?: string): any;
 
   /**
    * get deferred object
@@ -51,7 +51,7 @@ declare namespace ThinkHelper {
    */
   export function escapeHtml(str: string): string;
 
-  export function extend(target: Object, args: Object[]): any;
+  export function extend(target: Object, ...args: Object[]): any;
 
 
   /**
@@ -62,7 +62,7 @@ declare namespace ThinkHelper {
    * @param {string} prefix
    * @returns {string}
    */
-  export function getdirFiles(dir: string, prefix: string): Array<string>;
+  export function getdirFiles(dir: string, prefix?: string): Array<string>;
 
   export function isArray(arg: any): boolean;
 
@@ -84,11 +84,15 @@ declare namespace ThinkHelper {
 
   export function isFunction(arg: any): boolean;
 
-  export function isIP(): boolean;
+  export function isInt(value: string): boolean;
 
-  export function isIPv4(): boolean;
+  export function isIP(value: string): boolean;
 
-  export function isIPv6(): boolean;
+  export function isIPv4(value: string): boolean;
+
+  export function isIPv6(value: string): boolean;
+
+  export var isMaster: boolean;
 
   export function isNull(arg: any): boolean;
 
@@ -122,7 +126,7 @@ declare namespace ThinkHelper {
    * @param {string} mode default to '0777'
    * @returns {*}
    */
-  export function mkdir(dir: string, mode: string): any;
+  export function mkdir(dir: string, mode?: string): any;
 
   /**
    * transform humanize time to ms
@@ -161,7 +165,7 @@ declare namespace ThinkHelper {
    * @param  {Boolean} reserve []
    * @return {Promise}         []
    */
-  export function rmdir(p: String, reserve: Boolean): Promise<any>;
+  export function rmdir(p: String, reserve?: Boolean): Promise<any>;
 
   /**
    * snakeCase string
@@ -171,17 +175,17 @@ declare namespace ThinkHelper {
   export function snakeCase(str: string): string;
 
   /**
-   * get timeout Promise
+   * get timeout Promise default 1000
    * @param  {Number} time []
    * @return {Promise}      []
    */
-  export function timeout(time: Number): Promise<any>;
+  export function timeout(time?: Number): Promise<any>;
   /**
    * generate uuid
-   * @param  {String} version [uuid RFC version]
+   * @param  {String} version [uuid RFC version defautl to v4, or v1]
    * @return {String}         []
    */
-  export function uuid(version: string): string;
+  export function uuid(version?: string): string;
 
   export interface Think {
 
@@ -196,7 +200,7 @@ declare namespace ThinkHelper {
      * @param {string} mode default is '0777'
      * @returns {*}
      */
-    chmod(p: string, mode: string): any;
+    chmod(p: string, mode?: string): any;
 
     /**
      * get datetime
@@ -206,7 +210,7 @@ declare namespace ThinkHelper {
      * @param {*} format default is 'YYYY-MM-DD HH:mm:ss'
      * @returns {*}
      */
-    datetime(date: any, format: string): any;
+    datetime(date: any, format?: string): any;
 
     /**
      * get deferred object
@@ -225,7 +229,7 @@ declare namespace ThinkHelper {
      */
     escapeHtml(str: string): string;
 
-    extend(target: Object, args: Object[]): any;
+    extend(target: Object, ...args: Object[]): any;
 
 
     /**
@@ -236,7 +240,7 @@ declare namespace ThinkHelper {
      * @param {string} prefix
      * @returns {string}
      */
-    getdirFiles(dir: string, prefix: string): Array<string>;
+    getdirFiles(dir: string, prefix?: string): Array<string>;
 
     isArray(arg: any): boolean;
 
@@ -258,11 +262,13 @@ declare namespace ThinkHelper {
 
     isFunction(arg: any): boolean;
 
-    isIP(): boolean;
+    isIP(value: string): boolean;
 
-    isIPv4(): boolean;
+    isIPv4(value: string): boolean;
 
-    isIPv6(): boolean;
+    isIPv6(value: string): boolean;
+
+    isMaster: boolean;
 
     isNull(arg: any): boolean;
 
@@ -296,7 +302,7 @@ declare namespace ThinkHelper {
      * @param {string} mode default to '0777'
      * @returns {*}
      */
-    mkdir(dir: string, mode: string): any;
+    mkdir(dir: string, mode?: string): any;
 
     /**
      * transform humanize time to ms
@@ -335,7 +341,7 @@ declare namespace ThinkHelper {
      * @param  {Boolean} reserve []
      * @return {Promise}         []
      */
-    rmdir(p: String, reserve: Boolean): Promise<any>;
+    rmdir(p: String, reserve?: Boolean): Promise<any>;
 
     /**
      * snakeCase string
@@ -345,22 +351,20 @@ declare namespace ThinkHelper {
     snakeCase(str: string): string;
 
     /**
-     * get timeout Promise
+     * get timeout Promise default 1000
      * @param  {Number} time []
      * @return {Promise}      []
      */
-    timeout(time: Number): Promise<any>;
+    timeout(time?: Number): Promise<any>;
     /**
      * generate uuid
-     * @param  {String} version [uuid RFC version]
+     * @param  {String} version [uuid RFC version defautl to v4, or v1]
      * @return {String}         []
      */
-    uuid(version: string): string;
+    uuid(version?: string): string;
 
   }
 }
-
-
 
 export = ThinkHelper;
 
