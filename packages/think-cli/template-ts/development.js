@@ -14,6 +14,7 @@ const instance = new Application({
       noImplicitAny: true,
       removeComments: true,
       preserveConstEnums: true,
+      suppressImplicitAnyIndexErrors: true,
       sourceMap: true
     }
   }],
