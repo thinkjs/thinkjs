@@ -1,6 +1,7 @@
 
 import * as Koa from 'koa';
 import * as Helper from 'think-helper';
+import * as ThinkCluster from 'think-cluster';
 
 declare namespace ThinkJs {
 
@@ -456,6 +457,68 @@ declare namespace ThinkJs {
     model(name: string, config?: any, module?: string): Model;
   }
 
+  interface ViewExtend {
+    /**
+     * assign one value
+     * @memberOf ViewExtend
+     */
+    assign(name: string, value: any): void;
+    /**
+     * multiple value assign
+     * @memberOf ViewExtend
+     */
+    assign(value: object): void;
+    /**
+     * get assigned value by name
+     * @memberOf ViewExtend
+     */
+    assign(name: string): any;
+
+    /**
+     * get all assigned value
+     * @memberOf ViewExtend
+     */
+    assign(): any;
+    render(file?: string, config?: object | string): Promise<string>;
+    display(file?: string, config?: object | string): Promise<any>;
+
+    /**
+     * display base on current controller and action
+     *
+     * @memberOf ViewExtend
+     */
+    display(): Promise<any>;
+  }
+
+  interface SessionExtend {
+    /**
+     * get session
+     * @memberOf SessionExtend
+     */
+    session(name: string): Promise<string>;
+    /**
+     * set session
+     * @memberOf SessionExtend
+     */
+    session(name: string, value: string): Promise<string>;
+
+    /**
+     * delete the whole session
+     * @memberOf SessionExtend
+     */
+    session(name: null): Promise<string>;
+  }
+
+  interface I18NExtend {
+    getI18n(forceLocale?: string): object;
+
+    /**
+   ` * get current locale
+     * @memberOf I18NExtend
+     */
+    getLocale(): Array<string>;
+  }
+
   interface CacheExtend {
 
     /**
@@ -489,39 +552,14 @@ declare namespace ThinkJs {
     error(msg: string): void;
   }
 
-  class Messenger extends NodeJS.EventEmitter {
-    constructor();
-    domain: any;
+  interface WebsocketExtend {
 
-    /**
-     * get one worker
-     *
-     * @memberOf Messenger
-     */
-    getWorkers(type: string, cWorker: number): Array<any>;
+    readonly wsData: any;
+    readonly websocket: any;
+    readonly isWebsocket: boolean;
 
-    /**
-     * get all workers
-     * @memberOf Messenger
-     */
-    getWorkers(): Array<any>;
-
-    bindEvent(): any;
-    broadcast(action: string, data: any): void;
-    /**
-     * map worker task, return worker exec result
-     * @param {String} action
-     */
-    map(action: string, mapData: any): Promise<any>;
-    runInOnce(callback: Function): void;
-     /**
-     * run in one worker
-     */
-    consume(action: string, data?: any): void;
-    /**
-     * run in one worker
-     */
-    consume(action: Function, data?: any): void;
+    emit(event: string, data: any): void;
+    broadcast(event: string, data: any): void;
   }
 
   export interface Model {
@@ -764,30 +802,12 @@ declare namespace ThinkJs {
     readonly MANY_TO_MANY: number;
   }
 
-  export interface Context extends ContextExtend, ModelExtend, Koa.Context, CacheExtend { }
+  export interface Context extends ContextExtend, ModelExtend, Koa.Context, CacheExtend, SessionExtend, WebsocketExtend { }
 
-
-  export interface Controller extends ControllerExtend, ModelExtend, CacheExtend {
+  export interface Controller extends ControllerExtend, ModelExtend, CacheExtend, I18NExtend, ViewExtend, SessionExtend, WebsocketExtend {
     new(ctx: Context): Controller;
 
     ctx: Context;
-    assign?(name: string, value: any): any;
-    render?(file: string, config: object): Promise<string>;
-    render?(config: object): Promise<string>;
-    display?(file: string, config: object): Promise<any>;
-    display?(): Promise<any>;
-    /**
-     * get session
-     * @memberOf Controller
-     */
-    session?(name: string): Promise<string>;
-    /**
-     * set session
-     * @memberOf Controller
-     */
-    session?(name: string, value: string): Promise<string>;
-    session?(name: null): Promise<string>;
-
   }
 
   export interface Logic extends Controller {
@@ -798,10 +818,9 @@ declare namespace ThinkJs {
   }
 
   export interface Service extends ModelExtend {
-
   }
-  export interface Model extends ModelExtend {
 
+  export interface Model extends ModelExtend {
   }
 
   export interface Think extends Helper.Think, ModelExtend, CacheExtend {
@@ -812,7 +831,7 @@ declare namespace ThinkJs {
      */
     env: string;
     version: string;
-    messenger: Messenger;
+    messenger: ThinkCluster.Messenger;
     Controller: Controller;
     Logic: Logic;
     Service: Service;
