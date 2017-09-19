@@ -1,8 +1,6 @@
 
 import * as Koa from 'koa';
 import * as Helper from 'think-helper';
-import * as ThinkCluster from 'think-cluster';
-import * as ThinkLogger from 'think-logger3';
 
 declare namespace ThinkJs {
 
@@ -12,7 +10,7 @@ declare namespace ThinkJs {
     think: Think;
   }
 
-  export interface ContextExtend {
+  interface ContextExtend {
 
     readonly controller: string;
     readonly action: string;
@@ -220,7 +218,7 @@ declare namespace ThinkJs {
     download(filepath: string, filename?: string): void;
   }
 
-  export interface ControllerExtend {
+  interface ControllerExtend {
     body: any;
     readonly ip: string;
     readonly ips: string[];
@@ -451,8 +449,79 @@ declare namespace ThinkJs {
     download(filepath: string, filename?: string): void;
   }
 
-  export interface ServiceExtend {
+  interface ServiceExtend {
+  }
 
+  interface ModelExtend {
+    model(name: string, config?: any, module?: string): Model;
+  }
+
+  interface CacheExtend {
+
+    /**
+     * get cache
+     *
+     * @memberOf CacheExtend
+     */
+    cache(name: string): Promise<any>;
+
+    /**
+     * get or set cache
+     * if value is null means delete cache
+     * if value is undefined, get cache by name
+     * else mean set cache
+     * @memberOf CacheExtend
+     */
+    cache(name: string, value?: string, config?: object): Promise<any>;
+
+    /**
+     * get cache
+     *
+     * @memberOf CacheExtend
+     */
+    cache(name: string, value: Function): Promise<any>;
+  }
+
+  interface Logger {
+    debug(msg: string): void;
+    info(msg: string): void;
+    warn(msg: string): void;
+    error(msg: string): void;
+  }
+
+  class Messenger extends NodeJS.EventEmitter {
+    constructor();
+    domain: any;
+
+    /**
+     * get one worker
+     *
+     * @memberOf Messenger
+     */
+    getWorkers(type: string, cWorker: number): Array<any>;
+
+    /**
+     * get all workers
+     * @memberOf Messenger
+     */
+    getWorkers(): Array<any>;
+
+    bindEvent(): any;
+    broadcast(action: string, data: any): void;
+    /**
+     * map worker task, return worker exec result
+     * @param {String} action
+     */
+    map(action: string, mapData: any): Promise<any>;
+    runInOnce(callback: Function): void;
+     /**
+     * run in one worker
+     */
+    consume(action: string, data?: any): void;
+    /**
+     * run in one worker
+     */
+    consume(action: Function, data?: any): void;
   }
 
   export interface Model {
@@ -695,14 +764,13 @@ declare namespace ThinkJs {
     readonly MANY_TO_MANY: number;
   }
 
-  export interface Context extends ContextExtend, Koa.Context { }
+  export interface Context extends ContextExtend, ModelExtend, Koa.Context, CacheExtend { }
 
 
-  export interface Controller extends ControllerExtend {
+  export interface Controller extends ControllerExtend, ModelExtend, CacheExtend {
     new(ctx: Context): Controller;
 
     ctx: Context;
-    model(name: string, config?: object, module?: string): any;
     assign?(name: string, value: any): any;
     render?(file: string, config: object): Promise<string>;
     render?(config: object): Promise<string>;
@@ -726,16 +794,17 @@ declare namespace ThinkJs {
     new(ctx: Context): Logic;
     validate(rules: Object, msgs?: Object): Object;
     validateErrors?: Object;
+    allowMethods: string;
   }
 
-  export interface Service {
+  export interface Service extends ModelExtend {
 
   }
-  export interface Model {
+  export interface Model extends ModelExtend {
 
   }
 
-  export interface Think extends Helper.Think {
+  export interface Think extends Helper.Think, ModelExtend, CacheExtend {
     app: ThinkKoa;
     isCli: boolean;
     /**
@@ -743,18 +812,19 @@ declare namespace ThinkJs {
      */
     env: string;
     version: string;
-    messenger: ThinkCluster.Messenger;
+    messenger: Messenger;
     Controller: Controller;
     Logic: Logic;
     Service: Service;
     Model: Model;
     ROOT_PATH: string;
     APP_PATH: string;
-    logger: ThinkLogger.Logger;
+    logger: Logger;
 
     service(name: string, m: any, ...args: any[]): any;
     beforeStartServer(fn: Function): Promise<any>;
   }
+
   export class Application {
     constructor(options: {
       ROOT_PATH: string,
