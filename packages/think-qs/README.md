@@ -19,6 +19,8 @@ foo: {
 npm install think-qs
 ```
 
+think-qs need [thinkjs](https://github.com/thinkjs/thinkjs) version `>=3.2.2`.
+
 ## How to use
 
 Config file `src/config/middleware.js` (in multi mode, file is `src/common/config/middleware.js`), add middleware after payload:
