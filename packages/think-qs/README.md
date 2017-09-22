@@ -1,8 +1,10 @@
 # think-qs
 
-Use [qs](https://github.com/ljharb/qs) module to parse query & post data, support array & object value.
+[![Build Status](https://travis-ci.org/thinkjs/think-qs.svg?branch=master)](https://travis-ci.org/thinkjs/think-qs)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-qs/badge.svg)](https://coveralls.io/github/thinkjs/think-qs)
+[![npm](https://img.shields.io/npm/v/think-qs.svg)](https://www.npmjs.com/package/think-qs)
 
-For example, the string 'foo[bar]=baz' converts to: 
+Use [qs](https://github.com/ljharb/qs) module to parse query & post data, support array & object value.For example, the string 'foo[bar]=baz' converts to: 
 
 ```js
 foo: {
