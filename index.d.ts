@@ -804,13 +804,16 @@ declare namespace ThinkJs {
 
   export interface Context extends ContextExtend, ModelExtend, Koa.Context, CacheExtend, SessionExtend, WebsocketExtend { }
 
-  export interface Controller extends ControllerExtend, ModelExtend, CacheExtend, I18NExtend, ViewExtend, SessionExtend, WebsocketExtend {
-    new(ctx: Context): Controller;
 
+  export interface ControllerBase extends ControllerExtend, ModelExtend, CacheExtend, I18NExtend, ViewExtend, SessionExtend, WebsocketExtend {
     ctx: Context;
   }
 
-  export interface Logic extends Controller {
+  export interface Controller extends ControllerBase {
+    new(ctx: Context): Controller;
+  }
+
+  export interface Logic extends ControllerBase {
     new(ctx: Context): Logic;
     validate(rules: Object, msgs?: Object): Object;
     validateErrors?: Object;
