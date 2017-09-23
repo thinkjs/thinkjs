@@ -23,7 +23,7 @@ const routerREST = require('think-router-rest');
 
 module.exports = [
   {handle: router, options: {}},
-  routerREST
+  {handle: routerREST, options: {}}
 ];
 ```
 
