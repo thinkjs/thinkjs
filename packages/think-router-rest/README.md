@@ -12,7 +12,7 @@ npm install think-router-rest --save
 
 append this middleware in `src/config/middleware.js`:
 
-```
+```js
 const router = require('think-router');
 const routerREST = require('think-router-rest');
 
