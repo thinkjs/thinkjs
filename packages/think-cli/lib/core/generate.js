@@ -3,8 +3,11 @@ const path = require('path');
 const os = require('os');
 const helper = require('think-helper');
 const utils = require('../utils');
+const renderRaw = require('consolidate').handlebars.render;
+const render = utils.promisify(renderRaw, renderRaw);
 const toString = Object.prototype.toString;
 const tmpName = 'think-cli-generate';
+const logger = require('../logger.js');
 const tmpdir = path.join(os.tmpdir(), tmpName);
 const tmpdirIn = path.join(tmpdir, 'in');
 const tmpdirOut = path.join(tmpdir, 'out');
@@ -37,9 +40,29 @@ function generate(src, dest) {
       Metalsmith(src)
         .source('.')
         .destination(dest)
+        .use(template)
         .build(err => err ? reject(err) : resolve());
     });
   };
+}
+
+function template(files, metalsmith, done) {
+  const thinkjsInfo = require(path.join(path.resolve('./'), 'package.json')).thinkjs;
+  const metadata = thinkjsInfo.metadata;
+  const promises = Object.keys(files).map(file => {
+    const str = files[file].contents.toString();
+    return render(str, metadata)
+      .then(res => {
+        files[file].contents = Buffer.from(res);
+      })
+      .catch(e => {
+        logger.error('"%s" file render failed. message: %s', file, e.message);
+      });
+  });
+
+  Promise.all(promises).then(() => {
+    done(null);
+  }, done);
 }
 
 function copyOut(dest) {

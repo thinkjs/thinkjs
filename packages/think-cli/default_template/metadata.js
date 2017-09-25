@@ -38,12 +38,12 @@ module.exports = {
   ],
   "controller": {
     "default": [
-      ["src/controller/index_tpl.js", "/controller/[name].js"],
+      ["src/controller/index.tpl.js", "/controller/[name].js"],
       ["src/logic/index.js", "/logic/[name].js"]
     ],
     "rest": [
       ["src/controller/rest.js", "controller/rest.js"],
-      ["src/controller/restIndex_tpl.js", "/controller/[name].js"],
+      ["src/controller/restIndex.tpl.js", "/controller/[name].js"],
       ["src/logic/index.js", "/logic/[name].js"]
     ]
   },

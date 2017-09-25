@@ -153,11 +153,13 @@ function multiModule(multiModuleMap, isMultiModule) {
 function insertCliInfoToPackage({name: projectName, templateName, cacheTemplatePath, clone, isMultiModule}) {
   return function(files, metalsmith, done) {
     if (!files['package.json']) return done();
-    const defaultModule = metalsmith.metadata().defaultModule;
+    const metadata = metalsmith.metadata();
+    const defaultModule = metadata.defaultModule;
     const str = files['package.json'].contents.toString();
     const json = JSON.parse(str);
 
     json.thinkjs = Object.assign(json.thinkjs || {}, {
+      metadata,
       projectName,
       templateName,
       cacheTemplatePath,
