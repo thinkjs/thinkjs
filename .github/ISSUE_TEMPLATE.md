@@ -9,7 +9,8 @@ Node.js Version:
 ThinkJS Version:
 
 ### code
-```
+
+```js
 // your code here
 ```
 
