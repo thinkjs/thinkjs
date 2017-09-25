@@ -21,6 +21,7 @@ module.exports = function({name, templateName, cacheTemplatePath, targetPath, cl
     .source('.')
     .destination(targetPath)
     .use(ask(metadata.prompts, isMultiModule))
+    .use(filesignore(metadata.filesignore))
     .use(template(metadata.skipCompile))
     .use(multiModule(metadata.paths, metadata.multiModule, isMultiModule))
     .use(insertCliInfoToPackage({name, templateName, cacheTemplatePath, clone, isMultiModule}))
@@ -90,6 +91,23 @@ function template(skipCompile) {
   };
 }
 
+function filesignore(filesIgnore) {
+  return function(files, metalsmith, done) {
+    const reg = /(\.tpl\.js)$/;
+    for (const file in files) {
+      if (reg.test(file)) {
+        delete files[file];
+      }
+    }
+
+    for (let i = 0; i < filesIgnore.length; i++) {
+      delete files[filesIgnore[i]];
+    }
+
+    done(null);
+  }
+}
+
 /**
  * MultiModule plugin.
  * In multi module mode, multi module project is generated
@@ -135,14 +153,14 @@ function insertCliInfoToPackage({name: projectName, templateName, cacheTemplateP
     const str = files['package.json'].contents.toString();
     const json = JSON.parse(str);
 
-    json.thinkCli = {
+    json.thinkjs = Object.assign(json.thinkjs || {}, {
       projectName,
       templateName,
       cacheTemplatePath,
       defaultModule,
       clone,
       isMultiModule
-    };
+    });
 
     files['package.json'].contents = Buffer.from(JSON.stringify(json, null, '  '), 'binary');
     done();

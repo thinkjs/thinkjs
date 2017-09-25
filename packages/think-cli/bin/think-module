@@ -54,21 +54,22 @@ if (!utils.isThinkApp(appPath)) {
   )
 }
 
-const isMultiModule = helper.isDirectory(path.join(appPath, 'src/common'))
+const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
+const isMultiModule = thinkjsInfo.isMultiModule
 
 if (!isMultiModule) {
   logger.error('app mode is not module, can not create module.')
 }
 
-const thinkCliInfo = require(path.join(appPath, 'package.json')).thinkCli;
-const moduleName = program.args[0] || thinkCliInfo.defaultModule
-const template = thinkCliInfo.cacheTemplatePath && helper.isExist(thinkCliInfo.cacheTemplatePath)
-  ? thinkCliInfo.cacheTemplatePath
-  : thinkCliInfo.templateName
-const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkCliInfo.projectName)
+
+const moduleName = program.args[0] || thinkjsInfo.defaultModule
+const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
+  ? thinkjsInfo.cacheTemplatePath
+  : thinkjsInfo.templateName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
 const paths = require(path.join(template, 'metadata')).module
 
-const add = new ThinkAdd({name: '', moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkCliInfo.clone})
+const add = new ThinkAdd({name: '', moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
 
 add.run()
   .then(files => {

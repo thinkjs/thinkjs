@@ -15,8 +15,13 @@ module.exports = {
     }
   },
   "skipCompile": [
-    "App/src/**/*.vue",
-    "App/src/assets/*.png"
+    "src/**/*.vue",
+    "src/assets/*.png"
+  ],
+  "filesignore": [
+    "src/controller/index_tpl.js",
+    "src/controller/restIndex_tpl.js",
+    "src/controller/rest.js"
   ],
   "paths": {
     "controller": "src/controller",

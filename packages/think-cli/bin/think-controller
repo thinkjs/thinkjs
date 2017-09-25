@@ -56,20 +56,20 @@ if (!utils.isThinkApp(path.resolve('./'))) {
   )
 }
 
-const isMultiModule = helper.isDirectory(path.join(path.resolve('./'), 'src/common'))
-const thinkCliInfo = require(path.join(path.resolve('./'), 'package.json')).thinkCli;
+const thinkjsInfo = require(path.join(path.resolve('./'), 'package.json')).thinkjs;
+const isMultiModule = thinkjsInfo.isMultiModule
 const ctrlName = program.args[0]
-const moduleName = program.args[1] || thinkCliInfo.defaultModule
-const template = thinkCliInfo.cacheTemplatePath && helper.isExist(thinkCliInfo.cacheTemplatePath)
-  ? thinkCliInfo.cacheTemplatePath
-  : thinkCliInfo.templateName
-const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkCliInfo.projectName)
+const moduleName = program.args[1] || thinkjsInfo.defaultModule
+const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
+  ? thinkjsInfo.cacheTemplatePath
+  : thinkjsInfo.templateName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
 const metadata = require(path.join(template, 'metadata'))
 const paths = program.rest
   ? metadata.controller.rest
   : metadata.controller.default
 
-const add = new ThinkAdd({name: ctrlName, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkCliInfo.clone})
+const add = new ThinkAdd({name: ctrlName, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
 
 add.run()
   .then(files => {

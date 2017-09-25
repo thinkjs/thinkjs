@@ -50,7 +50,7 @@ class init {
 
     const template = rawTemplate.indexOf('/') > -1
       ? rawTemplate
-      : 'haotech/' + rawTemplate;
+      : 'think-template/' + rawTemplate;
 
     function ensureTargetPath(path) {
       return helper.isExist(path)

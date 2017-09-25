@@ -14,7 +14,7 @@ process.on('exit', function () {
 })
 
 const spinner = ora({text: 'Searching...', spinner: 'monkey'}).start()
-urllib.request('https://api.github.com/orgs/thinkjs/repos', (err, data, res) => {
+urllib.request('https://api.github.com/orgs/think-template/repos', (err, data, res) => {
   spinner.stop()
   if (err) return console.error(err)
 
@@ -30,7 +30,6 @@ urllib.request('https://api.github.com/orgs/thinkjs/repos', (err, data, res) => 
     console.log()
 
     list
-      .filter(item => /^(think-cli-template-)/.test(item.name))
       .forEach(item => {
         console.log(
           '  ' + '🐶' +
