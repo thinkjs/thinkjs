@@ -109,7 +109,7 @@ function filesignore(filesIgnore) {
     }
 
     done(null);
-  }
+  };
 }
 
 /**
