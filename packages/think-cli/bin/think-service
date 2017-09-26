@@ -14,7 +14,6 @@ const ThinkAdd = require('../lib/add')
 
 program
   .usage('<service-name> [module-name]')
-  .parse(process.argv)
 
 /**
  * Help.
@@ -31,6 +30,8 @@ program.on('--help', function () {
   console.log('    $ thinkjs service user home')
   console.log()
 })
+
+program.parse(process.argv)
 
 if (program.args.length < 1) return program.help()
 

@@ -14,7 +14,6 @@ const ThinkAdd = require('../lib/add')
 
 program
   .usage('<model-name> [module-name]')
-  .parse(process.argv)
 
 /**
  * Help.
@@ -28,6 +27,8 @@ program.on('--help', function () {
   console.log('    $ thinkjs model user')
   console.log()
 })
+
+program.parse(process.argv)
 
 if (program.args.length < 1) return program.help()
 

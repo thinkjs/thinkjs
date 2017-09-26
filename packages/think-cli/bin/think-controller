@@ -15,7 +15,6 @@ const ThinkAdd = require('../lib/add')
 program
   .usage('<controller-name> [module-name]')
   .option('-r, --rest', 'create rest controller')
-  .parse(process.argv)
 
 /**
  * Help.
@@ -32,6 +31,8 @@ program.on('--help', function () {
   console.log('    $ thinkjs controller user -r')
   console.log()
 })
+
+program.parse(process.argv)
 
 if (program.args.length < 1) return program.help()
 

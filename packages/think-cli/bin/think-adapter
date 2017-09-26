@@ -14,7 +14,6 @@ const ThinkAdd = require('../lib/add')
 
 program
   .usage('<adapter> [module-name]')
-  .parse(process.argv)
 
 /**
  * Help.
@@ -34,6 +33,8 @@ program.on('--help', function () {
   console.log('    $ thinkjs adapter user home')
   console.log()
 })
+
+program.parse(process.argv)
 
 if (program.args.length < 1) return program.help()
 
