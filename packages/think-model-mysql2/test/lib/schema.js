@@ -337,8 +337,10 @@ test('schema parse type', t => {
   t.is(schema.parseType('set', 'True'), 'True');
   t.is(schema.parseType('bigint', 'False'), 'False');
   t.is(schema.parseType('int(10)', '3'), 3);
+  t.is(schema.parseType('int(10)', 'fasdfadf'), 0);
   t.is(schema.parseType('double', '3.3'), 3.3);
   t.is(schema.parseType('float', '3.3'), 3.3);
+  t.is(schema.parseType('float', 'fasdfasdf'), 0);
   t.is(schema.parseType('decimal', '3.3'), 3.3);
   t.is(schema.parseType('bool', '0'), 1);
   t.is(schema.parseType('bool', ''), 0);
