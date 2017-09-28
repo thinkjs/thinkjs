@@ -89,5 +89,6 @@ Awesome projects for `ThinkJS 3.x`
 * [Firekylin](https://github.com/firekylin/firekylin) - A Simple & Fast Node.js Blogging Platform Base On ThinkJS & React & ES2015+
 * [CMSWing](https://github.com/arterli/CmsWing) - 一款功能强大的（PC端、手机端和微信公众平台）电子商务平台及 CMS 建站系统
 * [thinkjsplus](https://github.com/wuyanwen/thinkjsplus) - 一款基于 ThinkJS 3 从入门到实践的记事本项目，很适合新手实战
+* [NideShop](https://github.com/tumobi/nideshop) - 基于Node.js+MySQL开发的开源微信小程序商城
 ----
 If you have projects created by ThinkJS, please pull request.
