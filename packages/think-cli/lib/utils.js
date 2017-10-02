@@ -4,22 +4,6 @@ const exec = require('child_process').execSync;
 const helper = require('think-helper');
 const logger = require('./logger');
 
-/**
- * make callback function to promise
- * @param  {Function} fn
- * @param  {Object}   receiver
- * @return {Promise}
- */
-function promisify(fn, receiver) {
-  return (...args) => {
-    return new Promise((resolve, reject) => {
-      fn.apply(receiver, [...args, (err, res) => {
-        return err ? reject(err) : resolve(res);
-      }]);
-    });
-  };
-}
-
 module.exports = {
   isLocalPath(templatePath) {
     return /^[./]|(^[a-zA-Z]:)/.test(templatePath);
@@ -68,7 +52,5 @@ module.exports = {
     name = name && name.toString().trim();
     email = email && (' <' + email.toString().trim() + '>');
     return (name || '') + (email || '');
-  },
-
-  promisify
+  }
 };

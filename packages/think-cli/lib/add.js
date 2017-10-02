@@ -3,7 +3,7 @@ const ora = require('ora');
 const helper = require('think-helper');
 const utils = require('./utils');
 const downloadRaw = require('download-git-repo');
-const download = utils.promisify(downloadRaw, downloadRaw);
+const download = helper.promisify(downloadRaw, downloadRaw);
 const generate = require('./core/generate');
 
 const DOWNLOAD = Symbol('think-cli#download');

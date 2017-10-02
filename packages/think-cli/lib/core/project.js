@@ -4,10 +4,10 @@ const Handlebars = require('handlebars');
 const renderRaw = require('consolidate').handlebars.render;
 const path = require('path');
 const multimatch = require('multimatch');
+const helper = require('think-helper');
 const getOptions = require('./options.js');
 const logger = require('../logger.js');
-const utils = require('../utils');
-const render = utils.promisify(renderRaw, renderRaw);
+const render = helper.promisify(renderRaw, renderRaw);
 
 Handlebars.registerHelper('author', function(res) {
   return new Handlebars.SafeString(res.data.root.author);
