@@ -23,6 +23,7 @@ Usage: thinkjs [command] <options ...>
   Commands:
 
     new <projectPath>            create project
+    list                         list available official templates
     module <moduleName>          add module
     controller <controllerName>  add controller
     service <serviceName>        add service
