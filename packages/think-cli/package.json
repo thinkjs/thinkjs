@@ -7,7 +7,7 @@
   },
   "main": "bin/think",
   "scripts": {
-    "test": "eslint lib/ && nyc ava test/index.js --serial",
+    "test": "eslint lib/ && nyc ava test/ --serial",
     "lint": "eslint lib/",
     "lint-fix": "eslint --fix lib/"
   },
