@@ -91,5 +91,6 @@ Awesome projects for `ThinkJS 3.x`
 * [CMSWing](https://github.com/arterli/CmsWing) - 一款功能强大的（PC端、手机端和微信公众平台）电子商务平台及 CMS 建站系统
 * [thinkjsplus](https://github.com/wuyanwen/thinkjsplus) - 一款基于 ThinkJS 3 从入门到实践的记事本项目，很适合新手实战
 * [NideShop](https://github.com/tumobi/nideshop) - 基于 ThinkJS+MySQL 开发的开源微信小程序商城
+* [CmPage](https://gitee.com/defans/cmpage) - 企业信息化开发框架，包括账套、用户权限等管理模块，轻量级工作流引擎，以及业务模块的快速开发等
 ----
 If you have projects created by ThinkJS, please pull request.
