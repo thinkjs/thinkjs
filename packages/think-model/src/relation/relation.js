@@ -72,7 +72,7 @@ class Relation {
   async getRelation(data) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return data;
     const promises = Object.keys(this.relation).map(key => {
-      if (helper.isString(this.relationName) && this.relationName.indexOf(key) === -1) return;
+      if (helper.isArray(this.relationName) && this.relationName.indexOf(key) === -1) return;
       return this.parseItemRelation(key, data);
     });
     await Promise.all(promises);
