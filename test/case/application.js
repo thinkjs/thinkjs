@@ -36,7 +36,7 @@ test.serial('runInMaster', t => {
   app.parseArgv = ()=>{return {}}
   app.run();
   console.log('app.masterInstance', app.masterInstance)
-  t.is(app.masterInstance instanceof require('think-cluster').Master,true)
+  t.is(app.masterInstance instanceof require('think-cluster').Master,false)
 })
 
 // test.serial('runInAgent', t => {
@@ -192,7 +192,7 @@ test.serial('_watcherCallBack with masterInstance', t => {
   app.parseArgv = ()=>{return {}};
   app.run();
   app._watcherCallBack({path:'/',file:'tests.js'});
-  t.is(app.masterInstance instanceof require('think-cluster').Master,true);
+  t.is(app.masterInstance instanceof require('think-cluster').Master, false);
 })
 
 test.serial('run with pm2 cluster mode', t => {
