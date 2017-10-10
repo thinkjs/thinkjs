@@ -6,7 +6,7 @@ ThinkJS 3.X's ws adapter for websocket.
 ## Install
 
 ```
-npm install think-websocket-ws
+npm install think-websocket-ws --save
 ```
 
 ## How to Config
