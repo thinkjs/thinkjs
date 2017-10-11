@@ -85,4 +85,5 @@ module.exports = class extends think.Logic {
   }
 }
 ```
+
 you can get more information about logic from https://thinkjs.org/zh-cn/doc/3.0/logic.html.
