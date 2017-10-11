@@ -400,10 +400,11 @@ test('model delete data', async t => {
 });
 
 test('model update data', async t => {
-  t.plan(4);
+  t.plan(6);
 
   const model = new Model('post', {handle: class {
-    parseData(data) {
+    parseData(data, isUpdate) {
+      t.true(isUpdate);
       return data;
     }
     update(data, options) {

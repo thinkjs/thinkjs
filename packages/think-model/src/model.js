@@ -505,7 +505,7 @@ module.exports = class Model {
    */
   async update(data, options) {
     options = await this.parseOptions(options);
-    let parsedData = await this.db().parseData(data, false, options.table);
+    let parsedData = await this.db().parseData(data, true, options.table);
     // check where condition
     if (helper.isEmpty(options.where)) {
       if (parsedData[this.pk]) {
