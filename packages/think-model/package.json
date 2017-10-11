@@ -1,11 +1,11 @@
 {
   "name": "think-model",
-  "version": "1.0.6",
+  "version": "1.1.2",
   "description": "An adapter-based ORM for ThinkJS 3.x",
   "scripts": {
     "watch": "babel ./src --out-dir ./lib --watch",
     "compile": "babel ./src --out-dir ./lib",
-    "test": "npm run eslint && npm run test-cov",
+    "test": "npm run compile && npm run eslint && npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
     "eslint": "eslint ./src",
     "prepublish": "npm test && npm run compile"
@@ -31,6 +31,7 @@
     "think-cache": "^1.0.3",
     "think-debounce": "^1.0.3",
     "think-helper": "^1.0.5",
+    "think-model-abstract": "^1.1.0",
     "think-mysql": "^1.0.2"
   },
   "devDependencies": {

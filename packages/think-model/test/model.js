@@ -1,5 +1,5 @@
 const {test} = require('ava');
-const Model = require('../src/model');
+const Model = require('../lib/model');
 
 const db = {
   parseKey: key => key

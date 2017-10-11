@@ -1,5 +1,5 @@
 const {test} = require('ava');
-const Relation = require('../../src/relation/base');
+const Relation = require('../../lib/relation/base');
 test('instance normal', t => {
   t.plan(3);
 
