@@ -119,7 +119,7 @@ class Watcher {
     return changedFiles;
   }
   /**
-   * remove files in srcPath when is deleted in diffPath
+   * remove files in diffPath when is deleted in srcPath
    * @param {Array} srcFiles
    * @param {Array} diffFiles
    * @param {String} diffPath
