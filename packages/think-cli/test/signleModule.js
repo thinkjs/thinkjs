@@ -84,7 +84,7 @@ test('should be added the controller', async t => {
   const paths = metadata.controller.default
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -93,7 +93,7 @@ test('should be added the service', async t => {
   const paths = metadata.service
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -102,7 +102,7 @@ test('should be added the model', async t => {
   const paths = metadata.model
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -111,7 +111,7 @@ test('should be added the middleware', async t => {
   const paths = metadata.middleware
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -125,7 +125,7 @@ test('should be added the adapter', async t => {
   }
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 

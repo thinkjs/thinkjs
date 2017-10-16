@@ -24,7 +24,7 @@ class add {
   }
 
   [GENERATE]() {
-    const {paths, name, cacheTemplatePath, isMultiModule, moduleName} = this.options;
+    const {paths, name, template, isMultiModule, moduleName} = this.options;
 
     const sources = [];
     const targets = [];
@@ -33,7 +33,7 @@ class add {
       const item = paths[i];
       item[1] = path.join(item[2] ? item[2] : 'src', isMultiModule ? moduleName : '', item[1]);
       item[1] = item[1].replace(/(\[name\])/g, name);
-      sources.push(path.join(cacheTemplatePath, 'template', item[0]));
+      sources.push(path.join(template, 'template', item[0]));
       targets.push(item[1]);
     }
 

@@ -68,13 +68,13 @@ function template(files, metalsmith, done) {
 function copyOut(dest) {
   return _ => {
     if (toString.call(dest) === '[object String]') {
-      return utils.copyFile(path.join(tmpdirOut, dest.split('/').pop()), dest);
+      return utils.copyFile(path.join(tmpdirOut, dest.split('/').pop()), path.join(path.resolve('./'), dest));
     }
 
     if (toString.call(dest) === '[object Array]') {
       const list = dest.map(targetPath => {
         const filePath = path.join(tmpdirOut, targetPath);
-        return utils.copyFile(filePath, targetPath);
+        return utils.copyFile(filePath, path.join(path.resolve('./'), targetPath));
       });
       return Promise.all(list);
     }

@@ -6,7 +6,6 @@ const exec = require('child_process').execSync
 const ThinkInit = require('../lib/init.js')
 const ThinkAdd = require('../lib/add')
 const helper = require('think-helper');
-const cacheTemplatePath = path.join(__dirname, '.think-templates', 'localMultiModule')
 const targetDir = 'tmp'
 const targetName = 'think-cli-unit-test-local-multi-module'
 const name = 'user'
@@ -36,7 +35,7 @@ async function testAdd(paths) {
   const isMultiModule = thinkjsInfo.isMultiModule
   const moduleName = thinkjsInfo.defaultModule
   const template = thinkjsInfo.templateName
-  const add = new ThinkAdd({name: 'user', moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
+  const add = new ThinkAdd({name: 'user', moduleName, paths, template, isMultiModule, clone: thinkjsInfo.clone})
   return await add.run()
 }
 
@@ -56,7 +55,6 @@ test.cb('should generate multi module project from local default template', t =>
   const init = new ThinkInit({
     template: path.join(__dirname, '../default_template'),
     name: targetName,
-    cacheTemplatePath,
     targetPath,
     clone: false,
     isMultiModule: true
@@ -84,7 +82,7 @@ test('should be added the controller', async t => {
   const paths = metadata.controller.default
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -93,7 +91,7 @@ test('should be added the service', async t => {
   const paths = metadata.service
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -102,7 +100,7 @@ test('should be added the model', async t => {
   const paths = metadata.model
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -111,7 +109,7 @@ test('should be added the middleware', async t => {
   const paths = metadata.middleware
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
@@ -125,11 +123,10 @@ test('should be added the adapter', async t => {
   }
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {
-    t.is(paths[i][1], files[i])
+    t.truthy(files[i].endsWith(paths[i][1]))
   }
 })
 
 test.after(t => {
-  // return helper.rmdir(cacheTemplatePath)
-    // .then(() => helper.rmdir(path.join(__dirname, targetDir)))
+  return helper.rmdir(path.join(__dirname, targetDir))
 })
