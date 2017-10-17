@@ -52,8 +52,8 @@ $ thinkjs new my-project standard
 
 The above command pulls the template from [think-template/standard](https://github.com/think-template/standard), prompts for some information, and generates the project at ./my-project/.
 
-    * <project-name> is optional, defaults to the current working directory
-    * <template-name> is optional, default is the standard template, support offline use
+* <project-name> is optional, defaults to the current working directory
+* <template-name> is optional, default is the standard template, support offline use
 
 **Example:**
 ```
@@ -70,7 +70,7 @@ All official project templates are repos in the [think-template organization](ht
 
 Current available templates include:
 
-    * [standard](https://github.com/think-template/standard) - A full-featured standard template
+* [standard](https://github.com/think-template/standard) - A full-featured standard template
 
 ### thinkjs controller
 
