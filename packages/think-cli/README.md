@@ -74,4 +74,17 @@ Current available templates include:
 
 ### thinkjs controller
 
+**Usage:**
+
+```
+$ thinkjs controller <controller-name> [module-name]
+```
+
+**Example:**
+```
+$ thinkjs controller user home
+```
+
+The above command generates the controller at `src/home/controller/user.js`
+
 To be continued…
