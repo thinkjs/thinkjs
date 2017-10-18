@@ -13,12 +13,12 @@ $ npm install -g think-cli
 ## Commands:
 * [new](#new)                    generate a new project from a template
 * [list](#official-templates)                       list available official templates
-* module              add module from a template
+* [module](#module)              add module from a template
 * [controller](#controller)          add controller from a template
 * [service](#service)               add service from a template
-* model                add model from a template
-* middleware      add middleware from a template
-* adapter             add adapter from a template
+* [model](#model)                add model from a template
+* [middleware](#middleware)      add middleware from a template
+* [adapter](#adapter)             add adapter from a template
 
 ## new
 
@@ -123,4 +123,80 @@ The above command generates the service at `src/home/service/user.js`
 
 As with controller, `module-name` is optional and can only be used in multi-module projects
 
-To be continued…
+## model
+
+**Usage:**
+
+```
+$ thinkjs model <model-name> [module-name]
+```
+
+**Example:**
+```
+$ thinkjs model user home
+```
+
+The above command generates the model at `src/home/model/user.js`
+
+As with controller, `module-name` is optional and can only be used in multi-module projects
+
+## middleware
+
+**Usage:**
+
+```
+$ thinkjs middleware <middleware-name> [module-name]
+```
+
+**Example:**
+```
+$ thinkjs middleware user home
+```
+
+The above command generates the middleware at `src/home/middleware/user.js`
+
+As with controller, `module-name` is optional and can only be used in multi-module projects
+
+## adapter
+
+**Usage:**
+
+```
+$ thinkjs adapter <adapter> [module-name]
+```
+
+**Example:**
+create a adapter with the name base type user
+```
+$ thinkjs adapter user/base home
+```
+
+The above command generates the adapter at `src/home/adapter/user/base.js`
+
+adapter name is optional, defaults to the `base`, Example:
+
+```
+$ thinkjs adapter user
+```
+
+The above command generates the adapter at `src/adapter/user/base.js`
+
+As with controller, `module-name` is optional and can only be used in multi-module projects
+
+## module
+> The command can only be used in multi-module projects
+
+**Usage:**
+
+```
+$ thinkjs module [module-name]
+```
+
+**Example:**
+```
+$ thinkjs module user
+```
+
+The above command generates a module with the name `user`
+
+As with controller, `module-name` is optional,defaults to the `thinkjs.defaultModule` in in the package.json file of project root directory
