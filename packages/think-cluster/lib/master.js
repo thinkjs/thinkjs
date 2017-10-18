@@ -135,18 +135,40 @@ class Master {
       });
     });
     server.listen(this.options.port, this.options.host, () => {
-      this.forkWorkers().then(() => {
-        deferred.resolve();
+      this.forkWorkers().then(data => {
+        deferred.resolve(data);
       });
     });
     return deferred.promise;
   }
   /**
+   * send inspect port
+   * @param {Worker} worker 
+   */
+  sendInspectPort(worker) {
+    const inspect = process.execArgv.some(item => item.indexOf('--inspect') >= 0);
+    if (!inspect) return;
+    const spawnargs = worker.process.spawnargs;
+    let port;
+    spawnargs.some(item => {
+      let match;
+      if (item.indexOf('--inspect') >= 0 && (match = item.match(/\d+/))) {
+        port = match[0];
+      }
+    });
+    if (port) {
+      process.send({act: 'inspectPort', port});
+    }
+  }
+  /**
    * start server, support sticky
    */
   startServer() {
-    if (!this.options.sticky) return this.forkWorkers();
-    return this.createServer();
+    const promise = !this.options.sticky ? this.forkWorkers() : this.createServer();
+    return promise.then(data => {
+      this.sendInspectPort(data[0].worker);
+      return data;
+    });
   }
 }
 
