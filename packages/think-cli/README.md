@@ -10,32 +10,15 @@
 $ npm install -g think-cli
 ```
 
-## Usage:
-
-```
-$ thinkjs
-
-Usage: think <command> [options]
-
-
-  Options:
-
-    -V, --version  output the version number
-    -h, --help     output usage information
-
-
-  Commands:
-
-    new          generate a new project from a template
-    list         list available official templates
-    module       add module from a template
-    controller   add controller from a template
-    service      add service from a template
-    model        add model from a template
-    middleware   add middleware from a template
-    adapter      add adapter from a template
-    help [cmd]   display help for [cmd]
-```
+## Commands:
+* [new](#new)                    generate a new project from a template
+* [list](#official templates)                       list available official templates
+* module              add module from a template
+* [controller](#controller)          add controller from a template
+* [service](#service)               add service from a template
+* model                add model from a template
+* middleware      add middleware from a template
+* adapter             add adapter from a template
 
 ## new
 
