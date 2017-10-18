@@ -12,7 +12,7 @@ $ npm install -g think-cli
 
 ## Commands:
 * [new](#new)                    generate a new project from a template
-* [list](#official templates)                       list available official templates
+* [list](#official-templates)                       list available official templates
 * module              add module from a template
 * [controller](#controller)          add controller from a template
 * [service](#service)               add service from a template
