@@ -37,7 +37,7 @@ Usage: think <command> [options]
     help [cmd]   display help for [cmd]
 ```
 
-### thinkjs new
+## new
 
 **Usage:**
 
@@ -62,7 +62,13 @@ $ thinkjs new
 
 The above command, prompts for some information, and generates the project at ./ (current working directory), support offline use
 
-#### official templates
+If you want to create a multi-module project, you need to add the `-m` parameter:
+
+```
+$ thinkjs new -m
+```
+
+### official templates
 
 thinkjs provide some recommended templates.
 
@@ -72,7 +78,28 @@ Current available templates include:
 
 * [standard](https://github.com/think-template/standard) - A full-featured standard template
 
-### thinkjs controller
+### Custom Templates
+
+It's unlikely to make everyone happy with the official templates. You can simply fork an official template and then use it via `think-cli` with:
+
+```
+$ thinkjs new my-project username/repo
+```
+Where `username/repo` is the GitHub repo shorthand for your fork.
+
+The shorthand repo notation is passed to [download-git-repo](https://github.com/flipxfx/download-git-repo) so you can also use things like `bitbucket:username/repo` for a Bitbucket repo and `username/repo#branch` for tags or branches.
+
+If you would like to download from a private repository use the `—clone` flag and the cli will use `git clone` so your SSH keys are used.
+
+### Local Templates
+
+Instead of a GitHub repo, you can also use a template on your local file system:
+
+```
+$ thinkjs new my-project ~/fs/path/to-custom-template
+```
+
+## controller
 
 **Usage:**
 
@@ -86,5 +113,31 @@ $ thinkjs controller user home
 ```
 
 The above command generates the controller at `src/home/controller/user.js`
+
+* module-name is optional, defaults to the `thinkjs.defaultModule` in in the package.json file of project root directory, you can modify it, **module-name only be used in multi-module projects**
+
+You can also add the `-r` parameter to create a rest type controller
+
+**Example:**
+```
+$ thinkjs controller user -r
+```
+
+## service
+
+**Usage:**
+
+```
+$ thinkjs service <service-name> [module-name]
+```
+
+**Example:**
+```
+$ thinkjs service user home
+```
+
+The above command generates the service at `src/home/service/user.js`
+
+As with controller, `module-name` is optional and can only be used in multi-module projects
 
 To be continued…
