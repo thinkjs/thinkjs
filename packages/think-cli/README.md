@@ -11,14 +11,14 @@ $ npm install -g think-cli
 ```
 
 ## Commands:
-* [new](#new)                    generate a new project from a template
-* [list](#official-templates)                       list available official templates
-* [module](#module)              add module from a template
-* [controller](#controller)          add controller from a template
-* [service](#service)               add service from a template
-* [model](#model)                add model from a template
-* [middleware](#middleware)      add middleware from a template
-* [adapter](#adapter)             add adapter from a template
+* [new](#new) - generate a new project from a template
+* [list](#official-templates) - list available official templates
+* [module](#module) - add module from a template
+* [controller](#controller) - add controller from a template
+* [service](#service) - add service from a template
+* [model](#model) - add model from a template
+* [middleware](#middleware) - add middleware from a template
+* [adapter](#adapter) - add adapter from a template
 
 ## new
 
