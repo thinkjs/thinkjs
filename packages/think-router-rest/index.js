@@ -13,9 +13,10 @@ module.exports = options => {
 
     let actionName = ctx.method;
     const methodName = controller[_method];
-    /* just allow custom method in post request */
-    debug(`_method: methd=${actionName}, methodName = ${methodName}`);
-    if (actionName === 'POST' && methodName && ctx.query[methodName]) {
+    /* just allow custom method in post or cli request */
+    debug(`_method: method=${actionName}, methodName = ${methodName}`);
+    const isAllowedMethod = ['POST', 'CLI'].indexOf(actionName) > -1;
+    if (isAllowedMethod && methodName && ctx.query[methodName]) {
       actionName = ctx.query[methodName];
     }
     debug(`router-rest: controller=${ctx.controller}, action=${ctx.action}`);
