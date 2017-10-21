@@ -14,7 +14,7 @@ module.exports = options => {
     let actionName = ctx.method;
     const methodName = controller[_method];
     /* just allow custom method in post request */
-    debug(`_method: methd=${actionName}, methodName = ${methodName}`);
+    debug(`_method: method=${actionName}, methodName = ${methodName}`);
     if (actionName === 'POST' && methodName && ctx.query[methodName]) {
       actionName = ctx.query[methodName];
     }
