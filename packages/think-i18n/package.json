@@ -3,6 +3,7 @@
   "version": "1.2.3",
   "description": "i18n solution in thinkjs 3.0",
   "main": "index.js",
+  "type": "index.d.ts",
   "scripts": {
     "test": "eslint index.js && eslint src/ && nyc ava test/",
     "lint": "eslint index.js src/",
