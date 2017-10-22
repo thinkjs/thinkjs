@@ -24,6 +24,7 @@
     }
   ],
   "main": "index.js",
+  "type": "index.d.ts",
   "dependencies": {
     "think-helper": "^1.0.0"
   },
