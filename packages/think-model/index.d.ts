@@ -1,5 +1,6 @@
 
 declare namespace ThinkModel {
+  
   interface Model {
     new(modelName?: string, config?: object): Model;
     /**
@@ -233,12 +234,21 @@ declare namespace ThinkModel {
     transaction(fn: Function): Promise<any>;
   }
 
+  interface ModelThknkExtend {
+    Model: Model;
+  }
+
+  interface ModelExtend {
+    model(name: string, config?: any, module?: string): ThinkModel.Model;
+  }
+
 }
 
 declare module 'thinkjs' {
-  interface Model {
-    model(name: string, config?: any, module?: string): ThinkModel.Model;
-  }
+  interface Think extends ThinkModel.ModelExtend, ThinkModel.ModelThknkExtend {}
+  interface Controller extends ThinkModel.ModelExtend {}
+  interface Context extends ThinkModel.ModelExtend {}
+  interface Service extends ThinkModel.ModelExtend {}
 }
 
 export = ThinkModel;
