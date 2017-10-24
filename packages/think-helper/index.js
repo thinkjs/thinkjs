@@ -267,6 +267,11 @@ exports.escapeHtml = escapeHtml;
  * @return {String}      []
  */
 function datetime(date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') {
+  if (isString(date)) {
+    format = date;
+    date = new Date();
+  }
+
   const fn = d => {
     return ('0' + d).slice(-2);
   };
