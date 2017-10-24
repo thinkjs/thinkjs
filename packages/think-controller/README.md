@@ -16,8 +16,9 @@ const controller = require('think-controller');
 
 module.exports = [
   {
-    handle: controller, 
+    handle: controller,
     options: {
+      emptyModule: '',
       emptyController: '',
       preSetStatus: 200
     }
@@ -27,6 +28,7 @@ module.exports = [
 
 ## Options
 
+* `emptyModule` {String} default module when not found
 * `emptyController` {String} default controller when not found
 * `preSetStatus` {Number} preset http status when action exist
     Koa set http status to 404 before request handling, and will changed when set body or status properties. when `preSetStatus` is set and action exist, it's will preset status before action invoked.

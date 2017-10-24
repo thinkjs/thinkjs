@@ -2,6 +2,7 @@ const assert = require('assert');
 const helper = require('think-helper');
 
 const defaultOptions = {
+  emptyModule: '',
   emptyController: '',
   preSetStatus: 200
 };
@@ -19,6 +20,9 @@ function invokeController(options, app) {
     assert(ctx.action, 'ctx.action required');
     // error avoiding
     if (controllers && isMultiModule) {
+      if (!controllers[ctx.module]) {
+        ctx.module = options.emptyModule;
+      }
       controllers = controllers[ctx.module] || {};
     }
     let Controller = controllers[ctx.controller];
