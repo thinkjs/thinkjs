@@ -22,7 +22,7 @@ module.exports = function({name, templateName, cacheTemplatePath, targetPath, cl
     .destination(targetPath)
     .use(ask(metadata.prompts, isMultiModule))
     .use(filesignore(metadata.filesignore))
-    .use(template(metadata.skipCompile))
+    .use(template(metadata.skipCompile, {rootPath: targetPath, isMultiModule}))
     .use(multiModule(metadata.multiModule, isMultiModule))
     .use(insertCliInfoToPackage({name, templateName, cacheTemplatePath, clone, isMultiModule}))
     .build(done);
@@ -51,6 +51,7 @@ function ask(prompts, isMultiModule) {
       for (var key in answers) {
         metadata[key] = answers[key];
       }
+      metadata[isMultiModule] = !!isMultiModule;
       done();
     });
   };
@@ -62,7 +63,7 @@ function ask(prompts, isMultiModule) {
  * @param {Object} skip compile
  */
 
-function template(skipCompile) {
+function template(skipCompile, ctx) {
   skipCompile = typeof skipCompile === 'string'
     ? [skipCompile]
     : skipCompile;
@@ -76,7 +77,7 @@ function template(skipCompile) {
       }
 
       const str = files[file].contents.toString();
-      return render(str, metadata)
+      return render(str, Object.assign(metadata, ctx))
         .then(res => {
           files[file].contents = Buffer.from(res);
         })

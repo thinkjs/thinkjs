@@ -51,7 +51,7 @@ function template(files, metalsmith, done) {
   const metadata = thinkjsInfo.metadata;
   const promises = Object.keys(files).map(file => {
     const str = files[file].contents.toString();
-    return render(str, metadata)
+    return render(str, Object.assign(metadata, {rootPath: process.cwd()}))
       .then(res => {
         files[file].contents = Buffer.from(res);
       })
