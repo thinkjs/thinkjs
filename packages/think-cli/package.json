@@ -3,9 +3,9 @@
   "version": "2.0.0",
   "description": "A simple CLI for scaffolding Thinkjs projects.",
   "bin": {
-    "thinkjs": "bin/think"
+    "thinkjs": "bin/thinkjs"
   },
-  "main": "bin/think",
+  "main": "bin/thinkjs",
   "scripts": {
     "test": "eslint lib/ && nyc ava test/ --serial",
     "lint": "eslint lib/",
