@@ -226,7 +226,7 @@ declare module 'thinkjs' {
   }
 
   export interface Controller {
-    new(): Controller;
+    new(ctx: Context): Controller;
     ctx: Context;
     body: any;
     readonly ip: string;
@@ -458,10 +458,6 @@ declare module 'thinkjs' {
     download(filepath: string, filename?: string): void;
   }
 
-  export interface Model {
-    new(): Model;
-  }
-
   export interface Service {
     new(): Service;
   }
@@ -497,7 +493,6 @@ declare module 'thinkjs' {
     Controller: Controller;
     Logic: Logic;
     Service: Service;
-    Model: Model;
 
     service(name: string, m: any, ...args: any[]): any;
     beforeStartServer(fn: Function): Promise<any>;
