@@ -234,7 +234,7 @@ declare namespace ThinkModel {
     transaction(fn: Function): Promise<any>;
   }
 
-  interface ModelThknkExtend {
+  interface ModelThinkExtend {
     Model: Model;
   }
 
@@ -245,7 +245,7 @@ declare namespace ThinkModel {
 }
 
 declare module 'thinkjs' {
-  interface Think extends ThinkModel.ModelExtend, ThinkModel.ModelThknkExtend {}
+  interface Think extends ThinkModel.ModelExtend, ThinkModel.ModelThinkExtend {}
   interface Controller extends ThinkModel.ModelExtend {}
   interface Context extends ThinkModel.ModelExtend {}
   interface Service extends ThinkModel.ModelExtend {}
