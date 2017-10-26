@@ -1,0 +1,86 @@
+#!/usr/bin/env node
+const program = require('commander')
+const os = require('os')
+const chalk = require('chalk')
+const path = require('path')
+const helper = require('think-helper')
+const utils = require('../lib/utils')
+const logger = require('../lib/logger')
+const ThinkAdd = require('../lib/add')
+
+/**
+ * Usage.
+ */
+
+program
+  .usage('<adapter> [module-name]')
+
+/**
+ * Help.
+ */
+
+program.on('--help', function () {
+  console.log()
+  console.log('  Examples:')
+  console.log()
+  console.log(chalk.gray('    # create a adapter with the name ' + chalk.gray.underline.bold('user')))
+  console.log('    $ thinkjs adapter user')
+  console.log()
+  console.log(chalk.gray('    # create a adapter with the name ' + chalk.gray.underline.bold('base') + ' type ' + chalk.gray.underline.bold('user')))
+  console.log('    $ thinkjs adapter user/base')
+  console.log()
+  console.log(chalk.gray('    # create a adapter with the name ' + chalk.gray.underline.bold('user') + ' in multi-module mode'))
+  console.log('    $ thinkjs adapter user home')
+  console.log()
+})
+
+program.parse(process.argv)
+
+if (program.args.length < 1) return program.help()
+
+/**
+ * Padding.
+ */
+
+console.log()
+process.on('exit', function () {
+  console.log()
+})
+
+/**
+ * Start.
+ */
+
+const appPath = path.join(path.resolve('./'))
+if (!utils.isThinkApp(appPath)) {
+  logger.error(
+    'Please execute the command in the '+
+    chalk.yellow.underline.bold('thinkjs project') +
+    ' root directory'
+  )
+}
+
+const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
+const isMultiModule = thinkjsInfo.isMultiModule
+const adapter = program.args[0].split('/')
+const moduleName = program.args[1] || thinkjsInfo.defaultModule
+const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
+  ? thinkjsInfo.cacheTemplatePath
+  : thinkjsInfo.templateName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
+const paths = require(path.join(template, 'metadata')).adapter
+
+const type = adapter[0];
+const name = adapter[1] || 'base';
+
+for (let i = 0; i < paths.length; i++) {
+  paths[i][1] = paths[i][1].replace(/(\[type\])/g, type)
+}
+
+const add = new ThinkAdd({name, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
+
+add.run()
+  .then(files => {
+    logger.success('Generated %s', files)
+  })
+  .catch(logger.error)

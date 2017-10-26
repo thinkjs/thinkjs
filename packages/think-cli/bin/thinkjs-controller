@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+const program = require('commander')
+const os = require('os')
+const chalk = require('chalk')
+const path = require('path')
+const helper = require('think-helper')
+const utils = require('../lib/utils')
+const logger = require('../lib/logger')
+const ThinkAdd = require('../lib/add')
+
+/**
+ * Usage.
+ */
+
+program
+  .usage('<controller-name> [module-name]')
+  .option('-r, --rest', 'create rest controller')
+
+/**
+ * Help.
+ */
+
+program.on('--help', function () {
+  console.log()
+  console.log('  Examples:')
+  console.log()
+  console.log(chalk.gray('    # create a controller with the name ' + chalk.gray.underline.bold('user')))
+  console.log('    $ thinkjs controller user')
+  console.log()
+  console.log(chalk.gray('    # create rest controller'))
+  console.log('    $ thinkjs controller user -r')
+  console.log()
+})
+
+program.parse(process.argv)
+
+if (program.args.length < 1) return program.help()
+
+/**
+ * Padding.
+ */
+
+console.log()
+process.on('exit', function () {
+  console.log()
+})
+
+/**
+ * Start.
+ */
+
+if (!utils.isThinkApp(path.resolve('./'))) {
+  logger.error(
+    'Please execute the command in the '+
+    chalk.yellow.underline.bold('thinkjs project') +
+    ' root directory'
+  )
+}
+
+const thinkjsInfo = require(path.join(path.resolve('./'), 'package.json')).thinkjs;
+const isMultiModule = thinkjsInfo.isMultiModule
+const ctrlName = program.args[0]
+const moduleName = program.args[1] || thinkjsInfo.defaultModule
+const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
+  ? thinkjsInfo.cacheTemplatePath
+  : thinkjsInfo.templateName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
+const metadata = require(path.join(template, 'metadata'))
+const paths = program.rest
+  ? metadata.controller.rest
+  : metadata.controller.default
+
+const add = new ThinkAdd({name: ctrlName, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
+
+add.run()
+  .then(files => {
+    logger.success('Generated %s', files)
+  })
+  .catch(logger.error)

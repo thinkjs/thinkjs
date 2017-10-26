@@ -1,0 +1,72 @@
+#!/usr/bin/env node
+const program = require('commander')
+const os = require('os')
+const chalk = require('chalk')
+const path = require('path')
+const helper = require('think-helper')
+const utils = require('../lib/utils')
+const logger = require('../lib/logger')
+const ThinkAdd = require('../lib/add')
+
+/**
+ * Usage.
+ */
+
+program
+  .usage('<model-name> [module-name]')
+
+/**
+ * Help.
+ */
+
+program.on('--help', function () {
+  console.log()
+  console.log('  Examples:')
+  console.log()
+  console.log(chalk.gray('    # create a model with the name ' + chalk.gray.underline.bold('user')))
+  console.log('    $ thinkjs model user')
+  console.log()
+})
+
+program.parse(process.argv)
+
+if (program.args.length < 1) return program.help()
+
+/**
+ * Padding.
+ */
+
+console.log()
+process.on('exit', function () {
+  console.log()
+})
+
+/**
+ * Start.
+ */
+
+const appPath = path.join(path.resolve('./'))
+if (!utils.isThinkApp(appPath)) {
+  logger.error(
+    'Please execute the command in the '+
+    chalk.yellow.underline.bold('thinkjs project') +
+    ' root directory'
+  )
+}
+
+const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
+const isMultiModule = thinkjsInfo.isMultiModule
+const modelName = program.args[0]
+const moduleName = program.args[1] || thinkjsInfo.defaultModule
+const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
+  ? thinkjsInfo.cacheTemplatePath
+  : thinkjsInfo.templateName
+const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
+const paths = require(path.join(template, 'metadata')).model
+const add = new ThinkAdd({name: modelName, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
+
+add.run()
+  .then(files => {
+    logger.success('Generated %s', files)
+  })
+  .catch(logger.error)
