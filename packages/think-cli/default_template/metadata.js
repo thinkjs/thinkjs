@@ -27,6 +27,41 @@ module.exports = {
     "src/middleware",
     "src/service"
   ],
+  "new": {
+    "default": [
+      ["src/bootstrap", "src/bootstrap"],
+      ["src/config", "src/config"],
+      ["src/controller", "src/controller"],
+      ["src/logic", "src/logic"],
+      ["src/model", "src/model"],
+      ["view/index_index.html", "view/index_index.html"],
+      ["development.js", "development.js"],
+      ["eslintrc", ".eslintrc"],
+      ["gitignore", ".gitignore"],
+      ["nginx.conf", "nginx.conf"],
+      ["package.json", "package.json"],
+      ["pm2.json", "pm2.json"],
+      ["production.js", "production.js"],
+      ["README.md", "README.md"]
+    ],
+    "multiModule": [
+      ["src/bootstrap", "src/common/bootstrap"],
+      ["src/config", "src/common/config"],
+      ["src/config/config.js", "src/[defaultModule]/config/config.js"],
+      ["src/controller", "src/[defaultModule]/controller"],
+      ["src/logic", "src/[defaultModule]/logic"],
+      ["src/model", "src/[defaultModule]/model"],
+      ["view/index_index.html", "view/[defaultModule]/index_index.html"],
+      ["development.js", "development.js"],
+      ["eslintrc", ".eslintrc"],
+      ["gitignore", ".gitignore"],
+      ["nginx.conf", "nginx.conf"],
+      ["package.json", "package.json"],
+      ["pm2.json", "pm2.json"],
+      ["production.js", "production.js"],
+      ["README.md", "README.md"]
+    ]
+  }
   "multiModule": [
     ["src/bootstrap", "src/common/bootstrap"],
     ["src/config", "src/common/config"],
