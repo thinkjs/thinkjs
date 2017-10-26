@@ -46,6 +46,6 @@
   "dependencies": {
     "line-column": "~1.0.2",
     "think-helper": "~1.0.0",
-    "typescript": "~2.1.6"
+    "typescript": "^2.5.3"
   }
 }
