@@ -1,6 +1,6 @@
 {
   "name": "think-typescript",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Use TypeScript transpile ts to js",
   "main": "index.js",
   "scripts": {
