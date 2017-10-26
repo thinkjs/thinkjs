@@ -518,7 +518,7 @@ module.exports = class Model {
     parsedData = await this.beforeUpdate(parsedData, options);
     // check data is empty
     if (helper.isEmpty(parsedData)) {
-      return Promise.reject(new Error('update data is empty'));
+      return Promise.reject(new Error(`update data is empty, original data is ${JSON.stringify(data)}`));
     }
     const rows = await this.db().update(parsedData, options);
     const copyData = Object.assign({}, data, parsedData);
