@@ -4,7 +4,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference types="node" />
-declare namespace ThinkLogger {
+declare namespace ThinkCluster {
   class Messenger extends NodeJS.EventEmitter {
     constructor();
     domain: any;
@@ -40,5 +40,5 @@ declare namespace ThinkLogger {
     consume(action: Function, data?: any): void;
   }
 }
-export = ThinkLogger;
+export = ThinkCluster;
 
