@@ -15,7 +15,7 @@ module.exports = class Query {
    */
   get socket() {
     if (this[SOCKET]) return this[SOCKET];
-    this[SOCKET] = new Socket(this.config);
+    this[SOCKET] = Socket.getInstance(this.config);
     return this[SOCKET];
   }
   /**

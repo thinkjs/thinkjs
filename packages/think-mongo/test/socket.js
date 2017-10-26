@@ -2,23 +2,23 @@ const test = require('ava');
 const Socket = require('../src/socket');
 
 const defaultConfig = {
-  database: 'think_db',
-}
+  database: 'think_db'
+};
 
 test.serial('release', async t => {
-  let socket = new Socket(defaultConfig);
+  const socket = Socket.getInstance(defaultConfig);
   const pool = await socket.pool;
-  t.is(!!pool,true);
+  t.is(!!pool, true);
   const connection = await socket.getConnection();
-  t.is(!!connection,true);
+  t.is(!!connection, true);
   await socket.release(connection);
 });
 
 test.serial('close', async t => {
-  let socket = new Socket(defaultConfig);
+  const socket = Socket.getInstance(defaultConfig);
   const pool = await socket.pool;
-  t.is(!!pool,true);
+  t.is(!!pool, true);
   const connection = await socket.getConnection();
-  t.is(!!connection,true);
-  let ret = await socket.close(connection);
+  t.is(!!connection, true);
+  const ret = await socket.close(connection);
 });
