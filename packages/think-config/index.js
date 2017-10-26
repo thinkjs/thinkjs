@@ -70,14 +70,33 @@ function getConfigFn(configs, isMultiModule) {
   }
   return (name, value, m = 'common') => {
     let conf = configInstances.common;
-    if (isMultiModule && m && configInstances[m]) {
-      conf = configInstances[m];
+    // single module
+    if (!isMultiModule) {
+      if (value === undefined) {
+        return conf.get(name);
+      }
+      return conf.set(name, value);
     }
-    if (!conf) return;
+    // get config
     if (value === undefined) {
+      if (m && configInstances[m]) {
+        conf = configInstances[m];
+      }
       return conf.get(name);
     }
-    conf.set(name, value);
+    // set all modules config
+    if (m === true) {
+      for (const mName in configInstances) {
+        configInstances[mName].set(name, value);
+      }
+      return;
+    }
+    // set multi modules config
+    m.split(',').forEach(item => {
+      const conf = configInstances[item];
+      if (!conf) return;
+      conf.set(name, value);
+    });
   };
 }
 
