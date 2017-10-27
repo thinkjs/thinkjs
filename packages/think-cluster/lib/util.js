@@ -16,13 +16,6 @@ exports.WORKER_REALOD = WORKER_REALOD;
 exports.NEED_KILLED = NEED_KILLED;
 
 /**
- * check worker is first
- */
-exports.isFirstWorker = function() {
-  return +process.env.THINK_PROCESS_ID === 1;
-};
-
-/**
  * parse options
  */
 exports.parseOptions = function(options = {}) {
