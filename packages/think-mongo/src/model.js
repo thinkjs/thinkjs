@@ -504,8 +504,8 @@ class Mongo {
    * @param  {} options []
    * @return {}         []
    */
-  aggregate(options) {
-    return this.db().aggregate(this.tableName, options);
+  aggregate(pipeline, options) {
+    return this.db().aggregate(this.tableName, pipeline, options);
   }
   /**
    * map reduce

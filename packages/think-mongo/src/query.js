@@ -265,11 +265,11 @@ module.exports = class Query {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  aggregate(table, options) {
+  aggregate(table, pipeline, options) {
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(table);
       const fn = helper.promisify(collection.aggregate, collection);
-      return fn(options);
+      return fn(pipeline, options);
     });
   }
 };
