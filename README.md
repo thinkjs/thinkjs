@@ -21,6 +21,9 @@
     <a href="http://packagequality.com/#?package=thinkjs">
       <img src="http://npm.packagequality.com/shield/thinkjs.svg"/>
     </a>
+    <a href="https://www.npmjs.com/package/thinkjs">
+      <img src="https://img.shields.io/npm/dm/thinkjs.svg?style=flat-square" />
+    </a>
   </div>
 
   <p>Use full ES2015+ features to develop Node.js applications, Support TypeScript.</p>
