@@ -19,7 +19,7 @@
       <img src="https://img.shields.io/david/thinkjs/thinkjs.svg?style=flat-square" alt="Dependency Status" />
     </a>
     <a href="http://packagequality.com/#?package=thinkjs">
-      <img src="http://npm.packagequality.com/badge/thinkjs.png"/>
+      <img src="http://npm.packagequality.com/shield/thinkjs.svg"/>
     </a>
   </div>
 
