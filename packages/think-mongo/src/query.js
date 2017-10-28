@@ -269,7 +269,7 @@ module.exports = class Query {
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(table);
       const fn = helper.promisify(collection.aggregate, collection);
-      return fn(pipeline, options);
+      return options ? fn(pipeline, options) : fn(pipeline);
     });
   }
 };
