@@ -18,6 +18,9 @@
     <a href="https://david-dm.org/thinkjs/thinkjs">
       <img src="https://img.shields.io/david/thinkjs/thinkjs.svg?style=flat-square" alt="Dependency Status" />
     </a>
+    <a href="http://packagequality.com/#?package=thinkjs">
+      <img src="http://npm.packagequality.com/badge/thinkjs.png"/>
+    </a>
   </div>
 
   <p>Use full ES2015+ features to develop Node.js applications, Support TypeScript.</p>
