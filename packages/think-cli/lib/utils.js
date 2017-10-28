@@ -52,5 +52,10 @@ module.exports = {
     name = name && name.toString().trim();
     email = email && (' <' + email.toString().trim() + '>');
     return (name || '') + (email || '');
+  },
+
+  compose(...funcs) {
+    const first = funcs.pop()
+    return (...args) => funcs.reverse().reduce((item, fn) => fn(item), first(...args))
   }
 };
