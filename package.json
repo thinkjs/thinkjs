@@ -42,7 +42,7 @@
   "dependencies": {
     "bluebird": "3.3.5",
     "cookies": "^0.7.0",
-    "debug": "^2.6.1",
+    "debug": "^3.1.0",
     "destroy": "^1.0.4",
     "koa": "^2.2.0",
     "on-finished": "^2.3.0",
