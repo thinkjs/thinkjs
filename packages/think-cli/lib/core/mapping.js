@@ -1,8 +1,8 @@
-const util = require('../utils.js');
+const utils = require('../utils.js');
 
 module.exports = function (maps) {
   return function(files, metalsmith, done) {
-    const replaceFilePath = util.compose(batchReplaceFilePath, replaceFilePathByMaps, replaceFilePathByMapping)();
+    const replaceFilePath = utils.compose(batchReplaceFilePath, replaceFilePathByMaps, replaceFilePathByMapping)();
     files = replaceFilePath(files, maps);
     done(null);
   }

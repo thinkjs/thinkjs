@@ -7,10 +7,7 @@ module.exports = function (prompts, options = {}) {
     const metadata = metalsmith.metadata();
     inquirer
       .prompt(prompts)
-      .then((answers) => {
-        saveAnswersToMetadata(metadata, answers, options)
-        done();
-      });
+      .then(saveAnswersToMetadata(metadata, options, done));
   }
 };
 
@@ -34,9 +31,12 @@ function addMultiModulePrompt(prompts) {
   }
 }
 
-function saveAnswersToMetadata(metadata, answers, options) {
-  for (var key in answers) {
-    metadata[key] = answers[key];
+function saveAnswersToMetadata(metadata, options, done) {
+  return answers => {
+    for (var key in answers) {
+      metadata[key] = answers[key];
+    }
+    metadata[options.isMultiModule] = !!options.isMultiModule;
+    done();
   }
-  metadata[options.isMultiModule] = !!options.isMultiModule;
 }
