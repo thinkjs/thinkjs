@@ -1,14 +1,14 @@
 const inquirer = require('inquirer');
 const utils = require('../utils.js');
 
-module.exports = function (prompts, options = {}) {
+module.exports = function(prompts, options = {}) {
   prompts = utils.compose(addMultiModulePrompt, formatPrompts)(prompts)(options);
   return function(files, metalsmith, done) {
     const metadata = metalsmith.metadata();
     inquirer
       .prompt(prompts)
       .then(saveAnswersToMetadata(metadata, options, done));
-  }
+  };
 };
 
 function formatPrompts(prompts) {
@@ -24,11 +24,11 @@ function addMultiModulePrompt(prompts) {
       type: 'string',
       message: 'Please enter a default module name',
       default: 'home'
-    }
+    };
     return options.isMultiModule
       ? [...prompts, multiModulePrompt]
-      : prompts
-  }
+      : prompts;
+  };
 }
 
 function saveAnswersToMetadata(metadata, options, done) {
@@ -36,7 +36,6 @@ function saveAnswersToMetadata(metadata, options, done) {
     for (var key in answers) {
       metadata[key] = answers[key];
     }
-    metadata[options.isMultiModule] = !!options.isMultiModule;
     done();
-  }
+  };
 }

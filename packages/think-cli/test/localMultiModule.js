@@ -9,6 +9,7 @@ const helper = require('think-helper');
 const targetDir = 'tmp'
 const targetName = 'think-cli-unit-test-local-multi-module'
 const name = 'user'
+const root = path.join(__dirname, targetDir, targetName)
 
 function readProjectPackageFile (root) {
   return helper.promisify(fs.readFile, fs)(path.join(root, 'package.json'), 'utf8')
@@ -27,13 +28,12 @@ function isMultiModule (root) {
 }
 
 async function testAdd(paths) {
-  const root = path.join(__dirname, targetDir, targetName)
   process.chdir(root)
   const info = await readProjectPackageFile(root)
   const thinkjsInfo = info.thinkjs
 
   const isMultiModule = thinkjsInfo.isMultiModule
-  const moduleName = thinkjsInfo.defaultModule
+  const moduleName = thinkjsInfo.metadata.defaultModule
   const template = thinkjsInfo.templateName
   const add = new ThinkAdd({name: 'user', moduleName, paths, template, isMultiModule, clone: thinkjsInfo.clone})
   return await add.run()
@@ -72,13 +72,13 @@ test.cb('should generate multi module project from local default template', t =>
 })
 
 test('the project should be properly generated', async t => {
-  const root = path.join(__dirname, targetDir, targetName)
   const info = await readProjectPackageFile(root)
   t.is(info.thinkjs.isMultiModule, isMultiModule(root))
 })
 
 test('should be added the controller', async t => {
-  const metadata = require(path.join(__dirname, '../default_template', 'metadata'))
+  const info = await readProjectPackageFile(root)
+  const metadata = require(path.join(info.thinkjs.cacheTemplatePath, 'metadata'))
   const paths = metadata.controller.default
   const files = await testAdd(paths)
   for (let i = 0; i < paths.length; i++) {

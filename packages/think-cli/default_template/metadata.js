@@ -48,7 +48,8 @@ module.exports = {
       ["src/bootstrap", "src/common/bootstrap"],
       ["src/config", "src/common/config"],
       ["src/config/config.js", "src/[defaultModule]/config/config.js"],
-      ["src/controller", "src/[defaultModule]/controller"],
+      ["src/controller/base.js", "src/[defaultModule]/controller/base.js"],
+      ["src/controller/index.js", "src/[defaultModule]/controller/index.js"],
       ["src/logic", "src/[defaultModule]/logic"],
       ["src/model", "src/[defaultModule]/model"],
       ["view/index_index.html", "view/[defaultModule]/index_index.html"],
@@ -61,7 +62,7 @@ module.exports = {
       ["production.js", "production.js"],
       ["README.md", "README.md"]
     ]
-  }
+  },
   "multiModule": [
     ["src/bootstrap", "src/common/bootstrap"],
     ["src/config", "src/common/config"],

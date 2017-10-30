@@ -1,26 +1,25 @@
-const helper = require('think-helper');
 const render = require('consolidate').handlebars.render;
 const multimatch = require('multimatch');
 const logger = require('../logger.js');
 const utils = require('../utils.js');
 
-module.export = function(skipCompile) {
+module.exports = function(skipCompile) {
   skipCompile = typeof skipCompile === 'string'
     ? [skipCompile]
     : skipCompile;
 
   return function(files, metalsmith, done) {
     const metadata = metalsmith.metadata();
-    const run = utils.compose(startCompileFiles, compileFiles, skipOrCompile, setFileContent, compile)(metadata, render)
+    const run = utils.compose(startCompileFiles, compileFiles, skipOrCompile, setFileContent, compile)(metadata, render);
 
     run(skipCompile, multimatch, files, logger).then(_ => {
       done(null);
     }, done);
   };
-}
+};
 
 function startCompileFiles(fn) {
-  return (...args) => Promise.all(fn(...args))
+  return (...args) => Promise.all(fn(...args));
 }
 
 function compileFiles(fn) {
@@ -31,17 +30,17 @@ function compileFiles(fn) {
         return fn(skipCompile, multimatch, files, file).catch(_ => {
           logger.error('"%s" file render failed. Please add the file to the skipCompile key in the metadata.js', file);
         });
-      })
-  }
+      });
+  };
 }
 
 function skipOrCompile(fn) {
   return (skipCompile, multimatch, files, file) => {
     const str = files[file].contents.toString();
     return skipCompile && multimatch([file], skipCompile, { dot: true }).length
-      ? Promise.resolve();
-      : fn(str, file)
-  }
+      ? Promise.resolve()
+      : fn(str, file);
+  };
 }
 
 function setFileContent(fn) {
@@ -49,10 +48,10 @@ function setFileContent(fn) {
     return fn(str)
       .then(res => {
         file.contents = Buffer.from(res);
-      })
-  }
+      });
+  };
 }
 
 function compile(metadata, render) {
-  return str => render(str, metadata)
+  return str => render(str, metadata);
 }

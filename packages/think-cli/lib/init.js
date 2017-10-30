@@ -2,7 +2,7 @@ const ora = require('ora');
 const download = require('download-git-repo');
 const helper = require('think-helper');
 const utils = require('./utils.js');
-const generate = require('./core/project.js');
+const generate = require('./core/gen.js');
 const logger = require('./logger.js');
 
 const THINK_GENERATE = Symbol('think-cli#generate');
@@ -26,14 +26,16 @@ class init {
    * @param {String} template
    */
   [THINK_GENERATE]() {
-    const {name, template: rawTemplate, targetPath, isMultiModule} = this.options;
+    const {name, template: rawTemplate, targetPath, clone, isMultiModule} = this.options;
     const template = utils.getLocalTemplatePath(rawTemplate);
     if (!helper.isExist(template)) {
       console.log();
       logger.error('Local template "%s" not found.', template);
       return;
     }
-    generate({name, templateName: template, targetPath, isMultiModule}, (err) => {
+
+    const options = {name, command: 'new', template, clone, isMultiModule};
+    generate(template, targetPath, options, (err) => {
       if (err) return logger.error(err);
       console.log();
       logger.success('Generated %s', name);
@@ -63,7 +65,8 @@ class init {
         spinner.stop();
         if (err) return logger.error(err);
 
-        generate({name, templateName: template, cacheTemplatePath, targetPath, clone, isMultiModule}, (err) => {
+        const options = {name, command: 'new', template, clone, isMultiModule};
+        generate(cacheTemplatePath, targetPath, options, (err) => {
           if (err) return logger.error(err);
           console.log();
           logger.success('Generated %s', name);

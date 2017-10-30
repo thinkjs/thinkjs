@@ -55,7 +55,7 @@ module.exports = {
   },
 
   compose(...funcs) {
-    const first = funcs.pop()
-    return (...args) => funcs.reverse().reduce((item, fn) => fn(item), first(...args))
+    const first = funcs.pop();
+    return (...args) => funcs.reverse().reduce((item, fn) => fn(item), first(...args));
   }
 };

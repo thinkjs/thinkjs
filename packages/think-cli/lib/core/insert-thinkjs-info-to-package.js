@@ -2,7 +2,6 @@ module.exports = function({projectName, templateName, cacheTemplatePath, clone, 
   return function(files, metalsmith, done) {
     if (!files['package.json']) return done();
     const metadata = metalsmith.metadata();
-    const defaultModule = metadata.defaultModule;
     const str = files['package.json'].contents.toString();
     const json = JSON.parse(str);
 
@@ -11,7 +10,6 @@ module.exports = function({projectName, templateName, cacheTemplatePath, clone, 
       projectName,
       templateName,
       cacheTemplatePath,
-      defaultModule,
       clone,
       isMultiModule
     });
@@ -19,4 +17,4 @@ module.exports = function({projectName, templateName, cacheTemplatePath, clone, 
     files['package.json'].contents = Buffer.from(JSON.stringify(json, null, '  '), 'binary');
     done();
   };
-}
+};

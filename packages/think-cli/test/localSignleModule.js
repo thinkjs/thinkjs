@@ -33,7 +33,7 @@ async function testAdd(paths) {
   const thinkjsInfo = info.thinkjs
 
   const isMultiModule = thinkjsInfo.isMultiModule
-  const moduleName = thinkjsInfo.defaultModule
+  const moduleName = thinkjsInfo.metadata.defaultModule
   const template = thinkjsInfo.templateName
   const add = new ThinkAdd({name: 'user', moduleName, paths, template, isMultiModule, clone: thinkjsInfo.clone})
   return await add.run()
