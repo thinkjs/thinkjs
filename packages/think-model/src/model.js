@@ -668,11 +668,11 @@ module.exports = class Model {
       const multi = field.indexOf(',') > -1 && field.indexOf('(') === -1;
       if (multi) {
         field.split(/\s*,\s*/).forEach(item => {
-          result[item] = [];
+          result[item] = one === true ? undefined : [];
         });
         return result;
       } else {
-        return [];
+        return one === true ? undefined : [];
       }
     }
     if (fields.length === 1) {

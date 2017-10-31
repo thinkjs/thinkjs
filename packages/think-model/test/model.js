@@ -604,6 +604,64 @@ test('model get field one data', async t => {
   });
 });
 
+test('model get field no data 1', async t => {
+  t.plan(1);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      return [];
+    }
+  }});
+
+  const result = await model.getField('content, title', true);
+  t.deepEqual(result, {
+    title: undefined,
+    content: undefined
+  });
+});
+
+test('model get field no data 2', async t => {
+  t.plan(1);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      return [];
+    }
+  }});
+
+  const result = await model.getField('content', true);
+  t.deepEqual(result, undefined);
+});
+
+test('model get field no data 3', async t => {
+  t.plan(1);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      return [];
+    }
+  }});
+
+  const result = await model.getField('content');
+  t.deepEqual(result, []);
+});
+
+test('model get field no data 3', async t => {
+  t.plan(1);
+
+  const model = new Model('post', {handle: class {
+    select(options) {
+      return [];
+    }
+  }});
+
+  const result = await model.getField('content,title');
+  t.deepEqual(result, {
+    title: [],
+    content: []
+  });
+});
+
 test('model get field one key', async t => {
   t.plan(2);
 
