@@ -35,7 +35,7 @@ module.exports = class MysqlSchema extends Schema {
     item.type = item.type || 'varchar(100)';
     const pos = item.type.indexOf('(');
     item.tinyType = (pos === -1 ? item.type : item.type.slice(0, pos)).toLowerCase();
-    if (item.default && item.tinyType.indexOf('int') > -1) {
+    if (item.default && !helper.isFunction(item.default) && item.tinyType.indexOf('int') > -1) {
       item.default = parseInt(item.default);
     }
     if (item.type.indexOf('unsigned') > -1) {
