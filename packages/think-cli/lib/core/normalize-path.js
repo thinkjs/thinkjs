@@ -32,5 +32,5 @@ function replaceAction(fn) {
 }
 
 function replaceModule() {
-  return (path, ctx) => path.replace(/(\[module\])/g, module => (ctx[module.substring(1, module.length - 1)] || ''));
+  return (path, ctx) => path.replace(/(\[module\])/g, module => (ctx[module.substring(1, module.length - 1)] || ctx['defaultModule']));
 }
