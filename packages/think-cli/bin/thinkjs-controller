@@ -7,6 +7,7 @@ const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
 const ThinkAdd = require('../lib/add')
+const generate = require('../lib/core/gen.js')
 
 /**
  * Usage.
@@ -58,22 +59,26 @@ if (!utils.isThinkApp(path.resolve('./'))) {
 }
 
 const thinkjsInfo = require(path.join(path.resolve('./'), 'package.json')).thinkjs;
-const isMultiModule = thinkjsInfo.isMultiModule
 const ctrlName = program.args[0]
 const moduleName = program.args[1] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName
-const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
 const metadata = require(path.join(template, 'metadata'))
-const paths = program.rest
+const maps = program.rest
   ? metadata.controller.rest
   : metadata.controller.default
 
-const add = new ThinkAdd({name: ctrlName, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
+metadata.module = moduleName
+metadata.action = ctrlName
 
-add.run()
-  .then(files => {
-    logger.success('Generated %s', files)
-  })
-  .catch(logger.error)
+const options = {command: 'controller', metadata, maps};
+generate(template, path.resolve('./'), options, (err, files) => {
+  if (err) return logger.error(err);
+  console.log();
+  Object
+    .keys(files)
+    .forEach(file => {
+      logger.success('Create: %s', path.normalize(file))
+    })
+});

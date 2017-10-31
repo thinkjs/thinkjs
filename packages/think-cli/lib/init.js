@@ -5,6 +5,7 @@ const download = helper.promisify(downloadRaw, downloadRaw);
 const utils = require('./utils.js');
 const generate = require('./core/gen.js');
 const logger = require('./logger.js');
+const getOptions = require('./core/options.js');
 
 const THINK_LOCAL = Symbol('think-cli#local');
 const THINK_GENERATE = Symbol('think-cli#generate');
@@ -62,6 +63,10 @@ class init {
   }
 
   [THINK_GENERATE](source, target, options) {
+    const metadata = getOptions(options.name, source);
+    options.metadata = metadata;
+    options.maps = metadata[options.command][options.isMultiModule ? 'multiModule' : 'default'];
+
     return generate(source, target, options, (err) => {
       if (err) return logger.error(err);
       console.log();

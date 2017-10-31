@@ -31,7 +31,8 @@ module.exports = {
     "default": [
       ["src/bootstrap", "src/bootstrap"],
       ["src/config", "src/config"],
-      ["src/controller", "src/controller"],
+      ["src/controller/base.js", "src/[module]/controller/base.js"],
+      ["src/controller/index.js", "src/[module]/controller/index.js"],
       ["src/logic", "src/logic"],
       ["src/model", "src/model"],
       ["view/index_index.html", "view/index_index.html"],
@@ -74,8 +75,8 @@ module.exports = {
   ],
   "controller": {
     "default": [
-      ["src/controller/index.tpl.js", "/controller/[action].js"],
-      ["src/logic/index.js", "/logic/[action].js"]
+      ["src/controller/index.tpl.js", "src/[module]/controller/[action].js"],
+      ["src/logic/index.js", "src/[module]/logic/[action].js"]
     ],
     "rest": [
       ["src/controller/rest.js", "controller/rest.js"],
