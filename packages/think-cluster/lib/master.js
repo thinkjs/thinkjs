@@ -100,7 +100,8 @@ class Master {
     }
 
     const firstWorker = aliveWorkers.shift();
-    const promise = util.forkWorker(this.getForkEnv()).then(() => {
+    const promise = util.forkWorker(this.getForkEnv()).then(data => {
+      this.sendInspectPort(data.worker);
       // http://man7.org/linux/man-pages/man7/signal.7.html
       this.killWorker(firstWorker, true);
       return aliveWorkers.map(worker => {
