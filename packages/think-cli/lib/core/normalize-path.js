@@ -17,10 +17,10 @@ function batchReplacePath(fn) {
         const newPath = fn(filePath, ctx);
         if (newPath !== filePath) {
           files[newPath] = files[filePath];
-          delete files[filePath]
+          delete files[filePath];
         }
-      })
-  }
+      });
+  };
 }
 
 function replaceType(fn) {
