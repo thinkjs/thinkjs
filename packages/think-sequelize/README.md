@@ -12,6 +12,13 @@ Sequelize is a promise-based ORM for Node.js v4 and up. It supports the dialects
 
 ```sh
 npm install think-sequelize --save
+
+# And one of the following:
+$ npm install --save pg@6 pg-hstore # Note that `pg@7` is not supported yet
+$ npm install --save mysql2
+$ npm install --save sqlite3
+$ npm install --save tedious # MSSQL
+
 ```
 
 ## How to Use
