@@ -21,7 +21,7 @@
   "dependencies": {
     "debug": "^2.6.1",
     "mysql2": "~1.4.1",
-    "sequelize": "~4.6.0",
+    "sequelize": "~4.20.1",
     "think-helper": "^1.0.0",
     "think-instance": "~1.0.1"
   },
