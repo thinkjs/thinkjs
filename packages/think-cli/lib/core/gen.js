@@ -6,6 +6,7 @@ const ask = require('./ask.js');
 const fileFilter = require('./file-filter.js');
 const mapping = require('./mapping.js');
 const template = require('./template.js');
+const normalizePath = require('./normalize-path.js');
 const insertThinkjsInfoToPackage = require('./insert-thinkjs-info-to-package.js');
 
 Handlebars.registerHelper('author', function(res) {
@@ -33,6 +34,7 @@ module.exports = function(source, target, options, done) {
       clone: options.clone,
       isMultiModule: options.isMultiModule
     }))
+    .use(normalizePath())
     .destination(target)
     .build(done);
 };

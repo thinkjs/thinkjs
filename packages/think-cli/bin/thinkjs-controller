@@ -60,7 +60,7 @@ if (!utils.isThinkApp(path.resolve('./'))) {
 const thinkjsInfo = require(path.join(path.resolve('./'), 'package.json')).thinkjs;
 const isMultiModule = thinkjsInfo.isMultiModule
 const ctrlName = program.args[0]
-const moduleName = program.args[1] || thinkjsInfo.defaultModule
+const moduleName = program.args[1] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName

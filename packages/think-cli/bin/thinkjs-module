@@ -63,7 +63,7 @@ if (!isMultiModule) {
 }
 
 
-const moduleName = program.args[0] || thinkjsInfo.defaultModule
+const moduleName = program.args[0] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName
