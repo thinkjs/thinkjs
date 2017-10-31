@@ -25,7 +25,7 @@ module.exports = function(source, target, options, done) {
       clone: options.clone,
       isMultiModule: options.isMultiModule,
       skipCompile: options.metadata.skipCompile
-    }))
+    }));
   }
 
   if (options.command !== 'new') {

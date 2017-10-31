@@ -1,5 +1,3 @@
-const utils = require('../utils.js');
-
 module.exports = function(ctx) {
   return function(files, metalsmith, done) {
     const metadata = metalsmith.metadata();
