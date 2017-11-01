@@ -18,15 +18,6 @@ module.exports = {
     "src/**/*.vue",
     "src/assets/*.png"
   ],
-  "filesignore": [
-    "src/controller/index.tpl.js",
-    "src/controller/restIndex.tpl.js",
-    "src/controller/restIndex.js",
-    "src/controller/rest.js",
-    "src/adapter",
-    "src/middleware",
-    "src/service"
-  ],
   "new": [
     ["src/bootstrap", "src/common/bootstrap"],
     ["src/config", "src/common/config"],
