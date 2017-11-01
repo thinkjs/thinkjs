@@ -7,7 +7,7 @@
   },
   "main": "bin/thinkjs",
   "scripts": {
-    "test": "eslint lib/ && nyc ava test/localMultiModule.js test/localSignleModule.js --serial",
+    "test": "eslint lib/ && nyc ava test/ --serial",
     "lint": "eslint lib/",
     "lint-fix": "eslint --fix lib/"
   },
