@@ -67,10 +67,12 @@ const maps = program.rest
   ? metadata.controller.rest
   : metadata.controller.default
 
-metadata.action = actionName
-metadata.moduleName = moduleName
+const context = Object.assign(thinkjsInfo.metadata, {
+  action: actionName,
+  moduleName
+})
 
-const options = {command: 'controller', metadata, maps};
+const options = {command: 'controller', metadata, maps, context};
 generate(template, path.resolve('./'), options, (err, files) => {
   if (err) return logger.error(err);
   Object

@@ -54,17 +54,17 @@ if (!utils.isThinkApp(appPath)) {
 }
 
 const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
-const actionName = program.args[0]
-const moduleName = program.args[1] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName
-
 const metadata = require(path.join(template, 'metadata'))
-metadata.action = actionName
-metadata.moduleName = moduleName
 
-const options = {command: 'model', metadata, maps: metadata.model};
+const context = Object.assign(thinkjsInfo.metadata, {
+  action: program.args[0],
+  moduleName: program.args[1] || thinkjsInfo.metadata.defaultModule
+})
+
+const options = {command: 'model', metadata, maps: metadata.model, context};
 generate(template, path.resolve('./'), options, (err, files) => {
   if (err) return logger.error(err);
   Object

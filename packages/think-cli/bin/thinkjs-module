@@ -61,16 +61,17 @@ if (!isMultiModule) {
   logger.error('app mode is not module, can not create module.')
 }
 
-const moduleName = program.args[0] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName
 
 const metadata = require(path.join(template, 'metadata'))
 const maps = metadata.module
-metadata.moduleName = moduleName
+const context = Object.assign(thinkjsInfo.metadata, {
+  moduleName: program.args[0] || thinkjsInfo.metadata.defaultModule
+})
 
-const options = {command: 'module', metadata, maps};
+const options = {command: 'module', metadata, maps, context};
 generate(template, path.resolve('./'), options, (err, files) => {
   if (err) return logger.error(err);
   Object

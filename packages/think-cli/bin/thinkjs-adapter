@@ -66,15 +66,13 @@ const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cac
   : thinkjsInfo.templateName
 const metadata = require(path.join(template, 'metadata'))
 
-const moduleName = program.args[1] || thinkjsInfo.metadata.defaultModule
-const type = adapter[0];
-const actionName = adapter[1] || 'base';
+const context = Object.assign(thinkjsInfo.metadata, {
+  type: adapter[0],
+  action: adapter[1] || 'base',
+  moduleName: program.args[1] || thinkjsInfo.metadata.defaultModule
+})
 
-metadata.moduleName = moduleName
-metadata.type = type
-metadata.action = actionName
-
-const options = {command: 'adapter', metadata, maps: metadata.adapter};
+const options = {command: 'adapter', metadata, maps: metadata.adapter, context};
 generate(template, path.resolve('./'), options, (err, files) => {
   if (err) return logger.error(err);
   Object

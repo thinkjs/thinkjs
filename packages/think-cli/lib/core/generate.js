@@ -28,12 +28,9 @@ module.exports = function(source, target, options, done) {
     }));
   }
 
-  if (options.command !== 'new') {
-    metalsmith.use(saveCtxToMetadata(options.metadata));
-  }
-
   metalsmith.clean(options.command === 'new')
     .source('.')
+    .use(saveCtxToMetadata(options.context))
     .use(fileFilter(options.maps))
     .use(mapping(options.maps))
     .use(template(options.metadata.skipCompile))
