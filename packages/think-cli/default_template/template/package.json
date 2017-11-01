@@ -1,7 +1,8 @@
 {
-  "name": "thinkjs-application",
-  "description": "application created by thinkjs",
+  "name": "<%= name %>",
+  "description": "<%= description %>",
   "version": "1.0.0",
+  "author": "<%- author %>",
   "scripts": {
     "start": "node development.js",
     "compile": "babel --no-babelrc src/ --presets think-node --out-dir app/",

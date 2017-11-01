@@ -30,7 +30,7 @@
     "commander": "^2.9.0",
     "consolidate": "^0.14.5",
     "download-git-repo": "^1.0.1",
-    "handlebars": "^4.0.10",
+    "ejs": "^2.5.7",
     "inquirer": "^3.1.0",
     "metalsmith": "^2.3.0",
     "minimist": "^1.2.0",
