@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 const program = require('commander')
-const os = require('os')
 const chalk = require('chalk')
 const path = require('path')
 const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
-const ThinkAdd = require('../lib/add')
+const generate = require('../lib/core/generate.js')
 
 /**
  * Usage.
@@ -58,18 +57,22 @@ if (!utils.isThinkApp(appPath)) {
 }
 
 const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
-const isMultiModule = thinkjsInfo.isMultiModule
-const name = program.args[0]
+const actionName = program.args[0]
 const moduleName = program.args[1] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName
-const cacheTemplatePath = path.join(os.homedir(), '.think-templates', thinkjsInfo.projectName)
-const paths = require(path.join(template, 'metadata')).service
-const add = new ThinkAdd({name, moduleName, paths, template, cacheTemplatePath, isMultiModule, clone: thinkjsInfo.clone})
 
-add.run()
-  .then(files => {
-    logger.success('Generated %s', files)
-  })
-  .catch(logger.error)
+const metadata = require(path.join(template, 'metadata'))
+metadata.action = actionName
+metadata.moduleName = moduleName
+
+const options = {command: 'service', metadata, maps: metadata.service};
+generate(template, path.resolve('./'), options, (err, files) => {
+  if (err) return logger.error(err);
+  Object
+    .keys(files)
+    .forEach(file => {
+      logger.success('Create: %s', path.normalize(file))
+    })
+});

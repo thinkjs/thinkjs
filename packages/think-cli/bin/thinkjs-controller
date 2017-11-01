@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 const program = require('commander')
-const os = require('os')
 const chalk = require('chalk')
 const path = require('path')
 const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
-const ThinkAdd = require('../lib/add')
-const generate = require('../lib/core/gen.js')
+const generate = require('../lib/core/generate.js')
 
 /**
  * Usage.
@@ -59,7 +57,7 @@ if (!utils.isThinkApp(path.resolve('./'))) {
 }
 
 const thinkjsInfo = require(path.join(path.resolve('./'), 'package.json')).thinkjs;
-const ctrlName = program.args[0]
+const actionName = program.args[0]
 const moduleName = program.args[1] || thinkjsInfo.metadata.defaultModule
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
@@ -69,13 +67,12 @@ const maps = program.rest
   ? metadata.controller.rest
   : metadata.controller.default
 
-metadata.module = moduleName
-metadata.action = ctrlName
+metadata.action = actionName
+metadata.moduleName = moduleName
 
 const options = {command: 'controller', metadata, maps};
 generate(template, path.resolve('./'), options, (err, files) => {
   if (err) return logger.error(err);
-  console.log();
   Object
     .keys(files)
     .forEach(file => {

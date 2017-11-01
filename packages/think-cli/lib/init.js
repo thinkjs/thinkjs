@@ -3,7 +3,7 @@ const downloadRaw = require('download-git-repo');
 const helper = require('think-helper');
 const download = helper.promisify(downloadRaw, downloadRaw);
 const utils = require('./utils.js');
-const generate = require('./core/gen.js');
+const generate = require('./core/generate.js');
 const logger = require('./logger.js');
 const getOptions = require('./core/options.js');
 
@@ -65,7 +65,7 @@ class init {
   [THINK_GENERATE](source, target, options) {
     const metadata = getOptions(options.name, source);
     options.metadata = metadata;
-    options.maps = metadata[options.command][options.isMultiModule ? 'multiModule' : 'default'];
+    options.maps = metadata[options.command];
 
     return generate(source, target, options, (err) => {
       if (err) return logger.error(err);

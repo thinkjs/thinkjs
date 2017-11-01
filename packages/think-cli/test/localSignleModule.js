@@ -4,7 +4,7 @@ const inquirer = require('inquirer')
 const fs = require('fs')
 const exec = require('child_process').execSync
 const ThinkInit = require('../lib/init.js')
-const ThinkAdd = require('../lib/add')
+const generate = require('../lib/core/generate.js')
 const helper = require('think-helper');
 const targetDir = 'tmp'
 const targetName = 'think-cli-unit-test-local-signle-module'
@@ -26,17 +26,24 @@ function isMultiModule (root) {
   return helper.isExist(path.join(root, 'src/common'))
 }
 
-async function testAdd(paths) {
+async function testAdd(command, maps) {
   const root = path.join(__dirname, targetDir, targetName)
   process.chdir(root)
   const info = await readProjectPackageFile(root)
   const thinkjsInfo = info.thinkjs
 
-  const isMultiModule = thinkjsInfo.isMultiModule
-  const moduleName = thinkjsInfo.metadata.defaultModule
-  const template = thinkjsInfo.templateName
-  const add = new ThinkAdd({name: 'user', moduleName, paths, template, isMultiModule, clone: thinkjsInfo.clone})
-  return await add.run()
+  const template = thinkjsInfo.cacheTemplatePath
+  const metadata = require(path.join(template, 'metadata'))
+  metadata.action = 'user'
+  metadata.type = 'type'
+
+  const options = {command, metadata, maps}
+  return new Promise((resolve, reject) => {
+    generate(template, root, options, (err, files) => {
+      if (err) return reject(err)
+      resolve(files)
+    })
+  })
 }
 
 test.before(() => {
@@ -74,57 +81,42 @@ test.cb('should generate single module project from local default template', t =
 test('the project should be properly generated', async t => {
   const root = path.join(__dirname, targetDir, targetName)
   const info = await readProjectPackageFile(root)
-  t.is(info.thinkjs.isMultiModule, isMultiModule(root))
+  t.is(info.thinkjs.isMultiModule, !isMultiModule(root))
 })
 
 test('should be added the controller', async t => {
   const metadata = require(path.join(__dirname, '../default_template', 'metadata'))
   const paths = metadata.controller.default
-  const files = await testAdd(paths)
-  for (let i = 0; i < paths.length; i++) {
-    t.truthy(files[i].endsWith(paths[i][1]))
-  }
+  const files = await testAdd('controller', paths)
+  t.truthy(Object.keys(files).length === paths.length)
 })
 
 test('should be added the service', async t => {
   const metadata = require(path.join(__dirname, '../default_template', 'metadata'))
   const paths = metadata.service
-  const files = await testAdd(paths)
-  for (let i = 0; i < paths.length; i++) {
-    t.truthy(files[i].endsWith(paths[i][1]))
-  }
+  const files = await testAdd('service', paths)
+  t.truthy(Object.keys(files).length === paths.length)
 })
 
 test('should be added the model', async t => {
   const metadata = require(path.join(__dirname, '../default_template', 'metadata'))
   const paths = metadata.model
-  const files = await testAdd(paths)
-  for (let i = 0; i < paths.length; i++) {
-    t.truthy(files[i].endsWith(paths[i][1]))
-  }
+  const files = await testAdd('model', paths)
+  t.truthy(Object.keys(files).length === paths.length)
 })
 
 test('should be added the middleware', async t => {
   const metadata = require(path.join(__dirname, '../default_template', 'metadata'))
   const paths = metadata.middleware
-  const files = await testAdd(paths)
-  for (let i = 0; i < paths.length; i++) {
-    t.truthy(files[i].endsWith(paths[i][1]))
-  }
+  const files = await testAdd('middleware', paths)
+  t.truthy(Object.keys(files).length === paths.length)
 })
 
 test('should be added the adapter', async t => {
   const metadata = require(path.join(__dirname, '../default_template', 'metadata'))
   const paths = metadata.adapter
-  const type = 'user';
-
-  for (let i = 0; i < paths.length; i++) {
-    paths[i][1] = paths[i][1].replace(/(\[type\])/g, type)
-  }
-  const files = await testAdd(paths)
-  for (let i = 0; i < paths.length; i++) {
-    t.truthy(files[i].endsWith(paths[i][1]))
-  }
+  const files = await testAdd('adapter', paths)
+  t.truthy(Object.keys(files).length === paths.length)
 })
 
 test.after(t => {
