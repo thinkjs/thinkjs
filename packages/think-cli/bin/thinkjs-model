@@ -6,6 +6,7 @@ const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
 const generate = require('../lib/core/generate.js')
+const argv = require('minimist')(process.argv.slice(2))
 
 /**
  * Usage.
@@ -59,7 +60,7 @@ const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cac
   : thinkjsInfo.templateName
 const metadata = require(path.join(template, 'metadata'))
 
-const context = Object.assign(thinkjsInfo.metadata, {
+const context = Object.assign(thinkjsInfo.metadata, argv, {
   action: program.args[0],
   moduleName: program.args[1] || thinkjsInfo.metadata.defaultModule
 })

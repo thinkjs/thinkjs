@@ -33,6 +33,7 @@
     "handlebars": "^4.0.10",
     "inquirer": "^3.1.0",
     "metalsmith": "^2.3.0",
+    "minimist": "^1.2.0",
     "multimatch": "^2.1.0",
     "ora": "^1.2.0",
     "think-helper": "^1.0.21",

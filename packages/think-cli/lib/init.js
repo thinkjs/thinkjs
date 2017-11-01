@@ -31,7 +31,7 @@ class init {
    * @param {String} template
    */
   [THINK_LOCAL]() {
-    const {name, template: rawTemplate, targetPath, clone, isMultiModule} = this.options;
+    const {name, template: rawTemplate, targetPath, clone, isMultiModule, context} = this.options;
     const template = utils.getLocalTemplatePath(rawTemplate);
     if (!helper.isExist(template)) {
       console.log();
@@ -39,12 +39,12 @@ class init {
       return;
     }
 
-    const options = {name, command: 'new', template, clone, isMultiModule};
+    const options = {name, command: 'new', template, clone, isMultiModule, context};
     this[THINK_GENERATE](template, targetPath, options);
   }
 
   [THINK_DOWNLOAD_AND_GENERATE]() {
-    const {name, template: rawTemplate, cacheTemplatePath, targetPath, clone, isMultiModule} = this.options;
+    const {name, template: rawTemplate, cacheTemplatePath, targetPath, clone, isMultiModule, context} = this.options;
     const spinner = ora({text: 'downloading template...', spinner: 'arrow3'}).start();
 
     const template = rawTemplate.indexOf('/') > -1
@@ -55,7 +55,7 @@ class init {
       .then(this[THINK_DOWNLOAD](template, cacheTemplatePath, clone))
       .then(_ => {
         spinner.stop();
-        const options = {name, command: 'new', template, clone, isMultiModule};
+        const options = {name, command: 'new', template, clone, isMultiModule, context};
         this[THINK_GENERATE](cacheTemplatePath, targetPath, options);
       }).catch(err => {
         logger.error(err);

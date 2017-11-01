@@ -6,6 +6,7 @@ const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
 const generate = require('../lib/core/generate.js')
+const argv = require('minimist')(process.argv.slice(2))
 
 /**
  * Usage.
@@ -67,7 +68,7 @@ const maps = program.rest
   ? metadata.controller.rest
   : metadata.controller.default
 
-const context = Object.assign(thinkjsInfo.metadata, {
+const context = Object.assign(thinkjsInfo.metadata, argv, {
   action: actionName,
   moduleName
 })
