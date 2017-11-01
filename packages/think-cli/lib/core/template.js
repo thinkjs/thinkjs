@@ -28,7 +28,7 @@ function compileFiles(fn) {
     return Object
       .keys(files)
       .map(file => {
-        return fn(skipCompile, multimatch, files, file).catch(err => {
+        return fn(skipCompile, multimatch, files, file).catch(_ => {
           logger.error('"%s" file render failed. Please add the file to the skipCompile key in the metadata.js', file);
         });
       });
