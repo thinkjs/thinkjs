@@ -1,0 +1,44 @@
+{
+  "name": "think-helmet",
+  "description": "Important security headers for ThinkJS 3.x",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "npm run lint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "lint": "eslint index.js"
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "helmet": "^3.9.0"
+  },
+  "devDependencies": {
+    "ava": "^0.23.0",
+    "eslint": "^4.10.0",
+    "eslint-config-think": "^1.0.2",
+    "nyc": "^11.3.0"
+  },
+  "keywords": [
+    "helmet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-helmet"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-helmet/issues"
+  }
+}
