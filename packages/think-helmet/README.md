@@ -25,6 +25,18 @@ Helmet offers 11 security headers, you can config it with `options`:
 
 ### [contentSecurityPolicy](https://helmetjs.github.io/docs/csp/)
 
+for setting Content Security Policy, add `Content-Security-Policy` HTTP header.
+
+```js
+  options: {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
+      }
+    }
+  }
+```
 
 
 | Module | Default? |
