@@ -16,7 +16,13 @@ const helmet = require('think-helmet');
 module.exports = [{
   handle: helmet,
   options: {
-
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
+      }
+    },
+    dnsPrefetchControl: false // disable dns prefetch
   }
 }]
 ```
