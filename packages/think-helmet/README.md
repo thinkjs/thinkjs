@@ -21,43 +21,7 @@ module.exports = [{
 }]
 ```
 
-Helmet offers 11 security headers, you can config it with `options` field:
-
-### [contentSecurityPolicy](https://helmetjs.github.io/docs/csp/)
-
-for setting Content Security Policy, add `Content-Security-Policy` HTTP header.
-
-```js
-  options: {
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
-      }
-    }
-  }
-```
-
-### [dnsPrefetchControl](https://helmetjs.github.io/docs/dns-prefetch-control)
-
-controls browser DNS prefetching, add `X-DNS-Prefetch-Control` HTTP header. default is `X-DNS-Prefetch-Control: off`.
-
-```js
-  options: {
-    dnsPrefetchControl: {
-      allow: true
-    }
-  }
-```
-
-if you want disabled this header, you set `dnsPrefetchControl` value to `false`.
-
-```js
-  options: {
-    dnsPrefetchControl: false
-  }
-```
-
+Helmet offers 11 security headers:
 
 | Module | Default? |
 |---|---|
