@@ -12,6 +12,10 @@ module.exports = {
     "author": {
       "type": "string",
       "message": "Author"
+    },
+    "babel": {
+      "type": "confirm",
+      "message": "Do you want to turn on babel?"
     }
   },
   "new": {
