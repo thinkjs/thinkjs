@@ -45,3 +45,20 @@ In order to work well with the helmet HSTS module, think-helmet will augment
 `this.request` to include a `secure` boolean to determine if the request
 is over HTTPS.
 
+## Examples
+
+```js
+// src/config/middleware.js
+module.exports = [{
+  handle: require('think-helmet'),
+  options: {
+    contentSecurityPolicy: { // set content security policy directives
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
+      }
+    },
+    dnsPrefetchControl: false // disable dns prefetch
+  }
+}]
+```
