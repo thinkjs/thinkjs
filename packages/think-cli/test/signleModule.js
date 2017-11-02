@@ -82,7 +82,7 @@ test.cb('should generate multi module project from local default template', t =>
 
 test('the project should be properly generated', async t => {
   const info = await readProjectPackageFile(root)
-  t.is(info.thinkjs.isMultiModule, !isMultiModule(root))
+  t.is(info.thinkjs.isMultiModule, isMultiModule(root))
 })
 
 test('should be added the controller', async t => {

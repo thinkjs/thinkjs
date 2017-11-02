@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const format = require('util').format;
+const render = require('consolidate').ejs.render;
 
 var prefix = '   think-cli';
 var sep = chalk.gray('·');
@@ -25,4 +26,17 @@ exports.error = function(err) {
 exports.success = function() {
   const msg = format.apply(format, arguments);
   console.log(chalk.green(prefix), sep, msg);
+};
+
+exports.message = function(message, data) {
+  if (!message) return;
+  render(message, data, function(err, res) {
+    if (err) {
+      console.error('\n   Error when rendering template complete message: ' + err.message.trim());
+    } else {
+      console.log('\n' + res.split(/\r?\n/g).map(function(line) {
+        return '   ' + line;
+      }).join('\n'));
+    }
+  });
 };
