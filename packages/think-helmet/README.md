@@ -63,7 +63,7 @@ module.exports = [{
         styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
       }
     },
-    dnsPrefetchControl: false // disable dns prefetch
+    dnsPrefetchControl: false // disable dns prefetch control
   }
 }]
 ```
