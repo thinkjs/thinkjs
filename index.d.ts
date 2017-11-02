@@ -477,6 +477,10 @@ declare module 'thinkjs' {
     allowMethods: string;
   }
 
+  export interface Model {
+    new(): Model
+  }
+
   export interface Think extends Helper.Think {
     app: Application;
     isCli: boolean;
@@ -493,6 +497,7 @@ declare module 'thinkjs' {
     Controller: Controller;
     Logic: Logic;
     Service: Service;
+    Model: Model;
 
     service(name: string, m: any, ...args: any[]): any;
     beforeStartServer(fn: Function): Promise<any>;
