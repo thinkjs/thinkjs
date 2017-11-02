@@ -1,5 +1,10 @@
 # think-helmet
 
+[![npm](https://img.shields.io/npm/v/think-helmet.svg?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/thinkjs/think-helmet.svg?style=flat-square)]()
+[![Coveralls](https://img.shields.io/coveralls/thinkjs/think-helmet/master.svg?style=flat-square)]()
+[![David](https://img.shields.io/david/thinkjs/think-helmet.svg?style=flat-square)]()
+
 think-helmet is a wrapper for [helmet](https://github.com/helmetjs/helmet) to work with ThinkJS 3.x. It provides important security headers to make your app more secure by default.
 
 ## Installation
