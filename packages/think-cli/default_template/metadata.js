@@ -14,10 +14,6 @@ module.exports = {
       "message": "Author"
     }
   },
-  "skipCompile": [
-    "src/**/*.vue",
-    "src/assets/*.png"
-  ],
   "new": {
     "default": [
       ["src/bootstrap", "src/bootstrap"],

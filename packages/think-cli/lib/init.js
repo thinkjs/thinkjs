@@ -67,10 +67,16 @@ class init {
     options.metadata = metadata;
     options.maps = metadata[options.command][options.isMultiModule ? 'multiModule' : 'default'];
 
-    return generate(source, target, options, (err) => {
+    return generate(source, target, options, (err, files) => {
       if (err) return logger.error(err);
       console.log();
       logger.success('Generated %s', options.name);
+      if (options.metadata.completeMessage) {
+        logger.message(options.metadata.completeMessage, {
+          destDirName: options.name,
+          inPlace: target === process.cwd()
+        });
+      }
     });
   }
 
