@@ -12,17 +12,10 @@ npm install think-helmet --save
 
 ```js
 // src/config/middleware.js
-const helmet = require('think-helmet');
 module.exports = [{
-  handle: helmet,
+  handle: require('think-helmet'),
   options: {
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
-      }
-    },
-    dnsPrefetchControl: false // disable dns prefetch
+
   }
 }]
 ```
