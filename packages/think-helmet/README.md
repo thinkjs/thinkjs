@@ -12,7 +12,6 @@ npm install think-helmet --save
 
 ```js
 // src/config/middleware.js
-
 const helmet = require('think-helmet');
 module.exports = [{
   handle: helmet,
@@ -22,7 +21,11 @@ module.exports = [{
 }]
 ```
 
-Helmet offers 11 security middleware functions:
+Helmet offers 11 security headers, you can config it with `options`:
+
+### [contentSecurityPolicy](https://helmetjs.github.io/docs/csp/)
+
+
 
 | Module | Default? |
 |---|---|
