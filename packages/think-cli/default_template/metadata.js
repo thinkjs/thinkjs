@@ -86,5 +86,5 @@ module.exports = {
     ["src/model/index.js", "src/[moduleName]/model/index.js"],
     ["view/index_index.html", "view/[moduleName]/index_index.html"]
   ],
-  "completeMessage": "To get started:\n\n<% if (!inPlace) { %># enter path\n$ cd <%= destDirName %>\n\n<% } %># install dependencies:\n$ npm install\n\n#run the app\n$ npm run start"
+  "completeMessage": "To get started:\n\n<% if (!inPlace) { %># enter path\n$ cd <%= destDirName %>\n\n<% } %># install dependencies:\n$ npm install\n\n# run the app\n$ npm run start"
 }
