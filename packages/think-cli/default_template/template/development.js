@@ -1,5 +1,5 @@
 <% if (babel) {
-  %><% include development.raw.js %><% 
+  %><% include development.babel.js %><% 
 } else {
-  %><% include development.babel.js %><%
+  %><% include development.raw.js %><%
 } %>
