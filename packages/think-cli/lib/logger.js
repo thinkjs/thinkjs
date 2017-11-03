@@ -16,7 +16,6 @@ exports.warning = function() {
 };
 
 exports.error = function(err) {
-  console.log(err);
   if (err instanceof Error) err = err.message.trim();
   const msg = format.apply(format, arguments);
   console.error(chalk.red(prefix), sep, msg);
