@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 09:44:20
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-11-03 11:16:12
+* @Last Modified time: 2017-11-03 11:36:23
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -31,11 +31,17 @@ module.exports = app => {
         let relationName = ele[relationModelName];
         let relationInstance = model(relationModelName, config, m);
         let relationOptions = Object.assign({}, ele.options);
-        if(Relations[`${relationName}${relationModelName}${relationOptions.as}`]) return;
-        instance[relationName](relationInstance, relationOptions);
-        if(relationOptions.as) {
-          Relations[`${relationName}${relationModelName}${relationOptions.as}`] = 1;
+
+        let relationUnique = `${name}${relationName}${relationModelName}${relationOptions.as}`;
+        if (relationOptions.as) {
+          if(Relations[relationUnique]) {
+            return;
+          } else {
+            Relations[relationUnique] = true;
+          }
         }
+
+        instance[relationName](relationInstance, relationOptions);
       });
     }
 
