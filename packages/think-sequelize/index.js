@@ -2,11 +2,12 @@
 * @Author: lushijie
 * @Date:   2017-08-23 09:44:20
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-11-03 10:29:02
+* @Last Modified time: 2017-11-03 11:16:12
 */
 const helper = require('think-helper');
 const path = require('path');
 const Model = require('./lib/model.js');
+const Relations = {};
 
 module.exports = app => {
   function model(name, config, m = 'common') {
@@ -30,9 +31,14 @@ module.exports = app => {
         let relationName = ele[relationModelName];
         let relationInstance = model(relationModelName, config, m);
         let relationOptions = Object.assign({}, ele.options);
+        if(Relations[`${relationName}${relationModelName}${relationOptions.as}`]) return;
         instance[relationName](relationInstance, relationOptions);
+        if(relationOptions.as) {
+          Relations[`${relationName}${relationModelName}${relationOptions.as}`] = 1;
+        }
       });
     }
+
     return instance;
   };
 
