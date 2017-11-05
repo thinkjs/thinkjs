@@ -61,11 +61,13 @@ const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
 const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
   ? thinkjsInfo.cacheTemplatePath
   : thinkjsInfo.templateName
-
 const metadata = require(path.join(template, 'metadata'))
+const actionName = program.args[0]
+
 const context = Object.assign(thinkjsInfo.metadata, argv, {
-  action: program.args[0],
-  moduleName: program.args[1] || thinkjsInfo.metadata.defaultModule
+  action: utils.getActionName(actionName),
+  moduleName: program.args[1] || thinkjsInfo.metadata.defaultModule,
+  actionPrefix: utils.getPrefix(actionName)
 })
 
 const options = {command: 'service', metadata, maps: metadata.service, context};

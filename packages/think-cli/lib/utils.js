@@ -41,6 +41,23 @@ module.exports = {
     return target;
   },
 
+  /**
+   * When creating a very deep file, this method can return the prefix
+   * Example:
+   *   const prefix = getPrefix('user/user2/user3/user4.js')
+   *   console.log(prefix) => '../../../'
+   *
+   * @param  {string} name - 文件名
+   * @return {string} prefix - 路径前缀
+   */
+  getPrefix(name) {
+    return '../'.repeat(name.includes('/') ? name.match(/\//g).length : 1);
+  },
+
+  getActionName(name) {
+    return name.replace(/\.(js)$/, '');
+  },
+
   getGitUser() {
     let name, email;
 

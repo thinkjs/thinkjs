@@ -69,8 +69,9 @@ const maps = program.rest
   : metadata.controller.default
 
 const context = Object.assign(thinkjsInfo.metadata, argv, {
-  action: actionName,
-  moduleName
+  action: utils.getActionName(actionName),
+  moduleName,
+  actionPrefix: utils.getPrefix(actionName)
 })
 
 const options = {command: 'controller', metadata, maps, context};

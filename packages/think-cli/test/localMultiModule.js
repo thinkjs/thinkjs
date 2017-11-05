@@ -34,11 +34,14 @@ async function testAdd(command, maps) {
 
   const template = thinkjsInfo.cacheTemplatePath
   const metadata = require(path.join(template, 'metadata'))
-  metadata.action = 'user'
-  metadata.moduleName = 'home'
-  metadata.type = 'type'
+  const context = {
+    action: 'user',
+    moduleName: 'home',
+    type: 'type',
+    actionPrefix: './'
+  }
 
-  const options = {command, metadata, maps}
+  const options = {command, metadata, maps, context}
   return new Promise((resolve, reject) => {
     generate(template, root, options, (err, files) => {
       if (err) return reject(err)
