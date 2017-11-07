@@ -51,7 +51,7 @@ module.exports = {
    * @return {string} prefix - 路径前缀
    */
   getPrefix(name) {
-    return '../'.repeat(name.includes('/') ? name.match(/\//g).length : 1);
+    return name.replace(/^\//, '').includes('/') ? '../'.repeat(name.match(/\//g).length) : './';
   },
 
   getActionName(name) {
