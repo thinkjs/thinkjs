@@ -8,7 +8,8 @@ module.exports = function(command) {
   return function(files, metalsmith, done) {
     if (command === 'new') return done(null);
     const confirm = utils.compose(batch, inquire)();
-    confirm(files).then(res => {
+    confirm(files).then(list => {
+      if (list.length > 0) console.log('');
       done(null);
     }, _ => {
       console.log('');
@@ -18,6 +19,7 @@ module.exports = function(command) {
 };
 
 function batch(fn) {
+  const confirmedFiles = [];
   return files => new Promise((resolve, reject) => {
     const list = Object.keys(files);
 
@@ -29,7 +31,7 @@ function batch(fn) {
       }
 
       const filePath = list.shift();
-      if (filePath === undefined) return resolve(true);
+      if (filePath === undefined) return resolve(confirmedFiles);
       next(filePath);
     }
 
@@ -38,18 +40,17 @@ function batch(fn) {
     }
 
     function next(filePath) {
+      if (!helper.isExist(filePath)) return onFulfilled();
+      confirmedFiles.push(filePath);
       fn(path.normalize(filePath)).then(onFulfilled, onRejected);
     }
   });
 }
 
 function inquire() {
-  return filePath => {
-    if (!helper.isExist(filePath)) return Promise.resolve(true);
-    return inquirer.prompt([{
-      type: 'confirm',
-      message: `${filePath} already exists. Continue?`,
-      name: 'ok'
-    }]).then(answers => answers.ok);
-  };
+  return filePath => inquirer.prompt([{
+    type: 'confirm',
+    message: `${filePath} already exists. Continue?`,
+    name: 'ok'
+  }]).then(answers => answers.ok);
 }
