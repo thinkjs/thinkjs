@@ -60,7 +60,10 @@ const cacheTemplatePath = path.join(os.homedir(), '.think-templates', template.r
 const targetPath = path.join(process.cwd(), rawName || '.')
 const clone = program.clone || false
 const isMultiModule = program.module || false
-const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone, isMultiModule, context: argv})
+const context = Object.assign(argv, {
+  actionPrefix: './'
+})
+const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone, isMultiModule, context})
 
 if (helper.isExist(targetPath)) {
   inquirer.prompt([{
