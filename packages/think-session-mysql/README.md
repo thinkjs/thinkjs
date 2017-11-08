@@ -33,6 +33,7 @@ exports.session = {
   },
    mysql:{
     handle:mysqlSession,
+    // optional config fields,merge model.mysql if empty
     database:'think_test',
     prefix:'think_',
     host:'127.0.0.1',

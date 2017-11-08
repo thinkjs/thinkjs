@@ -23,12 +23,14 @@ const initSessionData = Symbol('think-session-mysql-init');
 class MysqlSession {
   constructor(options = {}, ctx) {
     assert(options.cookie, '.cookie required');
-    this.options = options;
+    const modelOption = think.config('model.mysql') || {};
+    this.options = Object.assign({},modelOption,options);
     this.mysql = mysql.getInstance(this.options);
     this.ctx = ctx;
     this.data = {};
-    this.tableName = (options.prefix || '') + 'session';
+    this.tableName = (this.options.prefix || '') + 'session';
   }
+
 
   [initSessionData]() {
     if (this.initPromise) {
