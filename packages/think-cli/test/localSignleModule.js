@@ -67,7 +67,8 @@ test.cb('should generate single module project from local default template', t =
     name: targetName,
     targetPath,
     clone: false,
-    isMultiModule: false
+    isMultiModule: false,
+    context: {actionPrefix: './'}
   })
 
   init.run()

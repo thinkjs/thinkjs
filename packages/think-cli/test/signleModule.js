@@ -63,12 +63,13 @@ test.before(() => {
 test.cb('should generate multi module project from local default template', t => {
   const targetPath = path.join(__dirname, targetDir, targetName)
   const init = new ThinkInit({
-    template: 'think-template/standard#cli-2.1',
+    template: 'think-template/standard',
     cacheTemplatePath,
     name: targetName,
     targetPath,
     clone: false,
-    isMultiModule: false
+    isMultiModule: false,
+    context: {actionPrefix: './'}
   })
 
   init.run()

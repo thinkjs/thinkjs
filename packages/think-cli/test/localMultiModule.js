@@ -68,7 +68,8 @@ test.cb('should generate multi module project from local default template', t =>
     name: targetName,
     targetPath,
     clone: false,
-    isMultiModule: true
+    isMultiModule: true,
+    context: {actionPrefix: './'}
   })
 
   init.run()
