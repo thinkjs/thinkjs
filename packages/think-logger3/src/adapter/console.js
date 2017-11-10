@@ -10,9 +10,12 @@ module.exports = class ConsoleLogger extends Base {
     layout = layout || {type: 'pattern', pattern: '%[[%d] [%z] [%p]%] - %m'};
 
     config = Object.assign({
-      appenders: [
-        {type: 'console', level, layout}
-      ]
+      appenders: {
+        console: {type: 'console', layout}
+      },
+      categories: {
+        default: {appenders: ['console'], level}
+      }
     }, lConfig);
 
     this.setLogger(config);

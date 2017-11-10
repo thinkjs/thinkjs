@@ -26,13 +26,13 @@
   },
   "homepage": "https://github.com/thinkjs/think-logger#readme",
   "dependencies": {
-    "log4js": "^1.1.0"
+    "log4js": "^2.3.11"
   },
   "devDependencies": {
     "ava": "^0.18.2",
-    "eslint": "^4.2.0",
-    "eslint-config-think": "^1.0.1",
-    "nyc": "^10.1.2",
+    "eslint": "^4.10.0",
+    "eslint-config-think": "^1.0.2",
+    "nyc": "^10.3.2",
     "sandboxed-module": "^2.0.3"
   }
 }
