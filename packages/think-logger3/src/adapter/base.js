@@ -2,8 +2,10 @@ const log4js = require('log4js');
 const _logger = Symbol('_logger');
 
 module.exports = class {
-  constructor() {
+  constructor(config/*, clusterMode */) {
     this[_logger] = {};
+    const logConfig = this.formatConfig(config);
+    this.setLogger(logConfig);
   }
 
   debug(...args) {
@@ -35,5 +37,9 @@ module.exports = class {
   setLogger(config, category) {
     this.configure(config);
     this[_logger] = log4js.getLogger(category);
+  }
+
+  formatConfig(config) {
+    return config;
   }
 };
