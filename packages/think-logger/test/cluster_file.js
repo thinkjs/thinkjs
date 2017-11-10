@@ -24,6 +24,7 @@ test('cluster file logger in master', async t => {
     on(event, callback) {
       if (event === 'message') {
         const simulatedLoggingEvent = new LoggingEvent(null, 'Info', ['hello world from worker']);
+        // eslint-disable-next-line standard/no-callback-literal
         callback({
           type: '::log-message',
           event: JSON.stringify(simulatedLoggingEvent)
@@ -35,7 +36,10 @@ test('cluster file logger in master', async t => {
     },
     id: 'workerid',
     isMaster: false,
-    isWorker: true
+    isWorker: true,
+    removeListener() {
+
+    }
   };
 
   const fakeMaster = {
@@ -48,6 +52,9 @@ test('cluster file logger in master', async t => {
     isWorker: false,
     workers: {
       '1': fakeWorker
+    },
+    removeListener() {
+
     }
   };
 
@@ -68,6 +75,7 @@ test('cluster file logger in master', async t => {
   const workerLogger = new Logger({handle: WorkerFileAdapter});
 
   masterLogger.info('hello world from master');
+  workerLogger.info('hello world from worker');
   await sleep(500);
 
   const text = fs.readFileSync(filename, {encoding: 'utf-8'});
