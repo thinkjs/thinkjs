@@ -12,12 +12,12 @@ test.before('console logger', () => {
 });
 
 test('console logger', t => {
-  let func_names = ['debug', 'info', 'warn', 'error'];
-  let logger = new Logger({handle: Adapter});
+  const funcNames = ['debug', 'info', 'warn', 'error'];
+  const logger = new Logger({handle: Adapter});
 
-  t.plan(func_names.length);
-  for(let func_name of func_names) {
-    let func = logger[func_name];
+  t.plan(funcNames.length);
+  for (const funcName of funcNames) {
+    const func = logger[funcName];
     func('Hello World');
     t.true(global.server_log.includes('Hello World'));
     global.server_log = '';

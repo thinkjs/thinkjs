@@ -12,17 +12,17 @@ test.before('cluster file logger', () => {
   try {
     fs.statSync(filename);
     fs.unlinkSync(filename);
-  } catch(e) {
+  } catch (e) {
 
   } finally {
     fs.writeFileSync(filename, '', {encoding: 'utf-8'});
-  }  
+  }
 });
 
 test('cluster file logger in master', async t => {
   const fakeWorker = {
     on(event, callback) {
-      if(event === 'message') {
+      if (event === 'message') {
         const simulatedLoggingEvent = new LoggingEvent(null, 'Info', ['hello world from worker']);
         callback({
           type: '::log-message',
@@ -40,7 +40,7 @@ test('cluster file logger in master', async t => {
 
   const fakeMaster = {
     on(event, callback) {
-      if(event === 'fork') {
+      if (event === 'fork') {
         callback(fakeWorker);
       }
     },
@@ -53,7 +53,7 @@ test('cluster file logger in master', async t => {
 
   const MasterFileAdapter = sandbox.require('../src/adapter/file', {
     requires: {
-      cluster: fakeMaster,
+      cluster: fakeMaster
     }
   });
   const WorkerFileAdapter = sandbox.require('../src/adapter/file', {
@@ -61,16 +61,16 @@ test('cluster file logger in master', async t => {
       cluster: fakeWorker
     }
   });
-  let masterLogger = new Logger({
+  const masterLogger = new Logger({
     handle: MasterFileAdapter,
     filename
   });
-  let workerLogger = new Logger({handle: WorkerFileAdapter});
+  const workerLogger = new Logger({handle: WorkerFileAdapter});
 
   masterLogger.info('hello world from master');
   await sleep(500);
 
-  let text = fs.readFileSync(filename, {encoding: 'utf-8'});
+  const text = fs.readFileSync(filename, {encoding: 'utf-8'});
   t.true(text.includes('hello world from worker'));
   fs.unlinkSync(filename);
 });
