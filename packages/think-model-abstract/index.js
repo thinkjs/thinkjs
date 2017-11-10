@@ -11,14 +11,14 @@ module.exports = class Abstract {
    * constructor
    * @param {Object} model 
    */
-  constructor(model) {
+  constructor(model, options = {}) {
     // this.model = model;
     const Parser = this.constructor.Parser;
     const Query = this.constructor.Query;
     const Schema = this.constructor.Schema;
-    this.parser = new Parser(model.config);
-    this.query = new Query(model.config);
-    this.schema = new Schema(model.config, model.schema, model.tableName);
+    this.parser = options.parser || new Parser(model.config);
+    this.query = options.query || new Query(model.config);
+    this.schema = options.schema || new Schema(model.config, model.schema, model.tableName);
     this.parser.query = this.query;
     this.parser.schema = this.schema;
     this.query.parser = this.parser;
