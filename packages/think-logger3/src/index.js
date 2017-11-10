@@ -1,4 +1,5 @@
 const assert = require('assert');
+const BasicAdapter = require('./adapter/base');
 const ConsoleAdapter = require('./adapter/console');
 const FileAdapter = require('./adapter/file');
 const DateFileAdapter = require('./adapter/datefile');
@@ -16,6 +17,7 @@ class Logger {
   }
 }
 
+Logger.Basic = BasicAdapter;
 Logger.Console = ConsoleAdapter;
 Logger.File = FileAdapter;
 Logger.DateFile = DateFileAdapter;
