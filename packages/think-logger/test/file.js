@@ -12,26 +12,26 @@ test.before('file logger', () => {
   try {
     fs.statSync(filename);
     fs.unlinkSync(filename);
-  } catch(e) {
+  } catch (e) {
 
   } finally {
     fs.writeFileSync(filename, '', {encoding: 'utf-8'});
-  }  
+  }
 });
 
 test('file logger', async t => {
-  let logger = new Logger({
+  const logger = new Logger({
     handle: Adapter,
     filename
   });
 
-  let funcs = ['debug', 'info', 'warn', 'error'];
+  const funcs = ['debug', 'info', 'warn', 'error'];
   funcs.forEach(func => logger[func]('Hello World'));
 
   await sleep(500);
 
-  let text = fs.readFileSync(filename, {encoding: 'utf-8'});
-  t.true(text.split('Hello World').length === funcs.length+1 );
-  
+  const text = fs.readFileSync(filename, {encoding: 'utf-8'});
+  t.true(text.split('Hello World').length === funcs.length + 1);
+
   fs.unlinkSync(filename);
 });

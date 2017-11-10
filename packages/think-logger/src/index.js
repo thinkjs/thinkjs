@@ -4,7 +4,7 @@ const FileAdapter = require('./adapter/file');
 const DateFileAdapter = require('./adapter/datefile');
 
 class Logger {
-  constructor(config, clusterMode) {
+  constructor(config = {}, clusterMode) {
     const Handle = config.handle || ConsoleAdapter;
     delete config.handle;
 
