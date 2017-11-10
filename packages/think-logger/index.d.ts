@@ -17,6 +17,7 @@ declare namespace ThinkLogger {
     error(msg: string): void;
     configure(config: Log4jsConfig | string): any;
     setLogger(config: Log4jsConfig | string): any;
+    formatConfig(config: Log4jsConfig | string): Log4jsConfig;
   }
 
   interface Console extends Base {}
@@ -34,6 +35,7 @@ declare namespace ThinkLogger {
 
   export interface LoggerConstructor {
     new (config: any, clusterMode: string): Logger;
+    Basic: Base;
     Console: Console;
     File: File;
     DateFile: DateFile;
