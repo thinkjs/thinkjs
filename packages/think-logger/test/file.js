@@ -1,8 +1,6 @@
 const fs = require('fs');
 const test = require('ava');
-const log4js = require('log4js');
 const Logger = require('../src');
-const process = require('process');
 const Adapter = Logger.File;
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
