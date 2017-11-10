@@ -11,13 +11,13 @@ module.exports = class DateFileLogger extends Base {
 
     // combine config for date file appender, common config for log4js
     config = Object.assign({
-      appenders: [
-        {type: 'dateFile', level, filename, pattern, alwaysIncludePattern, absolute, layout}
-      ]
+      appenders: {
+        dateFile: {type: 'dateFile', filename, pattern, alwaysIncludePattern, absolute, layout}
+      },
+      categories: {
+        default: {appenders: ['dateFile'], level}
+      }
     }, lConfig);
-
-    // check cluster mode
-    config = this.isCluster(config, clusterMode);
 
     this.setLogger(config);
   }

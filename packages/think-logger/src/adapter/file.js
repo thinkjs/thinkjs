@@ -11,12 +11,13 @@ module.exports = class FileLogger extends Base {
 
     // combine config for file appender, common config for log4js
     config = Object.assign({
-      appenders: [
-        {type: 'file', level, filename, maxLogSize, backups, absolute, layout}
-      ]
+      appenders: {
+        file: {type: 'file', filename, maxLogSize, backups, absolute, layout}
+      },
+      categories: {
+        default: {appenders: ['file'], level}
+      }
     }, lConfig);
-    // check cluster mode
-    config = this.isCluster(config, clusterMode);
 
     this.setLogger(config);
   }
