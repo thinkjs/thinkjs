@@ -1,23 +1,18 @@
 const Base = require('./base');
 
 module.exports = class ConsoleLogger extends Base {
-  constructor(config) {
-    super(config);
-
-    const lConfig = Object.assign({}, config);
-    let {level, layout} = lConfig;
+  formatConfig(config) {
+    let {level, layout} = config;
     level = level ? level.toUpperCase() : 'ALL';
     layout = layout || {type: 'pattern', pattern: '%[[%d] [%z] [%p]%] - %m'};
 
-    config = Object.assign({
+    return Object.assign({
       appenders: {
         console: {type: 'console', layout}
       },
       categories: {
         default: {appenders: ['console'], level}
       }
-    }, lConfig);
-
-    this.setLogger(config);
+    }, config);
   }
 };
