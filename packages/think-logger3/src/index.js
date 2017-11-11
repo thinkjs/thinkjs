@@ -5,11 +5,11 @@ const FileAdapter = require('./adapter/file');
 const DateFileAdapter = require('./adapter/datefile');
 
 class Logger {
-  constructor(config = {}, clusterMode) {
+  constructor(config = {}) {
     const Handle = config.handle || ConsoleAdapter;
     delete config.handle;
 
-    this._logger = new Handle(config, clusterMode);
+    this._logger = new Handle(config);
     ['debug', 'info', 'warn', 'error'].forEach(level => {
       assert(this._logger[level], `adapter function ${level} not exist!`);
       this[level] = this._logger[level].bind(this._logger);
