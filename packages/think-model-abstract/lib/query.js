@@ -6,7 +6,7 @@ const SOCKET = Symbol('think-model-socket');
 module.exports = class AbstractQuery {
   /**
    * abstract query class
-   * @param {object} config 
+   * @param {object} config
    */
   constructor(config = {}) {
     this.config = config;
@@ -31,7 +31,7 @@ module.exports = class AbstractQuery {
   }
   /**
    * get socket, invoked in sub class
-   * @param {String|Object} sql 
+   * @param {String|Object} sql
    */
   socket(sql, Cls) {
     if (sql && this.config.parser) {
@@ -44,8 +44,8 @@ module.exports = class AbstractQuery {
   }
   /**
    * insert data
-   * @param {Object} data 
-   * @param {Object} options 
+   * @param {Object} data
+   * @param {Object} options
    */
   add(data, options) {
     const values = [];
@@ -166,7 +166,7 @@ module.exports = class AbstractQuery {
   }
   /**
    * start transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   startTrans(connection) {
     return this.socket().startTrans(connection).then(connection => {
@@ -176,22 +176,22 @@ module.exports = class AbstractQuery {
   }
   /**
    * commit transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   commit(connection = this.connection) {
     return this.socket().commit(connection);
   }
   /**
    * rollback transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   rollback(connection = this.connection) {
     return this.socket().rollback(connection);
   }
   /**
    * wrap transaction
-   * @param {Function} fn 
-   * @param {Object} connection 
+   * @param {Function} fn
+   * @param {Object} connection
    */
   transaction(fn, connection) {
     return this.socket().transaction(connection => {

@@ -9,7 +9,7 @@ const {COMPARISON_LIST} = require('./lib/comparison.js');
 module.exports = class Abstract {
   /**
    * constructor
-   * @param {Object} model 
+   * @param {Object} model
    */
   constructor(model, options = {}) {
     // this.model = model;
@@ -34,54 +34,54 @@ module.exports = class Abstract {
   }
   /**
    * execute sql
-   * @param {String} sql 
+   * @param {String} sql
    */
   execute(sql) {
     return this.query.execute(sql);
   }
   /**
    * select add data
-   * @param {Array} fields 
-   * @param {String} table 
-   * @param {Object} options 
+   * @param {Array} fields
+   * @param {String} table
+   * @param {Object} options
    */
   selectAdd(fields, table, options) {
     return this.query.selectAdd(fields, table, options);
   }
   /**
    * add data
-   * @param {Object} data 
-   * @param {Object} options 
+   * @param {Object} data
+   * @param {Object} options
    */
   add(data, options) {
     return this.query.add(data, options);
   }
   /**
    * add data list
-   * @param {Array} dataList 
-   * @param {options} options 
+   * @param {Array} dataList
+   * @param {options} options
    */
   addMany(dataList, options) {
     return this.query.addMany(dataList, options);
   }
   /**
    * update
-   * @param {Object} data 
-   * @param {Object} options 
+   * @param {Object} data
+   * @param {Object} options
    */
   update(data, options) {
     return this.query.update(data, options);
   }
   /**
    * delete
-   * @param {Object} options 
+   * @param {Object} options
    */
   delete(options) {
     return this.query.delete(options);
   }
   /**
-   * select 
-   * @param {Object} options 
+   * select
+   * @param {Object} options
    * @return {Promise}
    */
   select(options) {
@@ -90,7 +90,7 @@ module.exports = class Abstract {
   /**
    * get reverse fields
    * @TODO move code to think-mode
-   * @param {String} fields 
+   * @param {String} fields
    * @return {Promise}
    */
   getReverseFields(fields) {
@@ -98,23 +98,23 @@ module.exports = class Abstract {
   }
   /**
    * get table schema
-   * @param {String} table 
+   * @param {String} table
    */
   getSchema(table) {
     return this.schema.getSchema(table);
   }
   /**
    * parse key
-   * @param {String} field 
+   * @param {String} field
    */
   parseKey(field) {
     return this.parser.parseKey(field);
   }
   /**
    * parse data
-   * @param {Object} data 
-   * @param {Boolean} isUpdate 
-   * @param {String} table 
+   * @param {Object} data
+   * @param {Boolean} isUpdate
+   * @param {String} table
    * @return {Promise}
    */
   parseData(data, isUpdate, table) {
@@ -122,29 +122,29 @@ module.exports = class Abstract {
   }
   /**
    * startTrans
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   startTrans(connection) {
     return this.query.startTrans(connection);
   }
   /**
    * commit transactions
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   commit(connection) {
     return this.query.commit(connection);
   }
   /**
    * rollback transactions
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   rollback(connection) {
     return this.query.rollback(connection);
   }
   /**
    * transaction
-   * @param {Function} fn 
-   * @param {Object} connection 
+   * @param {Function} fn
+   * @param {Object} connection
    */
   transaction(fn, connection) {
     return this.query.transaction(fn, connection);

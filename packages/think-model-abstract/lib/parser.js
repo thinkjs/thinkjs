@@ -4,7 +4,7 @@ const {COMPARISON, COMPARISON_LIST} = require('./comparison.js');
 
 /**
  * get comparison
- * @param {String} comparison 
+ * @param {String} comparison
  */
 const getComparison = comparison => {
   let comparisonUpper = comparison.toUpperCase();
@@ -23,7 +23,7 @@ module.exports = class AbstractParser {
   }
   /**
    * parse explain
-   * @param {Boolean} explain 
+   * @param {Boolean} explain
    */
   parseExplain(explain) {
     if (!explain) return '';
@@ -588,7 +588,7 @@ module.exports = class AbstractParser {
   }
   /**
    * get insert sql
-   * @param {Object} options 
+   * @param {Object} options
    */
   buildInsertSql(options) {
     const table = this.parseTable(options.table);
@@ -606,7 +606,7 @@ module.exports = class AbstractParser {
   }
   /**
    * build delete sql
-   * @param {Object} options 
+   * @param {Object} options
    */
   buildDeleteSql(options) {
     const sql = `DELETE FROM %TABLE%%WHERE%%ORDER%%LIMIT%%LOCK%%COMMENT%`;
@@ -614,7 +614,7 @@ module.exports = class AbstractParser {
   }
   /**
    * build update sql
-   * @param {Object} options 
+   * @param {Object} options
    */
   buildUpdateSql(data, options) {
     const set = this.parseSet(data);

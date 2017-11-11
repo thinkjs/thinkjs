@@ -5,9 +5,9 @@ const helper = require('think-helper');
 module.exports = class AbstractSchema {
   /**
    * constructor
-   * @param {Object} config 
-   * @param {Object} schema 
-   * @param {String} table 
+   * @param {Object} config
+   * @param {Object} schema
+   * @param {String} table
    */
   constructor(config, schema = {}, table) {
     this.config = config;
@@ -16,7 +16,7 @@ module.exports = class AbstractSchema {
   }
   /**
    * get reverse fields
-   * @param {String} fields 
+   * @param {String} fields
    */
   getReverseFields(fields) {
     if (helper.isString(fields)) fields = fields.trim().split(/\s*,\s*/);
@@ -33,16 +33,16 @@ module.exports = class AbstractSchema {
   }
   /**
    * validate data
-   * @param {Object} data 
-   * @param {Object} schema 
+   * @param {Object} data
+   * @param {Object} schema
    */
   validateData(data, schema) {
     return data;
   }
   /**
    * parse data
-   * @param {Object} data 
-   * @param {Boolean} isUpdate 
+   * @param {Object} data
+   * @param {Boolean} isUpdate
    */
   parseData(data, isUpdate = false, table) {
     return this.getSchema(table).then(schema => {
