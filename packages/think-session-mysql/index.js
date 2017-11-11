@@ -82,9 +82,10 @@ class MysqlSession {
   }
 
   'delete'() {
-    this.status = -1;
-    this.data = {};
-    return Promise.resolve();
+    return this[initSessionData]().then(() => {
+      this.status = -1;
+      this.data = {};
+    });
   }
 
   flush() {
