@@ -24,7 +24,7 @@ const defaultOptions = {
 class Worker {
   /**
    * constructor
-   * @param {Object} options 
+   * @param {Object} options
    */
   constructor(options) {
     options = util.parseOptions(options);
@@ -70,7 +70,7 @@ class Worker {
   }
   /**
    * disconnect worker
-   * @param {Boolean} sendSignal 
+   * @param {Boolean} sendSignal
    */
   disconnectWorker(sendSignal) {
     const worker = cluster.worker;

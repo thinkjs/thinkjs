@@ -101,7 +101,7 @@ class Messenger extends events {
   }
   /**
    * map worker task, return worker exec result
-   * @param {String} action 
+   * @param {String} action
    */
   map(action, mapData) {
     const defer = helper.defer();
@@ -119,7 +119,7 @@ class Messenger extends events {
   }
   /**
    * this method will be deprecated
-   * @param {Function} callback 
+   * @param {Function} callback
    */
   runInOne(callback) {
     return this.consume(callback);

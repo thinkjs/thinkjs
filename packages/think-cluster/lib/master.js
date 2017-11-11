@@ -23,7 +23,7 @@ const defaultOptions = {
 class Master {
   /**
    * constructor
-   * @param {Object} options 
+   * @param {Object} options
    */
   constructor(options) {
     options = util.parseOptions(options);
@@ -144,7 +144,7 @@ class Master {
   }
   /**
    * send inspect port
-   * @param {Worker} worker 
+   * @param {Worker} worker
    */
   sendInspectPort(worker) {
     const inspect = process.execArgv.some(item => item.indexOf('--inspect') >= 0);
