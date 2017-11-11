@@ -49,7 +49,7 @@ module.exports = class MysqlSchema extends Schema {
   }
   /**
    * get table schema
-   * @param {String} table 
+   * @param {String} table
    */
   getSchema(table = this.table) {
     if (SCHEMAS[table]) return Promise.resolve(SCHEMAS[table]);
@@ -79,8 +79,8 @@ module.exports = class MysqlSchema extends Schema {
   }
   /**
    * parse type
-   * @param {String} tinyType 
-   * @param {Mixed} value 
+   * @param {String} tinyType
+   * @param {Mixed} value
    */
   parseType(tinyType, value) {
     if (tinyType === 'enum' || tinyType === 'set' || tinyType === 'bigint') return value;
