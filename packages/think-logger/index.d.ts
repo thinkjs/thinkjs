@@ -34,7 +34,7 @@ declare namespace ThinkLogger {
   }
 
   export interface LoggerConstructor {
-    new (config: any, clusterMode: string): Logger;
+    new (config: any): Logger;
     Basic: Base;
     Console: Console;
     File: File;
