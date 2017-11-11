@@ -6,7 +6,8 @@ const inquirer = require('inquirer')
 const path = require('path')
 const helper = require('think-helper')
 const os = require('os')
-const ThinkInit = require('../lib/init.js')
+const Run = require('../lib/run')
+const logger = require('../lib/logger')
 const argv = require('minimist')(process.argv.slice(2))
 
 /**
@@ -60,10 +61,32 @@ const cacheTemplatePath = path.join(os.homedir(), '.think-templates', template.r
 const targetPath = path.join(process.cwd(), rawName || '.')
 const clone = program.clone || false
 const isMultiModule = program.module || false
+
+const maps = isMultiModule
+  ? 'new.multiModule'
+  : 'new.default'
+
 const context = Object.assign(argv, {
   actionPrefix: './'
 })
-const init = new ThinkInit({template, name, cacheTemplatePath, targetPath, clone, isMultiModule, context})
+
+const run = new Run({
+  template,
+  cacheTemplatePath,
+  targetPath,
+  options: {name, command: 'new', maps, clone, isMultiModule, context},
+  done(err, files, options) {
+    console.log();
+    if (err) return logger.error(err);
+    logger.success('Generated %s', name);
+    if (options.metadata.completeMessage) {
+      logger.message(options.metadata.completeMessage, {
+        destDirName: name,
+        inPlace: targetPath === process.cwd()
+      });
+    }
+  }
+})
 
 if (helper.isExist(targetPath)) {
   inquirer.prompt([{
@@ -74,9 +97,9 @@ if (helper.isExist(targetPath)) {
     name: 'ok'
   }]).then(function (answers) {
     if (answers.ok) {
-      init.run()
+      run.start()
     }
   })
 } else {
-  init.run()
+  run.start()
 }

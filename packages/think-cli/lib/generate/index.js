@@ -32,5 +32,5 @@ module.exports = function(source, target, options, done) {
     .use(confirmOverwrite(options.command))
     .use(template(source, options.metadata.skipCompile))
     .destination(target)
-    .build(done);
+    .build((err, files) => done(err, files, options));
 };
