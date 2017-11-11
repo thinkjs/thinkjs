@@ -5,7 +5,7 @@
 [![Coveralls](https://img.shields.io/coveralls/thinkjs/think-logger/master.svg?style=flat-square)]()
 [![David](https://img.shields.io/david/thinkjs/think-logger.svg?style=flat-square)]()
 
-ThinkJS3.x log module, based on log4js.
+ThinkJS3.x log module, based on [log4js](https://github.com/log4js-node/log4js-node).
 
 ## Installation
 
@@ -19,7 +19,7 @@ ThinkJS3.x log module, based on log4js.
 
   ```js
  const Logger = require('think-logger3');
- let logger = new Logger();
+ const logger = new Logger();
  logger.debug('Hello World');
   ```
 
@@ -39,7 +39,7 @@ If you want to log file, you can use file adapter like this:
 
 ```js
 const Logger = require('think-logger3');
-let logger = new Logger({
+const logger = new Logger({
    handle: Logger.File,
    filename: __dirname + '/test.log'
 });
@@ -54,7 +54,7 @@ This adapter will log to a file, and supports split log file by a constant file 
 
 ```js
 const Logger = require('think-logger3');
-let logger = new Logger({
+const logger = new Logger({
   handle: Logger.File,
   filename: __dirname + '/debug.log',
   maxLogSize: 50 * 1024,  //50M
@@ -70,7 +70,7 @@ Then initial log would create a file called `debug.log`. After this file reached
 - `maxLogSize`: The maximum size (in bytes) for a log file, if not provided then logs won't be rotated.
 - `backups`: The number of log files to keep after logSize has been reached (default 5)
 - `absolute`: If `filename` is a absolute path, the `absolute` value should be `true`.
-- `layout`: Layout defines the way how a log record is rendered. More layouts can see [here](https://github.com/nomiddlename/log4js-node/wiki/Layouts).
+- `layout`: Layout defines the way how a log record is rendered. More layouts can see [here](https://log4js-node.github.io/log4js-node/layouts.html).
 
 ### DateFile
 
@@ -78,7 +78,7 @@ This adapter will log to a file, moving old log messages to timestamped files ac
 
 ```js
 const Logger = require('think-logger3');
-let logger = new Logger({
+const logger = new Logger({
   handle: Logger.DateFile,
   filename: __dirname + '/debug.log',
   pattern: '-yyyy-MM-dd',
@@ -103,11 +103,28 @@ Then initial log would create a file called `debug.log`. At midnight, the curren
   - O - timezone (capital letter o)
 - `alwaysIncludePattern`: If `alwaysIncludePattern` is true, then the initial file will be `filename.2017-03-12` and no renaming will occur at midnight, but a new file will be written to with the name `filename.2017-03-13`.
 - `absolute`: If `filename` is a absolute path, the `absolute` value should be `true`.
-- `layout`: Layout defines the way how a log record is rendered. More layouts can see [here](https://github.com/nomiddlename/log4js-node/wiki/Layouts).
+- `layout`: Layout defines the way how a log record is rendered. More layouts can see [here](https://log4js-node.github.io/log4js-node/layouts.html).
 
-### Tips:
+### Basic
 
-`think-logger3` will auto detect cluster mode by `cluster.workers`, you needn't configure for cluster handly. If you want instance logger before fork worker, you can use like `new Logger({handle: Logger.File}, true)`.
+If those adapter configuration can't satisfy your need, you can use this adapter and set config like log4js. For example:
+
+```js
+const Logger = require('think-logger3');
+const logger = new Logger({
+  handle: Logger.Basic,
+  appenders: {
+    everything: { type: 'file', filename: 'all-the-logs.log' },
+    emergencies: {  type: 'file', filename: 'oh-no-not-again.log' },
+    'just-errors': { type: 'logLevelFilter', appender: 'emergencies', level: 'error' }
+  },
+  categories: {
+    default: { appenders: ['just-errors', 'everything'], level: 'debug' }
+  }
+});
+```
+
+All properties are as same as log4js except `handle` property. You can see more configure properties on [log4js documentation](https://log4js-node.github.io/log4js-node/api.html#configuration-object).
 
 
 ## Contributing
