@@ -7,7 +7,7 @@ const Mysql = require('think-mysql');
 module.exports = class MysqlQuery extends Query {
   /**
    * get socket
-   * @param {String|Object} sql 
+   * @param {String|Object} sql
    */
   socket(sql) {
     return super.socket(sql, Mysql);
