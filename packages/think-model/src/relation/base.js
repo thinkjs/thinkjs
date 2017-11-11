@@ -5,9 +5,9 @@ const helper = require('think-helper');
 module.exports = class BaseRelation {
   /**
    * constructor
-   * @param {Object|Array} data 
-   * @param {Object} options 
-   * @param {Object} model 
+   * @param {Object|Array} data
+   * @param {Object} options
+   * @param {Object} model
    */
   constructor(data, options, model) {
     this.data = data;
@@ -39,8 +39,8 @@ module.exports = class BaseRelation {
   }
   /**
    * merge relation data to data
-   * @param {Object} mapData 
-   * @param {Boolean} isArrMap 
+   * @param {Object} mapData
+   * @param {Boolean} isArrMap
    */
   parseRelationData(mapData, isArrMap) {
     if (helper.isArray(this.data)) {

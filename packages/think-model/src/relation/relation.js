@@ -18,8 +18,8 @@ class Relation {
   }
   /**
    * set relation
-   * @param {Mixed} name 
-   * @param {Mixed} value 
+   * @param {Mixed} name
+   * @param {Mixed} value
    */
   setRelation(name, value) {
     // ignore undefined name
@@ -67,7 +67,7 @@ class Relation {
   }
   /**
    * get relation data
-   * @param {Array|Object} data 
+   * @param {Array|Object} data
    */
   async getRelation(data) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return data;
@@ -79,9 +79,9 @@ class Relation {
     return data;
   }
   /**
-   * 
-   * @param {String} relationKey 
-   * @param {Object|Array} data 
+   *
+   * @param {String} relationKey
+   * @param {Object|Array} data
    */
   parseItemRelation(relationKey, data) {
     let item = this.relation[relationKey];

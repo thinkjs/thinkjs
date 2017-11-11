@@ -28,7 +28,7 @@ module.exports = class Model {
   }
   /**
    * get or set adapter
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   db(db) {
     const Handle = this.config.handle;
@@ -79,7 +79,7 @@ module.exports = class Model {
   }
   /**
    * get model instance
-   * @param {String} name 
+   * @param {String} name
    */
   model(name) {
     const ModelClass = this.models[name];
@@ -393,7 +393,7 @@ module.exports = class Model {
   }
   /**
    * parse options, reset this.options to {}
-   * @param {Object} options 
+   * @param {Object} options
    */
   async parseOptions(options) {
     if (helper.isNumber(options) || helper.isString(options)) {
@@ -416,8 +416,8 @@ module.exports = class Model {
   }
   /**
    * add data
-   * @param {Object} data 
-   * @param {Object} options 
+   * @param {Object} data
+   * @param {Object} options
    */
   async add(data, options) {
     options = await this.parseOptions(options);
@@ -724,7 +724,7 @@ module.exports = class Model {
   }
   /**
    * quote field
-   * @param {String} field 
+   * @param {String} field
    */
   [QUOTE_FIELD](field) {
     if (field) return this.db().parseKey(field);
@@ -815,8 +815,8 @@ module.exports = class Model {
   }
   /**
    * set relation
-   * @param {String} name 
-   * @param {Mixed} value 
+   * @param {String} name
+   * @param {Mixed} value
    */
   setRelation(name, value) {
     this[RELATION].setRelation(name, value);
