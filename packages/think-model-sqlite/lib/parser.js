@@ -7,7 +7,7 @@ const keywords = ['ABORT', 'ACTION', 'ADD', 'AFTER', 'ALL', 'ALTER', 'ANALYZE', 
 module.exports = class SQLiteParser extends Parser {
   /**
    * parseKey
-   * @param {String} key 
+   * @param {String} key
    */
   parseKey(key) {
     if (!/^\w+$/.test(key)) return key;

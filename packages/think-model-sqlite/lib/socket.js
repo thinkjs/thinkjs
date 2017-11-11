@@ -87,7 +87,7 @@ class SQLiteSocket {
   }
   /**
    * start transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   startTrans(connection) {
     return this.getConnection(connection).then(connection => {
@@ -100,7 +100,7 @@ class SQLiteSocket {
   }
   /**
    * commit transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   commit(connection) {
     return this.query({
@@ -111,7 +111,7 @@ class SQLiteSocket {
   }
   /**
    * rollback transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   rollback(connection) {
     return this.query({
@@ -122,8 +122,8 @@ class SQLiteSocket {
   }
   /**
    * transaction
-   * @param {Function} fn 
-   * @param {Object} connection 
+   * @param {Function} fn
+   * @param {Object} connection
    */
   transaction(fn, connection) {
     assert(helper.isFunction(fn), 'fn must be a function');
@@ -139,7 +139,7 @@ class SQLiteSocket {
   }
   /**
    * release connection
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   releaseConnection(connection) {
     // if not in transaction, release connection
@@ -182,8 +182,8 @@ class SQLiteSocket {
   }
   /**
    * query
-   * @param {Object} sqlOptions 
-   * @param {Object} connection 
+   * @param {Object} sqlOptions
+   * @param {Object} connection
    */
   query(sqlOptions, connection) {
     if (helper.isString(sqlOptions)) {
