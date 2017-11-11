@@ -9,8 +9,8 @@ const DB = Symbol('think-model-db');
 class Mongo {
   /**
    * constructor
-   * @param {String} modelName 
-   * @param {Object} config 
+   * @param {String} modelName
+   * @param {Object} config
    */
   constructor(modelName, config) {
     if (helper.isObject(modelName)) {
@@ -52,7 +52,7 @@ class Mongo {
   }
   /**
    * get model instance
-   * @param {String} name 
+   * @param {String} name
    */
   model(name) {
     const ModelClass = this.models[name];
@@ -68,7 +68,7 @@ class Mongo {
   }
   /**
    * get or set adapter
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   db(db) {
     if (db) {
@@ -254,7 +254,7 @@ class Mongo {
   }
   /**
    * parse options
-   * @param {Object} options 
+   * @param {Object} options
    */
   parseOptions(options) {
     options = Object.assign({}, this.options, options);
@@ -479,7 +479,7 @@ class Mongo {
     });
   }
   /**
-   * get count 
+   * get count
    * @param  {String} field []
    * @return {Promise}       []
    */

@@ -83,14 +83,14 @@ class MongoSocket {
   }
   /**
    * release connection
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   release(connection) {
     this.pool.release(connection);
   }
   /**
    * auto release connection after run function
-   * @param {Function} fn 
+   * @param {Function} fn
    */
   autoRelease(fn) {
     return this.pool.acquire().then(connection => {
@@ -104,7 +104,7 @@ class MongoSocket {
   }
   /**
    * close connection
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   close(connection) {
     if (connection) return this.pool.destroy(connection);

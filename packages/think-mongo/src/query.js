@@ -28,8 +28,8 @@ module.exports = class Query {
   }
   /**
    * add data
-   * @param {Object} data 
-   * @param {Object} options 
+   * @param {Object} data
+   * @param {Object} options
    */
   add(data, options) {
     return this.socket.autoRelease(async connection => {
@@ -41,8 +41,8 @@ module.exports = class Query {
   }
   /**
    * add data list
-   * @param {Array} dataList 
-   * @param {Object} options 
+   * @param {Array} dataList
+   * @param {Object} options
    */
   addMany(dataList, options) {
     return this.socket.autoRelease(async connection => {
@@ -94,7 +94,7 @@ module.exports = class Query {
   }
   /**
    * select data
-   * @param {Object} options 
+   * @param {Object} options
    */
   select(options) {
     const where = this.parser.parseWhere(options.where);
@@ -115,8 +115,8 @@ module.exports = class Query {
   }
   /**
    * update data
-   * @param {Object} data 
-   * @param {Object} options 
+   * @param {Object} data
+   * @param {Object} options
    */
   update(data, options) {
     const where = this.parser.parseWhere(options.where);
@@ -124,12 +124,12 @@ module.exports = class Query {
 
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(options.table);
-      // updates multiple documents that meet the query criteria. 
+      // updates multiple documents that meet the query criteria.
       // default only updates one document
       if (limit[1] !== 1) {
         options.multi = true;
       }
-      // If set to true, creates a new document when no document matches the query criteria. 
+      // If set to true, creates a new document when no document matches the query criteria.
       // The default value is false, which does not insert a new document when no match is found.
       if (!options.upsert) {
         options.upsert = false;
@@ -152,7 +152,7 @@ module.exports = class Query {
   }
   /**
    * delete data
-   * @param {Object} options 
+   * @param {Object} options
    */
   delete(options) {
     const where = this.parser.parseWhere(options.where);
@@ -171,7 +171,7 @@ module.exports = class Query {
   }
   /**
    * get data count
-   * @param {Object} options 
+   * @param {Object} options
    */
   count(options) {
     const where = this.parser.parseWhere(options.where);
@@ -200,7 +200,7 @@ module.exports = class Query {
   }
   /**
    * get data sum
-   * @param {Object} options 
+   * @param {Object} options
    */
   sum(options) {
     const where = this.parser.parseWhere(options.where);
