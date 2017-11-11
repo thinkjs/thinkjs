@@ -1,8 +1,8 @@
 const helper = require('think-helper');
 const utils = require('./utils.js');
-const generate = require('./core/generate.js');
+const generate = require('./generate');
 const logger = require('./logger.js');
-const getOptions = require('./core/options.js');
+const getOptions = require('./options.js');
 const Download = require('./download.js');
 
 const THINK_LOCAL = Symbol('think-cli#local');
