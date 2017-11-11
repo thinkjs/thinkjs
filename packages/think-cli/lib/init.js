@@ -25,7 +25,6 @@ class Init extends Download {
 
   /**
    * Generate from a local template
-   * @param {String} template
    */
   [THINK_LOCAL]() {
     const {name, template: rawTemplate, targetPath, clone, isMultiModule, context} = this.options;

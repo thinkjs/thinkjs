@@ -75,5 +75,18 @@ module.exports = {
   compose(...funcs) {
     const first = funcs.pop();
     return (...args) => funcs.reverse().reduce((item, fn) => fn(item), first(...args));
+  },
+
+  parsePath(path) {
+    const bailRE = /[^\w.$]/;
+    if (bailRE.test(path)) return;
+    const segments = path.split('.');
+    return obj => {
+      for (let i = 0; i < segments.length; i++) {
+        if (!obj) return;
+        obj = obj[segments[i]];
+      }
+      return obj;
+    };
   }
 };

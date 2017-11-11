@@ -10,3 +10,15 @@ test('The correct prefix should be returned', t => {
 test('The correct action name should be returned', t => {
   t.is(utils.getActionName('test.js'), 'test');
 });
+
+test('utils.parsePath', t => {
+  const data = {a: {b: {c : 'hello'}}};
+  t.is(utils.parsePath('a.b.c')(data), 'hello');
+});
+
+test('utils.isLocalPath', t => {
+  const data = {a: {b: {c : 'hello'}}};
+  t.is(utils.isLocalPath('./a/b/c'), true);
+  t.is(utils.isLocalPath('/a/b/c'), true);
+  t.is(utils.isLocalPath('a/b'), false);
+});

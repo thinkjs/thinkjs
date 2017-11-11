@@ -5,8 +5,8 @@ const path = require('path')
 const helper = require('think-helper')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
-const generate = require('../lib/core/generate.js')
 const argv = require('minimist')(process.argv.slice(2))
+const Run = require('../lib/run')
 
 /**
  * Usage.
@@ -62,10 +62,6 @@ if (!utils.isThinkApp(appPath)) {
 
 const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs
 const adapter = program.args[0].split('/')
-const template = thinkjsInfo.cacheTemplatePath && helper.isExist(thinkjsInfo.cacheTemplatePath)
-  ? thinkjsInfo.cacheTemplatePath
-  : thinkjsInfo.templateName
-const metadata = require(path.join(template, 'metadata'))
 const actionName = adapter[1] || 'base'
 
 const context = Object.assign(thinkjsInfo.metadata, argv, {
@@ -75,12 +71,19 @@ const context = Object.assign(thinkjsInfo.metadata, argv, {
   actionPrefix: utils.getPrefix(actionName)
 })
 
-const options = {command: 'adapter', metadata, maps: metadata.adapter, context};
-generate(template, path.resolve('./'), options, (err, files) => {
-  if (err) return logger.error(err);
-  Object
-    .keys(files)
-    .forEach(file => {
-      logger.success('Create: %s', path.normalize(file))
-    })
-});
+const run = new Run({
+  template: thinkjsInfo.templateName,
+  cacheTemplatePath: thinkjsInfo.cacheTemplatePath,
+  targetPath: path.resolve('./'),
+  options: {name: thinkjsInfo.metadata.name, command: 'adapter', maps: 'adapter', context},
+  done(err, files) {
+    if (err) return logger.error(err);
+    Object
+      .keys(files)
+      .forEach(file => {
+        logger.success('Create: %s', path.normalize(file))
+      })
+  }
+})
+
+run.start()
