@@ -1,15 +1,14 @@
 const {test} = require('ava');
 const Model = require('../lib/model');
+const handle = require('think-model-abstract');
 
-const db = {
-  parseKey: key => key
-};
+const db = new handle(new Model('test', {handle}));
 
 test('model instance normal', t => {
   t.plan(3);
 
   const config = {
-    handle: new Function()
+    handle
   };
   const modelName = 'post';
   const model = new Model(modelName, config);
@@ -19,7 +18,7 @@ test('model instance normal', t => {
 });
 test('model instance abnormal', t => {
   try {
-    new Model({handle: 111});
+    new Model({handle: 222});
     t.fail();
   } catch (e) {
     t.pass();
@@ -27,7 +26,7 @@ test('model instance abnormal', t => {
 });
 test('model get db', t => {
   const config = {
-    handle: new Function()
+    handle
   };
   const model = new Model(config);
   t.true(model.db() instanceof config.handle);
@@ -35,7 +34,7 @@ test('model get db', t => {
 test('model get models', t => {
   t.plan(2);
   const models = {post: {}};
-  const model = new Model({handle: new Function()});
+  const model = new Model({handle});
   t.deepEqual(model.models, {});
   model.models = models;
   t.is(model.models, models);
@@ -43,22 +42,22 @@ test('model get models', t => {
 test('model get table prefix', t => {
   t.plan(2);
 
-  t.is((new Model({handle: new Function()})).tablePrefix, '');
+  t.is((new Model({handle})).tablePrefix, '');
 
-  const model = new Model({handle: new Function(), prefix: 'fk_'});
+  const model = new Model({handle, prefix: 'fk_'});
   t.is(model.tablePrefix, 'fk_');
 });
 test('model get table name', t => {
   t.plan(2);
-  let model = new Model('post', {handle: new Function()});
+  let model = new Model('post', {handle});
   t.is(model.tableName, 'post');
 
-  model = new Model('post', {handle: new Function(), prefix: 'fk_'});
+  model = new Model('post', {handle, prefix: 'fk_'});
   t.is(model.tableName, 'fk_post');
 });
 test('model get pk', t => {
   t.plan(2);
-  const model = new Model({handle: new Function()});
+  const model = new Model({handle});
   t.is(model.pk, 'id');
   model._pk = 'user_id';
   t.is(model.pk, model._pk);
@@ -66,7 +65,7 @@ test('model get pk', t => {
 test('model get model inline', t => {
   t.plan(3);
 
-  const model = new Model('post', {handle: new Function(), prefix: 'fk_'});
+  const model = new Model('post', {handle, prefix: 'fk_'});
   model.models = {
     'admin/user': function(tableName) {
       this.tableName = tableName;
@@ -81,7 +80,7 @@ test('model set cache option', t => {
   t.plan(4);
 
   const model = new Model('post', {
-    handle: new Function(),
+    handle,
     cache: {
       type: 'file',
       handle: () => {}
@@ -99,7 +98,7 @@ test('model set cache option', t => {
 test('model set limit', t => {
   t.plan(6);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.limit();
   t.is(model.options.limit, undefined);
   model.limit([1]);
@@ -114,7 +113,7 @@ test('model set limit', t => {
   t.deepEqual(model.options.limit, [0, undefined]);
 });
 test('model set page', t => {
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.page();
   t.deepEqual(model.options.limit, [0, 10]);
   model.page(0);
@@ -129,7 +128,7 @@ test('model set page', t => {
 test('model set where', t => {
   t.plan(4);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.where();
   t.is(model.options.where, undefined);
   model.where('hello');
@@ -144,7 +143,7 @@ test('model set where', t => {
 test('model set field reverse', t => {
   t.plan(8);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.field();
   t.is(model.options.field, undefined);
   t.is(model.options.fieldReverse, undefined);
@@ -162,7 +161,7 @@ test('model set field reverse', t => {
 test('model set table name', t => {
   t.plan(4);
 
-  const model = new Model('post', {handle: new Function(), prefix: 'fk_'});
+  const model = new Model('post', {handle, prefix: 'fk_'});
   model.table();
   t.is(model.options.table, undefined);
   model.table('  user  ');
@@ -176,7 +175,7 @@ test('model set table name', t => {
 test('model set union', t => {
   t.plan(3);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.union();
   t.is(model.options.union, undefined);
   model.union('test');
@@ -188,7 +187,7 @@ test('model set union', t => {
 test('model set join', t => {
   t.plan(3);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.join();
   t.is(model.options.join, undefined);
   model.join(222);
@@ -200,7 +199,7 @@ test('model set join', t => {
 test('model set order alias having group lock auto explan distinct', t => {
   t.plan(9);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   t.is(model.order('id').options.order, 'id');
   t.is(model.alias('user').options.alias, 'user');
   t.is(model.having('user').options.having, 'user');
@@ -298,7 +297,7 @@ test('model then add data', async t => {
 test('model then update data exist', async t => {
   t.plan(2);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.find = function() {
     return {id: 1, title: 'test', content: 'world'};
   };
@@ -313,7 +312,7 @@ test('model then update data exist', async t => {
 test('model then update data not exist', async t => {
   t.plan(2);
 
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.find = function() {
     t.is(this.options.where.id, 3);
     return {};
@@ -710,7 +709,7 @@ test('model get field one data one key', async t => {
 
 test('model increment', async t => {
   t.plan(12);
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.db(db);
 
   const arr = ['count', 'view'];
@@ -762,7 +761,7 @@ test('model increment', async t => {
 
 test('model decrement', async t => {
   t.plan(12);
-  const model = new Model('post', {handle: new Function()});
+  const model = new Model('post', {handle});
   model.db(db);
 
   const arr = ['count', 'view'];
@@ -814,7 +813,7 @@ test('model decrement', async t => {
 
 for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
   test(`model ${logic} empty`, t => {
-    const model = new Model('post', {handle: new Function()});
+    const model = new Model('post', {handle});
     model.db(db);
     model.getField = function(sql) {
       t.is(sql, `${logic.toUpperCase()}(*) AS think_${logic}`);
@@ -822,7 +821,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
     model[logic]();
   });
   test(`model ${logic} custom pk`, t => {
-    const model = new Model('post', {handle: new Function()});
+    const model = new Model('post', {handle});
     model.db(db);
     model._pk = 'post_id';
     model.getField = function(sql) {
@@ -831,7 +830,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
     model[logic]();
   });
   test(`model ${logic} empty pk`, t => {
-    const model = new Model('post', {handle: new Function()});
+    const model = new Model('post', {handle});
     model.db(db);
     Object.defineProperty(model, 'pk', {value: false});
     model.getField = function(sql) {
@@ -840,7 +839,7 @@ for (const logic of ['count', 'sum', 'min', 'max', 'avg']) {
     model[logic]();
   });
   test(`model ${logic} with field`, t => {
-    const model = new Model('post', {handle: new Function()});
+    const model = new Model('post', {handle});
     model.db(db);
     Object.defineProperty(model, 'pk', {value: false});
     model.getField = function(sql) {
@@ -888,11 +887,50 @@ test('model excute method', async t => {
 
 test('model parser sql', t => {
   const model = new Model('post', {
-    handle: new Function(),
+    handle,
     prefix: 'fk_'
   });
   model.db(db);
 
   const result = model.parseSql('__TABLE__  __TABLE__  __TITLE__ __title__');
   t.is(result.sql, ' fk_post  fk_post  fk_title __title__');
+});
+test('set db 2', t => {
+  const model = new Model('post', {
+    handle,
+    prefix: 'fk_'
+  });
+  const db1 = model.db();
+  const db2 = model.db();
+  t.is(db1, db2);
+});
+
+test('set db 3', t => {
+  const model1 = new Model('post', {
+    handle,
+    prefix: 'fk_'
+  });
+  const model2 = new Model('post2', {
+    handle,
+    prefix: 'fk_'
+  });
+  const db1 = model1.db();
+  model2.db(db1);
+  const db2 = model2.db();
+  t.is(db1 === db2, false);
+});
+
+test('set db 4', t => {
+  const model1 = new Model('post', {
+    handle,
+    prefix: 'fk_'
+  });
+  const model2 = new Model('post2', {
+    handle,
+    prefix: 'fk_'
+  });
+  const db1 = model1.db();
+  model2.db(db1);
+  const db2 = model2.db();
+  t.is(db1.query, db2.query);
 });

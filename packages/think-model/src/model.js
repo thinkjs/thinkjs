@@ -31,12 +31,12 @@ module.exports = class Model {
    * @param {Object} connection 
    */
   db(db) {
+    const Handle = this.config.handle;
     if (db) {
-      this[DB] = db;
+      this[DB] = new Handle(this, {query: db.query});
       return this;
     }
     if (this[DB]) return this[DB];
-    const Handle = this.config.handle;
     const instance = new Handle(this);
     this[DB] = instance;
     return instance;
