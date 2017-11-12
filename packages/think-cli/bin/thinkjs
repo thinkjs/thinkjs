@@ -13,4 +13,6 @@ program
   .command('model', 'add model from a template')
   .command('middleware', 'add middleware from a template')
   .command('adapter', 'add adapter from a template')
+  .command('migrate', 'migrate the project to think-cli 2.0')
   .parse(process.argv)
+
