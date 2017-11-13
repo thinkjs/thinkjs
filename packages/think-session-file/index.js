@@ -80,9 +80,9 @@ class FileSession {
   set(name, value) {
     return this[initSessionData]().then(() => {
       this.status = 1;
-      if(value === null){
+      if (value === null) {
         delete this.data[name];
-      }else{
+      } else {
         this.data[name] = value;
       }
     });
