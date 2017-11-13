@@ -64,13 +64,14 @@ if (!isMultiModule) {
 
 const context = Object.assign(thinkjsInfo.metadata, argv, {
   actionPrefix: './',
-  moduleName: program.args[0] || thinkjsInfo.metadata.defaultModule
+  moduleName: program.args[0] || thinkjsInfo.metadata.defaultModule,
+  rootPath: appPath
 })
 
 const run = new Run({
   template: thinkjsInfo.templateName,
   cacheTemplatePath: thinkjsInfo.cacheTemplatePath,
-  targetPath: path.resolve('./'),
+  targetPath: appPath,
   options: {name: thinkjsInfo.metadata.name, command: 'module', maps: 'module', context},
   done(err, files) {
     if (err) return logger.error(err);

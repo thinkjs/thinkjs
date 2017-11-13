@@ -68,13 +68,14 @@ const context = Object.assign(thinkjsInfo.metadata, argv, {
   type: adapter[0],
   action: utils.getActionName(actionName),
   moduleName: program.args[1] || thinkjsInfo.metadata.defaultModule,
-  actionPrefix: utils.getPrefix(actionName)
+  actionPrefix: utils.getPrefix(actionName),
+  rootPath: appPath
 })
 
 const run = new Run({
   template: thinkjsInfo.templateName,
   cacheTemplatePath: thinkjsInfo.cacheTemplatePath,
-  targetPath: path.resolve('./'),
+  targetPath: appPath,
   options: {name: thinkjsInfo.metadata.name, command: 'adapter', maps: 'adapter', context},
   done(err, files) {
     if (err) return logger.error(err);

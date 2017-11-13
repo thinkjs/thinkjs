@@ -67,7 +67,8 @@ const maps = isMultiModule
   : 'new.default'
 
 const context = Object.assign(argv, {
-  actionPrefix: './'
+  actionPrefix: './',
+  rootPath: targetPath
 })
 
 const run = new Run({
