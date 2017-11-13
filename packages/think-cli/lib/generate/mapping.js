@@ -17,7 +17,7 @@ function replaceFilePathByMapping() {
 
 function replaceFilePathByMaps(fn) {
   return (filePath, maps) => {
-    const newMaps = maps.filter(mapping => new RegExp('^' + mapping[0]).test(filePath));
+    const newMaps = maps.filter(mapping => new RegExp('^' + mapping[0]).test(utils.normalizePath(filePath)));
     return fn(filePath, newMaps[0]);
   };
 }

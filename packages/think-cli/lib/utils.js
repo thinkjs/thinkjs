@@ -88,5 +88,11 @@ module.exports = {
       }
       return obj;
     };
+  },
+
+  // Normalize the platform-specific path
+  // Compatible with windows
+  normalizePath(p) {
+    return p.split(path.sep).join('/');
   }
 };
