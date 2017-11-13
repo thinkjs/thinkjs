@@ -1,6 +1,7 @@
 const assert = require('assert');
 const helper = require('think-helper');
 const mysql = require('think-mysql');
+const gc = require('think-gc');
 const initSessionData = Symbol('think-session-mysql-init');
 
 /*
@@ -29,6 +30,8 @@ class MysqlSession {
     this.ctx = ctx;
     this.data = {};
     this.tableName = (this.options.prefix || '') + 'session';
+    this.gcType = `session_mysql`;
+    gc(this, this.options.gcInterval);
   }
 
 
@@ -112,6 +115,12 @@ class MysqlSession {
       })
     }
     return Promise.resolve();
+  }
+
+  gc(){
+    this.mysql.execute({
+      sql: `DELETE FROM ${this.tableName} WHERE expire < ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000)`,
+    })
   }
 }
 module.exports = MysqlSession;
