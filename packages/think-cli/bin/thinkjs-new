@@ -68,7 +68,8 @@ const maps = isMultiModule
 
 const context = Object.assign(argv, {
   actionPrefix: './',
-  rootPath: targetPath
+  ROOT_PATH: targetPath,
+  APP_NAME: name
 })
 
 const run = new Run({

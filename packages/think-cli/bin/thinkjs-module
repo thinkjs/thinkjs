@@ -65,7 +65,8 @@ if (!isMultiModule) {
 const context = Object.assign(thinkjsInfo.metadata, argv, {
   actionPrefix: './',
   moduleName: program.args[0] || thinkjsInfo.metadata.defaultModule,
-  rootPath: appPath
+  ROOT_PATH: appPath,
+  APP_NAME: thinkjsInfo.projectName
 })
 
 const run = new Run({

@@ -70,7 +70,8 @@ const context = Object.assign(thinkjsInfo.metadata, argv, {
   action: utils.getActionName(actionName),
   moduleName,
   actionPrefix: utils.getPrefix(actionName),
-  rootPath: appPath
+  ROOT_PATH: appPath,
+  APP_NAME: thinkjsInfo.projectName
 })
 
 const run = new Run({
