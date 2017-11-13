@@ -37,7 +37,9 @@ async function testAdd(command, maps) {
   const context = {
     action: 'user',
     type: 'type',
-    actionPrefix: './'
+    actionPrefix: './',
+    ROOT_PATH: './',
+    APP_NAME: 'think-cli-test'
   }
 
   const options = {command, metadata, maps, context}
@@ -69,7 +71,7 @@ test.cb('should generate multi module project from local default template', t =>
     targetPath,
     clone: false,
     isMultiModule: false,
-    context: {actionPrefix: './'}
+    context: {actionPrefix: './', ROOT_PATH: './', APP_NAME: 'think-cli-test'}
   })
 
   init.run()
