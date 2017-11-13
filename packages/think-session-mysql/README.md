@@ -39,7 +39,8 @@ exports.session = {
     host:'127.0.0.1',
     port:'3306',
     user:'root',
-    password:''
+    password:'',
+    gcInterval: 3600 * 1000 //gc interval
   }
 }
 ```
