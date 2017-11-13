@@ -58,7 +58,7 @@ class RedisSession {
   }
   /**
    * get session data
-   * @param {String} name 
+   * @param {String} name
    */
   get(name) {
     return this[initSessionData]().then(() => {
@@ -70,16 +70,16 @@ class RedisSession {
   }
   /**
    * set session data
-   * @param {String} name 
-   * @param {Mixed} value 
+   * @param {String} name
+   * @param {Mixed} value
    */
   set(name, value) {
     return this[initSessionData]().then(() => {
       this.status = 1;
-      if(value === null){
+      if (value === null) {
         delete this.data[name];
-      }else{
-        this.data[name] = value;        
+      } else {
+        this.data[name] = value;
       }
     });
   }
