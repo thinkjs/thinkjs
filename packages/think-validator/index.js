@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-17 18:31:28
+* @Last Modified time: 2017-11-14 16:50:40
 */
 
 // let rules = {             // rules
@@ -26,7 +26,9 @@ const METHOD_MAP = {
   DELETE: 'post',
   PATCH: 'post',
   LINK: 'post',
-  UNLINK: 'post'
+  UNLINK: 'post',
+  WEBSOCKET: 'param',
+  CLI: 'param'
 };
 const preRules = require('./rules.js');
 const preErrors = require('./errors.js');
