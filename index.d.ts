@@ -494,6 +494,8 @@ declare module 'thinkjs' {
     Logic: Logic;
     Service: Service;
 
+    service(name: string): any;
+    service(name: string, ...args: any[]): any;
     service(name: string, m: any, ...args: any[]): any;
     beforeStartServer(fn: Function): Promise<any>;
   }
