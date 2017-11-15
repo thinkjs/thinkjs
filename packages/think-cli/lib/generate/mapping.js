@@ -11,7 +11,7 @@ module.exports = function(maps) {
 function replaceFilePathByMapping() {
   return (filePath, mapping) => {
     const reg = new RegExp('^' + mapping[0]);
-    return filePath.replace(reg, mapping[1]);
+    return utils.normalizePath(filePath).replace(reg, mapping[1]);
   };
 }
 
