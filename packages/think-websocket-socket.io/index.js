@@ -31,10 +31,10 @@ module.exports = class SocketIO {
    * @param {Object} data
    * @param {Object} socket
    */
-  mockRequst(url, data, socket, open) {
+  mockRequst(url, data, fn, socket, open) {
     if (url[0] !== '/') url = `/${url}`;
 
-    const args = {url, websocketData: data, websocket: socket, io: this.io, method: 'WEBSOCKET'};
+    const args = {url, websocketData: data, websocket: socket, wsCallback: fn, io: this.io, method: 'WEBSOCKET'};
     if (open) {
       args.req = socket.request;
     }
@@ -46,17 +46,17 @@ module.exports = class SocketIO {
   registerSocket(io, messages = {}) {
     io.on('connection', socket => {
       if (messages.open) {
-        this.mockRequst(messages.open, undefined, socket, true);
+        this.mockRequst(messages.open, undefined, undefined, socket, true);
       }
       if (messages.close) {
         socket.on('disconnect', () => {
-          this.mockRequst(messages.close, undefined, socket);
+          this.mockRequst(messages.close, undefined, undefined, socket);
         });
       }
       for (const key in messages) {
         if (key === 'open' || key === 'close') continue;
-        socket.on(key, data => {
-          this.mockRequst(messages[key], data, socket);
+        socket.on(key, (data, fn) => {
+          this.mockRequst(messages[key], data, fn, socket);
         });
       }
     });
