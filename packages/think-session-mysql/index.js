@@ -24,8 +24,13 @@ const initSessionData = Symbol('think-session-mysql-init');
 class MysqlSession {
   constructor(options = {}, ctx) {
     assert(options.cookie, '.cookie required');
-    const modelOption = think.config('model.mysql') || {};
-    this.options = Object.assign({},modelOption,options);
+    const modelConfig = think.config('model');
+    const useModel = modelConfig[modelConfig.type];
+    if (useModel.handle.name.toLowerCase().indexOf('mysql') > -1) {
+      this.options = Object.assign({}, useModel, options);
+    }else{
+      this.options = options;       
+    }
     this.mysql = mysql.getInstance(this.options);
     this.ctx = ctx;
     this.data = {};
