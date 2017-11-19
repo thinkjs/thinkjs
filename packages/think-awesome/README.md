@@ -80,6 +80,8 @@ Awesome projects for `ThinkJS 3.x`
 * [think-redis](https://github.com/thinkjs/think-redis) Wrap [ioredis](https://github.com/luin/ioredis)
 * [think-svg-captcha](https://github.com/thinkjs/think-svg-captcha) Generate svg captcha.
 * [think-memcache](https://github.com/thinkjs/think-memcache) Wrap memcache.
+* [think-hashids](https://github.com/weihongyu12/think-hashids) Generate a short unique ID from the integer for ThinkJS
+* [think-purify](https://github.com/weihongyu12/think-purify) Use the HTML5 Purify extension in ThinkJS
 
 ## Projects by ThinkJS
 
