@@ -36,15 +36,10 @@ module.exports = (options, app) => {
         if (options.sendResponseTime && !ctx.res.headersSent) {
           ctx.res.setHeader('X-Response-Time', `${endTime - startTime}ms`);
         }
-<<<<<<< HEAD
         if(options.logRequest){
           process.nextTick(() => {
             app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
           });
-=======
-        if (options.logRequest) {
-          app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
->>>>>>> 40dc60eb1e6c53c28512952f270e307c0e810605
         }
         if (err) return Promise.reject(err);
       });
