@@ -37,7 +37,9 @@ module.exports = (options, app) => {
            ctx.res.setHeader('X-Response-Time', `${endTime - startTime}ms`);
         }
         if(options.logRequest){
-          app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
+          process.nextTick(() => {
+            app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
+          });
         }
         if(err) return Promise.reject(err);
       })
