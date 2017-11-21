@@ -83,6 +83,6 @@ module.exports = function(opts = {}) {
       return parse.xml(ctx, opts.opts);
     }
 
-    return Promise.resolve({});
+    return parse.form(ctx, opts.opts);
   }
 };

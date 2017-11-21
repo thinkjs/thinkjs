@@ -17,8 +17,16 @@ module.exports = (ctx, opts = {}) => {
   onFinish(ctx.res, () => {
     if (!uploadFiles) return;
     Object.keys(uploadFiles).forEach(key => {
-      const filepath = uploadFiles[key].path;
-      if (helper.isExist(filepath)) fsUnlink(filepath);
+      const file = uploadFiles[key];
+      if (helper.isArray(file)) {
+        file.forEach(item => {
+          const filepath = item.path;
+          if (helper.isExist(filepath)) fsUnlink(filepath);
+        });
+      } else {
+        const filepath = file.path;
+        if (helper.isExist(filepath)) fsUnlink(filepath);
+      }
     });
   });
 
