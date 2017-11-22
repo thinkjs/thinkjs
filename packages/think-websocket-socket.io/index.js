@@ -24,6 +24,8 @@ module.exports = class SocketIO {
     if (config.path) {
       this.io.path(this.config.path);
     }
+
+    this.io.listen(server);
   }
   /**
    * mock request
