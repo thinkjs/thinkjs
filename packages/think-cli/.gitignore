@@ -37,5 +37,3 @@ jspm_packages
 .node_repl_history
 
 demo
-
-test/test*

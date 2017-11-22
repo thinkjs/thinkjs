@@ -1,56 +1,49 @@
 {
   "name": "think-cli",
-  "description": "command line interface for ThinkJS",
-  "version": "1.0.14",
-  "author": {
-    "name": "songguangyu",
-    "email": "522963130@qq.com"
-  },
-  "scripts": {
-    "test": "npm run lint & nyc ava test/",
-    "coverage": "nyc report --reporter=html",
-    "lint": "eslint commander.js & eslint template/**/*.js",
-    "lint-fix": "eslint --fix commander.js & eslint --fix template/**/*.js"
-  },
-  "ava": {
-    "require": [
-      "babel-core/register"
-    ]
-  },
-  "contributors": [
-    {
-      "name": "songguangyu",
-      "email": "522963130@qq.com"
-    }
-  ],
-  "main": "index.js",
+  "version": "2.1.1",
+  "description": "A simple CLI for scaffolding Thinkjs projects.",
   "bin": {
-    "thinkjs": "index.js"
+    "thinkjs": "bin/thinkjs"
   },
-  "dependencies": {
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "think-helper": "^1.0.0"
+  "main": "bin/thinkjs",
+  "scripts": {
+    "test": "eslint lib/ && nyc ava test/ --serial",
+    "lint": "eslint lib/",
+    "lint-fix": "eslint --fix lib/"
   },
-  "devDependencies": {
-    "ava": "^0.18.0",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
-    "eslint": "^4.2.0",
-    "eslint-config-think": "^1.0.1",
-    "mock-require": "^2.0.1",
-    "nyc": "^7.0.0"
-  },
-  "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-cli"
+    "url": "git+https://github.com/thinkjs/think-cli.git"
   },
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "readmeFilename": "README.md",
+  "keywords": [
+    "cli",
+    "think"
+  ],
+  "author": "Berwin <liubowen.niubi@gmail.com> (https://github.com/berwin)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/thinkjs/think-cli/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-cli#readme",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "consolidate": "^0.14.5",
+    "download-git-repo": "^1.0.1",
+    "ejs": "^2.5.7",
+    "inquirer": "^3.1.0",
+    "metalsmith": "^2.3.0",
+    "minimist": "^1.2.0",
+    "multimatch": "^2.1.0",
+    "ora": "^1.2.0",
+    "think-helper": "^1.0.21",
+    "urllib": "^2.22.0"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "coveralls": "^2.13.1",
+    "eslint": "^3.19.0",
+    "eslint-config-think": "^1.0.1",
+    "nyc": "^11.0.2"
   }
 }

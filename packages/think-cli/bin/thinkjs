@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+
+program
+  .version(require('../package.json').version)
+  .usage('<command> [options]')
+  .command('new', 'generate a new project from a template')
+  .command('list', 'list available official templates')
+  .command('module', 'add module from a template')
+  .command('controller', 'add controller from a template')
+  .command('service', 'add service from a template')
+  .command('model', 'add model from a template')
+  .command('middleware', 'add middleware from a template')
+  .command('adapter', 'add adapter from a template')
+  .command('migrate', 'migrate the project to think-cli 2.0')
+  .parse(process.argv)
+
