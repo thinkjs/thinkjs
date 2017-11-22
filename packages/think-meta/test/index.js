@@ -1,5 +1,6 @@
 const test = require('ava');
 const Meta = require('../');
+const helper = require('think-helper');
 function getApp() {
 	return {
 		think: {
@@ -40,6 +41,7 @@ test('default option', async t => {
 
 	t.is(ctx.res.headers['X-Powered-By'], `thinkjs-${app.think.version}`, '成功设置X-Powered-By');
 	t.truthy(ctx.res.headers['X-Response-Time'], '成功设置X-Response-Time');
+	await helper.timeout(10);
 	t.truthy(app.think.logger.infomsg, '成功log');
 });
 test('default option with err', async t => {
@@ -54,6 +56,7 @@ test('default option with err', async t => {
 	await Meta({}, app)(ctx, next).catch((err) => {
 		// console.log(err);
 	});
+	await helper.timeout(10);
 	t.is(ctx.res.headers['X-Powered-By'], `thinkjs-${app.think.version}`, '有报错成功设置X-Powered-By');
 	t.truthy(ctx.res.headers['X-Response-Time'], '有报错成功设置X-Response-Time');
 	t.truthy(app.think.logger.infomsg, '有报错成功log');
@@ -91,6 +94,7 @@ test('with TimeoutCallback', async t => {
 	  	});
 	    return promise;
 	});
+	await helper.timeout(10);
   t.false(callbacked, '未超时不调用回调函数');
 });
 test('settings', async t => {
@@ -104,7 +108,7 @@ test('settings', async t => {
 		sendResponseTime: false,
 		logRequest: false,
 	}, app)(ctx, next);
-
+	await helper.timeout(10);
 	t.is(ctx.res.headers['X-Powered-By'], undefined, '不设置X-Powered-By');
 	t.is(ctx.res.headers['X-Response-Time'], undefined, '不设置X-Response-Time');
 	t.is(app.think.logger.infomsg, undefined, '不log');
@@ -120,7 +124,7 @@ test('settings2', async t => {
 		sendResponseTime: true,
 		logRequest: false,
 	}, app)(ctx, next);
-
+	await helper.timeout(10);
 	t.is(ctx.res.headers['X-Powered-By'], undefined, '不设置X-Powered-By');
 	t.truthy(ctx.res.headers['X-Response-Time'], '设置X-Response-Time');
 	t.is(app.think.logger.infomsg, undefined, '不log');
@@ -136,7 +140,7 @@ test('settings3', async t => {
 		sendResponseTime: false,
 		logRequest: true,
 	}, app)(ctx, next);
-
+	await helper.timeout(10);
 	t.is(ctx.res.headers['X-Powered-By'], undefined, '不设置X-Powered-By');
 	t.is(ctx.res.headers['X-Response-Time'], undefined, '设置X-Response-Time');
 	t.truthy(app.think.logger.infomsg, 'log');
