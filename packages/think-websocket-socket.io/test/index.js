@@ -43,6 +43,9 @@ mockery.registerMock('socket.io', function() {
     },
     of: function() {
       return SOCKETIO;
+    },
+    listen: function() {
+
     }
   }
   return SOCKETIO;
