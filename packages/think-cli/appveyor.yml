@@ -2,12 +2,12 @@ environment:
   matrix:
     - nodejs_version: '6'
 clone_script:
-  - ps: git clone -q --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
-  - ps: cd %APPVEYOR_BUILD_FOLDER%
-  - ps: ls
-  - ps: (get-content .gitmodules) | %{$_ -replace "git@github.com\:", "https\://github.com/"} | set-content .gitmodules
-  - ps: git checkout -qf %APPVEYOR_REPO_COMMIT%
-  - ps: git submodule update --init --recursive
+  - cmd: git clone -q --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
+  - cmd: cd %APPVEYOR_BUILD_FOLDER%
+  - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
+  - ps: set-content .gitmodules "[submodule \"default_template\"]`r`n	path = default_template`r`n	url = https://github.com/think-template/standard.git"
+  - ps: cat .gitmodules
+  - cmd: git submodule update --init --recursive
 install:
   - ps: Install-Product node $env:nodejs_version
   - set CI=true
