@@ -36,6 +36,16 @@ exports.websocket = {
 }
 ```
 
+Edit config file `src/config/config.js`, add options:
+
+```js
+module.exports = {
+  // ...
+  stickyCluster: true
+  // ...
+}
+```
+
 ### Config Options
 
 `path`: The socket.io process path is `/socket.io` by default. You can edit the folloing configuration if you need.
