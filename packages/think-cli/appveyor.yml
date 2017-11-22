@@ -4,8 +4,8 @@ environment:
 clone_script:
   - cmd: git clone -q --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
+  - cmd: (get-content %APPVEYOR_BUILD_FOLDER%\.gitmodules) | %{$_ -replace "git@github.com\:", "https\://github.com/"}
   - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
-  - cmd: (get-content .gitmodules) | %{$_ -replace "git@github.com\:", "https\://github.com/"}
   - cmd: git submodule update --init --recursive
 install:
   - ps: Install-Product node $env:nodejs_version
