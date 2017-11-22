@@ -110,7 +110,7 @@ class Relation {
     allowOptions.forEach(allowItem => {
       let itemFn = opts[allowItem];
       if (helper.isFunction(itemFn)) {
-        itemFn = itemFn(model, this.model);
+        itemFn = itemFn.call(model, model, this.model);
       }
       if (itemFn !== undefined) {
         model[allowItem](itemFn);
