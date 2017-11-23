@@ -70,6 +70,7 @@ test('websocket', t => {
   result.controller.broadcast();
   let cc5 = result.controller.ctx.res.statusCode === 200
   result.controller.ctx.res.statusCode = '';
+  let cc6 = result.controller.wsCallback;
 
-  t.true(c1 && c11 && c2 && c3 && c4 && c5 && cc1 && cc11 && cc2 && cc3 && cc4 && cc5);
+  t.true(c1 && c11 && c2 && c3 && c4 && c5 && cc1 && cc11 && cc2 && cc3 && cc4 && cc5 && !cc6);
 });

@@ -27,7 +27,7 @@ module.exports = app => {
        */
       get wsData() {
         return this.req.websocketData;
-      },      
+      },
       /**
        * get wsCallback
        */
