@@ -27,6 +27,12 @@ module.exports = app => {
        */
       get wsData() {
         return this.req.websocketData;
+      },      
+      /**
+       * get wsCallback
+       */
+      get wsCallback() {
+        return this.req.wsCallback;
       },
       /**
        * get socket
@@ -66,6 +72,9 @@ module.exports = app => {
       },
       get wsData() {
         return this.ctx.wsData;
+      },
+      get wsCallback() {
+        return this.ctx.wsCallback;
       },
       get websocket() {
         return this.ctx.websocket;
