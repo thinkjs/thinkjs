@@ -72,7 +72,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-websocket](https://github.com/thinkjs/think-websocket) Support websocket.
 * [think-mongoose](https://github.com/thinkjs/think-mongoose) Wrap mongoose.
 * [think-sequelize](https://github.com/thinkjs/think-sequelize) Wrap sequelize
-* [think-i18n](https://github.com/thinkjs/think-i18n) A comprehensive I18N solution wraps Jed, Number(opt in) and Currency(opt in). Support flexible customize for text, number and currency behavior in different locale in a standard way.
+* [think-i18n](https://github.com/thinkjs/think-i18n) A comprehensive I18N solution wraps Jed, Number(opt in) and Currency(opt in). Support flexible customize for text, number and currency per locale in a standard way.
 
 ## Others
 
