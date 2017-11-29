@@ -137,4 +137,5 @@ test('should be added the module', async t => {
 test.after(t => {
   return helper.rmdir(root)
     .then(_ => helper.rmdir(cacheTemplatePath))
+    .catch(e => {})
 })

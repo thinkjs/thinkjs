@@ -134,5 +134,7 @@ test('should be added the module', async t => {
 })
 
 test.after(t => {
-  return helper.rmdir(root)
+  return helper
+    .rmdir(root)
+    .catch(e => {})
 })

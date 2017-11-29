@@ -126,5 +126,7 @@ test('should be added the adapter', async t => {
 })
 
 test.after(t => {
-  return helper.rmdir(path.join(__dirname, targetDir, targetName))
+  return helper
+    .rmdir(path.join(__dirname, targetDir, targetName))
+    .catch(e => {})
 })
