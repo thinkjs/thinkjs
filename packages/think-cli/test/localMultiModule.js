@@ -134,5 +134,5 @@ test('should be added the module', async t => {
 })
 
 test.after(t => {
-  return helper.rmdir(path.join(__dirname, targetDir))
+  return helper.rmdir(root)
 })
