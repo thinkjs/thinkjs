@@ -11,6 +11,7 @@ module.exports = app => {
   app.on('appReady', () => {
     instance = new Handle(app.server, config, app);
     instance.run();
+    app.websocket = instance;
   });
 
   return {
