@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "description": "Fetch for ThinkJS 3.x",
   "main": "index.js",
+  "type": "index.d.ts",
   "dependencies": {
     "node-fetch": "^1.6.3"
   },
