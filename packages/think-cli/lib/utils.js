@@ -96,7 +96,7 @@ module.exports = {
     return maps
       .map(mapping => mapping
         .map(item => item
-          .replace(/[/\\]/g, path.sep))
+          .replace(/[/\\]/g, path.sep === '\\' ? '\\' + path.sep : path.sep))
       );
   }
 };

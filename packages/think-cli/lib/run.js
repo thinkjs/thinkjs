@@ -42,7 +42,7 @@ class Run extends Download {
 
   generate(cacheTemplatePath, targetPath, options, done) {
     const metadata = getOptions(options.name, cacheTemplatePath);
-    const generateMaps = utils.compose(normalizeMaps, utils.parsePath)(options.maps)
+    const generateMaps = utils.compose(normalizeMaps, utils.parsePath)(options.maps);
     options.metadata = metadata;
     options.maps = generateMaps(metadata);
 
