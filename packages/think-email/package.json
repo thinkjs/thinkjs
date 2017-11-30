@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "Send email for Thinkjs3",
   "main": "index.js",
+  "type": "index.d.ts",
   "scripts": {
     "lint": "eslint --fix index.js",
     "test": "npm run lint && nyc ava test/",
