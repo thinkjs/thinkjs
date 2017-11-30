@@ -32,6 +32,6 @@ function usefulKeys(fn) {
 function isUseful() {
   return (filePath, maps) => {
     return maps
-      .some(mapping => new RegExp('^' + mapping[0]).test(utils.normalizePath(filePath)));
+      .some(mapping => new RegExp('^' + mapping[0]).test(filePath));
   };
 }

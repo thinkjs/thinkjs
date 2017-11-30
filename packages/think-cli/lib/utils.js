@@ -90,9 +90,13 @@ module.exports = {
     };
   },
 
-  // Normalize the platform-specific path
+  // Normalize maps to be the same as the platform-specific path
   // Compatible with windows
-  normalizePath(p) {
-    return p.split(path.sep).join('/');
+  normalizeMaps(maps) {
+    return maps
+      .map(mapping => mapping
+        .map(item => item
+          .replace(/[/\\]/g, path.sep))
+      );
   }
 };
