@@ -6,6 +6,7 @@
     "name": "lushijie1218",
     "email": "lushijie1218@126.com"
   },
+  "type": "index.d.ts",
   "scripts": {
     "test": "npm run test-cov",
     "test-cov": "nyc ava test/ && nyc report --reporter=html",
