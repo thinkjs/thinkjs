@@ -19,7 +19,7 @@
     }
   ],
   "dependencies": {
-    "ejs": "2.2.4",
+    "ejs": "^2.5.7",
     "multiparty": "4.1.1",
     "es6-promise": "2.0.1",
     "mime": "1.2.11",
