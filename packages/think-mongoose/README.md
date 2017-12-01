@@ -114,7 +114,7 @@ module.exports = class extends think.Mongoose {
   get schema() {
     const schema = new think.Mongoose.Schema({ name: String, type: String });
     schema.methods.findSimilarTypes = function(cb) {
-      return this.model('Animal').find({ type: this.type }, cb);
+      return this.model('think_Animal').find({ type: this.type }, cb); // model name `think_Animal` must have table prefix
     };
     return schema;
   }
@@ -133,6 +133,18 @@ module.exports = class extends think.Controller {
   }
 }
 ```
+If method is defined in schema, then you must be get class instance by yourself
+
+```js
+module.exports = class extends think.Controller {
+  async indexAction() {
+    const Cls = this.mongoose('user');
+    const instance = new Cls();
+    const data = await user.findSimilarTypes(); // findSimilarTypes method is defined in schema.methods.findSimilarTypes
+  }
+}
+```
+
 
 If default model adapter type is not `mongoose`, must be set second argument when get instance by `think.mongoose`, such as:
 
