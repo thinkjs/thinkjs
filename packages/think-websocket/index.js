@@ -3,12 +3,11 @@ const assert = require('assert');
 const deprecate = require('depd')('think-websocket');
 
 module.exports = app => {
-  const config = helper.parseAdapterConfig(app.think.config('websocket'));
-  const Handle = config.handle;
-  assert(helper.isFunction(Handle), 'websocket.handle must be a function');
-
   let instance;
   app.on('appReady', () => {
+    const config = helper.parseAdapterConfig(app.think.config('websocket'));
+    const Handle = config.handle;
+    assert(helper.isFunction(Handle), 'websocket.handle must be a function');
     instance = new Handle(app.server, config, app);
     instance.run();
     app.websocket = instance;
