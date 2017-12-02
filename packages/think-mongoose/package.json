@@ -6,6 +6,7 @@
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
+  type:"index.d.ts",
   "pre-commit": [
     "test"
   ],
