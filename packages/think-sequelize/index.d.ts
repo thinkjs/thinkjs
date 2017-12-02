@@ -29,6 +29,7 @@ declare namespace ThinkSequelize {
   interface SequelizeModel {
     new(modelName?: string, config?: object): SequelizeModel;
     readonly tablePrefix: string;
+    readonly tableName: string;
     models: object;
     sequel(name: string): SequelizeModel;
 
