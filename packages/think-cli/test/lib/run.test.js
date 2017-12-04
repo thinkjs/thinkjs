@@ -26,7 +26,7 @@ test.before(() => {
   }
 })
 
-test.cb('should generate multi module project from local default template', t => {
+test.cb('should generate project ', t => {
   const run = new Run({
     template: 'think-template/standard',
     cacheTemplatePath: cachePath,

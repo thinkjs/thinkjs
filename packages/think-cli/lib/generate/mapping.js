@@ -11,13 +11,13 @@ module.exports = function(maps) {
 function replaceFilePathByMapping() {
   return (filePath, mapping) => {
     const reg = new RegExp('^' + mapping[0]);
-    return filePath.replace(reg, mapping[1]);
+    return utils.normalizePath(filePath).replace(reg, mapping[1]);
   };
 }
 
 function replaceFilePathByMaps(fn) {
   return (filePath, maps) => {
-    const newMaps = maps.filter(mapping => new RegExp('^' + mapping[0]).test(filePath));
+    const newMaps = maps.filter(mapping => new RegExp('^' + mapping[0]).test(utils.normalizePath(filePath)));
     return fn(filePath, newMaps[0]);
   };
 }
