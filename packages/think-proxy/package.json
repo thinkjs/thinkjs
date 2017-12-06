@@ -1,0 +1,33 @@
+{
+  "name": "think-proxy",
+  "version": "0.0.1",
+  "description": "thinkJS v3.x proxy middleware",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint index.js",
+    "lint:fix": "eslint index.js --fix",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html",
+    "test": "nyc ava test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-proxy.git"
+  },
+  "keywords": ["thinkJS", "thinkJS3.x", "proxy", "middleware", "node"],
+  "author": "lidongjies@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-proxy/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-proxy#readme",
+  "devDependencies": {
+    "ava": "^0.24.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.12.1",
+    "eslint-config-think": "^1.0.2",
+    "nyc": "^11.3.0"
+  },
+  "engines": {
+    "node": ">=7.6.0"
+  }
+}
