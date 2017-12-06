@@ -13,7 +13,13 @@
     "type": "git",
     "url": "git+https://github.com/thinkjs/think-proxy.git"
   },
-  "keywords": ["thinkJS", "thinkJS3.x", "proxy", "middleware", "node"],
+  "keywords": [
+    "thinkJS",
+    "thinkJS3.x",
+    "proxy",
+    "middleware",
+    "node"
+  ],
   "author": "lidongjies@gmail.com",
   "license": "MIT",
   "bugs": {
@@ -21,6 +27,7 @@
   },
   "homepage": "https://github.com/thinkjs/think-proxy#readme",
   "devDependencies": {
+    "@types/node": "^8.0.55",
     "ava": "^0.24.0",
     "coveralls": "^3.0.0",
     "eslint": "^4.12.1",
@@ -29,5 +36,9 @@
   },
   "engines": {
     "node": ">=7.6.0"
+  },
+  "dependencies": {
+    "debug": "^3.1.0",
+    "request": "^2.83.0"
   }
 }
