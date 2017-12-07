@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-30 18:53:49
+* @Last Modified time: 2017-12-07 18:19:05
 */
 'use strict';
 const helper = require('think-helper');
@@ -43,7 +43,7 @@ Rules._requiredIf = (validValue, { currentQuery, ctx, rules }) => {
   if (rules && rules[first] && rules[first]['method']) {
     currentQuery = helper.extend({}, currentQuery);
     const method = rules[first]['method'].toUpperCase();
-    currentQuery = ctx[METHOD_MAP[method]];
+    currentQuery = ctx[METHOD_MAP[method]]();
   }
   // just parse the first param
   validValue[0] = currentQuery[first];
@@ -100,7 +100,7 @@ Rules._requiredWith = (validValue, { currentQuery, rules, ctx }) => {
     if (rules && rules[item] && rules[item]['method']) {
       currentQuery = helper.extend({}, currentQuery);
       const method = rules[item]['method'].toUpperCase();
-      currentQuery = ctx[METHOD_MAP[method]];
+      currentQuery = ctx[METHOD_MAP[method]]();
     }
     return !helper.isTrueEmpty(currentQuery[item]) ? currentQuery[item] : '';
   });
@@ -208,7 +208,7 @@ Rules._equals = (validValue, { currentQuery, rules, ctx }) => {
   if (rules && rules[validValue] && rules[validValue]['method']) {
     currentQuery = helper.extend({}, currentQuery);
     const method = rules[validValue]['method'].toUpperCase();
-    currentQuery = ctx[METHOD_MAP[method]];
+    currentQuery = ctx[METHOD_MAP[method]]();
   }
   return currentQuery[validValue];
 };
