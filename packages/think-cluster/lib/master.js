@@ -147,6 +147,7 @@ class Master {
    * @param {Worker} worker
    */
   sendInspectPort(worker) {
+    if (!process.send) return; 
     const inspect = process.execArgv.some(item => item.indexOf('--inspect') >= 0);
     if (!inspect) return;
     const spawnargs = worker.process.spawnargs;
