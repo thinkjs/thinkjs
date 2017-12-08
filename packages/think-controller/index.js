@@ -13,11 +13,10 @@ function invokeController(options, app) {
     const isMultiModule = app.modules.length;
     let controllers = app.controllers || {};
 
-    if (isMultiModule) {
-      assert(ctx.module, 'ctx.module required in multi module');
+    if ((isMultiModule && !ctx.module) || !ctx.controller || !ctx.action) {
+      return ctx.throw(404);
     }
-    assert(ctx.controller, 'ctx.controller required');
-    assert(ctx.action, 'ctx.action required');
+
     // error avoiding
     if (controllers && isMultiModule) {
       if (!controllers[ctx.module]) {
