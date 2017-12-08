@@ -15,19 +15,19 @@ module.exports = class SocketIO {
     // https://socket.io/docs/server-api/#server-adapter-value
     if (config.adapter) {
       this.io.adapter(config.adapter);
-      this.io.listen(server);
     }
     // https://socket.io/docs/server-api/#server-origins-value
     if (config.allowOrigin) {
       this.io.origins(config.allowOrigin);
-      this.io.listen(server);
     }
     // https://socket.io/docs/server-api/#server-path-value
     if (config.path) {
       this.io.path(this.config.path);
-      this.io.listen(server);
     }
 
+    if(config.adapter || config.allowOrigin || config.path) {
+      this.io.listen(server);
+    }
   }
   /**
    * mock request
