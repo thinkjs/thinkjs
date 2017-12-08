@@ -1,4 +1,3 @@
-const assert = require('assert');
 const helper = require('think-helper');
 
 const defaultOptions = {

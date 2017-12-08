@@ -1,26 +1,13 @@
 import test from 'ava';
+import helper from 'think-helper';
 import invokeController from '../index.js';
-// test('app check', t => {
-  /**
-   * @throws {ReferenceError} If module not exist
-   */
-  // const fn1 = invokeController();
-  // const err1 = t.throws(() => fn1());
-  // t.is(err1.message, 'app.modules required');
-  /**
-   * @throws {ReferenceError} If controller not exist
-   */
-//   const fn2 = invokeController(undefined, {modules: []});
-//   const err2 = t.throws(() => fn2({controller: 'foo'}));
-//   t.is(err2.message, 'app.controllers required');
-// });
 
 test('ctx.module required in multi module', t => {
   const fn = invokeController(undefined, {
     modules: [1]
   });
   const error = t.throws(() => fn({}));
-  t.is(error.message, 'ctx.module required in multi module');
+  t.is(true, helper.isError(error));
 });
 
 test('ctx.controller required', t => {
@@ -28,15 +15,38 @@ test('ctx.controller required', t => {
     modules: []
   });
   const error = t.throws(() => fn({}));
-  t.is(error.message, 'ctx.controller required');
+  t.is(true, helper.isError(error));
 });
+
+test('controller not exist with emptyController', t => {
+  let recieved = 0;
+  let expected = 0;
+  const plus = () => recieved++;
+  // single module but no corresponding controllers
+  const fn1 = invokeController({
+    emptyController: 'bar'
+  }, {
+    modules: [],
+    controllers: {'foo': true, 'bar': function() {}}
+  });
+  fn1({controller: 'a', action: 'baz'}, plus);
+  t.is(recieved, expected);
+  // // multi module but no corresponding controllers
+  // const fn2 = invokeController(undefined, {
+  //   modules: [1],
+  //   controllers: {'foo': {'foo': {}}}
+  // })
+  // fn2({controller: 'bar', action: 'baz', module: 'foo'}, plus);
+  // t.is(recieved, ++expected);
+});
+
 
 test('ctx.action required', t => {
   const fn = invokeController(undefined, {
     modules: []
   });
   const error = t.throws(() => fn({controller: {}}));
-  t.is(error.message, 'ctx.action required');
+  t.is(true, helper.isError(error));
 });
 
 test('empty controller', t => {
@@ -55,14 +65,14 @@ test('empty controller', t => {
    */
   const fn2 = invokeController(undefined, {
     modules: ['baz']
-  }); 
+  });
   fn2({controller: 'foo', action: 'bar', module: 'baz'}, plus);
   expected++;
   t.is(recieved, expected)
   // multi module but not specific controllers
   const fn3 = invokeController(undefined, {
     modules: ['baz'],
-    controllers: {} 
+    controllers: {}
   });
   fn3({module: 'baz', controller: 'foo', action: 'bar'}, plus);
   expected++;

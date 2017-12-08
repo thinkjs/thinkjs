@@ -11,11 +11,6 @@
     "coverage": "nyc report --reporter=html",
     "lint": "eslint index.js"
   },
-  "ava": {
-    "require": [
-      "babel-core/register"
-    ]
-  },
   "contributors": [
     {
       "name": "welefen",
