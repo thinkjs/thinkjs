@@ -1,26 +1,13 @@
 import test from 'ava';
+import helper from 'think-helper';
 import invokeLogic from '../index.js';
-// test('app check', t => {
-  /**
-   * @throws {ReferenceError} If modules not exist
-   */
-  // const fn1 = invokeLogic();
-  // const err1 = t.throws(() => fn1());
-  // t.is(err1.message, 'app.modules required');
-  /**
-   * @throws {ReferenceError} If logics not exist
-   */
-//   const fn2 = invokeLogic({modules: []});
-//   const err2 = t.throws(() => fn2({controller: 'foo'}));
-//   t.is(err2.message, 'app.logics required');
-// });
 
 test('ctx.module required in multi module', t => {
   const fn = invokeLogic(undefined, {
     modules: [1]
   });
   const error = t.throws(() => fn({}));
-  t.is(error.message, 'ctx.module required in multi module');
+  t.is(true, helper.isError(error));
 });
 
 test('ctx.controller required', t => {
@@ -28,7 +15,7 @@ test('ctx.controller required', t => {
     modules: []
   });
   const error = t.throws(() => fn({}));
-  t.is(error.message, 'ctx.controller required');
+  t.is(true, helper.isError(error));
 });
 
 test('ctx.action required', t => {
@@ -36,7 +23,7 @@ test('ctx.action required', t => {
     modules: []
   });
   const error = t.throws(() => fn({controller: {}}));
-  t.is(error.message, 'ctx.action required');
+  t.is(true, helper.isError(error));
 });
 
 test('empty logics', t => {
@@ -55,14 +42,14 @@ test('empty logics', t => {
    */
   const fn2 = invokeLogic(undefined, {
     modules: ['baz'],
-  }); 
+  });
   fn2({controller: 'foo', action: 'bar', module: 'baz'}, plus);
   expected++;
   t.is(recieved, expected)
   // multi module but no specific controller
   const fn3 = invokeLogic(undefined, {
     modules: ['baz'],
-    logics: {} 
+    logics: {}
   });
   fn3({module: 'baz', controller: 'foo', action: 'bar'}, plus);
   expected++;
