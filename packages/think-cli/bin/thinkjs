@@ -14,5 +14,6 @@ program
   .command('middleware', 'add middleware from a template')
   .command('adapter', 'add adapter from a template')
   .command('migrate', 'migrate the project to think-cli 2.0')
+  .command('sync', 'Synchronize the latest version of the project template to the local cache directory')
+  .command('clean', 'Clear the project template cache')
   .parse(process.argv)
-

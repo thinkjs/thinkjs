@@ -76,7 +76,7 @@ const run = new Run({
   template,
   cacheTemplatePath,
   targetPath,
-  options: {name, command: 'new', maps, clone, isMultiModule, context},
+  options: {name, command: 'new', maps, clone, isMultiModule, context, template},
   done(err, files, options) {
     console.log();
     if (err) return logger.error(err);
