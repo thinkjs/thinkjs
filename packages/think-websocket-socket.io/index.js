@@ -23,10 +23,9 @@ module.exports = class SocketIO {
     // https://socket.io/docs/server-api/#server-path-value
     if (config.path) {
       this.io.path(config.path);
-    }
-
-    if(config.adapter || config.allowOrigin || config.path) {
-      this.io.listen(server);
+      if (config.path !== '/socket.io') {
+        this.io.listen(server);
+      }
     }
   }
   /**
