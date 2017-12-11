@@ -22,7 +22,7 @@ module.exports = class SocketIO {
     }
     // https://socket.io/docs/server-api/#server-path-value
     if (config.path) {
-      this.io.path(this.config.path);
+      this.io.path(config.path);
     }
 
     if(config.adapter || config.allowOrigin || config.path) {
