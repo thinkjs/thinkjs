@@ -18,7 +18,24 @@ declare module 'thinkjs' {
   export interface Response extends Koa.Response {
   }
 
-  export interface Context extends Koa.Context {
+  interface ThinkCookie {
+    /**
+     * get cookie
+     */
+    cookie(name: string): string;
+
+    /**
+     * set cookie
+     */
+    cookie(name: string, value: string, options?: object): void;
+    /**
+     *
+     *  delete cookie
+     */
+    cookie(name: string, value: null, options?: object): void;
+  }
+
+  export interface Context extends Koa.Context, ThinkCookie {
     request: Request;
     response: Response;
     readonly controller: string;
@@ -201,22 +218,11 @@ declare module 'thinkjs' {
     file(name: string, value: any): this;
 
     /**
-     *
-     * get or set cookie, if value is null mean delete the cookie.
-     * if value is undefined mean get cookie by name
-     *
-     * @memberOf Context
-     */
-    cookie(name: string, value: string, options?: object): void;
-
-
-    /**
      * get service
      *
      * @memberOf Context
      */
     service(name: string, module?: string, ...args: any[]): any;
-
 
     /**
      * download
@@ -225,8 +231,8 @@ declare module 'thinkjs' {
     download(filepath: string, filename?: string): void;
   }
 
-  export interface Controller {
-    new(ctx: Context): Controller;
+  export interface Controller extends ThinkCookie {
+    
     ctx: Context;
     body: any;
     readonly ip: string;
@@ -458,6 +464,10 @@ declare module 'thinkjs' {
     download(filepath: string, filename?: string): void;
   }
 
+  export interface TController extends Controller {
+    new(ctx: Context): Controller;
+  }
+
   export interface Service {
     new(): Service;
   }
@@ -469,9 +479,8 @@ declare module 'thinkjs' {
     error(msg: string): void;
   }
 
-  export interface Logic {
+  export interface Logic extends Controller {
     new(): Logic;
-    ctx: Context;
     validate(rules: Object, msgs?: Object): Object;
     validateErrors?: Object;
     allowMethods: string;
@@ -490,7 +499,7 @@ declare module 'thinkjs' {
     APP_PATH: string;
     logger: Logger;
 
-    Controller: Controller;
+    Controller: TController;
     Logic: Logic;
     Service: Service;
 
