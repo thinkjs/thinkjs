@@ -56,7 +56,6 @@ class Messenger extends events {
               return defer.promise;
             });
             Promise.all(promises).then(data => {
-              mapPromise.delete(message.action);
               message.data = data;
               message.action = `${message.action}_ret`;
               worker.send(message);
@@ -72,10 +71,10 @@ class Messenger extends events {
         if (message.map && (typeof message.data === 'undefined')) {
           const listener = this.listeners(message.action)[0];
           assert(helper.isFunction(listener), `${message.action} listener must be a function`);
-          message.mapReturn = true;
           Promise.resolve(listener(message.mapData)).then(data => {
             delete message.mapData;
             message.data = data;
+            message.mapReturn = true;
             process.send(message);
           });
         } else {
@@ -114,6 +113,7 @@ class Messenger extends events {
     });
     this.once(`${action}_ret`, data => {
       defer.resolve(data);
+      mapPromise.delete(action);
     });
     return defer.promise;
   }
