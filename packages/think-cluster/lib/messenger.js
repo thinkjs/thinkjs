@@ -8,7 +8,8 @@ const BIND_EVENT = Symbol('bind-event');
 const MESSENGER = 'think-messenger';
 const mapPromise = new Map();
 
-let taskId = 1;
+// task counter
+let count = 0;
 
 /**
  * Messenger class
@@ -44,11 +45,11 @@ class Messenger extends events {
         const workers = this.getWorkers(message.target, worker);
         if (message.map) {
           if (message.mapReturn) {
-            const map = mapPromise.get(message.action);
+            const map = mapPromise.get(`${message.action}_${message.taskId}`);
             map.get(worker).resolve(message.data);
           } else {
             const map = new Map();
-            mapPromise.set(message.action, map);
+            mapPromise.set(`${message.action}_${message.taskId}`, map);
             const promises = workers.map(worker => {
               worker.send(message);
               const defer = helper.defer();
@@ -57,7 +58,7 @@ class Messenger extends events {
             });
             Promise.all(promises).then(data => {
               message.data = data;
-              message.action = `${message.action}_ret`;
+              message.action = `${message.action}_${message.taskId}_ret`;
               worker.send(message);
             });
           }
@@ -104,14 +105,17 @@ class Messenger extends events {
    */
   map(action, mapData) {
     const defer = helper.defer();
+    count = count % Number.MAX_SAFE_INTEGER + 1;
+    const taskId = count + '' + process.pid;
     process.send({
       act: MESSENGER,
       action,
+      taskId,
       mapData,
       map: true,
       target: 'all'
     });
-    this.once(`${action}_ret`, data => {
+    this.once(`${action}_${taskId}_ret`, data => {
       defer.resolve(data);
       mapPromise.delete(action);
     });
