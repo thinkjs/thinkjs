@@ -136,7 +136,9 @@ class Messenger extends events {
   consume(action, data) {
     if (helper.isFunction(action)) {
       const callback = action;
-      action = `think-messenger-${taskId++}`;
+      count = count % Number.MAX_SAFE_INTEGER + 1;
+      const taskId = count + '' + process.pid;
+      action = `think-messenger-${taskId}`;
       this.once(action, callback);
       // remove event callback after timeout, avoid memory leak
       helper.timeout(10000).then(() => this.removeAllListeners(action));
