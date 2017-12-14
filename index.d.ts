@@ -34,8 +34,27 @@ declare module 'thinkjs' {
      */
     cookie(name: string, value: null, options?: object): void;
   }
+  interface ThinkConfig {
+    /**
+     * get config
+     */
+    config(name: string): any;
+    /**
+     * set config
+     */
+    config(name: string, value: string): any;
+    /**
+     * get or set config
+     */
+    config(name: string, value?: string, module?: string): any;
 
-  export interface Context extends Koa.Context, ThinkCookie {
+    /**
+     * set config for all modules
+     */
+    config(name: string, value: string, module: true): any;
+  }
+
+  export interface Context extends Koa.Context, ThinkCookie, ThinkConfig {
     request: Request;
     response: Response;
     readonly controller: string;
@@ -114,23 +133,6 @@ declare module 'thinkjs' {
      * @memberOf Context
      */
     expires(time: any): any
-    /**
-     *
-     * get config
-     * @memberOf Context
-     */
-    config(name: string): Promise<string>;
-    /**
-     * set config
-     * @memberOf Context
-     */
-    config(name: string, value: string): Promise<string>;
-    /**
-     * get or set config
-     * @memberOf Context
-     */
-    config(name: string, value: string, module: string): Promise<string>;
-
 
     /**
      * get param
@@ -231,7 +233,7 @@ declare module 'thinkjs' {
     download(filepath: string, filename?: string): void;
   }
 
-  export interface Controller extends ThinkCookie {
+  export interface Controller extends ThinkCookie, ThinkConfig {
     
     ctx: Context;
     body: any;
@@ -261,23 +263,6 @@ declare module 'thinkjs' {
      * @memberOf Controller
      */
     readonly isCli: boolean;
-
-    /**
-     *
-     * get config
-     * @memberOf Controller
-     */
-    config(name: string): Promise<string>;
-    /**
-     * set config
-     * @memberOf Controller
-     */
-    config(name: string, value: string): Promise<string>;
-    /**
-     * get or set config
-     * @memberOf Controller
-     */
-    config(name: string, value: string, module: string): Promise<string>;
     /**
      * @memberOf Controller
      */
@@ -486,7 +471,7 @@ declare module 'thinkjs' {
     allowMethods: string;
   }
 
-  export interface Think extends Helper.Think {
+  export interface Think extends Helper.Think, ThinkConfig {
     app: Application;
     isCli: boolean;
     /**
