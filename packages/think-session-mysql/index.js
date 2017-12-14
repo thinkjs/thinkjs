@@ -48,6 +48,11 @@ class MysqlSession {
       return this.initPromise = Promise.resolve();
     }
 
+    // flush session when request finish
+    this.ctx.res.once('finish', () => {
+      this.flush();
+    });
+   
     this.initPromise = this.mysql.query({
       sql: `SELECT * FROM ${this.tableName} WHERE cookie = ? `,
       values: [this.options.cookie]
@@ -65,10 +70,6 @@ class MysqlSession {
       err => console.log(err)
     );
 
-    // flush session when request finish
-    this.ctx.res.once('finish', () => {
-      this.flush();
-    });
 
     return this.initPromise;
   }
