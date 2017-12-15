@@ -72,7 +72,7 @@ class Mongoose {
 
 Mongoose.mongoose = mongoose;
 Mongoose.Schema = mongoose.Schema;
-Mongoose.Mixed = mongoose.Schema.Types.ObjectId;
+Mongoose.Mixed = mongoose.Schema.Types.Mixed;
 Mongoose.ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = Mongoose;
