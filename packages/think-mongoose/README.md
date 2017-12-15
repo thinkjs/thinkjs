@@ -2,8 +2,8 @@
 
 [![npm](https://img.shields.io/npm/v/think-mongoose.svg?style=flat-square)]()
 [![Travis](https://img.shields.io/travis/thinkjs/think-mongoose.svg?style=flat-square)]()
-[![Coveralls](https://img.shields.io/coveralls/thinkjs/think-mongoose/master.svg?style=flat-square)]()
-[![David](https://img.shields.io/david/thinkjs/think-mongoose.svg?style=flat-square)]()
+<!-- [![Coveralls](https://img.shields.io/coveralls/thinkjs/think-mongoose/master.svg?style=flat-square)]() -->
+<!-- [![David](https://img.shields.io/david/thinkjs/think-mongoose.svg?style=flat-square)]() -->
 
 Wrap mongoose for ThinkJS 3.x
 
