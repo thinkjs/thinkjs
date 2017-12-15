@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const helper = require('think-helper');
 const stackTrace = require('stack-trace');
+const {htmlentities} = require('./helper');
 
 const readFileAsync = helper.promisify(fs.readFile);
 const DEFAULT_404_TEMPLATE = path.join(__dirname, '../template/404.html');
@@ -85,6 +86,7 @@ module.exports = class Tracer {
       err = '';
     }
 
+    error = htmlentities(error);
     return template.replace('{{error}}', error).replace(
       '{{errMsg}}',
       err.toString()
@@ -103,7 +105,8 @@ module.exports = class Tracer {
       err = '';
     }
 
-    return this.templates[404].replace('{{errMsg}}', err.toString());
+    return this.templates[404]
+      .replace('{{errMsg}}', htmlentities(err.toString()));
   }
 
   /**
