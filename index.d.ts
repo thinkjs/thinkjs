@@ -127,7 +127,7 @@ declare module 'thinkjs' {
      * send fail data
      * @memberOf Context
      */
-    fail(errno: any, errmsg?: string, data?: string): any;
+    fail(errno: any, errmsg?: object | string, data?: string): any;
     /**
      * set expires header
      * @memberOf Context
@@ -234,7 +234,7 @@ declare module 'thinkjs' {
   }
 
   export interface Controller extends ThinkCookie, ThinkConfig {
-    
+
     ctx: Context;
     body: any;
     readonly ip: string;
