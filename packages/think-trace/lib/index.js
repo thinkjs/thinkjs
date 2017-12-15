@@ -41,7 +41,7 @@ module.exports = function(opts, app) {
         err.status = 500;
       }
 
-      // set status to forbidden reset status 200 during set body 
+      // set status to forbidden reset status 200 during set body
       ctx.status = err.status;
 
       return tracer.run(ctx, err);
