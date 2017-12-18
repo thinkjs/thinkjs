@@ -10,7 +10,7 @@ function mockRequire() {
 }
 function mockDebug(param = []) {
   const debug1 = function(str) {
-    
+
     return function(err) {
       param.push(err);
     }
@@ -32,7 +32,7 @@ function mockIORedis() {
     set(key, val, type, expire) {
       return new Promise((resolve, reject) => {
         redisData[key] = val;
-      
+
         if(expire) {
           if(this.expireTimeout) {
             clearTimeout(this.expireTimeout);
@@ -41,7 +41,7 @@ function mockIORedis() {
             this.expireTimeout = null;
             this.del(key);
           }, expire);
-        } 
+        }
         resolve('OK');
       });
     }
@@ -125,7 +125,7 @@ test.serial('2. set and get session data with short maxAge', t => {
       'abc': '123'
     });
     await sleep(100);
-   
+
     const redisSession1 = new RedisSession(options, ctx);
     const data1 = await redisSession1.get('abc');
     t.is(data1, undefined);
@@ -146,6 +146,7 @@ test.serial('3. set and get session data with fresh param', t => {
         once: function(status, fn) {
           setTimeout(function() {
             fn();
+            resolve();
           }, 10);
         }
       }
@@ -157,7 +158,11 @@ test.serial('3. set and get session data with fresh param', t => {
       'abc': '123'
     });
 
-    resolve();
+    setTimeout(() => {
+      t.fail('new session value not set to redis');
+      reject();
+    }, 20);
+
   });
 });
 test.serial('4. set and get session data when JSON.parse(content) returns error', t => {
@@ -184,21 +189,21 @@ test.serial('4. set and get session data when JSON.parse(content) returns error'
     const redisSession = new RedisSession(options, ctx);
     await redisSession.set('abc', '123');
     await sleep(100);
-    
+
     redisData[cookieName] = 'zz';
     const redisSession1 = new RedisSession(options, ctx);
     await redisSession1.set('abc', '123');
-    
+
     t.is(debugParam.length, 1);
     resolve();
   });
 });
- 
+
 test.serial('5. set and get session data when options is undefined', t => {
   return new Promise(async (resolve, reject) => {
-   
+
     const RedisSession = mockRequire();
-  
+
     const ctx = {
       res: {
         once: function(status, fn) {
@@ -213,7 +218,7 @@ test.serial('5. set and get session data when options is undefined', t => {
       const redisSession = new RedisSession(undefined, ctx);
     });
     t.is(error.message, '.cookie required');
-    
+
     resolve();
   });
 });

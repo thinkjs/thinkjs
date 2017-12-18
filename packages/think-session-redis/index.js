@@ -31,6 +31,8 @@ class RedisSession {
     if (this.initPromise) {
       return this.initPromise;
     }
+
+    this[autoSave]();
     if (this.options.fresh || this.status === -1) {
       this.initPromise = Promise.resolve();
       return this.initPromise;
@@ -40,7 +42,6 @@ class RedisSession {
       if (helper.isEmpty(content)) return;
       this.data = content;
     }).catch(err => debug(err));
-    this[autoSave]();
     return this.initPromise;
   }
   /**
