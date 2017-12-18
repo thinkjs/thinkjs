@@ -1,7 +1,7 @@
 {
   "name": "think-session-redis",
   "description": "Use redis to store session data",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "huangxiaolu",
     "email": "lu.huang90@gmail.com"
