@@ -34,6 +34,7 @@ exports.session = {
     verify: {
         // verify options is not required
     }
+  }
 }
 ```
 
