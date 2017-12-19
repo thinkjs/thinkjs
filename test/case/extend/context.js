@@ -207,6 +207,30 @@ test.serial('param', async t => {
   t.is(context.param('name,age').age,3)
 });
 
+test.serial('param array', async t => {
+  context.param('name','thinkjs');
+  t.is(context.param('name'),'thinkjs');
+  t.is(context.param().name,'thinkjs');
+  context.param({age:3});
+  t.is(context.param().age,3);
+  t.is(context.param(['name','age']).name,'thinkjs');
+  t.is(context.param(['name','age']).age,3)
+  t.is(Object.keys(context.param(['name','age', 'test'])).length,2)
+});
+
+test.serial('post array', async t => {
+  context.post('name','thinkjs');
+  t.is(context.post('name'),'thinkjs');
+  t.is(context.post().name,'thinkjs');
+  context.post({age:3});
+  t.is(context.post().age,3);
+  t.is(context.post(['name','age']).name,'thinkjs');
+  t.is(context.post(['name','age']).age,3)
+  t.is(Object.keys(context.post(['name','age', 'test'])).length,2)
+});
+
+
+
 test.serial('file', async t => {
   let result = context.file('name');
   t.is(result,mockContext.request.body.file.name);
@@ -227,7 +251,7 @@ test.serial('cookie', async t => {
   t.is(context.cookie('username'), '');
   let overLength = null;
   context.app = {
-    emit(){
+    emit() {
       overLength = true;
     }
   };
