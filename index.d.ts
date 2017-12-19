@@ -18,7 +18,43 @@ declare module 'thinkjs' {
   export interface Response extends Koa.Response {
   }
 
-  export interface Context extends Koa.Context {
+  interface ThinkCookie {
+    /**
+     * get cookie
+     */
+    cookie(name: string): string;
+
+    /**
+     * set cookie
+     */
+    cookie(name: string, value: string, options?: object): void;
+    /**
+     *
+     *  delete cookie
+     */
+    cookie(name: string, value: null, options?: object): void;
+  }
+  interface ThinkConfig {
+    /**
+     * get config
+     */
+    config(name: string): any;
+    /**
+     * set config
+     */
+    config(name: string, value: string): any;
+    /**
+     * get or set config
+     */
+    config(name: string, value?: string, module?: string): any;
+
+    /**
+     * set config for all modules
+     */
+    config(name: string, value: string, module: true): any;
+  }
+
+  export interface Context extends Koa.Context, ThinkCookie, ThinkConfig {
     request: Request;
     response: Response;
     readonly controller: string;
@@ -91,29 +127,12 @@ declare module 'thinkjs' {
      * send fail data
      * @memberOf Context
      */
-    fail(errno: any, errmsg?: string, data?: string): any;
+    fail(errno: any, errmsg?: object | string, data?: string): any;
     /**
      * set expires header
      * @memberOf Context
      */
     expires(time: any): any
-    /**
-     *
-     * get config
-     * @memberOf Context
-     */
-    config(name: string): Promise<string>;
-    /**
-     * set config
-     * @memberOf Context
-     */
-    config(name: string, value: string): Promise<string>;
-    /**
-     * get or set config
-     * @memberOf Context
-     */
-    config(name: string, value: string, module: string): Promise<string>;
-
 
     /**
      * get param
@@ -201,22 +220,11 @@ declare module 'thinkjs' {
     file(name: string, value: any): this;
 
     /**
-     *
-     * get or set cookie, if value is null mean delete the cookie.
-     * if value is undefined mean get cookie by name
-     *
-     * @memberOf Context
-     */
-    cookie(name: string, value: string, options?: object): void;
-
-
-    /**
      * get service
      *
      * @memberOf Context
      */
     service(name: string, module?: string, ...args: any[]): any;
-
 
     /**
      * download
@@ -225,8 +233,8 @@ declare module 'thinkjs' {
     download(filepath: string, filename?: string): void;
   }
 
-  export interface Controller {
-    new(ctx: Context): Controller;
+  export interface Controller extends ThinkCookie, ThinkConfig {
+
     ctx: Context;
     body: any;
     readonly ip: string;
@@ -255,23 +263,6 @@ declare module 'thinkjs' {
      * @memberOf Controller
      */
     readonly isCli: boolean;
-
-    /**
-     *
-     * get config
-     * @memberOf Controller
-     */
-    config(name: string): Promise<string>;
-    /**
-     * set config
-     * @memberOf Controller
-     */
-    config(name: string, value: string): Promise<string>;
-    /**
-     * get or set config
-     * @memberOf Controller
-     */
-    config(name: string, value: string, module: string): Promise<string>;
     /**
      * @memberOf Controller
      */
@@ -458,6 +449,10 @@ declare module 'thinkjs' {
     download(filepath: string, filename?: string): void;
   }
 
+  export interface TController extends Controller {
+    new(ctx: Context): Controller;
+  }
+
   export interface Service {
     new(): Service;
   }
@@ -469,15 +464,14 @@ declare module 'thinkjs' {
     error(msg: string): void;
   }
 
-  export interface Logic {
+  export interface Logic extends Controller {
     new(): Logic;
-    ctx: Context;
     validate(rules: Object, msgs?: Object): Object;
     validateErrors?: Object;
     allowMethods: string;
   }
 
-  export interface Think extends Helper.Think {
+  export interface Think extends Helper.Think, ThinkConfig {
     app: Application;
     isCli: boolean;
     /**
@@ -490,7 +484,7 @@ declare module 'thinkjs' {
     APP_PATH: string;
     logger: Logger;
 
-    Controller: Controller;
+    Controller: TController;
     Logic: Logic;
     Service: Service;
 
