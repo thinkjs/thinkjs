@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/think-sequelize.svg?style=flat-square)]()
 [![Travis](https://img.shields.io/travis/thinkjs/think-sequelize.svg?style=flat-square)]()
-[![Coveralls](https://img.shields.io/coveralls/thinkjs/think-sequelize/master.svg?style=flat-square)]()
+<!-- [![Coveralls](https://img.shields.io/coveralls/thinkjs/think-sequelize/master.svg?style=flat-square)]() -->
 
 Wrap sequelize for ThinkJS 3.x
 

@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-03 21:38:17
+* @Last Modified time: 2017-12-20 10:39:55
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -36,10 +36,20 @@ class Model {
     debug(`ModelName: ${modelName}, Schema: ${JSON.stringify(this.schemaOptions)}`);
 
     const model = sequelizeConn.define(this.modelName, schema.attributes, schema.options);
+
     // const Class = class extends model {}; // make relation name wrong
     this.modelClass = class extends model {};
     extendClassMethods(this.modelClass, this);
     models[name] = this.modelClass;
+
+    // add instace methods
+    if (this.instanceMethods) {
+      Object.keys(this.instanceMethods).forEach(ele =>{
+        // model.prototype[ele] = this.instanceMethods[ele]; // without using this for reuse
+        this.modelClass.addInstanceMethod(this.instanceMethods[ele]);
+      })
+    }
+
     return this.modelClass;
   }
 
@@ -80,6 +90,14 @@ class Model {
     const instance = new ModelClass(modelName, this.config, name);
     instance.models = this.models;
     return instance;
+  }
+
+  /**
+   * add instance methods
+   * @param {Function} fn [anonymous fn is disabled]
+   */
+  addInstanceMethod(fn) {
+    this.prototype.__proto__[fn.name] = fn;
   }
 }
 
