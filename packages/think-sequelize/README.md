@@ -13,7 +13,7 @@ Sequelize is a promise-based ORM for Node.js v4 and up. It supports the dialects
 ```sh
 npm install think-sequelize --save
 
-# And one of the following:
+# add one of the following:
 $ npm install --save pg@6 pg-hstore # Note that `pg@7` is not supported yet
 $ npm install --save mysql2
 $ npm install --save sqlite3
@@ -130,6 +130,58 @@ If you want every model's `timestamps: false`, you can write in sequel's `option
 And you can rewrite common schema config in every model's schema.
 
 
+### Add instance methods
+
+```js
+module.exports = class extends think.Sequel {
+  constructor(...props) {
+    super(...props);
+  }
+
+  get schema() {
+    return {
+      attributes: {
+        id: {
+          type: think.Sequel.Sequel.BIGINT,
+          primaryKey: true
+        },
+        teamId: think.Sequel.Sequel.BIGINT, // belongsTo, 为当前模型添加外键
+        name: think.Sequel.Sequel.STRING(255),
+      },
+      options: {
+        timestamps: false,
+        freezeTableName: true,
+        tableName: 'think_player',
+      }
+    }
+  }
+
+  get instanceMethods() {
+    return {
+      test() {
+        console.log(this.id);
+      }
+    }
+  }
+}
+```
+
+`instanceMethods` return an `object`,each object's item is a function. Arrow function is disabled.
+
+If you just want add instance methods one by one in model, you can do like this:
+
+```js
+module.exports = class extends think.Sequel {
+  constructor(...props) {
+    super(...props);
+    this.addInstanceMethod(function test() { // anonymous fn is disabled
+      console.log(this.id);
+    });
+  }
+}
+```
+These methods are added to `sequelize.define(*).prototype`!
+
 ### Get Model Instance
 
 You can get sequel class instance by `think.sequel`, `ctx.sequel`, `service.sequel` or `controller.sequel`.
@@ -233,7 +285,7 @@ module.exports = class extends think.Sequel {
 
 NOTE: If you want use sequelize model in `schema`, you should use `think.sequel` method instead of `this.sequel`, because `this.sequel` has't been initialized at this time.
 
-Default `tableName` equal `db prefix` + '_' + `model name`, If you want custom `tableName`:
+Default `tableName` equal `${db prefix}_${model name}`, If you want custom `tableName`:
 
 ```js
 get schema () {
