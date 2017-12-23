@@ -174,7 +174,7 @@ If you just want add instance methods one by one in model, you can do like this:
 module.exports = class extends think.Sequel {
   constructor(...props) {
     super(...props);
-    this.addInstanceMethod(function test() { // anonymous fn is disabled
+    this.addInstanceMethod(function test() { // anonymous fn is disabled, arrow fn is disabled
       console.log(this.id);
     });
   }
