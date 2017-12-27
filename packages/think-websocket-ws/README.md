@@ -6,7 +6,7 @@ ThinkJS 3.X's ws adapter for websocket.
 ## Install
 
 ```
-npm install think-websocket-ws
+npm install think-websocket-ws --save
 ```
 
 ## How to Config
@@ -33,6 +33,16 @@ exports.ws = {
 ```
 
 More options see at [ws doc](https://github.com/websockets/ws/blob/master/doc/ws.md).
+
+Edit config file `src/config/config.js`, add options:
+
+```js
+module.exports = {
+  // ...
+  stickyCluster: true
+  // ...
+}
+```
 
 ## Work with Action
 
