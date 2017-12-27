@@ -67,7 +67,7 @@ declare namespace ThinkModel {
     /**
      * join
      */
-    join(join?: string | Array<string>): Model;
+    join(join?: string | Array<string> | object): Model;
     /**
      * set order options
      */
