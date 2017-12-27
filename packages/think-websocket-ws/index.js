@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-10-09 14:00:01
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-10-10 16:01:54
+* @Last Modified time: 2017-12-27 16:11:59
 */
 const WebSocketServer = require('ws').Server;
 const helper = require('think-helper');
@@ -54,11 +54,11 @@ module.exports = class WebSocket {
    * @param {Object} data
    * @param {Object} socket
    */
-  mockRequst(url, data, socket, open) {
+  mockRequst(url, data, socket, request ,open) {
     if (url[0] !== '/') url = `/${url}`;
     const args = {url, websocketData: data, websocket: socket, method: 'WEBSOCKET'};
     if (open) {
-      args.req = socket.request;
+      args.req = request;
     }
     return mockHttp(args, this.app);
   }
@@ -71,7 +71,7 @@ module.exports = class WebSocket {
 
     wss.on('connection', (socket, request) => {
       if (messages.open) {
-        this.mockRequst(messages.open, undefined, socket, true);
+        this.mockRequst(messages.open, undefined, socket, request, true);
       }
 
       if (messages.close) {
