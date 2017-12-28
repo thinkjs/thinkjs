@@ -15,7 +15,7 @@ Edit config file `src/config/adapter.js`, add options:
 
 ```js
 const ws = require('think-websocket-ws');
-exports.ws = {
+exports.websocket = {
   type: 'ws',
   common: {
     // common config
