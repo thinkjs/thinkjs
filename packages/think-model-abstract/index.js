@@ -53,16 +53,16 @@ module.exports = class Abstract {
    * @param {Object} data
    * @param {Object} options
    */
-  add(data, options) {
-    return this.query.add(data, options);
+  add(data, options, replace) {
+    return this.query.add(data, options, replace);
   }
   /**
    * add data list
    * @param {Array} dataList
    * @param {options} options
    */
-  addMany(dataList, options) {
-    return this.query.addMany(dataList, options);
+  addMany(dataList, options, replace) {
+    return this.query.addMany(dataList, options, replace);
   }
   /**
    * update
