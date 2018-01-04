@@ -176,6 +176,14 @@ class ThinkMysql {
       sqlOptions.debounce = true;
     }
     const startTime = Date.now();
+    if (sqlOptions.debounce) {
+      const key = JSON.stringify(sqlOptions);
+      return debounceInstance.debounce(key, () => {
+        return this.getConnection(connection).then(connection => {
+          return this[QUERY](sqlOptions, connection, startTime);
+        })
+      });
+    }
     return this.getConnection(connection).then(connection => {
       // set transaction status to connection
       if (sqlOptions.transaction) {
@@ -189,15 +197,7 @@ class ThinkMysql {
         }
         connection.transaction = sqlOptions.transaction;
       }
-
-      if (sqlOptions.debounce) {
-        const key = JSON.stringify(sqlOptions);
-        return debounceInstance.debounce(key, () => {
-          return this[QUERY](sqlOptions, connection, startTime);
-        });
-      } else {
-        return this[QUERY](sqlOptions, connection, startTime);
-      }
+      return this[QUERY](sqlOptions, connection, startTime);
     });
   }
 
