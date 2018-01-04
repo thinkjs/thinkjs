@@ -20,6 +20,9 @@ $ npm install -g think-cli
 * [model](#model) - add model from a template
 * [middleware](#middleware) - add middleware from a template
 * [adapter](#adapter) - add adapter from a template
+* [migrate](#migrate) - migrate the project to think-cli 2.0
+* [sync](#sync) - Synchronize the latest version of the project template to the local cache directory
+* [clean](#clean) - Clear the project template cache
 
 ## new
 
@@ -200,4 +203,37 @@ $ thinkjs module user
 
 The above command generates a module with the name `user`
 
-As with controller, `module-name` is optional,defaults to the `thinkjs.defaultModule` in in the package.json file of project root directory
+As with controller, `module-name` is optional,defaults to the `thinkjs.defaultModule` in in the package.json file of project root directory.
+
+
+## migrate
+
+**Usage:**
+
+```
+$ thinkjs module [module-name]
+```
+
+If your project was created with think-cli 1.0 and you want to use the capabilities of think-cli 2.0, you need to use `migrate` command to migrate your project to think-cli 2.0.
+
+## sync
+
+**Usage:**
+
+```
+$ thinkjs sync
+```
+
+The command will synchronize the latest version of the project template to the local cache directory.
+
+## clean
+
+**Usage:**
+
+```
+$ thinkjs clean
+```
+
+The command will delete the project template cache.
+
+After the template cache is deleted, your next create file command will pull the latest template
