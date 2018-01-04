@@ -181,7 +181,7 @@ class ThinkMysql {
       return debounceInstance.debounce(key, () => {
         return this.getConnection(connection).then(connection => {
           return this[QUERY](sqlOptions, connection, startTime);
-        })
+        });
       });
     }
     return this.getConnection(connection).then(connection => {
