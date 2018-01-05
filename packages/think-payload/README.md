@@ -73,7 +73,7 @@ this.ctx.body = this.ctx.request.body
     }
   }]
   ```
-- ** multiples **  If this option is enabled, when you call form.parse, the files argument will contain arrays of files for inputs which submit multiple files using the HTML5 multiple attribute.
+- **multiples**  If this option is enabled, when you call form.parse, the files argument will contain arrays of files for inputs which submit multiple files using the HTML5 multiple attribute.
 
 ### Errors
 This module creates errors depending on the error condition during reading. The error may be an error from the underlying Node.js implementation, but is otherwise an error created by this module, which has the following attributes:
