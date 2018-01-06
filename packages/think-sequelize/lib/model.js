@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-12-20 10:39:55
+* @Last Modified time: 2018-01-06 15:44:37
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -21,6 +21,7 @@ class Model {
     // connect
     const socket = Socket.getInstance(this.config);
     const sequelizeConn = socket.createConnection();
+    this.conn[modelName] = sequelizeConn;
 
     // schema
     let schema = this.schema || {};
@@ -66,6 +67,13 @@ class Model {
     let schemaOptions = this.schemaOptions;
     if(schemaOptions.options.freezeTableName && schemaOptions.options.tableName) return schemaOptions.options.tableName;
     return this.tablePrefix + this.modelName;
+  }
+
+  /**
+   * get model conntection
+   */
+  conn(modelName = this.modelName) {
+    return this.conn[modelName] || {};
   }
 
   /**
