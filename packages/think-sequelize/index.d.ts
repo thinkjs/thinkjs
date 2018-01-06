@@ -59,14 +59,13 @@ declare namespace ThinkSequelize {
   interface ModelExtend {
     sequel(name: string, config?: any, module?: string): ThinkSequelize.SequelizeModel;
   }
-
 }
 
 declare module 'thinkjs' {
-  interface Think extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend {}
-  interface Controller extends ThinkSequelize.ModelExtend {}
-  interface Context extends ThinkSequelize.ModelExtend {}
-  interface Service extends ThinkSequelize.ModelExtend {}
+  interface Think extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
+  interface Controller extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
+  interface Context extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
+  interface Service extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
 }
 
 export = ThinkSequelize;
