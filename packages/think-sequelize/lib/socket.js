@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-24 10:12:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-25 17:08:27
+* @Last Modified time: 2018-01-06 14:49:00
 */
 const Sequelize = require('sequelize');
 const getInstance = require('think-instance');
@@ -14,6 +14,7 @@ const defaultOptions = {
   host: '127.0.0.1',
   port: 3306,
   dialect: 'mysql',
+  operatorsAliases: Sequelize.Op,
   logging: function(sql) {
     /*eslint-disable */
     console.log.bind(console)(sql);
@@ -54,6 +55,7 @@ class Socket {
     if (config.logConnect && options.logging) {
       options.logging(connectionString);
     }
+
     const sequelizeConn = new Sequelize(connectionString, options);
     this[SEQUELIZE_CONN] = sequelizeConn;
     return sequelizeConn;
