@@ -2,15 +2,16 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-01-08 09:38:14
+* @Last Modified time: 2018-01-08 14:16:02
 */
 const path = require('path');
 const sequelize = require('sequelize');
 const Socket = require('./socket.js');
 const debug = require('debug')('think-sequelize');
 const {extendClassMethods} = require('./util.js');
-const models = {};
 const MODELS = Symbol('think-sequelize-models');
+const models = {};
+const conns = {};
 
 class Model {
   constructor(modelName, config, name) {
@@ -21,7 +22,7 @@ class Model {
     // connect
     const socket = Socket.getInstance(this.config);
     const sequelizeConn = socket.createConnection();
-    this.conn[modelName] = sequelizeConn;
+    conns[modelName] = sequelizeConn;
 
     // schema
     let schema = this.schema || {};
@@ -73,7 +74,7 @@ class Model {
    * get model conntection
    */
   getConnection(modelName = this.modelName) {
-    return this.conn[modelName] || {};
+    return conns[modelName] || {};
   }
 
   /**
