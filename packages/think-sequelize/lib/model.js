@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-08-23 16:05:05
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-01-06 15:44:37
+* @Last Modified time: 2018-01-08 09:38:14
 */
 const path = require('path');
 const sequelize = require('sequelize');
@@ -72,7 +72,7 @@ class Model {
   /**
    * get model conntection
    */
-  conn(modelName = this.modelName) {
+  getConnection(modelName = this.modelName) {
     return this.conn[modelName] || {};
   }
 
