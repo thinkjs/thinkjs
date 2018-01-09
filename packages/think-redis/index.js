@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-22 14:19:15
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-07-14 18:40:02
+* @Last Modified time: 2018-01-09 13:04:24
 */
 const helper = require('think-helper');
 const assert = require('assert');
@@ -33,6 +33,7 @@ class thinkRedis {
    * @return {Object}        [description]
    */
   [_getConnection](config) {
+    delete config.cookie;
     const md5 = helper.md5(JSON.stringify(config));
     if (!cacheConn[md5] || !cacheConn[md5].connector.connecting) {
       cacheConn[md5] = new IOredis(config);
