@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-12-07 18:19:05
+* @Last Modified time: 2018-01-15 09:50:27
 */
 'use strict';
 const helper = require('think-helper');
@@ -16,7 +16,9 @@ const METHOD_MAP = {
   DELETE: 'post',
   PATCH: 'post',
   LINK: 'post',
-  UNLINK: 'post'
+  UNLINK: 'post',
+  WEBSOCKET: 'param',
+  CLI: 'param'
 };
 const Rules = {};
 
