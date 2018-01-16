@@ -1,0 +1,15 @@
+{
+  "name": "think-ratelimiter",
+  "version": "0.1.0",
+  "description": "ThinkJS ratelimit middleware",
+  "main": "index.js",
+  "repository": "git@github.com:thinkjs/think-ratelimiter.git",
+  "author": "lidongjies@gmail.com",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "debug": "^3.1.0",
+    "ms": "^2.1.1",
+    "ratelimiter": "^3.0.3"
+  }
+}
