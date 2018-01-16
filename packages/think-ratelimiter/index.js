@@ -10,7 +10,7 @@ function ratelimit(opts = {}) {
     total = 'X-RateLimit-Limit'
   } = opts.headers || {};
 
-  const actionKeys = Object.keys(opts.actions);
+  const actionKeys = Object.keys(opts.resources);
 
   return async (ctx, next) => {
     if (actionKeys.length === 0) {
@@ -23,7 +23,7 @@ function ratelimit(opts = {}) {
       return await next();
     }
 
-    const opt = opts.actions[path];
+    const opt = opts.resources[path];
     const id = opt.id ? opt.id(ctx) : ctx.ip;
 
     if (id === false) return await next();
@@ -46,7 +46,7 @@ function ratelimit(opts = {}) {
 
     ctx.set(headers);
 
-    debug('remaining %s/%s %s', remaining, limit.total, id);
+    debug('remaining %s/%s %s', calls, limit.total, id);
     if (limit.remaining) return await next();
 
     const delta = (limit.reset * 1000) - Date.now() | 0;

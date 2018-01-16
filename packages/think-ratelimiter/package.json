@@ -1,6 +1,6 @@
 {
   "name": "think-ratelimiter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "ThinkJS ratelimit middleware",
   "main": "index.js",
   "repository": "git@github.com:thinkjs/think-ratelimiter.git",

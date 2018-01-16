@@ -1,9 +1,14 @@
 # think-ratelimiter
 ThinkJS ratelimit middlewate
 
+## Why use this middleware ?
+
+To protect your applications from Brute Force Request.
+
+
 ## Install
 
-`yarn add think-ratelimiter` or `npm install think-ratelimiter`
+`npm install think-ratelimiter`
 
 ## How to use
 ```js
@@ -12,18 +17,21 @@ ThinkJS ratelimit middlewate
 const redis = require('redis');
 const { port, host, password } = think.config('redis');
 const db = redis.createClient(port, host, { password });
+const ratelimiter = require('think-ratelimiter');
 
-{
+module.exports = {
+  // after router middleware
+  {
     handle: ratelimit,
     options: {
       db,
       errorMessage: 'Sometimes You Just Have To Slow Down',
       headers: {
-        remaining: 'Rate-Limit-Remaining',
-        reset: 'Rate-Limit-Reset',
-        total: 'Rate-Limit-Total'
+        remaining: 'X-RateLimit-Remaining',
+        reset: 'X-RateLimit-Reset',
+        total: 'X-RateLimit-Limit'
       },
-      actions: {
+      resources: {
         'test/test': {
           id: ctx => ctx.ip,
           max: 5,
@@ -32,4 +40,11 @@ const db = redis.createClient(port, host, { password });
       }
     }
   },
+}
+
 ```
+
+## Attention
+
+* `X-Ratelimit-Reset` is Unix timestamp (Epoch seconds).
+* When users exceed the access limit HTTP response status will be `429 Too Many Request`.
