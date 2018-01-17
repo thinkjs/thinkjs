@@ -10,9 +10,9 @@ function ratelimit(opts = {}) {
     total = 'X-RateLimit-Limit'
   } = opts.headers || {};
 
-  const actionKeys = Object.keys(opts.resources);
+  const actionKeys = Object.keys(opts.resources || {});
 
-  return async (ctx, next) => {
+  return async(ctx, next) => {
     if (actionKeys.length === 0) {
       return await next();
     }
@@ -29,7 +29,9 @@ function ratelimit(opts = {}) {
     if (id === false) return await next();
 
     // initialize limiter
-    const limiter = new Limiter(Object.assign({}, opt, { id, db: opts.db }));
+    const limiter = new Limiter(
+      Object.assign({}, opt, { id: `${id}:${path}`, db: opts.db })
+    );
 
     // check limit
     const limit = await thenify(limiter.get.bind(limiter));
@@ -49,15 +51,17 @@ function ratelimit(opts = {}) {
     debug('remaining %s/%s %s', calls, limit.total, id);
     if (limit.remaining) return await next();
 
-    const delta = (limit.reset * 1000) - Date.now() | 0;
-    const after = limit.reset - (Date.now() / 1000) | 0;
+    const delta = (limit.reset * 1000 - Date.now()) | 0;
+    const after = (limit.reset - Date.now() / 1000) | 0;
     ctx.set('Retry-After', after);
 
     ctx.status = 429;
     ctx.body = opts.errorMessage || `Rate limit exceeded, retry in ${ms(delta, { long: true })}.`;
 
     if (opts.throw) {
-      ctx.throw(ctx.status, ctx.body, { headers });
+      ctx.throw(ctx.status, ctx.body, {
+        headers
+      });
     }
   };
 }
