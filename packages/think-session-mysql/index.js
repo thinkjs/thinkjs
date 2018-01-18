@@ -95,10 +95,9 @@ class MysqlSession {
   }
 
   'delete'() {
-    return this[initSessionData]().then(() => {
-      this.status = -1;
-      this.data = {};
-    });
+    this.status = -1;
+    this.data = {};
+    return Promise.resolve();
   }
 
   flush() {
