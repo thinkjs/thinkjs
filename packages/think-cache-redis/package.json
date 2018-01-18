@@ -44,7 +44,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "think-helper": "~1.0.0",
-    "think-redis": "~1.0.5"
+    "think-helper": "^1.0.22",
+    "think-redis": "^1.1.0"
   }
 }
