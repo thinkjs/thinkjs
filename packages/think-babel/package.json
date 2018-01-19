@@ -46,6 +46,6 @@
   },
   "dependencies": {
     "babel-core": "~6.23.1",
-    "think-helper": "~1.0.0"
+    "think-helper": "^1.0.0"
   }
 }
