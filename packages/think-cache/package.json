@@ -20,8 +20,8 @@
   "main": "index.js",
   "type": "index.d.ts",
   "dependencies": {
-    "think-debounce": "~1.0.0",
-    "think-helper": "~1.0.0"
+    "think-debounce": "^1.0.0",
+    "think-helper": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^0.18.0",
