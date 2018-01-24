@@ -96,11 +96,12 @@ module.exports = class Parser {
       });
       return result;
     }
+
     for (const key in order) {
-      if (order[key] === false || order[key] === 0) {
+      if ([false, 0, -1].indexOf(order[key]) > -1) {
         order[key] = -1;
-      } else if (order[key] !== -1) {
-        order[key] = 1;
+      } else {
+        order[key] = (helper.isString(order[key]) && order[key].toLowerCase() === 'desc') ? -1 : 1;
       }
     }
     return order;
