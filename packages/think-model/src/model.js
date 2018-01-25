@@ -618,7 +618,7 @@ module.exports = class Model {
     const pagesize = options.limit[1];
     // get page options
     const data = {pageSize: pagesize};
-    const totalPage = Math.ceil(count / data.pagesize);
+    const totalPage = Math.ceil(count / data.pageSize);
 
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
 
