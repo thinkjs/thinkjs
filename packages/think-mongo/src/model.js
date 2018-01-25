@@ -420,7 +420,7 @@ class Mongo {
     // get page options
     const data = {pageSize: pagesize};
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
-    const totalPage = Math.ceil(count / data.pagesize);
+    const totalPage = Math.ceil(count / data.pageSize);
     if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
       if (pageFlag) {
         data.currentPage = 1;
