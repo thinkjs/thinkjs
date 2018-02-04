@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-01-15 09:50:27
+* @Last Modified time: 2018-02-04 17:46:11
 */
 'use strict';
 const helper = require('think-helper');
@@ -636,7 +636,7 @@ Rules.length = (value, { validValue }) => {
   if (helper.isObject(validValue)) {
     return validator.isLength(value, {min: validValue.min | 0, max: validValue.max});
   } else {
-    assert(value > 0, 'length\'s value should be integer larger than zero');
+    assert(validValue > 0, 'length\'s value should be integer larger than zero');
     return validator.isLength(value, {min: validValue, max: validValue});
   }
 };
