@@ -5,10 +5,10 @@ module.exports = options => {
   const _method = options.methodConstName || '_method';
 
   return (ctx, next) => {
-    const {app, modules, module, controller: controllerName} = ctx;
+    const {app, module, controller: controllerName} = ctx;
 
     let controllers = app.controllers;
-    if (modules.length) {
+    if (app.modules.length) {
       controllers = controllers[module];
     }
     const controller = controllers[controllerName];
