@@ -5,7 +5,14 @@ module.exports = options => {
   const _method = options.methodConstName || '_method';
 
   return (ctx, next) => {
-    const controller = ctx.app.controllers[ctx.controller];
+    const {app, modules, module, controller: controllerName} = ctx;
+
+    let controllers = app.controllers;
+    if (modules.length) {
+      controllers = controllers[module];
+    }
+    const controller = controllers[controllerName];
+
     if (!controller || !controller[_REST]) {
       debug(`_REST: ${ctx.controller} is not rest controller`);
       return next();
