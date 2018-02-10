@@ -7,7 +7,6 @@ const verify = helper.promisify(jwt.verify, jwt);
 
 class JWTSession {
   /**
-   * JWTSession class
    * @constructor
    * @param {object} options - config
    * @param {object} ctx     - koa context
@@ -39,12 +38,18 @@ class JWTSession {
         case 'query':
           token = this.ctx.query[tokenName];
           break;
-        default :
+        default:
           token = this.ctx.cookie(tokenName, undefined, this.options);
           break;
       }
       if (token) {
-        this.data = await verify(token, this.options.secret, this.verifyOptions);
+        try {
+          this.data = await verify(
+            token,
+            this.options.secret,
+            this.verifyOptions
+          );
+        } catch (e) {}
         this.fresh = false;
       }
     }

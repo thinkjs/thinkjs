@@ -1,9 +1,15 @@
-/* eslint-disable no-console */
 import test from 'ava';
 import mock from 'mock-require';
 import jwt from 'jsonwebtoken';
 
-const cookieName = ['red_skull', 'norman_osborn', 'loki', 'magneto', 'dr_doom', 'thor'];
+const cookieName = [
+  'red_skull',
+  'norman_osborn',
+  'loki',
+  'magneto',
+  'dr_doom',
+  'thor'
+];
 const cookieStore = {};
 const postData = {};
 
@@ -19,7 +25,7 @@ function mockContext() {
       if (name) return postData[name];
       return postData;
     },
-    cookie: function(name, data, options) {
+    cookie: function(name, data) {
       if (data) {
         cookieStore[name] = data;
       } else {
@@ -29,7 +35,7 @@ function mockContext() {
   };
 }
 
-function sleep(dur = 100) {
+async function sleep(dur = 100) {
   return new Promise((resolve, reject) => {
     setTimeout(resolve, dur);
   });
@@ -61,7 +67,7 @@ test.serial('2.set and get session data without maxAge', t => {
       secret: 'secret'
     };
 
-    ctx.cookie(options.tokenName, jwt.sign({abc: '123'}, 'secret'));
+    ctx.cookie(options.tokenName, jwt.sign({ abc: '123' }, 'secret'));
     const jwtSession = new JWTSession(options, ctx);
     await jwtSession.set('abc', '123');
     t.is(jwtSession.data.abc, '123');
@@ -103,7 +109,7 @@ test.serial('3.set and get session data with maxAge', async t => {
       }
     };
 
-    ctx.cookie(options.tokenName, jwt.sign({abc: '123'}, 'secret'));
+    ctx.cookie(options.tokenName, jwt.sign({ abc: '123' }, 'secret'));
     const jwtSession = new JWTSession(options, ctx);
 
     const token = await jwtSession.set('abc', '123');
@@ -114,9 +120,10 @@ test.serial('3.set and get session data with maxAge', async t => {
 
     ctx.cookie(options.tokenName, token);
     await sleep(1100);
+
     const jwtSession1 = new JWTSession(options, ctx);
-    const error = await t.throws(jwtSession1.get('abc'));
-    t.is(error.message, 'jwt expired');
+    const data = await jwtSession1.get();
+    t.deepEqual(data, {});
     resolve();
   });
 });
@@ -133,14 +140,15 @@ test.serial('4.set and get session data when JsonWebTokenError', t => {
     ctx.cookie('jwt', 'gg');
     const jwtSession = new JWTSession(options, ctx);
 
-    const error = await t.throws(jwtSession.set('abc', '123'));
-    t.is(error.message, 'jwt malformed');
+    const data = await jwtSession.get();
+    t.deepEqual(data, {});
 
     const jwtSession1 = new JWTSession(options, ctx);
     jwtSession1.data = undefined;
 
-    const error1 = await t.throws(jwtSession1.set());
-    t.is(error1.message, 'jwt malformed');
+    const token = jwt.sign({}, options.secret);
+    const data1 = await jwtSession1.set();
+    t.deepEqual(data1, token);
 
     resolve();
   });
