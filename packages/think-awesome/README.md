@@ -72,6 +72,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-mongoose](https://github.com/thinkjs/think-mongoose) Wrap mongoose.
 * [think-sequelize](https://github.com/thinkjs/think-sequelize) Wrap sequelize
 * [think-i18n](https://github.com/thinkjs/think-i18n) A comprehensive I18N solution wraps Jed, Number(opt in) and Currency(opt in). Support flexible customize for text, number and currency per locale in a standard way.
+* [think-eolinker-apishop](https://github.com/sls-open/think-eolinker-apishop) 对Eolinker官方apishop提供的第三方API做的封装。
 
 ## Others
 
