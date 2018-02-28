@@ -6,12 +6,12 @@ const { runHttpQuery } = require('apollo-server-core');
  * @param  {[type]} options [graphql options]
  * @return {[type]}         [description]
  */
-function thinkGraphql(options) {
-  assert(arguments.length === 1, `Graphql expects exactly one argument, got ${arguments.length}`);
-  return runHttpQuery([this.ctx], {
-    method: this.ctx.method,
+function thinkGraphql(options, ctx = this.ctx) {
+  assert(arguments.length === 2, `Graphql expects exactly two argument, got ${arguments.length}`);
+  return runHttpQuery([ctx], {
+    method: ctx.method,
     options: options,
-    query: this.ctx.method === 'GET' ? this.ctx.param() : this.ctx.post()
+    query: ctx.method === 'GET' ? ctx.param() : ctx.post()
   }).then(res => {
     return res;
   }, err => {
@@ -27,6 +27,9 @@ function thinkGraphql(options) {
  * extends to controller
  */
 module.exports = {
+  think: {
+    thinkGraphql: thinkGraphql
+  },
   controller: {
     thinkGraphql: thinkGraphql
   }
