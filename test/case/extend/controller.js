@@ -273,6 +273,30 @@ test.serial('service method with modules', async t => {
   t.is(ins instanceof think.app.services.common.test, true);
 });
 
+test.serial('service method with autocomplete modules', async t => {
+  t.plan(2);
+  think.app = {
+    services: {
+      home: {
+        home_test: class HomeTestService {}
+      },
+      common: {
+        test: class TestService {}
+      }
+    },
+    modules: ['home', 'common']
+  };
+  const newCtx = Object.assign({}, ctx);
+  newCtx.module = 'home';
+
+  const newController = new think.Controller(newCtx);
+  const insA = newController.service('home_test', 'home');
+  t.true(insA instanceof think.app.services.home.home_test);
+
+  const insB = newController.service('home_test');
+  t.true(insB instanceof think.app.services.home.home_test);
+});
+
 test.serial('service method', async t => {
   think.app = {
     services: {
