@@ -189,11 +189,12 @@ class SQLiteSocket {
     if (helper.isString(sqlOptions)) {
       sqlOptions = {sql: sqlOptions};
     }
-    if (this.config.debounce !== undefined) {
-      sqlOptions.debounce = this.config.debounce;
-    }
     if (sqlOptions.debounce === undefined) {
-      sqlOptions.debounce = true;
+      if (this.config.debounce !== undefined) {
+        sqlOptions.debounce = this.config.debounce;
+      } else {
+        sqlOptions.debounce = true;
+      }
     }
     const startTime = Date.now();
     return this.getConnection(connection).then(connection => {
