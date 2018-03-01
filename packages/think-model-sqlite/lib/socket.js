@@ -189,6 +189,9 @@ class SQLiteSocket {
     if (helper.isString(sqlOptions)) {
       sqlOptions = {sql: sqlOptions};
     }
+    if (this.config.debounce !== undefined) {
+      sqlOptions.debounce = this.config.debounce;
+    }
     if (sqlOptions.debounce === undefined) {
       sqlOptions.debounce = true;
     }
