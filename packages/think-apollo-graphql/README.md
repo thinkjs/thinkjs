@@ -56,3 +56,91 @@ Note: `think.thinkGraphql(graphqlOptions, ctx)`, think.thinkGraphql expects exac
 ```
 
 More doc at [apollo-server](https://github.com/apollographql/apollo-server).
+
+
+## Demo
+
+### Server
+```js
+// src/controller/graphql.js
+const { makeExecutableSchema } = require('graphql-tools');
+
+module.exports = class extends think.Controller {
+  constructor(...props) {
+    super(...props);
+  }
+
+  async indexAction() {
+    // Some fake data
+    const books = [
+      {
+        id: 1,
+        title: `Harry Potter and the Sorcerer's stone`,
+        author: 'J.K. Rowling',
+      },
+      {
+        id: 2,
+        title: 'Jurassic Park',
+        author: 'Michael Crichton',
+      },
+    ];
+
+    // The GraphQL schema in string form
+    const typeDefs = `
+      type Query {
+        books(id: Int): Book
+      }
+      type Book {
+        id: Int,
+        title: String,
+        author: String
+      }
+    `;
+
+    // The resolvers
+    const resolvers = {
+      Query: {
+        books: (_, arg) => {
+          return books.filter((ele) => {
+            return ele.id === +arg.id;
+          })[0];
+        }
+      }
+    };
+
+    const schema = makeExecutableSchema({
+      typeDefs,
+      resolvers,
+    });
+
+    const graphqlResult = await this.thinkGraphql({
+      schema
+    });
+
+    return this.json(graphqlResult);
+  }
+}
+```
+
+### Client
+```
+POST /graphql2 HTTP/1.1
+Host: 127.0.0.1:8360
+Content-Type: application/json
+
+{
+  "query": "query getBookById($id: Int){books(id: $id) {title}}",
+  "variables": {"id": 1}
+}
+```
+
+### Result
+```
+{
+  "data": {
+    "books": {
+      "title": "Harry Potter and the Sorcerer's stone"
+    }
+  }
+}
+```
