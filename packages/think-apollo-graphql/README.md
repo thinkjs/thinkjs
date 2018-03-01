@@ -1,6 +1,4 @@
 # think-apollo-graphql
-
-# think-apollo-graphql
 [![npm](https://img.shields.io/npm/v/think-apollo-graphql.svg?style=flat-square)](https://www.npmjs.com/package/think-apollo-graphql)
 
 ## Install
