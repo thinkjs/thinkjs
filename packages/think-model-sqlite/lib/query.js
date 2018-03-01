@@ -7,7 +7,7 @@ const SQLiteSocket = require('./socket.js');
 module.exports = class SQLiteQuery extends Query {
   /**
    * get socket
-   * @param {String|Object} sql 
+   * @param {String|Object} sql
    */
   socket(sql) {
     return super.socket(sql, SQLiteSocket);
@@ -25,8 +25,8 @@ module.exports = class SQLiteQuery extends Query {
   }
   /**
    * add data list
-   * @param {Array} data 
-   * @param {Object} options 
+   * @param {Array} data
+   * @param {Object} options
    */
   addMany(data, options) {
     return super.addMany(data, options).then(ret => {
