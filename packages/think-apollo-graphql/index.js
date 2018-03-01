@@ -7,7 +7,7 @@ const { runHttpQuery } = require('apollo-server-core');
  * @return {[type]}         [description]
  */
 function thinkGraphql(options, ctx = this.ctx) {
-  assert(arguments.length === 2, `Graphql expects exactly two argument, got ${arguments.length}`);
+  assert(options, `Graphql expects exactly graphql options`);
   return runHttpQuery([ctx], {
     method: ctx.method,
     options: options,

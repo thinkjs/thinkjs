@@ -1,6 +1,6 @@
 {
   "name": "think-apollo-graphql",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Graphql extend for ThinkJS",
   "main": "index.js",
   "scripts": {
