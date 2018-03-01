@@ -1,26 +1,26 @@
-# think-graphql
+# think-apollo-graphql
 
-# think-graphql
-[![npm](https://img.shields.io/npm/v/think-graphql.svg?style=flat-square)](https://www.npmjs.com/package/think-graphql)
+# think-apollo-graphql
+[![npm](https://img.shields.io/npm/v/think-apollo-graphql.svg?style=flat-square)](https://www.npmjs.com/package/think-apollo-graphql)
 
 ## Install
 
 ```
-npm install think-graphql
+npm install think-apollo-graphql
 ```
 ## How to use
 
 Set the extend in `src/config/extend.js`
 
 ```js
-const graphql = require('think-graphql');
+const graphql = require('think-apollo-graphql');
 
 module.exports = [
   graphql
 ];
 ```
 
-And then the `controller` will have the method `thinkGraphql`. For
+And then the `think`, `controller` will have the method `thinkGraphql`. For
 example in `controller` you can use like this:
 
 
@@ -36,6 +36,9 @@ module.exports = class extends think.Controller {
   }
 }
 ```
+
+Note: `think.thinkGraphql(graphqlOptions, ctx)`, think.thinkGraphql expects exactly ctx.
+
 
 #### graphqlOptions like:
 

@@ -1,6 +1,6 @@
 {
-  "name": "think-graphql",
-  "version": "1.0.0-alpha.2",
+  "name": "think-apollo-graphql",
+  "version": "1.0.0-alpha.1",
   "description": "Graphql extend for ThinkJS",
   "main": "index.js",
   "scripts": {
@@ -15,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-graphql.git"
+    "url": "git+https://github.com/thinkjs/think-apollo-graphql.git"
   },
   "keywords": [
-    "think-graphql"
+    "think-apollo-graphql"
   ],
   "author": {
     "name": "lushijie",
@@ -32,9 +32,9 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-graphql/issues"
+    "url": "https://github.com/thinkjs/think-apollo-graphql/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-graphql#readme",
+  "homepage": "https://github.com/thinkjs/think-apollo-graphql#readme",
   "devDependencies": {
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",
