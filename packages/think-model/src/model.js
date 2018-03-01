@@ -426,17 +426,13 @@ module.exports = class Model {
    * @param {Object} data
    * @param {Object} options
    */
-  async add(data, options) {
+  async add(data, options, replace) {
     options = await this.parseOptions(options);
     let parsedData = await this.db().parseData(data, false, options.table);
     parsedData = await this.beforeAdd(parsedData, options);
-    if (helper.isEmpty(parsedData)) {
-      return Promise.reject(new Error('add data is empty'));
-    }
-    const lastInsertId = await this.db().add(parsedData, options);
-    const copyData = Object.assign({}, data, parsedData, {
-      [this.pk]: lastInsertId
-    });
+    if (helper.isEmpty(parsedData)) return Promise.reject(new Error('add data is empty'));
+    const lastInsertId = await this.db().add(parsedData, options, replace);
+    const copyData = Object.assign({}, data, parsedData, {[this.pk]: lastInsertId});
     await this.afterAdd(copyData, options);
     return lastInsertId;
   }
@@ -475,7 +471,7 @@ module.exports = class Model {
    * @param {} options []
    * @param {} replace []
    */
-  async addMany(data, options) {
+  async addMany(data, options, replace) {
     if (!helper.isArray(data) || !helper.isObject(data[0])) {
       return Promise.reject(new Error('data must be an array'));
     }
@@ -485,7 +481,7 @@ module.exports = class Model {
       return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
-    const insertIds = await this.db().addMany(data, options);
+    const insertIds = await this.db().addMany(data, options, replace);
     promises = data.map((item, i) => {
       item[this.pk] = insertIds[i];
       return this.afterAdd(item, options);

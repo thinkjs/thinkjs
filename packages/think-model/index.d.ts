@@ -109,7 +109,7 @@ declare namespace ThinkModel {
     /**
      * add data
      */
-    add(data: object, options?: object): Promise<string>;
+    add(data: object, options?: object, replace?: boolean): Promise<string>;
 
     /**
      * add data when not exist
@@ -126,7 +126,7 @@ declare namespace ThinkModel {
     /**
      * add multi data
      */
-    addMany(data: Array<object>, options?: object): Promise<Array<string>>;
+    addMany(data: Array<object>, options?: object, replace?: boolean): Promise<Array<string>>;
 
     /**
      * delete data
