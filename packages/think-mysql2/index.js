@@ -29,6 +29,8 @@ const TRANSACTION = {
   end: 2
 };
 
+const TRANSACTIONS = Symbol('transactions');
+
 class ThinkMysql {
   /**
    * @param  {Object} config [connection options]
@@ -75,6 +77,12 @@ class ThinkMysql {
    */
   startTrans(connection) {
     return this.getConnection(connection).then(connection => {
+      if (connection[TRANSACTIONS] === undefined) {
+        connection[TRANSACTIONS] = 0;
+      }
+      connection[TRANSACTIONS]++;
+      if (connection[TRANSACTIONS] !== 1) return Promise.resolve();
+
       return this.query({
         sql: 'START TRANSACTION',
         transaction: TRANSACTION.start,
@@ -87,6 +95,10 @@ class ThinkMysql {
    * @param {Object} connection 
    */
   commit(connection) {
+    if (connection && connection[TRANSACTIONS]) {
+      connection[TRANSACTIONS]--;
+      if (connection[TRANSACTIONS]-- !== 0) return Promise.resolve();
+    }
     return this.query({
       sql: 'COMMIT',
       transaction: TRANSACTION.end,
@@ -98,6 +110,10 @@ class ThinkMysql {
    * @param {Object} connection 
    */
   rollback(connection) {
+    if (connection && connection[TRANSACTIONS]) {
+      connection[TRANSACTIONS]--;
+      if (connection[TRANSACTIONS]-- !== 0) return Promise.resolve();
+    }
     return this.query({
       sql: 'ROLLBACK',
       transaction: TRANSACTION.end,
