@@ -23,7 +23,7 @@ module.exports = class BaseRelation {
       const keys = [];
       this.data.forEach(item => {
         let itemValue = item[key];
-        if (!itemValue) return;
+        if (itemValue !== 0 && !itemValue) return;
         if (helper.isNumberString(itemValue)) itemValue = parseInt(itemValue, 10);
         if (keys.indexOf(itemValue) === -1) keys.push(itemValue);
       });
