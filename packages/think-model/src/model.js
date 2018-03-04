@@ -20,7 +20,10 @@ module.exports = class Model {
     if (helper.isObject(modelName)) {
       [modelName, config] = ['', modelName];
     }
-    assert(helper.isFunction(config.handle), 'config.handle must be a function');
+    assert(
+      helper.isFunction(config.handle),
+      'config.handle must be a function'
+    );
     this.config = config;
     this.modelName = modelName;
     this.options = {};
@@ -33,7 +36,7 @@ module.exports = class Model {
   db(db) {
     const Handle = this.config.handle;
     if (db) {
-      this[DB] = new Handle(this, {query: db.query});
+      this[DB] = new Handle(this, { query: db.query });
       return this;
     }
     if (this[DB]) return this[DB];
@@ -106,11 +109,15 @@ module.exports = class Model {
       [key, config] = ['', key];
     }
     if (helper.isNumber(config)) {
-      config = {timeout: config};
+      config = { timeout: config };
     }
     const cacheConfig = this._cacheConfig;
     if (cacheConfig) {
-      config = helper.parseAdapterConfig(cacheConfig, this.config.cache, config);
+      config = helper.parseAdapterConfig(
+        cacheConfig,
+        this.config.cache,
+        config
+      );
     } else {
       config = helper.parseAdapterConfig(this.config.cache, config);
     }
@@ -165,11 +172,11 @@ module.exports = class Model {
   where(where) {
     if (!where) return this;
     if (helper.isString(where)) {
-      where = {_string: where};
+      where = { _string: where };
     }
     const options = this.options;
     if (options.where && helper.isString(options.where)) {
-      options.where = {_string: options.where};
+      options.where = { _string: options.where };
     }
     options.where = helper.extend({}, options.where, where);
     return this;
@@ -399,9 +406,9 @@ module.exports = class Model {
     if (helper.isNumber(options) || helper.isString(options)) {
       options += '';
       const where = {
-        [this.pk]: options.indexOf(',') > -1 ? {IN: options} : options
+        [this.pk]: options.indexOf(',') > -1 ? { IN: options } : options
       };
-      options = {where};
+      options = { where };
     }
     options = helper.extend({}, this.options, options);
     this.options = {};
@@ -419,12 +426,12 @@ module.exports = class Model {
    * @param {Object} data
    * @param {Object} options
    */
-  async add(data, options) {
+  async add(data, options, replace) {
     options = await this.parseOptions(options);
     let parsedData = await this.db().parseData(data, false, options.table);
     parsedData = await this.beforeAdd(parsedData, options);
     if (helper.isEmpty(parsedData)) return Promise.reject(new Error('add data is empty'));
-    const lastInsertId = await this.db().add(parsedData, options);
+    const lastInsertId = await this.db().add(parsedData, options, replace);
     const copyData = Object.assign({}, data, parsedData, {[this.pk]: lastInsertId});
     await this.afterAdd(copyData, options);
     return lastInsertId;
@@ -439,10 +446,10 @@ module.exports = class Model {
   async thenAdd(data, where) {
     const findData = await this.where(where).find();
     if (!helper.isEmpty(findData)) {
-      return {[this.pk]: findData[this.pk], type: 'exist'};
+      return { [this.pk]: findData[this.pk], type: 'exist' };
     }
     const insertId = await this.add(data);
-    return {[this.pk]: insertId, type: 'add'};
+    return { [this.pk]: insertId, type: 'add' };
   }
 
   /**
@@ -464,7 +471,7 @@ module.exports = class Model {
    * @param {} options []
    * @param {} replace []
    */
-  async addMany(data, options) {
+  async addMany(data, options, replace) {
     if (!helper.isArray(data) || !helper.isObject(data[0])) {
       return Promise.reject(new Error('data must be an array'));
     }
@@ -474,7 +481,7 @@ module.exports = class Model {
       return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
-    const insertIds = await this.db().addMany(data, options);
+    const insertIds = await this.db().addMany(data, options, replace);
     promises = data.map((item, i) => {
       item[this.pk] = insertIds[i];
       return this.afterAdd(item, options);
@@ -509,7 +516,7 @@ module.exports = class Model {
     // check where condition
     if (helper.isEmpty(options.where)) {
       if (parsedData[this.pk]) {
-        options.where = {[this.pk]: parsedData[this.pk]};
+        options.where = { [this.pk]: parsedData[this.pk] };
         delete parsedData[this.pk];
       } else {
         return Promise.reject(new Error('miss where condition on update'));
@@ -518,7 +525,11 @@ module.exports = class Model {
     parsedData = await this.beforeUpdate(parsedData, options);
     // check data is empty
     if (helper.isEmpty(parsedData)) {
-      return Promise.reject(new Error(`update data is empty, original data is ${JSON.stringify(data)}`));
+      return Promise.reject(
+        new Error(
+          `update data is empty, original data is ${JSON.stringify(data)}`
+        )
+      );
     }
     const rows = await this.db().update(parsedData, options);
     const copyData = Object.assign({}, data, parsedData);
@@ -538,7 +549,9 @@ module.exports = class Model {
     }
     if (!dataList.every(data => data.hasOwnProperty(this.pk))) {
       this.options = {};
-      return Promise.reject(new Error('updateMany every data must contain primary key'));
+      return Promise.reject(
+        new Error('updateMany every data must contain primary key')
+      );
     }
     const promises = dataList.map(data => {
       return this.update(data, options);
@@ -617,10 +630,10 @@ module.exports = class Model {
     options.order = order;
     const pagesize = options.limit[1];
     // get page options
-    const data = {pagesize};
-    const totalPage = Math.ceil(count / data.pagesize);
+    const data = { pageSize: pagesize };
+    const totalPage = Math.ceil(count / data.pageSize);
 
-    data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
+    data.currentPage = parseInt(options.limit[0] / options.limit[1] + 1);
 
     if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
       if (pageFlag) {
@@ -631,7 +644,7 @@ module.exports = class Model {
         options.limit = [(totalPage - 1) * pagesize, pagesize];
       }
     }
-    const result = Object.assign({count: count, totalPages: totalPage}, data);
+    const result = Object.assign({ count: count, totalPages: totalPage }, data);
 
     if (options.cache && options.cache.key) {
       options.cache.key += '_count';
@@ -644,7 +657,7 @@ module.exports = class Model {
    * @return {[type]} [description]
    */
   async getField(field, one) {
-    const options = await this.parseOptions({field});
+    const options = await this.parseOptions({ field });
     if (helper.isNumber(one)) {
       options.limit = one;
     } else if (one === true) {
@@ -799,18 +812,23 @@ module.exports = class Model {
    */
   parseSql(sqlOptions, ...args) {
     if (helper.isString(sqlOptions)) {
-      sqlOptions = {sql: sqlOptions};
+      sqlOptions = { sql: sqlOptions };
     }
-    if (args.lenth) {
+    if (args.length) {
       sqlOptions.sql = util.format(sqlOptions.sql, ...args);
     }
     // replace table name
-    sqlOptions.sql = sqlOptions.sql.replace(/(?:^|\s)__([A-Z]+)__(?:$|\s)/g, (a, b) => {
-      if (b === 'TABLE') {
-        return ' ' + this[QUOTE_FIELD](this.tableName) + ' ';
+    sqlOptions.sql = sqlOptions.sql.replace(
+      /(?:^|\s)__([A-Z]+)__(?:$|\s)/g,
+      (a, b) => {
+        if (b === 'TABLE') {
+          return ' ' + this[QUOTE_FIELD](this.tableName) + ' ';
+        }
+        return (
+          ' ' + this[QUOTE_FIELD](this.tablePrefix + b.toLowerCase()) + ' '
+        );
       }
-      return ' ' + this[QUOTE_FIELD](this.tablePrefix + b.toLowerCase()) + ' ';
-    });
+    );
     return sqlOptions;
   }
   /**
