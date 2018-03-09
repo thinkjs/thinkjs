@@ -10,23 +10,25 @@ module.exports = class SocketIO {
     this.server = server;
     this.config = config;
     this.app = app;
-    this.io = socketio(server);
+    this.io = socketio(server, config);
 
-    // https://socket.io/docs/server-api/#server-adapter-value
-    if (config.adapter) {
-      this.io.adapter(config.adapter);
-    }
+    // // https://socket.io/docs/server-api/#server-adapter-value
+    // if (config.adapter) {
+    //   this.io.adapter(config.adapter);
+    // }
+
     // https://socket.io/docs/server-api/#server-origins-value
     if (config.allowOrigin) {
       this.io.origins(config.allowOrigin);
     }
-    // https://socket.io/docs/server-api/#server-path-value
-    if (config.path) {
-      this.io.path(config.path);
-      if (config.path !== '/socket.io') {
-        this.io.listen(server);
-      }
-    }
+
+    // // https://socket.io/docs/server-api/#server-path-value
+    // if (config.path) {
+    //   this.io.path(config.path);
+    //   if (config.path !== '/socket.io') {
+    //     this.io.listen(server);
+    //   }
+    // }
   }
   /**
    * mock request
