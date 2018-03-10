@@ -339,7 +339,7 @@ module.exports = class Model {
    * @return {}      []
    */
   afterAdd(data) {
-    return data;
+    return this[RELATION].afterAdd(data);
   }
   /**
    * before delete
@@ -353,7 +353,7 @@ module.exports = class Model {
    * @return {}      []
    */
   afterDelete(data) {
-    return data;
+    return this[RELATION].afterDelete(data);
   }
   /**
    * before update
@@ -369,7 +369,7 @@ module.exports = class Model {
    * @return {}         []
    */
   afterUpdate(data) {
-    return data;
+    return this[RELATION].afterUpdate(data);
   }
   /**
    * before find

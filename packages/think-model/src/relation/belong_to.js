@@ -10,4 +10,11 @@ module.exports = class BelongToRelation extends BaseRelation {
     const mapData = await this.options.model.where(where).select();
     return this.parseRelationData(mapData);
   }
+
+  /**
+   * relation on add, update, delete
+   */
+  async setRelationData() {
+
+  }
 };

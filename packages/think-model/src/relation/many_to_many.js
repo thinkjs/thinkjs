@@ -38,4 +38,27 @@ module.exports = class ManyToManyRelation extends BaseRelation {
     }).select();
     return this.parseRelationData(mapData, true);
   }
+
+  /**
+   * relation on add, update, delete
+   */
+  async setRelationData(type) {
+    const relationModelName = this.options.rModel || this.getRelationModelName();
+    const relationModel = this.model.model(relationModelName);
+    relationModel.db(this.model.db());
+
+    const where = {[this.options.fKey]: this.data[this.options.key]};
+    await relationModel.where(where).delete();
+
+    if (type === 'DELETE') {
+      return true;
+    }
+
+    const rfKey = this.options.rfKey || `${this.options.model.modelName}_id`;
+    const data = this.data[this.options.name].map(val => ({
+      [this.options.fKey]: this.data[this.options.key],
+      [rfKey]: val
+    }));
+    await relationModel.addMany(data);
+  }
 };
