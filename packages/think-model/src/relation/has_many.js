@@ -4,7 +4,7 @@ module.exports = class HasManyRelation extends BaseRelation {
   /**
    * relation on select or find
    */
-  async getRelation() {
+  async getRelationData() {
     const where = this.parseRelationWhere();
     if (where === false) return this.data;
     const mapData = await this.options.model.where(where).select();

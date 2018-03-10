@@ -28,7 +28,7 @@ test('many to many get relation no relation where', async t => {
 
   relation.parseRelationWhere = () => false;
   t.deepEqual(
-    await relation.getRelation(),
+    await relation.getRelationData(),
     [{
       id: 3,
       title: 'hello1',
@@ -69,7 +69,7 @@ test('many to many get relation get modelName from rModel', async t => {
       {name: 'lizheming', post_id: 3}
     ];
   };
-  t.deepEqual(await relation.getRelation(), [{
+  t.deepEqual(await relation.getRelationData(), [{
     id: 3,
     title: 'hello1',
     content: 'world1',

@@ -19,7 +19,7 @@ test('belong to get relation no relation where', async t => {
 
   relation.parseRelationWhere = () => false;
   t.deepEqual(
-    await relation.getRelation(),
+    await relation.getRelationData(),
     [{
       id: 3,
       title: 'hello1',
@@ -61,7 +61,7 @@ test('belong to get relation', async t => {
   };
 
   t.deepEqual(
-    await relation.getRelation(),
+    await relation.getRelationData(),
     [
       {
         id: 3,

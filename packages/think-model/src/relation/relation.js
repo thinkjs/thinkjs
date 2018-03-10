@@ -59,17 +59,17 @@ class Relation {
   }
 
   afterFind(data) {
-    return this.getRelation(data);
+    return this.getRelationData(data);
   }
 
   afterSelect(data) {
-    return this.getRelation(data);
+    return this.getRelationData(data);
   }
   /**
    * get relation data
    * @param {Array|Object} data
    */
-  async getRelation(data) {
+  async getRelationData(data) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return data;
     const promises = Object.keys(this.relation).map(key => {
       if (helper.isArray(this.relationName) && this.relationName.indexOf(key) === -1) return;
@@ -140,7 +140,7 @@ class Relation {
         break;
     };
     const instance = new Cls(data, opts, this.model);
-    return instance.getRelation();
+    return instance.getRelationData();
   }
 };
 Relation.HAS_ONE = 1;

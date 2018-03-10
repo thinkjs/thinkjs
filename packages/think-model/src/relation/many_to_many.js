@@ -14,7 +14,7 @@ module.exports = class ManyToManyRelation extends BaseRelation {
   /**
    * relation on select or find
    */
-  async getRelation() {
+  async getRelationData() {
     const where = this.parseRelationWhere();
     if (where === false) return this.data;
     const relationModel = this.options.rModel || this.getRelationModelName();
