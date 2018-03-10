@@ -5,6 +5,14 @@ const BaseRelation = require('./base.js');
  */
 module.exports = class HasOneRelation extends BaseRelation {
   /**
+   * get relation table name
+   * @param  {Object} model []
+   * @return {}       []
+   */
+  getRelationModelName() {
+    return this.options.model.modelName.toLowerCase();
+  }
+  /**
    * relation on select or find
    */
   async getRelationData() {

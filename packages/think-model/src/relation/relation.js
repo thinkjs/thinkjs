@@ -78,7 +78,7 @@ class Relation {
    * @param {Array|Object} data
    */
   async setRelationData(type, data) {
-    if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return true;
+    if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return;
 
     const promises = Object.keys(this.relation).map(key => {
       if (helper.isArray(this.relationName) && this.relationName.indexOf(key) === -1) return;

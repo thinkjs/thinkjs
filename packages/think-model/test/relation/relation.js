@@ -280,3 +280,46 @@ test('relation parse item relation many to many', async t => {
   });
   t.is(flag, 3);
 });
+
+test('set relation with relation data', async t => {
+  t.plan(3);
+  const relation = new Relation({
+    model: 'post',
+    relation: {
+      user: Relation.HAS_ONE
+    }
+  });
+
+  const postData = {
+    id: 3,
+    title: 'hello',
+    content: 'world',
+    user: {id: 1, name: 'lizheming'}
+  };
+
+  t.is(await relation.setRelationData('ADD'), undefined);
+  relation.relationName = false;
+  t.is(await relation.setRelationData('ADD', postData), undefined);
+  relation.relationName = true;
+  relation.setRelation(false);
+  t.is(await relation.setRelationData('ADD', postData), undefined);
+});
+
+test('set relation many to many', async t => {
+  const relation = new Relation({
+    model: 'post',
+    relation: {
+      cate: Relation.MANY_TO_MANY
+    }
+  });
+  const data = {id: 778, title: '1111', cate: [1, 2]};
+
+  relation.getRelationInstance = function() {
+    return {
+      setRelationData(type) {
+        t.is(type, 'ADD');
+      }
+    };
+  };
+  relation.setRelationData('ADD', data);
+});

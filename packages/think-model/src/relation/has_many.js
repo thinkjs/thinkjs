@@ -3,6 +3,14 @@ const BaseRelation = require('./base.js');
 
 module.exports = class HasManyRelation extends BaseRelation {
   /**
+   * get relation table name
+   * @param  {Object} model []
+   * @return {}       []
+   */
+  getRelationModelName() {
+    return this.options.model.modelName.toLowerCase();
+  }
+  /**
    * relation on select or find
    */
   async getRelationData() {
@@ -41,8 +49,7 @@ module.exports = class HasManyRelation extends BaseRelation {
           }
 
           item[this.options.fKey] = this.data[this.options.key];
-          // ignore error when add data
-          return relationModel.add(item).catch(() => {});
+          return relationModel.add(item);
         });
         return Promise.all(promises);
       case 'DELETE':
