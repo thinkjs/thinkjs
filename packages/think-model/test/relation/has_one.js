@@ -80,7 +80,7 @@ test('has one get relation', async t => {
 });
 
 test('has one data with relation', async t => {
-  t.plan(7);
+  t.plan(4);
 
   const relation = new Relation({
     id: 3,
@@ -91,35 +91,31 @@ test('has one data with relation', async t => {
   }, {
     key: 'id',
     fKey: 'user_id',
-    name: 'profile',
-    rfKey: 'cate_id',
-    rModel: 'profile'
+    name: 'profile'
   });
 
-  relation.model = relation.options.model = new Model('user', {handle: new Function()});
-  relation.model.model = function(name) {
-    t.is(name, 'profile');
-    const model = new Model(name, {handle: new Function()});
-    model.db = function() {
-      return {
-        where: function() {
+  relation.model = new Model('user', {handle: new Function()});
+  relation.options.model = new Model('profile', {handle: new Function()});
+  const {model} = relation.options;
+  model.db = function() {
+    return {
+      where() {
 
-        },
-        delete: function() {
-        }
-      };
+      },
+      delete() {
+
+      }
     };
-    model.where = function(where) {
-      t.deepEqual(where, {user_id: 3});
-      return model;
-    };
-    model.add = function(data) {
-      t.deepEqual(data, {user_id: 3, age: 30, sex: 'female'});
-    };
-    model.update = function(data) {
-      t.deepEqual(data, {age: 30, sex: 'female'});
-    };
+  };
+  model.where = function(where) {
+    t.deepEqual(where, {user_id: 3});
     return model;
+  };
+  model.add = function(data) {
+    t.deepEqual(data, {user_id: 3, age: 30, sex: 'female'});
+  };
+  model.update = function(data) {
+    t.deepEqual(data, {age: 30, sex: 'female'});
   };
 
   await relation.setRelationData('UPDATE');
