@@ -3,14 +3,6 @@ const BaseRelation = require('./base.js');
 
 module.exports = class HasManyRelation extends BaseRelation {
   /**
-   * get relation table name
-   * @param  {Object} model []
-   * @return {}       []
-   */
-  getRelationModelName() {
-    return this.options.model.modelName.toLowerCase();
-  }
-  /**
    * relation on select or find
    */
   async getRelationData() {
@@ -24,9 +16,7 @@ module.exports = class HasManyRelation extends BaseRelation {
    * relation on add, update, delete
    */
   async setRelationData(type) {
-    const relationModelName = this.options.rModel || this.getRelationModelName();
-    const relationModel = this.model.model(relationModelName);
-    relationModel.db(this.model.db());
+    const {model} = this.options;
 
     let data = this.data[this.options.name];
     if (!helper.isArray(data)) {
@@ -38,22 +28,22 @@ module.exports = class HasManyRelation extends BaseRelation {
           item[this.options.fKey] = this.data[this.options.key];
           return item;
         });
-        return relationModel.addMany(data);
+        return model.addMany(data);
       case 'UPDATE':
-        await relationModel.getSchema();
-        const {pk} = relationModel;
+        await model.getSchema();
+        const {pk} = model;
 
         const promises = data.map(item => {
           if (item[pk]) {
-            return relationModel.update(item);
+            return model.update(item);
           }
 
           item[this.options.fKey] = this.data[this.options.key];
-          return relationModel.add(item);
+          return model.add(item);
         });
         return Promise.all(promises);
       case 'DELETE':
-        return relationModel.where({
+        return model.where({
           [this.options.fKey]: this.data[this.options.key]
         }).delete();
     }

@@ -5,14 +5,6 @@ const BaseRelation = require('./base.js');
  */
 module.exports = class HasOneRelation extends BaseRelation {
   /**
-   * get relation table name
-   * @param  {Object} model []
-   * @return {}       []
-   */
-  getRelationModelName() {
-    return this.options.model.modelName.toLowerCase();
-  }
-  /**
    * relation on select or find
    */
   async getRelationData() {
@@ -26,21 +18,19 @@ module.exports = class HasOneRelation extends BaseRelation {
    * relation on add, update, delete
    */
   async setRelationData(type) {
-    const relationModelName = this.options.rModel || this.getRelationModelName();
-    const relationModel = this.model.model(relationModelName);
-    relationModel.db(this.model.db());
+    const {model} = this.options;
 
     const data = this.data[this.options.name];
     switch (type) {
       case 'ADD':
         data[this.options.fKey] = this.data[this.options.key];
-        return relationModel.add(data);
+        return model.add(data);
       case 'UPDATE':
-        return relationModel.where({
+        return model.where({
           [this.options.fKey]: this.data[this.options.key]
         }).update(data);
       case 'DELETE':
-        return relationModel.where({
+        return model.where({
           [this.options.fKey]: this.data[this.options.key]
         }).delete();
     }
