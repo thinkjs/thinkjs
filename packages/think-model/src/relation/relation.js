@@ -71,7 +71,7 @@ class Relation {
     return this.setRelationData('ADD', data);
   }
   afterDelete(data) {
-    return this.setRelationData('DELETE', data);
+    return this.setRelationData('DELETE', data.where);
   }
   /**
    * set relation data
