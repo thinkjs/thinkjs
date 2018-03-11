@@ -24,7 +24,7 @@ $ npm install -g think-cli
 * [sync](#sync) - Synchronize the latest version of the project template to the local cache directory
 * [clean](#clean) - Clear the project template cache
 
-## new
+### new
 
 **Usage:**
 
@@ -55,7 +55,7 @@ If you want to create a multi-module project, you need to add the `-m` parameter
 $ thinkjs new -m
 ```
 
-### official templates
+#### official templates
 
 thinkjs provide some recommended templates.
 
@@ -65,7 +65,7 @@ Current available templates include:
 
 * [standard](https://github.com/think-template/standard) - A full-featured standard template
 
-### Custom Templates
+#### Custom Templates
 
 It's unlikely to make everyone happy with the official templates. You can simply fork an official template and then use it via `think-cli` with:
 
@@ -78,7 +78,7 @@ The shorthand repo notation is passed to [download-git-repo](https://github.com/
 
 If you would like to download from a private repository use the `—clone` flag and the cli will use `git clone` so your SSH keys are used.
 
-### Local Templates
+#### Local Templates
 
 Instead of a GitHub repo, you can also use a template on your local file system:
 
@@ -86,7 +86,7 @@ Instead of a GitHub repo, you can also use a template on your local file system:
 $ thinkjs new my-project ~/fs/path/to-custom-template
 ```
 
-## controller
+### controller
 
 **Usage:**
 
@@ -110,7 +110,7 @@ You can also add the `-r` parameter to create a rest type controller
 $ thinkjs controller user -r
 ```
 
-## service
+### service
 
 **Usage:**
 
@@ -127,7 +127,7 @@ The above command generates the service at `src/home/service/user.js`
 
 As with controller, `module-name` is optional and can only be used in multi-module projects
 
-## model
+### model
 
 **Usage:**
 
@@ -144,7 +144,7 @@ The above command generates the model at `src/home/model/user.js`
 
 As with controller, `module-name` is optional and can only be used in multi-module projects
 
-## middleware
+### middleware
 
 **Usage:**
 
@@ -161,7 +161,7 @@ The above command generates the middleware at `src/home/middleware/user.js`
 
 As with controller, `module-name` is optional and can only be used in multi-module projects
 
-## adapter
+### adapter
 
 **Usage:**
 
@@ -187,7 +187,7 @@ The above command generates the adapter at `src/adapter/user/base.js`
 
 As with controller, `module-name` is optional and can only be used in multi-module projects
 
-## module
+### module
 > The command can only be used in multi-module projects
 
 **Usage:**
@@ -206,7 +206,7 @@ The above command generates a module with the name `user`
 As with controller, `module-name` is optional,defaults to the `thinkjs.defaultModule` in in the package.json file of project root directory.
 
 
-## migrate
+### migrate
 
 **Usage:**
 
@@ -216,7 +216,7 @@ $ thinkjs module [module-name]
 
 If your project was created with think-cli 1.0 and you want to use the capabilities of think-cli 2.0, you need to use `migrate` command to migrate your project to think-cli 2.0.
 
-## sync
+### sync
 
 **Usage:**
 
@@ -226,7 +226,7 @@ $ thinkjs sync
 
 The command will synchronize the latest version of the project template to the local cache directory.
 
-## clean
+### clean
 
 **Usage:**
 
@@ -237,3 +237,225 @@ $ thinkjs clean
 The command will delete the project template cache.
 
 After the template cache is deleted, your next create file command will pull the latest template
+
+## Writing Custom Templates from Scratch
+
+* A template repo **must** have a `template` directory that holds the template files.
+* A template repo **must** have a metadata file for the template which can be either a `metadata.js` or `metadata.json` file. It can contain the following fields:
+  * prompts: used to collect user options data;
+  * skipCompile: used to skip template compile, usually used for pictures and other resource files;
+  * completeMessage: the message to be displayed to the user when the template has been generated. You can include custom instruction here.
+  * new: new command mapping configuration
+  * controller: controller command mapping configuration
+  * model: model command mapping configuration
+  * service: service command mapping configuration
+  * middleware: middleware command mapping configuration
+  * adapter: adapter command mapping configuration
+  * module: module command mapping configuration
+* Template can use any parameter carried in the command line
+
+### prompts
+
+The prompts field in the metadata file should be an object hash containing prompts for the user. For each entry, the key is the variable name and the value is an [Inquirer.js question object](https://github.com/SBoudrias/Inquirer.js/#question). Example:
+
+```javascript
+{
+  "prompts": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "message": "Project name"
+    }
+  }
+}
+```
+
+After all prompts are finished, all files inside template will be rendered using [Ejs](http://ejs.co/), with the prompt results as the data.
+
+### skipCompile
+
+The project template is not always some code file, there are also some resource files, such as pictures, fonts, etc.
+
+Only the code file needs to be compiled, because the code file may need to use syntax such as variables or conditional judgment, and pictures and other resource files are not needed, so we are use skipCompile field Skip these files.
+
+The `skipCompile` field in the metadata file should be a [minimatch glob pattern](https://github.com/isaacs/minimatch). The files matched should skip rendering. Example:
+
+```javascript
+{
+  "skipCompile": "src/**/*.png"
+}
+```
+
+or
+
+```javascript
+{
+  "skipCompile": [
+    "src/**/*.css",
+    "src/**/*.png"
+  ]
+}
+```
+
+### completeMessage
+
+The `skipCompile` field in the metadata file, it can access the variables in the template, as well as all the syntax provided by EJS. Example:
+
+```javascript
+{
+  "completeMessage": "To get started:\n\n<% if (!inPlace) { %># enter path\n$ cd <%= destDirName %>\n\n<% } %># install dependencies:\n$ npm install\n\n# run the app\n$ npm start"
+}
+```
+
+### new
+
+The `skipCompile` field in the metadata file should be an object hash containing map configuration required to generate a project from a template. It contain the following fields：
+
+  * default: Generate single module project mapping configuration
+  * multiModule: Generate multi-module project mapping configuration
+
+Example:
+
+```javascript
+{
+  "new": {
+    "default": [
+      ["src/bootstrap", "src/bootstrap"],
+      ["src/config", "src/config"],
+      ["src/controller/base.js", "src/controller/base.js"],
+      ["src/controller/index.js", "src/controller/index.js"],
+      ["src/logic", "src/logic"],
+      ["src/model", "src/model"],
+      ["test/index.js", "test/index.js"],
+      ["view/index_index.html", "view/index_index.html"],
+      ["development.js", "development.js"],
+      ["eslintrc", ".eslintrc"],
+      ["gitignore", ".gitignore"],
+      ["nginx.conf", "nginx.conf"],
+      ["package.json", "package.json"],
+      ["pm2.json", "pm2.json"],
+      ["production.js", "production.js"],
+      ["README.md", "README.md"]
+    ],
+    "multiModule": [
+      ["src/bootstrap", "src/common/bootstrap"],
+      ["src/config", "src/common/config"],
+      ["src/config/config.js", "src/[moduleName]/config/config.js"],
+      ["src/controller/base.js", "src/[moduleName]/controller/base.js"],
+      ["src/controller/index.js", "src/[moduleName]/controller/index.js"],
+      ["src/logic", "src/[moduleName]/logic"],
+      ["src/model", "src/[moduleName]/model"],
+      ["test/index.js", "test/index.js"],
+      ["view/index_index.html", "view/[moduleName]/index_index.html"],
+      ["development.js", "development.js"],
+      ["eslintrc", ".eslintrc"],
+      ["gitignore", ".gitignore"],
+      ["nginx.conf", "nginx.conf"],
+      ["package.json", "package.json"],
+      ["pm2.json", "pm2.json"],
+      ["production.js", "production.js"],
+      ["README.md", "README.md"]
+    ]
+  }
+}
+```
+
+### controller
+
+The `skipCompile` field in the metadata file should be an object hash containing map configuration required to generate a controller from a template. It contain the following fields：
+
+  * default: Generate controller mapping configuration
+  * rest: Generate rest controller mapping configuration
+
+Example:
+
+```javascript
+{
+  "controller": {
+    "default": [
+      ["src/controller/index.js", "src/[moduleName]/controller/[action].js"],
+      ["src/logic/index.js", "src/[moduleName]/logic/[action].js"]
+    ],
+    "rest": [
+      ["src/controller/rest.js", "src/[moduleName]/controller/rest.js"],
+      ["src/controller/restIndex.js", "src/[moduleName]/controller/[action].js"],
+      ["src/logic/index.js", "src/[moduleName]/logic/[action].js"]
+    ]
+  }
+}
+```
+
+### model
+
+The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a model from a template. 
+
+Example:
+
+```javascript
+{
+  "model": [
+    ["src/model/index.js", "src/[moduleName]/model/[action].js"]
+  ]
+}
+```
+
+### service
+
+The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a service from a template. 
+
+Example:
+
+```javascript
+{
+  "service": [
+    ["src/service/index.js", "src/[moduleName]/service/[action].js"]
+  ]
+}
+```
+
+### middleware
+
+The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a middleware from a template. 
+
+Example:
+
+```javascript
+{
+  "middleware": [
+    ["src/middleware/base.js", "src/[moduleName]/middleware/[action].js"]
+  ]
+}
+```
+
+### adapter
+
+The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a adapter from a template. 
+
+Example:
+
+```javascript
+{
+  "adapter": [
+    ["src/adapter/base.js", "src/[moduleName]/adapter/[type]/[action].js"]
+  ]
+}
+```
+
+### module
+
+The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a module from a template. 
+
+Example:
+
+```javascript
+{
+  "module": [
+    ["src/config/config.js", "src/[moduleName]/config/config.js"],
+    ["src/controller/base.js", "src/[moduleName]/controller/base.js"],
+    ["src/controller/index.js", "src/[moduleName]/controller/index.js"],
+    ["src/logic/index.js", "src/[moduleName]/logic/index.js"],
+    ["src/model/index.js", "src/[moduleName]/model/index.js"],
+    ["view/index_index.html", "view/[moduleName]/index_index.html"]
+  ]
+}
+```
