@@ -124,19 +124,19 @@ test('relation get relation false', async t => {
       a: 'fake2'
     }});
 
-  t.false(await relation.getRelation(false));
+  t.false(await relation.getRelationData(false));
 });
 
 test('relation get relation relation empty', async t => {
   const relation = new Relation({model: 'fake'});
 
-  t.is(await relation.getRelation(123), 123);
+  t.is(await relation.getRelationData(123), 123);
 });
 
 test('relation get relation relationName empty', async t => {
   const relation = new Relation({model: 'fake'});
   relation.relationName = null;
-  t.is(await relation.getRelation(233), 233);
+  t.is(await relation.getRelationData(233), 233);
 });
 
 // test('relation get relation normal which relation has and relationName false', async t => {
@@ -146,7 +146,7 @@ test('relation get relation relationName empty', async t => {
 //       a: 'fake2'
 //     }});
 
-//   t.deepEqual(await relation.getRelation({a: 3}), {a: 3});
+//   t.deepEqual(await relation.getRelationData({a: 3}), {a: 3});
 // });
 
 test('relation parse item relation with relation data', t => {
@@ -279,4 +279,47 @@ test('relation parse item relation many to many', async t => {
     content: 'world'
   });
   t.is(flag, 3);
+});
+
+test('set relation with relation data', async t => {
+  t.plan(3);
+  const relation = new Relation({
+    model: 'post',
+    relation: {
+      user: Relation.HAS_ONE
+    }
+  });
+
+  const postData = {
+    id: 3,
+    title: 'hello',
+    content: 'world',
+    user: {id: 1, name: 'lizheming'}
+  };
+
+  t.is(await relation.setRelationData('ADD'), undefined);
+  relation.relationName = false;
+  t.is(await relation.setRelationData('ADD', postData), undefined);
+  relation.relationName = true;
+  relation.setRelation(false);
+  t.is(await relation.setRelationData('ADD', postData), undefined);
+});
+
+test('set relation many to many', async t => {
+  const relation = new Relation({
+    model: 'post',
+    relation: {
+      cate: Relation.MANY_TO_MANY
+    }
+  });
+  const data = {id: 778, title: '1111', cate: [1, 2]};
+
+  relation.getRelationInstance = function() {
+    return {
+      setRelationData(type) {
+        t.is(type, 'ADD');
+      }
+    };
+  };
+  relation.setRelationData('ADD', data);
 });

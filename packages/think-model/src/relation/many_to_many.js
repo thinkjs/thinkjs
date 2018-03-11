@@ -14,7 +14,7 @@ module.exports = class ManyToManyRelation extends BaseRelation {
   /**
    * relation on select or find
    */
-  async getRelation() {
+  async getRelationData() {
     const where = this.parseRelationWhere();
     if (where === false) return this.data;
     const relationModel = this.options.rModel || this.getRelationModelName();
@@ -37,5 +37,39 @@ module.exports = class ManyToManyRelation extends BaseRelation {
       }
     }).select();
     return this.parseRelationData(mapData, true);
+  }
+
+  /**
+   * relation on add, update, delete
+   */
+  async setRelationData(type) {
+    const relationModelName = this.options.rModel || this.getRelationModelName();
+    const relationModel = this.model.model(relationModelName);
+    relationModel.db(this.model.db());
+
+    const where = {[this.options.fKey]: this.data[this.options.key]};
+    await relationModel.where(where).delete();
+
+    if (type === 'DELETE') {
+      return true;
+    }
+
+    let data = this.data[this.options.name];
+    if (helper.isEmpty(data)) {
+      return;
+    }
+    if (!helper.isArray(data)) {
+      data = [data];
+    }
+    const rfKey = this.options.rfKey || `${this.options.model.modelName}_id`;
+
+    if (helper.isNumberString(data[0]) || (helper.isObject(data[0]) && (rfKey in data[0]))) {
+      data = data.map(val => ({
+        [this.options.fKey]: this.data[this.options.key],
+        [rfKey]: val[rfKey] || val
+      }));
+      await relationModel.addMany(data);
+    }
+    // add relation data then add relation
   }
 };

@@ -59,17 +59,40 @@ class Relation {
   }
 
   afterFind(data) {
-    return this.getRelation(data);
+    return this.getRelationData(data);
   }
-
   afterSelect(data) {
-    return this.getRelation(data);
+    return this.getRelationData(data);
+  }
+  afterUpdate(data) {
+    return this.setRelationData('UPDATE', data);
+  }
+  afterAdd(data) {
+    return this.setRelationData('ADD', data);
+  }
+  afterDelete(data) {
+    return this.setRelationData('DELETE', data.where);
+  }
+  /**
+   * set relation data
+   * @param {Array|Object} data
+   */
+  async setRelationData(type, data) {
+    if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return;
+
+    const promises = Object.keys(this.relation).map(key => {
+      if (helper.isArray(this.relationName) && this.relationName.indexOf(key) === -1) return;
+      const instance = this.getRelationInstance(key, data, type);
+      if (helper.isEmpty(instance)) return;
+      return instance.setRelationData(type);
+    });
+    await Promise.all(promises);
   }
   /**
    * get relation data
    * @param {Array|Object} data
    */
-  async getRelation(data) {
+  async getRelationData(data) {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return data;
     const promises = Object.keys(this.relation).map(key => {
       if (helper.isArray(this.relationName) && this.relationName.indexOf(key) === -1) return;
@@ -84,6 +107,19 @@ class Relation {
    * @param {Object|Array} data
    */
   parseItemRelation(relationKey, data) {
+    const instance = this.getRelationInstance(relationKey, data);
+    if (helper.isEmpty(instance)) {
+      return;
+    }
+    return instance.getRelationData();
+  }
+  /**
+   *
+   * @param {String} relationKey
+   * @param {Object|Array} data
+   * @param {String} type
+   */
+  getRelationInstance(relationKey, data, type) {
     let item = this.relation[relationKey];
     if (!helper.isObject(item)) {
       item = {type: item};
@@ -96,11 +132,14 @@ class Relation {
       relation: true,
       type: Relation.HAS_ONE
     }, item);
+
     // relation data is exist
-    const itemData = helper.isArray(data) ? data[0] : data;
-    const relData = itemData[opts.name];
-    if (helper.isArray(relData) || helper.isObject(relData)) {
-      return;
+    if (!type) {
+      const itemData = helper.isArray(data) ? data[0] : data;
+      const relData = itemData[opts.name];
+      if (helper.isArray(relData) || helper.isObject(relData)) {
+        return;
+      }
     }
 
     const model = this.model.model(opts.model);
@@ -139,8 +178,7 @@ class Relation {
         Cls = HasOne;
         break;
     };
-    const instance = new Cls(data, opts, this.model);
-    return instance.getRelation();
+    return new Cls(data, opts, this.model);
   }
 };
 Relation.HAS_ONE = 1;

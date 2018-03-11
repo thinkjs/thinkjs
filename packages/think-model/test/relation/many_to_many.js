@@ -28,7 +28,7 @@ test('many to many get relation no relation where', async t => {
 
   relation.parseRelationWhere = () => false;
   t.deepEqual(
-    await relation.getRelation(),
+    await relation.getRelationData(),
     [{
       id: 3,
       title: 'hello1',
@@ -69,7 +69,7 @@ test('many to many get relation get modelName from rModel', async t => {
       {name: 'lizheming', post_id: 3}
     ];
   };
-  t.deepEqual(await relation.getRelation(), [{
+  t.deepEqual(await relation.getRelationData(), [{
     id: 3,
     title: 'hello1',
     content: 'world1',
@@ -81,4 +81,74 @@ test('many to many get relation get modelName from rModel', async t => {
     user: [{name: 'lizheming', post_id: 10},
       {name: 'lizheming1', post_id: 10}]
   }]);
+});
+
+test('many to many delete data with relation', async t => {
+  t.plan(2);
+
+  const relation = new Relation({
+    id: 778,
+    title: '111',
+    cate: [1, 2]
+  }, {
+    key: 'id',
+    fKey: 'post_id',
+    name: 'cate',
+    rfKey: 'cate_id',
+    rModel: 'post_cate'
+  });
+
+  relation.model = relation.options.model = new Model('post', {handle: new Function()});
+  relation.model.model = function(name) {
+    t.is(name, 'post_cate');
+    const model = new Model('post_cate', {handle: new Function()});
+    model.db = function() {
+      return {
+        where: function() {
+
+        },
+        delete: function() {
+        }
+      };
+    };
+    model.where = function(where) {
+      t.deepEqual(where, {post_id: 778});
+      return model;
+    };
+    return model;
+  };
+
+  await relation.setRelationData('DELETE');
+});
+
+test('many to many add data with relation', async t => {
+  const relation = new Relation({
+    id: 778,
+    title: '111',
+    cate: [1, 2]
+  }, {
+    key: 'id',
+    fKey: 'post_id',
+    name: 'cate',
+    rfKey: 'cate_id',
+    rModel: 'post_cate'
+  });
+
+  relation.model = relation.options.model = new Model('post', {handle: new Function()});
+  relation.model.model = function(name) {
+    const model = new Model('post_cate', {handle: new Function()});
+    model.db = function() {
+      return {
+        delete: function() {
+        }
+      };
+    };
+    model.addMany = function(data) {
+      t.deepEqual(data, [{post_id: 778, cate_id: 1}, {post_id: 778, cate_id: 2}]);
+      return model;
+    };
+    return model;
+  };
+
+  await relation.setRelationData('ADD');
 });

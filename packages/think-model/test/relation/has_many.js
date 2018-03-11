@@ -19,7 +19,7 @@ test('has many get relation no relation where', async t => {
 
   relation.parseRelationWhere = () => false;
   t.deepEqual(
-    await relation.getRelation(),
+    await relation.getRelationData(),
     [{
       id: 3,
       title: 'hello1',
@@ -61,7 +61,7 @@ test('has many get relation', async t => {
   };
 
   t.deepEqual(
-    await relation.getRelation(),
+    await relation.getRelationData(),
     [
       {
         id: 3,
@@ -80,4 +80,47 @@ test('has many get relation', async t => {
       }
     ]
   );
+});
+
+test('has one data with relation', async t => {
+  t.plan(3);
+
+  const relation = new Relation({
+    id: 3,
+    post: {
+      title: 'hello1',
+      content: 'world1'
+    }
+  }, {
+    key: 'id',
+    fKey: 'user_id',
+    name: 'post'
+  });
+
+  relation.model = new Model('user', {handle: new Function()});
+  relation.options.model = new Model('post', {handle: new Function()});
+  const {model} = relation.options;
+  model.db = function() {
+    return {
+      delete() {
+
+      }
+    };
+  };
+  model.getSchema = function() {
+
+  };
+  model.where = function(where) {
+    t.deepEqual(where, {user_id: 3});
+    return model;
+  };
+  model.addMany = function(data) {
+    t.deepEqual(data, [{user_id: 3, title: 'hello1', content: 'world1'}]);
+  };
+  model.add = function(data) {
+    t.deepEqual(data, {user_id: 3, title: 'hello1', content: 'world1'});
+  };
+  await relation.setRelationData('UPDATE');
+  await relation.setRelationData('ADD');
+  await relation.setRelationData('DELETE');
 });
