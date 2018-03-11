@@ -64,6 +64,10 @@ All official project templates are repos in the [think-template organization](ht
 Current available templates include:
 
 * [standard](https://github.com/think-template/standard) - A full-featured standard template
+* [api](https://github.com/think-template/api) - API application template
+* [vue](https://github.com/think-template/vue) - ThinkJS Vue Template
+* [react](https://github.com/think-template/react) - ThinkJS React Template
+* [typescript](https://github.com/think-template/typescript) - ThinkJS typescript cli template
 
 #### Custom Templates
 
