@@ -242,16 +242,16 @@ After the template cache is deleted, your next create file command will pull the
 
 * A template repo **must** have a `template` directory that holds the template files.
 * A template repo **must** have a metadata file for the template which can be either a `metadata.js` or `metadata.json` file. It can contain the following fields:
-  * prompts: used to collect user options data;
-  * skipCompile: used to skip template compile, usually used for pictures and other resource files;
-  * completeMessage: the message to be displayed to the user when the template has been generated. You can include custom instruction here.
-  * new: new command mapping configuration
-  * controller: controller command mapping configuration
-  * model: model command mapping configuration
-  * service: service command mapping configuration
-  * middleware: middleware command mapping configuration
-  * adapter: adapter command mapping configuration
-  * module: module command mapping configuration
+  * `prompts` - used to collect user options data;
+  * `skipCompile` - used to skip template compile, usually used for pictures and other resource files;
+  * `completeMessage` - the message to be displayed to the user when the template has been generated. You can include custom instruction here.
+  * `new` - new command mapping configuration
+  * `controller` - controller command mapping configuration
+  * `model` - model command mapping configuration
+  * `service` - service command mapping configuration
+  * `middleware` - middleware command mapping configuration
+  * `adapter` - adapter command mapping configuration
+  * `module` - module command mapping configuration
 * Template can use any parameter carried in the command line
 
 ### prompts
@@ -311,8 +311,8 @@ The `skipCompile` field in the metadata file, it can access the variables in the
 
 The `skipCompile` field in the metadata file should be an object hash containing map configuration required to generate a project from a template. It contain the following fields：
 
-  * default: Generate single module project mapping configuration
-  * multiModule: Generate multi-module project mapping configuration
+  * `default` - Generate single module project mapping configuration
+  * `multiModule` - Generate multi-module project mapping configuration
 
 Example:
 
@@ -364,8 +364,8 @@ Example:
 
 The `skipCompile` field in the metadata file should be an object hash containing map configuration required to generate a controller from a template. It contain the following fields：
 
-  * default: Generate controller mapping configuration
-  * rest: Generate rest controller mapping configuration
+  * `default` - Generate controller mapping configuration
+  * `rest` - Generate rest controller mapping configuration
 
 Example:
 
