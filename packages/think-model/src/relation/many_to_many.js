@@ -54,11 +54,22 @@ module.exports = class ManyToManyRelation extends BaseRelation {
       return true;
     }
 
+    let data = this.data[this.options.name];
+    if (helper.isEmpty(data)) {
+      return;
+    }
+    if (!helper.isArray(data)) {
+      data = [data];
+    }
     const rfKey = this.options.rfKey || `${this.options.model.modelName}_id`;
-    const data = this.data[this.options.name].map(val => ({
-      [this.options.fKey]: this.data[this.options.key],
-      [rfKey]: val
-    }));
-    await relationModel.addMany(data);
+
+    if (helper.isNumberString(data[0]) || (helper.isObject(data[0]) && (rfKey in data[0]))) {
+      data = data.map(val => ({
+        [this.options.fKey]: this.data[this.options.key],
+        [rfKey]: val[rfKey] || val
+      }));
+      await relationModel.addMany(data);
+    }
+    // add relation data then add relation
   }
 };
