@@ -367,6 +367,8 @@ The `skipCompile` field in the metadata file should be an object hash containing
   * `default` - Generate controller mapping configuration
   * `rest` - Generate rest controller mapping configuration
 
+mapping configuration can access these variables: `action`,`moduleName`, 'type'.
+
 Example:
 
 ```javascript
@@ -389,6 +391,8 @@ Example:
 
 The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a model from a template. 
 
+mapping configuration can access these variables: `action`,`moduleName`, 'type'.
+
 Example:
 
 ```javascript
@@ -402,6 +406,8 @@ Example:
 ### service
 
 The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a service from a template. 
+
+mapping configuration can access these variables: `action`,`moduleName`, 'type'.
 
 Example:
 
@@ -417,6 +423,8 @@ Example:
 
 The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a middleware from a template. 
 
+mapping configuration can access these variables: `action`,`moduleName`, 'type'.
+
 Example:
 
 ```javascript
@@ -431,6 +439,8 @@ Example:
 
 The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a adapter from a template. 
 
+mapping configuration can access these variables: `action`,`moduleName`, 'type'.
+
 Example:
 
 ```javascript
@@ -444,6 +454,8 @@ Example:
 ### module
 
 The `skipCompile` field in the metadata file should be an array containing map configuration required to generate a module from a template. 
+
+mapping configuration can access these variables: `action`,`moduleName`, 'type'.
 
 Example:
 
