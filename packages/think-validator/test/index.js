@@ -2,13 +2,36 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-08-16 15:05:31
+* @Last Modified time: 2018-03-16 16:26:26
 */
 import test from 'ava';
 import helper from 'think-helper';
 import Validator from '../index.js';
 import defaultCtx from './ctx.js';
-const NOERROR = ' valid failed';
+const WITHOUT_ERR_MESSAGE = ' valid failed';
+
+
+test('rule-name-custom-message2', t => {
+  const err = 'error message';
+  let rules = {
+    arg: {
+      required: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+    }
+  });
+
+  let msgs = {
+    required: function() {
+      return err;
+    },
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret.arg === err);
+});
 
 
 test('rule-required, required = true', t => {
@@ -2901,6 +2924,29 @@ test('rule-name-custom-message', t => {
   );
 });
 
+test('rule-array-message', t => {
+  let rules = {
+    arg3: {
+      array: true,
+      children: {
+        int: true
+      }
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      arg3: ['1a']
+    }
+  });
+
+  let msgs = {
+    arg3: 'this is array custom message'
+  }
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules, msgs);
+  t.true(ret['arg3[0]'] === msgs.arg3);
+});
+
 test('rule-name-custom-message-else', t => {
   let rules = {
     arg: {
@@ -2966,8 +3012,8 @@ test('rule-name-custom-message-else', t => {
 
   let INT_ERROR = ' need an integer under your options';
   t.true(
-    ret.arg === `arg${NOERROR}` &&
-    ret.arg2 === `arg2${NOERROR}` &&
+    ret.arg === `arg${WITHOUT_ERR_MESSAGE}` &&
+    ret.arg2 === `arg2${WITHOUT_ERR_MESSAGE}` &&
     ret['arg3.a'] === `arg3${INT_ERROR}` &&
     ret['arg3.b'] === `arg3${INT_ERROR}` &&
     ret['arg3.c'] === `arg3${INT_ERROR}` &&
@@ -2978,25 +3024,4 @@ test('rule-name-custom-message-else', t => {
 });
 
 
-test('rule-array-message', t => {
-  let rules = {
-    arg3: {
-      array: true,
-      children: {
-        int: true
-      }
-    }
-  }
-  let ctx = helper.extend({}, defaultCtx, {
-    PARAM: {
-      arg3: ['1a']
-    }
-  });
 
-  let msgs = {
-    arg3: 'this is array custom message'
-  }
-  let instance = new Validator(ctx);
-  let ret = instance.validate(rules, msgs);
-  t.true(ret['arg3[0]'] === msgs.arg3);
-});

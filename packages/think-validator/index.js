@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-03-16 12:19:47
+* @Last Modified time: 2018-03-16 16:36:58
 */
 
 // let rules = {             // rules
@@ -14,10 +14,13 @@
 //   }
 // }
 
+const assert = require('assert');
 const helper = require('think-helper');
+const preRules = require('./rules.js');
+const preErrors = require('./errors.js');
 const ARRAY_SP = '__array__';
 const OBJECT_SP = '__object__';
-const NOERROR = ' valid failed';
+const WITHOUT_ERR_MESSAGE = ' valid failed';
 const METHOD_MAP = {
   GET: 'param',
   POST: 'post',
@@ -30,8 +33,6 @@ const METHOD_MAP = {
   WEBSOCKET: 'param',
   CLI: 'param'
 };
-const preRules = require('./rules.js');
-const preErrors = require('./errors.js');
 
 class Validator {
   constructor(ctx) {
@@ -69,6 +70,15 @@ class Validator {
   }
 
   /**
+   * [_checkCustomMessage error should be function or string]
+   * @param  {[type]} error [description]
+   * @return {[type]}       [description]
+   */
+  _checkCustomMessage(error) {
+    return error && (helper.isString(error) || helper.isFunction(error));
+  }
+
+  /**
    * get error message
    * @param  {String} argName        [description]
    * @param  {Object} rule            [description]
@@ -77,7 +87,7 @@ class Validator {
    * @return {String}                 [description]
    */
   _getErrorMessage({ argName, rule, validName, parsedValidValue }) {
-    let errMsg;
+    let errMsg = '';
 
     // all required style error map to `requied error message`
     if (this.requiredValidNames.indexOf(validName) > -1) {
@@ -89,68 +99,89 @@ class Validator {
       argName = argName.split(ARRAY_SP)[0];
     }
 
-    // set valid and arg error
+    // [error message]: { string: 'the error message' }
     const validNameError = this.errors[validName];
-    let argNameError = this.errors[argName];
-
-    // eg int: 'error message'
-    if (helper.isString(validNameError)) {
+    if (this._checkCustomMessage(validNameError)) {
       errMsg = validNameError;
     }
 
-    // eg name: 'error message'
-    if (helper.isString(argNameError)) {
+    // [error message]: { username: 'the error message' }
+    let argNameError = this.errors[argName];
+    if (this._checkCustomMessage(argNameError)) {
       errMsg = argNameError;
     }
 
-    // eg name: {int: 'error message'}
-    if (helper.isObject(argNameError) && helper.isString(argNameError[validName])) {
-      errMsg = this.errors[argName][validName];
+    // [error message]: { username: { string: 'the error message' } }
+    if (helper.isObject(argNameError)) {
+      const validArgNameError = this.errors[argName][validName];
+      if (this._checkCustomMessage(validArgNameError)) {
+        errMsg = validArgNameError;
+      }
     }
 
-    // eg name: {name1,name2: 'error message'}
-    // eg name: {name1,name2: {int: 'error message'}}
+    // nested object error config
+    // eg: { address: { object: true, children: { // ... } } }
+    // data: { address: { province: '山东', city: '济南' } }
     if (argName.indexOf(OBJECT_SP) > -1) {
-      const parsedResult = argName.split(OBJECT_SP);
-      const subRuleName = parsedResult[1];
-      argName = parsedResult[0];
-      argNameError = this.errors[argName];
+      const parsedResult = argName.split(OBJECT_SP); // eg: argName: address__object__province after pretreating(just one rule split from address)
+      argName = parsedResult[0]; // eg: address
+      const subRuleName = parsedResult[1]; // eg: province
+      argNameError = this.errors[argName]; // eg: address
 
       if (helper.isObject(argNameError)) {
-        // eg: arg: {int: 'error message', 'a,b': 'error message'}
-        errMsg = argNameError[validName]; // int
-
+        // [error message]: { address: {required: 'error message'} }
+        errMsg = argNameError[validName];
         for (const i in argNameError) {
           if (i.split(',').indexOf(subRuleName) > -1) {
             if (helper.isObject(argNameError[i])) {
-              errMsg = argNameError[i][validName];
-            } else if (helper.isString(argNameError[i])) {
-              errMsg = argNameError[i];
+              // [error message]: { address: {'procince,city': {required: 'the error message'}} }
+              if (this._checkCustomMessage(argNameError[i][validName])) {
+                errMsg = argNameError[i][validName];
+              }
+            } else {
+              // [error message]: { address: {'procince,city': 'the error message'} }
+              if (this._checkCustomMessage(argNameError[i])) {
+                errMsg = argNameError[i];
+              }
             }
           }
         }
-      } else if (helper.isString(argNameError)) {
-        // eg: arg: 'arg object valid error'
-        errMsg = argNameError;
+      } else {
+        if (this._checkCustomMessage(argNameError)) {
+          // [error message]: { address: 'address valid error' }
+          errMsg = argNameError;
+        }
       }
 
-      // eg: {int: 'error message', arg: {...}}
-      errMsg = errMsg || this.errors[validName]; // int
+      // [error message]: {required: 'the error message', address: null }
+      errMsg = errMsg || this.errors[validName];
     }
 
-    // format error message rule name
-    const originRuleName = rule.aliasName || this._formatNestedRuleName(argName);
-
-    // set defalut error message
+    const originRuleName = this._formatNestedRuleName(argName);
     if (!errMsg) {
-      return originRuleName + NOERROR;
+      return (rule.aliasName || originRuleName) + WITHOUT_ERR_MESSAGE;
     }
 
     const validValue = rule[validName];
-    const lastMsg = errMsg.replace('{name}', originRuleName)
+
+    // support function as the custom message
+    if (helper.isFunction(errMsg)) {
+      const lastErrorMsg = errMsg({
+        name: originRuleName,
+        validName: validName,
+        rule: rule,
+        args: validValue,
+        pargs: parsedValidValue
+      });
+      assert(helper.isString(lastErrorMsg), 'custom error function should return string.');
+      return lastErrorMsg;
+    }
+
+    // string as the custom message
+    const lastErrorMsg = errMsg.replace('{name}', (rule.aliasName || originRuleName))
       .replace('{args}', helper.isString(validValue) ? validValue : JSON.stringify(validValue))
       .replace('{pargs}', helper.isString(parsedValidValue) ? parsedValidValue : JSON.stringify(parsedValidValue));
-    return lastMsg;
+    return lastErrorMsg;
   }
 
   /**
@@ -166,7 +197,7 @@ class Validator {
       validValue = _fn(validValue, {
         argName,
         validName,
-        currentQuery: this.ctx[this._getQueryMethod(rule)](),
+        currentQuery: this.ctx[this._getRuleMethod(rule)](),
         ctx: this.ctx,
         rule: rule,
         rules: cloneRules
@@ -182,7 +213,7 @@ class Validator {
    * @return {Mixed}          [description]
    */
   _convertParamValue(argName, rule) {
-    const queryMethod = this._getQueryMethod(rule);
+    const queryMethod = this._getRuleMethod(rule);
     const ruleCtxQuery = this.ctx[queryMethod]();
     if ((rule.int || rule.float || rule.numeric) && queryMethod) {
       if (argName.indexOf(ARRAY_SP) > -1) {
@@ -214,7 +245,7 @@ class Validator {
           validName,
           validValue: rule[validName],
           parsedValidValue,
-          currentQuery: this.ctx[this._getQueryMethod(rule)](),
+          currentQuery: this.ctx[this._getRuleMethod(rule)](),
           ctx: this.ctx,
           rule,
           rules: cloneRules // prevent to write
@@ -232,7 +263,7 @@ class Validator {
    * @param  {Object} rule [description]
    * @return {String}      [methodName]
    */
-  _getQueryMethod(rule) {
+  _getRuleMethod(rule) {
     if (typeof rule.method === 'undefined' || rule.method === '') {
       rule.method = this.ctx.method.toUpperCase();
     } else {
@@ -247,16 +278,13 @@ class Validator {
    * @return {Object}       [description]
    */
   _preTreatRules(rules) {
-    rules = helper.extend({}, rules);
-
     // to keep the nested rules split from the array or object
     const childRules = {};
 
+    rules = helper.extend({}, rules);
     for (const argName in rules) {
       const rule = rules[argName];
-
-      const queryMethod = this._getQueryMethod(rule);
-
+      const queryMethod = this._getRuleMethod(rule);
       const ruleCtxQuery = this.ctx[queryMethod]();
 
       // basic type check, only one basic type is legal(ok)
@@ -298,7 +326,7 @@ class Validator {
       }
 
       // write back rule.value to ctx
-      if (typeof rule.value !== 'undefined' && queryMethod) {
+      if (typeof rule.value !== 'undefined') {
         if (argName.indexOf(ARRAY_SP) !== -1 || argName.indexOf(OBJECT_SP) !== -1) {
           const parsedRuleName = argName.split(argName.indexOf(ARRAY_SP) === -1 ? OBJECT_SP : ARRAY_SP);
           ruleCtxQuery[parsedRuleName[0]][parsedRuleName[1]] = rule.value;
@@ -309,12 +337,11 @@ class Validator {
 
       // array & object children split and set the value
       if (rule.children) {
-        const ruleValue = rule.value;
-        const ruleChildren = rule.children;
-
         // delete the argName, like [array|object]: true
         delete rules[argName];
 
+        const ruleValue = rule.value;
+        const ruleChildren = rule.children;
         if (rule.array) {
           for (let i = 0; i < ruleValue.length; i++) {
             const tmpRuleName = argName + ARRAY_SP + i;
@@ -401,7 +428,7 @@ class Validator {
           validName,
           validValue: rule[validName],
           parsedValidValue,
-          currentQuery: this.ctx[this._getQueryMethod(rule)](),
+          currentQuery: this.ctx[this._getRuleMethod(rule)](),
           ctx: this.ctx,
           rule,
           rules: helper.extend({}, rules) // prevent to write
