@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-11-14 16:50:40
+* @Last Modified time: 2018-03-16 12:19:47
 */
 
 // let rules = {             // rules
@@ -36,7 +36,6 @@ const preErrors = require('./errors.js');
 class Validator {
   constructor(ctx) {
     this.ctx = ctx;
-    this.ctxQuery = {};
     this.requiredValidNames = [
       'required',
       'requiredIf',
@@ -167,7 +166,7 @@ class Validator {
       validValue = _fn(validValue, {
         argName,
         validName,
-        currentQuery: this.ctxQuery,
+        currentQuery: this.ctx[this._getQueryMethod(rule)](),
         ctx: this.ctx,
         rule: rule,
         rules: cloneRules
@@ -184,15 +183,16 @@ class Validator {
    */
   _convertParamValue(argName, rule) {
     const queryMethod = this._getQueryMethod(rule);
+    const ruleCtxQuery = this.ctx[queryMethod]();
     if ((rule.int || rule.float || rule.numeric) && queryMethod) {
       if (argName.indexOf(ARRAY_SP) > -1) {
         const parsedRuleName = argName.split(ARRAY_SP);
-        this.ctxQuery[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        ruleCtxQuery[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       } else if (argName.indexOf(OBJECT_SP) > -1) {
         const parsedRuleName = argName.split(OBJECT_SP);
-        this.ctxQuery[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
+        ruleCtxQuery[parsedRuleName[0]][parsedRuleName[1]] = parseFloat(rule.value);
       } else {
-        this.ctxQuery[argName] = parseFloat(rule.value);
+        ruleCtxQuery[argName] = parseFloat(rule.value);
       }
     }
   }
@@ -214,7 +214,7 @@ class Validator {
           validName,
           validValue: rule[validName],
           parsedValidValue,
-          currentQuery: this.ctxQuery,
+          currentQuery: this.ctx[this._getQueryMethod(rule)](),
           ctx: this.ctx,
           rule,
           rules: cloneRules // prevent to write
@@ -257,8 +257,7 @@ class Validator {
 
       const queryMethod = this._getQueryMethod(rule);
 
-      // set this.ctxQuery
-      this.ctxQuery = this.ctx[queryMethod]();
+      const ruleCtxQuery = this.ctx[queryMethod]();
 
       // basic type check, only one basic type is legal(ok)
       const containTypeNum = this.basicType.reduce((acc, val) => {
@@ -271,7 +270,7 @@ class Validator {
 
       // set related value on ctx to rule.value first
       if (!rule.value) {
-        rule.value = this.ctxQuery[argName];
+        rule.value = ruleCtxQuery[argName];
       }
 
       // set default, when rule.value is undefined
@@ -302,9 +301,9 @@ class Validator {
       if (typeof rule.value !== 'undefined' && queryMethod) {
         if (argName.indexOf(ARRAY_SP) !== -1 || argName.indexOf(OBJECT_SP) !== -1) {
           const parsedRuleName = argName.split(argName.indexOf(ARRAY_SP) === -1 ? OBJECT_SP : ARRAY_SP);
-          this.ctxQuery[parsedRuleName[0]][parsedRuleName[1]] = rule.value;
+          ruleCtxQuery[parsedRuleName[0]][parsedRuleName[1]] = rule.value;
         } else {
-          this.ctxQuery[argName] = rule.value;
+          ruleCtxQuery[argName] = rule.value;
         }
       }
 
@@ -402,7 +401,7 @@ class Validator {
           validName,
           validValue: rule[validName],
           parsedValidValue,
-          currentQuery: this.ctxQuery,
+          currentQuery: this.ctx[this._getQueryMethod(rule)](),
           ctx: this.ctx,
           rule,
           rules: helper.extend({}, rules) // prevent to write
