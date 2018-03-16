@@ -1,6 +1,6 @@
 {
   "name": "think-validator",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Validator for ThinkJS",
   "main": "index.js",
   "scripts": {
