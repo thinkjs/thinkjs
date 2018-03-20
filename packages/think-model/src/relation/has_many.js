@@ -38,7 +38,13 @@ module.exports = class HasManyRelation extends BaseRelation {
             return model.update(item);
           }
 
-          item[this.options.fKey] = this.data[this.options.key];
+          // return if main model pk value not exist
+          const fKeyData = this.data[this.options.key];
+          if (!fKeyData) {
+            return;
+          }
+
+          item[this.options.fKey] = fKeyData;
           return model.add(item);
         });
         return Promise.all(promises);
