@@ -47,13 +47,7 @@ module.exports = function(opts = {}) {
         limit: opts.limit,
         encoding: opts.encoding
       },
-      multipartOpts: {
-        keepExtensions: opts.keepExtensions,
-        uploadDir: opts.uploadDir,
-        encoding: opts.encoding,
-        hash: opts.hash,
-        multiples: opts.multiples
-      }
+      multipart: opts.multipart
     }).then(body => {
       ctx.request.body = body;
       return next();
@@ -77,7 +71,7 @@ module.exports = function(opts = {}) {
       return parse.text(ctx, opts.opts);
     }
     if (ctx.request.is(multipartTypes)) {
-      return parse.multipart(ctx, opts.multipartOpts);
+      return parse.multipart(ctx, opts.multipart);
     }
     if (ctx.request.is(xmlTypes)) {
       return parse.xml(ctx, opts.opts);
