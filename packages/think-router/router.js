@@ -143,10 +143,10 @@ class Router {
         item.query.forEach((queryItem, index) => {
           if (/^\d+$/.test(queryItem.name)) {
             const index = parseInt(queryItem.name) + 1;
-            pathname = pathname.replace(`:${index}`, match[index] || '');
+            pathname = pathname.replace(new RegExp(`:${index}`, 'g'), match[index] || '');
           } else {
             query[queryItem.name] = match[index + 1];
-            pathname = pathname.replace(`:${queryItem.name}`, query[queryItem.name]);
+            pathname = pathname.replace(new RegExp(`:${queryItem.name}`, 'g'), query[queryItem.name]);
           }
         });
         rule = Object.assign({}, item, {query, path: pathname});
