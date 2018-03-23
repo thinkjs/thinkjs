@@ -2,14 +2,13 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-03-16 16:26:26
+* @Last Modified time: 2018-03-23 14:17:30
 */
 import test from 'ava';
 import helper from 'think-helper';
 import Validator from '../index.js';
 import defaultCtx from './ctx.js';
 const WITHOUT_ERR_MESSAGE = ' valid failed';
-
 
 test('rule-name-custom-message2', t => {
   const err = 'error message';
@@ -32,7 +31,6 @@ test('rule-name-custom-message2', t => {
   let ret = instance.validate(rules, msgs);
   t.true(ret.arg === err);
 });
-
 
 test('rule-required, required = true', t => {
   let rules = {
@@ -2729,6 +2727,28 @@ test('rule-add-method', t => {
   let instance = new Validator(helper.extend({}, defaultCtx));
   let ret = instance.validate(rules);
   t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-add-method2', t => {
+  let rules = {
+    arg: {
+      default: 'lua',
+      eqlushijie: true
+    }
+  }
+  let wrongMsg = 'eqlushijie error';
+
+  Validator.addRule('eqlushijie', function(value, { parsedValidValue }) {
+    return {
+      arg: wrongMsg
+    };
+  }, wrongMsg);
+  Validator.addRule('_eqlushijie', function(validValue, { currentQuery }) {
+    return currentQuery.arg + 'shijie';
+  });
+  let instance = new Validator(helper.extend({}, defaultCtx));
+  let ret = instance.validate(rules);
+  t.true(ret.arg === wrongMsg);
 });
 
 test('rule one-more-basic type', t => {

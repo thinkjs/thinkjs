@@ -2,18 +2,8 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-03-16 16:36:58
+* @Last Modified time: 2018-03-23 15:10:59
 */
-
-// let rules = {             // rules
-//   name: {                 // argName: rule
-//     required: true,       // validName: validValue
-//     method: 'GET'
-//     trim: true,
-//     defalut: 'thinkjs'
-//   }
-// }
-
 const assert = require('assert');
 const helper = require('think-helper');
 const preRules = require('./rules.js');
@@ -52,29 +42,28 @@ class Validator {
   }
 
   /**
-   * format argName nested array and object
+   * get origin argName for nested array and object
    * @param  {String} argName [description]
    * @return {String}          [description]
    */
-  _formatNestedRuleName(argName) {
-    let newArgName = argName;
-    if (newArgName.indexOf(ARRAY_SP) > -1) {
-      const tmpRuleName = newArgName.split(ARRAY_SP);
-      newArgName = tmpRuleName[0] + '[' + tmpRuleName[1] + ']';
+  _getOriginArgName(argName) {
+    if (argName.indexOf(ARRAY_SP) > -1) {
+      const tmpRuleName = argName.split(ARRAY_SP);
+      argName = tmpRuleName[0] + '[' + tmpRuleName[1] + ']';
     }
-    if (newArgName.indexOf(OBJECT_SP) > -1) {
-      const tmpRuleName = newArgName.split(OBJECT_SP);
-      newArgName = tmpRuleName[0] + '.' + tmpRuleName[1];
+    if (argName.indexOf(OBJECT_SP) > -1) {
+      const tmpRuleName = argName.split(OBJECT_SP);
+      argName = tmpRuleName[0] + '.' + tmpRuleName[1];
     }
-    return newArgName;
+    return argName;
   }
 
   /**
-   * [_checkCustomMessage error should be function or string]
+   * [error should be function or string]
    * @param  {[type]} error [description]
    * @return {[type]}       [description]
    */
-  _checkCustomMessage(error) {
+  _isErrorType(error) {
     return error && (helper.isString(error) || helper.isFunction(error));
   }
 
@@ -101,20 +90,20 @@ class Validator {
 
     // [error message]: { string: 'the error message' }
     const validNameError = this.errors[validName];
-    if (this._checkCustomMessage(validNameError)) {
+    if (this._isErrorType(validNameError)) {
       errMsg = validNameError;
     }
 
     // [error message]: { username: 'the error message' }
     let argNameError = this.errors[argName];
-    if (this._checkCustomMessage(argNameError)) {
+    if (this._isErrorType(argNameError)) {
       errMsg = argNameError;
     }
 
     // [error message]: { username: { string: 'the error message' } }
     if (helper.isObject(argNameError)) {
       const validArgNameError = this.errors[argName][validName];
-      if (this._checkCustomMessage(validArgNameError)) {
+      if (this._isErrorType(validArgNameError)) {
         errMsg = validArgNameError;
       }
     }
@@ -135,19 +124,19 @@ class Validator {
           if (i.split(',').indexOf(subRuleName) > -1) {
             if (helper.isObject(argNameError[i])) {
               // [error message]: { address: {'procince,city': {required: 'the error message'}} }
-              if (this._checkCustomMessage(argNameError[i][validName])) {
+              if (this._isErrorType(argNameError[i][validName])) {
                 errMsg = argNameError[i][validName];
               }
             } else {
               // [error message]: { address: {'procince,city': 'the error message'} }
-              if (this._checkCustomMessage(argNameError[i])) {
+              if (this._isErrorType(argNameError[i])) {
                 errMsg = argNameError[i];
               }
             }
           }
         }
       } else {
-        if (this._checkCustomMessage(argNameError)) {
+        if (this._isErrorType(argNameError)) {
           // [error message]: { address: 'address valid error' }
           errMsg = argNameError;
         }
@@ -157,9 +146,9 @@ class Validator {
       errMsg = errMsg || this.errors[validName];
     }
 
-    const originRuleName = this._formatNestedRuleName(argName);
+    const originArgName = this._getOriginArgName(argName);
     if (!errMsg) {
-      return (rule.aliasName || originRuleName) + WITHOUT_ERR_MESSAGE;
+      return (rule.aliasName || originArgName) + WITHOUT_ERR_MESSAGE;
     }
 
     const validValue = rule[validName];
@@ -167,7 +156,7 @@ class Validator {
     // support function as the custom message
     if (helper.isFunction(errMsg)) {
       const lastErrorMsg = errMsg({
-        name: originRuleName,
+        name: originArgName,
         validName: validName,
         rule: rule,
         args: validValue,
@@ -178,7 +167,7 @@ class Validator {
     }
 
     // string as the custom message
-    const lastErrorMsg = errMsg.replace('{name}', (rule.aliasName || originRuleName))
+    const lastErrorMsg = errMsg.replace('{name}', (rule.aliasName || originArgName))
       .replace('{args}', helper.isString(validValue) ? validValue : JSON.stringify(validValue))
       .replace('{pargs}', helper.isString(parsedValidValue) ? parsedValidValue : JSON.stringify(parsedValidValue));
     return lastErrorMsg;
@@ -188,7 +177,7 @@ class Validator {
    * parse valid args by _validName method
    * @return {Mixed}           [description]
    */
-  _parseValidArgs(validName, rule, cloneRules, argName) {
+  _parseValidValue(validName, rule, cloneRules, argName) {
     let validValue = rule[validName];
     const _fn = preRules['_' + validName];
 
@@ -212,7 +201,7 @@ class Validator {
    * @param  {Object} rule     [description]
    * @return {Mixed}          [description]
    */
-  _convertParamValue(argName, rule) {
+  _convertArgValue(argName, rule) {
     const queryMethod = this._getRuleMethod(rule);
     const ruleCtxQuery = this.ctx[queryMethod]();
     if ((rule.int || rule.float || rule.numeric) && queryMethod) {
@@ -232,24 +221,19 @@ class Validator {
    * check the value if is required
    * @return {Boolean}      [description]
    */
-  _checkRequired(rule, rules, argName) {
+  _isArgRequired(params) {
     let isRequired = false;
-    const cloneRules = helper.extend({}, rules);
+    const cloneRules = helper.extend({}, params.rules);
     for (let i = 0; i <= this.requiredValidNames.length; i++) {
       const validName = this.requiredValidNames[i];
-      if (rule[validName]) {
+      if (params.rule[validName]) {
         const fn = preRules[validName];
-        const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules, argName);
-        if (fn(rule.value, {
-          argName,
-          validName,
-          validValue: rule[validName],
-          parsedValidValue,
-          currentQuery: this.ctx[this._getRuleMethod(rule)](),
-          ctx: this.ctx,
-          rule,
-          rules: cloneRules // prevent to write
-        })) {
+
+        params.validName = validName;
+        params.validValue = params.rule[validName];
+        params.parsedValidValue = this._parseValidValue(validName, params.rule, cloneRules, params.argName);
+
+        if (fn(params.rule.value, params)) {
           isRequired = true;
           break;
         };
@@ -379,29 +363,34 @@ class Validator {
    * @return {Object}       {argName: errorMessage}
    */
   validate(rules, msgs) {
-    const ret = {};
+    let ret = {};
     const cloneRules = helper.extend({}, rules);
     const parsedRules = this._preTreatRules(rules);
     this.errors = helper.extend(this.errors, msgs);
 
     for (const argName in parsedRules) {
       const rule = parsedRules[argName];
+      const params = {
+        argName,
+        rule,
+        rules: cloneRules,
+        currentQuery: this.ctx[this._getRuleMethod(rule)](),
+        ctx: this.ctx
+      };
 
       // required check
-      const isRequired = this._checkRequired(rule, rules, argName);
       if (helper.isTrueEmpty(rule.value)) {
-        if (isRequired) {
-          let validName;
+        if (this._isArgRequired(params)) {
           for (let i = 0; i < this.requiredValidNames.length; i++) {
             if (rule[this.requiredValidNames[i]]) {
-              validName = this.requiredValidNames[i];
+              const validName = this.requiredValidNames[i];
+              params.validName = validName;
+              params.validValue = rule[validName];
+              params.parsedValidValue = this._parseValidValue(validName, rule, cloneRules, argName);
               break;
             }
           }
-
-          const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules, argName);
-          const errMsg = this._getErrorMessage({ argName, rule, validName, parsedValidValue });
-          ret[argName] = errMsg;
+          ret[argName] = this._getErrorMessage(params);
           continue;
         } else {
           continue;
@@ -410,6 +399,7 @@ class Validator {
 
       // valid check
       for (const validName in rule) {
+        // skip unnecessary attribute
         if (this.skippedValidNames.indexOf(validName) >= 0) {
           continue;
         }
@@ -420,28 +410,20 @@ class Validator {
           throw new Error(validName + ' valid method is not been configed');
         }
 
-        // get parsed valid options
-        const parsedValidValue = this._parseValidArgs(validName, rule, cloneRules, argName);
+        params.validName = validName;
+        params.validValue = rule[validName];
+        params.parsedValidValue = this._parseValidValue(validName, rule, cloneRules, argName);
 
-        const result = fn(rule.value, {
-          argName,
-          validName,
-          validValue: rule[validName],
-          parsedValidValue,
-          currentQuery: this.ctx[this._getRuleMethod(rule)](),
-          ctx: this.ctx,
-          rule,
-          rules: helper.extend({}, rules) // prevent to write
-        });
-        if (!result) {
-          const errMsg = this._getErrorMessage({ argName, rule, validName, parsedValidValue });
-          // format error message's rule name
-          const newRuleName = this._formatNestedRuleName(argName);
-          ret[newRuleName] = errMsg;
-          break; // go to first for loop
-        } else {
-          // if this is no error, convert the value
-          this._convertParamValue(argName, rule);
+        const result = fn(rule.value, params);
+        if (result === false) { // standard valid failed
+          const originArgName = this._getOriginArgName(argName);
+          ret[originArgName] = this._getErrorMessage(params);
+          break;
+        } else if (helper.isObject(result)) { // custom valid failed for json-schema
+          ret = Object.assign({}, ret, result);
+          break;
+        } else { // valid success
+          this._convertArgValue(argName, rule);
         }
       }
     }
