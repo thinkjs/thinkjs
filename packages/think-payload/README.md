@@ -51,7 +51,7 @@ this.ctx.body = this.ctx.request.body
 - **encoding:** The encoding to use to decode the body into a string.
   By default, a `Buffer` instance will be returned when no encoding is specified.
   Most likely, you want `utf-8`, so setting `encoding` to `true` will decode as `utf-8`.
-  You can use any type of encoding supported by [iconv-lite](https://www.npmjs.org/package/iconv-lite#readme).
+  You can use any type of encoding supported by [iconv-lite](https://www.npmjs.org/package/iconv-lite#readme). If it is a file upload, the default is `utf-8`, Because file uploads are based on [node-formidable](https://github.com/felixge/node-formidable).
 - **extendTypes:** support extend types:
 
   ```javascript
@@ -70,16 +70,17 @@ this.ctx.body = this.ctx.request.body
     }
   }]
   ```
-- **multipart:** The `multipart` field in the options should be an object containing parameters for [parsing form data](https://github.com/felixge/node-formidable), especially file uploads.
-  - **encoding:** Sets encoding for incoming form fields.
-  - **uploadDir:** Sets the directory for placing file uploads in. You can move them later on using fs.rename(). The default is os.tmpdir().
-  - **keepExtensions:** If you want the files written to form.uploadDir to include the extensions of the original files, set this property to true.
-  - **maxFieldsSize:** Limits the amount of memory all fields together (except files) can allocate in bytes. If this value is exceeded, an 'error' event is emitted. The default size is 20MB.
-  - **maxFileSize:** Limits the size of uploaded file. If this value is exceeded, an 'error' event is emitted. The default size is 200MB.
-  - **maxFields:** Limits the number of fields that the querystring parser will decode. Defaults to 1000 (0 for unlimited).
-  - **hash:** If you want checksums calculated for incoming files, set this to either 'sha1' or 'md5'.
-  - **multiples**  If this option is enabled, when you call form.parse, the files argument will contain arrays of files for inputs which submit multiple files using the HTML5 multiple attribute.
-  - [See more node-formidable](https://github.com/felixge/node-formidable)
+
+The following options are parsing form data, especially file uploads.
+
+- **uploadDir:** Sets the directory for placing file uploads in. You can move them later on using fs.rename(). The default is os.tmpdir().
+- **keepExtensions:** If you want the files written to form.uploadDir to include the extensions of the original files, set this property to true.
+- **maxFieldsSize:** Limits the amount of memory all fields together (except files) can allocate in bytes. If this value is exceeded, an 'error' event is emitted. The default size is 20MB.
+- **maxFileSize:** Limits the size of uploaded file. If this value is exceeded, an 'error' event is emitted. The default size is 200MB.
+- **maxFields:** Limits the number of fields that the querystring parser will decode. Defaults to 1000 (0 for unlimited).
+- **hash:** If you want checksums calculated for incoming files, set this to either 'sha1' or 'md5'.
+- **multiples**  If this option is enabled, when you call form.parse, the files argument will contain arrays of files for inputs which submit multiple files using the HTML5 multiple attribute.
+- [See more node-formidable](https://github.com/felixge/node-formidable)
 
 ### Errors
 This module creates errors depending on the error condition during reading. The error may be an error from the underlying Node.js implementation, but is otherwise an error created by this module, which has the following attributes:

@@ -7,7 +7,8 @@ const app = new Koa();
 app.use(payload({
   extendTypes: {
     json: ['application/json-patch+json']
-  }
+  },
+  uploadDir: path.join(__dirname, '../tmpdir')
 }));
 app.use((ctx) => {
   ctx.body = ctx.request.body;
@@ -87,6 +88,7 @@ test.cb('should be able to receive multipart type requests', t => {
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
+    t.truthy(res.body.file.xxfile.path.indexOf(path.join(__dirname, '../tmpdir')) !== -1);
     t.is(res.body.file.xxfile.name, 'index.js');
     t.is(res.body.file.xxfile.type, 'application/javascript');
     t.end();

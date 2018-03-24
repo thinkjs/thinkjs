@@ -47,14 +47,14 @@ module.exports = function(opts = {}) {
         limit: opts.limit,
         encoding: opts.encoding
       },
-      multipart: opts.multipart
+      multipart: opts
     }).then(body => {
       ctx.request.body = body;
       return next();
     });
   };
 
-  function parseBody(ctx, opts) {
+  function parseBody(ctx, {opts, multipart}) {
     const methods = ['POST', 'PUT', 'DELETE', 'PATCH', 'LINK', 'UNLINK'];
 
     if (methods.every(method => ctx.method !== method)) {
@@ -62,19 +62,19 @@ module.exports = function(opts = {}) {
     }
 
     if (ctx.request.is(jsonTypes)) {
-      return parse.json(ctx, opts.opts);
+      return parse.json(ctx, opts);
     }
     if (ctx.request.is(formTypes)) {
-      return parse.form(ctx, opts.opts);
+      return parse.form(ctx, opts);
     }
     if (ctx.request.is(textTypes)) {
-      return parse.text(ctx, opts.opts);
+      return parse.text(ctx, opts);
     }
     if (ctx.request.is(multipartTypes)) {
-      return parse.multipart(ctx, opts.multipart);
+      return parse.multipart(ctx, multipart);
     }
     if (ctx.request.is(xmlTypes)) {
-      return parse.xml(ctx, opts.opts);
+      return parse.xml(ctx, opts);
     }
 
     return Promise.resolve({});
