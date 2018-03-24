@@ -32,8 +32,7 @@
     "think-cache": "^1.0.7",
     "think-debounce": "^1.0.3",
     "think-helper": "^1.0.22",
-    "think-model-abstract": "^1.2.0",
-    "think-mysql": "^1.1.0"
+    "think-model-abstract": "^1.2.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",
