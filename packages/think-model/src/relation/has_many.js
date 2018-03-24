@@ -30,7 +30,7 @@ module.exports = class HasManyRelation extends BaseRelation {
         });
         return model.addMany(data);
       case 'UPDATE':
-        await model.getSchema();
+        await model.db().getSchema();
         const {pk} = model;
 
         const promises = data.map(item => {

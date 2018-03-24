@@ -104,11 +104,11 @@ test('has one data with relation', async t => {
     return {
       delete() {
 
+      },
+      getSchema() {
+
       }
     };
-  };
-  model.getSchema = function() {
-
   };
   model.where = function(where) {
     t.deepEqual(where, {user_id: 3});

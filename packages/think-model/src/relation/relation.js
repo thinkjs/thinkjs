@@ -81,7 +81,13 @@ class Relation {
     if (helper.isEmpty(data) || helper.isEmpty(this.relation) || helper.isEmpty(this.relationName)) return;
 
     const promises = Object.keys(this.relation).map(key => {
-      if (helper.isArray(this.relationName) && this.relationName.indexOf(key) === -1) return;
+      if (
+        helper.isArray(this.relationName) &&
+        this.relationName.indexOf(key) === -1
+      ) {
+        return;
+      }
+
       const instance = this.getRelationInstance(key, data, type);
       if (helper.isEmpty(instance)) return;
       return instance.setRelationData(type);
@@ -135,9 +141,15 @@ class Relation {
 
     // relation data is exist
     if (!type) {
+      // get relation data
       const itemData = helper.isArray(data) ? data[0] : data;
       const relData = itemData[opts.name];
       if (helper.isArray(relData) || helper.isObject(relData)) {
+        return;
+      }
+    } else {
+      // set relation data
+      if (type !== 'DELETE' && helper.isEmpty(data[opts.name])) {
         return;
       }
     }
