@@ -16,7 +16,7 @@ Awesome projects for `ThinkJS 3.x`
 | [think-swagger](https://github.com/libery/think-swagger)  | [@libery](https://github.com/libery)   | ![version](https://img.shields.io/npm/v/think-swagger-controller.svg)  |  ![](https://travis-ci.org/libery/think-swagger-controller.svg) | ![](https://coveralls.io/repos/github/libery/think-swagger-controller/badge.svg)  | swagger middleware |
 | [think-qs](https://github.com/thinkjs/think-qs)  | [@welefen](https://github.com/welefen)  | ![version](https://img.shields.io/npm/v/think-qs.svg)  |  ![](https://travis-ci.org/thinkjs/think-qs.svg) | ![](https://coveralls.io/repos/github/thinkjs/think-qs/badge.svg)  | parse complex query data |
 
-## Koa Middlewares 
+## Koa Middlewares
 
 | Package  | Author  | Version  |  Status | downloads | Description |
 |---|---|---|---|---|---|
@@ -37,6 +37,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-view-ejs](https://github.com/thinkjs/think-view-ejs) Use ejs to render view files
 * [think-view-xtemplate](https://github.com/lizheming/think-view-xtemplate) Use xtemplate to render view files
 * [think-view-opx](https://github.com/wj008/think-view-opx) Use sdopx to render view files
+* [think-view-art](https://github.com/leo-enigma/think-view-art) Use art-template to render view files
 
 ### session
 * [think-session-cookie](https://github.com/thinkjs/think-session-cookie) Use cookie to store session data
@@ -64,7 +65,7 @@ Awesome projects for `ThinkJS 3.x`
 
 * [think-view](https://github.com/thinkjs/think-view) Add `display`, `render`, `assign` methods to controller.
 * [think-email](https://github.com/thinkjs/think-email) Add `sendEmail` method to think, context, controller.
-* [think-cache](https://github.com/thinkjs/think-cache) Add `cache` method to  think, context, controller. 
+* [think-cache](https://github.com/thinkjs/think-cache) Add `cache` method to  think, context, controller.
 * [think-session](https://github.com/thinkjs/think-session) Add `session` method to  think, context, controller.
 * [think-fetch](https://github.com/thinkjs/think-fetch) Add `fetch` method to  think, context, controller, service.
 * [think-model](https://github.com/thinkjs/think-model) Add `model` method to  think, context, controller, service. add `Model` to think.
