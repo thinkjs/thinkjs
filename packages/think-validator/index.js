@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-03-23 15:10:59
+* @Last Modified time: 2018-03-29 09:24:31
 */
 const assert = require('assert');
 const helper = require('think-helper');
@@ -286,7 +286,7 @@ class Validator {
       }
 
       // set default, when rule.value is undefined
-      if (typeof (rule.value) === 'undefined' && !helper.isTrueEmpty(rule.default)) {
+      if (typeof (rule.value) === 'undefined' /* && !helper.isTrueEmpty(rule.default) */) {
         rule.value = rule.default;
       }
 
