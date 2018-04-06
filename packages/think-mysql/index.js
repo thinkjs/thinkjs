@@ -70,9 +70,9 @@ class ThinkMysql {
   getConnection(connection) {
     if (connection && !connection[CONNECTION_LOST]) return Promise.resolve(connection);
     const promise = helper.promisify(this.pool.getConnection, this.pool)();
-    if (this.config.afterConnection) {
+    if (this.config.afterConnect) {
       return promise.then(connection => {
-        return this.config.afterConnection(connection).then(() => connection);
+        return this.config.afterConnect(connection).then(() => connection);
       });
     }
     return promise;
