@@ -52,7 +52,7 @@ npm start
 ```text
 [2017-05-22 15:54:58.281] [INFO] - Server running at http://127.0.0.1:8360
 [2017-05-22 15:54:58.283] [INFO] - ThinkJS version: 3.0.0-alpha1
-[2017-05-22 15:54:58.283] [INFO] - Enviroment: development
+[2017-05-22 15:54:58.283] [INFO] - environment: development
 [2017-05-22 15:54:58.284] [INFO] - Workers: 1
 ```
 
