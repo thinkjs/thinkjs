@@ -79,7 +79,7 @@ class ThinkMysql {
   }
   /**
    * start transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   startTrans(connection) {
     return this.getConnection(connection).then(connection => {
@@ -98,12 +98,12 @@ class ThinkMysql {
   }
   /**
    * commit transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   commit(connection) {
     if (connection && connection[TRANSACTIONS]) {
       connection[TRANSACTIONS]--;
-      if (connection[TRANSACTIONS]-- !== 0) return Promise.resolve();
+      if (connection[TRANSACTIONS] !== 0) return Promise.resolve();
     }
     return this.query({
       sql: 'COMMIT',
@@ -113,12 +113,12 @@ class ThinkMysql {
   }
   /**
    * rollback transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   rollback(connection) {
     if (connection && connection[TRANSACTIONS]) {
       connection[TRANSACTIONS]--;
-      if (connection[TRANSACTIONS]-- !== 0) return Promise.resolve();
+      if (connection[TRANSACTIONS] !== 0) return Promise.resolve();
     }
     return this.query({
       sql: 'ROLLBACK',
@@ -128,8 +128,8 @@ class ThinkMysql {
   }
   /**
    * transaction
-   * @param {Function} fn 
-   * @param {Object} connection 
+   * @param {Function} fn
+   * @param {Object} connection
    */
   transaction(fn, connection) {
     assert(helper.isFunction(fn), 'fn must be a function');
@@ -187,8 +187,8 @@ class ThinkMysql {
    *  timeout: 40000, // 40s
    *  values: ['David']
    * })
-   * @param {Object} sqlOptions 
-   * @param {Object} connection 
+   * @param {Object} sqlOptions
+   * @param {Object} connection
    */
   query(sqlOptions, connection) {
     if (helper.isString(sqlOptions)) {
