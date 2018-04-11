@@ -16,10 +16,6 @@ module.exports = (options = {}) => {
 
     return utils
       .checkCsrf(ctx, options)
-      .then(() => next())
-      .catch(() => {
-        ctx.status = options.errno;
-        ctx.message = options.errmsg;
-      });
+      .then(_ => next());
   };
 };

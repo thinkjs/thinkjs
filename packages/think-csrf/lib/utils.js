@@ -12,12 +12,12 @@ module.exports = {
       );
   },
 
-  checkCsrf(ctx, {session_name, form_name, header_name}) {
+  checkCsrf(ctx, {session_name, form_name, header_name, errno, errmsg}) {
     return ctx.session(session_name).then(value => {
-      if (!value) throw new Error('Verification failed');
+      if (!value) ctx.throw(errno, errmsg);
 
       const token = ctx.query[form_name] || (ctx.request.body.post && ctx.request.body.post[form_name]) || ctx.get(header_name);
-      if (token !== value) throw new Error('Verification failed');
+      if (token !== value) ctx.throw(errno, errmsg);
     });
   },
 
