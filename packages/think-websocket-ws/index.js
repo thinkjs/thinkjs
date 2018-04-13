@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-10-09 14:00:01
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-12-27 16:11:59
+* @Last Modified time: 2018-04-13 11:34:42
 */
 const WebSocketServer = require('ws').Server;
 const helper = require('think-helper');
@@ -54,9 +54,9 @@ module.exports = class WebSocket {
    * @param {Object} data
    * @param {Object} socket
    */
-  mockRequst(url, data, socket, request ,open) {
+  mockRequst(url, data, socket, request, open, wss) {
     if (url[0] !== '/') url = `/${url}`;
-    const args = {url, websocketData: data, websocket: socket, method: 'WEBSOCKET'};
+    const args = {url, websocketData: data, websocket: socket, wss, method: 'WEBSOCKET'};
     if (open) {
       args.req = request;
     }
@@ -71,12 +71,12 @@ module.exports = class WebSocket {
 
     wss.on('connection', (socket, request) => {
       if (messages.open) {
-        this.mockRequst(messages.open, undefined, socket, request, true);
+        this.mockRequst(messages.open, undefined, socket, request, true, wss);
       }
 
       if (messages.close) {
         socket.on('close', () => {
-          this.mockRequst(messages.close, undefined, socket);
+          this.mockRequst(messages.close, undefined, socket, undefined, false, wss);
         });
       }
 
@@ -85,7 +85,7 @@ module.exports = class WebSocket {
         socket.on('message', data => {
           data = JSON.parse(data);
           if (key === data.event) {
-            this.mockRequst(messages[key], data, socket);
+            this.mockRequst(messages[key], data, socket, undefined, false, wss);
           }
         });
       }
