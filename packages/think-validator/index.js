@@ -2,27 +2,16 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-03-29 09:24:31
+* @Last Modified time: 2018-04-16 18:08:12
 */
 const assert = require('assert');
 const helper = require('think-helper');
 const preRules = require('./rules.js');
 const preErrors = require('./errors.js');
+const METHOD_MAP = require('./method.js');
 const ARRAY_SP = '__array__';
 const OBJECT_SP = '__object__';
 const WITHOUT_ERR_MESSAGE = ' valid failed';
-const METHOD_MAP = {
-  GET: 'param',
-  POST: 'post',
-  FILE: 'file',
-  PUT: 'post',
-  DELETE: 'post',
-  PATCH: 'post',
-  LINK: 'post',
-  UNLINK: 'post',
-  WEBSOCKET: 'param',
-  CLI: 'param'
-};
 
 class Validator {
   constructor(ctx) {
@@ -253,7 +242,7 @@ class Validator {
     } else {
       rule.method = rule.method.toUpperCase();
     }
-    return METHOD_MAP[rule.method];
+    return METHOD_MAP[rule.method] || 'param';
   }
 
   /**

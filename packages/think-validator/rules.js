@@ -2,24 +2,13 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-02-04 17:46:11
+* @Last Modified time: 2018-04-16 18:09:38
 */
 'use strict';
 const helper = require('think-helper');
 const validator = require('validator');
 const assert = require('assert');
-const METHOD_MAP = {
-  GET: 'param',
-  POST: 'post',
-  FILE: 'file',
-  PUT: 'post',
-  DELETE: 'post',
-  PATCH: 'post',
-  LINK: 'post',
-  UNLINK: 'post',
-  WEBSOCKET: 'param',
-  CLI: 'param'
-};
+const METHOD_MAP = require('./method.js');
 const Rules = {};
 
 /**

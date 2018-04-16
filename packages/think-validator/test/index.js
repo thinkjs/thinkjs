@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-03-23 14:17:30
+* @Last Modified time: 2018-04-16 18:07:46
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -373,6 +373,24 @@ test('rule-equals parse success', t => {
   let rules = {
     username: {
       equals: 'abc'
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+      username: 'lushijie',
+      abc: 'lushijie'
+    }
+  });
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.true(Object.keys(ret).length === 0);
+});
+
+test('rule-equals parse success2', t => {
+  let rules = {
+    username: {
+      equals: 'abc',
+      method: 'notExist'
     }
   }
   let ctx = helper.extend({}, defaultCtx, {
