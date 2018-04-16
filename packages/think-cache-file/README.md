@@ -25,7 +25,7 @@ exports.cache = {
   },
   file: {
     handle: fileCache,
-    cachePath: '/home/usr/data',  // absoulte path is necessarily required
+    cachePath: '/home/usr/data',  // absolute path is necessarily required
     pathDepth: 1,
     gcInterval: 24 * 60 * 60 * 1000 // gc
   }
