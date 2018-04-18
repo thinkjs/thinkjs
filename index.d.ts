@@ -127,7 +127,7 @@ declare module 'thinkjs' {
      * send fail data
      * @memberOf Context
      */
-    fail(errno: any, errmsg?: object | string, data?: string): any;
+    fail(errno: any, errmsg?: object | string, data?: any): any;
     /**
      * set expires header
      * @memberOf Context
