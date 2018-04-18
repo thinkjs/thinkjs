@@ -303,7 +303,7 @@ declare module 'thinkjs' {
      * send fail data
      * @memberOf Controller
      */
-    fail(errno: any, errmsg?: string, data?: string): any;
+    fail(errno: any, errmsg?: string, data?: any): any;
     /**
      * set expires header
      * @memberOf Controller
