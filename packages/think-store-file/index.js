@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-03-16 09:50:44
 * @Last Modified by:   lushijie
-* @Last Modified time: 2017-05-20 12:41:01
+* @Last Modified time: 2018-04-19 18:42:37
 */
 const helper = require('think-helper');
 const path = require('path');
@@ -95,7 +95,12 @@ class FileStore {
     if (!helper.isFile(filePath)) {
       return Promise.resolve();
     }
-    return unlink(filePath);
+
+    // mutiple process will cause error if just unlink(filePath);
+    return unlink(filePath).catch(err => {
+      if (err.code === 'ENOENT') return;
+      return Promise.reject(err);
+    });
   }
 }
 
