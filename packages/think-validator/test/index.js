@@ -2,11 +2,11 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-04-16 18:07:46
+* @Last Modified time: 2018-04-19 14:10:46
 */
 import test from 'ava';
 import helper from 'think-helper';
-import Validator from '../index.js';
+import Validator from '../src/index.js';
 import defaultCtx from './ctx.js';
 const WITHOUT_ERR_MESSAGE = ' valid failed';
 

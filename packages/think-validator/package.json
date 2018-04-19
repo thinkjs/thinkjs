@@ -2,9 +2,9 @@
   "name": "think-validator",
   "version": "1.6.3",
   "description": "Validator for ThinkJS",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "lint": "eslint --fix rules.js & eslint --fix index.js",
+    "lint": "eslint --fix rules.js & eslint --fix src/index.js",
     "test": "npm run lint && nyc ava test/index.js",
     "coverage": "npm test && nyc report --reporter=html"
   },

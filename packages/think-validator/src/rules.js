@@ -2,9 +2,8 @@
 * @Author: lushijie
 * @Date:   2017-02-27 19:11:47
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-04-16 18:09:38
+* @Last Modified time: 2018-04-19 14:11:40
 */
-'use strict';
 const helper = require('think-helper');
 const validator = require('validator');
 const assert = require('assert');
