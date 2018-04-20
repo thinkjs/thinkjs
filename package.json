@@ -38,7 +38,7 @@
     }
   ],
   "main": "lib/application.js",
-  "type": "index.d.ts",
+  "types": "index.d.ts",
   "dependencies": {
     "bluebird": "3.3.5",
     "cookies": "^0.7.0",
