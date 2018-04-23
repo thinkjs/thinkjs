@@ -7,8 +7,13 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint index.js --fix && nyc ava test/index.js ",
-    "coverage": "nyc report --reporter=html"
+    "test": "eslint index.js --fix && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
   },
   "contributors": [
     {
@@ -18,6 +23,7 @@
   ],
   "main": "index.js",
   "dependencies": {
+    "depd": "^1.1.2",
     "think-helper": "^1.0.0"
   },
   "devDependencies": {

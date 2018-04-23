@@ -152,3 +152,71 @@ test('after', async t => {
   await fn({controller: 'foo', action: 'bar'}, () => {});
   t.is(recieved, ++expected);
 });
+
+test('allowMethods', async t => {
+  let err = 0;
+  const getFn = (allowMethods) => invokeLogic(undefined, {
+    modules: [],
+    logics: {
+      foo: class {
+        constructor () {
+        }
+        barAction() {
+          this.allowMethods = allowMethods;
+        }
+      }
+    }
+  });
+  const args = [{
+    controller: 'foo',
+    action: 'bar',
+    config() {
+      return 'ctx.config'
+    },
+    fail() {
+      return 'ctx.fail'
+    },
+    method: 'GET'
+  }, (res) => res];
+  const fn1 = getFn('GET');
+  await fn1(...args);
+  t.is(err, 0);
+});
+
+test('allowMethods2', async t => {
+  let err = 0;
+  const getFn = (allowMethods) => invokeLogic(undefined, {
+    modules: [],
+    logics: {
+      foo: class {
+        constructor () {
+        }
+        barAction() {
+          this.allowMethods = allowMethods;
+          this.validate = function() {
+            return false;
+          }
+          this.rules = {
+            required: true
+          }
+        }
+      }
+    }
+  });
+  const args = [{
+    controller: 'foo',
+    action: 'bar',
+    config() {
+      err = 1;
+      return 'ctx.config'
+    },
+    fail() {
+      return 'ctx.fail'
+    },
+    method: 'GET'
+  }, (res) => res];
+  const fn1 = getFn(['GET,PUT']);
+  await fn1(...args);
+  t.is(err, 1)
+});
+
