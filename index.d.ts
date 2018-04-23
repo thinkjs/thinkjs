@@ -469,6 +469,7 @@ declare module 'thinkjs' {
     validate(rules: Object, msgs?: Object): Object;
     validateErrors?: Object;
     allowMethods: string;
+    rules: Object;
   }
 
   export interface Think extends Helper.Think, ThinkConfig {
