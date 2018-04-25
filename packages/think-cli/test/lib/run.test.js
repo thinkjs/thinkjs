@@ -29,7 +29,6 @@ test.before(() => {
 test.cb('should generate project ', t => {
   const run = new Run({
     template: 'think-template/standard',
-    cacheTemplatePath: cachePath,
     targetPath: appPath,
     options: {
       name: targetName,

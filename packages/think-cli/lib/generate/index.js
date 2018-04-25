@@ -16,8 +16,7 @@ module.exports = function(source, target, options, done) {
     metalsmith.use(ask(options.metadata.prompts, {isMultiModule: options.isMultiModule}));
     metalsmith.use(insertThinkjsInfoToPackage({
       projectName: options.name,
-      templateName: options.template,
-      cacheTemplatePath: source,
+      template: options.template,
       clone: options.clone,
       isMultiModule: options.isMultiModule
     }));

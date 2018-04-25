@@ -3,12 +3,12 @@ const path = require('path');
 const helper = require('think-helper');
 const utils = require('./utils.js');
 
-module.exports = function(name, dir) {
+module.exports = function(dir, data) {
   const metadata = getMetadata(dir);
-
-  setDefaultPrompt(metadata, 'name', name);
+  for (const key in data) {
+    setDefaultPrompt(metadata, key, data[key]);
+  }
   setDefaultPrompt(metadata, 'author', utils.getGitUser());
-
   return metadata;
 };
 

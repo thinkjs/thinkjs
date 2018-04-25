@@ -5,6 +5,7 @@ const chalk = require('chalk')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
 const Sync = require('../lib/sync')
+const config = require('../config')
 
 /**
  * Padding.
@@ -31,15 +32,16 @@ if (!utils.isThinkApp(appPath)) {
 }
 
 const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs;
+const cacheTemplatePath = path.join(config.templateCacheDirectory, thinkjsInfo.template.replace(/[\\/\\:]/g, '-'));
 const sync = new Sync({
-  template: thinkjsInfo.templateName || 'standard',
-  cacheTemplatePath: thinkjsInfo.cacheTemplatePath,
+  template: thinkjsInfo.template || 'standard',
+  cacheTemplatePath,
   clone: thinkjsInfo.clone
 });
 
 sync.start()
   .then(cacheTemplatePath => {
-    if (cacheTemplatePath === thinkjsInfo.cacheTemplatePath) {
+    if (cacheTemplatePath === cacheTemplatePath) {
       logger.success('Synchronization completed~')
     }
   }).catch(err => {

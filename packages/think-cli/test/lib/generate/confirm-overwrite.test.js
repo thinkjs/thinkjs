@@ -7,7 +7,8 @@ test.cb('file already exists. Continue? yes', t => {
   const run = confirmOverwrite('test');
   run({
     [__filename]: {}
-  }, null, _ => {
+  }, null, err => {
+    t.is(err, null);
     t.end();
   })
 });
@@ -19,6 +20,7 @@ test.cb('file already exists. Continue? no', t => {
     [__filename]: {}
   }, null, _ => {})
 
+  console.log(' Here should print "Abort the operation": ');
   t.end();
 });
 
@@ -27,7 +29,8 @@ test.cb('The new command should be skipped', t => {
 
   run({
     [__filename]: {}
-  }, null, _ => {
+  }, null, err => {
+    t.is(err, null);
     t.end();
   })
 });

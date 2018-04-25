@@ -1,4 +1,4 @@
-module.exports = function({projectName, templateName, cacheTemplatePath, clone, isMultiModule}) {
+module.exports = function({projectName, template, clone, isMultiModule}) {
   return function(files, metalsmith, done) {
     if (!files['package.json']) return done();
     const metadata = metalsmith.metadata();
@@ -8,8 +8,7 @@ module.exports = function({projectName, templateName, cacheTemplatePath, clone, 
     json.thinkjs = Object.assign(json.thinkjs || {}, {
       metadata,
       projectName,
-      templateName,
-      cacheTemplatePath,
+      template,
       clone,
       isMultiModule
     });

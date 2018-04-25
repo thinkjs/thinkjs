@@ -39,12 +39,11 @@ const packageJSON = require(packageJSONPath)
 const templateInfo = {
   projectName: packageJSON.name || path.relative('../', process.cwd()),
   templateName: 'think-template/standard',
-  cacheTemplatePath: path.join(os.homedir(), '.think-templates/standard'),
   clone: false,
   isMultiModule
 }
 
-const metaConf = getOptions(templateInfo.projectName, path.join(__dirname, '../default_template'));
+const metaConf = getOptions(path.join(__dirname, '../default_template'), {name: templateInfo.projectName});
 const prompts = utils.compose(addMultiModulePrompt, formatPrompts)(metaConf.prompts)(templateInfo);
 inquirer
   .prompt(prompts)

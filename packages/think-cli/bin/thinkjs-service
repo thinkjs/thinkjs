@@ -69,8 +69,7 @@ const context = Object.assign(thinkjsInfo.metadata, argv, {
 })
 
 const run = new Run({
-  template: thinkjsInfo.templateName,
-  cacheTemplatePath: thinkjsInfo.cacheTemplatePath,
+  template: thinkjsInfo.template,
   targetPath: appPath,
   options: {name: thinkjsInfo.metadata.name, command: 'service', maps: 'service', context},
   done(err, files) {

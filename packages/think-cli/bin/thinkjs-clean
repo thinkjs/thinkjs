@@ -6,6 +6,7 @@ const chalk = require('chalk')
 const utils = require('../lib/utils')
 const logger = require('../lib/logger')
 const helper = require('think-helper');
+const config = require('../config');
 
 /**
  * Padding.
@@ -33,8 +34,10 @@ if (!utils.isThinkApp(appPath)) {
 
 const spinner = ora({text: 'Clear the cache template...', spinner: 'arrow3'}).start();
 const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs;
+const cacheTemplatePath = path.join(config.templateCacheDirectory, thinkjsInfo.template.replace(/[\/\\:]/g, '-'));
+
 helper
-  .rmdir(thinkjsInfo.cacheTemplatePath)
+  .rmdir(cacheTemplatePath)
   .then(_ => {
     spinner.stop();
     logger.success('Clean up completed~')
