@@ -40,6 +40,19 @@ test.cb('should be able to receive json type requests', t => {
   });
 });
 
+test.cb('should be thrown 400 errors, Because the parameter format is not json', t => {
+  request(app.callback())
+  .post('/')
+  .set('Content-Type', 'application/json')
+  .send('Berwin')
+  .expect(400)
+  .end((err, res) => {
+    if (err) throw err;
+    t.is(res.text, 'Incorrect parameter format');
+    t.end();
+  });
+});
+
 test.cb('should support extend types requests', t => {
   request(app.callback())
   .post('/')
@@ -76,7 +89,7 @@ test.cb('should be able to receive text type requests', t => {
   .expect(200)
   .end((err, res) => {
     if (err) throw err;
-    t.is(res.text, 'Berwin')
+    t.is(res.text, 'Berwin');
     t.end();
   });
 });

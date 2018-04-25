@@ -51,6 +51,8 @@ module.exports = function(opts = {}) {
     }).then(body => {
       ctx.request.body = body;
       return next();
+    }, _ => {
+      ctx.throw(400, 'Incorrect parameter format');
     });
   };
 
