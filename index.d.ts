@@ -57,6 +57,7 @@ declare module 'thinkjs' {
   export interface Context extends Koa.Context, ThinkCookie, ThinkConfig {
     request: Request;
     response: Response;
+    readonly module: string;
     readonly controller: string;
     readonly action: string;
     /**
