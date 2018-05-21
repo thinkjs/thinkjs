@@ -359,6 +359,15 @@ test('isNumberString', t => {
   t.is(isNumberString(''), false);
   t.is(isNumberString('111d111'), false);
   t.is(isNumberString('111111'), true);
+  t.is(isNumberString('.1'), true);
+  t.is(isNumberString('.e1'), false);
+  t.is(isNumberString('.1e1'), true);
+  t.is(isNumberString('1.e1'), true);
+  t.is(isNumberString('e1'), false);
+  t.is(isNumberString('1e1'), true);
+  t.is(isNumberString('1.1e1'), true);
+  t.is(isNumberString('e1499451'), false);
+  t.is(isNumberString('149e9451'), true);
 });
 
 test('camelCase', t => {

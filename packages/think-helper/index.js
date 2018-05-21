@@ -27,7 +27,7 @@ const fsRmdir = promisify(fs.rmdir, fs);
 const fsUnlink = promisify(fs.unlink, fs);
 const fsReaddir = promisify(fs.readdir, fs);
 
-const numberReg = /^((-?\d*\.?\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
+const numberReg = /^((-?(\d+\.|\d+|\.\d)\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
 const toString = Object.prototype.toString;
 
 exports.isIP = net.isIP;
