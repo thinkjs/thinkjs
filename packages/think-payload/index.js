@@ -42,13 +42,7 @@ module.exports = function(opts = {}) {
   return function(ctx, next) {
     if (ctx.request.body !== undefined) return next();
 
-    return parseBody(ctx, {
-      opts: {
-        limit: opts.limit,
-        encoding: opts.encoding
-      },
-      multipart: opts
-    }).then(body => {
+    return parseBody(ctx, opts).then(body => {
       ctx.request.body = body;
       return next();
     }, _ => {
@@ -56,7 +50,7 @@ module.exports = function(opts = {}) {
     });
   };
 
-  function parseBody(ctx, {opts, multipart}) {
+  function parseBody(ctx, opts) {
     const methods = ['POST', 'PUT', 'DELETE', 'PATCH', 'LINK', 'UNLINK'];
 
     if (methods.every(method => ctx.method !== method)) {
@@ -73,7 +67,7 @@ module.exports = function(opts = {}) {
       return parse.text(ctx, opts);
     }
     if (ctx.request.is(multipartTypes)) {
-      return parse.multipart(ctx, multipart);
+      return parse.multipart(ctx, opts);
     }
     if (ctx.request.is(xmlTypes)) {
       return parse.xml(ctx, opts);

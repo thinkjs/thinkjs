@@ -8,6 +8,7 @@ app.use(payload({
   extendTypes: {
     json: ['application/json-patch+json']
   },
+  explicitArray: false,
   uploadDir: path.join(__dirname, '../tmpdir')
 }));
 app.use((ctx) => {
@@ -146,6 +147,19 @@ test.cb('should be able to receive xml type requests', t => {
   .end((err, res) => {
     if (err) throw err;
     t.is(res.body.post.root, 'Hello Berwin!');
+    t.end();
+  });
+});
+
+test.cb('xml support parameters', t => {
+  request(app.callback())
+  .post('/')
+  .set('Content-Type', 'text/xml')
+  .send("<root><name>Hello Berwin!</name></root>")
+  .expect(200)
+  .end((err, res) => {
+    if (err) throw err;
+    t.is(res.body.post.root.name, 'Hello Berwin!');
     t.end();
   });
 });
