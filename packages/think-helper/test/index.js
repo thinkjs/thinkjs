@@ -83,7 +83,6 @@ test('isInt12', t => {
   t.is(isInt(42.1), false);
 });
 
-
 test('isExist', t => {
   t.is(isExist('/www/fasdfasfasdfa'), false);
 });
@@ -327,8 +326,22 @@ test('datetime', t => {
 });
 
 test('datetime 1', t => {
-  datetime('', 'YYYY-MM-DD');
-  datetime('2017-12-12', 'YYYY-MM-DD');
+  t.plan(4);
+  const now = new Date();
+  t.is(datetime('2017-12-12 10:00:00', 'YYYY-MM-DD'), '2017-12-12');
+  t.is(datetime('', 'YYYY-MM-DD'), 'YYYY-aN-aN');
+  t.is(
+    datetime(new Date('2017/10/10'), 'YYYY-MM-DD HH:mm:ss'),
+    '2017-10-10 00:00:00'
+  );
+  t.is(
+    datetime('YYYY/MM/DD'),
+    [
+      now.getFullYear(),
+      ('0' + (now.getMonth() + 1)).slice(-2),
+      now.getDate()
+    ].join('/')
+  );
 });
 
 test('escapeHtml', t => {

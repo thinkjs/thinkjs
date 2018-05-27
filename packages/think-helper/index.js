@@ -269,11 +269,17 @@ exports.escapeHtml = escapeHtml;
  * @param  {Date} date []
  * @return {String}      []
  */
-function datetime(date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') {
-  if (isString(date)) {
-    format = date;
-    date = new Date();
+function datetime(date = new Date(), format) {
+  if (date && isString(date)) {
+    const dateString = date;
+    date = new Date(Date.parse(date));
+
+    if (isNaN(date.getTime()) && !format) {
+      format = dateString;
+      date = new Date();
+    }
   }
+  format = format || 'YYYY-MM-DD HH:mm:ss';
 
   const fn = d => {
     return ('0' + d).slice(-2);
