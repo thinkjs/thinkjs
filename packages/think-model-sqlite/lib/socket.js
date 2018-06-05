@@ -6,8 +6,6 @@ const path = require('path');
 const genericPool = require('generic-pool');
 const Debounce = require('think-debounce');
 
-const debounceInstance = new Debounce();
-
 const CREATE_POOL = Symbol('think-sqlite-create-pool');
 const QUERY = Symbol('think-sqlite-query');
 const POOL = Symbol('think-sqlite-pool');
@@ -27,6 +25,8 @@ const TRANSACTION = {
 
 class SQLiteSocket {
   constructor(config = {}) {
+    // different socket may connect to different db,so use independent debounce instance
+    this.debounceInstance = new Debounce();
     this.config = Object.assign({}, defaultOptions, config);
     let savePath = this.config.path;
     if (savePath === true || savePath === ':memory:') {
@@ -74,7 +74,8 @@ class SQLiteSocket {
     };
     const options = {
       min: 1,
-      max: this.config.connectionLimit || 1
+      max: this.config.connectionLimit || 1,
+      acquireTimeoutMillis: this.config.acquireTimeout
     };
     return genericPool.createPool(factory, options);
   }
@@ -154,32 +155,48 @@ class SQLiteSocket {
    * query data
    */
   [QUERY](sqlOptions, connection, startTime) {
-    let promise = null;
-    if (sqlOptions.execute) {
-      promise = new Promise((resolve, reject) => {
-        connection.run(sqlOptions.sql, function(err) {
-          if (err) return reject(err);
-          resolve({insertId: this.lastID, affectedRows: this.changes});
-        });
-      });
-    } else {
-      const queryFn = helper.promisify(connection.all, connection);
-      promise = queryFn(sqlOptions.sql);
-    }
-    return promise.catch(err => {
-      return helper.isError(err) ? err : new Error(err);
-    }).then(data => {
-      // log sql
-      if (this.config.logSql) {
-        const endTime = Date.now();
-        this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
+    return this.getConnection(connection).then(connection => {
+      // set transaction status to connection
+      if (sqlOptions.transaction) {
+        if (sqlOptions.transaction === TRANSACTION.start) {
+          if (connection.transaction === TRANSACTION.start) return;
+        } else if (sqlOptions.transaction === TRANSACTION.end) {
+          if (connection.transaction !== TRANSACTION.start) {
+            this.releaseConnection(connection);
+            return;
+          }
+        }
+        connection.transaction = sqlOptions.transaction;
       }
-      this.releaseConnection(connection);
 
-      if (helper.isError(data)) return Promise.reject(data);
-      return data;
+      let promise = null;
+      if (sqlOptions.execute) {
+        promise = new Promise((resolve, reject) => {
+          connection.run(sqlOptions.sql, function(err) {
+            if (err) return reject(err);
+            resolve({insertId: this.lastID, affectedRows: this.changes});
+          });
+        });
+      } else {
+        const queryFn = helper.promisify(connection.all, connection);
+        promise = queryFn(sqlOptions.sql);
+      }
+      return promise.catch(err => {
+        return helper.isError(err) ? err : new Error(err);
+      }).then(data => {
+        // log sql
+        if (this.config.logSql) {
+          const endTime = Date.now();
+          this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
+        }
+        this.releaseConnection(connection);
+
+        if (helper.isError(data)) return Promise.reject(data);
+        return data;
+      });
     });
   }
+
   /**
    * query
    * @param {Object} sqlOptions
@@ -197,34 +214,21 @@ class SQLiteSocket {
       }
     }
     const startTime = Date.now();
-    return this.getConnection(connection).then(connection => {
-      // set transaction status to connection
-      if (sqlOptions.transaction) {
-        if (sqlOptions.transaction === TRANSACTION.start) {
-          if (connection.transaction === TRANSACTION.start) return;
-        } else if (sqlOptions.transaction === TRANSACTION.end) {
-          if (connection.transaction !== TRANSACTION.start) {
-            this.releaseConnection(connection);
-            return;
-          }
-        }
-        connection.transaction = sqlOptions.transaction;
-      }
-
-      if (sqlOptions.debounce) {
-        const key = JSON.stringify(sqlOptions);
-        return debounceInstance.debounce(key, () => {
-          return this[QUERY](sqlOptions, connection, startTime);
-        });
-      } else {
+    if (sqlOptions.debounce) {
+      const key = JSON.stringify(sqlOptions);
+      return this.debounceInstance.debounce(key, () => {
         return this[QUERY](sqlOptions, connection, startTime);
-      }
-    });
+      });
+    } else {
+      return this[QUERY](sqlOptions, connection, startTime);
+    }
   }
+
   /**
    * execute
-   * @param  {Array} args []
    * @returns {Promise}
+   * @param sqlOptions
+   * @param connection
    */
   execute(sqlOptions, connection) {
     if (helper.isString(sqlOptions)) {
