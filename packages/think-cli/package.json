@@ -1,6 +1,6 @@
 {
   "name": "think-cli",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "A simple CLI for scaffolding Thinkjs projects.",
   "bin": {
     "thinkjs": "bin/thinkjs"
