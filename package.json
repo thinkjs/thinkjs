@@ -58,7 +58,7 @@
     "think-payload": "^1.0.0",
     "think-pm2": "^1.0.0",
     "think-resource": "^1.0.0",
-    "think-router": "^1.0.0",
+    "think-router": "^1.3.1",
     "think-trace": "^1.0.2",
     "think-validator": "^1.0.2"
   },
