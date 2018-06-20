@@ -199,7 +199,10 @@ class Router {
     }
     // remove when query value is undefined or empty string
     for (const name in query) {
-      if (query[name] === undefined || query[name].trim() === '') {
+      const isUndefind = query[name] === undefined;
+      const isEmptyString = helper.isString(query[name]) && query[name].trim() === '';
+      const isEmptyArray = helper.isArray(query[name]) && query[name].every(val => !val);
+      if(isUndefind || isEmptyString || isEmptyArray) {
         delete query[name];
       }
     }
