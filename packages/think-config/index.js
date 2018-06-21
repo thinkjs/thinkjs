@@ -41,6 +41,7 @@ class Config {
   set(name, value) {
     if (name.indexOf('.') === -1) {
       this.config[name] = value;
+      return this;
     }
     let config = this.config;
     name = name.split('.');
