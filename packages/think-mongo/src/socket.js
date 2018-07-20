@@ -71,7 +71,8 @@ class MongoSocket {
     };
     const options = {
       min: 1,
-      max: this.config.connectionLimit || 1
+      max: this.config.connectionLimit || 1,
+      acquireTimeoutMillis: this.config.acquireTimeoutMillis || 3000
     };
     return genericPool.createPool(factory, options);
   }
