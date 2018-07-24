@@ -41,9 +41,9 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "coveralls": "^2.13.1",
+    "coveralls": "^3.0.2",
     "eslint": "^3.19.0",
     "eslint-config-think": "^1.0.1",
-    "nyc": "^11.0.2"
+    "nyc": "^13.0.0"
   }
 }
