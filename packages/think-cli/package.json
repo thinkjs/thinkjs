@@ -40,7 +40,7 @@
     "urllib": "^2.22.0"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^0.25.0",
     "coveralls": "^2.13.1",
     "eslint": "^3.19.0",
     "eslint-config-think": "^1.0.1",
