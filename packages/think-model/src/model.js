@@ -473,7 +473,7 @@ module.exports = class Model {
    */
   async addMany(data, options, replace) {
     if (!helper.isArray(data) || !helper.isObject(data[0])) {
-      return Promise.reject(new Error('data must be an array'));
+      return Promise.reject(new Error('data must be an object array'));
     }
     options = await this.parseOptions(options);
     let promises = data.map(async item => {
