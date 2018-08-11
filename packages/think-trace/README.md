@@ -82,6 +82,7 @@ module.exports = [
       }
     }
     ```
+  Also you can set templates as function, function should return error template file path or error template file path object.
 
 ## Contributing
 
