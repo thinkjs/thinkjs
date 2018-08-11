@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const helper = require('think-helper');
 const stackTrace = require('stack-trace');
-const {htmlentities} = require('./helper');
+const { htmlentities } = require('./helper');
 
 const readFileAsync = helper.promisify(fs.readFile);
 const DEFAULT_404_TEMPLATE = path.join(__dirname, '../template/404.html');
@@ -13,38 +13,66 @@ module.exports = class Tracer {
     this.ctxLineNumbers = opts.ctxLineNumbers || 10;
     this.debug = opts.debug !== undefined ? opts.debug : true;
 
-    if (typeof (opts.templates) === 'string') {
-      const templates = {};
-      fs.readdirSync(opts.templates)
-        .forEach(file => {
-          const match = file.match(/^(\d{3})\./);
-          if (Array.isArray(match)) {
-            templates[match[1]] = path.join(opts.templates, file);
-          }
-        });
-      opts.templates = templates;
+    if (helper.isFunction(opts.templates)) {
+      this.templatesPath = opts.templates;
+    } else {
+      if (helper.isString(opts.templates)) {
+        opts.templates = this.readTemplatesPath(opts.templates);
+      }
+      this.templatesPath = helper.extend({
+        404: DEFAULT_404_TEMPLATE,
+        500: DEFAULT_500_TEMPLATE
+      }, opts.templates);
     }
 
-    this.contentType = opts.contentType;
-    this.templatesPath = helper.extend({
-      404: DEFAULT_404_TEMPLATE,
-      500: DEFAULT_500_TEMPLATE
-    }, opts.templates);
     this.templates = {};
+    this.contentType = opts.contentType;
+  }
+
+  /**
+   * get error template path from error directory
+   * @param {String} dir directory
+   */
+  readTemplatesPath(dir) {
+    const templates = {};
+    try {
+      fs.readdirSync(dir)
+        .forEach(file => {
+          const match = file.match(/^(\d{3})\./);
+          if (helper.isArray(match)) {
+            templates[match[1]] = path.join(dir, file);
+          }
+        });
+    } catch (e) {
+      console.log(e); // eslint-disable-line no-console
+    }
+    return templates;
   }
 
   /**
    * get error template file content
    */
-  getTemplateContent() {
-    if (!this.debug && !this.templates) {
+  async getTemplateContent() {
+    if (!helper.isEmpty(this.templates)) {
       return Promise.resolve();
     }
 
-    const readFilesAsync = Object.keys(this.templatesPath).map(status =>
-      readFileAsync(this.templatesPath[status], {encoding: 'utf-8'})
+    let templates = this.templatesPath;
+    if (helper.isFunction(templates)) {
+      templates = await this.templatesPath();
+      if (helper.isString(templates)) {
+        templates = this.readTemplatesPath(templates);
+      }
+      templates = helper.extend({
+        404: DEFAULT_404_TEMPLATE,
+        500: DEFAULT_500_TEMPLATE
+      }, templates);
+    }
+
+    const readFilesAsync = Object.keys(templates).map(status =>
+      readFileAsync(templates[status], { encoding: 'utf-8' })
         .catch(() =>
-          readFileAsync(status !== '404' ? DEFAULT_500_TEMPLATE : DEFAULT_404_TEMPLATE, {encoding: 'utf-8'})
+          readFileAsync(status !== '404' ? DEFAULT_500_TEMPLATE : DEFAULT_404_TEMPLATE, { encoding: 'utf-8' })
         ).then(template => {
           this.templates[status] = template;
         })
@@ -60,7 +88,7 @@ module.exports = class Tracer {
     const filename = line.getFileName();
     const lineNumber = line.getLineNumber();
 
-    return readFileAsync(filename, {encoding: 'utf-8'}).then(data => {
+    return readFileAsync(filename, { encoding: 'utf-8' }).then(data => {
       let content = data.split('\n');
       const startLineNumber = Math.max(0, lineNumber - this.ctxLineNumbers);
       const endLineNumber = Math.min(lineNumber + this.ctxLineNumbers, data.length);
@@ -70,7 +98,7 @@ module.exports = class Tracer {
       line.startLineNumber = Math.max(0, startLineNumber) + 1;
 
       return line;
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   /**
