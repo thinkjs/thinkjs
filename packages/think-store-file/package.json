@@ -1,6 +1,6 @@
 {
   "name": "think-store-file",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "store content use file",
   "main": "index.js",
   "scripts": {
