@@ -78,8 +78,7 @@ class FileStore {
    */
   set(relativePath, content) {
     const filePath = this[getFilePath](relativePath);
-    const res = helper.mkdir(path.dirname(filePath));
-    assert(res, 'You don\'t have right to create file in the given path!');
+    helper.mkdir(path.dirname(filePath));
     return writeFile(filePath, content).then(() => {
       return helper.chmod(filePath);
     });
