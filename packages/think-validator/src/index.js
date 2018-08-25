@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-04-16 18:08:12
+* @Last Modified time: 2018-08-25 20:50:10
 */
 const assert = require('assert');
 const helper = require('think-helper');
@@ -289,7 +289,9 @@ class Validator {
         if (rule.value && helper.isString(rule.value) && rule.value.indexOf(',') > -1) {
           rule.value = rule.value.split(',');
         } else {
-          rule.value = [rule.value];
+          if (typeof (rule.value) !== 'undefined') {
+            rule.value = [rule.value];
+          }
         }
       }
 

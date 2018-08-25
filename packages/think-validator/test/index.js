@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-05-14 09:23:50
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-04-19 14:10:46
+* @Last Modified time: 2018-08-25 20:54:01
 */
 import test from 'ava';
 import helper from 'think-helper';
@@ -2816,6 +2816,22 @@ test('rule-array', t => {
   let instance = new Validator(ctx);
   let ret = instance.validate(rules);
   t.deepEqual(ctx.param().arg, ['123']);
+});
+
+test('rule-array', t => {
+  let rules = {
+    arg: {
+      array: true
+    }
+  }
+  let ctx = helper.extend({}, defaultCtx, {
+    PARAM: {
+    }
+  });
+
+  let instance = new Validator(ctx);
+  let ret = instance.validate(rules);
+  t.deepEqual(ctx.param().arg, undefined);
 });
 
 test('rule-int-convert', t => {
