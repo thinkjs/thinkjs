@@ -60,7 +60,7 @@ class Socket {
       config.logger(connectionString);
     }
     const opts = config.options || {};
-    opts.useMongoClient = true;
+    opts.useNewUrlParser = true;
     const connection = mongoose.createConnection(connectionString, opts);
     connection.on('error', err => {
       this.config.logger(err);

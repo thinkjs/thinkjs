@@ -23,17 +23,17 @@
     }
   ],
   "dependencies": {
-    "mongoose": "^4.11.7",
-    "think-helper": "^1.0.20",
+    "mongoose": "^5.2.10",
+    "think-helper": "^1.1.2",
     "think-instance": "^1.0.1"
   },
   "devDependencies": {
-    "ava": "^0.18.0",
-    "eslint": "^4.2.0",
+    "ava": "^0.25.0",
+    "eslint": "^5.4.0",
     "eslint-config-think": "^1.0.2",
     "mkdirp": "^0.5.1",
-    "mock-require": "^2.0.1",
-    "nyc": "^7.0.0",
+    "mock-require": "^3.0.2",
+    "nyc": "^13.0.1",
     "pre-commit": "^1.2.2"
   },
   "keywords": [
