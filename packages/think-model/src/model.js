@@ -869,6 +869,16 @@ module.exports = class Model {
   transaction(fn, connection) {
     return this.db().transaction(fn, connection);
   }
+  /**
+   * build select sql
+   * @param {Object} options 
+   * @param {Boolean} noParentheses 
+   */
+  async buildSelectSql(options, noParentheses = false) {
+    options = await this.parseOptions(options);
+    const sql = this.db().parser.buildSelectSql(options).trim();
+    return noParentheses ? sql : `( ${sql} )`;
+  }
 };
 
 module.exports.HAS_ONE = Relation.HAS_ONE;
