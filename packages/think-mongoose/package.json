@@ -1,12 +1,12 @@
 {
   "name": "think-mongoose",
   "description": "Wrap mongoose for ThinkJS",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
-  "type":"index.d.ts",
+  "type": "index.d.ts",
   "pre-commit": [
     "test"
   ],
