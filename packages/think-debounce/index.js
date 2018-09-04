@@ -1,6 +1,6 @@
 /**
  * Debounce class
- * runs a time-consuming operation. The operation may be called several times concurrently, 
+ * runs a time-consuming operation. The operation may be called several times concurrently
  * but within think-debounce, it will only be run once before it's finished.
  */
 class Debounce {
@@ -9,13 +9,15 @@ class Debounce {
   }
   /**
    * debounce
-   * @param {String} key 
-   * @param {Function} fn 
+   * @param {String} key
+   * @param {Function} fn
    */
   debounce(key, fn) {
     if (!(key in this.queues)) {
       this.queues[key] = [];
-      return Promise.resolve(fn()).then(data => {
+      return Promise.resolve().then(() => {
+        return fn();
+      }).then(data => {
         process.nextTick(() => {
           this.queues[key].forEach(deferred => deferred.resolve(data));
           delete this.queues[key];
