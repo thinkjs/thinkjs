@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-08-25 20:50:10
+* @Last Modified time: 2018-09-09 17:53:30
 */
 const assert = require('assert');
 const helper = require('think-helper');
@@ -296,7 +296,7 @@ class Validator {
       }
 
       // boolean convert
-      if (rule.boolean) {
+      if (rule.boolean && typeof rule.value !== 'undefined') {
         rule.value = ['yes', 'on', '1', 'true', true].indexOf(rule.value) > -1;
       }
 
