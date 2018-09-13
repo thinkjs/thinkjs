@@ -1,6 +1,6 @@
 const helper = require('think-helper');
 const querystring = require('querystring');
-const {COMPARISON, COMPARISON_LIST} = require('./comparison.js');
+const { COMPARISON, COMPARISON_LIST } = require('./comparison.js');
 
 /**
  * get comparison
@@ -165,10 +165,10 @@ module.exports = class AbstractParser {
         str += this.parseThinkWhere(key, val);
       } else if (!keySafeRegExp.test(key)) {
         throw new Error('INVALID_WHERE_CONDITION_KEY');
-      // title|content
+        // title|content
       } else if (key.indexOf('|') > -1) {
         str += key.split('|').map(fn).join(' OR ');
-      // title&content
+        // title&content
       } else if (key.indexOf('&') > -1) {
         str += key.split('&').map(fn).join(' AND ');
       } else {
@@ -352,79 +352,96 @@ module.exports = class AbstractParser {
     if (helper.isEmpty(join)) return '';
     let joinStr = '';
     const defaultJoin = ' LEFT JOIN ';
-    if (helper.isArray(join)) {
-      const joins = {
-        'left': ' LEFT JOIN ',
-        'right': ' RIGHT JOIN ',
-        'inner': ' INNER JOIN '
-      };
-      join.forEach(val => {
-        if (helper.isString(val)) {
-          const hasJoin = val.toLowerCase().indexOf(' join ') > -1;
-          joinStr += (hasJoin ? ' ' : defaultJoin) + val;
-        } else if (helper.isObject(val)) {
-          const ret = [];
-          if (!('on' in val)) {
-            for (const key in val) {
-              const v = val[key];
-              if (helper.isObject(v)) {
-                v.table = key;
-                ret.push(v);
-              } else {
-                ret.push(val);
-                break;
-              }
-            }
-          } else {
+    if (!helper.isArray(join)) {
+      joinStr += defaultJoin + join;
+      return joinStr;
+    }
+
+    const joins = {
+      'left': ' LEFT JOIN ',
+      'right': ' RIGHT JOIN ',
+      'inner': ' INNER JOIN '
+    };
+    join.forEach(val => {
+      if (!helper.isString(val) && !helper.isObject(val)) {
+        return;
+      }
+
+      if (helper.isString(val)) {
+        const hasJoin = val.toLowerCase().indexOf(' join ') > -1;
+        joinStr += (hasJoin ? ' ' : defaultJoin) + val;
+        return;
+      }
+
+      const ret = [];
+      if (!('on' in val)) {
+        for (const key in val) {
+          const v = val[key];
+          if (!helper.isObject(v)) {
             ret.push(val);
+            break;
           }
-          ret.forEach(item => {
-            const joinType = joins[item.join] || item.join || defaultJoin;
-            let table = item.table.trim();
-            // table is sql
-            if (table.indexOf(' ') > -1) {
-              if (table.indexOf('(') !== 0) {
-                table = '(' + table + ')';
-              }
-              joinStr += joinType + table;
-            } else {
-              table = options.tablePrefix + table;
-              if (table.indexOf('.') === -1) {
-                joinStr += joinType + this.parseKey(table);
-              } else {
-                joinStr += joinType + table;
-              }
+
+          v.table = key;
+          ret.push(v);
+        }
+      } else {
+        ret.push(val);
+      }
+
+      ret.forEach(item => {
+        const joinType = joins[item.join] || item.join || defaultJoin;
+        let table = item.table.trim();
+        // table is sql
+        if (table.indexOf(' ') > -1) {
+          if (table.indexOf('(') !== 0) {
+            table = '(' + table + ')';
+          }
+          joinStr += joinType + table;
+        } else {
+          table = options.tablePrefix + table;
+          if (table.indexOf('.') === -1) {
+            joinStr += joinType + this.parseKey(table);
+          } else {
+            joinStr += joinType + table;
+          }
+        }
+        if (item.as) {
+          joinStr += ' AS ' + this.parseKey(item.as);
+        }
+        if (item.on) {
+          const mTable = this.parseKey(options.alias || options.table);
+          const jTable = this.parseKey(item.as || table);
+
+          if (!helper.isObject(item.on)) {
+            if (helper.isString(item.on)) {
+              item.on = item.on.split(/\s*,\s*/);
             }
-            if (item.as) {
-              joinStr += ' AS ' + this.parseKey(item.as);
+            joinStr += ' ON ' + (item.on[0].indexOf('.') > -1 ? item.on[0] : (mTable + '.' + this.parseKey(item.on[0])));
+            joinStr += ' = ' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.' + this.parseKey(item.on[1])));
+            return;
+          }
+
+          const where = [];
+          for (const key in item.on) {
+            let onKey = key;
+            if (onKey.indexOf('.') === -1) {
+              onKey = mTable + '.' + this.parseKey(onKey);
             }
-            if (item.on) {
-              const mTable = this.parseKey(options.alias || options.table);
-              const jTable = this.parseKey(item.as || table);
-              if (helper.isObject(item.on)) {
-                const where = [];
-                for (const key in item.on) {
-                  where.push([
-                    key.indexOf('.') > -1 ? key : (mTable + '.' + this.parseKey(key)),
-                    '=',
-                    item.on[key].indexOf('.') > -1 ? item.on[key] : (jTable + '.' + this.parseKey(item.on[key]))
-                  ].join(''));
-                }
-                joinStr += ' ON (' + where.join(' AND ') + ')';
-              } else {
-                if (helper.isString(item.on)) {
-                  item.on = item.on.split(/\s*,\s*/);
-                }
-                joinStr += ' ON ' + (item.on[0].indexOf('.') > -1 ? item.on[0] : (mTable + '.' + this.parseKey(item.on[0])));
-                joinStr += ' = ' + (item.on[1].indexOf('.') > -1 ? item.on[1] : (jTable + '.' + this.parseKey(item.on[1])));
-              }
+
+            let onVal = item.on[key];
+            if (helper.isString(onVal) && onVal.indexOf('.') === -1) {
+              onVal = jTable + '.' + this.parseKey(onVal);
+            } else if (helper.isArray(onVal) && onVal[0] === 'exp') {
+              onVal = onVal[1];
             }
-          });
+
+            where.push([onKey, '=', onVal.toString()].join(''));
+          }
+          joinStr += ' ON (' + where.join(' AND ') + ')';
         }
       });
-    } else {
-      joinStr += defaultJoin + join;
-    }
+    });
     return joinStr;
   }
   /**
