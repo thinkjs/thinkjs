@@ -67,7 +67,7 @@ test.serial('1. set and get session data without maxAge', t => {
     const RedisSession = mockRequire();
     const options = {
       cookie: cookieName,
-      autoUpdate: true
+      maxAge: 100 * 1000
     }
     const ctx = {
       res: {
@@ -139,7 +139,8 @@ test.serial('3. set and get session data with fresh param', t => {
     const RedisSession = mockRequire();
     const options = {
       cookie: cookieName,
-      fresh: true
+      fresh: true,
+      maxAge: 100 * 1000
     }
     const ctx = {
       res: {
@@ -173,7 +174,7 @@ test.serial('4. set and get session data when JSON.parse(content) returns error'
     const RedisSession = mockRequire();
     const options = {
       cookie: cookieName,
-      maxAge: '1d'
+      maxAge: 24 * 3600 * 1000
     }
     const ctx = {
       res: {

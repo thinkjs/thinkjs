@@ -15,14 +15,16 @@ class RedisSession {
    * @param {Object} options cookie options
    * @param {Object} ctx koa ctx
    */
-  constructor(options = {}, ctx) {
+  constructor(options = {}, ctx, cookieOptions) {
     assert(options.cookie, '.cookie required');
     this.options = options;
+    this.cookieOptions = cookieOptions;
     this.redis = new ThinkRedis(this.options);
     this.ctx = ctx;
     this.data = {};
     this.status = 0;
-    this.fresh = true;
+    this.maxAge = this.options.maxAge || 0;
+    this.expires = 0;
   }
 
   /**
@@ -41,10 +43,25 @@ class RedisSession {
     this.initPromise = this.redis.get(this.options.cookie).then(content => {
       content = JSON.parse(content);
       if (helper.isEmpty(content)) return;
-      this.data = content;
-      this.fresh = false;
+      this.data = content.data || {};
+      if (content.maxAge) {
+        this.maxAge = content.maxAge;
+      }
+      this.expires = content.expires || 0;
+      this.autoUpdate();
     }).catch(err => debug(err));
     return this.initPromise;
+  }
+  autoUpdate() {
+    if (this.maxAge && this.expires) {
+      const rate = (this.expires - Date.now()) / this.maxAge;
+      if (rate < this.cookieOptions.autoUpdateRate) {
+        this.status = 1;
+        this.cookieOptions.maxAge = this.maxAge;
+        // update cookie maxAge
+        this.ctx.cookie(this.cookieOptions.name, this.options.cookie, this.cookieOptions);
+      }
+    }
   }
   /**
    * auto save session data when it is changed
@@ -54,12 +71,12 @@ class RedisSession {
       if (this.status === -1) {
         return this.redis.delete(this.options.cookie);
       } else if (this.status === 1) {
-        if (this.fresh) {
-          const maxAge = this.options.maxAge;
-          return this.redis.set(this.options.cookie, JSON.stringify(this.data), maxAge ? helper.ms(maxAge) : undefined);
-        }
         // if not fresh, can not override maxAge (may be set user defined timeout)
-        return this.redis.set(this.options.cookie, JSON.stringify(this.data));
+        return this.redis.set(this.options.cookie, JSON.stringify({
+          data: this.data,
+          maxAge: this.maxAge,
+          expires: Date.now() + this.maxAge
+        }), 'PX', this.maxAge);
       }
     });
   }
@@ -69,9 +86,6 @@ class RedisSession {
    */
   get(name) {
     return this[initSessionData]().then(() => {
-      if (this.options.autoUpdate) {
-        this.status = 1;
-      }
       return name ? this.data[name] : this.data;
     });
   }
