@@ -58,8 +58,9 @@ test.serial('2. `getSessionInstance` when handle.onlyCookie is true', t => {
       constructor(options, ctx) {
         t.deepEqual(options, {
           name: 'thinkjs',
-          autoUpdate: false,
+          autoUpdateRate: 0.5,
           path: '/',
+          maxAge: 86400000,
           httpOnly: true,
           sameSite: false,
           signed: false,
@@ -159,7 +160,7 @@ test.serial('`3. getSessionInstance` when ctx.cookie(name) is undefined', t => {
   let cookieConfig = {
     encrypt: true,
     name: 'cookieName',
-    autoUpdate: true
+    autoUpdateRate: 0.5
   };
   const ctx = {
     config(key){
