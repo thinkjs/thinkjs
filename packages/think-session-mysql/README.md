@@ -48,14 +48,14 @@ exports.session = {
 ## Create Database
 `think_` is the prefix in `adapter.js`
 ```
-  DROP TABLE IF EXISTS `think_session`;
-  CREATE TABLE `think_session` (
-    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `cookie` varchar(255) NOT NULL DEFAULT '',
-    `data` text,
-    `expire` bigint(11) NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `cookie` (`cookie`),
-    KEY `expire` (`expire`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `think_session` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `cookie` varchar(255) NOT NULL DEFAULT '',
+  `data` text,
+  `expire` bigint(11) NOT NULL DEFAULT '0',
+  `maxage` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cookie` (`cookie`),
+  KEY `expire` (`expire`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
