@@ -163,13 +163,12 @@ test.serial('2. set and get session data with maxAge', t => {
     resolve();
   });
 });
-test.serial('3. set and get session data with autoUpdate', t => {
+test.serial('3. set and get session data 2', t => {
   const cookieName = fileList[2];
   return new Promise(async (resolve, reject) => {
     const options = {
       sessionPath: sessionPath,
       cookie: cookieName,
-      autoUpdate: true,
       gcInterval: 3600 * 1000
     }
     const param = mockHelper();
@@ -195,7 +194,7 @@ test.serial('3. set and get session data with autoUpdate', t => {
     const data = await fileSession1.get('abc');
     t.is(data, undefined);// Session data is still accessible.
 
-    t.is(fileSession1.status, 1);
+    t.is(fileSession1.status, -1);
    
    
     resolve();
@@ -207,7 +206,6 @@ test.serial('4. set and gc when content empty', t => {
     const options = {
       sessionPath: sessionPath,
       cookie: cookieName,
-      autoUpdate: true,
       maxAge: 3600 * 1000,
       gcInterval: 3600 * 1000
     }

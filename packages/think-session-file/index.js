@@ -20,14 +20,17 @@ class FileSession {
    * @param {Object} options 
    * @param {Object} ctx 
    */
-  constructor(options, ctx) {
+  constructor(options, ctx, cookieOptions = {}) {
     assert(options.sessionPath && path.isAbsolute(options.sessionPath), '.sessionPath required');
     assert(options.cookie, '.cookie required');
 
     this.options = options;
+    this.cookieOptions = cookieOptions;
     this.ctx = ctx;
     this.fileStore = new FileStore(options.sessionPath);
     this.data = {};
+    this.maxAge = this.options.maxAge || 0;
+    this.expires = 0;
     this.status = 0;
 
     this.gcType = `session_${options.sessionPath}`;
@@ -37,6 +40,17 @@ class FileSession {
     this.ctx.res.once('finish', () => {
       this.flush();
     });
+  }
+  autoUpdate() {
+    if (this.maxAge && this.expires) {
+      const rate = (this.expires - Date.now()) / this.maxAge;
+      if (rate < this.cookieOptions.autoUpdateRate) {
+        this.status = 1;
+        this.cookieOptions.maxAge = this.maxAge;
+        // update cookie maxAge
+        this.ctx.cookie(this.cookieOptions.name, this.options.cookie, this.cookieOptions);
+      }
+    }
   }
   /**
    * init session data
@@ -56,7 +70,12 @@ class FileSession {
       if (content.expires < Date.now()) {
         return this.delete();
       }
+      if (content.maxAge) {
+        this.maxAge = content.maxAge || 0;
+      }
       this.data = content.data || {};
+      this.expires = content.expires;
+      this.autoUpdate();
     }).catch(err => debug(err));
     return this.initPromise;
   }
@@ -66,9 +85,6 @@ class FileSession {
    */
   get(name) {
     return this[initSessionData]().then(() => {
-      if (this.options.autoUpdate) {
-        this.status = 1;
-      }
       return name ? this.data[name] : this.data;
     });
   }
@@ -105,7 +121,8 @@ class FileSession {
     } else if (this.status === 1) {
       this.status = 0;
       return this.fileStore.set(this.options.cookie, JSON.stringify({
-        expires: Date.now() + helper.ms(this.options.maxAge || 0),
+        expires: Date.now() + this.maxAge,
+        maxAge: this.maxAge,
         data: this.data
       }));
     }
