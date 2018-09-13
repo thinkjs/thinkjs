@@ -20,7 +20,7 @@ function getKeygrip() {
 
 const defaultCtx = {
   cookieStore: {
-    test: JSON.stringify({id: 1, value: 'test'})
+    test: JSON.stringify({data: {id: 1, value: 'test'}})
   },
   cookie(name,data){
     if(data == undefined){
@@ -30,7 +30,7 @@ const defaultCtx = {
   },
   clear(){
     this.cookieStore = {
-      test: JSON.stringify({id: 1, value: 'test'})
+      test: JSON.stringify({data: {id: 1, value: 'test'}})
     };
   }
 };
@@ -119,7 +119,7 @@ test('set/get function -- normal scene', async t => {
 
 });
 
-test('set/get function -- encrypt', async t => {
+test('set/get function -- encrypt 1', async t => {
   const options = {
     name: 'test',
     encrypt: 'test',
@@ -162,18 +162,18 @@ test('get function -- autoUpdate && maxAge name', async t => {
   t.deepEqual(result, {});
 });
 
-test('set/get function -- encrypt', async t => {
+test('set/get function -- encrypt 2', async t => {
   const SessionCookie = getSessionCookie();
   const sc = new SessionCookie(undefined,defaultCtx);
   t.deepEqual(sc instanceof SessionCookie,true)
 });
 
-test('set/get function -- encrypt', t => {
+test('set/get function -- encrypt 3', t => {
   const keys = ['a', 'b'];
   const cpData = {id: 1, name: 'thinkjs'};
   const Keygrip = getKeygrip();
   const kg = new Keygrip(keys);
-  const cpVal = kg.encrypt(JSON.stringify(cpData))
+  const cpVal = kg.encrypt(JSON.stringify({data: cpData}))
   const ctx = {
     cookieStore: {
       test: cpVal

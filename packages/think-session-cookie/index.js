@@ -22,6 +22,8 @@ class CookieSession {
     this.ctx = ctx;
     this.fresh = true; // session data is fresh
     this.data = {}; // session data
+    this.maxAge = options.maxAge || 0;
+    this.expire = 0;
     this.initSessionData();
   }
   /**
@@ -39,7 +41,10 @@ class CookieSession {
       }
       if (data) {
         try {
-          this.data = JSON.parse(data) || {};
+          const result = JSON.parse(data);
+          this.data = result.data || {};
+          this.maxAge = result.maxAge || 0;
+          this.expire = result.expire || 0;
           this.fresh = false;
         } catch (e) {}
       }
@@ -47,29 +52,37 @@ class CookieSession {
   }
   /**
    * get session data
-   * @param {String} name 
+   * @param {String} name
    */
   get(name) {
     // auto update cookie when maxAge or expires is set
-    if (this.options.autoUpdate && this.options.maxAge && !this.fresh) {
-      this.set();
+    if (this.maxAge && this.expire && !this.fresh && this.options.autoUpdateRate) {
+      const rate = (this.expire - Date.now()) / (this.maxAge * 1000);
+      if (rate < this.options.autoUpdateRate) {
+        this.set();
+      }
     }
     if (name) return Promise.resolve(this.data[name]);
     return Promise.resolve(this.data);
   }
   /**
    * set session data
-   * @param {String} name 
-   * @param {Mixed} value 
+   * @param {String} name
+   * @param {Mixed} value
    */
   set(name, value) {
     if (name) {
       this.data[name] = value;
     }
-    let data = JSON.stringify(this.data);
+    let data = JSON.stringify({
+      maxAge: this.maxAge,
+      expire: Date.now() + this.maxAge * 1000,
+      data: this.data
+    });
     if (this.keygrip) {
       data = this.keygrip.encrypt(data).toString('base64');
     }
+    this.options.maxAge = this.maxAge;
     this.ctx.cookie(this.options.name, data, this.options);
     return Promise.resolve();
   }
