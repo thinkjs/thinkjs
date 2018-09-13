@@ -74,7 +74,7 @@ class FileSession {
         this.maxAge = content.maxAge || 0;
       }
       this.data = content.data || {};
-      this.expires = content.expires;
+      this.expires = content.expires || 0;
       this.autoUpdate();
     }).catch(err => debug(err));
     return this.initPromise;
