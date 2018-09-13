@@ -49,7 +49,7 @@ class RedisSession {
       }
       this.expires = content.expires || 0;
       this.autoUpdate();
-    }).catch(err => debug(err));
+    });
     return this.initPromise;
   }
   autoUpdate() {
