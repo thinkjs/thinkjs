@@ -28,7 +28,7 @@ describe('before', function(){
           { Field: 'expire',Type: 'bigint(11)',Null: 'NO',Key: 'MUL',Default: null,Extra: '' } 
         ]);
       }else if (sql === "SELECT * FROM `think_session` WHERE ( `cookie` = 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_' ) LIMIT 1") {
-        return getPromise([ { id: 1,cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 1509896404697 } ])
+        return getPromise([ { id: 1,cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 2509896404697 } ])
       }else if (sql === "SELECT * FROM `think_session` WHERE ( `cookie` = 'expired' ) LIMIT 1") {
         return getPromise([ { id: 1,cookie: 'Nru4DV9uYy3jUP8_MDl4l-wbkVe-gQO_',data: '{"name":"suredy"}',expire: 1309896404697 } ])
       }else if (sql === "SELECT * FROM `think_session` WHERE ( `cookie` = 'dataempty' ) LIMIT 1") {
