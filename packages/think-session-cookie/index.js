@@ -57,7 +57,7 @@ class CookieSession {
   get(name) {
     // auto update cookie when maxAge or expires is set
     if (this.maxAge && this.expire && !this.fresh && this.options.autoUpdateRate) {
-      const rate = (this.expire - Date.now()) / (this.maxAge * 1000);
+      const rate = (this.expire - Date.now()) / this.maxAge;
       if (rate < this.options.autoUpdateRate) {
         this.set();
       }
@@ -76,7 +76,7 @@ class CookieSession {
     }
     let data = JSON.stringify({
       maxAge: this.maxAge,
-      expire: Date.now() + this.maxAge * 1000,
+      expire: Date.now() + this.maxAge,
       data: this.data
     });
     if (this.keygrip) {
