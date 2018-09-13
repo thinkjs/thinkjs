@@ -16,6 +16,9 @@ config file `src/config/adapter.js`, add options:
 const cookie = require('think-session-cookie');
 exports.session = {
   type: 'cookie',
+  common: {
+    maxAge: 24 * 3600 * 1000, // 1 day 
+  },
   cookie: {
     handle: cookie
   }
