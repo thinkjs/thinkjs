@@ -22,6 +22,7 @@ class RedisSession {
     this.ctx = ctx;
     this.data = {};
     this.status = 0;
+    this.fresh = true;
   }
 
   /**
@@ -41,6 +42,7 @@ class RedisSession {
       content = JSON.parse(content);
       if (helper.isEmpty(content)) return;
       this.data = content;
+      this.fresh = false;
     }).catch(err => debug(err));
     return this.initPromise;
   }
@@ -52,8 +54,12 @@ class RedisSession {
       if (this.status === -1) {
         return this.redis.delete(this.options.cookie);
       } else if (this.status === 1) {
-        const maxAge = this.options.maxAge;
-        return this.redis.set(this.options.cookie, JSON.stringify(this.data), maxAge ? helper.ms(maxAge) : undefined);
+        if (this.fresh) {
+          const maxAge = this.options.maxAge;
+          return this.redis.set(this.options.cookie, JSON.stringify(this.data), maxAge ? helper.ms(maxAge) : undefined);
+        }
+        // if not fresh, can not override maxAge (may be set user defined timeout)
+        return this.redis.set(this.options.cookie, JSON.stringify(this.data));
       }
     });
   }
