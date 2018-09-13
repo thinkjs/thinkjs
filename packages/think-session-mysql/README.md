@@ -45,6 +45,33 @@ exports.session = {
 }
 ```
 
+if some fields also in model config, you can use Spread Properties.
+
+```js
+const mysqlConfig = {
+  database:'think_test',
+  prefix:'think_',
+  host:'127.0.0.1',
+  port:'3306',
+  user:'root',
+  password:'',
+}
+exports.model = {
+  type: 'mysql',
+  mysql: {
+    handle: mysqlModel,
+    ...mysqlConfig
+  }
+}
+exports.session = {
+  type: 'mysql',
+  mysql: {
+    handle: mysqlSession,
+    ...mysqlConfig
+  }
+}
+```
+
 ## Create Database
 `think_` is the prefix in `adapter.js`
 ```
