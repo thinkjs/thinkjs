@@ -5,16 +5,16 @@ const gc = require('think-gc');
 const initSessionData = Symbol('think-session-mysql-init');
 
 /*
- DROP TABLE IF EXISTS `think_session`;
- CREATE TABLE `think_session` (
- `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
- `cookie` varchar(255) NOT NULL DEFAULT '',
- `data` text,
- `expire` bigint(11) NOT NULL,
- PRIMARY KEY (`id`),
- UNIQUE KEY `cookie` (`cookie`),
- KEY `expire` (`expire`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `think_session` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `cookie` varchar(255) NOT NULL DEFAULT '',
+  `data` text,
+  `expire` bigint(11) NOT NULL DEFAULT '0',
+  `maxage` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cookie` (`cookie`),
+  KEY `expire` (`expire`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  */
 
 /**
@@ -22,58 +22,65 @@ const initSessionData = Symbol('think-session-mysql-init');
  *
  */
 class MysqlSession {
-  constructor(options = {}, ctx) {
+  constructor(options = {}, ctx, cookieOptions) {
     assert(options.cookie, '.cookie required');
-    const modelConfig = think.config('model');
-    const useModel = modelConfig[modelConfig.type];
-    if (useModel.handle.name.toLowerCase().indexOf('mysql') > -1) {
-      this.options = Object.assign({}, useModel, options);
-    }else{
-      this.options = options;       
-    }
-    this.mysql = mysql.getInstance(this.options);
+    this.options = options;
+    this.cookieOptions = cookieOptions;
+    this.mysql = mysql.getInstance(helper.omit(options, 'cookie'));
     this.ctx = ctx;
     this.data = {};
     this.tableName = (this.options.prefix || '') + 'session';
+    this.status = 0;
+    this.maxAge = this.options.maxAge || 0;
+    this.expire = 0;
     this.gcType = `session_mysql`;
     gc(this, this.options.gcInterval);
   }
-
 
   [initSessionData]() {
     if (this.initPromise) {
       return this.initPromise;
     }
     if (this.options.fresh || this.status === -1) {
-      return this.initPromise = Promise.resolve();
+      this.initPromise = Promise.resolve();
+      return this.initPromise;
     }
 
     // flush session when request finish
     this.ctx.res.once('finish', () => {
       this.flush();
     });
-   
+
     this.initPromise = this.mysql.query({
       sql: `SELECT * FROM ${this.tableName} WHERE cookie = ? `,
       values: [this.options.cookie]
     }).then(row => {
-      if(row.length === 0) return;
-      //session data is expired
-      if(row[0].expire < Date.now()){
+      if (row.length === 0) return;
+      // session data is expired
+      if (row[0].expire < Date.now()) {
         return this.delete();
       }
-      let content = row[0].data;
-      content = JSON.parse(content);
-      if (helper.isEmpty(content)) return;
-      this.data = content;
-    }).catch(
-      err => console.log(err)
-    );
-
-
+      const content = row[0].data;
+      this.data = JSON.parse(content) || {};
+      if (row[0].maxAge) {
+        this.maxAge = row[0].maxAge;
+      }
+      this.expire = row[0].expire;
+      this.autoUpdate();
+    });
     return this.initPromise;
   }
-
+  autoUpdate() {
+    if (this.maxAge && this.expire) {
+      const rate = (this.expire - Date.now()) / this.maxAge;
+      if (rate < this.cookieOptions.autoUpdateRate) {
+        this.status = 1;
+        this.cookieOptions.maxAge = this.maxAge;
+        // update cookie maxAge
+        this.ctx.cookie(this.cookieOptions.name, this.options.cookie, this.cookieOptions);
+      }
+    }
+  }
   get(name) {
     return this[initSessionData]().then(() => {
       if (this.options.autoUpdate) {
@@ -86,9 +93,9 @@ class MysqlSession {
   set(name, value) {
     return this[initSessionData]().then(() => {
       this.status = 1;
-      if(value === null){
+      if (value === null) {
         delete this.data[name];
-      }else{
+      } else {
         this.data[name] = value;
       }
     });
@@ -107,25 +114,25 @@ class MysqlSession {
       this.mysql.execute({
         sql: `DELETE FROM ${this.tableName} WHERE cookie=?`,
         values: [this.options.cookie]
-      })
+      });
     } else if (this.status === 1) {
       this.status = 0;
       // insert or update data
-      const maxAge = Date.now() + helper.ms(this.options.maxAge || 0);
-      let fields = [this.options.cookie, JSON.stringify(this.data), maxAge];
+      const expire = Date.now() + this.maxAge;
+      const fields = [this.options.cookie, JSON.stringify(this.data), expire, this.maxAge];
       this.mysql.execute({
-        sql: `INSERT INTO ${this.tableName} (cookie, data, expire) VALUES(?, ?, ?) 
-            ON DUPLICATE KEY UPDATE data=?, expire=?`,
-        values: [...fields, fields[1], fields[2]]
-      })
+        sql: `INSERT INTO ${this.tableName} (cookie, data, expire, maxage) VALUES(?, ?, ?, ?) 
+            ON DUPLICATE KEY UPDATE data=?, expire=?, maxage=?`,
+        values: [...fields, fields[1], fields[2], fields[3]]
+      });
     }
     return Promise.resolve();
   }
 
-  gc(){
-    this.mysql.execute({
-      sql: `DELETE FROM ${this.tableName} WHERE expire < ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000)`,
-    })
+  gc() {
+    return this.mysql.execute({
+      sql: `DELETE FROM ${this.tableName} WHERE expire < ${Date.now()}`
+    });
   }
 }
 module.exports = MysqlSession;
