@@ -1,7 +1,7 @@
 const Query = require('./query.js');
 const path = require('path');
 const helper = require('think-helper');
-const {ObjectID} = require('mongodb');
+const { ObjectID } = require('mongodb');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
@@ -54,7 +54,7 @@ class Mongo {
    * get model instance
    * @param {String} name
    */
-  model(name) {
+  mongo(name) {
     const ModelClass = this.models[name];
     const modelName = path.basename(name);
     let instance;
@@ -65,6 +65,12 @@ class Mongo {
     }
     instance.models = this.models;
     return instance;
+  }
+  /**
+   * this.mongo alias
+   */
+  model(...args) {
+    return this.mongo(...args);
   }
   /**
    * get or set adapter
@@ -289,7 +295,7 @@ class Mongo {
     data = await this.beforeAdd(data, options);
     data = this.parseData(data);
     const insertId = await this.db().add(data, options);
-    const copyData = Object.assign({}, data, {[this.pk]: insertId});
+    const copyData = Object.assign({}, data, { [this.pk]: insertId });
     await this.afterAdd(copyData, options);
     return insertId;
   }
@@ -302,10 +308,10 @@ class Mongo {
   async thenAdd(data, where) {
     const findData = await this.where(where).find();
     if (!helper.isEmpty(findData)) {
-      return {[this.pk]: findData[this.pk], type: 'exist'};
+      return { [this.pk]: findData[this.pk], type: 'exist' };
     }
     const insertId = await this.add(data);
-    return {[this.pk]: insertId, type: 'add'};
+    return { [this.pk]: insertId, type: 'add' };
   }
   /**
    * update data when exist, otherwise add data
@@ -356,7 +362,7 @@ class Mongo {
     }
     const pk = this.pk;
     if (data[pk]) {
-      this.where({[pk]: data[pk]});
+      this.where({ [pk]: data[pk] });
       delete data[pk];
     }
     options = this.parseOptions(options);
@@ -418,7 +424,7 @@ class Mongo {
 
     const pagesize = options.limit[1];
     // get page options
-    const data = {pageSize: pagesize};
+    const data = { pageSize: pagesize };
     data.currentPage = parseInt((options.limit[0] / options.limit[1]) + 1);
     const totalPage = Math.ceil(count / data.pageSize);
     if (helper.isBoolean(pageFlag) && data.currentPage > totalPage) {
@@ -430,7 +436,7 @@ class Mongo {
         options.limit = [(totalPage - 1) * pagesize, pagesize];
       }
     }
-    const result = Object.assign({count: count, totalPages: totalPage}, data);
+    const result = Object.assign({ count: count, totalPages: totalPage }, data);
     result.data = count ? await this.select(options) : [];
     return result;
   }
