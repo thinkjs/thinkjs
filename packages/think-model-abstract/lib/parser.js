@@ -288,7 +288,7 @@ module.exports = class AbstractParser {
         const isArr = helper.isArray(val[i]);
         data = isArr ? val[i][1] : val[i];
         const exp = ((isArr ? val[i][0] : '') + '').toUpperCase();
-        if (/^exp$/.test(exp)) {
+        if (/^exp$/i.test(exp)) {
           result.push(`(${key} ${data})`);
         } else {
           const op = isArr ? getComparison(val[i][0]) : '=';
@@ -429,14 +429,17 @@ module.exports = class AbstractParser {
               onKey = mTable + '.' + this.parseKey(onKey);
             }
 
-            let onVal = item.on[key];
+            const onVal = item.on[key];
+            const onWhereItem = [onKey];
             if (helper.isString(onVal) && onVal.indexOf('.') === -1) {
-              onVal = '=' + jTable + '.' + this.parseKey(onVal);
+              onWhereItem.push('=', jTable + '.' + this.parseKey(onVal));
             } else if (helper.isArray(onVal) && /^exp$/i.test(onVal[0])) {
-              onVal = onVal[1];
+              onWhereItem.push(onVal[1]);
+            } else {
+              onWhereItem.push('=', onVal);
             }
 
-            where.push(onKey + onVal);
+            where.push(onWhereItem.join(''));
           }
           joinStr += ' ON (' + where.join(' AND ') + ')';
         }
