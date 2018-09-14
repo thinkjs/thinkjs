@@ -98,7 +98,7 @@ declare module 'thinkjs' {
      * is ajax request
      * @memberOf Context
      */
-    isAjax(method: string): boolean;
+    isAjax(method?: string): boolean;
     /**
      * is jsonp request
      *  callbackField default to this.config('jsonpCallbackField')
