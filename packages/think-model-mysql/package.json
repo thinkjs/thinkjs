@@ -37,16 +37,5 @@
     "eslint-config-think": "^1.0.1",
     "muk": "^0.5.3",
     "nyc": "^10.3.0"
-  },
-  "ava": {
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
-  },
-  "babel": {
-    "presets": [
-      "think-node"
-    ]
   }
 }
