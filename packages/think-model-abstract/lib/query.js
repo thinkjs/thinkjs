@@ -59,6 +59,16 @@ module.exports = class AbstractQuery {
         fields.push(parser.parseKey(key));
       }
     }
+
+    // compatiable with boolean and array update property value
+    if (options.update === true) {
+      options.update = fields;
+    } else if (helper.isArray(options.update)) {
+      options.update = options.update.filter(field =>
+        fields.indexOf(field) > -1
+      );
+    }
+
     options.fields = fields.join(',');
     options.values = values.join(',');
     const sql = this.parser.buildInsertSql(options, replace);
@@ -72,7 +82,7 @@ module.exports = class AbstractQuery {
    */
   addMany(data, options, replace) {
     const parser = this.parser;
-    const fields = Object.keys(data[0]).map(item => parser.parseKey(item)).join(',');
+    const fields = Object.keys(data[0]).map(item => parser.parseKey(item));
     const values = data.map(item => {
       const value = [];
       for (const key in item) {
@@ -85,7 +95,16 @@ module.exports = class AbstractQuery {
       return `(${value.join(',')})`;
     }).join(',');
 
-    options.fields = fields;
+    // compatiable with boolean and array update property value
+    if (options.update === true) {
+      options.update = fields;
+    } else if (helper.isArray(options.update)) {
+      options.update = options.update.filter(field =>
+        fields.indexOf(field) > -1
+      );
+    }
+
+    options.fields = fields.join(',');
     options.values = values;
     const sql = this.parser.buildInsertSql(options, replace);
     return this.execute(sql).then(() => {
