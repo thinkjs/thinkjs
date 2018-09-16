@@ -67,6 +67,13 @@ module.exports = class AbstractQuery {
       options.update = options.update.filter(field =>
         fields.indexOf(field) > -1
       );
+    } else {
+      for (const key in options.update) {
+        if (fields.indexOf(key) > -1) {
+          continue;
+        }
+        delete options.update[key];
+      }
     }
 
     options.fields = fields.join(',');
@@ -102,6 +109,13 @@ module.exports = class AbstractQuery {
       options.update = options.update.filter(field =>
         fields.indexOf(field) > -1
       );
+    } else {
+      for (const key in options.update) {
+        if (fields.indexOf(key) > -1) {
+          continue;
+        }
+        delete options.update[key];
+      }
     }
 
     options.fields = fields.join(',');
