@@ -126,6 +126,20 @@ ava.test('parseField, single field', t => {
   t.deepEqual(key, '`name`');
 });
 
+ava.test('parseField, string field with alias', t => {
+  const instance = getParserInstance();
+  const key = instance.parseField('name', {
+    alias: 'u'
+  });
+  t.deepEqual(key, '`u`.`name`');
+});
+
+ava.test('parseField, single field with ()', t => {
+  const instance = getParserInstance();
+  const key = instance.parseField('(name)');
+  t.deepEqual(key, '(name)');
+});
+
 ava.test('parseField, multi field', t => {
   const instance = getParserInstance();
   const key = instance.parseField('name,title');
@@ -136,6 +150,12 @@ ava.test('parseField, multi field', t => {
   const instance = getParserInstance();
   const key = instance.parseField('name, title');
   t.deepEqual(key, '`name`,`title`');
+});
+
+ava.test('parseField, array', t => {
+  const instance = getParserInstance();
+  const key = instance.parseField(['name', 'title'], { alias: 'u' });
+  t.deepEqual(key, '`u`.`name`,`u`.`title`');
 });
 
 ava.test('parseField, object', t => {
@@ -157,6 +177,12 @@ ava.test('parseTable, string', t => {
   const instance = getParserInstance();
   const key = instance.parseTable('user');
   t.deepEqual(key, '`user`');
+});
+
+ava.test('parseTable, string with alias', t => {
+  const instance = getParserInstance();
+  const key = instance.parseTable('user', { alias: 'u' });
+  t.deepEqual(key, '`user` AS u');
 });
 
 ava.test('parseTable, string, multi', t => {
@@ -317,7 +343,7 @@ ava.test('parseOrder, string', t => {
 
 ava.test('parseOrder, object', t => {
   const instance = getParserInstance();
-  const data = instance.parseOrder({name: 'ASC', 'title': 'DESC'});
+  const data = instance.parseOrder({ name: 'ASC', 'title': 'DESC' });
   t.is(data, ' ORDER BY `name` ASC,`title` DESC');
 });
 
@@ -389,6 +415,23 @@ ava.test('parseJoin, array', t => {
   t.is(data, ' INNER JOIN `cate` AS `c` ON `user`.`cate_id` = `c`.`id`');
 });
 
+ava.test('parseJoin, array', t => {
+  const instance = getParserInstance();
+  const data = instance.parseJoin([{
+    table: 'cate',
+    join: 'inner',
+    as: 'c',
+    on: {
+      'user.cate_id': 'id',
+      cate_id: ['EXP', ' > 100']
+    }
+  }], {
+    tablePrefix: '',
+    table: 'user'
+  });
+  t.is(data, ' INNER JOIN `cate` AS `c` ON (user.cate_id=`c`.`id` AND `user`.`cate_id` > 100)');
+});
+
 ava.test('parseJoin, array, no on', t => {
   const instance = getParserInstance();
   const data = instance.parseJoin([{
@@ -400,6 +443,19 @@ ava.test('parseJoin, array, no on', t => {
     table: 'user'
   });
   t.is(data, ' INNER JOIN `cate` AS `c`');
+});
+
+ava.test('parseJoin, array, no on table with .', t => {
+  const instance = getParserInstance();
+  const data = instance.parseJoin([{
+    table: 'db2.cate',
+    join: 'inner',
+    as: 'c'
+  }], {
+    tablePrefix: '',
+    table: 'user'
+  });
+  t.is(data, ' INNER JOIN db2.cate AS `c`');
 });
 
 ava.test('parseJoin, array, ignore not object', t => {
@@ -641,7 +697,7 @@ ava.test('parseThinkWhere, _query, with logic', t => {
 
 ava.test('parseThinkWhere, _query, object', t => {
   const instance = getParserInstance();
-  const data = instance.parseThinkWhere('_query', {name: 'lizheming', name1: 'suredy'});
+  const data = instance.parseThinkWhere('_query', { name: 'lizheming', name1: 'suredy' });
   t.is(data, '`name` = \'lizheming\' AND `name1` = \'suredy\'');
 });
 
@@ -653,20 +709,20 @@ ava.test('parseWhere, empty', t => {
 
 ava.test('parseWhere, empty 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({_logic: 'AND'});
+  const data = instance.parseWhere({ _logic: 'AND' });
   t.is(data, '');
 });
 
 ava.test('parseWhere, 1=1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({1: 1});
+  const data = instance.parseWhere({ 1: 1 });
   t.is(data, ' WHERE ( 1 = 1 )');
 });
 
 ava.test('parseWhere, key is not valid', t => {
   const instance = getParserInstance();
   try {
-    instance.parseWhere({'&*&*&*': 'title'});
+    instance.parseWhere({ '&*&*&*': 'title' });
     t.fail('parseWhere fail without error when key is not valid');
   } catch (e) {
     t.pass();
@@ -675,79 +731,79 @@ ava.test('parseWhere, key is not valid', t => {
 
 ava.test('parseWhere, string & object', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: 'lizheming', _string: 'status=1'});
+  const data = instance.parseWhere({ title: 'lizheming', _string: 'status=1' });
   t.is(data, ' WHERE ( `title` = \'lizheming\' ) AND ( status=1 )');
 });
 
 ava.test('parseWhere, null', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: null});
+  const data = instance.parseWhere({ title: null });
   t.is(data, ' WHERE ( `title` IS NULL )');
 });
 
 ava.test('parseWhere, null 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: {'=': null}});
+  const data = instance.parseWhere({ title: { '=': null } });
   t.is(data, ' WHERE ( `title` IS NULL )');
 });
 
 ava.test('parseWhere, null 2', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: ['=', null]});
+  const data = instance.parseWhere({ title: ['=', null] });
   t.is(data, ' WHERE ( `title` IS NULL )');
 });
 
 ava.test('parseWhere, not null', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: {'!=': null}});
+  const data = instance.parseWhere({ title: { '!=': null } });
   t.is(data, ' WHERE ( `title` IS NOT NULL )');
 });
 
 ava.test('parseWhere, not null 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: ['!=', null]});
+  const data = instance.parseWhere({ title: ['!=', null] });
   t.is(data, ' WHERE ( `title` IS NOT NULL )');
 });
 
 ava.test('parseWhere, object', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: 10});
+  const data = instance.parseWhere({ id: 10 });
   t.is(data, ' WHERE ( `id` = 10 )');
 });
 
 ava.test('parseWhere, object IN number', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: {IN: [1, 2, 3]}});
+  const data = instance.parseWhere({ id: { IN: [1, 2, 3] } });
   t.is(data, ' WHERE ( `id` IN (1, 2, 3) )');
 });
 
 ava.test('parseWhere, IN number string', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: [1, 2, 3]});
+  const data = instance.parseWhere({ id: [1, 2, 3] });
   t.is(data, ' WHERE ( `id` IN ( 1, 2, 3 ) )');
 });
 
 ava.test('parseWhere, object 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: [1, 10, 'string']});
+  const data = instance.parseWhere({ id: [1, 10, 'string'] });
   t.is(data, ' WHERE ( (`id` = 1) AND (`id` = 10) AND (`id` = \'string\') )');
 });
 
 ava.test('parseWhere, IN number string', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['1', '2', '3']});
+  const data = instance.parseWhere({ id: ['1', '2', '3'] });
   t.is(data, ' WHERE ( `id` IN ( 1, 2, 3 ) )');
 });
 
 ava.test('parseWhere, object IN number string', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: {IN: ['1', '2', '3']}});
+  const data = instance.parseWhere({ id: { IN: ['1', '2', '3'] } });
   t.is(data, ' WHERE ( `id` IN (\'1\', \'2\', \'3\') )');
 });
 
 ava.test('parseWhere, object 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['!=', 10]});
+  const data = instance.parseWhere({ id: ['!=', 10] });
   t.is(data, ' WHERE ( `id` != 10 )');
 });
 
@@ -759,43 +815,43 @@ ava.test('parseWhere, string', t => {
 
 ava.test('parseWhere, EXP', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({name: ['EXP', "='name'"]});
+  const data = instance.parseWhere({ name: ['EXP', "='name'"] });
   t.is(data, ' WHERE ( (`name` =\'name\') )');
 });
 
 ava.test('parseWhere, EXP 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({view_nums: ['EXP', '=view_nums+1']});
+  const data = instance.parseWhere({ view_nums: ['EXP', '=view_nums+1'] });
   t.is(data, ' WHERE ( (`view_nums` =view_nums+1) )');
 });
 
 ava.test('parseWhere, LIKE', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: ['NOTLIKE', 'lizheming']});
+  const data = instance.parseWhere({ title: ['NOTLIKE', 'lizheming'] });
   t.is(data, ' WHERE ( `title` NOT LIKE \'lizheming\' )');
 });
 
 ava.test('parseWhere, LIKE 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: ['like', '%lizheming%']});
+  const data = instance.parseWhere({ title: ['like', '%lizheming%'] });
   t.is(data, ' WHERE ( `title` LIKE \'%lizheming%\' )');
 });
 
 ava.test('parseWhere, LIKE 2', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: ['like', ['lizheming', 'suredy']]});
+  const data = instance.parseWhere({ title: ['like', ['lizheming', 'suredy']] });
   t.is(data, ' WHERE ( (`title` LIKE \'lizheming\' OR `title` LIKE \'suredy\') )');
 });
 
 ava.test('parseWhere, LIKE 3', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({title: ['like', ['lizheming', 'suredy'], 'AND']});
+  const data = instance.parseWhere({ title: ['like', ['lizheming', 'suredy'], 'AND'] });
   t.is(data, ' WHERE ( (`title` LIKE \'lizheming\' AND `title` LIKE \'suredy\') )');
 });
 
 ava.test('parseWhere, key has |', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({'title|content': ['like', '%lizheming%']});
+  const data = instance.parseWhere({ 'title|content': ['like', '%lizheming%'] });
   t.is(data, ' WHERE ( (`title` LIKE \'%lizheming%\') OR (`content` LIKE \'%lizheming%\') )');
 });
 
@@ -823,7 +879,7 @@ ava.test('parseWhere, key has |, multi', t => {
 
 ava.test('parseWhere, key has &', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({'title&content': ['like', '%lizheming%']});
+  const data = instance.parseWhere({ 'title&content': ['like', '%lizheming%'] });
   t.is(data, ' WHERE ( (`title` LIKE \'%lizheming%\') AND (`content` LIKE \'%lizheming%\') )');
 });
 
@@ -841,110 +897,129 @@ ava.test('parseWhere, key has &, multi', t => {
 
 ava.test('parseWhere, IN', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['IN', '10,20']});
+  const data = instance.parseWhere({ id: ['IN', '10,20'] });
   t.is(data, ' WHERE ( `id` IN (\'10\',\'20\') )');
 });
 
 ava.test('parseWhere, IN 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['IN', [10, 20]]});
+  const data = instance.parseWhere({ id: ['IN', [10, 20]] });
   t.is(data, ' WHERE ( `id` IN (10,20) )');
 });
 
 ava.test('parseWhere, IN 2', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['NOTIN', [10, 20]]});
+  const data = instance.parseWhere({ id: ['NOTIN', [10, 20]] });
   t.is(data, ' WHERE ( `id` NOT IN (10,20) )');
 });
 
 ava.test('parseWhere, NOT IN, only one', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['NOTIN', 10]});
+  const data = instance.parseWhere({ id: ['NOTIN', 10] });
   t.is(data, ' WHERE ( `id` != 10 )');
 });
 
 ava.test('parseWhere, IN, only one', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['IN', 10]});
+  const data = instance.parseWhere({ id: ['IN', 10] });
   t.is(data, ' WHERE ( `id` = 10 )');
 });
 
 ava.test('parseWhere, IN, object', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: {IN: [1, 2, 3]}});
+  const data = instance.parseWhere({ id: { IN: [1, 2, 3] } });
   t.is(data, ' WHERE ( `id` IN (1, 2, 3) )');
 });
 
 ava.test('parseWhere, IN, has exp', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['NOTIN', '(10,20,30)', 'exp']});
+  const data = instance.parseWhere({ id: ['NOTIN', '(10,20,30)', 'exp'] });
   t.is(data, ' WHERE ( `id` NOT IN (10,20,30) )');
 });
 
 ava.test('parseWhere, multi fields', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: 10, title: 'www'});
+  const data = instance.parseWhere({ id: 10, title: 'www' });
   t.is(data, ' WHERE ( `id` = 10 ) AND ( `title` = \'www\' )');
 });
 
 ava.test('parseWhere, multi fields 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: 10, title: 'www', _logic: 'OR'});
+  const data = instance.parseWhere({ id: 10, title: 'www', _logic: 'OR' });
   t.is(data, ' WHERE ( `id` = 10 ) OR ( `title` = \'www\' )');
 });
 
 ava.test('parseWhere, multi fields 2', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: 10, title: 'www', _logic: 'XOR'});
+  const data = instance.parseWhere({ id: 10, title: 'www', _logic: 'XOR' });
   t.is(data, ' WHERE ( `id` = 10 ) XOR ( `title` = \'www\' )');
 });
 
 ava.test('parseWhere, BETWEEN', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['BETWEEN', 1, 2]});
+  const data = instance.parseWhere({ id: ['BETWEEN', 1, 2] });
   t.is(data, ' WHERE (  (`id` BETWEEN 1 AND 2) )');
 });
 
 ava.test('parseWhere, BETWEEN', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['BETWEEN', '2017-04-13 00:00:00', '2017-04-19 00:00:00']});
+  const data = instance.parseWhere({ id: ['BETWEEN', '2017-04-13 00:00:00', '2017-04-19 00:00:00'] });
   t.is(data, ' WHERE (  (`id` BETWEEN \'2017-04-13 00:00:00\' AND \'2017-04-19 00:00:00\') )');
 });
 
 ava.test('parseWhere, BETWEEN', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: ['between', '1,2']});
+  const data = instance.parseWhere({ id: ['between', '1,2'] });
   t.is(data, ' WHERE (  (`id` BETWEEN \'1\' AND \'2\') )');
+});
+
+ava.test('parseWhere, error', t => {
+  const instance = getParserInstance();
+  try {
+    instance.parseWhere({
+      id: ['not between', 2]
+    });
+    t.fail();
+  } catch (e) {
+    // t.is(e.message, 'shouldbe is not valid');
+    t.is(e.message, 'WHERE_CONDITION_`id`:["not between",2]_INVALID');
+  }
 });
 
 ava.test('parseWhere, complex', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: {
-    '>': 10,
-    '<': 20
-  }});
+  const data = instance.parseWhere({
+    id: {
+      '>': 10,
+      '<': 20
+    }
+  });
   t.is(data, ' WHERE ( `id` > 10 AND `id` < 20 )');
 });
 
 ava.test('parseWhere, complex 1', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: {
-    '>': 10,
-    '<': 20,
-    _logic: 'OR'
-  }});
+  const data = instance.parseWhere({
+    id: {
+      '>': 10,
+      '<': 20,
+      _logic: 'OR'
+    }
+  });
   t.is(data, ' WHERE ( `id` > 10 OR `id` < 20 )');
 });
 
 ava.test('parseWhere, complex 2', t => {
   const instance = getParserInstance();
-  const data = instance.parseWhere({id: {
-    '>=': 10,
-    '<=': 20
-  },
-  'title': ['like', '%lizheming%'],
-  date: ['>', '2014-08-12'],
-  _logic: 'OR'});
+  const data = instance.parseWhere({
+    id: {
+      '>=': 10,
+      '<=': 20
+    },
+    'title': ['like', '%lizheming%'],
+    date: ['>', '2014-08-12'],
+    _logic: 'OR'
+  });
   t.is(data, ' WHERE ( `id` >= 10 AND `id` <= 20 ) OR ( `title` LIKE \'%lizheming%\' ) OR ( `date` > \'2014-08-12\' )');
 });
 
@@ -1048,54 +1123,64 @@ ava.test('buildSelectSql', t => {
 });
 
 ava.test('parseSql', t => {
-  const instance = getParserInstance({prefix: 'think_'});
+  const instance = getParserInstance({ prefix: 'think_' });
   const data = instance.parseSql('SELECT * FROM __USER__ WHERE name=1');
   t.is(data, 'SELECT * FROM `think_user` WHERE name=1');
 });
 
 ava.test('parseSql 1', t => {
-  const instance = getParserInstance({prefix: 'think_'});
+  const instance = getParserInstance({ prefix: 'think_' });
   const data = instance.parseSql('SELECT * FROM __USER__ WHERE name=\'%TEST%\'');
   t.is(data, 'SELECT * FROM `think_user` WHERE name=\'%TEST%\'');
 });
 
 ava.test('parseUnion, empty', t => {
-  const instance = getParserInstance({prefix: 'think_'});
+  const instance = getParserInstance({ prefix: 'think_' });
   const data = instance.parseUnion();
   t.is(data, '');
 });
 
 ava.test('parseUnion, string', t => {
-  const instance = getParserInstance({prefix: 'think_'});
+  const instance = getParserInstance({ prefix: 'think_' });
   const data = instance.parseUnion('SELECT * FROM meinv_pic2');
   t.is(data, ' UNION (SELECT * FROM meinv_pic2)');
 });
 
 ava.test('parseUnion, object', t => {
-  const instance = getParserInstance({prefix: 'think_'});
-  const data = instance.parseUnion({table: 'meinv_pic2'});
+  const instance = getParserInstance({ prefix: 'think_' });
+  const data = instance.parseUnion({ table: 'meinv_pic2' });
   t.is(data, ' UNION (SELECT * FROM `meinv_pic2`)');
 });
 
 ava.test('parseUnion, object', t => {
-  const instance = new Parser({prefix: 'think_'});
-  const data = instance.parseUnion({table: 'meinv_pic2'});
+  const instance = new Parser({ prefix: 'think_' });
+  const data = instance.parseUnion({ table: 'meinv_pic2' });
   t.is(data, ' UNION (SELECT * FROM meinv_pic2)');
 });
 
 ava.test('parseUnion, array', t => {
-  const instance = getParserInstance({prefix: 'think_'});
+  const instance = getParserInstance({ prefix: 'think_' });
   const data = instance.parseUnion([{
-    union: {table: 'meinv_pic2'},
+    union: { table: 'meinv_pic2' },
     all: true
   }]);
   t.is(data, ' UNION ALL (SELECT * FROM `meinv_pic2`)');
 });
 
 ava.test('parseUnion, array', t => {
-  const instance = getParserInstance({prefix: 'think_'});
+  const instance = getParserInstance({ prefix: 'think_' });
   const data = instance.parseUnion([{
     union: 'SELECT * FROM meinv_pic2'
   }]);
   t.is(data, ' UNION (SELECT * FROM meinv_pic2)');
+});
+
+ava.test('buildInsertSql', t => {
+  const instance = getParserInstance();
+  const sql = instance.buildInsertSql({
+    table: 'user',
+    values: '1,lizheming',
+    fields: 'id,name'
+  }, true);
+  t.is(sql, 'REPLACE INTO `user` (id,name) VALUES (1,lizheming)');
 });
