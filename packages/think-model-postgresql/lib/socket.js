@@ -54,7 +54,7 @@ class PostgreSQLSocket {
   }
   /**
    * start transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   startTrans(connection) {
     return this.getConnection(connection).then(connection => {
@@ -67,7 +67,7 @@ class PostgreSQLSocket {
   }
   /**
    * commit transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   commit(connection) {
     return this.query({
@@ -78,7 +78,7 @@ class PostgreSQLSocket {
   }
   /**
    * rollback transaction
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   rollback(connection) {
     return this.query({
@@ -89,8 +89,8 @@ class PostgreSQLSocket {
   }
   /**
    * transaction
-   * @param {Function} fn 
-   * @param {Object} connection 
+   * @param {Function} fn
+   * @param {Object} connection
    */
   transaction(fn, connection) {
     assert(helper.isFunction(fn), 'fn must be a function');
@@ -106,7 +106,7 @@ class PostgreSQLSocket {
   }
   /**
    * release connection
-   * @param {Object} connection 
+   * @param {Object} connection
    */
   releaseConnection(connection) {
     // if not in transaction, release connection
@@ -138,8 +138,8 @@ class PostgreSQLSocket {
   }
   /**
    * query
-   * @param {Object} sqlOptions 
-   * @param {Object} connection 
+   * @param {Object} sqlOptions
+   * @param {Object} connection
    */
   query(sqlOptions, connection) {
     if (helper.isString(sqlOptions)) {
