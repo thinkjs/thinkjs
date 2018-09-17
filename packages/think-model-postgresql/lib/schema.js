@@ -1,25 +1,25 @@
 const helper = require('think-helper');
-const {Schema} = require('think-model-abstract');
+const { Schema } = require('think-model-abstract');
 const Debounce = require('think-debounce');
 
 const debounce = new Debounce();
 const SCHEMAS = {};
 
 /**
- * mysql Schema
+ * PostgreSQL Schema
  */
-module.exports = class MysqlSchema extends Schema {
+module.exports = class PostgreSQLSchema extends Schema {
   _getItemSchemaValidate(fieldData) {
     const validate = {};
     switch (fieldData.tinyType) {
       case 'tinyint':
-        validate.int = {min: 0, max: 255};
+        validate.int = { min: 0, max: 255 };
         break;
       case 'smallint':
-        validate.int = {min: fieldData.unsigned ? 0 : -32768, max: 32767};
+        validate.int = { min: fieldData.unsigned ? 0 : -32768, max: 32767 };
         break;
       case 'int':
-        validate.int = {min: fieldData.unsigned ? 0 : -2147483648, max: 2147483647};
+        validate.int = { min: fieldData.unsigned ? 0 : -2147483648, max: 2147483647 };
         break;
       case 'date':
         validate.date = true;

@@ -3,7 +3,7 @@ const { Query } = require('think-model-abstract');
 const PostgreSQLSocket = require('./socket.js');
 
 /**
- * mysql query
+ * PostgreSQL query
  */
 module.exports = class PostgreSQLQuery extends Query {
   /**
