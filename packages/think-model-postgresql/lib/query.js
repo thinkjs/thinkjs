@@ -5,7 +5,7 @@ const PostgreSQLSocket = require('./socket.js');
 /**
  * mysql query
  */
-module.exports = class SQLiteQuery extends Query {
+module.exports = class PostgreSQLQuery extends Query {
   /**
    * get socket
    * @param {String|Object} sql
