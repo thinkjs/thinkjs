@@ -7,7 +7,7 @@ const keywords = ['ABORT', 'ABS', 'ABSOLUTE', 'ACCESS', 'ACTION', 'ADA', 'ADD', 
 module.exports = class PostgreSQLParser extends Parser {
   /**
    * parse key
-   * @param {String} key 
+   * @param {String} key
    */
   parseKey(key) {
     if (!/^\w+$/.test(key)) return key;
@@ -110,7 +110,7 @@ module.exports = class PostgreSQLParser extends Parser {
   }
   /**
    * build insert sql
-   * @param {Object} options 
+   * @param {Object} options
    */
   buildInsertSql(options) {
     const sql = super.buildInsertSql(options);
