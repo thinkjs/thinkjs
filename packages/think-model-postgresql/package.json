@@ -36,6 +36,7 @@
     "ava": "^0.19.1",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
+    "mock-require": "^3.0.2",
     "muk": "^0.5.3",
     "nyc": "^10.3.0"
   },

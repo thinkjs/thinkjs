@@ -36,7 +36,7 @@ module.exports = class PostgreSQLSchema extends Schema {
     }
     if (item.type.indexOf('unsigned') > -1) {
       item.unsigned = true;
-      item.type = item.type.replace('unsigned', true).trim();
+      item.type = item.type.replace('unsigned', '').trim();
     }
     if (!item.validate) {
       item.validate = this._getItemSchemaValidate(item);
