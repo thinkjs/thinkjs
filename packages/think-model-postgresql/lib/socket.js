@@ -1,5 +1,5 @@
 const thinkInstance = require('think-instance');
-const {Pool} = require('pg');
+const { Pool } = require('pg');
 const assert = require('assert');
 const helper = require('think-helper');
 const Debounce = require('think-debounce');
@@ -114,7 +114,7 @@ class PostgreSQLSocket {
       // connection maybe already released, so and try for it
       try {
         connection.release();
-      } catch (e) {}
+      } catch (e) { }
     }
   }
   /**
@@ -143,7 +143,7 @@ class PostgreSQLSocket {
    */
   query(sqlOptions, connection) {
     if (helper.isString(sqlOptions)) {
-      sqlOptions = {sql: sqlOptions};
+      sqlOptions = { sql: sqlOptions };
     }
     if (sqlOptions.debounce === undefined) {
       if (this.config.debounce !== undefined) {
@@ -184,7 +184,7 @@ class PostgreSQLSocket {
    */
   execute(sqlOptions, connection) {
     if (helper.isString(sqlOptions)) {
-      sqlOptions = {sql: sqlOptions};
+      sqlOptions = { sql: sqlOptions };
     }
     sqlOptions.debounce = false;
     return this.query(sqlOptions, connection);

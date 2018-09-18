@@ -1,4 +1,4 @@
-const {Parser} = require('think-model-abstract');
+const { Parser } = require('think-model-abstract');
 const helper = require('think-helper');
 
 // https://www.postgresql.org/docs/8.1/static/sql-keywords-appendix.html
@@ -54,16 +54,17 @@ module.exports = class PostgreSQLParser extends Parser {
       result = [];
       for (let key in group) {
         let type = group[key];
-        let matches;
         key = key.replace(/"/g, '');
+
         if (helper.isString(type)) {
-          matches = type.match(/.*(ASC|DESC)/i);
-        }
-        if (matches) {
-          type = ' ' + matches[1];
+          const matches = type.match(/.*(ASC|DESC)/i);
+          if (matches) {
+            type = ' ' + matches[1];
+          }
         } else if (helper.isNumber(type) || helper.isNumberString(type)) {
           type = parseInt(type) === -1 ? ' DESC' : ' ASC';
         }
+
         if (key.indexOf('.') === -1) {
           result.push(`"${key}"${type}`);
         } else {
