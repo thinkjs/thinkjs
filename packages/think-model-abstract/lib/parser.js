@@ -243,9 +243,6 @@ module.exports = class AbstractParser {
         } else {
           whereStr += key + ' ' + val0 + ' ' + this.parseValue(val[1]);
         }
-      } else if (/^exp$/i.test(val0)) {
-        // exp
-        whereStr += '(' + key + ' ' + val[1] + ')';
       } else if (val0 === 'IN' || val0 === 'NOT IN') {
         // in or not in
         if (/^exp$/i.test(val[2])) {
@@ -264,7 +261,7 @@ module.exports = class AbstractParser {
             whereStr += key + ' ' + val0 + ' (' + val[1].join(',') + ')';
           }
         }
-      } else if (val0 === 'BETWEEN') {
+      } else if (val0 === 'BETWEEN' || val0 === 'NOT BETWEEN') {
         // between
         data = helper.isString(val[1]) ? val[1].split(',') : val[1];
         if (!helper.isArray(data) || data.length === 1) {
@@ -273,7 +270,8 @@ module.exports = class AbstractParser {
         whereStr += ' (' + key + ' ' + val0 + ' ' + this.parseValue(data[0]);
         whereStr += ' AND ' + this.parseValue(data[1]) + ')';
       } else {
-        throw new Error(`WHERE_CONDITION_${key}:${JSON.stringify(val)}_INVALID`);
+        // exp
+        whereStr += '(' + key + ' ' + val[1] + ')';
       }
     } else {
       let length = val.length;
