@@ -340,7 +340,7 @@ declare module 'thinkjs' {
      * get post data, name can be split by comma 'field1,field2' or 'field'
      * @memberOf Controller
      */
-    post(name: string): object;
+    post(name: string): any;
 
 
     /**
