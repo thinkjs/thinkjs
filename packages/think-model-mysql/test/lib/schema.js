@@ -1,7 +1,54 @@
-const {test} = require('ava');
+const { test } = require('ava');
 const Query = require('../../lib/query');
 const Parser = require('../../lib/parser');
 const Schema = require('../../lib/schema');
+
+test('_getItemSchemaValidate', t => {
+  const schema = new Schema();
+  const data = [
+    [{ tinyType: 'tinyint' }, { int: { min: 0, max: 255 } }],
+    [{ tinyType: 'smallint' }, { int: { min: -32768, max: 32767 } }],
+    [{ tinyType: 'smallint', unsigned: 1 }, { int: { min: 0, max: 32767 } }],
+    [{ tinyType: 'int' }, { int: { min: -2147483648, max: 2147483647 } }],
+    [{ tinyType: 'int', unsigned: 1 }, {
+      int: { min: 0, max: 2147483647 }
+    }],
+    [{ tinyType: 'date' }, { date: true }],
+    [{ unsigned: true }, {}]
+  ];
+
+  t.plan(data.length);
+  data.forEach(([params, except]) =>
+    t.deepEqual(schema._getItemSchemaValidate(params), except)
+  );
+});
+
+test('_parseItemSchema', t => {
+  const schema = new Schema();
+  const data = [
+    [
+      { type: 'INT', default: '3', validate: 'hello' },
+      { type: 'INT', tinyType: 'int', default: 3, validate: 'hello' }
+    ],
+    [
+      { type: 'INT unsigned', default: '3' },
+      { type: 'INT', tinyType: 'int unsigned', default: 3, unsigned: true, validate: {} }
+    ],
+    // [
+    //   { default: function() { return 'lizheming' } },
+    //   { type: 'varchar(100)', tinyType: 'varchar', validate: {}, default: function() { return 'lizheming' } }
+    // ],
+    [
+      {},
+      { type: 'varchar(100)', tinyType: 'varchar', validate: {} }
+    ]
+  ];
+
+  t.plan(data.length);
+  data.forEach(([params, except]) =>
+    t.deepEqual(schema._parseItemSchema(params), except)
+  );
+});
 
 test('schema parser and query object', t => {
   t.plan(2);
@@ -264,7 +311,7 @@ test('schema get normal schema 4', async t => {
   const schema = new Schema({}, {
     id: {
       validate: {
-        int: {min: 0, max: 1}
+        int: { min: 0, max: 1 }
       }
     },
     title: {
