@@ -975,15 +975,10 @@ ava.test('parseWhere, BETWEEN', t => {
 
 ava.test('parseWhere, error', t => {
   const instance = getParserInstance();
-  try {
-    instance.parseWhere({
-      id: ['not between', 2]
-    });
-    t.fail();
-  } catch (e) {
-    // t.is(e.message, 'shouldbe is not valid');
-    t.is(e.message, 'WHERE_CONDITION_`id`:["not between",2]_INVALID');
-  }
+  const data = instance.parseWhere({
+    id: ['not between', '1,2']
+  });
+  t.is(data, ' WHERE (  (`id` NOT BETWEEN \'1\' AND \'2\') )');
 });
 
 ava.test('parseWhere, complex', t => {
