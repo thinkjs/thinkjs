@@ -3,7 +3,8 @@
   "version": "2.2.3",
   "description": "A simple CLI for scaffolding Thinkjs projects.",
   "bin": {
-    "thinkjs": "bin/thinkjs"
+    "thinkjs": "bin/thinkjs",
+    "think-cli": "bin/thinkjs"
   },
   "main": "bin/thinkjs",
   "scripts": {

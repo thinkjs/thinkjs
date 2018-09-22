@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const program = require('commander')
+const program = require('commander');
 
 program
   .version(require('../package.json').version)
@@ -16,4 +16,4 @@ program
   .command('migrate', 'migrate the project to think-cli 2.0')
   .command('sync', 'Synchronize the latest version of the project template to the local cache directory')
   .command('clean', 'Clear the project template cache')
-  .parse(process.argv)
+  .parse(process.argv);
