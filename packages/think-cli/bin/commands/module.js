@@ -69,7 +69,7 @@ const context = Object.assign(thinkjsInfo.metadata, argv, {
 });
 
 const run = new Run({
-  template: thinkjsInfo.templateName,
+  template: thinkjsInfo.template,
   targetPath: appPath,
   options: { name: thinkjsInfo.metadata.name, command: 'module', maps: 'module', context },
   done(err, files) {
