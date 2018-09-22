@@ -52,9 +52,9 @@ process.on('exit', function() {
  */
 
 const rawName = program.args[0];
-const template = program.args[1] || path.join(__dirname, '../default_template');
+const template = program.args[1] || path.join(__dirname, '../../default_template');
 const isHere = !rawName || rawName === '.';
-const name = isHere ? path.relative('../', process.cwd()) : rawName;
+const name = isHere ? path.relative('../../', process.cwd()) : rawName;
 const targetPath = path.join(process.cwd(), rawName || '.');
 const clone = program.clone || false;
 const isMultiModule = program.module || false;

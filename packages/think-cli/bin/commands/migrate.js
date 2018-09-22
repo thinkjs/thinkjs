@@ -42,7 +42,7 @@ const templateInfo = {
   isMultiModule
 };
 
-const metaConf = getOptions(path.join(__dirname, '../default_template'), { name: templateInfo.projectName });
+const metaConf = getOptions(path.join(__dirname, '../../default_template'), { name: templateInfo.projectName });
 const prompts = utils.compose(addMultiModulePrompt, formatPrompts)(metaConf.prompts)(templateInfo);
 inquirer
   .prompt(prompts)
