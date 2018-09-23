@@ -1061,6 +1061,25 @@ ava.test('parseWhere, complex 4', t => {
   });
   t.is(data, ' WHERE (  ( `id` IN (1,2,3) ) OR ( `content` = \'www\' ) ) AND (  ( `name` = \'lizheming\' ) OR ( `email` = \'lizheming@163.com\' ) OR (  ( `admin` = 1 ) AND ( `status` = 0 ) ) OR (  ( `status` = 1 ) OR ( `ip` = \'127.0.0.1\' ) ) )');
 });
+
+ava.test('parseWhere, complex 5', t => {
+  const instance = getParserInstance();
+  const data = instance.parseWhere({
+    _logic: 'or',
+    _complex: [
+      {
+        start_date: ['<=', '2017-01-01'],
+        end_date: ['>=', '2017-01-01']
+      },
+      {
+        start_date: ['<=', '2017-01-01'],
+        end_date: ['>=', '2017-01-01']
+      }
+    ]
+  });
+  t.is(data, ' WHERE (  ( `start_date` <= \'2017-01-01\' ) AND ( `end_date` >= \'2017-01-01\' ) ) OR (  ( `start_date` <= \'2017-01-01\' ) AND ( `end_date` >= \'2017-01-01\' ) )');
+});
+
 ava.test('parseWhere, other', t => {
   const instance = getParserInstance();
   try {
