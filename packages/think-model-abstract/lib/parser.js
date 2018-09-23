@@ -162,6 +162,13 @@ module.exports = class AbstractParser {
       str = '( ';
       // _string: ''
       if (['_string', '_complex', '_query'].indexOf(key) > -1) {
+        if (helper.isArray(val)) {
+          result = result.concat(
+            val.map(v => `( ${this.parseThinkWhere(key, v)} )`)
+          );
+          continue;
+        }
+
         str += this.parseThinkWhere(key, val);
       } else if (!keySafeRegExp.test(key)) {
         throw new Error('INVALID_WHERE_CONDITION_KEY');

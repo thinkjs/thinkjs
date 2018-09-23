@@ -1031,6 +1031,36 @@ ava.test('parseWhere, complex 3', t => {
   t.is(data, ' WHERE ( `title` = \'test\' ) AND (  ( `id` IN (1,2,3) ) OR ( `content` = \'www\' ) )');
 });
 
+ava.test('parseWhere, complex 4', t => {
+  const instance = getParserInstance();
+  const data = instance.parseWhere({
+    _complex: [
+      {
+        id: ['IN', [1, 2, 3]],
+        content: 'www',
+        _logic: 'or'
+      },
+      {
+        name: 'lizheming',
+        email: 'lizheming@163.com',
+        _logic: 'or',
+        _complex: [
+          {
+            admin: true,
+            status: 0,
+            _logic: 'and'
+          },
+          {
+            status: 1,
+            ip: '127.0.0.1',
+            _logic: 'or'
+          }
+        ]
+      }
+    ]
+  });
+  t.is(data, ' WHERE (  ( `id` IN (1,2,3) ) OR ( `content` = \'www\' ) ) AND (  ( `name` = \'lizheming\' ) OR ( `email` = \'lizheming@163.com\' ) OR (  ( `admin` = 1 ) AND ( `status` = 0 ) ) OR (  ( `status` = 1 ) OR ( `ip` = \'127.0.0.1\' ) ) )');
+});
 ava.test('parseWhere, other', t => {
   const instance = getParserInstance();
   try {
