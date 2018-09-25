@@ -29,13 +29,7 @@ module.exports = [
 
 When add mongoose extend, it will add some below methods:
 
-* `think.Mongoose` {Class} Base class(it's extends from mongoose model), model class must be extends this class.
-
-  * `think.Mongoose.mongoose` mongoose object
-  * `think.Mongoose.Schema` mongoose Schema class
-  * `think.Mongoose.Mixed` mongoose Schema Mixed type
-  * `think.Mongoose.ObjectId` mongoose Schema ObjectId type
-
+* `think.Mongoose` {Class} Model definition base class, model class must be extends this class and implement get schama().
 * `think.mongoose` {Function} get mongoose instance
 * `ctx.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
 * `controller.mongoose` {Function} get mongoose instance, it's wrapped from think.mongoose
@@ -84,6 +78,8 @@ Create model class extends from `think.Mongoose`, like:
 ```js
 // src/model/user.js
 
+const {SchameTypes} = require('mongoose');
+
 module.exports = class extends think.Mongoose {
   get schema() {
     return {
@@ -95,8 +91,8 @@ module.exports = class extends think.Mongoose {
       mixed:   Schema.Types.Mixed,
       _someId: Schema.Types.ObjectId,
       array:      [],
-      ofMixed:    [think.Mongoose.Mixed],
-      ofObjectId: [think.Mongoose.ObjectId],
+      ofMixed:    [SchameTypes.Mixed],
+      ofObjectId: [SchameTypes.ObjectId],
       ofArrays:   [[]],
       ofArrayOfNumbers: [[Number]],
       nested: {
@@ -110,9 +106,11 @@ module.exports = class extends think.Mongoose {
 Sometime, you want to add some methods to schema, then you can get schema instance by yourself and return instance:
 
 ```js
+import {Schema} from 'mongoose';
+
 module.exports = class extends think.Mongoose {
   get schema() {
-    const schema = new think.Mongoose.Schema({ name: String, type: String });
+    const schema = new Schema({ name: String, type: String });
     schema.methods.findSimilarTypes = function(cb) {
       return this.model('think_Animal').find({ type: this.type }, cb); // model name `think_Animal` must have table prefix
     };

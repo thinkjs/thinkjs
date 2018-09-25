@@ -6,7 +6,7 @@
     "name": "welefen",
     "email": "welefen@gmail.com"
   },
-  "type": "index.d.ts",
+  "types": "index.d.ts",
   "pre-commit": [
     "test"
   ],
@@ -23,6 +23,7 @@
     }
   ],
   "dependencies": {
+    "@types/mongoose": "^5.2.17",
     "mongoose": "^5.2.10",
     "think-helper": "^1.1.2",
     "think-instance": "^1.0.1"
