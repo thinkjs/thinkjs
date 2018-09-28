@@ -18,7 +18,7 @@
     }
   ],
   "main": "index.js",
-  "type": "index.d.ts",
+  "types": "index.d.ts",
   "dependencies": {
     "think-debounce": "^1.0.0",
     "think-helper": "^1.0.0"
