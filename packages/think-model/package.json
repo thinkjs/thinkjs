@@ -21,7 +21,7 @@
     "adapter",
     "model"
   ],
-  "type": "index.d.ts",
+  "types": "index.d.ts",
   "author": "lizheming",
   "license": "MIT",
   "bugs": {
