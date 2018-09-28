@@ -24,7 +24,7 @@
     }
   ],
   "main": "index.js",
-  "type": "index.d.ts",
+  "types": "index.d.ts",
   "dependencies": {
     "core-util-is": "^1.0.2",
     "ms": "^1.0.0",
