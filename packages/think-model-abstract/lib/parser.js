@@ -51,6 +51,9 @@ module.exports = class AbstractParser {
    * parse field
    * parseField('name');
    * parseField('name,email');
+   * parseField([]);
+   * parseField(['xx_name','xx_email']);
+   * parseField({});
    * parseField({
    *     xx_name: 'name',
    *     xx_email: 'email'
@@ -68,13 +71,13 @@ module.exports = class AbstractParser {
       }
     }
     const alias = options.alias;
-    if (helper.isArray(fields)) {
+    if (helper.isArray(fields) && !helper.isEmpty(fields)) {
       return fields.map(item => {
         item = this.parseKey(item);
         if (alias && item.indexOf('.') === -1) return `${this.parseKey(alias)}.${item}`;
         return item;
       }).join(',');
-    } else if (helper.isObject(fields)) {
+    } else if (helper.isObject(fields) && !helper.isEmpty(fields)) {
       const data = [];
       for (const key in fields) {
         data.push(this.parseKey(key) + ' AS ' + this.parseKey(fields[key]));
