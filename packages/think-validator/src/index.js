@@ -2,7 +2,7 @@
 * @Author: lushijie
 * @Date:   2017-02-21 18:50:26
 * @Last Modified by:   lushijie
-* @Last Modified time: 2018-09-09 17:53:30
+* @Last Modified time: 2018-10-11 19:14:21
 */
 const assert = require('assert');
 const helper = require('think-helper');
@@ -31,10 +31,10 @@ class Validator {
   }
 
   /**
-   * get origin argName for nested array and object
-   * @param  {String} argName [description]
-   * @return {String}          [description]
-   */
+     * get origin argName for nested array and object
+     * @param  {String} argName [description]
+     * @return {String}          [description]
+     */
   _getOriginArgName(argName) {
     if (argName.indexOf(ARRAY_SP) > -1) {
       const tmpRuleName = argName.split(ARRAY_SP);
@@ -48,23 +48,23 @@ class Validator {
   }
 
   /**
-   * [error should be function or string]
-   * @param  {[type]} error [description]
-   * @return {[type]}       [description]
-   */
+     * [error should be function or string]
+     * @param  {[type]} error [description]
+     * @return {[type]}       [description]
+     */
   _isErrorType(error) {
     return error && (helper.isString(error) || helper.isFunction(error));
   }
 
   /**
-   * get error message
-   * @param  {String} argName        [description]
-   * @param  {Object} rule            [description]
-   * @param  {String} validName       [description]
-   * @param  {Mixed} parsedValidValue [description]
-   * @return {String}                 [description]
-   */
-  _getErrorMessage({ argName, rule, validName, parsedValidValue }) {
+     * get error message
+     * @param  {String} argName        [description]
+     * @param  {Object} rule            [description]
+     * @param  {String} validName       [description]
+     * @param  {Mixed} parsedValidValue [description]
+     * @return {String}                 [description]
+     */
+  _getErrorMessage({argName, rule, validName, parsedValidValue}) {
     let errMsg = '';
 
     // all required style error map to `requied error message`
@@ -163,9 +163,9 @@ class Validator {
   }
 
   /**
-   * parse valid args by _validName method
-   * @return {Mixed}           [description]
-   */
+     * parse valid args by _validName method
+     * @return {Mixed}           [description]
+     */
   _parseValidValue(validName, rule, cloneRules, argName) {
     let validValue = rule[validName];
     const _fn = preRules['_' + validName];
@@ -185,11 +185,11 @@ class Validator {
   }
 
   /**
-   * convert value by value type
-   * @param  {String} argName [description]
-   * @param  {Object} rule     [description]
-   * @return {Mixed}          [description]
-   */
+     * convert value by value type
+     * @param  {String} argName [description]
+     * @param  {Object} rule     [description]
+     * @return {Mixed}          [description]
+     */
   _convertArgValue(argName, rule) {
     const queryMethod = this._getRuleMethod(rule);
     const ruleCtxQuery = this.ctx[queryMethod]();
@@ -207,9 +207,9 @@ class Validator {
   }
 
   /**
-   * check the value if is required
-   * @return {Boolean}      [description]
-   */
+     * check the value if is required
+     * @return {Boolean}      [description]
+     */
   _isArgRequired(params) {
     let isRequired = false;
     const cloneRules = helper.extend({}, params.rules);
@@ -225,17 +225,17 @@ class Validator {
         if (fn(params.rule.value, params)) {
           isRequired = true;
           break;
-        };
+        }
       }
     }
     return isRequired;
   }
 
   /**
-   * get ctx's method which to get or set the query
-   * @param  {Object} rule [description]
-   * @return {String}      [methodName]
-   */
+     * get ctx's method which to get or set the query
+     * @param  {Object} rule [description]
+     * @return {String}      [methodName]
+     */
   _getRuleMethod(rule) {
     if (typeof rule.method === 'undefined' || rule.method === '') {
       rule.method = this.ctx.method.toUpperCase();
@@ -246,10 +246,10 @@ class Validator {
   }
 
   /**
-   * pre treat rule.value & handle the nested array and object valid
-   * @param  {Object} rules [description]
-   * @return {Object}       [description]
-   */
+     * pre treat rule.value & handle the nested array and object valid
+     * @param  {Object} rules [description]
+     * @return {Object}       [description]
+     */
   _preTreatRules(rules) {
     // to keep the nested rules split from the array or object
     const childRules = {};
@@ -311,7 +311,7 @@ class Validator {
       }
 
       // array & object children split and set the value
-      if (rule.children) {
+      if (rule.children && rule.value !== undefined) {
         // delete the argName, like [array|object]: true
         delete rules[argName];
 
@@ -320,12 +320,16 @@ class Validator {
         if (rule.array) {
           for (let i = 0; i < ruleValue.length; i++) {
             const tmpRuleName = argName + ARRAY_SP + i;
-            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[i]});
+            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {
+              value: ruleValue[i]
+            });
           }
         } else {
           for (const key in ruleValue) {
             const tmpRuleName = argName + OBJECT_SP + key;
-            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {value: ruleValue[key]});
+            childRules[tmpRuleName] = helper.extend({}, ruleChildren, {
+              value: ruleValue[key]
+            });
           }
         }
       }
@@ -338,21 +342,21 @@ class Validator {
   }
 
   /**
-   * add custom valid method
-   * @param {String}   validName [description]
-   * @param {Function} callback  [description]
-   * @param {String}   msg       [description]
-   */
+     * add custom valid method
+     * @param {String}   validName [description]
+     * @param {Function} callback  [description]
+     * @param {String}   msg       [description]
+     */
   static addRule(validName, callback) {
     preRules[validName] = callback;
   }
 
   /**
-   * validate rules
-   * @param  {Object} rules [description]
-   * @param  {Object} msgs  [custom errors]
-   * @return {Object}       {argName: errorMessage}
-   */
+     * validate rules
+     * @param  {Object} rules [description]
+     * @param  {Object} msgs  [custom errors]
+     * @return {Object}       {argName: errorMessage}
+     */
   validate(rules, msgs) {
     let ret = {};
     const cloneRules = helper.extend({}, rules);
