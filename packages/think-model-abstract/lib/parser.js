@@ -592,6 +592,8 @@ module.exports = class AbstractParser {
       }
     } else if (helper.isBoolean(value)) {
       value = value ? '1' : '0';
+    } else if (helper.isBuffer(value)) {
+      value = `X'${value.toString('hex')}'`;
     } else if (value === null) {
       value = 'null';
     }

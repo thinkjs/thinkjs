@@ -114,6 +114,12 @@ ava.test('parseValue, object', t => {
   t.deepEqual(key, {});
 });
 
+ava.test('parseValue, buffer', t => {
+  const instance = getParserInstance();
+  const key = instance.parseValue(Buffer.from([1, 2, 3, 4, 255]));
+  t.is(key, "X'01020304ff'");
+});
+
 ava.test('parseField, empty', t => {
   const instance = getParserInstance();
   const key = instance.parseField();
