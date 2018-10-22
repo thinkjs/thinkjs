@@ -67,6 +67,8 @@ class MysqlSession {
       }
       this.expire = row[0].expire;
       this.autoUpdate();
+    }).catch(err => {
+      console.error(err);
     });
     return this.initPromise;
   }
