@@ -195,7 +195,7 @@ test.serial('4. set and get session data when JSON.parse(content) returns error'
     const redisSession1 = new RedisSession(options, ctx);
     await redisSession1.set('abc', '123');
 
-    t.is(debugParam.length, 1);
+    t.is(debugParam.length, 0);
     resolve();
   });
 });

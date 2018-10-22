@@ -1,7 +1,7 @@
 const ThinkRedis = require('think-redis');
 const assert = require('assert');
 const helper = require('think-helper');
-const debug = require('debug')('think-session-redis');
+// const debug = require('debug')('think-session-redis');
 
 const initSessionData = Symbol('think-session-redis-init');
 const autoSave = Symbol('think-session-save');
@@ -18,8 +18,8 @@ class RedisSession {
   constructor(options = {}, ctx, cookieOptions) {
     assert(options.cookie, '.cookie required');
     this.options = options;
-    this.cookieOptions = cookieOptions;
-    this.redis = new ThinkRedis(this.options);
+    this.cookieOptions = cookieOptions || {};
+    this.redis = new ThinkRedis(helper.omit(this.options, 'cookie,fresh'));
     this.ctx = ctx;
     this.data = {};
     this.status = 0;
@@ -41,6 +41,7 @@ class RedisSession {
       return this.initPromise;
     }
     this.initPromise = this.redis.get(this.options.cookie).then(content => {
+      if (helper.isEmpty(content)) return;
       content = JSON.parse(content);
       if (helper.isEmpty(content)) return;
       this.data = content.data || {};
@@ -49,6 +50,8 @@ class RedisSession {
       }
       this.expires = content.expires || 0;
       this.autoUpdate();
+    }).catch(err => {
+      console.error(err);
     });
     return this.initPromise;
   }
