@@ -197,7 +197,7 @@ declare namespace ThinkModel {
     /**
      * query
      */
-    query(sqlOptions: object): Promise<any>;
+    query(sqlOptions: object | string): Promise<any>;
     /**
      * execute sql
      */
