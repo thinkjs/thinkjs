@@ -871,8 +871,8 @@ module.exports = class Model {
   }
   /**
    * build select sql
-   * @param {Object} options 
-   * @param {Boolean} noParentheses 
+   * @param {Object} options
+   * @param {Boolean} noParentheses
    */
   async buildSelectSql(options, noParentheses = false) {
     options = await this.parseOptions(options);
