@@ -5,6 +5,8 @@ const assert = require('assert');
 const sign = helper.promisify(jwt.sign, jwt);
 const verify = helper.promisify(jwt.verify, jwt);
 
+const callback = any => any;
+
 class JWTSession {
   /**
    * @constructor
@@ -17,6 +19,8 @@ class JWTSession {
     this.ctx = ctx;
     this.data = {};
     this.fresh = true;
+    this.error = null;
+    this.verifyCallback = options.verifyCallback || callback
     this.verifyOptions = options.verify || {};
     this.signOptions = options.sign || {};
   }
@@ -49,12 +53,14 @@ class JWTSession {
             this.options.secret,
             this.verifyOptions
           );
-        } catch (e) {}
-        this.fresh = false;
+        } catch (err) {
+          this.error = this.verifyCallback(err) || err;
+        } finally {
+          this.fresh = false;
+        }
       }
     }
   }
-
   /**
    * auto save session data when it is change
    */
@@ -79,7 +85,10 @@ class JWTSession {
    */
   async get(name) {
     await this.initSessionData();
-    return name ? this.data[name] : this.data;
+    if (this.error) {
+      return this.error
+    }
+    return name ? this.data[name] : this.data
   }
 
   /**

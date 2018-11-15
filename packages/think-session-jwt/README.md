@@ -25,21 +25,23 @@ exports.session = {
   },
   jwt: {
     handle: JWTSession,
-    secret: 'secret',  // secret is reqired
+    secret: 'secret', // secret is reqired
     tokenType: 'cookie', // ['query', 'body', 'header', 'cookie'], 'cookie' is default
     tokenName: 'jwt', // if tokenType not 'cookie', this will be token name, 'jwt' is default
     sign: {
-        // sign options is not required
+      // sign options is not required
     },
     verify: {
-        // verify options is not required
-    }
+      // verify options is not required
+    },
+    verifyCallback: any => any, // default verify fail callback
   }
 }
 ```
 
-1. session数据从token中获取，通过配置tokenType指定token获取方式。
-2. 设置session数据后会返回token字符串。
+1. session数据从token中获取，通过配置tokenType指定token来源；
+2. 设置session数据后会返回token字符串；
+3. 配置`verifyCallback`函数，验证失败时返回该函数运行的结果；
 
 ### Sign and verify options
 
