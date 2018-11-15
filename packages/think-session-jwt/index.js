@@ -20,7 +20,7 @@ class JWTSession {
     this.data = {};
     this.fresh = true;
     this.error = null;
-    this.verifyCallback = options.verifyCallback || callback
+    this.verifyCallback = options.verifyCallback || callback;
     this.verifyOptions = options.verify || {};
     this.signOptions = options.sign || {};
   }
@@ -86,9 +86,9 @@ class JWTSession {
   async get(name) {
     await this.initSessionData();
     if (this.error) {
-      return this.error
+      return this.error;
     }
-    return name ? this.data[name] : this.data
+    return name ? this.data[name] : this.data;
   }
 
   /**

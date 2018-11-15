@@ -123,7 +123,8 @@ test.serial('3.set and get session data with maxAge', async t => {
 
     const jwtSession1 = new JWTSession(options, ctx);
     const data = await jwtSession1.get();
-    t.deepEqual(data, {});
+    t.is(data.name, 'TokenExpiredError');
+    t.is(data.message, 'jwt expired');
     resolve();
   });
 });
@@ -141,7 +142,8 @@ test.serial('4.set and get session data when JsonWebTokenError', t => {
     const jwtSession = new JWTSession(options, ctx);
 
     const data = await jwtSession.get();
-    t.deepEqual(data, {});
+    t.is(data.name, 'JsonWebTokenError');
+    t.is(data.message, 'jwt malformed');
 
     const jwtSession1 = new JWTSession(options, ctx);
     jwtSession1.data = undefined;
