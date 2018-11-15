@@ -7,7 +7,8 @@
     "test": "nyc ava test/index.js",
     "coverage": "nyc report --reporter=html",
     "pretest": "eslint index.js",
-    "lint-fix": "eslint --fix index.js"
+    "lint-fix": "eslint --fix index.js",
+    "prepublish": "rm -rf .nyc_output"
   },
   "repository": {
     "type": "git",
