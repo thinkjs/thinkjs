@@ -52,7 +52,8 @@ module.exports = class MysqlSchema extends Schema {
    * @param {String} table
    */
   getSchema(table = this.table) {
-    if (SCHEMAS[table]) return Promise.resolve(SCHEMAS[table]);
+    const cacheKey = `${this.config.database}.${table}`;
+    if (SCHEMAS[cacheKey]) return Promise.resolve(SCHEMAS[cacheKey]);
     return debounce.debounce(`getTable${table}Schema`, () => {
       const columnSql = `SHOW COLUMNS FROM ${this.parser.parseKey(table)}`;
       return this.query.query(columnSql).catch(() => []).then(data => {
@@ -72,7 +73,7 @@ module.exports = class MysqlSchema extends Schema {
         for (const key in ret) {
           ret[key] = this._parseItemSchema(ret[key]);
         }
-        SCHEMAS[table] = ret;
+        SCHEMAS[cacheKey] = ret;
         return ret;
       });
     });
