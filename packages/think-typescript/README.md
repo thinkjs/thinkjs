@@ -9,7 +9,7 @@
 
 ## Syntax
 
-```
+```js
 import thinkTypescript from 'think-typescript';
 thinkTypescript({
   srcPath,
