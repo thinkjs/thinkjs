@@ -97,6 +97,9 @@ class MongoSocket {
     return this.pool.acquire().then(connection => {
       return Promise.resolve(fn(connection)).then(data => {
         return {data, connection};
+      }).catch(err => {
+        this.pool.release(connection);
+        throw err;
       });
     }).then(data => {
       this.pool.release(data.connection);
