@@ -100,7 +100,7 @@ class MongoSocket {
       }).catch(err => {
         this.pool.release(connection);
         throw err;
-      })
+      });
     }).then(data => {
       this.pool.release(data.connection);
       return data.data;
