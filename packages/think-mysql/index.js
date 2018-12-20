@@ -38,6 +38,7 @@ class ThinkMysql {
   constructor(config) {
     config = helper.extend({}, defaultConfig, config);
     this.config = config;
+    this.maxRetryTimes = Math.max(config.connectionLimit + 1, 3);
     this.pool = mysql.createPool(helper.omit(config, 'logger,logConnect,logSql'));
 
     this.pool.on('acquire', connection => {
@@ -154,7 +155,7 @@ class ThinkMysql {
       // if server close connection, then retry it
       if (helper.isError(data) && data.code === 'PROTOCOL_CONNECTION_LOST') {
         connection[CONNECTION_LOST] = true;
-        if (times < 3) {
+        if (times < this.maxRetryTimes) {
           return this.getConnection().then(connection => {
             return this[QUERY](sqlOptions, connection, startTime, times + 1);
           });
