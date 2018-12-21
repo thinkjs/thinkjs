@@ -13,7 +13,7 @@ module.exports = function loader(appPath, modules) {
       const filepath = path.join(appPath, `${m}/config/crontab.js`);
       if (helper.isFile(filepath)) {
         debug(`load file: ${filepath}`);
-        const data = interopRequire(filepath, true) || [];
+        const data = interopRequire(filepath) || [];
         crontab = crontab.concat(data);
       }
     });
@@ -22,7 +22,7 @@ module.exports = function loader(appPath, modules) {
   const filepath = path.join(appPath, 'config/crontab.js');
   if (helper.isFile(filepath)) {
     debug(`load file: ${filepath}`);
-    return interopRequire(filepath, true) || [];
+    return interopRequire(filepath) || [];
   }
   return [];
 };
