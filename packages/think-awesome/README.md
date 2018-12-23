@@ -48,7 +48,7 @@ Awesome projects for `ThinkJS 3.x`
 ### cache
 * [think-cache-file](https://github.com/thinkjs/think-cache-file) Use file to store cache data
 * [think-cache-redis](https://github.com/thinkjs/think-cache-redis) Use redis to store cache data
-* [think-cache-memcache](https://github.com/thinkjs/think-cache-memchache) Use memcache to store cache data
+* [think-cache-memcache](https://github.com/thinkjs/think-cache-memcache) Use memcache to store cache data
 
 ### model
 * [think-model-abstract](https://github.com/thinkjs/think-model-abstract) Model adapter abstract class
