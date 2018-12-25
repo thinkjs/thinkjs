@@ -166,7 +166,10 @@ class ThinkMysql {
         const endTime = Date.now();
         this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
       }
-      if (helper.isError(data)) return Promise.reject(data);
+      if (helper.isError(data)) {
+        data.message += `, SQL: ${sqlOptions.sql}`;
+        return Promise.reject(data);
+      }
       return data;
     });
   }
