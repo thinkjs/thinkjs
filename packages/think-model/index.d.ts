@@ -1,8 +1,12 @@
 
 declare namespace ThinkModel {
-  
+
   interface Model {
     new(modelName?: string, config?: object): Model;
+    readonly HAS_MANY: number;
+    readonly HAS_ONE: number;
+    readonly BELONG_TO: number;
+    readonly MANY_TO_MANY: number;
     /**
      * get or set db
      */
@@ -241,14 +245,13 @@ declare namespace ThinkModel {
   interface ModelExtend {
     model(name: string, config?: any, module?: string): ThinkModel.Model;
   }
-
 }
 
 declare module 'thinkjs' {
-  interface Think extends ThinkModel.ModelExtend, ThinkModel.ModelThinkExtend {}
-  interface Controller extends ThinkModel.ModelExtend {}
-  interface Context extends ThinkModel.ModelExtend {}
-  interface Service extends ThinkModel.ModelExtend {}
+  interface Think extends ThinkModel.ModelExtend, ThinkModel.ModelThinkExtend { }
+  interface Controller extends ThinkModel.ModelExtend { }
+  interface Context extends ThinkModel.ModelExtend { }
+  interface Service extends ThinkModel.ModelExtend { }
 }
 
 export = ThinkModel;
