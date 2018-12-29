@@ -57,13 +57,15 @@ test('parseValue', t => {
   const parser = new Parser();
   const data = [
     ['lizheming', "E'lizheming'"],
+    ["I'm my wife's rock.", "E'I\\\'m my wife\\\'s rock.'"],
     [3, 3],
     [{ a: 1 }, { a: 1 }],
     [null, 'null'],
     [true, 'true'],
     [false, 'false'],
     [['EXP', '= 3'], '= 3'],
-    [[{ a: 1 }, 3, true, null, ['EXP', ' = 3']], [{ a: 1 }, 3, 'true', 'null', ' = 3']]
+    [[{ a: 1 }, 3, true, null, ['EXP', ' = 3']], [{ a: 1 }, 3, 'true', 'null', ' = 3']],
+    [new Buffer('abcdefg'), '\\x61626364656667']
   ];
 
   t.plan(data.length);
