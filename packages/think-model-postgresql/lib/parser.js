@@ -106,7 +106,7 @@ module.exports = class PostgreSQLParser extends Parser {
       }
     }
     if (helper.isBoolean(value)) return value ? 'true' : 'false';
-    if (helper.isBuffer(value)) return `\\x${value.toString('hex')}`;
+    if (helper.isBuffer(value)) return `'\\x${value.toString('hex')}'`;
     if (value === null) return 'null';
     return value;
   }

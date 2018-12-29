@@ -65,7 +65,7 @@ test('parseValue', t => {
     [false, 'false'],
     [['EXP', '= 3'], '= 3'],
     [[{ a: 1 }, 3, true, null, ['EXP', ' = 3']], [{ a: 1 }, 3, 'true', 'null', ' = 3']],
-    [new Buffer('abcdefg'), '\\x61626364656667']
+    [Buffer.from('abcdefg'), "'\\x61626364656667'"]
   ];
 
   t.plan(data.length);
