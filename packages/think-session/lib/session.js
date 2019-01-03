@@ -38,6 +38,8 @@ class Session {
    */
   constructor(ctx, options = {}) {
     this.ctx = ctx;
+    this._options = options;
+
     const sessionConfig = helper.parseAdapterConfig(ctx.config('session'), options);
     this.options = helper.extend({}, defaultOptions, sessionConfig);
     // transform humanize time to ms
@@ -50,37 +52,56 @@ class Session {
    * get session instance
    */
   getSessionInstance() {
-    if (!this.ctx[SESSION]) {
-      const Handle = this.options.handle;
-      let instance;
-      // store session data on cookie
-      if (Handle.onlyCookie) {
-        instance = new Handle(this.cookieOptions, this.ctx);
-      } else {
-        const name = this.cookieOptions.name;
-        let cookie = this.ctx.cookie(name, undefined, this.cookieOptions);
-        let fresh = false;
-        if (!cookie) {
-          cookie = helper.uuid();
-          this.ctx.cookie(name, cookie, this.cookieOptions);
-          fresh = true;
-        }
-        this.options.cookie = cookie;
-        this.options.fresh = fresh;
-        instance = new Handle(this.options, this.ctx, this.cookieOptions);
+    let instance = this.ctx[SESSION];
+
+    if (instance) {
+      if (!helper.isEmpty(this._options)) {
+        // refresh instance config
+        instance.options = this.options;
+        instance.cookieOptions = this.cookieOptions;
+        instance.maxAge = this.options.maxAge;
+
+        // update cookie if session options update
+        const cookieName = this.cookieOptions.name;
+        this.ctx.cookie(cookieName, this.options.cookie, this.cookieOptions);
       }
-      this.ctx[SESSION] = instance;
+
+      return instance;
     }
-    return this.ctx[SESSION];
+
+    const Handle = this.options.handle;
+    // store session data on cookie
+    if (Handle.onlyCookie) {
+      instance = new Handle(this.cookieOptions, this.ctx);
+    } else {
+      const name = this.cookieOptions.name;
+      let cookie = this.ctx.cookie(name, undefined, this.cookieOptions);
+      let fresh = false;
+
+      if (!cookie) {
+        cookie = helper.uuid();
+        this.ctx.cookie(name, cookie, this.cookieOptions);
+        fresh = true;
+      } else if (!helper.isEmpty(this._options)) {
+        this.ctx.cookie(name, cookie, this.cookieOptions);
+      }
+
+      this.options.cookie = cookie;
+      this.options.fresh = fresh;
+      instance = new Handle(this.options, this.ctx, this.cookieOptions);
+    }
+
+    this.ctx[SESSION] = instance;
+    return instance;
   }
   /**
    * get or set session data
-   * @param {String} name 
-   * @param {Mixed} value 
+   * @param {String} name
+   * @param {Mixed} value
    */
   run(name, value) {
     const instance = this.getSessionInstance();
-    // delete session
+    // clear session
     if (name === null) {
       return Promise.resolve(instance.delete());
     }
