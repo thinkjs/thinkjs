@@ -106,6 +106,7 @@ module.exports = class PostgreSQLParser extends Parser {
       }
     }
     if (helper.isBoolean(value)) return value ? 'true' : 'false';
+    if (helper.isBuffer(value)) return `'\\x${value.toString('hex')}'`;
     if (value === null) return 'null';
     return value;
   }
@@ -117,5 +118,12 @@ module.exports = class PostgreSQLParser extends Parser {
     const sql = super.buildInsertSql(options);
     if (!options.pk) return sql;
     return `${sql} RETURNING ${options.pk}`;
+  }
+  /**
+   * escape string
+   * @param {String} str
+   */
+  escapeString(str) {
+    return str.replace(/'/g, "\\'");
   }
 };
