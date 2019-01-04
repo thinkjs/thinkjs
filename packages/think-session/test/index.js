@@ -3,17 +3,17 @@ import mock from 'mock-require';
 
 function mockAssert(assertParams = []) {
   mock('assert', (condition, errmsg) => {
-    if(!condition){
+    if (!condition) {
       assertParams.push(condition, errmsg);
-      throw new Error("this is an assert failed signal");
+      throw new Error('this is an assert failed signal');
     }
   });
 }
 function getSession() {
   return mock.reRequire('../lib/session');
 }
-// 1
-test.serial('1. instantiate Session', t => {
+
+test.serial('instantiate Session', t => {
   const sessionConfig = {
     type: 'cookie',
     cookie: {
@@ -25,16 +25,21 @@ test.serial('1. instantiate Session', t => {
       handle: 'file'
     }
   };
+  const cookieConfig = {
+    encrypt: true,
+    name: 'cookieName',
+    autoUpdate: true
+  };
   const ctx = {
-    config(key){
-      switch(key) {
-        case 'session': 
+    config(key) {
+      switch (key) {
+        case 'session':
           return sessionConfig;
-        case 'cookie': 
+        case 'cookie':
           return cookieConfig;
       }
     }
-  }
+  };
   const options = {
     type: 'file'
   };
@@ -43,17 +48,16 @@ test.serial('1. instantiate Session', t => {
   const Session = getSession();
   let session;
   t.throws(() => {
-    session = new Session(ctx, options);
+    new Session(ctx, options);
   }, Error);
   t.deepEqual(assertParams, [
     false, 'session.handle must be a function'
   ]);
 });
 
-// 2
-test.serial('2. `getSessionInstance` when handle.onlyCookie is true', t => {
+test.serial('`getSessionInstance` when handle.onlyCookie is true', t => {
   function mockHandler(onlyCookie) {
-    //eg. think-session-cookie
+    // eg. think-session-cookie
     class cookieSession {
       constructor(options, ctx) {
         t.deepEqual(options, {
@@ -72,7 +76,7 @@ test.serial('2. `getSessionInstance` when handle.onlyCookie is true', t => {
     }
     cookieSession.onlyCookie = onlyCookie;
     return cookieSession;
-  } 
+  }
   const handle = mockHandler(true);
   const sessionConfig = {
     type: 'cookie',
@@ -81,54 +85,54 @@ test.serial('2. `getSessionInstance` when handle.onlyCookie is true', t => {
       handle
     }
   };
-  let cookieConfig = {
+  const cookieConfig = {
     config1: 'config1',
     encrypt: true
   };
   const ctx = {
-    config(key){
-      switch(key) {
-        case 'session': 
+    config(key) {
+      switch (key) {
+        case 'session':
           return sessionConfig;
-        case 'cookie': 
+        case 'cookie':
           return cookieConfig;
       }
     }
-  }
+  };
   const options = {
     type: 'cookie'
   };
-  
+
   const Session = getSession();
   const session = new Session(ctx, options);
-  
+
   const instance = session.getSessionInstance();
 });
 
-// 3
-test.serial('`3. getSessionInstance` when ctx.cookie(name) is undefined', t => {
+test.serial('`getSessionInstance` when ctx.cookie(name) is undefined', t => {
   function mockHelper() {
     var helper = require('think-helper');
-    helper.uuid =  ()=>{
-      return 'cookie666'
+    helper.uuid = () => {
+      return 'cookie666';
     };
     helper.ms = (ss) => {
       return ss;
-    }
+    };
   }
   let cookieData = {};
   function cookie(key, value, options) {
-    if(key && value === undefined) return cookieData[key];
-    if(key === null) {
+    if (key && value === undefined) return cookieData[key];
+    if (key === null) {
       cookieData = {};
       return;
     }
-    if(key && value) {
-      return cookieData[key] = value;
+    if (key && value) {
+      cookieData[key] = value;
+      return value;
     }
   }
   function mockHandler(onlyCookie) {
-    //eg. think-session-cookie
+    // eg. think-session-cookie
     class cookieSession {
       constructor(options, ctx) {
         t.deepEqual(options, {
@@ -137,15 +141,15 @@ test.serial('`3. getSessionInstance` when ctx.cookie(name) is undefined', t => {
           fresh: true,
           cookie: 'cookie666',
           maxAge: 'maxAge',
-          type: "cookie",
+          type: 'cookie'
         });
       }
     }
     cookieSession.onlyCookie = onlyCookie;
     return cookieSession;
-  } 
+  }
   const handle = mockHandler(false);
-  let sessionConfig = {
+  const sessionConfig = {
     type: 'cookie',
     cookie: {
       maxAge: 'maxAge',
@@ -157,57 +161,186 @@ test.serial('`3. getSessionInstance` when ctx.cookie(name) is undefined', t => {
       handle: 'file'
     }
   };
-  let cookieConfig = {
+  const cookieConfig = {
     encrypt: true,
     name: 'cookieName',
     autoUpdateRate: 0.5
   };
   const ctx = {
-    config(key){
-      switch(key) {
-        case 'session': 
+    config(key) {
+      switch (key) {
+        case 'session':
           return sessionConfig;
-        case 'cookie': 
+        case 'cookie':
           return cookieConfig;
       }
     },
     cookie
-  }
+  };
   const options = {
     type: 'cookie'
   };
-  
+
   mockHelper();
   const Session = getSession();
   const session = new Session(ctx, options);
-  
-  const instance = session.getSessionInstance();
+
+  session.getSessionInstance();
   t.deepEqual(cookieData, {
     'cookieName': 'cookie666'
   });
 });
 
-// 4
-test.serial('4. `getSessionInstance` when `cookieOption.autoUpdate && cookieOptions.maxAge` is true', t => {
-  function mockHelper() {
-    var helper = require('think-helper');
-    
-    helper.ms = (ss) => {
-      return ss;
+test.serial('`getSessionInstance` when ctx.cookie(name) and have maxAge setting', t => {
+  let cookieData = {
+    cookieName: '1111'
+  };
+  function cookie(key, value, options) {
+    t.is(options.maxAge, 7 * 3600 * 24000);
+    if (key && value === undefined) return cookieData[key];
+    if (key === null) {
+      cookieData = {};
+      return;
+    }
+    if (key && value) {
+      cookieData[key] = value;
+      return value;
     }
   }
+
+  const sessionConfig = {
+    type: 'file',
+    cookie: {
+      maxAge: 'maxAge',
+      prop1: 'prop1',
+      handle: class cookieSession {
+      }
+    },
+    file: {
+      prop2: 'prop2',
+      handle: class fileSession {
+      }
+    }
+  };
+  const cookieConfig = {
+    encrypt: true,
+    name: 'cookieName',
+    autoUpdateRate: 0.5
+  };
+  const ctx = {
+    config(key) {
+      switch (key) {
+        case 'session':
+          return sessionConfig;
+        case 'cookie':
+          return cookieConfig;
+      }
+    },
+    cookie
+  };
+  const options = {
+    type: 'cookie',
+    cookie: {
+      maxAge: 7 * 3600 * 24000
+    }
+  };
+
+  const Session = getSession();
+  const session = new Session(ctx, options);
+
+  session.getSessionInstance();
+});
+
+test.serial('`getSessionInstance` when instance is exist and have maxAge setting', t => {
+  t.plan(6);
+
+  const helper = require('think-helper');
+  helper.uuid = function () {
+    return 1234;
+  };
+
   let cookieData = {
+    cookieName: '1111'
+  };
+  let i = 0;
+  function cookie(key, value, options) {
+    i += 1;
+    switch (i) {
+      case 1:
+        t.is(value, undefined);
+        break;
+      case 2:
+        t.is(value, 1234);
+        break;
+      case 3:
+        t.is(options.maxAge, 7 * 3600 * 24000);
+        break;
+    }
+
+    if (key && value === undefined) return cookieData[key];
+    if (key === null) {
+      cookieData = {};
+      return;
+    }
+    if (key && value) {
+      cookieData[key] = value;
+      return value;
+    }
+  }
+
+  const sessionConfig = {
+    type: 'file',
+    file: {
+      handle: class fileSession { }
+    }
+  };
+  const ctx = {
+    config(key) {
+      switch (key) {
+        case 'session':
+          return sessionConfig;
+      }
+    },
+    cookie
+  };
+  const options = {
+    type: 'file',
+    file: {
+      maxAge: 7 * 3600 * 24000
+    }
+  };
+
+  const Session = getSession();
+  const session = new Session(ctx);
+  const session2 = new Session(ctx, options);
+  session.getSessionInstance();
+  const instance = session2.getSessionInstance();
+  t.deepEqual(instance.options, session2.options);
+  t.deepEqual(instance.cookieOptions, session2.cookieOptions);
+  t.deepEqual(instance.maxAge, session2.options.maxAge);
+});
+
+test.serial('`getSessionInstance` when `cookieOption.autoUpdate && cookieOptions.maxAge` is true', t => {
+  function mockHelper() {
+    var helper = require('think-helper');
+
+    helper.ms = (ss) => {
+      return ss;
+    };
+  }
+  const cookieData = {
     'cookieName': 'cookie233'
   };
   function cookie(key, value, options) {
-    if(key && value === undefined) return cookieData[key];
-   
-    if(key && value) {
-      return cookieData[key] = value;
+    if (key && value === undefined) return cookieData[key];
+
+    if (key && value) {
+      cookieData[key] = value;
+      return value;
     }
   }
   function mockHandler(onlyCookie) {
-    //eg. think-session-cookie
+    // eg. think-session-cookie
     class cookieSession {
       constructor(options, ctx) {
         t.deepEqual(options, {
@@ -216,15 +349,15 @@ test.serial('4. `getSessionInstance` when `cookieOption.autoUpdate && cookieOpti
           fresh: false,
           cookie: 'cookie233',
           maxAge: 'maxAge',
-          type: "cookie",
+          type: 'cookie'
         });
       }
     }
     cookieSession.onlyCookie = onlyCookie;
     return cookieSession;
-  } 
+  }
   const handle = mockHandler(false);
-  let sessionConfig = {
+  const sessionConfig = {
     type: 'cookie',
     cookie: {
       maxAge: 'maxAge',
@@ -236,59 +369,58 @@ test.serial('4. `getSessionInstance` when `cookieOption.autoUpdate && cookieOpti
       handle: 'file'
     }
   };
-  let cookieConfig = {
+  const cookieConfig = {
     encrypt: true,
     name: 'cookieName',
     autoUpdate: true,
     maxAge: '1'
   };
   const ctx = {
-    config(key){
-      switch(key) {
-        case 'session': 
+    config(key) {
+      switch (key) {
+        case 'session':
           return sessionConfig;
-        case 'cookie': 
+        case 'cookie':
           return cookieConfig;
       }
     },
     cookie
-  }
+  };
   const options = {
     type: 'cookie'
   };
-  
+
   mockHelper();
   const Session = getSession();
   const session = new Session(ctx, options);
-  
-  const instance = session.getSessionInstance();
+
+  session.getSessionInstance();
   t.deepEqual(cookieData, {
     'cookieName': 'cookie233'
   });
-
-  
 });
 
-test.serial('5. `getSessionInstance` when `cookieOption.autoUpdate && cookieOptions.maxAge` is false', t => {
+test.serial('`getSessionInstance` when `cookieOption.autoUpdate && cookieOptions.maxAge` is false', t => {
   function mockHelper() {
     var helper = require('think-helper');
-    
+
     helper.ms = (ss) => {
       return ss;
-    }
+    };
   }
-  let cookieData = {
+  const cookieData = {
     'cookieName': 'cookie233'
   };
   function cookie(key, value, options) {
-    if(key && value === undefined) return cookieData[key];
-   
-    if(key && value) {
-      return cookieData[key] = value;
+    if (key && value === undefined) return cookieData[key];
+
+    if (key && value) {
+      cookieData[key] = value;
+      return value;
     }
   }
   function mockHandler(onlyCookie) {
-    //eg. think-session-cookie
+    // eg. think-session-cookie
     class cookieSession {
       constructor(options, ctx) {
         t.deepEqual(options, {
@@ -297,15 +429,15 @@ test.serial('5. `getSessionInstance` when `cookieOption.autoUpdate && cookieOpti
           fresh: false,
           cookie: 'cookie233',
           maxAge: 'maxAge',
-          type: "cookie",
+          type: 'cookie'
         });
       }
     }
     cookieSession.onlyCookie = onlyCookie;
     return cookieSession;
-  } 
+  }
   const handle = mockHandler(false);
-  let sessionConfig = {
+  const sessionConfig = {
     type: 'cookie',
     cookie: {
       maxAge: 'maxAge',
@@ -317,105 +449,103 @@ test.serial('5. `getSessionInstance` when `cookieOption.autoUpdate && cookieOpti
       handle: 'file'
     }
   };
-  let cookieConfig = {
+  const cookieConfig = {
     encrypt: true,
     name: 'cookieName',
     autoUpdate: true,
     maxAge: ''
   };
   const ctx = {
-    config(key){
-      switch(key) {
-        case 'session': 
+    config(key) {
+      switch (key) {
+        case 'session':
           return sessionConfig;
-        case 'cookie': 
+        case 'cookie':
           return cookieConfig;
       }
     },
     cookie
-  }
+  };
   const options = {
     type: 'cookie'
   };
-  
+
   mockHelper();
   const Session = getSession();
   const session = new Session(ctx, options);
-  
+
   const instance = session.getSessionInstance();
   t.deepEqual(cookieData, {
     'cookieName': 'cookie233'
   });
-
-  
 });
 
-test('6. run', t => {
-  let cookieData = {};
+test('run', t => {
+  const cookieData = {};
   function cookie(key, value, options) {
-    if(key && value === undefined) return cookieData[key];
-    if(key && value) {
+    if (key && value === undefined) return cookieData[key];
+    if (key && value) {
       return cookieData[key] = value;
     }
   }
   function mockHandler(onlyCookie) {
-    //eg. think-session-cookie
+    // eg. think-session-cookie
     class cookieSession {
-      constructor(options, ctx) {}
+      constructor(options, ctx) { }
       delete() {
-        return 'delete'
+        return 'delete';
       }
       set(name, value) {
-        return 'set'
+        return 'set';
       }
       get(name) {
-        return 'get'
+        return 'get';
       }
     }
     cookieSession.onlyCookie = onlyCookie;
     return cookieSession;
-  } 
+  }
   const handle = mockHandler(false);
-  let sessionConfig = {
+  const sessionConfig = {
     type: 'cookie',
     cookie: {
       handle
     }
   };
-  let cookieConfig = {
+  const cookieConfig = {
     encrypt: true,
     name: 'cookieName',
     autoUpdate: true
   };
   const ctx = {
-    config(key){
-      switch(key) {
-        case 'session': 
+    config(key) {
+      switch (key) {
+        case 'session':
           return sessionConfig;
-        case 'cookie': 
+        case 'cookie':
           return cookieConfig;
       }
     },
     cookie
-  }
+  };
   const Session = getSession();
   const session = new Session(ctx, {});
-  
-  session.run(null).then((error, res) => {
+
+  session.run(null).then((_, res) => {
     t.is(res, 'delete');
   });
-  session.run('user', 'xxx').then((error, res) => {
+  session.run('user', 'xxx').then((_, res) => {
     t.is(res, 'set');
   });
-  session.run('user', undefined).then((error, res) => {
+  session.run('user', undefined).then((_, res) => {
     t.is(res, 'get');
   });
 
   var assertParams = [];
   mockAssert(assertParams);
   t.throws(() => {
-    session.run(1, 'xxx').then((error, res) => {
+    session.run(1, 'xxx').then((_, res) => {
       t.is(assertParams, 'session.name must be a string');
     });
-  }, Error); 
+  }, Error);
 });
