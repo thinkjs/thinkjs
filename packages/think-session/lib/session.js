@@ -63,7 +63,9 @@ class Session {
 
         // update cookie if session options update
         const cookieName = this.cookieOptions.name;
-        this.ctx.cookie(cookieName, this.options.cookie, this.cookieOptions);
+        const cookie = this.ctx.cookie(cookieName, undefined, this.cookieOptions);
+        this.options.cookie = cookie;
+        this.ctx.cookie(cookieName, cookie, this.cookieOptions);
       }
 
       return instance;
