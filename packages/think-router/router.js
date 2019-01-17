@@ -50,6 +50,7 @@ class Router {
     this.rules = this.ctx.app.routers;
     this.ctxMethod = ctx.method.toUpperCase();
   }
+
   /**
    * get pathname, remove prefix & suffix
    */
@@ -161,19 +162,51 @@ class Router {
   }
 
   /**
-    parse controllers
+    parse module
    */
-  parseController(pathname, controllers) {
+  parseModule({ pathname, controllers }) {
+    let m = '';
+    const pos = pathname.indexOf('/');
+    m = pos === -1 ? pathname : pathname.slice(0, pos);
+    if (this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1) {
+      pathname = pos === -1 ? '' : pathname.slice(pos + 1);
+    }
+    if (m === '' || controllers[m] === undefined) {
+      m = this.options.defaultModule;
+    }
+    controllers = controllers[m] || {};
+    return { m, controllers, pathname };
+  }
+
+  /**
+    parse controller
+   */
+  parseController({ pathname, controllers }) {
     let controller = '';
     for (const name in controllers) {
-      if (name.indexOf('/') === -1) break;
       if (name === pathname || pathname.indexOf(`${name}/`) === 0) {
         controller = name;
         pathname = pathname.slice(name.length + 1);
-        break;
+        break; // if already have matched, break the loop
       }
     }
+    if ((controller && controllers[controller] === undefined) || !controller) {
+      controller = this.options.defaultController;
+    }
     return { controller, pathname };
+  }
+
+  /**
+   * parse action
+   */
+  parseAction({ pathname, controllers, controller, ruleMethod }) {
+    let action = '';
+    pathname = pathname.split('/');
+    action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase() : pathname[0];
+    if (action === '' || (controller && controllers[controller] === undefined) || (controller && action && this.controllers[controller] && this.controllers[controller][`${action}Action`] === undefined)) {
+      action = this.options.defaultAction;
+    }
+    return { action };
   }
 
   /**
@@ -202,7 +235,7 @@ class Router {
       const isUndefind = query[name] === undefined;
       const isEmptyString = helper.isString(query[name]) && query[name].trim() === '';
       const isEmptyArray = helper.isArray(query[name]) && query[name].every(val => !val);
-      if(isUndefind || isEmptyString || isEmptyArray) {
+      if (isUndefind || isEmptyString || isEmptyArray) {
         delete query[name];
       }
     }
@@ -211,40 +244,25 @@ class Router {
     // multi module application, parse module first
     let controllers = this.controllers;
     if (this.modules.length) {
-      const pos = pathname.indexOf('/');
-      m = pos === -1 ? pathname : pathname.slice(0, pos);
-      if (this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1) {
-        pathname = pos === -1 ? '' : pathname.slice(pos + 1);
-      } else {
-        m = this.options.defaultModule;
-      }
-      controllers = controllers[m] || {};
+      const parseModuleResult = this.parseModule({ pathname, controllers });
+      m = parseModuleResult.m;
+      controllers = parseModuleResult.controllers;
+      pathname = parseModuleResult.pathname;
     }
 
     let controller = '';
-    let parseControllerResult = this.parseController(pathname, controllers);
+    const parseControllerResult = this.parseController({ pathname, controllers });
     controller = parseControllerResult.controller;
     pathname = parseControllerResult.pathname;
-    if (!controller) {
-      parseControllerResult = this.parseController(`${pathname}/${this.options.defaultController}`, controllers);
-      controller = parseControllerResult.controller;
-      pathname = parseControllerResult.pathname;
-    }
 
     let action = '';
-    pathname = pathname.split('/');
-    if (controller) {
-      action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase() : pathname[0];
-    } else {
-      controller = pathname[0];
-      action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase() : pathname[1];
-    }
+    const parseActionResult = this.parseAction({ pathname, controllers, controller, ruleMethod });
+    action = parseActionResult.action;
 
     this.ctx.module = m;
-    this.ctx.controller = controller || this.options.defaultController;
-    this.ctx.action = action || this.options.defaultAction;
-    // add query to context
-    this.ctx.param(query);
+    this.ctx.controller = controller;
+    this.ctx.action = action;
+    this.ctx.param(query); // add query to context
     debug(`RouterParser: path=${this.ctx.path}, module=${this.ctx.module}, controller=${this.ctx.controller}, action=${this.ctx.action}, query=${JSON.stringify(query)}`);
     return this.next();
   }
