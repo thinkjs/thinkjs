@@ -250,7 +250,7 @@ class Router {
 
     // parse controller
     const parseControllerResult = this.parseController({ pathname, controllers });
-    const {controller} = parseControllerResult;
+    const { controller } = parseControllerResult;
     pathname = parseControllerResult.pathname;
 
     // parse action
