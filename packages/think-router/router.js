@@ -168,15 +168,17 @@ class Router {
    */
   parseModule({ pathname, controllers }) {
     let m = '';
-    const pos = pathname.indexOf('/');
-    m = pos === -1 ? pathname : pathname.slice(0, pos);
-    if (this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1) {
-      pathname = pos === -1 ? '' : pathname.slice(pos + 1);
+    if (this.modules.length) {
+      const pos = pathname.indexOf('/');
+      m = pos === -1 ? pathname : pathname.slice(0, pos);
+      if (this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1) {
+        pathname = pos === -1 ? '' : pathname.slice(pos + 1);
+      }
+      if (m === '' || controllers[m] === undefined) {
+        m = this.options.defaultModule;
+      }
+      controllers = controllers[m] || {};
     }
-    if (m === '' || controllers[m] === undefined) {
-      m = this.options.defaultModule;
-    }
-    controllers = controllers[m] || {};
     return { m, controllers, pathname };
   }
 
@@ -242,23 +244,19 @@ class Router {
       }
     }
     // parse module when in multi module
-    let m = '';
     let controllers = this.controllers;
-    if (this.modules.length) {
-      const parseModuleResult = this.parseModule({ pathname, controllers });
-      m = parseModuleResult.m;
-      controllers = parseModuleResult.controllers;
-      pathname = parseModuleResult.pathname;
-    }
+    const parseModuleResult = this.parseModule({ pathname, controllers });
+    const { m } = parseModuleResult;
+    controllers = parseModuleResult.controllers;
+    pathname = parseModuleResult.pathname;
+
     // parse controller
     let controller = '';
     const parseControllerResult = this.parseController({ pathname, controllers });
     controller = parseControllerResult.controller;
     pathname = parseControllerResult.pathname;
     // parse action
-    let action = '';
-    const parseActionResult = this.parseAction({ pathname, controllers, controller, ruleMethod });
-    action = parseActionResult.action;
+    const { action } = this.parseAction({ pathname, controllers, controller, ruleMethod });
     // wirte back to ctx
     this.ctx.module = m;
     this.ctx.controller = controller;
