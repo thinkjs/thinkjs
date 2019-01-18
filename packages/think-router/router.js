@@ -243,18 +243,16 @@ class Router {
         delete query[name];
       }
     }
-    // parse module when in multi module
-    let controllers = this.controllers;
-    const parseModuleResult = this.parseModule({ pathname, controllers });
-    const { m } = parseModuleResult;
-    controllers = parseModuleResult.controllers;
+    // parse module
+    const parseModuleResult = this.parseModule({ pathname, controllers: this.controllers });
+    const { m, controllers } = parseModuleResult;
     pathname = parseModuleResult.pathname;
 
     // parse controller
-    let controller = '';
     const parseControllerResult = this.parseController({ pathname, controllers });
-    controller = parseControllerResult.controller;
+    const {controller} = parseControllerResult;
     pathname = parseControllerResult.pathname;
+
     // parse action
     const { action } = this.parseAction({ pathname, controllers, controller, ruleMethod });
     // wirte back to ctx
