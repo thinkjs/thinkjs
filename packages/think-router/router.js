@@ -173,8 +173,7 @@ class Router {
       m = pos === -1 ? pathname : pathname.slice(0, pos);
       if (this.modules.indexOf(m) > -1 && m !== 'common' && this.options.denyModules.indexOf(m) === -1) {
         pathname = pos === -1 ? '' : pathname.slice(pos + 1);
-      }
-      if (m === '' || controllers[m] === undefined) {
+      } else {
         m = this.options.defaultModule;
       }
       controllers = controllers[m] || {};
@@ -187,29 +186,32 @@ class Router {
    */
   parseController({ pathname, controllers }) {
     let controller = '';
+    // only check multiple layer controller, because single layer can get controller from pathname
     for (const name in controllers) {
+      if (name.indexOf('/') === -1) break; // if single layer, break the loop
       if (name === pathname || pathname.indexOf(`${name}/`) === 0) {
         controller = name;
         pathname = pathname.slice(name.length + 1);
         break; // if already have matched, break the loop
       }
     }
-    if ((controller && controllers[controller] === undefined) || !controller) {
-      controller = this.options.defaultController;
+    if (controller === '') {
+      const pos = pathname.indexOf('/');
+      controller = pos === -1 ? pathname : pathname.slice(0, pos);
+      pathname = pos === -1 ? '' : pathname.slice(pos + 1);
     }
+    controller = controller || this.options.defaultController;
     return { controller, pathname };
   }
 
   /**
    * parse action
    */
-  parseAction({ pathname, controllers, controller, ruleMethod }) {
+  parseAction({ pathname, ruleMethod }) {
     let action = '';
     pathname = pathname.split('/');
     action = ruleMethod === 'REST' ? this.ctxMethod.toLowerCase() : pathname[0];
-    if (action === '' || (controller && controllers[controller] === undefined) || (controller && action && this.controllers[controller] && this.controllers[controller][`${action}Action`] === undefined)) {
-      action = this.options.defaultAction;
-    }
+    action = action || this.options.defaultAction;
     return { action };
   }
 
@@ -254,7 +256,7 @@ class Router {
     pathname = parseControllerResult.pathname;
 
     // parse action
-    const { action } = this.parseAction({ pathname, controllers, controller, ruleMethod });
+    const { action } = this.parseAction({ pathname, ruleMethod });
     // wirte back to ctx
     this.ctx.module = m;
     this.ctx.controller = controller;

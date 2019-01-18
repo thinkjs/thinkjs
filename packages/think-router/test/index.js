@@ -714,9 +714,9 @@ test.serial.cb('multiple modules, match and rules = null', t => {
   ctx.app = app;
   parseRouter(options, app)(ctx, next).then(data => {
     t.deepEqual(RESULT, {
-      module: 'defaultModule',
-      controller: 'defaultController',
-      action: 'defaultAction'
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
     });
     t.end();
   });
@@ -979,7 +979,6 @@ test.serial.cb('multiple modules, pathname without /', t => {
     t.end();
   });
 });
-
 
 test.serial.cb('use defaultAction', t => {
   const options = helper.extend({}, defaultOptions);
@@ -1300,6 +1299,40 @@ test.serial.cb('routerChange', t => {
       module: 'defaultModule',
       controller: 'defaultController',
       action: 'defaultAction'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('emptycontroller', t => {
+  const options = helper.extend({}, defaultOptions, {
+    defaultController: ''
+  });
+  const ctx = helper.extend({}, defaultCtx);
+  const app = helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {
+      'admin/article/list2/': {
+        // articleAction() {}
+      },
+      admin: {
+
+      },
+      admin2: {
+
+      }
+    },
+    routers: [
+      ['^/admin/article/list', 'admin/article/list', 'get']
+    ]
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: '',
+      controller: 'admin',
+      action: 'article'
     });
     t.end();
   });
