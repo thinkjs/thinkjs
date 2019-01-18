@@ -121,6 +121,7 @@ class Router {
     }
     return rules;
   }
+
   /**
    * detect rule match
    */
@@ -129,18 +130,19 @@ class Router {
     const specialMethods = ['REDIRECT', 'REST'];
     rules.some(item => {
       if (!item.rules) {
+        // check rule'method matched
         const itemMethod = item.method;
         if (itemMethod && specialMethods.indexOf(itemMethod) === -1) {
-          // check method matched
           if (itemMethod.indexOf(this.ctxMethod) === -1) return;
         }
+        // check rule'match matched
         assert(helper.isRegExp(item.match), 'router.match must be a RegExp');
         const match = item.match.exec(this.pathname);
         if (!match) return;
+        // parse query
         assert(helper.isArray(item.query), 'router.query must be an array');
         const query = {};
         let pathname = item.path || this.pathname;
-
         item.query.forEach((queryItem, index) => {
           if (/^\d+$/.test(queryItem.name)) {
             const index = parseInt(queryItem.name) + 1;
@@ -239,9 +241,8 @@ class Router {
         delete query[name];
       }
     }
-
-    let m = ''; // module
-    // multi module application, parse module first
+    // parse module when in multi module
+    let m = '';
     let controllers = this.controllers;
     if (this.modules.length) {
       const parseModuleResult = this.parseModule({ pathname, controllers });
@@ -249,23 +250,24 @@ class Router {
       controllers = parseModuleResult.controllers;
       pathname = parseModuleResult.pathname;
     }
-
+    // parse controller
     let controller = '';
     const parseControllerResult = this.parseController({ pathname, controllers });
     controller = parseControllerResult.controller;
     pathname = parseControllerResult.pathname;
-
+    // parse action
     let action = '';
     const parseActionResult = this.parseAction({ pathname, controllers, controller, ruleMethod });
     action = parseActionResult.action;
-
+    // wirte back to ctx
     this.ctx.module = m;
     this.ctx.controller = controller;
     this.ctx.action = action;
-    this.ctx.param(query); // add query to context
+    this.ctx.param(query);
     debug(`RouterParser: path=${this.ctx.path}, module=${this.ctx.module}, controller=${this.ctx.controller}, action=${this.ctx.action}, query=${JSON.stringify(query)}`);
     return this.next();
   }
+
   /**
    * parse router
    */
@@ -280,6 +282,7 @@ class Router {
       debug(`RouterParser: path=${this.ctx.path}, module=${this.ctx.module}, controller=${this.ctx.controller}, action=${this.ctx.action}`);
       return this.next();
     }
+    // parse rules
     const rules = this.getRules();
     const matchedRule = this.getMatchedRule(rules);
     if (matchedRule) {
