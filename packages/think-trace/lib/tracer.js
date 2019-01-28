@@ -151,9 +151,14 @@ module.exports = class Tracer {
       if (!helper.isFunction(ctx.json)) {
         ctx.json = res => { ctx.body = JSON.stringify(res) };
       }
+
+      const customField = think && helper.isFunction(think.config);
+      const errnoField = customField ? think.config('errnoField') : 'errno';
+      const errmsgField = customField ? think.config('errmsgField') : 'errmsg';
+
       return (isJsonp ? ctx.jsonp : ctx.json).bind(ctx)({
-        errno: ctx.status,
-        errmsg: err.message
+        [errnoField]: ctx.status,
+        [errmsgField]: err.message
       });
     }
 
