@@ -22,7 +22,7 @@ exports.cache = {
   type: 'redis',
   common: {
     timeout: 24 * 3600 * 1000 // millisecond
-  }
+  },
   redis: {
     handle: redisCache,
     port: 6379,
