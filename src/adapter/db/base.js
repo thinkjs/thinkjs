@@ -59,7 +59,8 @@ export default class extends Parse {
       item => this.parseKey(item)
     );
     const values = data.map(item => {
-      const value = fields.map(key => {
+      const value = [];
+      fields.forEach(key => {
         const val = this.parseValue(item[key]);
         if (think.isString(val) || think.isBoolean(val) || think.isNumber(val)) {
           value.push(val);
