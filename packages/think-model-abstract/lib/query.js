@@ -94,7 +94,7 @@ module.exports = class AbstractQuery {
       const value = fields.map(key => {
         const val = parser.parseValue(item[key]);
         if (helper.isString(val) || helper.isBoolean(val) || helper.isNumber(val)) {
-          value.push(val);
+          return val;
         }
       });
       return `(${value.join(',')})`;
