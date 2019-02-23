@@ -91,14 +91,12 @@ module.exports = class AbstractQuery {
     const parser = this.parser;
     const fields = Object.keys(data[0]).map(item => parser.parseKey(item));
     const values = data.map(item => {
-      const value = [];
-      for (const key in item) {
-        let val = item[key];
-        val = parser.parseValue(val);
+      const value = fields.map(key => {
+        const val = parser.parseValue(item[key]);
         if (helper.isString(val) || helper.isBoolean(val) || helper.isNumber(val)) {
           value.push(val);
         }
-      }
+      });
       return `(${value.join(',')})`;
     }).join(',');
 
