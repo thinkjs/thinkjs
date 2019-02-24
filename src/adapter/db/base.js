@@ -11,7 +11,7 @@ export default class extends Parse {
    * init
    * @return {} []
    */
-  init(config){
+  init(config) {
     super.init(config);
     this.sql = '';
     this.lastInsertId = 0;
@@ -22,7 +22,7 @@ export default class extends Parse {
    * get socket instance, override by sub class
    * @return {Object} [socket instance]
    */
-  socket(){}
+  socket() { }
   /**
    * insert data
    * @param  {Object} data    []
@@ -30,10 +30,10 @@ export default class extends Parse {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  add(data, options, replace){
+  add(data, options, replace) {
     let values = [];
     let fields = [];
-    for(let key in data){
+    for (let key in data) {
       let val = data[key];
       val = this.parseValue(val);
       if (think.isString(val) || think.isBoolean(val) || think.isNumber(val)) {
@@ -54,22 +54,24 @@ export default class extends Parse {
    * @param  {Boolean} replace []
    * @return {Promise}         []
    */
-  addMany(data, options, replace){
-    let fields = Object.keys(data[0]).map(item => this.parseKey(item)).join(',');
-    let values = data.map(item => {
-      let value = [];
-      for(let key in item){
-        let val = item[key];
-        val = this.parseValue(val);
+  addMany(data, options, replace) {
+    const fields = Object.keys(data[0]).map(
+      item => this.parseKey(item)
+    );
+    const values = data.map(item => {
+      const value = [];
+      fields.forEach(key => {
+        const val = this.parseValue(item[key]);
         if (think.isString(val) || think.isBoolean(val) || think.isNumber(val)) {
           value.push(val);
         }
-      }
+      });
       return '(' + value.join(',') + ')';
-    }).join(',');
+    });
+
     let sql = replace ? 'REPLACE' : 'INSERT';
-    sql += ' INTO ' + this.parseTable(options.table) + '(' + fields + ')';
-    sql += ' VALUES ' + values;
+    sql += ' INTO ' + this.parseTable(options.table) + '(' + fields.join(',') + ')';
+    sql += ' VALUES ' + values.join(',');
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
     return this.execute(sql);
   }
@@ -80,7 +82,7 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  selectAdd(fields, table, options = {}){
+  selectAdd(fields, table, options = {}) {
     if (think.isString(fields)) {
       fields = fields.split(/\s*,\s*/);
     }
@@ -94,7 +96,7 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  delete(options){
+  delete(options) {
     let sql = [
       'DELETE FROM ',
       this.parseTable(options.table),
@@ -112,7 +114,7 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  update(data, options){
+  update(data, options) {
     let sql = [
       'UPDATE ',
       this.parseTable(options.table),
@@ -130,12 +132,12 @@ export default class extends Parse {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  select(options, cache){
+  select(options, cache) {
     let sql;
-    if(think.isObject(options)){
+    if (think.isObject(options)) {
       sql = this.buildSelectSql(options);
       cache = options.cache || cache;
-    }else{
+    } else {
       sql = options;
     }
     if (!think.isEmpty(cache) && this.config.cache.on) {
@@ -149,25 +151,25 @@ export default class extends Parse {
    * @param  {String} str []
    * @return {String}     []
    */
-  escapeString(str){
+  escapeString(str) {
     if (!str) {
       return '';
     }
     return str.replace(/[\0\n\r\b\t\\\'\"\x1a]/g, s => {
-      switch(s) {
-        case '\0': 
+      switch (s) {
+        case '\0':
           return '\\0';
-        case '\n': 
+        case '\n':
           return '\\n';
-        case '\r': 
+        case '\r':
           return '\\r';
-        case '\b': 
+        case '\b':
           return '\\b';
-        case '\t': 
+        case '\t':
           return '\\t';
-        case '\x1a': 
+        case '\x1a':
           return '\\Z';
-        default:   
+        default:
           return '\\' + s;
       }
     });
@@ -176,14 +178,14 @@ export default class extends Parse {
    * get last sql
    * @return {String}       []
    */
-  getLastSql(){
+  getLastSql() {
     return this.sql;
   }
   /**
    * get last insert id
    * @return {String} []
    */
-  getLastInsertId(){
+  getLastInsertId() {
     return this.lastInsertId;
   }
   /**
@@ -191,7 +193,7 @@ export default class extends Parse {
    * @param  string str
    * @return promise
    */
-  query(sql){
+  query(sql) {
     this.sql = sql;
     return think.await(sql, () => {
       return this.socket(sql).query(sql).then(data => {
@@ -204,13 +206,13 @@ export default class extends Parse {
    * @param  {Array} data []
    * @return {Array}      []
    */
-  bufferToString(data){
+  bufferToString(data) {
     if (!this.config.buffer_tostring || !think.isArray(data)) {
       return data;
     }
-    for(let i = 0, length = data.length; i < length; i++){
-      for(let key in data[i]){
-        if(think.isBuffer(data[i][key])){
+    for (let i = 0, length = data.length; i < length; i++) {
+      for (let key in data[i]) {
+        if (think.isBuffer(data[i][key])) {
           data[i][key] = data[i][key].toString();
         }
       }
@@ -222,7 +224,7 @@ export default class extends Parse {
    * @param  {String} sql []
    * @return {}     []
    */
-  execute(sql){
+  execute(sql) {
     this.sql = sql;
     return this.socket(sql).execute(sql).then(data => {
       if (data.insertId) {
@@ -235,7 +237,7 @@ export default class extends Parse {
    * start transaction
    * @return {Promise} []
    */
-  startTrans(){
+  startTrans() {
     if (this.transTimes === 0) {
       this.transTimes++;
       return this.execute('START TRANSACTION');
@@ -247,7 +249,7 @@ export default class extends Parse {
    * commit
    * @return {Promise} []
    */
-  commit(){
+  commit() {
     if (this.transTimes > 0) {
       this.transTimes = 0;
       return this.execute('COMMIT');
@@ -258,7 +260,7 @@ export default class extends Parse {
    * rollback
    * @return {Promise} []
    */
-  rollback(){
+  rollback() {
     if (this.transTimes > 0) {
       this.transTimes = 0;
       return this.execute('ROLLBACK');
@@ -269,7 +271,7 @@ export default class extends Parse {
    * close connect
    * @return {} []
    */
-  close(){
+  close() {
     if (this._socket) {
       this._socket.close();
       this._socket = null;
