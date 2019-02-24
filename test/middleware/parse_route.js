@@ -14,8 +14,9 @@ var _http = require('../_http.js');
 
 function getHttp(config, options){
   think.APP_PATH = path.dirname(__dirname) + think.sep + 'testApp';
-  var req = think.extend({}, _http.req);
-  var res = think.extend({}, _http.res);
+  var instance = _http.createReqRes();
+  var req = instance.req;
+  var res = instance.res;
   return think.http(req, res).then(function(http){
     if(config){
       http._config = config;

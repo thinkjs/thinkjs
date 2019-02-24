@@ -55,7 +55,8 @@ export default class extends Parse {
    * @return {Promise}         []
    */
   addMany(data, options, replace) {
-    const fields = Object.keys(data[0]).map(
+    const fields = Object.keys(data[0]);
+    const quoteFields = fields.map(
       item => this.parseKey(item)
     );
     const values = data.map(item => {
@@ -70,7 +71,7 @@ export default class extends Parse {
     });
 
     let sql = replace ? 'REPLACE' : 'INSERT';
-    sql += ' INTO ' + this.parseTable(options.table) + '(' + fields.join(',') + ')';
+    sql += ' INTO ' + this.parseTable(options.table) + '(' + quoteFields.join(',') + ')';
     sql += ' VALUES ' + values.join(',');
     sql += this.parseLock(options.lock) + this.parseComment(options.comment);
     return this.execute(sql);
