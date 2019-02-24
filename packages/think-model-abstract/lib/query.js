@@ -89,7 +89,8 @@ module.exports = class AbstractQuery {
    */
   addMany(data, options, replace) {
     const parser = this.parser;
-    const fields = Object.keys(data[0]).map(item => parser.parseKey(item));
+
+    let fields = Object.keys(data[0]);
     const values = data.map(item => {
       const value = [];
       fields.forEach(key => {
@@ -101,6 +102,7 @@ module.exports = class AbstractQuery {
       return `(${value.join(',')})`;
     }).join(',');
 
+    fields = fields.map(field => parser.parseKey(field));
     // compatiable with boolean and array update property value
     if (options.update === true) {
       options.update = fields;
