@@ -22,3 +22,26 @@ test.serial('close', async t => {
   t.is(!!connection, true);
   const ret = await socket.close(connection);
 });
+
+const connectionLimitConfig = {
+  database: 'think_db',
+  connectionLimit: 5
+};
+test.serial('pool size is config.connectionLimitConfig', async t => {
+  const socket = Socket.getInstance(connectionLimitConfig);
+  const pool = await socket.pool;
+  t.is(pool.max, 5);
+});
+
+const poolSizeConfig = {
+  database: 'think_db',
+  connectionLimit: 5,
+  options: {
+    poolSize: 10
+  }
+};
+test.serial('pool size is config.options.poolSize', async t => {
+  const socket = Socket.getInstance(poolSizeConfig);
+  const pool = await socket.pool;
+  t.is(pool.max, 10);
+});
