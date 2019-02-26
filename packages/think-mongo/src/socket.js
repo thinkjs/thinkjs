@@ -69,9 +69,18 @@ class MongoSocket {
         return Promise.resolve();
       }
     };
-    const options = {
+
+    let { connectionLimit, options } = this.config;
+    if (options && (options.poolSize || options.maxPoolSize)) {
+      connectionLimit = options.poolSize || options.maxPoolSize;
+    }
+    if (helper.isTrueEmpty(connectionLimit)) {
+      connectionLimit = 5;
+    }
+
+    options = {
       min: 1,
-      max: (this.config.options && (this.config.options.poolSize || this.config.options.maxPoolSize)) || this.config.connectionLimit || 5,
+      max: connectionLimit,
       acquireTimeoutMillis: this.config.acquireTimeoutMillis || 3000
     };
     return genericPool.createPool(factory, options);
@@ -96,7 +105,7 @@ class MongoSocket {
   autoRelease(fn) {
     return this.pool.acquire().then(connection => {
       return Promise.resolve(fn(connection)).then(data => {
-        return {data, connection};
+        return { data, connection };
       }).catch(err => {
         this.pool.release(connection);
         throw err;
