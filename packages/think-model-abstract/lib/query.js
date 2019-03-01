@@ -203,7 +203,7 @@ module.exports = class AbstractQuery {
    * @param {Object} connection
    */
   startTrans(connection) {
-    return this.socket().startTrans(connection).then(connection => {
+    return this.socket('START TRANSACTION').startTrans(connection).then(connection => {
       this.connection = connection;
       return connection;
     });
@@ -213,14 +213,14 @@ module.exports = class AbstractQuery {
    * @param {Object} connection
    */
   commit(connection = this.connection) {
-    return this.socket().commit(connection);
+    return this.socket('COMMIT').commit(connection);
   }
   /**
    * rollback transaction
    * @param {Object} connection
    */
   rollback(connection = this.connection) {
-    return this.socket().rollback(connection);
+    return this.socket('ROLLBACK').rollback(connection);
   }
   /**
    * wrap transaction
@@ -228,7 +228,7 @@ module.exports = class AbstractQuery {
    * @param {Object} connection
    */
   transaction(fn, connection) {
-    return this.socket().transaction(connection => {
+    return this.socket('START TRANSACTION').transaction(connection => {
       this.connection = connection;
       return fn(connection);
     }, connection);
