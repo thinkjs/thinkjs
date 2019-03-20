@@ -1,6 +1,6 @@
 {
   "name": "think-mongo",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Mongo adaper",
   "scripts": {
     "watch": "babel ./src --out-dir ./lib --watch",
