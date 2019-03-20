@@ -71,7 +71,7 @@ class MongoSocket {
     };
 
     let { connectionLimit, options } = this.config;
-    if (options && (options.poolSize || options.maxPoolSize)) {
+    if (!connectionLimit && options && (options.poolSize || options.maxPoolSize)) {
       connectionLimit = options.poolSize || options.maxPoolSize;
     }
     if (helper.isTrueEmpty(connectionLimit)) {

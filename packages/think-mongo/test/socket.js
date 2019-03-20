@@ -31,7 +31,11 @@ test.serial('default value of pool size is 5', async t => {
 
 const connectionLimitConfig = {
   database: 'think_db',
-  connectionLimit: 10
+  connectionLimit: 10,
+  options: {
+    maxPoolSize: 15,
+    poolSize: 20
+  }
 };
 
 test.serial('pool size is config.connectionLimitConfig', async t => {
@@ -42,7 +46,6 @@ test.serial('pool size is config.connectionLimitConfig', async t => {
 
 const maxPoolSizeConfig = {
   database: 'think_db',
-  connectionLimit: 10,
   options: {
     maxPoolSize: 15
   }
@@ -56,7 +59,6 @@ test.serial('pool size is config.options.maxPoolSize', async t => {
 
 const poolSizeConfig = {
   database: 'think_db',
-  connectionLimit: 10,
   options: {
     maxPoolSize: 15,
     poolSize: 20
