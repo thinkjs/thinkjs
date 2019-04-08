@@ -1,6 +1,6 @@
 {
   "name": "think-babel",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "Use Babel transpile ES6+ file to ES5",
   "main": "index.js",
   "scripts": {
@@ -38,14 +38,14 @@
   "devDependencies": {
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",
+    "babel-preset-es2015": "~6.22.0",
     "coveralls": "~2.11.16",
     "eslint": "~4.2.0",
     "eslint-config-think": "~1.0.1",
-    "nyc": "~10.1.2",
-    "babel-preset-es2015": "~6.22.0"
+    "nyc": "~10.1.2"
   },
   "dependencies": {
-    "babel-core": "~6.23.1",
+    "@babel/core": "^7.4.3",
     "think-helper": "^1.0.0"
   }
 }

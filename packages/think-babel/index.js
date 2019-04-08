@@ -1,4 +1,4 @@
-const babelCore = require('babel-core');
+const babelCore = require('@babel/core');
 const helper = require('think-helper');
 const fs = require('fs');
 const path = require('path');
