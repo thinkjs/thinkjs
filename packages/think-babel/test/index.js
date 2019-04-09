@@ -35,7 +35,7 @@ test.serial('thinkBabel-1', t => {
     outPath: './test/out',
     file: 'b/test.es',
     options: {
-      presets: ['es2015']
+      presets: ['@babel/preset-env']
     }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js'));
@@ -50,7 +50,7 @@ test.serial('thinkBabel-2', t => {
     file: 'b/test.es',
     options: {
       sourceMaps: false,
-      presets: ['es2015']
+      presets: ['@babel/preset-env']
     }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js'));
@@ -65,7 +65,7 @@ test.serial('thinkBabel-3', t => {
     file: 'b/test.es',
     ext: '.js2',
     options: {
-      presets: ['es2015']
+      presets: ['@babel/preset-env']
     }
   });
   let outFile = helper.isFile(path.join(__dirname, 'out/b/test.js2'));
@@ -82,7 +82,7 @@ test.serial('thinkBabel-4', t => {
     outPath: './test/out',
     file: 'b/test.es',
     options: {
-      presets: ['es2015']
+      presets: ['@babel/preset-env']
     }
   });
 
