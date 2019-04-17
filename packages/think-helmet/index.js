@@ -1,1 +1,1 @@
-module.exports = require('helmet');
+module.exports = require('koa-helmet');

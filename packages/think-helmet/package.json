@@ -18,7 +18,7 @@
     }
   ],
   "dependencies": {
-    "helmet": "^3.9.0"
+    "koa-helmet": "^4.1.0"
   },
   "devDependencies": {
     "ava": "^0.23.0",
