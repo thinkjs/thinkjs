@@ -11,18 +11,21 @@ class CookieSession {
    * @param {Object} options cookie options
    * @param {Object} ctx koa ctx
    */
-  constructor(options = {}, ctx) {
-    if (options.encrypt) {
-      assert(options.keys && helper.isArray(options.keys), '.keys required and must be an array when encrypt is set');
-      options.signed = false; // disable signed when set encrypt
-      this.keygrip = new Keygrip(options.keys);
+  constructor(options = {}, ctx, cookieOptions = {}) {
+    if (cookieOptions.encrypt) {
+      assert(cookieOptions.keys && helper.isArray(cookieOptions.keys), '.keys required and must be an array when encrypt is set');
+      cookieOptions.signed = false; // disable signed when set encrypt
+      this.keygrip = new Keygrip(cookieOptions.keys);
     }
-    options.overwrite = true;
+    cookieOptions.overwrite = true;
+
     this.options = options;
+    this.cookieOptions = cookieOptions;
+
     this.ctx = ctx;
     this.fresh = true; // session data is fresh
     this.data = {}; // session data
-    this.maxAge = options.maxAge || 0;
+    this.maxAge = cookieOptions.maxAge || 0;
     this.expire = 0;
     this.initSessionData();
   }
@@ -30,7 +33,7 @@ class CookieSession {
    * init session data
    */
   initSessionData() {
-    let data = this.ctx.cookie(this.options.name, undefined, this.options);
+    let data = this.ctx.cookie(this.cookieOptions.name, undefined, this.cookieOptions);
     if (data) {
       if (this.keygrip) {
         data = Buffer.from(data, 'base64');
@@ -56,9 +59,9 @@ class CookieSession {
    */
   get(name) {
     // auto update cookie when maxAge or expires is set
-    if (this.maxAge && this.expire && !this.fresh && this.options.autoUpdateRate) {
+    if (this.maxAge && this.expire && !this.fresh && this.cookieOptions.autoUpdateRate) {
       const rate = (this.expire - Date.now()) / this.maxAge;
-      if (rate < this.options.autoUpdateRate) {
+      if (rate < this.cookieOptions.autoUpdateRate) {
         this.set();
       }
     }
@@ -82,8 +85,8 @@ class CookieSession {
     if (this.keygrip) {
       data = this.keygrip.encrypt(data).toString('base64');
     }
-    this.options.maxAge = this.maxAge;
-    this.ctx.cookie(this.options.name, data, this.options);
+    this.cookieOptions.maxAge = this.maxAge;
+    this.ctx.cookie(this.cookieOptions.name, data, this.cookieOptions);
     return Promise.resolve();
   }
   /**
@@ -91,7 +94,7 @@ class CookieSession {
    */
   delete() {
     if (!this.fresh) {
-      this.ctx.cookie(this.options.name, null, this.options);
+      this.ctx.cookie(this.cookieOptions.name, null, this.cookieOptions);
       this.data = {};
     }
     return Promise.resolve();

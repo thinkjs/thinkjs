@@ -50,7 +50,7 @@ test('constructor function -- option.encrypt with empty keys', t => {
   const SessionCookie = getSessionCookie();
 
   t.throws(() => {
-    new SessionCookie(options, defaultCtx);
+    new SessionCookie({}, defaultCtx, options);
   }, Error);
 
   t.deepEqual(assertCallParams,
@@ -71,7 +71,7 @@ test('constructor function -- option.encrypt with not array keys', t => {
   const SessionCookie = getSessionCookie();
 
   t.throws(() => {
-    new SessionCookie(options, defaultCtx);
+    new SessionCookie({}, defaultCtx, options);
   }, Error);
 
   t.deepEqual(assertCallParams,
@@ -88,7 +88,7 @@ test('initSessionData function -- get empty session data', t => {
   };
   const SessionCookie = getSessionCookie();
 
-  const sc = new SessionCookie(options, defaultCtx);
+  const sc = new SessionCookie({}, defaultCtx, options);
 
   t.deepEqual(sc.data, {});
 });
@@ -99,7 +99,7 @@ test('initSessionData function -- get empty session data', t => {
   };
   const SessionCookie = getSessionCookie();
 
-  const sc = new SessionCookie(options, defaultCtx);
+  const sc = new SessionCookie({}, defaultCtx, options);
 
   t.deepEqual(sc.data, {id: 1, value: 'test'});
   t.deepEqual(sc.fresh, false);
@@ -111,7 +111,7 @@ test('set/get function -- normal scene', async t => {
   };
 
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, defaultCtx);
+  const sc = new SessionCookie({}, defaultCtx, options);
   await sc.set('username', 'thinkjs');
   let value = await sc.get('username');
 
@@ -126,7 +126,7 @@ test('set/get function -- encrypt 1', async t => {
     keys: ['a', 'b']
   };
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, defaultCtx);
+  const sc = new SessionCookie({}, defaultCtx, options);
   await sc.set('username', 'thinkjs');
   let value = await sc.get('username');
 
@@ -155,7 +155,7 @@ test('get function -- autoUpdate && maxAge name', async t => {
     }
   };
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, ctx);
+  const sc = new SessionCookie({}, ctx, options);
 
   sc.fresh = false;
   const result = await sc.get();
@@ -191,7 +191,7 @@ test('set/get function -- encrypt 3', t => {
     keys
   };
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, ctx);
+  const sc = new SessionCookie({}, ctx, options);
   t.deepEqual(sc.data, cpData);
 });
 
@@ -211,7 +211,7 @@ test('set/get function -- encrypt', t => {
     name: 'test',
   };
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, ctx);
+  const sc = new SessionCookie({}, ctx, options);
   t.deepEqual(sc.data, {});
 });
 
@@ -220,7 +220,7 @@ test('delete function', async t => {
     name: 'test',
   };
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, defaultCtx);
+  const sc = new SessionCookie({}, defaultCtx, options);
   await sc.set('username','thinkjs');
   let val = await sc.get('username');
 
@@ -235,7 +235,7 @@ test('delete function', async t => {
     name: 'test',
   };
   const SessionCookie = getSessionCookie();
-  const sc = new SessionCookie(options, defaultCtx);
+  const sc = new SessionCookie({}, defaultCtx, options);
   await sc.set('username','thinkjs');
   let val = await sc.get('username');
 
