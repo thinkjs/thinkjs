@@ -74,7 +74,7 @@ class Session {
     const Handle = this.options.handle;
     // store session data on cookie
     if (Handle.onlyCookie) {
-      instance = new Handle(this.cookieOptions, this.ctx);
+      instance = new Handle(this.options, this.ctx, this.cookieOptions);
     } else {
       const name = this.cookieOptions.name;
       let cookie = this.ctx.cookie(name, undefined, this.cookieOptions);
