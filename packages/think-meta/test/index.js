@@ -97,6 +97,24 @@ test('with TimeoutCallback', async t => {
 	await helper.timeout(10);
   t.false(callbacked, '未超时不调用回调函数');
 });
+
+test('with TimeoutCallback 2', async t => {
+	let ctx = getCtx();
+	let app = getApp();
+	let callbacked = false;
+	await Meta({
+		requestTimeoutCallback: null,
+		requestTimeout: 5 * 1000,
+	}, app)(ctx, () => {
+		let promise = new Promise(function(resolve) {
+			setTimeout(function() {
+				resolve();
+			}, 7 * 1000 + 100);
+		});
+		return promise;
+	});
+  t.true(!callbacked, '超时调用回调函数');
+});
 test('settings', async t => {
 	let ctx = getCtx();
 	let app = getApp();

@@ -19,7 +19,11 @@ module.exports = (options, app) => {
 
   return (ctx, next) => {
     // set request timeout
-    ctx.res.setTimeout(options.requestTimeout, options.requestTimeoutCallback);
+    if (helper.isFunction(options.requestTimeoutCallback)) {
+      ctx.res.setTimeout(options.requestTimeout, () => {
+        options.requestTimeoutCallback(ctx, options);
+      });
+    }
     // send power by header
     if (options.sendPowerBy && !ctx.res.headersSent) {
       const version = app.think.version;

@@ -33,7 +33,7 @@ module.exports = [
 ```js
 {
   requestTimeout: 10 * 1000, //request timeout, default is 10s
-  requestTimeoutCallback: () => {}, //request timeout callback
+  requestTimeoutCallback: (ctx, options) => {}, //request timeout callback
   sendPowerBy: true,  //send powerby
   sendResponseTime: true, //send response time
   logRequest: true //log request
