@@ -46,11 +46,8 @@ class CookieSession {
         try {
           const result = JSON.parse(data);
           this.data = result.data || {};
+          this.maxAge = result.maxAge || 0;
           this.expire = result.expire || 0;
-          const offsetTime = this.maxAge - result.maxAge;
-          if (offsetTime !== 0) {
-            this.expire = +new Date(this.expire) - offsetTime;
-          }
           this.fresh = false;
         } catch (e) {}
       }
