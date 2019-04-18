@@ -44,6 +44,9 @@
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.1"
   },
+  "peerDependencies": {
+    "think-session": "^1.1.4"
+  },
   "keywords": [],
   "repository": {
     "type": "git",
