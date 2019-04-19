@@ -58,3 +58,9 @@ module.exports = class extends think.Service {
 };
 
 ```
+
+## Production
+
+Mock auto close when you are not at devlepment enviroment. 
+
+You don't need remove decorator `mock`, but is better if you do. 
