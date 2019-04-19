@@ -85,6 +85,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-hashids](https://github.com/weihongyu12/think-hashids) Generate a short unique ID from the integer for ThinkJS
 * [think-purify](https://github.com/weihongyu12/think-purify) Use the HTML5 Purify extension in ThinkJS
 * [think-esapi](https://github.com/weihongyu12/think-esapi) An ESAPI(Enterprise Security API) extend for ThinkJS
+* [think-mock](https://github.com/thinkjs/think-mock) Mock data extend for ThinkJS
 
 ## Projects by ThinkJS
 
