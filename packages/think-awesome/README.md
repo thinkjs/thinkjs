@@ -74,6 +74,7 @@ Awesome projects for `ThinkJS 3.x`
 * [think-sequelize](https://github.com/thinkjs/think-sequelize) Wrap sequelize
 * [think-i18n](https://github.com/thinkjs/think-i18n) A comprehensive I18N solution wraps Jed, Number(opt in) and Currency(opt in). Support flexible customize for text, number and currency per locale in a standard way.
 * [think-eolinker-apishop](https://github.com/sls-open/think-eolinker-apishop) 对[eoLinker官方apishop](https://www.apishop.net/)提供的第三方API做的封装。
+* [think-mock](https://github.com/thinkjs/think-mock) Mock data extend for ThinkJS
 
 ## Others
 
@@ -85,7 +86,6 @@ Awesome projects for `ThinkJS 3.x`
 * [think-hashids](https://github.com/weihongyu12/think-hashids) Generate a short unique ID from the integer for ThinkJS
 * [think-purify](https://github.com/weihongyu12/think-purify) Use the HTML5 Purify extension in ThinkJS
 * [think-esapi](https://github.com/weihongyu12/think-esapi) An ESAPI(Enterprise Security API) extend for ThinkJS
-* [think-mock](https://github.com/thinkjs/think-mock) Mock data extend for ThinkJS
 
 ## Projects by ThinkJS
 
