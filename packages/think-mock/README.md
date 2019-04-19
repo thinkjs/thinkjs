@@ -15,13 +15,25 @@ is used!Replace them with corresponding plugin if babel6 is used in your project
 
 ## How to Use
 
-1. Config mock path, or use default
+1. Add extend support 
+
+```js
+// think.ROOT_PATH/src/config/extend.js 
+const mock = require('think-mock');
+
+module.exports = [
+  mock(think.app),
+];
+
+```
+
+2. Config mock path, or use default
 ```js
   // config.js
   mock: path.join(think.ROOT_PATH, 'mock'), // default
 ```
 
-2. Create mock file
+3. Create mock file
 
 ```js
   // think.ROOT_PATH/mock/user/index.js
@@ -30,7 +42,7 @@ is used!Replace them with corresponding plugin if babel6 is used in your project
   }
 ```
 
-3. Add mock to action or method
+4. Add mock to action or method
 
 ```js
 // controller/user.js
