@@ -1,14 +1,15 @@
 const path = require('path');
 
-module.exports = app => {
+module.exports = (app, type) => {
   const think = app.think;
   const isDev = think.env === 'development';
   const mockPath = think.config('mock') || path.join(think.ROOT_PATH, 'mock');
 
-  function mockControllerAction(target, name, descriptor) {
+  function controllerMock(target, name, descriptor) {
     const fn = descriptor.value;
     descriptor.value = function() {
-      if (!isDev) return fn.apply(this, arguments); // 非开发模式禁用mock
+      // 非开发模式禁用mock
+      if (!isDev) return fn.apply(this, arguments);
 
       // 存在 this.action 调用，所以不能直接 this.ctx.controller 来获取 controllerName
       const reg = new RegExp(`${think.ROOT_PATH}(/app)?/controller/(.+)`);
@@ -30,10 +31,11 @@ module.exports = app => {
     return descriptor;
   }
 
-  function mockServiceAction(target, name, descriptor) {
+  function serviceMock(target, name, descriptor) {
     const fn = descriptor.value;
     descriptor.value = function() {
-      if (!isDev) return fn.apply(this, arguments); // 非开发模式禁用mock
+      // 非开发模式禁用mock
+      if (!isDev) return fn.apply(this, arguments);
 
       const reg = new RegExp(`${think.ROOT_PATH}(/app)?/service/(.+)`);
       const serviceName = ((this.__filename.match(reg) || [])[2] || '').replace(/\.[^/.]+$/, '');
@@ -53,9 +55,6 @@ module.exports = app => {
     return descriptor;
   }
 
-  return {
-    mockControllerAction,
-    mockServiceAction,
-  }
+  if (type === 'controller') return controllerMock;
+  if (type === 'service') return serviceMock;
 };
-

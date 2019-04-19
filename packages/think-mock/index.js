@@ -1,14 +1,13 @@
-const { mockControllerAction, mockServiceAction } = require('./lib/mock');
+const mock = require('./lib/mock');
 
 module.exports = app => {
-
   return {
     controller: {
-      mock: mockControllerAction,
+      mock: mock(app, 'controller'),
     },
 
-    server: {
-      mock: mockServiceAction,
+    service: {
+      mock: mock(app, 'service'),
     }
   }
 };
