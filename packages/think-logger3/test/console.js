@@ -12,7 +12,7 @@ test.before('console logger', () => {
 });
 
 test('console logger', t => {
-  const funcNames = ['debug', 'info', 'warn', 'error'];
+  const funcNames = ['trace', 'debug', 'info', 'warn', 'error'];
   const logger = new Logger({handle: Adapter});
 
   t.plan(funcNames.length);
