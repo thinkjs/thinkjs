@@ -8,6 +8,10 @@ module.exports = class {
     this.setLogger(logConfig);
   }
 
+  trace(...args) {
+    return this[_logger].trace(...args);
+  }
+
   debug(...args) {
     return this[_logger].debug(...args);
   }

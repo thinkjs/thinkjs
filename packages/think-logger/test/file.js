@@ -23,7 +23,7 @@ test('file logger', async t => {
     filename
   });
 
-  const funcs = ['debug', 'info', 'warn', 'error'];
+  const funcs = ['trace', 'debug', 'info', 'warn', 'error'];
   funcs.forEach(func => logger[func]('Hello World'));
 
   await sleep(500);
