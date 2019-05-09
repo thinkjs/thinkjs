@@ -50,7 +50,7 @@ test('constructor function', async t => {
   const instance = mysql.getInstance(config);
   const conn = await instance.getConnection();
   const keys = Object.keys(instance.config).sort();
-  t.deepEqual(keys, [ 'connectionLimit', 'database', 'host', 'logConnect', 'logSql', 'logger', 'password', 'port', 'user' ]);
+  t.deepEqual(keys, [ 'acquireWaitTimeout', 'connectionLimit', 'database', 'host', 'logConnect', 'logSql', 'logger', 'password', 'port', 'user' ]);
   t.is(helper.isEmpty(instance.config), false);
   t.is(helper.isEmpty(instance.pool), false);
   t.is(helper.isEmpty(conn), false);
