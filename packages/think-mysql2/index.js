@@ -18,7 +18,8 @@ const defaultConfig = {
   connectionLimit: 1,
   logger: console.log.bind(console), /* eslint no-console: ["error", { allow: ["log"] }] */
   logConnect: false,
-  logSql: false
+  logSql: false,
+  acquireWaitTimeout: 0
 };
 
 /**
@@ -70,7 +71,22 @@ class ThinkMysql {
    */
   getConnection(connection) {
     if (connection && !connection[CONNECTION_LOST]) return Promise.resolve(connection);
-    const promise = helper.promisify(this.pool.getConnection, this.pool)();
+    let promise;
+    if (this.config.acquireWaitTimeout) {
+      promise = new Promise((resolve, reject) => {
+        this.pool.getConnection((err, connection) => {
+          if (err) reject(err);
+          else resolve(connection);
+        });
+        setTimeout(() => {
+          const err = new Error('acquireWaitTimeout: ' + this.config.acquireWaitTimeout + 'ms');
+          err.code = 'ACQUIRE_WAIT_TIMEOUT';
+          reject(err);
+        }, this.config.acquireWaitTimeout);
+      });
+    } else {
+      promise = helper.promisify(this.pool.getConnection, this.pool)();
+    }
     if (this.config.afterConnect) {
       return promise.then(connection => {
         return this.config.afterConnect(connection).then(() => connection);
