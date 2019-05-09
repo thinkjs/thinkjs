@@ -56,7 +56,7 @@ module.exports = class MysqlSchema extends Schema {
     if (SCHEMAS[cacheKey]) return Promise.resolve(SCHEMAS[cacheKey]);
     return debounce.debounce(`getTable${table}Schema`, () => {
       const columnSql = `SHOW COLUMNS FROM ${this.parser.parseKey(table)}`;
-      return this.query.query(columnSql).catch(() => []).then(data => {
+      return this.query.query(columnSql).then(data => {
         let ret = {};
         data.forEach(item => {
           ret[item.Field] = {
