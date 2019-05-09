@@ -100,7 +100,9 @@ test('schema get empty schema', async t => {
   const schema = new Schema({});
   schema.query = new Query();
   schema.parser = new Parser();
-  const result = await schema.getSchema();
+  const result = await schema.getSchema().catch(() => {
+    return {};
+  });
   t.deepEqual(result, {});
 });
 
@@ -108,10 +110,14 @@ test('schema get empty schema 2', async t => {
   const schema = new Schema({});
   schema.query = new Query();
   schema.parser = new Parser();
-  const result = await schema.getSchema();
-  const result2 = await schema.getSchema();
+  const result = await schema.getSchema().catch(() => {
+    return {};
+  });
+  const result2 = await schema.getSchema().catch(() => {
+    return {};
+  });
   t.deepEqual(result, {});
-  t.is(result, result2);
+  t.deepEqual(result, result2);
 });
 
 test('schema get normal schema', async t => {
