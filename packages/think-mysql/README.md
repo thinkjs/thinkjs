@@ -26,7 +26,8 @@ const defaultConfig = {
   multipleStatements: true,
   logger: console.log.bind(console),
   logConnect: false,
-  logSql: false
+  logSql: false,
+  acquireWaitTimeout: 0 // if set timeout, it will be throw an error after get connection timeout
 };
 ```
 
