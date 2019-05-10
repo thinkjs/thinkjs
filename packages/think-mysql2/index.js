@@ -77,8 +77,9 @@ class ThinkMysql {
         this.pool.getConnection((err, connection) => {
           if (err) reject(err);
           else resolve(connection);
+          clearTimeout(timer);
         });
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           const err = new Error('acquireWaitTimeout: ' + this.config.acquireWaitTimeout + 'ms');
           err.code = 'ACQUIRE_WAIT_TIMEOUT';
           reject(err);
