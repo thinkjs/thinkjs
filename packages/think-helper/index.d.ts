@@ -8,7 +8,7 @@
 declare namespace ThinkHelper {
   interface Defer {
     promise: Promise<any>,
-    resove: Function,
+    resolve: Function,
     reject: Function
   }
   export function camelCase(str: any): any;
