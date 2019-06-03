@@ -90,7 +90,7 @@ class ThinkMysql {
     }
     if (this.config.afterConnect) {
       return promise.then(connection => {
-        return this.config.afterConnect(connection).then(() => connection);
+        return Promise.resolve(this.config.afterConnect(connection)).then(() => connection);
       });
     }
     return promise;
