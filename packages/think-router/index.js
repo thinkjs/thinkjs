@@ -48,22 +48,26 @@ const formatRule = rule => {
 const formatRouters = routers => {
   if (helper.isArray(routers)) {
     return routers.map(item => {
+      if (item.isFormatted) return item;
       if (item.rules) {
         item.match = pathToRegexp(item.match);
         item.rules = item.rules.map(rule => {
           return formatRule(rule);
         });
-        return item;
       } else {
-        return formatRule(item);
+        item = formatRule(item);
       }
+      item.isFormatted = 1;
+      return item;
     });
   }
   for (const m in routers) {
+    if (routers[m].isFormatted) continue;
     if (routers[m].match) {
       routers[m].match = pathToRegexp(routers[m].match);
     }
     routers[m].rules = formatRouters(routers[m].rules);
+    routers[m].isFormatted = 1;
   }
 
   return routers;
@@ -87,14 +91,17 @@ module.exports = function parseRouter(options, app) {
     });
     options.subdomain = subdomain;
   }
-  // format routers when app ready
-  app.once('appReady', () => {
-    app.routers = formatRouters(app.routers);
-  });
+
   // format routers when routerChange event fired
   app.on('routerChange', routers => {
     app.routers = formatRouters(routers);
   });
+
+  // format routers when app ready
+  app.once('appReady', () => {
+    app.routers = formatRouters(app.routers);
+  });
+
   return function router(ctx, next) {
     const instance = new Router(ctx, next, options);
     return instance.run();

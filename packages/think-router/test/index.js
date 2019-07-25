@@ -79,6 +79,32 @@ test.serial.beforeEach(t => {
   RESULT = {};
 });
 
+test.serial.cb('multiple modules2', t => {
+  const options = helper.extend({}, defaultOptions);
+  const ctx = helper.extend({}, defaultCtx);
+  const app = helper.extend({}, defaultApp, {
+    modules: ['admin'],
+    controllers: {
+      admin: {
+        article: {
+          listAction() {}
+        }
+      }
+    },
+    routers: {'admin': {'match': /^admin*/, 'rules': [{'path': 'admin/article/list', 'method': 'GET', 'options': {}, 'query': [], 'isFormatted': 1}], 'isFormatted': 1}}
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'admin',
+      controller: 'article',
+      action: 'list'
+    });
+    t.end();
+  });
+});
+
 test.serial.cb('default options', t => {
   const options = helper.extend({}, defaultOptions);
   const ctx = helper.extend({}, defaultCtx);
@@ -1290,6 +1316,41 @@ test.serial.cb('routerChange', t => {
     on: function(event, cb) {
       // eslint-disable-next-line
       cb(['^/admin/article/list', 'admin/article/list', 'get']);
+    }
+  });
+
+  ctx.app = app;
+  parseRouter(options, app)(ctx, next).then(data => {
+    t.deepEqual(RESULT, {
+      module: 'defaultModule',
+      controller: 'defaultController',
+      action: 'defaultAction'
+    });
+    t.end();
+  });
+});
+
+test.serial.cb('routerChange2', t => {
+  const options = helper.extend({}, defaultOptions);
+  const ctx = helper.extend({}, defaultCtx, {
+    path: ''
+  });
+  const app = helper.extend({}, defaultApp, {
+    modules: ['admin', 'home'],
+    on: function(event, cb) {
+      // eslint-disable-next-line
+      cb(['^/admin/article/list', 'admin/article/list', 'get']);
+
+      // eslint-disable-next-line
+      cb(
+        [{
+          match: /^\/about(?:\/(?=$))?$/,
+          path: 'monitor/alive',
+          method: undefined,
+          options: {},
+          query: [],
+          isFormatted: 1
+        }]);
     }
   });
 
