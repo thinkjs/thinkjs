@@ -46,7 +46,7 @@ class Watcher {
   }
   /**
    * build Options
-   * @param {Object} options 
+   * @param {Object} options
    */
   buildOptions(options = {}) {
     if (helper.isString(options)) {
@@ -88,11 +88,13 @@ class Watcher {
         diffFiles = helper.getdirFiles(diffPath).filter(file => {
           return options.filter({path: diffPath, file}, options);
         });
-        this.removeDeletedFiles(srcFiles, diffFiles, diffPath);
+        if (srcPath !== diffPath) {
+          this.removeDeletedFiles(srcFiles, diffFiles, diffPath);
+        }
       }
       srcFiles.forEach(file => {
         const mtime = fs.statSync(path.join(srcPath, file)).mtime.getTime();
-        if (diffPath) {
+        if (diffPath && diffPath !== srcPath) {
           let diffFile = '';
           diffFiles.some(dfile => {
             if (this.removeFileExtName(dfile) === this.removeFileExtName(file)) {

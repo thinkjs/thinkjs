@@ -385,7 +385,7 @@ test('getChangedFiles function -- watch file change', async(t) => {
 
   await sleep(1000);
 
-  fs.writeFile(path.resolve(__dirname, 'tmp1', 'admin','admin1.js'),"console.log('Hello thinkjs!')");
+  fs.writeFile(path.resolve(__dirname, 'tmp1', 'admin','admin1.js'),"console.log('Hello thinkjs!')", () =>{} );
 
   await sleep(1000);
 
