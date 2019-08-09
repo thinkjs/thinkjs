@@ -13,7 +13,7 @@ module.exports = function({projectName, template, clone, isMultiModule}) {
       isMultiModule
     });
 
-    files['package.json'].contents = Buffer.from(JSON.stringify(json, null, '  '), 'binary');
+    files['package.json'].contents = Buffer.from(JSON.stringify(json, null, '  '), 'utf8');
     done();
   };
 };
