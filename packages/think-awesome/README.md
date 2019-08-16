@@ -99,5 +99,6 @@ Awesome projects for `ThinkJS 3.x`
 * [thinkjsplus](https://github.com/wuyanwen/thinkjsplus) - 一款基于 ThinkJS 3 从入门到实践的记事本项目，很适合新手实战
 * [NideShop](https://github.com/tumobi/nideshop) - 基于 ThinkJS+MySQL 开发的开源微信小程序商城
 * [CmPage](https://gitee.com/defans/cmpage) - 企业信息化开发框架，包括账套、用户权限等管理模块，轻量级工作流引擎，以及业务模块的快速开发等
+* [weekly](https://github.com/saucxs/weekly) - 周报系统，企业管理系统，各级负责人（4级权限控制）向上汇报每周工作和完成情况，以及下属的统计情况，适合新手学习。
 ----
 If you have projects created by ThinkJS, please pull request.
