@@ -10,14 +10,19 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macOS-latest']
+        node: [8, 10, 12]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm test
+      - run: npm install coveralls && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls
 
   publish-npm:
     needs: build
@@ -28,6 +33,8 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-      - run: npm publish
+      - run: npm install
+      - run: npm run semantic-release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+          GITHUB_TOKEN: ${{ secrets.git_token }}
