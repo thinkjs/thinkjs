@@ -622,7 +622,7 @@ module.exports = class Model {
 
     if (!count) {
       this.options = options;
-      count = await this.count(`\`${table}\`.${this.pk}`);
+      count = await this.count(`${this[QUOTE_FIELD](table)}.${this.pk}`);
     }
 
     options.limit = options.limit || [0, this.config.pagesize || 10];
