@@ -594,6 +594,7 @@ module.exports = class Model {
     let fields = data[0].field;
     if (!fields) {
       fields = await this.db().getSchema();
+      fields = Object.keys(fields);
     }
     return this.db().selectAdd(fields, data[0].table, data[1]);
   }
