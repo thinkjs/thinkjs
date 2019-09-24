@@ -593,8 +593,8 @@ module.exports = class Model {
     const data = await Promise.all([this.parseOptions(), promise]);
     let fields = data[0].field;
     if (!fields) {
-      fields = await this.db().getSchema();
-      fields = Object.keys(fields);
+      const schema = await this.db().getSchema();
+      fields = Object.keys(schema);
     }
     return this.db().selectAdd(fields, data[0].table, data[1]);
   }
