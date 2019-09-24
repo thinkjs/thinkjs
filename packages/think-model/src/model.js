@@ -698,6 +698,7 @@ module.exports = class Model {
    * @return {Promise} []
    */
   increment(field, step = 1) {
+    step = parseFloat(step);
     let data = {};
     if (helper.isArray(field)) {
       field.forEach(item => {
@@ -719,6 +720,7 @@ module.exports = class Model {
    * @return {} []
    */
   decrement(field, step = 1) {
+    step = parseFloat(step);
     let data = {};
     if (helper.isArray(field)) {
       field.forEach(item => {
