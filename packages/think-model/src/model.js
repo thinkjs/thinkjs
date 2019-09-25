@@ -431,7 +431,10 @@ module.exports = class Model {
     let parsedData = await this.db().parseData(data, false, options.table);
     parsedData = await this.beforeAdd(parsedData, options);
     if (helper.isEmpty(parsedData)) return Promise.reject(new Error('add data is empty'));
-    const lastInsertId = await this.db().add(parsedData, options, replace);
+    if (replace) {
+      options.replace = replace;
+    }
+    const lastInsertId = await this.db().add(parsedData, options);
     const copyData = Object.assign({}, data, parsedData, {[this.pk]: lastInsertId});
     await this.afterAdd(copyData, options);
     return lastInsertId;
@@ -481,7 +484,10 @@ module.exports = class Model {
       return this.beforeAdd(item, options);
     });
     data = await Promise.all(promises);
-    const insertIds = await this.db().addMany(data, options, replace);
+    if (replace) {
+      options.replace = replace;
+    }
+    const insertIds = await this.db().addMany(data, options);
     promises = data.map((item, i) => {
       item[this.pk] = insertIds[i];
       return this.afterAdd(item, options);
