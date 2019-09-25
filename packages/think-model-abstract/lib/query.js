@@ -145,6 +145,7 @@ module.exports = class AbstractQuery {
       table,
       fields: fields.join(','),
       values: options,
+      replace: options.replace,
       ignore: options.ignore
     });
     return this.execute(sql);
