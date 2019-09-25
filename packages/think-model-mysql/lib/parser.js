@@ -49,10 +49,10 @@ module.exports = class MysqlParser extends Parser {
    * get insert sql
    * @param {Object} options
    */
-  buildInsertSql(options, replace) {
+  buildInsertSql(options) {
     const isUpdate = helper.isObject(options.update) || helper.isArray(options.update);
-    if (replace || !isUpdate) {
-      return super.buildInsertSql(options, replace);
+    if (options.replace || !isUpdate) {
+      return super.buildInsertSql(options);
     }
 
     const table = this.parseTable(options.table);
