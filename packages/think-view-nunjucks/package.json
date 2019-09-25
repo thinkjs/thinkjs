@@ -1,6 +1,6 @@
 {
   "name": "think-view-nunjucks",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "think-view-nunjucks for ThinkJS",
   "main": "index.js",
   "scripts": {
@@ -44,7 +44,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "nunjucks": "~3.0.0",
+    "nunjucks": "~3.2.0",
     "think-helper": "~1.0.0"
   }
 }
