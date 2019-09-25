@@ -620,9 +620,12 @@ module.exports = class AbstractParser {
    * get insert sql
    * @param {Object} options
    */
-  buildInsertSql(options, replace) {
+  buildInsertSql(options) {
     const table = this.parseTable(options.table);
-    const sql = replace ? 'REPLACE' : 'INSERT';
+    let sql = options.replace ? 'REPLACE' : 'INSERT';
+    if (sql === 'INSERT' && options.ignore) {
+      sql += ' IGNORE';
+    }
     const insertSql = `${sql} INTO ${table} (${options.fields})`;
     if (helper.isString(options.values)) {
       let values = options.values;

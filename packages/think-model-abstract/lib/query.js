@@ -47,7 +47,7 @@ module.exports = class AbstractQuery {
    * @param {Object} data
    * @param {Object} options
    */
-  add(data, options, replace) {
+  add(data, options = {}) {
     const values = [];
     const fields = [];
     const parser = this.parser;
@@ -78,7 +78,7 @@ module.exports = class AbstractQuery {
 
     options.fields = fields.join(',');
     options.values = values.join(',');
-    const sql = this.parser.buildInsertSql(options, replace);
+    const sql = this.parser.buildInsertSql(options);
     return this.execute(sql).then(() => this.lastInsertId);
   }
   /**
@@ -87,7 +87,7 @@ module.exports = class AbstractQuery {
    * @param  {Object} options []
    * @return {Promise}         []
    */
-  addMany(data, options, replace) {
+  addMany(data, options = {}) {
     const parser = this.parser;
 
     let fields = Object.keys(data[0]);
@@ -121,7 +121,7 @@ module.exports = class AbstractQuery {
 
     options.fields = fields.join(',');
     options.values = values;
-    const sql = this.parser.buildInsertSql(options, replace);
+    const sql = this.parser.buildInsertSql(options);
     return this.execute(sql).then(() => {
       return data.map((item, index) => {
         return this.lastInsertId ? this.lastInsertId + index : 0;
@@ -144,7 +144,8 @@ module.exports = class AbstractQuery {
     const sql = this.parser.buildInsertSql({
       table,
       fields: fields.join(','),
-      values: options
+      values: options,
+      ignore: options.ignore
     });
     return this.execute(sql);
   }

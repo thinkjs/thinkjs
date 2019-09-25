@@ -1244,7 +1244,31 @@ ava.test('buildInsertSql', t => {
   const sql = instance.buildInsertSql({
     table: 'user',
     values: '1,lizheming',
-    fields: 'id,name'
-  }, true);
+    fields: 'id,name',
+    replace: true
+  });
+  t.is(sql, 'REPLACE INTO `user` (id,name) VALUES (1,lizheming)');
+});
+
+ava.test('buildInsertSql 2', t => {
+  const instance = getParserInstance();
+  const sql = instance.buildInsertSql({
+    table: 'user',
+    values: '1,lizheming',
+    fields: 'id,name',
+    ignore: true
+  });
+  t.is(sql, 'INSERT IGNORE INTO `user` (id,name) VALUES (1,lizheming)');
+});
+
+ava.test('buildInsertSql 3', t => {
+  const instance = getParserInstance();
+  const sql = instance.buildInsertSql({
+    table: 'user',
+    values: '1,lizheming',
+    fields: 'id,name',
+    replace: true,
+    ignore: true
+  });
   t.is(sql, 'REPLACE INTO `user` (id,name) VALUES (1,lizheming)');
 });

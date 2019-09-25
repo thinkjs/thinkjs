@@ -35,9 +35,9 @@ ava.test('add with update boolean', async t => {
 
   const instance = new Base();
   class NewParser extends Parser {
-    buildInsertSql(options, replace) {
+    buildInsertSql(options) {
       t.deepEqual(options.update, ['name', 'title', 'key']);
-      return super.buildInsertSql(options, replace);
+      return super.buildInsertSql(options);
     }
   }
   Object.defineProperty(instance, 'parser', {
@@ -63,9 +63,9 @@ ava.test('add with update array', async t => {
 
   const instance = new Base();
   class NewParser extends Parser {
-    buildInsertSql(options, replace) {
+    buildInsertSql(options) {
       t.deepEqual(options.update, ['name', 'title', 'key']);
-      return super.buildInsertSql(options, replace);
+      return super.buildInsertSql(options);
     }
   }
   Object.defineProperty(instance, 'parser', {
@@ -91,12 +91,12 @@ ava.test('add with update object', async t => {
 
   const instance = new Base();
   class NewParser extends Parser {
-    buildInsertSql(options, replace) {
+    buildInsertSql(options) {
       t.deepEqual(options.update, {
         name: 3,
         title: 4
       });
-      return super.buildInsertSql(options, replace);
+      return super.buildInsertSql(options);
     }
   }
   Object.defineProperty(instance, 'parser', {
@@ -187,9 +187,9 @@ ava.test('add many with update boolean', async t => {
 
   const instance = new Base();
   class NewParser extends Parser {
-    buildInsertSql(options, replace) {
+    buildInsertSql(options) {
       t.deepEqual(options.update, ['name', 'title', 'key']);
-      return super.buildInsertSql(options, replace);
+      return super.buildInsertSql(options);
     }
   }
   Object.defineProperty(instance, 'parser', {
@@ -219,9 +219,9 @@ ava.test('add many with update array', async t => {
 
   const instance = new Base();
   class NewParser extends Parser {
-    buildInsertSql(options, replace) {
+    buildInsertSql(options) {
       t.deepEqual(options.update, ['name', 'title', 'key']);
-      return super.buildInsertSql(options, replace);
+      return super.buildInsertSql(options);
     }
   }
   Object.defineProperty(instance, 'parser', {
@@ -251,11 +251,11 @@ ava.test('add many with update object', async t => {
 
   const instance = new Base();
   class NewParser extends Parser {
-    buildInsertSql(options, replace) {
+    buildInsertSql(options) {
       t.deepEqual(options.update, {
         name: ['EXP', 'VALUES(name)']
       });
-      return super.buildInsertSql(options, replace);
+      return super.buildInsertSql(options);
     }
   }
   Object.defineProperty(instance, 'parser', {
