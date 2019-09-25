@@ -1,6 +1,6 @@
 {
   "name": "think-model-abstract",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "Abstract adapter for ThinkJS 3.x",
   "scripts": {
     "test": "npm run lint && npm run test-cov",
