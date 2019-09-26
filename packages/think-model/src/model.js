@@ -831,11 +831,9 @@ module.exports = class Model {
       /(?:^|\s)__([A-Z]+)__(?:$|\s)/g,
       (a, b) => {
         if (b === 'TABLE') {
-          return ' ' + this[QUOTE_FIELD](this.tableName) + ' ';
+          return ` ${this[QUOTE_FIELD](this.tableName)} `;
         }
-        return (
-          ' ' + this[QUOTE_FIELD](this.tablePrefix + b.toLowerCase()) + ' '
-        );
+        return ` ${this[QUOTE_FIELD](this.tablePrefix + b.toLowerCase())} `;
       }
     );
     return sqlOptions;
