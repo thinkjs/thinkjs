@@ -759,7 +759,7 @@ module.exports = class Model {
    */
   count(field) {
     field = this[QUOTE_FIELD](field);
-    return this.getField('COUNT(' + field + ') AS think_count', true);
+    return this.getField(`COUNT(${field}) AS think_count`, true);
   }
   /**
    * get sum
@@ -768,7 +768,7 @@ module.exports = class Model {
    */
   sum(field) {
     field = this[QUOTE_FIELD](field);
-    return this.getField('SUM(' + field + ') AS think_sum', true);
+    return this.getField(`SUM(${field}) AS think_sum`, true);
   }
   /**
    * get min value
@@ -777,7 +777,7 @@ module.exports = class Model {
    */
   min(field) {
     field = this[QUOTE_FIELD](field);
-    return this.getField('MIN(' + field + ') AS think_min', true);
+    return this.getField(`MIN(${field}) AS think_min`, true);
   }
   /**
    * get max valud
@@ -786,7 +786,7 @@ module.exports = class Model {
    */
   max(field) {
     field = this[QUOTE_FIELD](field);
-    return this.getField('MAX(' + field + ') AS think_max', true);
+    return this.getField(`MAX(${field}) AS think_max`, true);
   }
   /**
    * get value average
@@ -795,7 +795,7 @@ module.exports = class Model {
    */
   avg(field) {
     field = this[QUOTE_FIELD](field);
-    return this.getField('AVG(' + field + ') AS think_avg', true);
+    return this.getField(`AVG(${field}) AS think_avg`, true);
   }
   /**
    * query
