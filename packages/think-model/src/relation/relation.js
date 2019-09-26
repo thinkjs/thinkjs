@@ -92,7 +92,7 @@ class Relation {
       if (helper.isEmpty(instance)) return;
       return instance.setRelationData(type);
     });
-    await Promise.all(promises);
+    return Promise.all(promises);
   }
   /**
    * get relation data
