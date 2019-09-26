@@ -68,8 +68,7 @@ module.exports = class ManyToManyRelation extends BaseRelation {
         [this.options.fKey]: this.data[this.options.key],
         [rfKey]: val[rfKey] || val
       }));
-      await relationModel.addMany(data);
+      return relationModel.addMany(data);
     }
-    // add relation data then add relation
   }
 };
