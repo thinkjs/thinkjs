@@ -35,9 +35,9 @@ module.exports = app => {
   };
   /**
    * inject model method
-   * @param {String} name 
-   * @param {Object} config 
-   * @param {String} m 
+   * @param {String} name
+   * @param {Object} config
+   * @param {String} m
    */
   function injectModel(name, config, m) {
     const modelConfig = app.think.config('model', undefined, m);
