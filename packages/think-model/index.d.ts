@@ -91,7 +91,7 @@ declare namespace ThinkModel {
     /**
      * set lock options
      */
-    lock(value: string): Model;
+    lock(value: boolean): Model;
     /**
      * set auto options
      */
