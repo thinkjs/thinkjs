@@ -52,7 +52,7 @@ class MysqlSession {
     }
 
     this.initPromise = this.mysql.query({
-      sql: `SELECT * FROM ${this.tableName} WHERE cookie = ? `,
+      sql: `SELECT * FROM \`${this.tableName}\` WHERE cookie = ? `,
       values: [this.options.cookie]
     }).then(row => {
       if (row.length === 0) return;
@@ -114,7 +114,7 @@ class MysqlSession {
       this.status = 0;
       // delete data
       this.mysql.execute({
-        sql: `DELETE FROM ${this.tableName} WHERE cookie=?`,
+        sql: `DELETE FROM \`${this.tableName}\` WHERE cookie=?`,
         values: [this.options.cookie]
       });
     } else if (this.status === 1) {
@@ -123,7 +123,7 @@ class MysqlSession {
       const expire = Date.now() + this.maxAge;
       const fields = [this.options.cookie, JSON.stringify(this.data), expire, this.maxAge];
       this.mysql.execute({
-        sql: `INSERT INTO ${this.tableName} (cookie, data, expire, maxage) VALUES(?, ?, ?, ?) 
+        sql: `INSERT INTO \`${this.tableName}\` (cookie, data, expire, maxage) VALUES(?, ?, ?, ?) 
             ON DUPLICATE KEY UPDATE data=?, expire=?, maxage=?`,
         values: [...fields, fields[1], fields[2], fields[3]]
       });
@@ -133,7 +133,7 @@ class MysqlSession {
 
   gc() {
     return this.mysql.execute({
-      sql: `DELETE FROM ${this.tableName} WHERE expire < ${Date.now()}`
+      sql: `DELETE FROM \`${this.tableName}\` WHERE expire < ${Date.now()}`
     });
   }
 }
