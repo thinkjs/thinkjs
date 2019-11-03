@@ -43,7 +43,7 @@
   "devDependencies": {
     "ava": "^0.25.0",
     "coveralls": "^3.0.2",
-    "eslint": "^3.19.0",
+    "eslint": "^4.18.2",
     "eslint-config-think": "^1.0.1",
     "nyc": "^13.0.0"
   }
