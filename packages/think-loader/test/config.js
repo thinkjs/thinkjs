@@ -70,7 +70,7 @@ test('load config isMultiModule === true', t => {
     'env',
     'adapter',
     path.join('appPath/common/adapter'),
-  { type: 'load adapter' },
+    { type: 'load adapter' },
     'load adapter result',
     extendParams2,
     'env',
@@ -79,7 +79,7 @@ test('load config isMultiModule === true', t => {
     'env',
     'adapter',
     path.join('appPath/common/adapter'),
-  { type: 'load adapter' },
+    { type: 'load adapter' },
     'load adapter result' ]);
 
   const expect = {
@@ -104,9 +104,9 @@ test('load config isMultiModule === false', t => {
 
   const paths = [path.join('appPath', 'config')];
   t.deepEqual(depsCalledParams, [
-    paths, 'env', undefined,  // loadConfig has been called with {paths, 'env'}
-    [path.join('thinkPath', 'lib/config')], 'env', 'adapter',  // loadConfig thinkAdapterConfig
-    paths, 'env', 'adapter',  // loadConfig adapter
+    paths, 'env', undefined, // loadConfig has been called with {paths, 'env'}
+    [path.join('thinkPath', 'lib/config')], 'env', 'adapter', // loadConfig thinkAdapterConfig
+    paths, 'env', 'adapter', // loadConfig adapter
     path.join('appPath', 'adapter'), // loadAdapter                             // loadAdapter config has been called with {paths, 'env'}
     {type: 'load adapter'}, 'load adapter result' // formatAdapter has been called with 'adapter call result'
   ]);

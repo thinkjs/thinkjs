@@ -57,7 +57,7 @@ test('middleware will be filter when !!enable is false', t => {
   const result = instance.parse([
     {
       handle: 'handler1',
-      options: 'options not filter2'  // not filter
+      options: 'options not filter2' // not filter
     },
     {
       handle: 'handler2',
@@ -87,7 +87,7 @@ test('middleware will pass options', t => {
   instance.parse([
     {
       handle: 'handler1',
-      options: 'options not filter2'  // not filter
+      options: 'options not filter2' // not filter
     },
     {
       handle: 'handler2'

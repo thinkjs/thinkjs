@@ -5,7 +5,7 @@ test.beforeEach(t => {
   const fs = require('fs');
   fs.___readdirSync = fs.readdirSync;
   fs.___statSync = fs.statSync;
-    // This runs after each test and other test hooks, even if they failed
+  // This runs after each test and other test hooks, even if they failed
 });
 
 function mockFs(t, isCommonConfigDirectory) {

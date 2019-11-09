@@ -86,7 +86,7 @@ test('extend 3', t => {
       this.aaa = value;
     }
   };
-  const target = {  /* eslint accessor-pairs: ["error", { "setWithoutGet": false }] */
+  const target = { /* eslint accessor-pairs: ["error", { "setWithoutGet": false }] */
     set a(value) {
       this.bbb = 22;
     }

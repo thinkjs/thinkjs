@@ -55,11 +55,11 @@ function createTest1(isFile, modules, path) {
   };
 }
 test('return [] when no middleware.js, isMultiModule = true',
- createTest1(false, ['admin'], path.join('appPath', 'common/config/middleware.js'))
+  createTest1(false, ['admin'], path.join('appPath', 'common/config/middleware.js'))
 );
 
 test('return [] when no middleware.js, isMultiModule = false',
- createTest1(false, [], path.join('appPath', 'config/middleware.js'))
+  createTest1(false, [], path.join('appPath', 'config/middleware.js'))
 );
 
 test('load middleware isMultiModule === true', t => {
