@@ -30,8 +30,9 @@
   ],
   "dependencies": {
     "debug": "^2.6.1",
+    "path-to-regexp": "^1.7.0",
     "think-helper": "^1.0.0",
-    "path-to-regexp": "^1.7.0"
+    "thinkjs": "^3.2.10"
   },
   "devDependencies": {
     "ava": "^0.18.2",
