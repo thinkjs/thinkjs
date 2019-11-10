@@ -10,7 +10,7 @@ const SYS_MIDDLEWARES = {
   logic: require('thinkjs/lib/middleware/logic'),
   meta: require('thinkjs/lib/middleware/meta'),
   payload: require('thinkjs/lib/middleware/payload'),
-  resource: require('thinkjs/lib/middleware/router'),
+  resource: require('thinkjs/lib/middleware/resource'),
   router: require('thinkjs/lib/middleware/router'),
   trace: require('thinkjs/lib/middleware/trace')
 };
