@@ -35,14 +35,13 @@ function mockFs(t, isCommonConfigDirectory) {
 }
 
 function createLoader() {
-  return new Loader('appPath', 'thinkPath');
+  return new Loader('appPath');
 }
 
 test('Loader constructor properly set paths', t => {
   mockFs(t, false);
   var loader = createLoader();
   t.is(loader.appPath, 'appPath');
-  t.is(loader.thinkPath, 'thinkPath');
 });
 
 function testIsMultiModule(isCommonConfigDirectory, modules) {

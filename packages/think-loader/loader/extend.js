@@ -29,7 +29,7 @@ const ExtendLoader = {
   load(appPath, modules) {
     const allowExtends = ExtendLoader.allowExtends;
 
-    let extend = {};
+    let extend = [];
     const filepath = path.join(appPath, modules.length ? 'common/config/extend.js' : 'config/extend.js');
     if (helper.isFile(filepath)) {
       debug(`load file: ${filepath}`);

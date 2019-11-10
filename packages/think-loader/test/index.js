@@ -10,11 +10,10 @@ function createLoader(modules = 'modules') {
 
 test('loadConfig will pass the right params and return', t => {
   mock('../loader/config.js', class config {
-    load(a, b, c, d) {
+    load(a, b, c) {
       t.is(a, 'apppath');
-      t.is(b, 'thinkpath');
-      t.is(c, 'env');
-      t.is(d, 'modules');
+      t.is(b, 'env');
+      t.is(c, 'modules');
       return 'config';
     }
   });
@@ -63,11 +62,10 @@ test('loadCommon will pass the right params and return', testCommon('loadCommon'
 
 test('loadMiddleware will pass the right params and return', t => {
   mock('../loader/middleware.js', class middleware {
-    load(a, b, c, d) {
+    load(a, b, c) {
       t.is(a, 'apppath');
-      t.is(b, 'thinkpath');
-      t.is(c, 'modules');
-      t.is(d, 'app');
+      t.is(b, 'modules');
+      t.is(c, 'app');
       return 'middleware';
     }
   });
@@ -76,11 +74,12 @@ test('loadMiddleware will pass the right params and return', t => {
 });
 
 test('loadRouter will pass the right params and return', t => {
-  mock('../loader/router.js', {load: function(a, b) {
-    t.is(a, 'apppath');
-    t.is(b, 'modules');
-    return 'router';
-  }
+  mock('../loader/router.js', {
+    load: function(a, b) {
+      t.is(a, 'apppath');
+      t.is(b, 'modules');
+      return 'router';
+    }
   });
   var loader = createLoader();
   t.is(loader.loadRouter(), 'router');
