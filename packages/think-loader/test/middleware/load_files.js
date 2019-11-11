@@ -5,7 +5,7 @@ function mockGetFiles(instance) {
   callGetMidFilesParams = [];
   instance.getFiles = function(a) {
     callGetMidFilesParams.push(a);
-    return {[callGetMidFilesParams.length]: 'value'};
+    return { [callGetMidFilesParams.length]: 'value' };
   };
   return callGetMidFilesParams;
 }
@@ -18,29 +18,39 @@ function getInstance() {
 test('loadFiles isMultiModule === true', t => {
   const middleware = getInstance();
   const params = mockGetFiles(middleware);
-  const result = middleware.loadFiles('appPath', true, 'thinkPath');
+  const result = middleware.loadFiles('appPath', true);
   t.deepEqual(params, [
-    path.join('thinkPath', 'lib/middleware'),
     path.join('appPath', 'common/middleware')
   ]);
 
   t.deepEqual(result, {
     1: 'value',
-    2: 'value'
+    controller: require('thinkjs/lib/middleware/controller'),
+    logic: require('thinkjs/lib/middleware/logic'),
+    meta: require('thinkjs/lib/middleware/meta'),
+    payload: require('thinkjs/lib/middleware/payload'),
+    resource: require('thinkjs/lib/middleware/router'),
+    router: require('thinkjs/lib/middleware/router'),
+    trace: require('thinkjs/lib/middleware/trace')
   });
 });
 
 test('loadFiles isMultiModule === false', t => {
   const middleware = getInstance();
   const params = mockGetFiles(middleware);
-  const result = middleware.loadFiles('appPath', false, 'thinkPath');
+  const result = middleware.loadFiles('appPath', false);
   t.deepEqual(params, [
-    path.join('thinkPath', 'lib/middleware'),
     path.join('appPath', 'middleware')
   ]);
 
   t.deepEqual(result, {
     1: 'value',
-    2: 'value'
+    controller: require('thinkjs/lib/middleware/controller'),
+    logic: require('thinkjs/lib/middleware/logic'),
+    meta: require('thinkjs/lib/middleware/meta'),
+    payload: require('thinkjs/lib/middleware/payload'),
+    resource: require('thinkjs/lib/middleware/router'),
+    router: require('thinkjs/lib/middleware/router'),
+    trace: require('thinkjs/lib/middleware/trace')
   });
 });

@@ -66,7 +66,7 @@ function mockUtil(contents) {
 }
 
 function createTest(modules, isFiles, fileContents,
- formatRouterCallParams, expectResult, expectAssertParams = []) {
+  formatRouterCallParams, expectResult, expectAssertParams = []) {
   return t => {
     var assertParams = [];
     mock('assert', function(a, b) {

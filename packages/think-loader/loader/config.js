@@ -4,6 +4,8 @@ const interopRequire = require('./util.js').interopRequire;
 const assert = require('assert');
 const debug = require('debug')(`think-loader-config-${process.pid}`);
 
+const SYS_CONFIG = require('thinkjs/lib/config/config');
+
 /**
  * load config
  */
@@ -120,34 +122,41 @@ class Config {
    * src/config/adapter.js
    * src/config/adapter.[env].js
    */
-  load(appPath, thinkPath, env, modules) {
-    const thinkConfig = interopRequire(path.join(thinkPath, 'lib/config/config.js'));
+  load(appPath, env, modules) {
     if (modules.length) {
       const result = {};
-      modules.forEach(dir => {
+      modules.forEach(modName => {
         // merge common & module config
         const paths = [
-          path.join(thinkPath, 'lib/config'),
           path.join(appPath, 'common/config')
         ];
-
-        if (dir !== 'common') {
-          paths.push(path.join(appPath, dir, 'config'));
+        if (modName !== 'common') {
+          paths.push(path.join(appPath, modName, 'config'));
         }
-        const config = this.loadConfig(paths, env);
-        const adapterConfig = this.loadConfig(paths, env, 'adapter');
-        const adapter = this.loadAdapter(path.join(appPath, 'common/adapter'));
-        result[dir] = helper.extend({}, thinkConfig, config, this.formatAdapter(adapterConfig, adapter));
+
+        const config = helper.extend(
+          {}, SYS_CONFIG, this.loadConfig(paths, env, 'config')
+        );
+        const adapter = this.formatAdapter(
+          this.loadConfig(paths, env, 'adapter'),
+          this.loadAdapter(path.join(appPath, 'common/adapter'))
+        );
+        // const adapter = {};
+        result[modName] = helper.extend({}, config, adapter);
       });
       return result;
-    } else {
-      const configPath = [path.join(appPath, 'config')];
-      const config = this.loadConfig(configPath, env);
-      const thinkAdapterConfig = this.loadConfig([path.join(thinkPath, 'lib/config')], env, 'adapter');
-      const adapterConfig = this.loadConfig(configPath, env, 'adapter');
-      const adapter = this.loadAdapter(path.join(appPath, 'adapter'));
-      return helper.extend({}, thinkConfig, config, thinkAdapterConfig, this.formatAdapter(adapterConfig, adapter));
     }
+
+    const paths = [path.join(appPath, 'config')];
+    const config = helper.extend(
+      {}, SYS_CONFIG, this.loadConfig(paths, env, 'config')
+    );
+
+    const adapter = this.formatAdapter(
+      this.loadConfig(paths, env, 'adapter'),
+      this.loadAdapter(path.join(appPath, 'adapter'))
+    );
+    return helper.extend({}, config, adapter);
   }
 }
 

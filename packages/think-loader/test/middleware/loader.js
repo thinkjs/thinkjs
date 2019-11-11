@@ -17,14 +17,14 @@ function mockDeps(instance) {
 
   instance.interopRequire = function(p) {
     if (path.join('appPath', 'common/config/middleware.js') === p) {
-      return {value: 'MultiModuleMiddlewares'};
+      return { value: 'MultiModuleMiddlewares' };
     } else if (path.join('appPath', 'config/middleware.js') === p) {
-      return {value: 'Middlewares'};
+      return { value: 'Middlewares' };
     }
   };
 
-  instance.loadFiles = function(a, b, c) {
-    depsCalledParams.push(a, b, c);
+  instance.loadFiles = function(a, b) {
+    depsCalledParams.push(a, b);
     return 'loadFiles call result';
   };
 
@@ -47,7 +47,7 @@ function createTest1(isFile, modules, path) {
     const instance = createInstance();
     const params = mockDeps(instance);
 
-    const result = instance.load('appPath', 'thinkPath', modules, 'app');
+    const result = instance.load('appPath', modules, 'app');
 
     t.deepEqual(isFileParams, [path]);
     t.deepEqual(params, []);
@@ -55,11 +55,11 @@ function createTest1(isFile, modules, path) {
   };
 }
 test('return [] when no middleware.js, isMultiModule = true',
- createTest1(false, ['admin'], path.join('appPath', 'common/config/middleware.js'))
+  createTest1(false, ['admin'], path.join('appPath', 'common/config/middleware.js'))
 );
 
 test('return [] when no middleware.js, isMultiModule = false',
- createTest1(false, [], path.join('appPath', 'config/middleware.js'))
+  createTest1(false, [], path.join('appPath', 'config/middleware.js'))
 );
 
 test('load middleware isMultiModule === true', t => {
@@ -67,11 +67,11 @@ test('load middleware isMultiModule === true', t => {
   const instance = createInstance();
   const params = mockDeps(instance);
 
-  const result = instance.load('appPath', 'thinkPath', ['admin'], 'app');
+  const result = instance.load('appPath', ['admin'], 'app');
 
   t.deepEqual(params, [
-    'appPath', 1, 'thinkPath',
-    {value: 'MultiModuleMiddlewares'}, 'loadFiles call result', 'app'
+    'appPath', 1,
+    { value: 'MultiModuleMiddlewares' }, 'loadFiles call result', 'app'
   ]);
 
   t.is(result, 'parse call result');
@@ -82,11 +82,11 @@ test('load middleware isMultiModule === false', t => {
   const instance = createInstance();
   const params = mockDeps(instance);
 
-  const result = instance.load('appPath', 'thinkPath', [], 'app');
+  const result = instance.load('appPath', [], 'app');
 
   t.deepEqual(params, [
-    'appPath', 0, 'thinkPath',
-    {value: 'Middlewares'}, 'loadFiles call result', 'app'
+    'appPath', 0,
+    { value: 'Middlewares' }, 'loadFiles call result', 'app'
   ]);
 
   t.is(result, 'parse call result');

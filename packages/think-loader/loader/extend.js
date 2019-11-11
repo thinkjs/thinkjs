@@ -6,6 +6,12 @@ const interopRequire = util.interopRequire;
 const extendObj = util.extend;
 const debug = require('debug')(`think-loader-extend-${process.pid}`);
 
+const SYS_EXTENDS = {
+  context: require('thinkjs/lib/extend/context'),
+  controller: require('thinkjs/lib/extend/controller'),
+  logic: require('thinkjs/lib/extend/logic')
+};
+
 const ExtendLoader = {
 
   allowExtends: ['think', 'application', 'context', 'request', 'response', 'controller', 'logic', 'service'],
@@ -20,15 +26,16 @@ const ExtendLoader = {
    *  modelExtend,
    * ]
    */
-  load(appPath, thinkPath, modules) {
+  load(appPath, modules) {
     const allowExtends = ExtendLoader.allowExtends;
-    const thinkFilePath = path.join(thinkPath, 'lib/config/extend.js');
-    let extend = interopRequire(thinkFilePath);
+
+    let extend = [];
     const filepath = path.join(appPath, modules.length ? 'common/config/extend.js' : 'config/extend.js');
     if (helper.isFile(filepath)) {
       debug(`load file: ${filepath}`);
       extend = extend.concat(interopRequire(filepath));
     }
+
     const ret = {};
     function assign(type, ext) {
       if (!ret[type]) {
@@ -37,14 +44,10 @@ const ExtendLoader = {
       ret[type] = extendObj(ret[type], ext);
     }
     // system extend
-    allowExtends.forEach(type => {
-      const filepath = path.join(thinkPath, `lib/extend/${type}.js`);
-      if (!helper.isFile(filepath)) {
-        return;
-      }
-      debug(`load file: ${filepath}`);
-      assign(type, interopRequire(filepath));
-    });
+    allowExtends
+      .filter(type => SYS_EXTENDS[type])
+      .forEach(type => assign(type, SYS_EXTENDS[type]));
+
     // config extend
     extend.forEach(item => {
       if (helper.isFunction(item)) {

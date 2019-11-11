@@ -18,9 +18,8 @@ class Loader {
   /**
    * constructor
    */
-  constructor(appPath, thinkPath) {
+  constructor(appPath) {
     this.appPath = appPath;
-    this.thinkPath = thinkPath;
     this.modules = [];
     const dir = path.join(appPath, 'common/config');
     if (helper.isDirectory(dir)) {
@@ -34,7 +33,7 @@ class Loader {
    * load config
    */
   loadConfig(env) {
-    return (new Config()).load(this.appPath, this.thinkPath, env, this.modules);
+    return (new Config()).load(this.appPath, env, this.modules);
   }
   /**
    * load bootstrap
@@ -71,7 +70,7 @@ class Loader {
    * load middleware
    */
   loadMiddleware(app) {
-    return (new Middleware()).load(this.appPath, this.thinkPath, this.modules, app);
+    return (new Middleware()).load(this.appPath, this.modules, app);
   }
   /**
    * load router
@@ -83,7 +82,7 @@ class Loader {
    * load extend
    */
   loadExtend() {
-    return extend.load(this.appPath, this.thinkPath, this.modules);
+    return extend.load(this.appPath, this.modules);
   }
   /**
    * load crontab

@@ -5,6 +5,15 @@ const assert = require('assert');
 const pathToRegexp = require('path-to-regexp');
 const debug = require('debug')(`think-loader-middleware-${process.pid}`);
 
+const SYS_MIDDLEWARES = {
+  controller: require('thinkjs/lib/middleware/controller'),
+  logic: require('thinkjs/lib/middleware/logic'),
+  meta: require('thinkjs/lib/middleware/meta'),
+  payload: require('thinkjs/lib/middleware/payload'),
+  resource: require('thinkjs/lib/middleware/resource'),
+  router: require('thinkjs/lib/middleware/router'),
+  trace: require('thinkjs/lib/middleware/trace')
+};
 class Middleware {
   interopRequire(path) {
     return interopRequire(path);
@@ -39,10 +48,10 @@ class Middleware {
   parse(middlewares = [], middlewarePkg = {}, app) {
     return middlewares.map(item => {
       if (helper.isString(item)) {
-        return {handle: item};
+        return { handle: item };
       }
       if (helper.isFunction(item)) {
-        return {handle: () => item};
+        return { handle: () => item };
       }
       return item;
     }).filter(item => {
@@ -87,7 +96,7 @@ class Middleware {
       // has match or ignore
       return (ctx, next) => {
         if ((match && !this.checkMatch(match, ctx)) ||
-            (ignore && this.checkMatch(ignore, ctx))) {
+          (ignore && this.checkMatch(ignore, ctx))) {
           return next();
         }
         return item.handle(ctx, next);
@@ -119,15 +128,14 @@ class Middleware {
   /**
    * load sys and app middlewares
    */
-  loadFiles(appPath, isMultiModule, thinkPath) {
-    const sysMiddlewares = this.getFiles(path.join(thinkPath, 'lib/middleware'));
+  loadFiles(appPath, isMultiModule) {
     const appMiddlewarePath = path.join(appPath, isMultiModule ? 'common/middleware' : 'middleware');
     const appMiddlewares = this.getFiles(appMiddlewarePath);
-    const middlewares = Object.assign({}, sysMiddlewares, appMiddlewares);
+    const middlewares = Object.assign({}, SYS_MIDDLEWARES, appMiddlewares);
     return middlewares;
   }
 
-  load(appPath, thinkPath, modules, app) {
+  load(appPath, modules, app) {
     let filepath = '';
     if (modules.length) {
       filepath = path.join(appPath, 'common/config/middleware.js');
@@ -139,7 +147,7 @@ class Middleware {
     }
     debug(`load file: ${filepath}`);
     const middlewares = this.interopRequire(filepath);
-    return this.parse(middlewares, this.loadFiles(appPath, modules.length, thinkPath), app);
+    return this.parse(middlewares, this.loadFiles(appPath, modules.length), app);
   }
 }
 
