@@ -21,7 +21,7 @@ declare namespace ThinkCache {
      * else mean set cache
      * @memberOf CacheExtend
      */
-    cache(name: string, value?: string, config?: object): Promise<any>;
+    cache(name: string, value?: any, config?: object): Promise<any>;
 
     /**
      * get cache
