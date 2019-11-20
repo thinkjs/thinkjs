@@ -1,5 +1,5 @@
 declare class ThinkViewEjs {
-  constructor(vieFile: string, viewData: Object, config: Object)
+  constructor(viewFile: string, viewData: Object, config: Object)
   render(): string
 }
 
