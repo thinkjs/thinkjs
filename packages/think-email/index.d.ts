@@ -1,21 +1,25 @@
+interface ThinkEmailCtx {
+  sendEmail(transport: object, options: object): Promise<any>;
+}
+
 declare module 'thinkjs' {
-  interface Think extends ThinkEmail.EmailExtend {
+  interface Think extends ThinkEmailCtx {
   }
 
-  interface Context extends ThinkEmail.EmailExtend {
+  interface Context extends ThinkEmailCtx {
   }
 
-  interface Controller extends ThinkEmail.EmailExtend {
+  interface Controller extends ThinkEmailCtx {
   }
 
-  interface Service extends ThinkEmail.EmailExtend {
+  interface Service extends ThinkEmailCtx {
   }
 }
 
 declare namespace ThinkEmail {
-  interface EmailExtend {
-    sendEmail(transport: object, options: object): Promise<any>;
-  }
+  const think: ThinkEmailCtx
+  const controller: ThinkEmailCtx
+  const context: ThinkEmailCtx
 }
 
 export = ThinkEmail;
