@@ -1,25 +1,29 @@
+interface ThinkFetchCtx {
+  /**
+   * Stay consistent with window.fetch API.
+   * @memberOf FetchExtend
+   */
+  fetch(url: string, options?: object): Promise<any>;
+}
 declare module 'thinkjs' {
-  interface Think extends ThinkFetch.FetchExtend {
+  interface Think extends ThinkFetchCtx {
   }
 
-  interface Context extends ThinkFetch.FetchExtend {
+  interface Context extends ThinkFetchCtx {
   }
 
-  interface Controller extends ThinkFetch.FetchExtend {
+  interface Controller extends ThinkFetchCtx {
   }
 
-  interface Service extends ThinkFetch.FetchExtend {
+  interface Service extends ThinkFetchCtx {
   }
 }
 
 declare namespace ThinkFetch {
-  interface FetchExtend {
-    /**
-     * Stay consistent with window.fetch API.
-     * @memberOf FetchExtend
-     */
-    fetch(url: string, options?: object): Promise<any>;
-  }
+  const think: ThinkFetchCtx
+  const controller: ThinkFetchCtx
+  const context: ThinkFetchCtx
+  const service: ThinkFetchCtx
 }
 
 export = ThinkFetch;
