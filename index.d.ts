@@ -484,6 +484,7 @@ declare module 'thinkjs' {
     messenger: ThinkCluster.Messenger;
     ROOT_PATH: string;
     APP_PATH: string;
+    RUNTIME_PATH: string;
     logger: Logger;
 
     Controller: TController;
