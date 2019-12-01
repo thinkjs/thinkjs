@@ -10,14 +10,12 @@ const Socket = require('./socket.js');
 const debug = require('debug')('think-sequelize');
 const {extendClassMethods} = require('./util.js');
 const MODELS = Symbol('think-sequelize-models');
-const models = {};
 const conns = {};
 
 class Model {
   constructor(modelName, config, name) {
     this.modelName = modelName;
     this.config = config;
-    if (models[name]) return models[name];
 
     // connect
     const socket = Socket.getInstance(this.config);
@@ -42,7 +40,6 @@ class Model {
     // const Class = class extends model {}; // make relation name wrong
     this.modelClass = class extends model {};
     extendClassMethods(this.modelClass, this);
-    models[name] = this.modelClass;
 
     // add instace methods
     if (this.instanceMethods) {
