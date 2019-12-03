@@ -55,3 +55,14 @@ test.serial('set key and then incr & decr ', async t => {
   t.true(g1 === '101' && g2 === '100');
 });
 
+test.serial('clear keys', async t => {
+  const keys = 'na*';
+  const redisInst = new Redis();
+  const s = await redisInst.set('name2', 'lushijie');
+  const g1 = await redisInst.get('name2');
+  const result = await redisInst.deleteRegKey(keys);
+  const g2 = await redisInst.get('name2');
+  t.true(
+    g1 === 'lushijie' && g2 === null && result === 'OK'
+  );
+});

@@ -102,6 +102,39 @@ class thinkRedis {
   }
 
   /**
+   * delete Regular expressions key
+   * @param regKey
+   * @return {Promise}     [description]
+   */
+  deleteRegKey(regKey) {
+    return new Promise((resolve, reject) => {
+      const stream = this.redis.scanStream({
+        match: regKey
+      });
+      stream.on('data', (keys = []) => {
+        stream.pause();
+        if (keys.length) {
+          var pipeline = this.redis.pipeline();
+          keys.forEach(function(key) {
+            pipeline.del(key);
+          });
+          pipeline.exec().then((res) => {
+            stream.resume();
+          }).catch((err) => {
+            err.pattern = regKey;
+            reject(err);
+          });
+        } else {
+          resolve('NO_KEYS');
+        }
+      });
+      stream.on('end', () => {
+        resolve('OK');
+      });
+    });
+  }
+
+  /**
    * increase key's value
    * @param  {String} key [description]
    * @return {Promise}     [description]
