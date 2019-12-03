@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "think-helper": "^1.0.22",
-    "think-redis": "^1.1.0"
+    "think-redis": "^1.1.2"
   }
 }
