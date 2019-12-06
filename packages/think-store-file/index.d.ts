@@ -1,11 +1,8 @@
 declare class ThinkStoreFile {
-  constructor(options: object, ctx: object, cookieOptions?: object)
-  autoUpdate(): void
-  get(name: string): Promise<any>
-  set(name: string, value): Promise<any>
-  delete(): Promise<any>
-  flush(): Promise<any>
-  gc(): void
+  constructor(storePath: string)
+  get(relativePath: string): Promise<any>
+  set(relativePath: string, content: string): Promise<any>
+  delete(relativePath: string): Promise<any>
 }
 
 export = ThinkStoreFile;
