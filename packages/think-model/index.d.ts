@@ -519,5 +519,5 @@ declare module 'thinkjs' {
   interface Service extends NewThinkModel.service { }
 }
 
-declare function model(): typeof NewThinkModel;
+declare function model(app: object): typeof NewThinkModel;
 export = model
