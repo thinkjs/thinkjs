@@ -1,3 +1,6 @@
 {
-  "extends": "think"
+  "extends": "think",
+  "rules": {
+    "no-console": "off"
+  }
 }
