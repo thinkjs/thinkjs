@@ -30,4 +30,14 @@ declare module 'thinkjs' {
   interface Service extends ThinkMongoose.ModelExtend { }
 }
 
-export = ThinkMongoose;
+declare interface IThinkMongoose {
+  think: ThinkMongoose.ModelExtend & ThinkMongoose.ModelThinkExtend
+  controller: ThinkMongoose.ModelExtend
+  context: ThinkMongoose.ModelExtend
+  service: ThinkMongoose.ModelExtend
+}
+
+declare function model(app): IThinkMongoose
+
+export = model
+
