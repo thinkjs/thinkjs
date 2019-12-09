@@ -35,5 +35,12 @@ declare module 'thinkjs' {
   interface Service extends ThinkSequelMethod {}
 }
 
-declare function model(app: object): ThinkSequelize;
+declare interface IThinkSequelize {
+  think: ThinkSequelInst &  ThinkSequelMethod
+  controller: ThinkSequelMethod
+  context: ThinkSequelMethod
+  service: ThinkSequelMethod
+}
+
+declare function model(app: object): IThinkSequelize;
 export = model
