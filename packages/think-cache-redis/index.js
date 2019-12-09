@@ -58,7 +58,12 @@ class RedisCache {
    * @return {Promise}     [description]
    */
   delete(key) {
-    return this.redis.delete(key);
+    const patt = /^[a-z0-9_.]+$/;
+    if (patt.test(key)) {
+      return this.redis.delete(key);
+    } else {
+      return this.redis.deleteRegKey(key);
+    }
   }
 
   /**
