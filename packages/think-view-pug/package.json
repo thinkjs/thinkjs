@@ -1,6 +1,6 @@
 {
   "name": "think-view-pug",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Pug view adapter for ThinkJS",
   "main": "index.js",
   "scripts": {
