@@ -20,6 +20,7 @@
   ],
   "main": "index.js",
   "dependencies": {
+    "@types/sequelize": "^4.28.8",
     "debug": "^2.6.1",
     "sequelize": "^4.20.1",
     "think-helper": "^1.0.0",

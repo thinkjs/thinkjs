@@ -1,71 +1,46 @@
-declare namespace ThinkSequelize {
-  interface SequelizeEmitters {
-    // success
-    // cb(obj?:any)
-    success(cb:Function):SequelizeEmitters;
-    ok(cb:Function):SequelizeEmitters;
+import sequlize from 'sequelize';
 
-    // error
-    // cb(err?:Error)
-    error(cb:Function):SequelizeEmitters;
-    failure(cb:Function):SequelizeEmitters;
-    fail(cb:Function):SequelizeEmitters;
+declare enum Relation {
+  HAS_ONE = 'hasOne',
+  BELONG_TO = 'belongsTo',
+  HAS_MANY = 'hasMany',
+  MANY_TO_MANY = 'belongsToMany'
+}
 
-    // done
-    // cb(err?:Error)
-    done(cb:Function):SequelizeEmitters;
-    complete(cb:Function):SequelizeEmitters;
-  }
+declare interface ThinkSequelize extends sequlize.Model<any, any> {
+  new(modelName: string, config: object, name?: string): ThinkSequelize;
+  readonly tablePrefix: string
+  readonly tableName: string
+  readonly models: any
 
-  interface SequelizeResult {
-    save():SequelizeEmitters;
-    update(...args:any[]):SequelizeEmitters;
-    updateAttributes(data:any,opts?:any):SequelizeEmitters;
-    destroy(...args:any[]):SequelizeEmitters;
-    reload():SequelizeEmitters;
-    decrement(obj:any):SequelizeEmitters;
-  }
+  sequel(modelName: string): ThinkSequelize
+  addInstanceMethod(fn: () => any): void
 
-  interface SequelizeModel {
-    new(modelName?: string, config?: object): SequelizeModel;
-    readonly tablePrefix: string;
-    readonly tableName: string;
-    models: object;
-    sequel(name: string): SequelizeModel;
+  Sequel: typeof sequlize
+  Relation: typeof Relation
+}
 
-    build(obj:any):SequelizeResult;
-    create(obj:any, opts?:any):SequelizeEmitters;
-    bulkCreate(obj:any[]):SequelizeEmitters
-    find(id:number):SequelizeEmitters;
-    find(opts?:any, qopts?:any):SequelizeEmitters;
-    findAll(opts?:any, qopts?:any):SequelizeEmitters;
-    findOrCreate(where:any, defaults:any, opt?:any):SequelizeEmitters;
-    findAndCountAll(opts:any):SequelizeEmitters;
-    sync(options?:{force?:boolean}):SequelizeEmitters;
-    drop():SequelizeEmitters;
-    count():SequelizeEmitters;
-    max(attr:string):SequelizeEmitters;
-    min(attr:string):SequelizeEmitters;
-    belongsTo(model:SequelizeModel);
-    hasOne(model:SequelizeModel, opts?:any);
-    hasMany(model:SequelizeModel, opts?:any);
-    update(obj:any, where:any, opts?:any):SequelizeEmitters;
-  }
+declare interface ThinkSequelInst {
+  Sequel: ThinkSequelize
+}
 
-  interface ModelThinkExtend {
-    Sequel: SequelizeModel;
-  }
-
-  interface ModelExtend {
-    sequel(name: string, config?: any, module?: string): ThinkSequelize.SequelizeModel;
-  }
+declare interface ThinkSequelMethod {
+  sequel(modelName: string, config: object, m?: string):  ThinkSequelize
 }
 
 declare module 'thinkjs' {
-  interface Think extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
-  interface Controller extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
-  interface Context extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
-  interface Service extends ThinkSequelize.ModelExtend, ThinkSequelize.ModelThinkExtend, ThinkSequelize.SequelizeEmitters, ThinkSequelize.SequelizeResult, ThinkSequelize.SequelizeModel {}
+  interface Think extends ThinkSequelInst, ThinkSequelMethod {}
+  interface Controller extends ThinkSequelMethod {}
+  interface Context extends ThinkSequelMethod {}
+  interface Service extends ThinkSequelMethod {}
 }
 
-export = ThinkSequelize;
+declare interface IThinkSequelize {
+  think: ThinkSequelInst &  ThinkSequelMethod
+  controller: ThinkSequelMethod
+  context: ThinkSequelMethod
+  service: ThinkSequelMethod
+}
+
+declare function model(app: object): IThinkSequelize;
+export = model
