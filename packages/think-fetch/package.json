@@ -1,6 +1,6 @@
 {
   "name": "think-fetch",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Fetch for ThinkJS 3.x",
   "main": "index.js",
   "type": "index.d.ts",
