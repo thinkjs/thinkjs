@@ -466,11 +466,14 @@ declare module 'thinkjs' {
   }
 
   export interface Logic extends Controller {
-    new(): Logic;
     validate(rules: Object, msgs?: Object): Object;
     validateErrors?: Object;
     allowMethods: string;
     rules: Object;
+  }
+
+  export interface TLogic extends Logic {
+    new(ctx: Context): Logic;
   }
 
   export interface Think extends Helper.Think, ThinkConfig {
@@ -488,7 +491,7 @@ declare module 'thinkjs' {
     logger: Logger;
 
     Controller: TController;
-    Logic: Logic;
+    Logic: TLogic;
     Service: Service;
 
     service(name: string): any;
