@@ -25,7 +25,7 @@
     "ava": "^0.18.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
-    "eslint": "^3.16.1",
+    "eslint": "^6.8.0",
     "eslint-config-think": "^1.0.0",
     "coveralls": "~2.11.16",
     "mock-require": "^2.0.1",
