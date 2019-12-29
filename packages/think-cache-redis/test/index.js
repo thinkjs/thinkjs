@@ -35,7 +35,7 @@ test.serial('set key1 -> get ke1 -> set key2 ->get key2 ->delCache ke1 key2', as
   const redisCache = new RedisCache();
   const key1 = 'name1';
   const key2 = 'name2';
-  const regKey = 'nam*';
+  const regKey = {SCAN: 'nam*'};
   const content1 = {a: {b: 'thinkjs'}};
   const content2 = {c: {d: 'thinkjs'}};
   await redisCache.set(key1, content1);
