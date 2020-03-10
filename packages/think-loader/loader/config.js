@@ -47,7 +47,7 @@ class Config {
     const files = helper.getdirFiles(adapterPath);
     const ret = {};
     files.forEach(file => {
-      if (!/\.js$/.test(file)) return; // only load js files
+      if (!/^(?!\.).+\.js$/i.test(file)) return; // only load js files
       const item = file.replace(/\.\w+$/, '').split(path.sep);
       if (item.length !== 2 || !item[0] || !item[1]) {
         return;

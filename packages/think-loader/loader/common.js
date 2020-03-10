@@ -6,7 +6,7 @@ const debug = require('debug')(`think-loader-common-${process.pid}`);
 const CommonLoader = {
   loadFiles(dir) {
     const files = helper.getdirFiles(dir).filter(file => {
-      return /\.js$/.test(file);
+      return /^(?!\.).+\.js$/i.test(file);
     });
     const cache = {};
     files.forEach(file => {
