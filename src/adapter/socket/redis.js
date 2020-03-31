@@ -14,11 +14,18 @@ export default class extends Base {
   init(config = {}){
     super.init(config);
 
-    this.config = think.extend({
-      port: 6379,
-      host: '127.0.0.1',
-      password: ''
-    }, config);
+    if (think.isEmpty(config.clusters)) {
+      this.config = think.extend({
+        port: 6379,
+        host: '127.0.0.1',
+        password: ''
+      }, config);
+    } else {
+      this.config = think.extend({
+        clusters: [],
+        options: {}
+      }, config);
+    }
   }
   /**
    * connect redis
@@ -28,29 +35,52 @@ export default class extends Base {
     if (this.connection) {
       return this.connection;
     }
-    let redis = await think.npm('redis');
     let config = this.config;
-    let str = `redis://${config.host}:${config.port}`;
-    return think.await(str, () => {
+    if (think.isEmpty(config.clusters)) {
+      let redis = await think.npm('redis');
+      let str = `redis://${config.host}:${config.port}`;
+      return think.await(str, () => {
 
-      let deferred = think.defer();
-      let connection = redis.createClient(config.port, config.host, config);
-      if (config.password) {
-        connection.auth(config.password, () => {});
-      }
-      connection.on('connect', () => {
-        this.connection = connection;
-        this.logConnect(str, 'redis');
-        deferred.resolve(connection);
+        let deferred = think.defer();
+        let connection = redis.createClient(config.port, config.host, config);
+        if (config.password) {
+          connection.auth(config.password, () => {});
+        }
+        connection.on('connect', () => {
+          this.connection = connection;
+          this.logConnect(str, 'redis');
+          deferred.resolve(connection);
+        });
+        connection.on('error', err => {
+          this.close();
+          this.logConnect(str, 'redis');
+          deferred.reject(err);
+        });
+        let err = new Error(str);
+        return think.error(deferred.promise, err);
       });
-      connection.on('error', err => {
-        this.close();
-        this.logConnect(str, 'redis');
-        deferred.reject(err);
+    } else {
+      let Redis = await think.npm('ioredis');
+
+      return think.await(Redis, () => {
+        let deferred = think.defer();
+        const { clusters, options } = config;
+        const connection = new Redis.Cluster(clusters, options);
+
+        connection.on('connect', () => {
+          this.connection = connection;
+          this.logConnect(JSON.stringify(config), 'redis');
+          deferred.resolve(connection);
+        });
+        connection.on('error', err => {
+          this.close();
+          this.logConnect(JSON.stringify(config), 'redis');
+          deferred.reject(err);
+        });
+        let err = new Error(str);
+        return think.error(deferred.promise, err);
       });
-      let err = new Error(str);
-      return think.error(deferred.promise, err);
-    });
+    }
   }
   /**
    * add event
