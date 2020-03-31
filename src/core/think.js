@@ -665,6 +665,9 @@ think.session = http => {
   if (!cookie) {
     let options = sessionOptions.cookie || {};
     cookie = think.uuid(options.length || 32);
+    if (sessionOptions.prefix) {
+      cookie = sessionOptions.prefix + cookie;
+    }
     sessionCookie = cookie;
     //sign cookie
     if (secret) {
