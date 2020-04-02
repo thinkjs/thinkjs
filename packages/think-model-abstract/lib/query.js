@@ -186,6 +186,10 @@ module.exports = class AbstractQuery {
     if (!cache) return this.query(sql);
 
     cache.key = cache.key || helper.md5(sql);
+    
+    const timeout = cache._keyTimeout;
+    delete cache._keyTimeout;
+
     const Handle = cache.handle;
     const instance = new Handle(cache);
     return instance.get(cache.key).then(data => {
@@ -194,7 +198,7 @@ module.exports = class AbstractQuery {
         return data;
       }
       return this.query(sql).then(data => {
-        return instance.set(cache.key, data).then(() => {
+        return instance.set(cache.key, data, timeout).then(() => {
           return data;
         });
       });
