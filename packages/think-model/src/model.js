@@ -111,6 +111,12 @@ module.exports = class Model {
     if (helper.isNumber(config)) {
       config = { timeout: config };
     }
+
+    // user should set key timeout in here
+    // so we should sperate it to avoid it covers cacheConfig.timeout
+    config._keyTimeout = config.timeout;
+    delete config.timeout;
+
     const cacheConfig = this._cacheConfig;
     if (cacheConfig) {
       config = helper.parseAdapterConfig(
