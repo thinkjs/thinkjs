@@ -2,6 +2,12 @@
 
 /**
  * redis configs
+ * 
+ * ioredis configs
+ * {
+ *    clusters: [],
+ *    options: {}
+ * }
  */
 export default {
   host: '127.0.0.1',
