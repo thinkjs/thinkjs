@@ -186,7 +186,7 @@ module.exports = class AbstractQuery {
     if (!cache) return this.query(sql);
 
     cache.key = cache.key || helper.md5(sql);
-    
+
     const timeout = cache._keyTimeout;
     delete cache._keyTimeout;
 
