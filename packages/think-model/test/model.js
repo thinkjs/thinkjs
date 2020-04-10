@@ -88,10 +88,10 @@ test('model set cache option', t => {
   });
 
   model.cache(500);
-  t.is(model.options.cache.timeout, 500);
+  t.is(model.options.cache._keyTimeout, 500);
   model.cache('page', {timeout: 300});
   t.is(model.options.cache.key, 'page');
-  t.is(model.options.cache.timeout, 300);
+  t.is(model.options.cache._keyTimeout, 300);
   model.cache('page', {key: 'post'});
   t.is(model.options.cache.key, 'post');
 });
