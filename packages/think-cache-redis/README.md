@@ -31,4 +31,4 @@ exports.cache = {
   }
 }
 ```
-redis config see at https://github.com/luin/ioredis/blob/master/lib/redis.js
+redis config see at https://github.com/luin/ioredis/
