@@ -76,6 +76,10 @@ module.exports = app => {
             instance.db(this[DB_CONNECTION]);
           } else {
             this[DB_CONNECTION] = instance.db();
+            // when response end, release db connection
+            this.res.once('end', () => {
+              this[DB_CONNECTION] = null;
+            });
           }
         }
         return instance;
