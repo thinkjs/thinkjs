@@ -94,6 +94,10 @@ module.exports = class Model {
     }
     instance.models = this.models;
     instance._cacheConfig = this._cacheConfig;
+    // add reuseDB config for db connection
+    if (this.config.reuseDB) {
+      instance.db(this.db());
+    }
     return instance;
   }
   /**

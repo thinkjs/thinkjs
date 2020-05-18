@@ -2,6 +2,7 @@ const helper = require('think-helper');
 const path = require('path');
 const {COMPARISON_LIST} = require('think-model-abstract');
 const Model = require('./lib/model.js');
+const DB_CONNECTION = Symbol('db_connection');
 
 module.exports = app => {
   app.on('filterParam', data => {
@@ -59,6 +60,9 @@ module.exports = app => {
     controller: {
       model(name, config, m) {
         return this.ctx.model(name, config, m);
+      },
+      transModel(name, config, m) {
+        return this.ctx.transModel(name, config, m);
       }
     },
     context: {
@@ -67,6 +71,13 @@ module.exports = app => {
         const instance = model(name, config, m);
         // add adapter cache config
         instance._cacheConfig = this.config('cache');
+        if (config.reuseDB) {
+          if (this[DB_CONNECTION]) {
+            instance.db(this[DB_CONNECTION]);
+          } else {
+            this[DB_CONNECTION] = instance.db();
+          }
+        }
         return instance;
       }
     }
