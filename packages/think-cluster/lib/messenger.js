@@ -28,7 +28,8 @@ class Messenger extends events {
     const aliveWorkers = util.getAliveWorkers();
     if (type === 'all') return aliveWorkers;
     if (type === 'one') {
-      if (!aliveWorkers.length || aliveWorkers[0] !== cWorker) return [];
+      if (!aliveWorkers.length) return [];
+      if (aliveWorkers.find(w => w === cWorker)) return [cWorker];
       return [aliveWorkers[0]];
     }
   }
