@@ -31,7 +31,7 @@
   "homepage": "https://github.com/thinkjs/think-mongo#readme",
   "dependencies": {
     "generic-pool": "^3.1.7",
-    "mongodb": "^2.2.30",
+    "mongodb": "^3.5.9",
     "think-helper": "^1.0.5",
     "think-instance": "^1.0.1"
   },

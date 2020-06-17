@@ -62,7 +62,7 @@ class MongoSocket {
         if (config.logConnect) {
           config.logger(connectStr);
         }
-        return mongoConnect(connectStr);
+        return mongoConnect(connectStr, {useUnifiedTopology: true});
       },
       destroy: client => {
         client.close();
@@ -104,7 +104,7 @@ class MongoSocket {
    */
   autoRelease(fn) {
     return this.pool.acquire().then(connection => {
-      return Promise.resolve(fn(connection)).then(data => {
+      return Promise.resolve(fn(connection.db())).then(data => {
         return { data, connection };
       }).catch(err => {
         this.pool.release(connection);

@@ -34,7 +34,7 @@ module.exports = class Query {
   add(data, options) {
     return this.socket.autoRelease(async connection => {
       const collection = connection.collection(options.table);
-      await collection.insert(data);
+      await collection.insertOne(data);
       this.lastInsertId = data._id.toString();
       return this.lastInsertId;
     });
@@ -47,7 +47,7 @@ module.exports = class Query {
   addMany(dataList, options) {
     return this.socket.autoRelease(async connection => {
       const collection = connection.collection(options.table);
-      await collection.insert(dataList, options);
+      await collection.insertMany(dataList, options);
       const insertedIds = dataList.map(item => {
         return item._id.toString();
       });
@@ -107,7 +107,7 @@ module.exports = class Query {
       if (distinct) {
         return collection.distinct(distinct, where);
       }
-      collection = collection.find(where, field);
+      collection = collection.find(where).project(field);
       collection = this.limit(collection, options.limit);
       collection = collection.sort(order);
       return collection.toArray();
@@ -147,7 +147,7 @@ module.exports = class Query {
       }
       // update operator
       // http://docs.mongodb.org/manual/reference/operator/update/#id1
-      return collection.update(where, data, options);
+      return collection.updateMany(where, data, options);
     });
   }
   /**
@@ -166,7 +166,7 @@ module.exports = class Query {
 
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(options.table);
-      return collection.remove(where, removeOpt);
+      return collection.deleteMany(where, removeOpt);
     });
   }
   /**
@@ -193,7 +193,10 @@ module.exports = class Query {
       const collection = connection.collection(options.table);
       // make aggregate method to be a promise
       const fn = helper.promisify(collection.aggregate, collection);
-      return fn(aggregate).then(data => {
+      return fn(aggregate).then(cursor => {
+        const toArray = helper.promisify(cursor.toArray, cursor);
+        return toArray();
+      }).then(data => {
         return (data[0] && data[0].total) || 0;
       });
     });
@@ -219,7 +222,10 @@ module.exports = class Query {
       const collection = connection.collection(options.table);
       // make aggregate method to be a promise
       const fn = helper.promisify(collection.aggregate, collection);
-      return fn(aggregate).then(data => {
+      return fn(aggregate).then(cursor => {
+        const toArray = helper.promisify(cursor.toArray, cursor);
+        return toArray();
+      }).then(data => {
         if (group._id) {
           const ret = [];
           data.forEach(item => {
@@ -256,7 +262,7 @@ module.exports = class Query {
     }
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(table);
-      return collection.ensureIndex(indexes, options);
+      return collection.createIndex(indexes, options);
     });
   }
   /**
@@ -269,7 +275,11 @@ module.exports = class Query {
     return this.socket.autoRelease(connection => {
       const collection = connection.collection(table);
       const fn = helper.promisify(collection.aggregate, collection);
-      return options ? fn(pipeline, options) : fn(pipeline);
+      const curPromise = options ? fn(pipeline, options) : fn(pipeline);
+      return curPromise.then(cursor => {
+        const toArray = helper.promisify(cursor.toArray, cursor);
+        return toArray();
+      });
     });
   }
 };
