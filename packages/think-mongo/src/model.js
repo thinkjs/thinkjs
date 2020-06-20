@@ -2,6 +2,8 @@ const Query = require('./query.js');
 const path = require('path');
 const helper = require('think-helper');
 const { ObjectID } = require('mongodb');
+const { connect } = require('http2');
+const { SIGHUP } = require('constants');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
@@ -546,6 +548,23 @@ class Mongo {
       const collection = connection.collection(table);
       return collection.indexes();
     });
+  }
+  
+  async transaction(fn, transactionOptions = {}) {
+    const client = await this.db().socket.getConnection();
+    const session = client.startSession();
+    try {
+      session.startTransaction(transactionOptions);
+      await fn(connection, session);
+      await session.commitTransaction();
+    } catch(err) {
+      await session.abortTransaction();
+      await this.db().socket.release(client);
+      throw err;
+    } finally {
+      await session.endSession();
+      await this.db().socket.release(client);
+    }
   }
 };
 
