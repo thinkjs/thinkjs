@@ -552,17 +552,24 @@ class Mongo {
   
   async transaction(fn, transactionOptions = {}) {
     const client = await this.db().socket.getConnection();
-    const session = client.startSession();
+    const session = this.options.session || client.startSession();
     try {
       session.startTransaction(transactionOptions);
-      await fn(connection, session);
+      this.options.session = session;
+      // fn 中的其他表操作需要手动增加 options.session 赋值
+      // const UserModel = this.mongo('user');
+      // UserModel.options.session = session;
+      await fn(session, client);
+      this.options.session = null;
       await session.commitTransaction();
     } catch(err) {
       await session.abortTransaction();
+      this.options.session = null;
       await this.db().socket.release(client);
       throw err;
     } finally {
       await session.endSession();
+      this.options.session = null;
       await this.db().socket.release(client);
     }
   }
