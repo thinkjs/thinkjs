@@ -2,8 +2,6 @@ const Query = require('./query.js');
 const path = require('path');
 const helper = require('think-helper');
 const { ObjectID } = require('mongodb');
-const { connect } = require('http2');
-const { SIGHUP } = require('constants');
 
 const MODELS = Symbol('think-models');
 const DB = Symbol('think-model-db');
