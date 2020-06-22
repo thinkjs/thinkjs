@@ -549,7 +549,8 @@ class Mongo {
   }
 
   async transaction(fn, transactionOptions = {}) {
-    const client = await this.db().socket.getConnection();
+    const connect = this.db().socket;
+    const client = await connect.getConnection();
     const session = this.options.session || client.startSession();
     try {
       session.startTransaction(transactionOptions);
@@ -562,13 +563,11 @@ class Mongo {
       await session.commitTransaction();
     } catch (err) {
       await session.abortTransaction();
-      this.options.session = null;
-      await this.db().socket.release(client);
       throw err;
     } finally {
       await session.endSession();
       this.options.session = null;
-      await this.db().socket.release(client);
+      await connect.release(client);
     }
   }
 };
