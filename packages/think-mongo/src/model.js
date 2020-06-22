@@ -547,7 +547,7 @@ class Mongo {
       return collection.indexes();
     });
   }
-  
+
   async transaction(fn, transactionOptions = {}) {
     const client = await this.db().socket.getConnection();
     const session = this.options.session || client.startSession();
@@ -560,7 +560,7 @@ class Mongo {
       await fn(session, client);
       this.options.session = null;
       await session.commitTransaction();
-    } catch(err) {
+    } catch (err) {
       await session.abortTransaction();
       this.options.session = null;
       await this.db().socket.release(client);
