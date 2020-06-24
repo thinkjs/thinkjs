@@ -7,7 +7,10 @@ node_js:
 # make mongodb support a replica set
 # https://georgeshank.com/how-to-enable-a-mongodb-replica-set-on-travis/
 before_install:
-  - echo "replication:\n  oplogSizeMB: 1024\n replSetName: rs0" | sudo tee -a /etc/mongod.conf
+  - echo "replication:
+      oplogSizeMB: 1024
+      replSetName: rs0
+  " | sudo tee -a /etc/mongod.conf
   - sudo service mongod restart
   - sleep 20
   - mongo --eval 'rs.initiate()'
