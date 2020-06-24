@@ -7,8 +7,8 @@ node_js:
 # make mongodb support a replica set
 # https://georgeshank.com/how-to-enable-a-mongodb-replica-set-on-travis/
 before_install:
-  - sudo service mongod stop
-  - nohup mongod --config /etc/mongod.conf --replSet rs0 &
+  - cp -y .travis/mongod.conf /etc/mongod.conf
+  - sudo service mongod restart
   - sleep 20
   - mongo --eval 'rs.initiate()'
   - sleep 15
