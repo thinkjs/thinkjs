@@ -8,7 +8,7 @@ node_js:
 # https://georgeshank.com/how-to-enable-a-mongodb-replica-set-on-travis/
 before_install:
   - echo "replSet = rs0" | sudo tee -a /etc/mongodb.conf
-  - sudo service mongodb restart
+  - sudo service mongod restart
   - sleep 20
   - mongo --eval 'rs.initiate()'
   - sleep 15
