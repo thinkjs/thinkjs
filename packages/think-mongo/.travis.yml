@@ -4,6 +4,14 @@ node_js:
   - '7'
   - '8'
 sudo: false
+# make mongodb support Replica Set
+# https://georgeshank.com/how-to-enable-a-mongodb-replica-set-on-travis/
+before_script:
+  - echo "replSet = rs0" | sudo tee -a /etc/mongodb.conf
+  - sudo service mongodb restart
+  - sleep 20
+  - mongo --eval 'rs.initiate()'
+  - sleep 15
 script:
     - "npm run test"
 after_script: "npm install coveralls && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
