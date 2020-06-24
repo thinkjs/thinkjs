@@ -159,7 +159,9 @@ module.exports = class Query {
     const limit = this.parser.parseLimit(options.limit);
 
     // delete one row
-    const removeOpt = {};
+    const removeOpt = {
+      session: options.session
+    };
     if (limit[1] === 1) {
       removeOpt.justOne = true;
     }
