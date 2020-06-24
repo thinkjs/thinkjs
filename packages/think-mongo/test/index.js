@@ -23,6 +23,15 @@ test.afterEach.always(async _ => {
   await m.table('think').delete();
 });
 
+test.serial('transaction', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  await m.transaction(async session => {
+    await m.add({name: 'thinkjs'});
+  });
+  const ret = await m.select();
+  t.is(ret.length, 1);
+});
+
 test.serial('model', async t => {
   const m = new model(defaultTable, defaultOptions);
   const ret = m.model('test');
@@ -315,4 +324,98 @@ test.serial('distinct', async t => {
   const ret = await m.distinct('name').select();
   const n = ret.filter(item => item === 'thinkjs').length;
   t.is(n, 1);
+});
+
+test.serial('transaction', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  await m.transaction(async session => {
+    await m.add({name: 'thinkjs'});
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret.length, 1);
+});
+
+test.serial('transaction', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  await m.transaction(async session => {
+    await m.add({name: 'thinkjs'});
+    throw Error('transaction failed');
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret.length, 0);
+});
+
+test.serial('transaction failed with multi connection', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  const n = new model(defaultTable, defaultOptions);
+  await m.transaction(async session => {
+    n.options.session = session;
+    await m.add({name: 'thinkjs'});
+    await n.add({name: 'thinkjs2'});
+    throw Error('transaction failed');
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret.length, 0);
+});
+
+test.serial('transaction with multi connection', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  const n = new model(defaultTable, defaultOptions);
+  await m.transaction(async session => {
+    n.options.session = session;
+    await m.add({name: 'thinkjs'});
+    await n.add({name: 'thinkjs2'});
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret.length, 2);
+});
+
+test.serial('transaction with update', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  const n = new model(defaultTable, defaultOptions);
+  await m.add({name: 'thinkjs'});
+  await m.transaction(async session => {
+    n.options.session = session;
+    await n.where({name: 'thinkjs'}).update({name: 'thinkjs2'});
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret[0].name, 'thinkjs2');
+});
+
+test.serial('transaction failed with update', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  const n = new model(defaultTable, defaultOptions);
+  await m.add({name: 'thinkjs'});
+  await m.transaction(async session => {
+    n.options.session = session;
+    await n.where({name: 'thinkjs'}).update({name: 'thinkjs2'});
+    throw Error('transaction failed');
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret[0].name, 'thinkjs');
+});
+
+test.serial('transaction with delete', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  const n = new model(defaultTable, defaultOptions);
+  await m.add({name: 'thinkjs'});
+  await m.transaction(async session => {
+    n.options.session = session;
+    await n.where({name: 'thinkjs'}).delete();
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret.length, 0);
+});
+
+test.serial('transaction failed with delete', async t => {
+  const m = new model(defaultTable, defaultOptions);
+  const n = new model(defaultTable, defaultOptions);
+  await m.add({name: 'thinkjs'});
+  await m.transaction(async session => {
+    n.options.session = session;
+    await n.where({name: 'thinkjs'}).delete();
+    throw Error('transaction failed');
+  }).catch(e => {});
+  const ret = await m.select();
+  t.is(ret.length, 1);
 });

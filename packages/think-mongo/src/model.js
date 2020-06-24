@@ -547,6 +547,28 @@ class Mongo {
       return collection.indexes();
     });
   }
+
+  async transaction(fn, transactionOptions = {}) {
+    const connect = this.db().socket;
+    const client = await connect.getConnection();
+    const session = this.options.session || client.startSession();
+    try {
+      session.startTransaction(transactionOptions);
+      this.options.session = session;
+      // fn 中的其他表操作需要手动增加 options.session 赋值
+      // const UserModel = this.mongo('user');
+      // UserModel.options.session = session;
+      await fn(session, client);
+      await session.commitTransaction();
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      await session.endSession();
+      this.options.session = null;
+      await connect.release(client);
+    }
+  }
 };
 
 Mongo.ObjectID = ObjectID;
