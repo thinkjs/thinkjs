@@ -559,7 +559,6 @@ class Mongo {
       // const UserModel = this.mongo('user');
       // UserModel.options.session = session;
       await fn(session, client);
-      this.options.session = null;
       await session.commitTransaction();
     } catch (err) {
       await session.abortTransaction();

@@ -34,7 +34,7 @@ module.exports = class Query {
   add(data, options) {
     return this.socket.autoRelease(async connection => {
       const collection = connection.collection(options.table);
-      await collection.insertOne(data);
+      await collection.insertOne(data, options);
       this.lastInsertId = data._id.toString();
       return this.lastInsertId;
     });
