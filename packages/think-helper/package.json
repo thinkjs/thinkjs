@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "ava": "^0.18.0",
-    "codecov": "^1.0.1",
+    "codecov": "^3.7.1",
     "coveralls": "^2.11.16",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
