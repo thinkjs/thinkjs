@@ -28,5 +28,8 @@
     "eslint": "^4.7.2",
     "eslint-config-think": "^1.0.2",
     "nyc": "^11.2.1"
+  },
+  "dependencies": {
+    "debug": "^4.1.1"
   }
 }
