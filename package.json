@@ -40,7 +40,7 @@
   "main": "lib/application.js",
   "types": "index.d.ts",
   "dependencies": {
-    "cookies": "^0.7.0",
+    "cookies": "^0.8.0",
     "debug": "^3.1.0",
     "destroy": "^1.0.4",
     "koa": "^2.2.0",
