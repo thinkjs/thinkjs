@@ -88,6 +88,9 @@ module.exports = class MysqlSchema extends Schema {
     if (tinyType.indexOf('int') > -1) return parseInt(value, 10) || 0;
     if (['double', 'float', 'decimal'].indexOf(tinyType) > -1) return parseFloat(value, 10) || 0;
     if (tinyType === 'bool') return value ? 1 : 0;
+    if (this.config.jsonFormat && tinyType === 'json') {
+      return JSON.stringify(value);
+    }
     return value;
   }
 };
