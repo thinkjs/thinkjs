@@ -5,6 +5,25 @@ const Mysql = require('think-mysql');
  * mysql query
  */
 module.exports = class MysqlQuery extends Query {
+  select(options, cache) {
+    if(!this.config.jsonFormat) {
+      return super.select(options, cache);
+    }
+
+    return Promise.all([
+      super.select(options, cache),
+      this.schema.getSchema()
+    ]).then(([data, schema]) => {
+      const keys = Object.keys(schema).filter(key => schema[key].tinyType === 'json');
+      (Array.isArray(data) ? data : [data]).forEach(row => {
+        keys.filter(key => row[key] !== undefined).forEach(key => {
+          row[key] = JSON.parse(row[key]);
+        });
+      });
+      return data;
+    });
+  }
+  
   /**
    * get socket
    * @param {String|Object} sql
