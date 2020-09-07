@@ -379,7 +379,9 @@ test('schema get normal schema 4', async t => {
 });
 
 test('schema parse type', t => {
-  const schema = new Schema({});
+  t.plan(13);
+  
+  const schema = new Schema({jsonFormat: true});
   t.is(schema.parseType('enum', '1'), '1');
   t.is(schema.parseType('set', 'True'), 'True');
   t.is(schema.parseType('bigint', 'False'), 'False');
@@ -392,4 +394,5 @@ test('schema parse type', t => {
   t.is(schema.parseType('bool', '0'), 1);
   t.is(schema.parseType('bool', ''), 0);
   t.is(schema.parseType('xxx', 'aaa'), 'aaa');
+  t.is(schema.parseType('json', [1,2,3,4]), '[1,2,3,4]');
 });
