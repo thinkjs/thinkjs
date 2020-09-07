@@ -6,7 +6,7 @@ const Mysql = require('think-mysql');
  */
 module.exports = class MysqlQuery extends Query {
   select(options, cache) {
-    if(!this.config.jsonFormat) {
+    if (!this.config.jsonFormat) {
       return super.select(options, cache);
     }
 
@@ -23,7 +23,7 @@ module.exports = class MysqlQuery extends Query {
       return data;
     });
   }
-  
+
   /**
    * get socket
    * @param {String|Object} sql
