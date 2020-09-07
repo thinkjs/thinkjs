@@ -61,7 +61,7 @@ module.exports = class AbstractSchema {
           }
           continue;
         }
-        if (helper.isNumber(data[key]) || helper.isString(data[key]) || helper.isBoolean(data[key])) {
+        if (helper.isNumber(data[key]) || helper.isString(data[key]) || helper.isBoolean(data[key]) || schema[key].tinyType === 'json') {
           result[key] = this.parseType(schema[key].tinyType, data[key]);
         } else {
           result[key] = data[key];
