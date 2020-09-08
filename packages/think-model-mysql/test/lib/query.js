@@ -3,6 +3,50 @@ const helper = require('think-helper');
 const Base = require('../../lib/query');
 const Parser = require('../../lib/parser');
 
+ava.test('select jsonFormat false', t => {
+  t.plan(2);
+
+  const instance = new Base();
+  instance.__proto__.__proto__.select = function(options, cache) {
+    t.is(options, 1);
+    t.is(cache, 2);
+  }
+  instance.select(1, 2);
+})
+
+ava.test('select jsonFormat true', async t => {
+  t.plan(2);
+  
+  const instance = new Base({jsonFormat: true});
+  instance.schema = {
+    getSchema() {
+      return {
+        title: {
+          tinyType: 'varchar'
+        },
+        content: {
+          tinyType: 'varchar'
+        },
+        json: {
+          tinyType: 'json'
+        }
+      };
+    }
+  }
+  instance.__proto__.__proto__.select = function() {
+    return {title: 'hello', content: 'world', json: JSON.stringify([1,2,3,4])};
+  }
+  const data = await instance.select();
+  t.deepEqual(data, {title: 'hello', content: 'world', json: [1,2,3,4]});
+
+
+  instance.__proto__.__proto__.select = function() {
+    return [{title: 'hello', content: 'world', json: JSON.stringify([1,2,3,4])}];
+  }
+  const data2 = await instance.select();
+  t.deepEqual(data2, [{title: 'hello', content: 'world', json: [1,2,3,4]}]);
+});
+
 ava.test('socket is function', t => {
   const instance = new Base();
   t.true(helper.isFunction(instance.socket));
