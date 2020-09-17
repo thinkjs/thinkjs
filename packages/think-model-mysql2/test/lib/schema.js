@@ -385,7 +385,7 @@ test('schema get normal schema 4', async t => {
 });
 
 test('schema parse type', t => {
-  t.plan(13);
+  t.plan(15);
   
   const schema = new Schema({jsonFormat: true});
   t.is(schema.parseType('enum', '1'), '1');
@@ -401,4 +401,6 @@ test('schema parse type', t => {
   t.is(schema.parseType('bool', ''), 0);
   t.is(schema.parseType('xxx', 'aaa'), 'aaa');
   t.is(schema.parseType('json', [1,2,3,4]), '[1,2,3,4]');
+  t.is(schema.parseType('json', null), null);
+  t.is(schema.parseType('json', undefined), null);
 });
