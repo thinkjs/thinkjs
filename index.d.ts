@@ -5,7 +5,6 @@ import * as ThinkCluster from 'think-cluster';
 import { Think } from 'thinkjs';
 
 declare module 'thinkjs' {
-
   export interface Application extends Koa {
     think: Think;
     request: Request;
@@ -499,10 +498,10 @@ declare module 'thinkjs' {
     service(name: string, m: any, ...args: any[]): any;
     beforeStartServer(fn: Function): Promise<any>;
   }
+
+  export var think : Think;
 }
 
-declare namespace ThinkJS {
-  export var think: Think;
+declare global {
+  var think: Think
 }
-
-export = ThinkJS;
