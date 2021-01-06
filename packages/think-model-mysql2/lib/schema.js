@@ -84,7 +84,7 @@ module.exports = class MysqlSchema extends Schema {
    * @param {Mixed} value
    */
   parseType(tinyType, value) {
-    if (tinyType === 'enum' || tinyType === 'set' || tinyType === 'bigint') return value;
+    if (tinyType === 'enum' || tinyType === 'set' || tinyType === 'bigint' || tinyType === 'bigint unsigned') return value;
     if (tinyType.indexOf('int') > -1) return parseInt(value, 10) || 0;
     if (['double', 'float', 'decimal'].indexOf(tinyType) > -1) return parseFloat(value, 10) || 0;
     if (tinyType === 'bool') return value ? 1 : 0;
