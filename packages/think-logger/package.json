@@ -1,6 +1,6 @@
 {
   "name": "think-logger3",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "logger for ThinkJS 3.x",
   "main": "./src",
   "type": "index.d.ts",
