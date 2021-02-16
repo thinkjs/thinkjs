@@ -40,5 +40,26 @@ declare namespace ThinkLogger {
     File: File;
     DateFile: DateFile;
   }
+
+  export class Console implements Console {
+        
+  }
+
+  export class Base implements Base {
+
+  }
+
+  export class LoggerConstructor implements LoggerConstructor {
+
+  }
+
+  export class DateFile implements DateFile {
+
+  }
+
+  export class File implements File {
+      
+  }
+
 }
 export = ThinkLogger;
