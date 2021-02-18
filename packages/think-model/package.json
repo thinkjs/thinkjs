@@ -1,6 +1,6 @@
 {
   "name": "think-model",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "An adapter-based ORM for ThinkJS 3.x",
   "scripts": {
     "watch": "babel ./src --out-dir ./lib --watch",
