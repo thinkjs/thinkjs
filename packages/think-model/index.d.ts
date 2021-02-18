@@ -111,6 +111,34 @@ declare namespace ThinkModel {
      */
     parseOptions(options: any): Promise<any>;
     /**
+     * Pre-operation of add
+     */
+    beforeAdd(data: object, options?: object): any
+    /**
+     * Follow-up operation of add
+     */
+    afterAdd(data: object, options?: object): Promise<any>
+    /**
+     * Follow-up operation of delete.
+     */
+    afterDelete(options: object): Promise<any>
+    /**
+     * Pre-operation of update
+     */
+    beforeUpdate(data: object, options?: object): any
+    /**
+     * Post operation of update
+     */
+    afterUpdate(data: object, options?: object): Promise<any>
+    /**
+     * Follow-up operation of find query
+     */
+    afterFind(data: object, options?: object): Promise<any>
+    /**
+     * Follow-up operation of select query
+     */
+    afterSelect(data: Array<object>, options?: object): Promise<any>
+    /**
      * add data
      */
     add(data: object, options?: object, replace?: boolean): Promise<number>;
