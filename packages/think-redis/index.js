@@ -33,8 +33,7 @@ class thinkRedis {
    * @return {Object}        [description]
    */
   [_getConnection](config) {
-    delete config.cookie;
-    delete config.key; // fix think-model cache
+    config = helper.omit(config, ['cookie', 'key', 'timeout']);
     const md5 = helper.md5(JSON.stringify(config));
     if (!cacheConn[md5] || !cacheConn[md5].connector.connecting) {
       cacheConn[md5] = new IOredis(config);
