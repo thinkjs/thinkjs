@@ -639,7 +639,7 @@ module.exports = class Model {
     const order = options.order;
     delete options.order;
 
-    if (!count) {
+    if (!count && count !== 0) {
       this.options = options;
       count = await this.count(`${this[QUOTE_FIELD](table)}.${this.pk}`);
     }
