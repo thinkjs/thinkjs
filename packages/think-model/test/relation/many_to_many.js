@@ -62,7 +62,7 @@ test('many to many get relation get modelName from rModel', async t => {
 
   relation.model = relation.options.model = new Model('user', {handle: new Function()});
   relation.options.model.select = function() {
-    t.deepEqual(this.options, {'field': '*,b.post_id', 'fieldReverse': false, 'alias': 'a', 'where': {'post_id': ['IN', [3, 10]]}, 'join': [{'post_user': {'table': 'relationModel', 'as': 'b', 'join': 'inner', 'on': ['id', 'user_id']}}]});
+    t.deepEqual(this.options, {'field': '*,b.post_id', 'fieldReverse': false, 'alias': 'a', 'where': {'b.post_id': ['IN', [3, 10]]}, 'join': [{'post_user': {'table': 'relationModel', 'as': 'b', 'join': 'inner', 'on': ['id', 'user_id']}}]});
     return [
       {name: 'lizheming', post_id: 10},
       {name: 'lizheming1', post_id: 10},

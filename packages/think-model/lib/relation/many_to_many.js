@@ -20,7 +20,7 @@ module.exports = class ManyToManyRelation extends BaseRelation {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      const where = _this.parseRelationWhere();
+      const where = _this.parseRelationWhere('b.');
       if (where === false) return _this.data;
       const relationModel = _this.options.rModel || _this.getRelationModelName();
       const rfKey = _this.options.rfKey || `${_this.options.model.modelName}_id`;

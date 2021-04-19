@@ -16,8 +16,9 @@ module.exports = class BaseRelation {
   }
   /**
    * parse where in relation model
+   * @param {String} prefix prefix for table alia name
    */
-  parseRelationWhere() {
+  parseRelationWhere(prefix = '') {
     const {key, fKey} = this.options;
     if (helper.isArray(this.data)) {
       const keys = [];
@@ -29,12 +30,12 @@ module.exports = class BaseRelation {
       });
       if (keys.length === 0) return false;
       return {
-        [fKey]: ['IN', keys]
+        [prefix + fKey]: ['IN', keys]
       };
     }
     if (!this.data[key]) return false;
     return {
-      [fKey]: this.data[key]
+      [prefix + fKey]: this.data[key]
     };
   }
   /**
