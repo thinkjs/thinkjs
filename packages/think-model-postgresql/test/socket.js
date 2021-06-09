@@ -74,7 +74,7 @@ test('getConnection', async t => {
   t.plan(3);
   const socket = new Socket();
   t.is(await socket.getConnection(2), 2);
-  socket.pool.connect = function() {
+  socket.pool.connect = function () {
     t.pass();
     return 3;
   };
@@ -86,7 +86,7 @@ test('startTrans', async t => {
 
   const socket = new Socket();
   const defaultConnection = Promise.resolve(2);
-  socket.query = async function(option, connection) {
+  socket.query = async function (option, connection) {
     t.deepEqual(option, {
       sql: 'BEGIN',
       transaction: 1,
@@ -103,7 +103,7 @@ test('commit', async t => {
 
   const socket = new Socket();
   const defaultConnection = Promise.resolve(3);
-  socket.query = function(option, connection) {
+  socket.query = function (option, connection) {
     t.deepEqual(option, {
       sql: 'COMMIT',
       transaction: 2,
@@ -120,7 +120,7 @@ test('rollback', async t => {
 
   const socket = new Socket();
   const defaultConnection = Promise.resolve(3);
-  socket.query = function(option, connection) {
+  socket.query = function (option, connection) {
     t.deepEqual(option, {
       sql: 'ROLLBACK',
       transaction: 2,
@@ -147,15 +147,15 @@ test('transaction', async t => {
 
   const socket = new Socket();
   const defaultConnection = 'connection';
-  const defaultFn = function(connection) {
+  const defaultFn = function (connection) {
     t.deepEqual(connection, defaultConnection);
     return 'lizheming';
   };
-  socket.startTrans = socket.commit = function(connection) {
+  socket.startTrans = socket.commit = function (connection) {
     t.deepEqual(connection, defaultConnection);
     return Promise.resolve(connection);
   };
-  socket.rollback = function() {
+  socket.rollback = function () {
     t.fail();
   };
   const ret = await socket.transaction(defaultFn, defaultConnection);
@@ -167,19 +167,19 @@ test('transaction with error', async t => {
 
   const socket = new Socket();
   const defaultConnection = 'connection';
-  const defaultFn = function(connection) {
+  const defaultFn = function (connection) {
     t.deepEqual(connection, defaultConnection);
     return 'lizheming';
   };
-  socket.startTrans = function(connection) {
+  socket.startTrans = function (connection) {
     t.deepEqual(connection, defaultConnection);
     return Promise.resolve(connection);
   };
-  socket.commit = function(connection) {
+  socket.commit = function (connection) {
     t.deepEqual(connection, defaultConnection);
     return Promise.reject(new Error('error'));
   };
-  socket.rollback = function(connection) {
+  socket.rollback = function (connection) {
     t.deepEqual(connection, defaultConnection);
     return Promise.resolve();
   };
@@ -214,7 +214,7 @@ test('release connection', t => {
 });
 
 test('query', async t => {
-  t.plan(4);
+  t.plan(5);
 
   const sqlOption1 = 'string sqloption';
   mock('think-debounce', class {
@@ -231,7 +231,7 @@ test('query', async t => {
   };
   const Socket = mock.reRequire('../lib/socket');
   const socket = new Socket();
-  socket.releaseConnection = function(connection) {
+  socket.releaseConnection = function (connection) {
     t.deepEqual(connection, defaultConnection);
   };
   const ret = await socket.query(sqlOption1, defaultConnection);
@@ -259,7 +259,7 @@ test('query with object', async t => {
   };
   const Socket = mock.reRequire('../lib/socket');
   const socket = new Socket();
-  socket.releaseConnection = function() { };
+  socket.releaseConnection = function () { };
   const ret = await socket.query(sqlOption2, defaultConnection);
   mock.stopAll();
   t.is(ret, sqlOption2.sql);
@@ -285,7 +285,7 @@ test('query with config debounce', async t => {
   };
   const Socket = mock.reRequire('../lib/socket');
   const socket = new Socket({ debounce: false });
-  socket.releaseConnection = function() { };
+  socket.releaseConnection = function () { };
   const ret = await socket.query(sqlOption3, defaultConnection);
   mock.stopAll();
   t.is(ret, sqlOption3.sql);
@@ -345,7 +345,7 @@ test('query with connection transaction null and sql transend', async t => {
     }
   };
   const socket = new Socket();
-  socket.releaseConnection = function(connection) {
+  socket.releaseConnection = function (connection) {
     t.is(connection, defaultConnection);
   };
   const ret = await socket.query(sqlOption5, defaultConnection);
@@ -388,7 +388,7 @@ test('query with error', async t => {
   };
 
   let i = 0;
-  Date.now = function() {
+  Date.now = function () {
     if (i) {
       return 4;
     } else {
@@ -425,7 +425,7 @@ test('query with error object', async t => {
   };
 
   let i = 0;
-  Date.now = function() {
+  Date.now = function () {
     if (i) {
       return 4;
     } else {
@@ -451,14 +451,14 @@ test('excute', t => {
   t.plan(4);
 
   const socket = new Socket();
-  socket.query = function(sqlOption, connection) {
+  socket.query = function (sqlOption, connection) {
     t.deepEqual(sqlOption, { sql: 'lizheming', debounce: false });
     t.is(connection, 222);
     return 3;
   };
   t.is(socket.execute('lizheming', 222), 3);
 
-  socket.query = function(sqlOption) {
+  socket.query = function (sqlOption) {
     t.deepEqual(sqlOption, { a: 1, b: 2, debounce: false });
   };
   socket.execute({ a: 1, b: 2, debounce: true });

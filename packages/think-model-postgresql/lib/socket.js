@@ -171,7 +171,11 @@ class PostgreSQLSocket {
         const key = JSON.stringify(sqlOptions);
         return debounceInstance.debounce(key, () => {
           return this[QUERY](sqlOptions, connection, startTime);
-        }).then(_ => this.releaseConnection(connection));
+        }).then(data => {
+          // release connection if debounce patch 
+          this.releaseConnection(connection);
+          return data;
+        });
       } else {
         return this[QUERY](sqlOptions, connection, startTime);
       }
