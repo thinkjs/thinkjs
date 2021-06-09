@@ -172,7 +172,7 @@ class PostgreSQLSocket {
         return debounceInstance.debounce(key, () => {
           return this[QUERY](sqlOptions, connection, startTime);
         }).then(data => {
-          // release connection if debounce patch 
+          // release connection if debounce patch
           this.releaseConnection(connection);
           return data;
         });
