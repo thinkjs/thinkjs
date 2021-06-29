@@ -1,5 +1,5 @@
 const helper = require('think-helper');
-const deprecate = require('depd')('logic');
+// const deprecate = require('depd')('logic');
 /**
  * invoke logic
  */
@@ -33,9 +33,9 @@ function invokeLogic(options, app) {
       promise = Promise.resolve(instance.__before());
     }
 
-    if (instance.__after) {
-      deprecate(`logic's __after method is deprecated, it will be discarded in the next version `);
-    }
+    // if (instance.__after) {
+    //   deprecate(`logic's __after method is deprecated, it will be discarded in the next version `);
+    // }
 
     // if return false, it will be prevent next process
     return promise.then(data => {
