@@ -1,7 +1,7 @@
 {
   "name": "think-pagination",
   "description": "pagination for ThinkJS 3.x",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
