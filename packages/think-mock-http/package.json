@@ -1,7 +1,7 @@
 {
   "name": "think-mock-http",
   "description": "mock http for ThinkJS ",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
