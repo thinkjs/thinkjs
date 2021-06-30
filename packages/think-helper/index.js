@@ -392,8 +392,7 @@ exports.isDirectory = isDirectory;
  * @param  {String} mode [path mode]
  * @return {Boolean}      []
  */
-function chmod(p, mode = '0777') {
-  if (!isExist(p)) return false;
+function chmod(p, mode) {
   try {
     fs.chmodSync(p, mode);
     return true;
@@ -406,8 +405,11 @@ exports.chmod = chmod;
 /**
  * make dir
  */
-function mkdir(dir, mode = '0777') {
-  if (isExist(dir)) return chmod(dir, mode);
+function mkdir(dir, mode) {
+  if (isExist(dir)) {
+    if (mode) return chmod(dir, mode);
+    return true;
+  }
   const pp = path.dirname(dir);
   if (isExist(pp)) {
     try {
