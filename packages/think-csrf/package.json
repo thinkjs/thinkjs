@@ -1,6 +1,6 @@
 {
   "name": "think-csrf",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CSRF for ThinkJS 3.x",
   "main": "index.js",
   "dependencies": {
