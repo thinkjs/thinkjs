@@ -19,7 +19,7 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "think-helper": "^1.0.13"
+    "think-helper": "^1.1.3"
   },
   "devDependencies": {
     "mocha": "1.20.1",

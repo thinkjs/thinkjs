@@ -59,7 +59,7 @@ const getPageIndex = (pagerData, options) => {
 };
 
 /**
- * thinkjs pagenation 
+ * thinkjs pagenation
  * @param  {Object} pagerData [pagerData by countSelect]
  * @param  {Object} ctx      []
  * @param  {Object} options   []
