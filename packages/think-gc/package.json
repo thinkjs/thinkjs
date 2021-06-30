@@ -1,7 +1,7 @@
 {
   "name": "think-gc",
   "description": "gc for ThinkJS 3.x",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
