@@ -27,6 +27,7 @@
   "type": "index.d.ts",
   "dependencies": {
     "core-util-is": "^1.0.2",
+    "lodash.merge": "^4.6.2",
     "ms": "^1.0.0",
     "uuid": "^3.0.1"
   },

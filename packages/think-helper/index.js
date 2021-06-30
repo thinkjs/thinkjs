@@ -89,44 +89,7 @@ function promisify(fn, receiver) {
 
 exports.promisify = promisify;
 
-/**
- * extend object
- * @return {Object} []
- */
-function extend(target = {}, ...args) {
-  let i = 0;
-  const length = args.length;
-  let options;
-  let name;
-  let src;
-  let copy;
-  if (!target) {
-    target = exports.isArray(args[0]) ? [] : {};
-  }
-  for (; i < length; i++) {
-    options = args[i];
-    if (!options) {
-      continue;
-    }
-    for (name in options) {
-      src = target[name];
-      copy = options[name];
-      if (src && src === copy) {
-        continue;
-      }
-      if (exports.isArray(copy)) {
-        target[name] = extend([], copy);
-      } else if (exports.isObject(copy)) {
-        target[name] = extend(src && exports.isObject(src) ? src : {}, copy);
-      } else {
-        target[name] = copy;
-      }
-    }
-  }
-  return target;
-}
-
-exports.extend = extend;
+exports.extend = require('lodash.merge');
 
 /**
  * camelCase string
@@ -149,7 +112,7 @@ exports.camelCase = camelCase;
  * @return {String}     []
  */
 function snakeCase(str) {
-  return str.replace(/([^A-Z])([A-Z])/g, function($0, $1, $2) {
+  return str.replace(/([^A-Z])([A-Z])/g, function ($0, $1, $2) {
     return $1 + '_' + $2.toLowerCase();
   });
 };
@@ -306,7 +269,7 @@ exports.datetime = datetime;
  * @param  {String} version [uuid RFC version]
  * @return {String}         []
  */
-exports.uuid = function(version) {
+exports.uuid = function (version) {
   if (version === 'v1') return uuid.v1();
   return uuid.v4();
 };
@@ -322,25 +285,25 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
   if (config.handle) {
     const type = config.type;
     delete config.type;
-    config = {type, [type]: config};
+    config = { type, [type]: config };
   }
   extConfig = extConfig.map(item => {
     if (!item) return {};
     // only change type
     // 'xxx'
     if (exports.isString(item)) {
-      item = {type: item};
+      item = { type: item };
     }
     // {handle: 'www'}
     // only add some configs
     if (!item.type) {
-      item = {type: config.type, [config.type]: item};
+      item = { type: config.type, [config.type]: item };
     }
     // {type: 'xxx', handle: 'www'}
     if (item.handle) {
       const type = item.type;
       delete item.type;
-      item = {type, [type]: item};
+      item = { type, [type]: item };
     }
     return item;
   });
@@ -354,7 +317,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
 /**
  * transform humanize time to ms
  */
-exports.ms = function(time) {
+exports.ms = function (time) {
   if (typeof time === 'number') return time;
   const result = ms(time);
   if (result === undefined) {
@@ -366,7 +329,7 @@ exports.ms = function(time) {
 /**
  * omit some props in object
  */
-exports.omit = function(obj, props) {
+exports.omit = function (obj, props) {
   if (exports.isString(props)) {
     props = props.split(',');
   }
