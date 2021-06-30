@@ -112,7 +112,7 @@ exports.camelCase = camelCase;
  * @return {String}     []
  */
 function snakeCase(str) {
-  return str.replace(/([^A-Z])([A-Z])/g, function ($0, $1, $2) {
+  return str.replace(/([^A-Z])([A-Z])/g, function($0, $1, $2) {
     return $1 + '_' + $2.toLowerCase();
   });
 };
@@ -269,7 +269,7 @@ exports.datetime = datetime;
  * @param  {String} version [uuid RFC version]
  * @return {String}         []
  */
-exports.uuid = function (version) {
+exports.uuid = function(version) {
   if (version === 'v1') return uuid.v1();
   return uuid.v4();
 };
@@ -317,7 +317,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
 /**
  * transform humanize time to ms
  */
-exports.ms = function (time) {
+exports.ms = function(time) {
   if (typeof time === 'number') return time;
   const result = ms(time);
   if (result === undefined) {
@@ -329,7 +329,7 @@ exports.ms = function (time) {
 /**
  * omit some props in object
  */
-exports.omit = function (obj, props) {
+exports.omit = function(obj, props) {
   if (exports.isString(props)) {
     props = props.split(',');
   }
