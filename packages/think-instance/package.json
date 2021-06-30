@@ -1,7 +1,7 @@
 {
   "name": "think-instance",
   "description": "add .getInstance method for class",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
