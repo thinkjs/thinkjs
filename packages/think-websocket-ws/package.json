@@ -1,7 +1,7 @@
 {
   "name": "think-websocket-ws",
   "description": "ws adapter for websocket",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "lushijie",
     "email": "lushijie1218@126.com"
