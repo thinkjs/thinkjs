@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "nunjucks": "~3.2.0",
-    "think-helper": "~1.0.0"
+    "think-helper": "^1.1.3"
   }
 }
