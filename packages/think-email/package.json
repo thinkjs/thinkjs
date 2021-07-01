@@ -46,6 +46,6 @@
   },
   "dependencies": {
     "nodemailer": "~4.0.1",
-    "think-helper": "~1.0.13"
+    "think-helper": "^1.1.3"
   }
 }
