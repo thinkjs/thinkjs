@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "memcache-plus": "~0.2.17",
-    "think-debounce": "^1.0.3",
-    "think-helper": "^1.0.4"
+    "think-debounce": "^1.0.4",
+    "think-helper": "^1.1.3"
   }
 }
