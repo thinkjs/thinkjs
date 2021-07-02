@@ -1,6 +1,6 @@
 {
   "name": "think-cache-memcache",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Redis cache Adapter for ThinkJS'S Cache",
   "main": "index.js",
   "scripts": {
