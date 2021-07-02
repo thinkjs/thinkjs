@@ -46,6 +46,6 @@
   },
   "dependencies": {
     "handlebars": "~4.5.3",
-    "think-helper": "~1.0.0"
+    "think-helper": "^1.1.3"
   }
 }
