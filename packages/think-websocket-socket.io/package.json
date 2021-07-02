@@ -1,7 +1,7 @@
 {
   "name": "think-websocket-socket.io",
   "description": "socket.io adapter for websocket",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
