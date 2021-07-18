@@ -1,5 +1,5 @@
 const helper = require('think-helper');
-const {Schema} = require('think-model-abstract');
+const { Schema } = require('think-model-abstract');
 const Debounce = require('think-debounce');
 
 const debounce = new Debounce();
@@ -14,13 +14,13 @@ module.exports = class MysqlSchema extends Schema {
     const validate = {};
     switch (fieldData.tinyType) {
       case 'tinyint':
-        validate.int = {min: 0, max: 255};
+        validate.int = { min: 0, max: 255 };
         break;
       case 'smallint':
-        validate.int = {min: fieldData.unsigned ? 0 : -32768, max: 32767};
+        validate.int = { min: fieldData.unsigned ? 0 : -32768, max: 32767 };
         break;
       case 'int':
-        validate.int = {min: fieldData.unsigned ? 0 : -2147483648, max: 2147483647};
+        validate.int = { min: fieldData.unsigned ? 0 : -2147483648, max: 2147483647 };
         break;
       // case 'bigint':
       //   validate.int = {min: fieldData.unique ? 0 : -9223372036854775808, max: 9223372036854775807};
@@ -62,7 +62,7 @@ module.exports = class MysqlSchema extends Schema {
           ret[item.Field] = {
             name: item.Field,
             type: item.Type,
-            required: item.Null === '',
+            required: item.Null === 'NO',
             default: '',
             primary: item.Key === 'PRI',
             unique: item.Key === 'UNI',

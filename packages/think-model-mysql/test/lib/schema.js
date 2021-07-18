@@ -154,7 +154,7 @@ test('schema get normal schema', async t => {
     id: {
       name: 'id',
       type: 'int(10)',
-      required: false,
+      required: true,
       default: '',
       primary: true,
       unique: false,
@@ -171,7 +171,7 @@ test('schema get normal schema', async t => {
     title: {
       name: 'title',
       type: 'varchar(255)',
-      required: false,
+      required: true,
       default: '',
       primary: false,
       unique: false,
@@ -220,7 +220,7 @@ test('schema get normal schema 2', async t => {
     id: {
       name: 'id',
       type: 'int(10)',
-      required: false,
+      required: true,
       default: '',
       primary: true,
       unique: false,
@@ -237,7 +237,7 @@ test('schema get normal schema 2', async t => {
     title: {
       name: 'title',
       type: 'varchar(255)',
-      required: false,
+      required: true,
       default: 'title',
       primary: false,
       unique: false,
@@ -286,7 +286,7 @@ test('schema get normal schema 3', async t => {
     id: {
       name: 'id',
       type: 'int(10)',
-      required: false,
+      required: true,
       default: '',
       primary: true,
       unique: false,
@@ -303,7 +303,7 @@ test('schema get normal schema 3', async t => {
     title: {
       name: 'title',
       type: 'varchar(255)',
-      required: false,
+      required: true,
       default: 'title',
       primary: false,
       unique: false,
@@ -356,7 +356,7 @@ test('schema get normal schema 4', async t => {
     id: {
       name: 'id',
       type: 'int(10)',
-      required: false,
+      required: true,
       default: '',
       primary: true,
       unique: false,
@@ -373,7 +373,7 @@ test('schema get normal schema 4', async t => {
     title: {
       name: 'title',
       type: 'varchar(255)',
-      required: false,
+      required: true,
       default: 'title',
       primary: false,
       unique: false,
@@ -386,8 +386,8 @@ test('schema get normal schema 4', async t => {
 
 test('schema parse type', t => {
   t.plan(15);
-  
-  const schema = new Schema({jsonFormat: true});
+
+  const schema = new Schema({ jsonFormat: true });
   t.is(schema.parseType('enum', '1'), '1');
   t.is(schema.parseType('set', 'True'), 'True');
   t.is(schema.parseType('bigint', 'False'), 'False');
@@ -400,7 +400,7 @@ test('schema parse type', t => {
   t.is(schema.parseType('bool', '0'), 1);
   t.is(schema.parseType('bool', ''), 0);
   t.is(schema.parseType('xxx', 'aaa'), 'aaa');
-  t.is(schema.parseType('json', [1,2,3,4]), '[1,2,3,4]');
+  t.is(schema.parseType('json', [1, 2, 3, 4]), '[1,2,3,4]');
   t.is(schema.parseType('json', null), null);
   t.is(schema.parseType('json', undefined), null);
 });
