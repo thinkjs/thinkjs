@@ -45,6 +45,9 @@ class Config {
     }
     let config = this.config;
     name = name.split('.');
+    if (name.some(item => /^__proto__|prototype|construcotr$/.test(item))) {
+      return this;
+    }
     const length = name.length;
     name.forEach((item, index) => {
       if (index === length - 1) {

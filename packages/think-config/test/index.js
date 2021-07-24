@@ -81,6 +81,12 @@ test('config set 6', t => {
   t.deepEqual(config.get('name'), {value: {name: 3}});
 });
 
+test('config set 7', t => {
+  const config = new Config({name: 2});
+  config.set('name.__proto__', 1234);
+  t.deepEqual(config.get('name.__proto__'), undefined);
+});
+
 test('getConfigFn 1', t => {
   const fn = getConfigFn({name: 1}, false);
   const result = fn('name');
