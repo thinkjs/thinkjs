@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "ThinkJS - Use full ES6/7 features to develop web applications, Support TypeScript",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -46,7 +46,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "ejs": "2.5.7",
-    "multiparty": "4.1.2",
+    "multiparty": "4.2.2",
     "mime": "1.3.4",
     "mysql": "2.11.1",
     "thinkit": "4.10.0",
