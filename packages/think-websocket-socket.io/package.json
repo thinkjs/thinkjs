@@ -1,7 +1,7 @@
 {
   "name": "think-websocket-socket.io",
   "description": "socket.io adapter for websocket",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -21,7 +21,7 @@
   "main": "index.js",
   "dependencies": {
     "debug": "^2.6.1",
-    "socket.io": "^2.0.1",
+    "socket.io": "^4.4.0",
     "think-helper": "^1.1.3",
     "think-mock-http": "^1.0.6"
   },
