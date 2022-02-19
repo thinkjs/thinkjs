@@ -43,6 +43,13 @@ module.exports = function(opts = {}) {
     if (ctx.request.body !== undefined) return next();
 
     return parseBody(ctx, opts).then(body => {
+      if (body.raw || typeof body === 'string') {
+        if (ctx.request.rawBody === undefined) {
+          ctx.request.rawBody = body.raw || body;
+        }
+        delete body.raw;
+      }
+
       ctx.request.body = body;
       return next();
     }, _ => {

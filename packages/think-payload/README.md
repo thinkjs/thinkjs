@@ -27,6 +27,9 @@ module.exports = [{
 
 ```javascript
 this.ctx.body = this.ctx.request.body
+
+// use `rawBody` to get raw request body
+this.ctc.request.rawBody
 ```
 
 #### this.ctx.request.body

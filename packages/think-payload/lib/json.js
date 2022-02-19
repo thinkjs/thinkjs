@@ -12,6 +12,8 @@ module.exports = function(ctx, opts = {}) {
   opts.limit = opts.limit || '1mb';
 
   return raw(inflate(req), opts)
-    .then(str => JSON.parse(str))
-    .then(data => ({post: data}));
+    .then(str => ({
+      post: JSON.parse(str),
+      raw: str
+    }));
 };
