@@ -9,7 +9,12 @@ const path = require('path');
 const assert = require('assert');
 const helper = require('think-helper');
 const Debounce = require('think-debounce');
-const { readFile, writeFile, unlink, appendFile, access, stat } = require('fs/promises');
+const readFile = helper.promisify(fs.readFile, fs);
+const writeFile = helper.promisify(fs.writeFile, fs);
+const unlink = helper.promisify(fs.unlink, fs);
+const appendFile = helper.promisify(fs.appendFile, fs);
+const access = helper.promisify(fs.access, fs);
+const stat = helper.promisify(fs.stat, fs);
 
 const debounceInstance = new Debounce();
 const getFilePath = Symbol('think-get-file-path');
