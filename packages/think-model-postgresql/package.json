@@ -1,6 +1,6 @@
 {
   "name": "think-model-postgresql",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "PostgreSQL adapter for ThinkJS 3.x",
   "scripts": {
     "test": "npm run eslint && npm run test-cov",
