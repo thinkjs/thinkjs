@@ -16,11 +16,8 @@ module.exports = class MysqlQuery extends Query {
     ]).then(([data, schema]) => {
       const keys = Object.keys(schema).filter(key => schema[key].tinyType === 'json');
       (Array.isArray(data) ? data : [data]).forEach(row => {
-        keys.filter(key => row[key] !== undefined).forEach(key => {
-          // 如果已经parse的话直接跳过
-          if (!helper.isArray(row[key]) || !helper.isObject(row[key])) {
-            row[key] = JSON.parse(row[key]);
-          }
+        keys.filter(key => row[key] !== undefined && !helper.isArray(row[key]) && !helper.isObject(row[key])).forEach(key => {
+          row[key] = JSON.parse(row[key]);
         });
       });
       return data;
