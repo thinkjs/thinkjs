@@ -153,7 +153,7 @@ module.exports = class SQLiteParser extends Parser {
   parseKey(key) {
     if (!/^\w+$/.test(key)) return key;
     const keyUpperCase = key.toUpperCase();
-    if (keywords.indexOf(keyUpperCase) > -1) return `"${key}"`;
+    if (keywords.indexOf(keyUpperCase) > -1 || /^\d/.test(key)) return `"${key}"`;
     return key;
   }
   /**
