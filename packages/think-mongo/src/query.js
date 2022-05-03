@@ -199,7 +199,7 @@ module.exports = class Query {
         const toArray = helper.promisify(cursor.toArray, cursor);
         return toArray();
       }).then(data => {
-        return (data[0] && data[0].total) || 0;
+        return options.raw ? data : ((data[0] && data[0].total) || 0);
       });
     });
   }
@@ -238,7 +238,7 @@ module.exports = class Query {
           });
           return ret;
         }
-        return (data[0] && data[0].total) || 0;
+        return options.raw ? data : ((data[0] && data[0].total) || 0);
       });
     });
   }
