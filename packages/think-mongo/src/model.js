@@ -487,21 +487,31 @@ class Mongo {
   /**
    * get count
    * @param  {String} field []
+   * @param {Object} options
    * @return {Promise}       []
    */
-  count(field) {
+  count(field, options) {
+    if (helper.isObject(field) && !options) {
+      options = field;
+      field = undefined;
+    }
     this.field(field);
-    const options = this.parseOptions();
+    options = this.parseOptions(options);
     return this.db().count(options);
   }
   /**
    * get sum
    * @param  {String} field []
+   * @param {Object} options
    * @return {Promise}       []
    */
-  sum(field) {
+  sum(field, options) {
+    if (helper.isObject(field) && !options) {
+      options = field;
+      field = undefined;
+    }
     this.field(field);
-    const options = this.parseOptions();
+    options = this.parseOptions(options);
     return this.db().sum(options);
   }
   /**
