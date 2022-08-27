@@ -32,7 +32,7 @@ declare namespace ThinkHelper {
    * @param {*} format default is 'YYYY-MM-DD HH:mm:ss'
    * @returns {*}
    */
-  export function datetime(date?: any, format?: string): any;
+  export function datetime(date?: Date | string | number, format?: string): string;
 
   /**
    * get deferred object
