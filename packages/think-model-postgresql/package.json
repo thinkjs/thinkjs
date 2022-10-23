@@ -36,9 +36,6 @@
     "ava": "^0.19.1",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-standard": "^5.0.0",
     "mock-require": "^3.0.2",
     "muk": "^0.5.3",
     "nyc": "^10.3.0"

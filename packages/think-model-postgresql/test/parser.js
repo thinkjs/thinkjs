@@ -5,8 +5,8 @@ test('parserKey', t => {
   t.plan(3);
 
   const parser = new Parser();
-  t.is(parser.parseKey('aa bb'), '"aa bb"');
-  t.is(parser.parseKey('lizheming'), '"lizheming"');
+  t.is(parser.parseKey('aa bb'), 'aa bb');
+  t.is(parser.parseKey('lizheming'), 'lizheming');
   t.is(parser.parseKey('where'), '"where"');
 });
 
