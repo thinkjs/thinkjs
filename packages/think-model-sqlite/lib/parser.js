@@ -161,13 +161,13 @@ module.exports = class SQLiteParser extends Parser {
    * build insert sql
    * @param {Object} options
    */
-   buildInsertSql(options) {
+  buildInsertSql(options) {
     const sql = super.buildInsertSql(options);
 
     // FIX `INSERT IGNORE` generated in think-model-abstract
     // For sqlite, the equivalent syntax for `insert ignore` is `insert or ignore`
     // SEE https://www.sqlite.org/lang_insert.html
-    return sql.replace(/^INSERT IGNORE/,'INSERT OR IGNORE');
+    return sql.replace(/^INSERT IGNORE/, 'INSERT OR IGNORE');
   }
 
   /**
