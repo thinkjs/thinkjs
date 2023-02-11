@@ -1,5 +1,5 @@
 {
-  "name": "think-model-mysql",
+  "name": "think-model-mysql2",
   "version": "1.1.7",
   "description": "Mysql adapter for ThinkJS 3.x",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-model-mysql.git"
+    "url": "git+https://github.com/thinkjs/think-model-mysql2.git"
   },
   "keywords": [
     "thinkjs",
@@ -22,14 +22,14 @@
   "author": "lizheming",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-model-mysql/issues"
+    "url": "https://github.com/thinkjs/think-model-mysql2/issues"
   },
-  "homepage": "https://github.com/thinkjs/think-model-mysql#readme",
+  "homepage": "https://github.com/thinkjs/think-model-mysql2#readme",
   "dependencies": {
     "think-debounce": "^1.0.4",
     "think-helper": "^1.1.2",
     "think-model-abstract": "^1.2.2",
-    "think-mysql": "^1.2.4"
+    "think-mysql": "npm:think-mysql2@^2.0.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",
