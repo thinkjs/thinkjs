@@ -1,15 +1,12 @@
-# think-mysql2
+# think-mysql
+[![Build Status](https://travis-ci.org/thinkjs/think-mysql.svg?branch=master)](https://travis-ci.org/thinkjs/think-mysql)
+[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-mysql/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-mysql?branch=master)
+[![npm](https://img.shields.io/npm/v/think-mysql.svg?style=flat-square)](https://www.npmjs.com/package/think-mysql)
 
-[![Build Status](https://travis-ci.org/thinkjs/think-mysql2.svg?branch=master)](https://travis-ci.org/thinkjs/think-mysql2)
-[![Coverage Status](https://coveralls.io/repos/github/thinkjs/think-mysql2/badge.svg?branch=master)](https://coveralls.io/github/thinkjs/think-mysql2?branch=master)
-[![npm](https://img.shields.io/npm/v/think-mysql2.svg?style=flat-square)](https://www.npmjs.com/package/think-mysql2)
-
-
-use [mysql2](https://npmjs.com/mysql2) instead of mysql module.
 ## Install
 
 ```
-npm install think-mysql2
+npm install think-mysql
 ```
 
 ## How to use
@@ -38,7 +35,7 @@ const defaultConfig = {
 
 #### Custom usage
 ```js
-  import mysql from 'think-mysql2';
+  import mysql from 'think-mysql';
   let instance = mysql.getInstance(config);
   await instance.execute({
     sql:"insert into `think_test`.`books` (`name`, `author`) values ('thinkjs best practice', ?)",
@@ -56,7 +53,7 @@ const defaultConfig = {
 #### Transactions
 
 ```js
-  import mysql from 'think-mysql2';
+  import mysql from 'think-mysql';
   let instance = mysql.getInstance(config);
   let result = null;
   try{
