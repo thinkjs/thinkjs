@@ -1,6 +1,6 @@
 {
   "name": "think-model-mysql2",
-  "version": "1.1.7",
+  "version": "2.0.0",
   "description": "Mysql adapter for ThinkJS 3.x",
   "scripts": {
     "test": "npm run lint && npm run test-cov",
