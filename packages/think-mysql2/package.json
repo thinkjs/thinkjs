@@ -1,6 +1,6 @@
 {
-  "name": "think-mysql",
-  "description": "think-mysql for ThinkJS",
+  "name": "think-mysql2",
+  "description": "think-mysql2 for ThinkJS",
   "version": "1.4.4",
   "author": {
     "name": "zhengqingxin",
@@ -26,7 +26,7 @@
   "main": "index.js",
   "dependencies": {
     "debug": "^2.6.4",
-    "mysql": "^2.16.0",
+    "mysql": "npm:mysql2@^3.1.2",
     "think-debounce": "^1.0.3",
     "think-helper": "^1.1.3",
     "think-instance": "^1.0.2"
@@ -46,13 +46,13 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-mysql"
+    "url": "https://github.com/thinkjs/think-mysql2"
   },
   "engines": {
     "node": ">=6.0.0"
   },
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/thinkjs/think-mysql/issues"
+    "url": "https://github.com/thinkjs/think-mysql2/issues"
   }
 }

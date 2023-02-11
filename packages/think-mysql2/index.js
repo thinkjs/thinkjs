@@ -4,10 +4,10 @@ const assert = require('assert');
 const Debounce = require('think-debounce');
 const thinkInstance = require('think-instance');
 
-const debug = require('debug')('think-mysql');
+const debug = require('debug')('think-mysql2');
 const debounceInstance = new Debounce();
-const QUERY = Symbol('think-mysql-query');
-const CONNECTION_LOST = Symbol('think-mysql-connection-lost');
+const QUERY = Symbol('think-mysql2-query');
+const CONNECTION_LOST = Symbol('think-mysql2-connection-lost');
 
 const defaultConfig = {
   port: 3306,
