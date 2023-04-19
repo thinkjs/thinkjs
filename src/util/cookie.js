@@ -5,6 +5,10 @@ import crypto from 'crypto';
  * cookie
  * @type {Object}
  */
+
+// https://github.com/pillarjs/cookies/blob/master/index.js#L52
+const SAME_SITE_REGEXP = /^(?:lax|none|strict)$/i;
+
 let Cookie = {
   /**
    * parse cookie
@@ -57,14 +61,20 @@ let Cookie = {
       item.push('Path=' + options.path);
     }
     let expires = options.expires;
-    if (expires){
+    if (expires) {
       if (!think.isDate(expires)) {
         expires = new Date(expires);
       }
       item.push('Expires=' + expires.toUTCString());
-    } 
+    }
     if (options.httponly) {
       item.push('HttpOnly');
+    }
+    if (options.samesite) {
+      const samesite = options.samesite === true ? 'strict' : options.samesite.toLowerCase();
+      if (SAME_SITE_REGEXP.test(samesite)) {
+        item.push('SameSite=' + samesite);
+      }
     }
     if (options.secure) {
       item.push('Secure');
