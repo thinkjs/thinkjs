@@ -45,6 +45,26 @@ describe('Cookie', function(){
         httponly: true
       }), 'welefen=suredy; HttpOnly')
     })
+    it('samesite', function(){
+      assert.strictEqual(Cookie.stringify('welefen', 'suredy', {
+        samesite: true
+      }), 'welefen=suredy; SameSite=strict')
+    })
+    it('samesite None', function(){
+      assert.strictEqual(Cookie.stringify('welefen', 'suredy', {
+        samesite: 'None'
+      }), 'welefen=suredy; SameSite=none')
+    })
+    it('samesite lax', function(){
+      assert.strictEqual(Cookie.stringify('welefen', 'suredy', {
+        samesite: 'lax'
+      }), 'welefen=suredy; SameSite=lax')
+    })
+    it('samesite abc', function(){
+      assert.strictEqual(Cookie.stringify('welefen', 'suredy', {
+        samesite: 'abc'
+      }), 'welefen=suredy')
+    })
     it('secure', function(){
       assert.strictEqual(Cookie.stringify('welefen', 'suredy', {
         secure: true
