@@ -12,7 +12,7 @@
     "compile": "babel src/ --out-dir lib/",
     "watch-compile": "npm run compile -- --watch",
     "watch": "npm run watch-compile",
-    "prepublish": "npm run compile",
+    "prepublishOnly": "npm run compile",
     "eslint": "eslint src/"
   },
   "bin": {
