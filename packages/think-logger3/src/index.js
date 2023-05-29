@@ -10,7 +10,7 @@ class Logger {
     delete config.handle;
 
     this._logger = new Handle(config);
-    ['trace', 'debug', 'info', 'warn', 'error'].forEach(level => {
+    ['trace', 'debug', 'info', 'warn', 'error', 'getLogger'].forEach(level => {
       assert(this._logger[level], `adapter function ${level} not exist!`);
       this[level] = this._logger[level].bind(this._logger);
     });
