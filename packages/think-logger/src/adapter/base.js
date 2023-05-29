@@ -42,7 +42,9 @@ module.exports = class {
     this.configure(config);
     this[_logger] = log4js.getLogger(category);
   }
-
+  getLogger() {
+    return this[_logger];
+  }
   formatConfig(config) {
     return config;
   }
