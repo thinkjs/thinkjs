@@ -72,7 +72,7 @@ module.exports = class MysqlSchema extends Schema {
             name: item.name,
             type: item.type,
             required: !!item.notnull,
-            default: item.dflt_value || '',
+            default: '',
             primary: !!item.pk,
             unique: item.unique,
             autoIncrement: false
