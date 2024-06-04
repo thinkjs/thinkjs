@@ -7,7 +7,8 @@ const defaultOptions = {
   requestTimeoutCallback: () => {}, // request timeout callback
   sendPowerBy: true, // send powerby
   sendResponseTime: true, // send response time
-  logRequest: true
+  logRequest: true,
+  ignoreUrl:[]
 };
 
 /**
@@ -42,7 +43,10 @@ module.exports = (options, app) => {
         }
         if (options.logRequest) {
           process.nextTick(() => {
-            app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
+            if(!options.ignoreUrl.includes(ctx.url)){
+              app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
+            }
+            
           });
         }
         if (err) return Promise.reject(err);
