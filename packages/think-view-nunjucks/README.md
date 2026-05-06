@@ -80,17 +80,3 @@ exports.view = {
 }
 ```
 you can find all APIs in `env` at https://mozilla.github.io/nunjucks/api.html#environment
-
-## CI npm auto publish
-
-The repository includes a GitHub Actions auto-publish workflow at `.github/workflows/npm-publish.yml`.
-
-Trigger:
-- Runs automatically when a GitHub Release is published (`published` event)
-
-Before publish:
-- Installs dependencies (`npm ci` when `package-lock.json` exists, otherwise `npm install`)
-- Runs `npm test`
-
-Required setup:
-- Add `NPM_TOKEN` in repository `Settings -> Secrets and variables -> Actions`
