@@ -80,3 +80,17 @@ exports.view = {
 }
 ```
 you can find all APIs in `env` at https://mozilla.github.io/nunjucks/api.html#environment
+
+## CI 自动发布 npm 包
+
+项目已配置 GitHub Actions 自动发布流程：`.github/workflows/npm-publish.yml`。
+
+触发方式：
+- 在 GitHub 上发布 Release（`published`）后自动执行
+
+发布前会自动执行：
+- `npm install`
+- `npm test`
+
+发布所需配置：
+- 在仓库 `Settings -> Secrets and variables -> Actions` 中添加 `NPM_TOKEN`
