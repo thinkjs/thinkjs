@@ -35,6 +35,9 @@
     "url": "https://github.com/thinkjs/think-view-nunjucks/issues"
   },
   "homepage": "https://github.com/thinkjs/think-view-nunjucks#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "ava": "~0.18.1",
     "babel-eslint": "~7.1.1",
