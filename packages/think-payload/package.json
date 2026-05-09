@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "ava": "^8.0.0",
-    "coveralls": "^2.13.0",
+    "coveralls": "^3.1.1",
     "eslint": "^8.57.1",
     "eslint-config-think": "^1.1.0",
     "koa": "^2.2.0",
