@@ -1,7 +1,7 @@
 {
   "name": "thinkjs",
   "description": "ThinkJS - Use full ES6+ features to develop web applications",
-  "version": "3.2.15",
+  "version": "4.0.0-alpha.0",
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -43,7 +43,7 @@
     "cookies": "^0.8.0",
     "debug": "^3.1.0",
     "destroy": "^1.0.4",
-    "koa": "^2.13.1",
+    "koa": "^3.0.0",
     "on-finished": "^2.3.0",
     "think-cluster": "^1.5.8",
     "think-config": "^1.1.2",
@@ -93,7 +93,7 @@
     "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=18.0.0"
   },
   "license": "MIT",
   "readmeFilename": "README.md",
