@@ -1,9 +1,8 @@
 const text = require('./text.js');
-const helper = require('think-helper');
-const parseString = require('xml2js').parseString;
-const parser = helper.promisify(parseString, parseString);
+const xml2js = require('xml2js');
 
-module.exports = (ctx, opts) => text(ctx, opts)
-  .then(xml =>
-    parser(xml, opts).then(post => ({ post, raw: xml }))
-  );
+module.exports = async(ctx, opts) => {
+  const xml = await text(ctx, opts);
+  const post = await (new xml2js.Parser(opts)).parseStringPromise(xml);
+  return { post, raw: xml };
+};
