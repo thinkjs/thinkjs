@@ -12,11 +12,6 @@
     "lint-fix": "npm run lint -- --fix",
     "coverage": "nyc ava test/ && nyc report --reporter=html"
   },
-  "ava": {
-    "require": [
-      "babel-core/register"
-    ]
-  },
   "contributors": [
     {
       "name": "welefen",
@@ -32,17 +27,15 @@
     "debug": "^2.6.1",
     "path-to-regexp": "^1.7.0",
     "think-helper": "^1.0.0",
-    "thinkjs": "^3.2.10"
+    "thinkjs": "^4.0.0"
   },
   "devDependencies": {
-    "ava": "^0.18.2",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
+    "ava": "^8.0.0",
     "coveralls": "~2.11.16",
     "eslint": "^4.19.1",
-    "eslint-config-think": "^1.0.0",
+    "eslint-config-think": "^1.0.3",
     "mock-require": "^2.0.1",
-    "nyc": "^7.0.0"
+    "nyc": "^18.0.0"
   },
   "keywords": [],
   "repository": {

@@ -1,4 +1,4 @@
-const test = require('ava');
+const { default: test } = require('ava');
 const util = require('../loader/util.js');
 const mock = require('mock-require');
 
@@ -17,7 +17,7 @@ test('obj is not a string, __esModule=true', t => {
 test('obj is string, not safe require, module not found', t => {
   t.throws(() => {
     interopRequire('../a', false);
-  }, Error);
+  }, {instanceOf: Error});
 });
 
 test('obj is string, not safe require', t => {

@@ -1,4 +1,4 @@
-const test = require('ava');
+const { default: test } = require('ava');
 const path = require('path');
 
 const fileList = ['folder/b2.js', 'a.js', 'folder/b1.js', 'd.css', 'e.js.bs', 'folder\\folder2\\c.js'];

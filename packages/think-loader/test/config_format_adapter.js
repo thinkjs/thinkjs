@@ -1,4 +1,4 @@
-const test = require('ava');
+const { default: test } = require('ava');
 
 var assertCallParams;
 function mockAssert() {

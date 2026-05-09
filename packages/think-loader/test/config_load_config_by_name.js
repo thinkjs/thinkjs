@@ -1,4 +1,4 @@
-const test = require('ava');
+const { default: test } = require('ava');
 const path = require('path');
 
 function mockHelper(isFile) {

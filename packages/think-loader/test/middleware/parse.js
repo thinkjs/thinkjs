@@ -1,4 +1,4 @@
-const test = require('ava');
+const { default: test } = require('ava');
 const mock = require('mock-require');
 
 var assertCallParams;
@@ -36,7 +36,7 @@ test('assert middleware is a function', t => {
   // const handle = () => {};
   t.throws(() => {
     instance.parse(['handler'], {handler: {}});
-  }, Error);
+  }, {instanceOf: Error});
 
   t.deepEqual(assertCallParams, [false, 'handle must be a function']);
 });
