@@ -57,7 +57,7 @@ class Worker {
     const env = Object.assign({}, process.env, {
       THINK_WORKER_ID: index
     });
-    debug(`fork worker: ${exec} ${args.join(' ')}, env: ${JSON.stringify(env)}`);
+    debug(`fork worker: ${exec} ${args.join(' ')}, THINK_WORKER_ID: ${index}`);
     return cluster.fork(env);
   }
 
