@@ -2,6 +2,9 @@
   "name": "thinkjs",
   "description": "ThinkJS - Use full ES6+ features to develop web applications",
   "version": "4.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "author": {
     "name": "welefen",
     "email": "welefen@gmail.com"
@@ -13,7 +16,9 @@
     "test": "npm run lint && npm run test-cov",
     "test-cov": "nyc ava test/case/ && nyc report --reporter=html",
     "lint": "eslint ./lib/ index.js",
-    "prepublish": "npm test"
+    "prepublish": "npm test",
+    "packages:test": "npm run test --workspaces --if-present",
+    "packages:lint": "npm run lint --workspaces --if-present"
   },
   "contributors": [
     {
