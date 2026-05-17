@@ -1,0 +1,54 @@
+{
+  "name": "think-helper",
+  "description": "Helper for ThinkJS",
+  "version": "1.1.4",
+  "author": {
+    "name": "songguangyu",
+    "email": "522963130@qq.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "lint": "eslint index.js",
+    "lint-fix": "eslint --fix index.js"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "songguangyu",
+      "email": "522963130@qq.com"
+    }
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "dependencies": {
+    "core-util-is": "^1.0.2",
+    "lodash.merge": "^4.6.2",
+    "ms": "^1.0.0",
+    "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "ava": "^0.18.0",
+    "codecov": "^3.7.1",
+    "coveralls": "^2.11.16",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
+    "nyc": "^7.1.0"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-helper"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-helper/issues"
+  }
+}
