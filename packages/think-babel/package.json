@@ -1,0 +1,51 @@
+{
+  "name": "think-babel",
+  "version": "2.0.1",
+  "description": "Use Babel transpile ES6+ file to ES5",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --fix index.js",
+    "test": "npm run lint && nyc ava test/index.js",
+    "coverage": "npm test && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-babel.git"
+  },
+  "keywords": [
+    "think-babel"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-babel/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-babel#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.4.3",
+    "ava": "~0.18.1",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~4.2.0",
+    "eslint-config-think": "~1.0.1",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "@babel/core": "^7.4.3",
+    "think-helper": "^1.1.3"
+  }
+}
