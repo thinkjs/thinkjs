@@ -1,0 +1,63 @@
+{
+  "name": "think-inspect",
+  "description": "inspector for ThinkJS",
+  "version": "0.0.2",
+  "author": {
+      "name": "huangxiaolu",
+      "email": "lu.huang90@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=html",
+    "lint": "eslint index.js",
+    "lint-fix": "eslint --fix index.js"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ],
+     "exclude": [
+      "demo"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+       "demo"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    },
+    {
+      "name": "huangxiaolu",
+      "email": "lu.huang90@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.0",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
+    "nyc": "^7.0.0",
+    "mock-require": "^2.0.1"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-inspect"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-inspect/issues"
+  }
+}
