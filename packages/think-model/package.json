@@ -1,0 +1,70 @@
+{
+  "name": "think-model",
+  "version": "1.5.4",
+  "description": "An adapter-based ORM for ThinkJS 3.x",
+  "scripts": {
+    "watch": "babel ./src --out-dir ./lib --watch",
+    "compile": "babel ./src --out-dir ./lib",
+    "test": "npm run compile && npm run eslint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "eslint": "eslint ./src",
+    "prepublish": "npm test && npm run compile",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-model.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "orm",
+    "mysql",
+    "adapter",
+    "model"
+  ],
+  "types": "index.d.ts",
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-model/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-model#readme",
+  "dependencies": {
+    "think-cache": "^1.0.7",
+    "think-debounce": "^1.0.3",
+    "think-helper": "^1.0.22",
+    "think-model-abstract": "^1.2.0"
+  },
+  "devDependencies": {
+    "@semantic-release/github": "^5.4.3",
+    "@semantic-release/npm": "^5.1.15",
+    "ava": "^0.19.1",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-think-node": "^1.0.1",
+    "eslint": "^4.11.0",
+    "eslint-config-think": "^1.0.2",
+    "muk": "^0.5.3",
+    "nyc": "^10.3.0",
+    "semantic-release": "^15.13.24"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  },
+  "babel": {
+    "presets": [
+      "think-node"
+    ]
+  },
+  "release": {
+    "branche": "master",
+    "plugins": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  }
+}
