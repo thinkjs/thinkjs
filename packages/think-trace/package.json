@@ -1,0 +1,57 @@
+{
+  "name": "think-trace",
+  "version": "1.0.18",
+  "description": "Error trace for thinkjs 3.x",
+  "main": "./lib",
+  "scripts": {
+    "compile": "webpack -p",
+    "eslint": "eslint ./lib",
+    "test": "npm run eslint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "preversion": "npm test",
+    "postversion": "git push"
+  },
+  "dependencies": {
+    "source-map-support": "^0.4.18",
+    "stack-trace": "^0.0.9",
+    "statuses": "^1.4.0",
+    "think-helper": "^1.1.3"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.27.3",
+    "eslint": "^4.13.1",
+    "eslint-config-think": "^1.0.2",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "file-loader": "^0.10.1",
+    "html-webpack-plugin": "^2.30.1",
+    "nyc": "^10.3.2",
+    "raw-loader": "^0.5.1",
+    "style-loader": "^0.14.1",
+    "url-loader": "^0.5.9",
+    "webpack": "^2.7.0",
+    "webpack-zepto": "0.0.1",
+    "zepto": "^1.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-trace.git"
+  },
+  "keywords": [
+    "stack",
+    "trace",
+    "node",
+    "thinkjs",
+    "error"
+  ],
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-trace/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-trace#readme"
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Not Found - ThinkJS</title>
+  <style type="text/css">
+  <% htmlWebpackPlugin.files.css.forEach(function(cssFile) { %>
+    <%=compilation.assets[cssFile.substr(htmlWebpackPlugin.files.publicPath.length)].source()%>
+  <% }) %>
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="wrap">
+		<div class="logo">
+			<a href="http://www.thinkjs.org/">
+				<img src="<%=require('../images/logo.png')%>" alt="ThinkJS"></a>
+			</div>
+			<div class="headr">
+				<a href="http://www.thinkjs.org/doc/error_handle.html#404" target="_blank">
+					Why might this be happening?
+				</a>
+			</div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="wrap-bg"></div>
+  <h1>Not Found</h1>
+  <div class="error-msg">
+    <pre>{{errMsg}}</pre>
+  </div>
+</div>
+<script type="text/javascript">
+<% htmlWebpackPlugin.files.js.forEach(function(jsFile) { %>
+  <%=compilation.assets[jsFile.substr(htmlWebpackPlugin.files.publicPath.length)].source()%>
+<% }) %>
+</script>
+</body>
+</html>
