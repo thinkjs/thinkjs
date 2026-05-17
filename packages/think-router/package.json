@@ -1,0 +1,51 @@
+{
+  "name": "think-router",
+  "description": "Router for ThinkJS",
+  "version": "1.3.5",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc ava test/ && nyc report --reporter=html",
+    "lint": "eslint index.js & eslint router.js",
+    "lint-fix": "eslint --fix index.js & eslint --fix router.js"
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    },
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "debug": "^2.6.3",
+    "path-to-regexp": "^1.7.0",
+    "think-helper": "^1.1.3"
+  },
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "coveralls": "~2.11.16",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
+    "mockery": "~2.0.0",
+    "nyc": "~10.1.2"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-router"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-router/issues"
+  }
+}
