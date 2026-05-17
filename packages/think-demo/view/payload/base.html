@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payload Demo</title>
+</head>
+<body>
+  {% block header %}{% endblock %}
+  {% block body %}{% endblock %}
+
+  <script src="http://s0.qhimg.com/static/0e4b4f909dd26431/jquery,qw.core.js"></script>
+  <script>
+    var utils = {
+      bind: function (fn, ctx) {
+        return function () {
+          fn.apply(ctx, arguments);
+        }
+      },
+
+      inheritObject: function (obj) {
+        function F() {}
+        F.prototype = obj;
+        return new F();
+      },
+
+      inheritPrototype: function (subClass, superClass) {
+        var p = utils.inheritObject(superClass.prototype);
+        p.constructor = subClass;
+        subClass.prototype = p;
+      }
+    };
+
+    function BaseRequest() {
+      this.eventMap = {};
+      this.eles = {};
+    }
+
+    BaseRequest.prototype = {
+      _initializeElements: function (eles) {
+        for (var name in eles) {
+          this[name] = $(eles[name]);
+        }
+      },
+
+      _scanEventsMap: function (maps, isOn) {
+        var eventSplitter = /^(.+):(.+)$/;
+        var bind = isOn ? utils.bind(this._delegate, this) : utils.bind(this._undelegate, this);
+
+        for (var key in maps) {
+          if (maps.hasOwnProperty(key)) {
+            var matchs = key.match(eventSplitter);
+            bind(matchs[1], matchs[2], this[maps[key]]);
+          }
+        }
+      },
+
+      _delegate: function (eventName, selector, fn) {
+        this.body.on(eventName, selector, utils.bind(fn, this));
+      },
+      _undelegate: function (eventName, selector, fn) {
+        this.body.off(eventName, selector, utils.bind(fn, this));
+      },
+
+      _initializeEvent: function (maps) {
+        this._scanEventsMap(maps, true);
+      },
+      _destroyEvent: function (maps) {
+        this._scanEventsMap(maps);
+      },
+
+      initialization: function () {
+        this._initializeElements(Object.assign(this.eles, {
+          body: 'body'
+        }));
+        this._initializeEvent(this.eventMap);
+      },
+      destroy: function () {
+        this._destroyEvent(this.eventMap);
+      }
+    };
+  </script>
+  {% block loadJs %}{% endblock %}
+</body>
+</html>

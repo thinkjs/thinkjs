@@ -1,0 +1,54 @@
+{
+  "name": "think-demo",
+  "description": "Helper for ThinkJS",
+  "version": "1.0.0",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "start": "node development.js",
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [],
+  "main": "index.js",
+  "dependencies": {
+    "babel-preset-think-node": "^1.0.0",
+    "node-notifier": "^5.0.2",
+    "think-cache-file": "~1.0.8",
+    "think-fetch": "^1.0.0",
+    "think-i18n": "^1.2.3",
+    "think-model": "*",
+    "think-mongoose": "^1.0.1",
+    "think-session-cookie": "^1.0.0",
+    "think-session-file": "^1.0.0",
+    "think-view": "^1.0.0",
+    "think-view-nunjucks": "^1.0.1",
+    "think-watcher": "^3.0.0",
+    "think-websocket": "^1.0.0",
+    "think-websocket-socket.io": "^1.0.0",
+    "thinkjs": "^3.0.0"
+  },
+  "devDependencies": {
+    "think-inspect": "0.0.2",
+    "think-babel": "^1.0.3"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-demo"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-demo/issues"
+  }
+}

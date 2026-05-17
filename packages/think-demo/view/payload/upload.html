@@ -1,0 +1,72 @@
+{% extends "./base.html" %}
+
+{% block header %}
+  <h1>Upload Demo</h1>
+  <div>
+    <a href="/payload">Payload Demo</a> > payload upload demo
+  </div>
+{% endblock %}
+{% block body %}
+<dl>
+  <dt>
+    <input type="text" id="text"><br />
+    <input type="file" id="file" name="image" multiple="multiple">file upload (support multi file upload)<br />
+    <button id="submit">submit</button>
+  </dt>
+  <dd>
+    <h3>请求信息</h3>
+    <div id="result"></div>
+  </dd>
+</dl>
+{% endblock %}
+
+{% block loadJs %}
+<script>
+  utils.inheritPrototype(Request, BaseRequest);
+
+  function Request() {
+    BaseRequest.call(this);
+
+    this.eventMap = {
+      'change:#file': 'upload',
+      'click:#submit': 'submit'
+    };
+
+    this.eles = {
+      result: '#result',
+      text: '#text'
+    };
+
+    this.state = {};
+    this.initialization();
+  }
+
+  Request.prototype = Object.assign(Request.prototype, {
+    upload: function (ev) {
+      this.state.files = ev.target.files;
+    },
+
+    submit: function () {
+      var files = this.state.files;
+      var data = new FormData();
+      data.append('text', this.text.val());
+
+      for (var i = 0; i < files.length; i++) {
+        data.append('file' + i+1, files[i]);
+      }
+
+      var self = this;
+      fetch('/payload/demo' + location.search, {
+        method: 'post',
+        body: data
+      }).then(function (res) {
+        return res.json();
+      }).then(function (data) {
+        self.result.html('header: {"Content-Type": "multipart/form-data"}</br> response body: ' + JSON.stringify(data));
+      });
+    }
+  });
+
+  new Request();
+</script>
+{%  endblock%}

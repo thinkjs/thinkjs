@@ -1,0 +1,15 @@
+{
+  "apps": [{
+    "name": "demo",
+    "script": "index.js",
+    "cwd": "/Users/welefen/Develop/git/thinkjs3/thinkjs/demo",
+    "exec_mode": "fork",
+    "max_memory_restart": "1G",
+    "autorestart": true,
+    "node_args": [],
+    "args": [],
+    "env": {
+      
+    }
+  }]
+}
