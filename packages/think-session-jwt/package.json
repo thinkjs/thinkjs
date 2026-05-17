@@ -1,0 +1,47 @@
+{
+  "name": "think-session-jwt",
+  "version": "1.1.1",
+  "description": "JsonWebToken for ThinkJS 3.x",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc ava test/index.js",
+    "coverage": "nyc report --reporter=html",
+    "pretest": "eslint index.js",
+    "lint-fix": "eslint --fix index.js",
+    "prepublish": "rm -rf .nyc_output"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-session-jwt.git"
+  },
+  "keywords": [
+    "JsonWebToken",
+    "ThinkJS",
+    "session"
+  ],
+  "author": "makeco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-session-jwt/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-session-jwt#readme",
+  "devDependencies": {
+    "ava": "^0.22.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "coveralls": "^2.13.1",
+    "eslint": "^4.4.1",
+    "eslint-config-think": "^1.0.2",
+    "mock-require": "^2.0.2",
+    "nyc": "^11.1.0"
+  },
+  "dependencies": {
+    "debug": "^3.0.0",
+    "jsonwebtoken": "^7.4.2",
+    "ms": "^2.0.0",
+    "think-helper": "^1.0.20"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
