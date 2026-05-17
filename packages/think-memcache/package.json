@@ -1,0 +1,51 @@
+{
+  "name": "think-memcache",
+  "version": "1.1.2",
+  "description": "Memcache for ThinkJS",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --fix index.js",
+    "test": "npm run lint && nyc ava test/",
+    "coverage": "npm test && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-memcache.git"
+  },
+  "keywords": [
+    "think-memcache"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-memcache/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-memcache#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~6.8.0",
+    "eslint-config-think": "~1.0.1",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "memcache-plus": "~0.2.17",
+    "think-debounce": "^1.0.4",
+    "think-helper": "^1.1.3"
+  }
+}
