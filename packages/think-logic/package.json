@@ -1,0 +1,52 @@
+{
+  "name": "think-logic",
+  "description": "Invoke logic for ThinkJS 3.x",
+  "version": "1.2.2",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js --fix && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "coveralls": "^2.12.0",
+    "mkdirp": "^0.5.1",
+    "mock-require": "^2.0.1",
+    "nyc": "^7.0.0",
+    "rimraf": "^2.6.1",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.0"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-logic"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-logic/issues"
+  }
+}
