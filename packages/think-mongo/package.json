@@ -1,0 +1,60 @@
+{
+  "name": "think-mongo",
+  "version": "2.2.1",
+  "description": "Mongo adaper",
+  "scripts": {
+    "watch": "babel ./src --out-dir ./lib --watch",
+    "compile": "babel ./src --out-dir ./lib",
+    "test": "npm run lint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "lint": "eslint ./src",
+    "lint-fix": "eslint --fix ./src",
+    "prepublish": "npm test && npm run compile",
+    "coverage": "nyc report --reporter=html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-mongo.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "orm",
+    "mysql",
+    "adapter",
+    "model"
+  ],
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-mongo/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-mongo#readme",
+  "dependencies": {
+    "generic-pool": "^3.1.7",
+    "mongodb": "^3.5.9",
+    "think-helper": "^1.1.3",
+    "think-instance": "^1.0.2"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-think-node": "^1.0.2",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
+    "muk": "^0.5.3",
+    "nyc": "^10.3.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  },
+  "babel": {
+    "presets": [
+      "think-node"
+    ]
+  }
+}

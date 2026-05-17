@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - '8'
+  - '10'
+  - '12'
+# sudo: false
+# make mongodb support a replica set
+# https://georgeshank.com/how-to-enable-a-mongodb-replica-set-on-travis/
+before_install:
+  - sudo cp ./.travis/mongod.conf /etc/mongod.conf
+  - sudo service mongod restart
+  - sleep 20
+  - mongo --eval 'rs.initiate()'
+  - sleep 15
+script:
+    - "npm run test"
+after_script: "npm install coveralls && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
+services:
+  - mongodb
+
