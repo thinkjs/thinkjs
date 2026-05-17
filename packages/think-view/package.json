@@ -1,0 +1,59 @@
+{
+  "name": "think-view",
+  "description": "view for ThinkJS",
+  "version": "1.0.12",
+  "author": {
+    "name": "welefen",
+    "email": "welefen@gmail.com"
+  },
+  "pre-commit": [
+    "test"
+  ],
+  "scripts": {
+    "lint": "eslint lib/",
+    "lint-fix": "eslint --fix lib/",
+    "test": "eslint lib/ && nyc ava test/",
+    "coverage": "nyc report --reporter=html"
+  },
+  "ava": {
+    "require": [
+      "babel-core/register"
+    ]
+  },
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "dependencies": {
+    "debug": "^2.6.1",
+    "methods": "^1.1.2",
+    "think-helper": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "coveralls": "^2.12.0",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
+    "mock-require": "^2.0.1",
+    "nyc": "^7.0.0",
+    "pre-commit": "^1.2.2"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/think-view"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-view/issue"
+  }
+}
