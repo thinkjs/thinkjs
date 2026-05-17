@@ -1,8 +1,8 @@
 {
-  "name": "thinkjs-monorepo",
+  "name": "thinkjs",
   "private": true,
   "version": "1.0.0",
-  "packageManager": "pnpm@10",
+  "packageManager": "pnpm@11",
   "scripts": {
     "test": "pnpm --filter thinkjs test",
     "lint": "pnpm --filter thinkjs lint"
