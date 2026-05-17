@@ -1,0 +1,35 @@
+{
+  "name": "think-router-rest",
+  "version": "1.0.5",
+  "description": "Let think-router recognize REST router easily without custom router.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint && nyc ava test",
+    "lint": "eslint index.js",
+    "lint-fix": "npm run lint -- --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-router-rest.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "think-router",
+    "restful"
+  ],
+  "author": "lizheming <i@imnerd.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-router-rest/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-router-rest#readme",
+  "devDependencies": {
+    "ava": "^0.22.0",
+    "eslint": "^4.7.2",
+    "eslint-config-think": "^1.0.2",
+    "nyc": "^11.2.1"
+  },
+  "dependencies": {
+    "debug": "^4.1.1"
+  }
+}
