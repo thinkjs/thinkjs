@@ -1,0 +1,50 @@
+{
+  "name": "think-validator",
+  "version": "1.6.7",
+  "description": "Validator for ThinkJS",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint --fix rules.js & eslint --fix src/index.js",
+    "test": "npm run lint && nyc ava test/index.js",
+    "coverage": "npm test && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-validator.git"
+  },
+  "keywords": [
+    "think-validator"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-validator/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-validator#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~4.2.0",
+    "eslint-config-think": "~1.0.1",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "think-helper": "^1.1.3",
+    "validator": "^9.0.0"
+  }
+}
