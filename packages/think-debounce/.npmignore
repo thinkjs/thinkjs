@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+demo/
+test/
+src/
+ISSUE_TEMPLATE.md
+appveyor.yml
+README_zh-CN.md
