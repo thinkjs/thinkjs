@@ -1,5 +1,5 @@
 const thinkInstance = require('think-instance');
-const sqlite = require('sqlite3');
+const BetterSqlite3 = require('better-sqlite3');
 const assert = require('assert');
 const helper = require('think-helper');
 const path = require('path');
@@ -22,6 +22,8 @@ const TRANSACTION = {
   start: 1,
   end: 2
 };
+
+const SELECT_SQL_RE = /^\s*(SELECT|PRAGMA|WITH|EXPLAIN)\b/i;
 
 class SQLiteSocket {
   constructor(config = {}) {
@@ -52,23 +54,24 @@ class SQLiteSocket {
   [CREATE_POOL]() {
     const factory = {
       create: () => {
-        const deferred = helper.defer();
-        const db = new sqlite.Database(this.savePath, err => {
+        return Promise.resolve().then(() => {
+          let timeout = this.config.timeout;
+          const options = {};
+          if (timeout) {
+            timeout = helper.ms(timeout);
+            options.timeout = timeout;
+          }
+          const db = new BetterSqlite3(this.savePath, options);
           if (this.config.logConnect) {
             this.config.logger(`sqlite:${this.savePath}`);
           }
-          if (err) return deferred.reject(err);
-          deferred.resolve(db);
+          return db;
         });
-        let timeout = this.config.timeout;
-        if (timeout) {
-          timeout = helper.ms(timeout);
-          db.configure('busyTimeout', timeout);
-        }
-        return deferred.promise;
       },
       destroy: (client) => {
-        client.close();
+        try {
+          client.close();
+        } catch (e) {}
         return Promise.resolve();
       }
     };
@@ -94,6 +97,7 @@ class SQLiteSocket {
     return this.getConnection(connection).then(connection => {
       return this.query({
         sql: 'BEGIN TRANSACTION',
+        execute: true,
         transaction: TRANSACTION.start,
         debounce: false
       }, connection).then(() => connection);
@@ -106,6 +110,7 @@ class SQLiteSocket {
   commit(connection) {
     return this.query({
       sql: 'COMMIT',
+      execute: true,
       transaction: TRANSACTION.end,
       debounce: false
     }, connection);
@@ -117,6 +122,7 @@ class SQLiteSocket {
   rollback(connection) {
     return this.query({
       sql: 'ROLLBACK',
+      execute: true,
       transaction: TRANSACTION.end,
       debounce: false
     }, connection);
@@ -170,17 +176,23 @@ class SQLiteSocket {
       }
 
       let promise = null;
-      if (sqlOptions.execute) {
-        promise = new Promise((resolve, reject) => {
-          connection.run(sqlOptions.sql, function(err) {
-            if (err) return reject(err);
-            resolve({insertId: this.lastID, affectedRows: this.changes});
-          });
-        });
-      } else {
-        const queryFn = helper.promisify(connection.all, connection);
-        promise = queryFn(sqlOptions.sql);
-      }
+      promise = Promise.resolve().then(() => {
+        const stmt = connection.prepare(sqlOptions.sql);
+        if (sqlOptions.execute) {
+          const ret = stmt.run();
+          return {
+            insertId: Number(ret.lastInsertRowid) || 0,
+            affectedRows: ret.changes || 0
+          };
+        }
+
+        if (SELECT_SQL_RE.test(sqlOptions.sql)) {
+          return stmt.all();
+        }
+
+        stmt.run();
+        return [];
+      });
       return promise.catch(err => {
         return helper.isError(err) ? err : new Error(err);
       }).then(data => {
