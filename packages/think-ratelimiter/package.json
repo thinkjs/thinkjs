@@ -1,0 +1,28 @@
+{
+  "name": "think-ratelimiter",
+  "version": "1.0.0",
+  "description": "ThinkJS ratelimit middleware",
+  "main": "index.js",
+  "repository": "git@github.com:thinkjs/think-ratelimiter.git",
+  "author": "lidongjies@gmail.com",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "test": "nyc ava test/index.js",
+    "pretest": "eslint index.js"
+  },
+  "dependencies": {
+    "debug": "^3.1.0",
+    "ms": "^2.1.1",
+    "ratelimiter": "^3.0.3"
+  },
+  "devDependencies": {
+    "ava": "^0.24.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.15.0",
+    "eslint-config-think": "^1.0.2",
+    "mockery": "^2.1.0",
+    "nyc": "^11.4.1",
+    "supertest": "^3.0.0"
+  }
+}
