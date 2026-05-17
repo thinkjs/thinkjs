@@ -1,0 +1,39 @@
+{
+  "name": "think-view-ejs",
+  "version": "0.0.12",
+  "description": "compile view templates with EJS for ThinkJS 3.x",
+  "author": {
+    "name": "huangxiaolu",
+    "email": "lu.huang90@gmail.com"
+  },
+  "scripts": {
+    "test": "eslint index.js && nyc ava test/",
+    "coverage": "nyc report --reporter=html",
+    "pubtonpm": "npm version patch && npm publish",
+    "lint": "eslint index.js",
+    "lint-fix": "eslint --fix index.js"
+  },
+  "dependencies": {
+    "think-helper": "^1.0.0",
+    "ejs": "^2.5.6"
+  },
+  "devDependencies": {
+    "ava": "^0.18.0",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.2.0",
+    "eslint-config-think": "^1.0.1",
+    "nyc": "^7.0.0",
+    "mock-require": "^2.0.1"
+  },
+  "contributors": [
+    {
+      "name": "huangxiaolu",
+      "email": "lu.huang90@gmail.com"
+    },
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ]
+}
