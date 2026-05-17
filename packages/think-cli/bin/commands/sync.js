@@ -1,0 +1,52 @@
+const path = require('path');
+const chalk = require('chalk');
+const utils = require('../../lib/utils');
+const logger = require('../../lib/logger');
+const Sync = require('../../lib/sync');
+const config = require('../../config');
+
+/**
+ * Padding.
+ */
+
+console.log();
+process.on('exit', function() {
+  console.log();
+});
+
+/**
+ * Start.
+ */
+
+const appPath = path.join(path.resolve('./'));
+if (!utils.isThinkApp(appPath)) {
+  logger.error(
+    'Please execute the command in the ' +
+    chalk.yellow.underline.bold('thinkjs project') +
+    ' root directory, If you are sure you have already in the thinkjs root directory, please execute ' +
+    chalk.green.underline.bold('thinkjs migrate') +
+    ' to migrate your project to think-cli 2.0'
+  );
+}
+
+const thinkjsInfo = require(path.join(appPath, 'package.json')).thinkjs;
+const cacheTemplatePath = path.join(config.templateCacheDirectory, thinkjsInfo.template.replace(/[\\/\\:]/g, '-'));
+const sync = new Sync({
+  template: thinkjsInfo.template || 'standard',
+  cacheTemplatePath,
+  clone: thinkjsInfo.clone
+});
+
+sync.start()
+  .then(cacheTemplatePath => {
+    if (cacheTemplatePath === cacheTemplatePath) {
+      logger.success('Synchronization completed~');
+    }
+  }).catch(err => {
+    console.error(err);
+    console.log('');
+    logger.warning(
+      'Please feedback this issue to issues: ' +
+      chalk.green.underline('https://github.com/thinkjs/thinkjs/issues')
+    );
+  });
