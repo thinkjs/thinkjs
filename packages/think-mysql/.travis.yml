@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+  - '6'
+sudo: false
+script:
+    - "npm test"
+after_success:
+    - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
+services:
+  - mysql
+before_install:
+  - mysql -e '
+    CREATE DATABASE think_test;
+    USE think_test;
+    CREATE TABLE `think_test`.`books` (
+        `id` int NOT NULL AUTO_INCREMENT,
+        `name` varchar(255) NOT NULL DEFAULT "",
+        `author` varchar(255) NOT NULL DEFAULT "",
+        PRIMARY KEY (`id`)
+    );'
+
