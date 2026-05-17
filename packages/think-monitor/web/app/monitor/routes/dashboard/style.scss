@@ -1,0 +1,8 @@
+.dashboard-page {
+  &__criteria {
+    padding: 15px 35px 0;
+    >label, >span, >div {
+      margin-right: 15px;
+    }
+  }
+}

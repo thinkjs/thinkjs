@@ -1,0 +1,66 @@
+.left-menu-component {
+  float: left;
+  width: 190px;
+  height: 100%;
+  background-color: #141414;
+  border-top: 1px solid #000;
+  color: #FFF;
+}
+
+.left-menu-component .glyphicon {
+  float: right;
+  margin: 10px 25px 0 0;
+}
+
+.left-menu-component .glyphicon-rotate {
+  transform: rotate(90deg);
+}
+
+.left-menu-component .first-menu-item {
+  font-size: 15px;
+  margin-right: 5px;
+}
+
+.left-menu__content {
+  margin-top: 10px;
+  background-color: #181818;
+}
+
+.left-menu__item {
+  height: 34px;
+  line-height: 34px;
+  border-bottom: 1px solid #000;
+}
+
+.left-menu__item:hover {
+  background-color: #1F1F1F;
+}
+
+.left-menu__item > a {
+  padding-left: 3px;
+  display: block;
+  color: #FFF;
+}
+
+.left-menu__item > a:focus, .left-menu__item > a:hover {
+  outline: none;
+  text-decoration: none;
+}
+
+.left-menu__item > a.active-menu {
+  border-left: 3px solid #00A3F2;
+  background-color: #333333;
+  padding-left: 0;
+}
+
+.left-menu__item--group .first-menu-item {
+  padding-left: 15px;
+}
+
+.left-menu__item--menu {
+  background-color: #000;
+}
+
+.left-menu__item--menu .first-menu-item {
+  padding-left: 27px;
+}
