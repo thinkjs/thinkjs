@@ -17,13 +17,13 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate storage
 .grunt
 
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
+# Compiled binary addons
 build/Release
 
 # Dependency directories
@@ -38,5 +38,9 @@ jspm_packages
 
 demo/
 
-test/**/*.json
+# Test runtime artifacts
+packages/thinkjs/test/**/*.json
+
 .DS_Store
+.nyc_output/
+coverage/ 
