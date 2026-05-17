@@ -1,0 +1,50 @@
+{
+  "name": "think-store-file",
+  "version": "1.1.1",
+  "description": "store content use file",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --fix index.js",
+    "test": "npm run lint && nyc ava test/",
+    "coverage": "npm test && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-store-file.git"
+  },
+  "keywords": [
+    "think-store-file"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-store-file/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-store-file#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~6.8.0",
+    "eslint-config-think": "~1.0.1",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "think-debounce": "^1.0.3",
+    "think-helper": "^1.1.3"
+  }
+}
