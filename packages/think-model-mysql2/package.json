@@ -1,0 +1,41 @@
+{
+  "name": "think-model-mysql2",
+  "version": "2.0.0",
+  "description": "Mysql adapter for ThinkJS 3.x",
+  "scripts": {
+    "test": "npm run lint && npm run test-cov",
+    "test-cov": "nyc ava test/ && nyc report --reporter=html",
+    "lint": "eslint ./lib index.js",
+    "prepublish": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-model-mysql2.git"
+  },
+  "keywords": [
+    "thinkjs",
+    "orm",
+    "mysql",
+    "adapter",
+    "model"
+  ],
+  "author": "lizheming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-model-mysql2/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-model-mysql2#readme",
+  "dependencies": {
+    "think-debounce": "^1.0.4",
+    "think-helper": "^1.1.2",
+    "think-model-abstract": "^1.2.2",
+    "think-mysql": "npm:think-mysql2@^2.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "eslint": "^4.19.1",
+    "eslint-config-think": "^1.0.1",
+    "muk": "^0.5.3",
+    "nyc": "^10.3.0"
+  }
+}
