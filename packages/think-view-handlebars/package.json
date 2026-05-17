@@ -1,0 +1,51 @@
+{
+  "name": "think-view-handlebars",
+  "version": "1.0.9",
+  "description": "Handlebars view adapter for ThinkJS",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --fix index.js",
+    "test": "npm run lint && nyc ava test/index.js",
+    "coverage": "nyc ava test/index.js && nyc report --reporter=html"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkjs/think-view-handlebars.git"
+  },
+  "keywords": [
+    "think-view-handlebars"
+  ],
+  "author": {
+    "name": "lushijie",
+    "email": "lushijie1218@126.com"
+  },
+  "contributors": [
+    {
+      "name": "lushijie",
+      "email": "lushijie1218@126.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkjs/think-view-handlebars/issues"
+  },
+  "homepage": "https://github.com/thinkjs/think-view-handlebars#readme",
+  "devDependencies": {
+    "ava": "~0.18.1",
+    "babel-cli": "~6.23.0",
+    "babel-eslint": "~7.1.1",
+    "coveralls": "~2.11.16",
+    "eslint": "~6.8.0",
+    "eslint-config-think": "~1.0.1",
+    "nyc": "~10.1.2"
+  },
+  "dependencies": {
+    "handlebars": "~4.5.3",
+    "think-helper": "^1.1.3"
+  }
+}
