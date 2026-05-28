@@ -1,0 +1,70 @@
+name: Publish changed packages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'packages/*/package.json'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          registry-url: https://registry.npmjs.org
+
+      - name: Find packages with version changes
+        id: changed_packages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          before_sha="${{ github.event.before }}"
+          if [ "$before_sha" = "0000000000000000000000000000000000000000" ]; then
+            before_sha="$(git rev-parse HEAD^)"
+          fi
+
+          changed_files=$(git diff --name-only "$before_sha" "$GITHUB_SHA" -- 'packages/*/package.json' || true)
+          packages=""
+
+          for file in $changed_files; do
+            old_version=$(git show "$before_sha:$file" 2>/dev/null | node -p "try { JSON.parse(require('fs').readFileSync(0, 'utf8')).version || '' } catch { '' }")
+            new_version=$(node -p "try { require('./$file').version || '' } catch { '' }")
+
+            if [ -n "$new_version" ] && [ "$old_version" != "$new_version" ]; then
+              pkg_dir=$(dirname "$file")
+              packages="${packages}${pkg_dir}"$'\n'
+            fi
+          done
+
+          packages=$(printf "%s" "$packages" | sed '/^$/d' | sort -u || true)
+          {
+            echo "packages<<EOF"
+            echo "$packages"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish changed packages
+        if: ${{ steps.changed_packages.outputs.packages != '' }}
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r pkg; do
+            [ -z "$pkg" ] && continue
+            echo "Publishing $pkg"
+            (cd "$pkg" && npm publish --provenance)
+          done <<< "${{ steps.changed_packages.outputs.packages }}"
