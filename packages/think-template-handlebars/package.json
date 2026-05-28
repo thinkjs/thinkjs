@@ -34,7 +34,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/welefen/think-template-handlebars"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
     "node": ">=0.12.0"

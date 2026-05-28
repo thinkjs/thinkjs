@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-email.git"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "keywords": [
     "think-email"

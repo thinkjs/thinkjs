@@ -39,7 +39,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-websocket-socket.io"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
     "node": ">=6.0.0"

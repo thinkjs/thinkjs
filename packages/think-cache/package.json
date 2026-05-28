@@ -35,7 +35,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-cache"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
     "node": ">=6.0.0"

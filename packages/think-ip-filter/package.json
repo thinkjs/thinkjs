@@ -14,10 +14,12 @@
     "prepublish": "npm run compile",
     "eslint": "eslint src/"
   },
-  "contributors": [{
-    "name": "welefen",
-    "email": "welefen@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "welefen",
+      "email": "welefen@gmail.com"
+    }
+  ],
   "main": "lib/index.js",
   "dependencies": {
     "babel-runtime": "5.8.25"
@@ -37,7 +39,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/welefen/think-ip-filter"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
     "node": ">=0.12.0"

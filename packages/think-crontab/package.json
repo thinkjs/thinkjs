@@ -50,7 +50,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-crontab"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
     "node": ">=6.0.0"

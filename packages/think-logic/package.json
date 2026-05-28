@@ -40,7 +40,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-logic"
+    "url": "https://github.com/thinkjs/thinkjs"
   },
   "engines": {
     "node": ">=6.0.0"
