@@ -39,7 +39,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/thinkjs"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-gc"
   },
   "engines": {
     "node": ">=6.0.0"

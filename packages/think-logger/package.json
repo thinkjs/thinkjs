@@ -12,7 +12,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/thinkjs"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-logger"
   },
   "keywords": [
     "thinkjs",

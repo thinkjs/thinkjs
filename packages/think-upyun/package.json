@@ -35,7 +35,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/thinkjs"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-upyun"
   },
   "engines": {
     "node": ">=0.12.0"

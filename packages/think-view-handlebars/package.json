@@ -15,7 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/thinkjs"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-view-handlebars"
   },
   "keywords": [
     "think-view-handlebars"

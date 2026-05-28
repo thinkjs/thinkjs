@@ -47,7 +47,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/thinkjs"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-view"
   },
   "engines": {
     "node": ">=6.0.0"
