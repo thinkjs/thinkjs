@@ -349,7 +349,7 @@ exports.omit = function(obj, props) {
 function isExist(dir) {
   dir = path.normalize(dir);
   try {
-    fs.accessSync(dir, fs.R_OK);
+    fs.accessSync(dir, fs.constants.R_OK);
     return true;
   } catch (e) {
     return false;
