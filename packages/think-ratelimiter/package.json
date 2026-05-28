@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "ThinkJS ratelimit middleware",
   "main": "index.js",
-  "repository": "git@github.com:thinkjs/think-ratelimiter.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-ratelimiter"
+  },
   "author": "lidongjies@gmail.com",
   "license": "MIT",
   "private": false,

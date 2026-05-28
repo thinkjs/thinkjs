@@ -10,7 +10,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-router-rest.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-router-rest"
   },
   "keywords": [
     "thinkjs",

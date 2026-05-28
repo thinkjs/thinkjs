@@ -28,12 +28,13 @@
     "babel-eslint": "4.1.3"
   },
   "keywords": [
-    "thinkjs", 
+    "thinkjs",
     "html-cache"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/welefen/think-html-cache"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-html-cache"
   },
   "engines": {
     "node": ">=0.12.0"

@@ -45,7 +45,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-mock-http"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-mock-http"
   },
   "engines": {
     "node": ">=6.0.0"

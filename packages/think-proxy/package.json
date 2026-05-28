@@ -11,7 +11,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-proxy.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-proxy"
   },
   "keywords": [
     "thinkJS",

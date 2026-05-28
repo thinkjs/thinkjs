@@ -3,8 +3,8 @@
   "description": "inspector for ThinkJS",
   "version": "0.0.2",
   "author": {
-      "name": "huangxiaolu",
-      "email": "lu.huang90@gmail.com"
+    "name": "huangxiaolu",
+    "email": "lu.huang90@gmail.com"
   },
   "scripts": {
     "test": "eslint index.js && nyc ava test/",
@@ -16,13 +16,13 @@
     "require": [
       "babel-core/register"
     ],
-     "exclude": [
+    "exclude": [
       "demo"
     ]
   },
   "nyc": {
     "exclude": [
-       "demo"
+      "demo"
     ]
   },
   "contributors": [
@@ -51,7 +51,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-inspect"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-inspect"
   },
   "engines": {
     "node": ">=6.0.0"

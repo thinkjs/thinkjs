@@ -31,7 +31,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-helmet"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-helmet"
   },
   "engines": {
     "node": ">=6.0.0"

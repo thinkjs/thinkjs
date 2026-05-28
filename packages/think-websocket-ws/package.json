@@ -36,7 +36,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-websocket-ws"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-websocket-ws"
   },
   "engines": {
     "node": ">=6.0.0"
