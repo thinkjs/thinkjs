@@ -1,2 +1,12 @@
 packages:
   - "packages/*"
+allowBuilds:
+  better-sqlite3: true
+  core-js: true
+  ejs: true
+  es5-ext: true
+  execSync: true
+  fsevents: true
+  nodemon: true
+  pre-commit: true
+  spawn-sync: true
