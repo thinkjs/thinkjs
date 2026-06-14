@@ -1,4 +1,4 @@
-const {test} = require('ava');
+const {default: test} = require('ava');
 const Socket = require('../lib/socket');
 
 function createMemorySocket() {

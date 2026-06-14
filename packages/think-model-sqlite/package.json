@@ -35,16 +35,10 @@
     "think-model-abstract": "^1.6.5"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^8.0.0",
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
     "muk": "^0.5.3",
     "nyc": "^10.3.0"
-  },
-  "ava": {
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
   }
 }
