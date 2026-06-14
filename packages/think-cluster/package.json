@@ -34,7 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-cluster"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-cluster"
   },
   "engines": {
     "node": ">=6.0.0"

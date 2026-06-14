@@ -42,7 +42,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-session-mysql"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-session-mysql"
   },
   "engines": {
     "node": ">=6.0.0"

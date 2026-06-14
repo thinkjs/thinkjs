@@ -47,7 +47,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-watcher"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-watcher"
   },
   "engines": {
     "node": ">=6.0.0"

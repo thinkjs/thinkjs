@@ -37,7 +37,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-config"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-config"
   },
   "engines": {
     "node": ">=6.0.0"

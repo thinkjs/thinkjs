@@ -15,7 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-apollo-graphql.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-apollo-graphql"
   },
   "keywords": [
     "think-apollo-graphql"

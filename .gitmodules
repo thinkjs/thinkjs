@@ -1,0 +1,3 @@
+[submodule "packages/think-cli/default_template"]
+	path = packages/think-cli/default_template
+	url = https://github.com/think-template/standard

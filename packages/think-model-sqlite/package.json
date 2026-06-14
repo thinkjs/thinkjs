@@ -10,7 +10,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-model-sqlite.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-model-sqlite"
   },
   "keywords": [
     "thinkjs",

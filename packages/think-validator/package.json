@@ -15,7 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-validator.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-validator"
   },
   "keywords": [
     "think-validator"

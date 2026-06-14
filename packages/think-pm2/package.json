@@ -22,9 +22,7 @@
     }
   ],
   "main": "index.js",
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
     "ava": "^0.18.0",
     "babel-core": "^6.22.1",
@@ -37,7 +35,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-pm2"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-pm2"
   },
   "engines": {
     "node": ">=6.0.0"

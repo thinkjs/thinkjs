@@ -50,7 +50,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-session-cookie"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-session-cookie"
   },
   "engines": {
     "node": ">=6.0.0"

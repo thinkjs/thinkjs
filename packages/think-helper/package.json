@@ -1,7 +1,7 @@
 {
   "name": "think-helper",
   "description": "Helper for ThinkJS",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "author": {
     "name": "songguangyu",
     "email": "522963130@qq.com"
@@ -42,7 +42,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-helper"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-helper"
   },
   "engines": {
     "node": ">=6.0.0"

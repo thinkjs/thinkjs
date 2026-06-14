@@ -15,7 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-cache-memcache.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-cache-memcache"
   },
   "keywords": [
     "think-cache-memcache"

@@ -41,7 +41,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thinkjs/think-session"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-session"
   },
   "engines": {
     "node": ">=6.0.0"

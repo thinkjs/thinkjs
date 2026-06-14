@@ -14,7 +14,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkjs/think-mock.git"
+    "url": "https://github.com/thinkjs/thinkjs",
+    "directory": "packages/think-mock"
   },
   "keywords": [
     "think-mock"
