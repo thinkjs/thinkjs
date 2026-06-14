@@ -46,7 +46,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "nodemailer": "~4.0.1",
+    "nodemailer": "~8.0.5",
     "think-helper": "^1.1.3"
   }
 }
