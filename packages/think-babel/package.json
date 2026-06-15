@@ -46,7 +46,7 @@
     "nyc": "~10.1.2"
   },
   "dependencies": {
-    "@babel/core": "^7.4.3",
+    "@babel/core": "^7.29.6",
     "think-helper": "^1.1.3"
   }
 }
