@@ -39,6 +39,7 @@
     "eslint": "^4.2.0",
     "eslint-config-think": "^1.0.1",
     "muk": "^0.5.3",
-    "nyc": "^10.3.0"
+    "nyc": "^10.3.0",
+    "think-model": "^1.5.4"
   }
 }

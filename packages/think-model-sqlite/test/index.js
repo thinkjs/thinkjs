@@ -1,4 +1,7 @@
 const {default: test} = require('ava');
+const Model = require('think-model/lib/model');
+const SQLite = require('../');
+
 const Socket = require('../lib/socket');
 
 function createMemorySocket() {
@@ -51,4 +54,27 @@ test('transaction rollback should keep data unchanged', async t => {
   } finally {
     await socket.close();
   }
+});
+
+test('think-model integration', async t => {
+  const userModel = new Model('user', {
+    handle: SQLite,
+    path: '/tmp',
+    database: 'test',
+    logConnect: false,
+    debounce: false
+  });
+
+  await userModel.execute('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)');
+
+  const insert1 = await userModel.add({name: 'alice'});
+  const insert2 = await userModel.add({name: 'bob'});
+  const rows = await userModel.select();
+
+  t.is(insert1, 1);
+  t.is(insert2, 2);
+  t.deepEqual(rows, [
+    {id: 1, name: 'alice'},
+    {id: 2, name: 'bob'}
+  ]);
 });
