@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "packageManager": "pnpm@11.6.0",
   "scripts": {
-    "test": "pnpm --filter thinkjs test",
+    "test": "pnpm -r --if-present test",
     "lint": "pnpm --filter thinkjs lint"
   }
 }
