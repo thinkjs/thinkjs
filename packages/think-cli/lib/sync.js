@@ -20,8 +20,8 @@ class Synchronous extends Download {
 
   start() {
     return utils.isLocalPath(this.template)
-     ? this[LOCAL]()
-     : this[REMOTE]();
+      ? this[LOCAL]()
+      : this[REMOTE]();
   }
 
   /**
