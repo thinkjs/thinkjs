@@ -1,9 +1,3 @@
-/*
-* @Author: lushijie
-* @Date:   2017-03-16 09:23:41
-* @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-13 12:05:15
-*/
 const helper = require('think-helper');
 const Redis = require('think-redis');
 

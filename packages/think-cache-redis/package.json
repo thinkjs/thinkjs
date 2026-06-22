@@ -37,12 +37,13 @@
   },
   "homepage": "https://github.com/thinkjs/think-cache-redis#readme",
   "devDependencies": {
-    "ava": "~0.18.1",
+    "ava": "~8.0.1",
     "babel-eslint": "~7.1.1",
     "coveralls": "~2.11.16",
     "eslint": "~6.7.2",
     "eslint-config-think": "~1.0.1",
-    "nyc": "~10.1.2"
+    "mock-require": "^3.0.3",
+    "nyc": "~18.0.0"
   },
   "dependencies": {
     "think-helper": "^1.1.3",
