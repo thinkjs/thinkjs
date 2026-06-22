@@ -6,5 +6,8 @@
   "scripts": {
     "test": "pnpm -r --if-present --filter './packages/**' --filter '!think-apollo-graphql' --filter '!think-demo' --filter '!think-email' --filter '!think-mock' --filter '!think-pm2' --filter '!think-websocket-ws' test",
     "lint": "pnpm -r --if-present --filter './packages/**' --filter '!think-apollo-graphql' --filter '!think-demo' --filter '!think-email' --filter '!think-mock' --filter '!think-pm2' --filter '!think-websocket-ws' lint"
+  },
+  "devDependencies": {
+    "pre-commit": "^1.2.2"
   }
 }
