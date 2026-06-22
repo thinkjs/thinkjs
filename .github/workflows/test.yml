@@ -12,17 +12,13 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - node-version: 22.x
-            experimental: false
-          - node-version: 24.x
-            experimental: false
-          - node-version: 26.x
-            experimental: true
+        node-version:
+          - 22.x
+          - 24.x
+          - 26.x
 
     steps:
       - name: Checkout
