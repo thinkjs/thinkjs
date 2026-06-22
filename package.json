@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "packageManager": "pnpm@11.6.0",
   "scripts": {
-    "test": "pnpm --filter thinkjs test",
-    "lint": "pnpm --filter thinkjs lint"
+    "test": "pnpm -r --if-present --filter './packages/**' --filter '!think-apollo-graphql' --filter '!think-demo' --filter '!think-email' --filter '!think-mock' --filter '!think-pm2' --filter '!think-websocket-ws' test",
+    "lint": "pnpm -r --if-present --filter './packages/**' --filter '!think-apollo-graphql' --filter '!think-demo' --filter '!think-email' --filter '!think-mock' --filter '!think-pm2' --filter '!think-websocket-ws' lint"
   }
 }
