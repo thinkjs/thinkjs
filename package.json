@@ -5,6 +5,6 @@
   "packageManager": "pnpm@11.6.0",
   "scripts": {
     "test": "pnpm -r --if-present test",
-    "lint": "pnpm --filter thinkjs lint"
+    "lint": "pnpm -r --if-present lint"
   }
 }
