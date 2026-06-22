@@ -638,31 +638,6 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0
 
-  packages/think-html-cache:
-    dependencies:
-      babel-runtime:
-        specifier: 5.8.25
-        version: 5.8.25
-    devDependencies:
-      babel:
-        specifier: 5.8.23
-        version: 5.8.23(supports-color@6.1.0)
-      babel-eslint:
-        specifier: 4.1.3
-        version: 4.1.3
-      eslint:
-        specifier: 1.8.0
-        version: 1.8.0(supports-color@6.1.0)
-      istanbul:
-        specifier: 0.4.0
-        version: 0.4.0
-      mocha:
-        specifier: 1.20.1
-        version: 1.20.1(supports-color@6.1.0)
-      thinkjs:
-        specifier: 2.x.x
-        version: 2.3.3
-
   packages/think-i18n:
     dependencies:
       cookie:
