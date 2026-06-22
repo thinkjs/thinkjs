@@ -22,7 +22,7 @@ importers:
         version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -50,10 +50,10 @@ importers:
         version: 7.29.5(@babel/core@7.29.0(supports-color@6.1.0))(supports-color@6.1.0)
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -78,7 +78,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -115,10 +115,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -143,10 +143,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -171,10 +171,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -257,7 +257,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       eslint:
         specifier: ^4.2.0
         version: 4.19.1(supports-color@5.5.0)
@@ -279,7 +279,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       codecov:
         specifier: ^1.0.1
         version: 1.0.1
@@ -304,7 +304,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -353,7 +353,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -393,7 +393,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ^7.2.1
         version: 7.2.3
@@ -512,10 +512,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -537,7 +537,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ^7.2.1
         version: 7.2.3
@@ -565,7 +565,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -621,7 +621,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       codecov:
         specifier: ^3.7.1
         version: 3.8.3(encoding@0.1.13)(supports-color@6.1.0)
@@ -658,7 +658,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -689,7 +689,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -717,7 +717,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ^7.1.1
         version: 7.2.3
@@ -854,7 +854,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -897,10 +897,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -922,7 +922,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -965,10 +965,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -993,7 +993,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1338,7 +1338,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1387,7 +1387,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1485,7 +1485,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1544,7 +1544,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       eslint:
         specifier: ^4.2.0
         version: 4.19.1(supports-color@5.5.0)
@@ -1605,11 +1605,11 @@ importers:
         version: 1.1.5
     devDependencies:
       ava:
-        specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        specifier: ~8.0.1
+        version: 8.0.1(encoding@0.1.13)
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -1680,7 +1680,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -1736,7 +1736,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1764,7 +1764,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1801,7 +1801,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1853,7 +1853,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1933,7 +1933,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1973,7 +1973,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2007,10 +2007,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2035,10 +2035,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2100,7 +2100,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.26.0
         version: 6.26.3
@@ -2167,10 +2167,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2238,10 +2238,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2269,7 +2269,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2306,7 +2306,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2337,13 +2337,13 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-cli:
         specifier: ~6.23.0
         version: 6.23.0
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2368,10 +2368,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2396,10 +2396,10 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-eslint:
         specifier: ~7.1.1
-        version: 7.1.1
+        version: 7.1.1(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
@@ -2424,7 +2424,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2470,7 +2470,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2510,7 +2510,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2553,7 +2553,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2647,7 +2647,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2(supports-color@6.1.0)
+        version: 0.18.2
       eslint:
         specifier: ^4.2.0
         version: 4.19.1(supports-color@5.5.0)
@@ -3273,6 +3273,10 @@ packages:
   '@concordance/react@2.0.0':
     resolution: {integrity: sha512-huLSkUuM2/P+U0uy2WwlKuixMsTODD8p4JVQBI4VKeopkiN0C7M3N9XYVawb4M+4spN5RrO/eLhk7KoQX6nsfA==}
     engines: {node: '>=6.12.3 <7 || >=8.9.4 <9 || >=10.0.0'}
+
+  '@cto.af/wtf8@0.0.5':
+    resolution: {integrity: sha512-LfUFi+Vv4eDzj+XAtR89e3wwjXA/NZjUSwU5NhwbBrLecxPaBYFy3exCuc1j+D4UZeOVdqlsl8G7LmOt18V0tg==}
+    engines: {node: '>=20'}
 
   '@eslint-community/eslint-utils@4.9.1':
     resolution: {integrity: sha512-phrYmNiYppR7znFEdqgfWHXR6NCkZEK7hwWDHZUjit/2/U0r6XvkDl0SYnoM51Hq7FhCGdLDT6zxCCOY1hexsQ==}
@@ -4102,6 +4106,16 @@ packages:
       '@ava/typescript':
         optional: true
 
+  ava@8.0.1:
+    resolution: {integrity: sha512-YlwwL5HX2EJRE75e2LR8nio8lKAJ702sFbv0QYnhzngAjyo9wB+Xg4JZh5f432khlWfVD5OQ93rrRopEXJptpg==}
+    engines: {node: ^22.20 || ^24.12 || >=26}
+    hasBin: true
+    peerDependencies:
+      '@ava/typescript': '*'
+    peerDependenciesMeta:
+      '@ava/typescript':
+        optional: true
+
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
@@ -4834,6 +4848,10 @@ packages:
   caw@2.0.1:
     resolution: {integrity: sha512-Cg8/ZSBEa8ZVY9HspcGUYaK63d/bN7rqS3CYCzEGUxuYv6UlmcjzDUz2fCFFHyTvUW5Pk0I+3hkA3iXlIj6guA==}
     engines: {node: '>=4'}
+
+  cbor2@2.3.0:
+    resolution: {integrity: sha512-76WB3hq8BoaGkMkBVJ27fW5LJU+qqDLEpgRNCG/SYKhODWXpVPOTD4UcUto3IEzYLA52nsvbhb0wabhHDn3qXg==}
+    engines: {node: '>=20'}
 
   cbor@10.0.12:
     resolution: {integrity: sha512-exQDevYd7ZQLP4moMQcZkKCVZsXLAtUSflObr3xTh4xzFIv/xBCdvCd6L259kQOUP2kcTC0jvC6PpZIf/WmRXA==}
@@ -13687,6 +13705,8 @@ snapshots:
     dependencies:
       arrify: 1.0.1
 
+  '@cto.af/wtf8@0.0.5': {}
+
   '@eslint-community/eslint-utils@4.9.1(eslint@8.57.1(supports-color@6.1.0))':
     dependencies:
       eslint: 8.57.1(supports-color@6.1.0)
@@ -13786,11 +13806,11 @@ snapshots:
       pretty-ms: 0.2.2
       text-table: 0.2.0
 
-  '@mapbox/node-pre-gyp@2.0.3(encoding@0.1.13)(supports-color@6.1.0)':
+  '@mapbox/node-pre-gyp@2.0.3(encoding@0.1.13)':
     dependencies:
       consola: 3.4.2
       detect-libc: 2.1.2
-      https-proxy-agent: 7.0.6(supports-color@6.1.0)
+      https-proxy-agent: 7.0.6
       node-fetch: 2.7.0(encoding@0.1.13)
       nopt: 8.1.0
       semver: 7.8.0
@@ -14112,9 +14132,9 @@ snapshots:
 
   '@ungap/structured-clone@1.3.1': {}
 
-  '@vercel/nft@1.5.0(encoding@0.1.13)(supports-color@6.1.0)':
+  '@vercel/nft@1.5.0(encoding@0.1.13)':
     dependencies:
-      '@mapbox/node-pre-gyp': 2.0.3(encoding@0.1.13)(supports-color@6.1.0)
+      '@mapbox/node-pre-gyp': 2.0.3(encoding@0.1.13)
       '@rollup/pluginutils': 5.4.0
       acorn: 8.16.0
       acorn-import-attributes: 1.9.5(acorn@8.16.0)
@@ -14627,7 +14647,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ava@0.18.2(supports-color@6.1.0):
+  ava@0.18.2:
     dependencies:
       '@ava/babel-preset-stage-4': 1.1.0
       '@ava/babel-preset-transform-test-files': 2.0.1
@@ -14644,6 +14664,84 @@ snapshots:
       caching-transform: 1.0.1
       chalk: 1.1.3
       chokidar: 1.7.0
+      clean-stack: 1.3.0
+      clean-yaml-object: 0.1.0
+      cli-cursor: 2.1.0
+      cli-spinners: 1.3.1
+      cli-truncate: 0.2.1
+      co-with-promise: 4.6.0
+      code-excerpt: 2.1.1
+      common-path-prefix: 1.0.0
+      convert-source-map: 1.9.0
+      core-assert: 0.2.1
+      currently-unhandled: 0.4.1
+      debug: 2.6.9(supports-color@6.1.0)
+      diff: 3.5.1
+      dot-prop: 4.2.1
+      empower-core: 0.6.2
+      equal-length: 1.0.1
+      figures: 2.0.0
+      find-cache-dir: 0.1.1
+      fn-name: 2.0.1
+      get-port: 2.1.0
+      globby: 6.1.0
+      has-flag: 2.0.0
+      ignore-by-default: 1.0.1
+      indent-string: 3.2.0
+      is-ci: 1.2.1
+      is-generator-fn: 1.0.0
+      is-obj: 1.0.1
+      is-observable: 0.2.0
+      is-promise: 2.2.2
+      jest-snapshot: 18.1.0
+      last-line-stream: 1.0.0
+      lodash.debounce: 4.0.8
+      lodash.difference: 4.5.0
+      lodash.flatten: 4.4.0
+      lodash.isequal: 4.5.0
+      loud-rejection: 1.6.0
+      matcher: 0.1.2
+      max-timeout: 1.0.0
+      md5-hex: 2.0.0
+      meow: 3.7.0
+      ms: 0.7.3
+      multimatch: 2.1.0
+      observable-to-promise: 0.4.0
+      option-chain: 0.1.1
+      package-hash: 1.2.0
+      pkg-conf: 2.1.0
+      plur: 2.1.2
+      pretty-ms: 2.1.0
+      require-precompiled: 0.1.0
+      resolve-cwd: 1.0.0
+      slash: 1.0.0
+      source-map-support: 0.4.18
+      stack-utils: 1.0.5
+      strip-ansi: 3.0.1
+      strip-bom-buf: 1.0.0
+      time-require: 0.1.2
+      unique-temp-dir: 1.0.0
+      update-notifier: 1.0.3
+    transitivePeerDependencies:
+      - supports-color
+
+  ava@0.18.2(supports-color@6.1.0):
+    dependencies:
+      '@ava/babel-preset-stage-4': 1.1.0
+      '@ava/babel-preset-transform-test-files': 2.0.1
+      '@ava/pretty-format': 1.1.0
+      arr-flatten: 1.1.0
+      array-union: 1.0.2
+      array-uniq: 1.0.3
+      arrify: 1.0.1
+      auto-bind: 1.2.1
+      ava-init: 0.2.1
+      babel-code-frame: 6.26.0
+      babel-core: 6.26.3
+      bluebird: 3.7.2
+      caching-transform: 1.0.1
+      chalk: 1.1.3
+      chokidar: 1.7.0(supports-color@6.1.0)
       clean-stack: 1.3.0
       clean-yaml-object: 0.1.0
       cli-cursor: 2.1.0
@@ -15260,7 +15358,7 @@ snapshots:
 
   ava@8.0.0(encoding@0.1.13)(supports-color@6.1.0):
     dependencies:
-      '@vercel/nft': 1.5.0(encoding@0.1.13)(supports-color@6.1.0)
+      '@vercel/nft': 1.5.0(encoding@0.1.13)
       acorn: 8.16.0
       acorn-walk: 8.3.5
       ansi-styles: 6.2.3
@@ -15268,6 +15366,53 @@ snapshots:
       arrify: 3.0.0
       callsites: 4.2.0
       cbor: 10.0.12
+      chalk: 5.6.2
+      chunkd: 2.0.1
+      ci-info: 4.4.0
+      ci-parallel-vars: 1.0.1
+      cli-truncate: 6.0.0
+      code-excerpt: 4.0.0
+      common-path-prefix: 3.0.0
+      concordance: 5.0.4
+      currently-unhandled: 0.4.1
+      debug: 4.4.3(supports-color@6.1.0)
+      emittery: 2.0.0
+      figures: 6.1.0
+      globby: 16.2.0
+      ignore-by-default: 2.1.0
+      indent-string: 5.0.0
+      is-plain-object: 5.0.0
+      is-promise: 4.0.0
+      matcher: 6.0.0
+      memoize: 11.0.0
+      ms: 2.1.3
+      p-map: 7.0.4
+      package-config: 5.0.0
+      picomatch: 4.0.4
+      plur: 6.0.0
+      pretty-ms: 9.3.0
+      resolve-cwd: 3.0.0
+      slash: 5.1.0
+      stack-utils: 2.0.6
+      supertap: 3.0.1
+      temp-dir: 3.0.0
+      write-file-atomic: 7.0.1
+      yargs: 18.0.0
+    transitivePeerDependencies:
+      - encoding
+      - rollup
+      - supports-color
+
+  ava@8.0.1(encoding@0.1.13):
+    dependencies:
+      '@vercel/nft': 1.5.0(encoding@0.1.13)
+      acorn: 8.16.0
+      acorn-walk: 8.3.5
+      ansi-styles: 6.2.3
+      arrgv: 1.0.2
+      arrify: 3.0.0
+      callsites: 4.2.0
+      cbor2: 2.3.0
       chalk: 5.6.2
       chunkd: 2.0.1
       ci-info: 4.4.0
@@ -15425,7 +15570,7 @@ snapshots:
       babel-register: 6.26.0
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
       babylon: 6.18.0
       convert-source-map: 1.9.0
@@ -15449,7 +15594,7 @@ snapshots:
       babel-register: 6.26.0
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
       babylon: 6.18.0
       convert-source-map: 1.9.0
@@ -15629,10 +15774,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-eslint@7.1.1:
+  babel-eslint@7.1.1(supports-color@6.1.0):
     dependencies:
       babel-code-frame: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
       babylon: 6.18.0
       lodash.pickby: 4.6.0
@@ -15642,7 +15787,7 @@ snapshots:
   babel-eslint@7.2.3:
     dependencies:
       babel-code-frame: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
       babylon: 6.18.0
     transitivePeerDependencies:
@@ -15662,7 +15807,7 @@ snapshots:
   babel-helper-bindify-decorators@6.24.1:
     dependencies:
       babel-runtime: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -15703,7 +15848,7 @@ snapshots:
     dependencies:
       babel-helper-hoist-variables: 6.24.1
       babel-runtime: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -15747,7 +15892,7 @@ snapshots:
   babel-helper-explode-assignable-expression@6.24.1:
     dependencies:
       babel-runtime: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -15780,7 +15925,7 @@ snapshots:
     dependencies:
       babel-helper-bindify-decorators: 6.24.1
       babel-runtime: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -15790,7 +15935,7 @@ snapshots:
       babel-helper-get-function-arity: 6.24.1
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -15851,7 +15996,7 @@ snapshots:
       babel-helper-function-name: 6.24.1
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -15892,7 +16037,7 @@ snapshots:
       babel-messages: 6.23.0
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -16122,7 +16267,7 @@ snapshots:
     dependencies:
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
       lodash: 4.18.1
     transitivePeerDependencies:
@@ -16137,7 +16282,7 @@ snapshots:
       babel-messages: 6.23.0
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -16275,7 +16420,7 @@ snapshots:
       babel-helper-get-function-arity: 6.24.1
       babel-runtime: 6.26.0
       babel-template: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
     transitivePeerDependencies:
       - supports-color
@@ -16529,7 +16674,7 @@ snapshots:
   babel-template@6.26.0:
     dependencies:
       babel-runtime: 6.26.0
-      babel-traverse: 6.26.0
+      babel-traverse: 6.26.0(supports-color@6.1.0)
       babel-types: 6.26.0
       babylon: 6.18.0
       lodash: 4.18.1
@@ -16562,20 +16707,6 @@ snapshots:
       babel-traverse: 6.26.0(supports-color@5.5.0)
       babel-types: 6.26.0
       babylon: 6.18.0
-      lodash: 4.18.1
-    transitivePeerDependencies:
-      - supports-color
-
-  babel-traverse@6.26.0:
-    dependencies:
-      babel-code-frame: 6.26.0
-      babel-messages: 6.23.0
-      babel-runtime: 6.26.0
-      babel-types: 6.26.0
-      babylon: 6.18.0
-      debug: 2.6.9(supports-color@6.1.0)
-      globals: 9.18.0
-      invariant: 2.2.4
       lodash: 4.18.1
     transitivePeerDependencies:
       - supports-color
@@ -16616,6 +16747,20 @@ snapshots:
       babel-types: 6.26.0
       babylon: 6.18.0
       debug: 2.6.9(supports-color@5.5.0)
+      globals: 9.18.0
+      invariant: 2.2.4
+      lodash: 4.18.1
+    transitivePeerDependencies:
+      - supports-color
+
+  babel-traverse@6.26.0(supports-color@6.1.0):
+    dependencies:
+      babel-code-frame: 6.26.0
+      babel-messages: 6.23.0
+      babel-runtime: 6.26.0
+      babel-types: 6.26.0
+      babylon: 6.18.0
+      debug: 2.6.9(supports-color@6.1.0)
       globals: 9.18.0
       invariant: 2.2.4
       lodash: 4.18.1
@@ -17085,6 +17230,10 @@ snapshots:
       tunnel-agent: 0.6.0
       url-to-options: 1.0.1
 
+  cbor2@2.3.0:
+    dependencies:
+      '@cto.af/wtf8': 0.0.5
+
   cbor@10.0.12:
     dependencies:
       nofilter: 3.1.0
@@ -17142,7 +17291,7 @@ snapshots:
       is-binary-path: 1.0.1
       is-glob: 2.0.1
       path-is-absolute: 1.0.1
-      readdirp: 2.2.1
+      readdirp: 2.2.1(supports-color@6.1.0)
     optionalDependencies:
       fsevents: 1.2.13
     transitivePeerDependencies:
@@ -17188,6 +17337,21 @@ snapshots:
       is-glob: 2.0.1
       path-is-absolute: 1.0.1
       readdirp: 2.2.1(supports-color@5.5.0)
+    optionalDependencies:
+      fsevents: 1.2.13
+    transitivePeerDependencies:
+      - supports-color
+
+  chokidar@1.7.0(supports-color@6.1.0):
+    dependencies:
+      anymatch: 1.3.2
+      async-each: 1.0.6
+      glob-parent: 2.0.0
+      inherits: 2.0.4
+      is-binary-path: 1.0.1
+      is-glob: 2.0.1
+      path-is-absolute: 1.0.1
+      readdirp: 2.2.1(supports-color@6.1.0)
     optionalDependencies:
       fsevents: 1.2.13
     transitivePeerDependencies:
@@ -21243,7 +21407,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  https-proxy-agent@7.0.6(supports-color@6.1.0):
+  https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
       debug: 4.4.3(supports-color@6.1.0)
@@ -23853,14 +24017,14 @@ snapshots:
       got: 5.7.1
       registry-auth-token: 3.4.0
       registry-url: 3.1.0
-      semver: 5.3.0
+      semver: 5.7.2
 
   package-json@4.0.1:
     dependencies:
       got: 6.7.1
       registry-auth-token: 3.4.0
       registry-url: 3.1.0
-      semver: 5.3.0
+      semver: 5.7.2
 
   pako@1.0.11: {}
 
@@ -24712,14 +24876,6 @@ snapshots:
       inherits: 2.0.4
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
-
-  readdirp@2.2.1:
-    dependencies:
-      graceful-fs: 4.2.11
-      micromatch: 3.1.10(supports-color@6.1.0)
-      readable-stream: 2.3.8
-    transitivePeerDependencies:
-      - supports-color
 
   readdirp@2.2.1(supports-color@3.2.3):
     dependencies:
@@ -25958,7 +26114,7 @@ snapshots:
   supertap@3.0.1:
     dependencies:
       indent-string: 5.0.0
-      js-yaml: 3.14.1
+      js-yaml: 3.14.2
       serialize-error: 7.0.1
       strip-ansi: 7.2.0
 
@@ -27159,7 +27315,7 @@ snapshots:
 
   win-release@1.1.1:
     dependencies:
-      semver: 5.3.0
+      semver: 5.7.2
 
   window-size@0.1.0: {}
 

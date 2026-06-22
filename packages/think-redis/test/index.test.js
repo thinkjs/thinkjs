@@ -1,7 +1,7 @@
-const test = require('ava');
+const {default: test} = require('ava');
 const mock = require('mock-require');
 
-mock('ioredis', './fake-redis.js');
+mock('ioredis', './mock-ioredis.js');
 const Redis = require('../index.js');
 
 test.serial('set key & get key & del key', async t => {
