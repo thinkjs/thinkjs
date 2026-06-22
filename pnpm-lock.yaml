@@ -31,7 +31,7 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ^1.0.1
-        version: 1.1.0(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
+        version: 1.1.0(eslint@4.2.0)
       nyc:
         specifier: ~10.1.2
         version: 10.1.2
@@ -50,7 +50,7 @@ importers:
         version: 7.29.5(@babel/core@7.29.0(supports-color@6.1.0))(supports-color@6.1.0)
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -62,7 +62,7 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ~1.0.1
-        version: 1.0.3(eslint@4.2.0)
+        version: 1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
       nyc:
         specifier: ~10.1.2
         version: 10.1.2
@@ -78,7 +78,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -115,7 +115,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -143,7 +143,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -171,7 +171,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -235,7 +235,7 @@ importers:
         version: 3.1.1
       eslint:
         specifier: ^4.18.2
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -257,10 +257,10 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -279,7 +279,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       codecov:
         specifier: ^1.0.1
         version: 1.0.1
@@ -288,7 +288,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.3.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -304,7 +304,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -316,7 +316,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.0
         version: 1.1.0(eslint@4.19.1)
@@ -353,7 +353,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -365,7 +365,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -393,7 +393,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ^7.2.1
         version: 7.2.3
@@ -438,7 +438,7 @@ importers:
         version: 7.2.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -512,7 +512,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -537,7 +537,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ^7.2.1
         version: 7.2.3
@@ -565,7 +565,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -577,7 +577,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -596,7 +596,7 @@ importers:
         version: 0.23.0
       eslint:
         specifier: ^4.10.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -621,7 +621,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       codecov:
         specifier: ^3.7.1
         version: 3.8.3(encoding@0.1.13)(supports-color@6.1.0)
@@ -630,7 +630,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -658,7 +658,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -689,7 +689,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -698,7 +698,7 @@ importers:
         version: 7.2.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -717,7 +717,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ^7.1.1
         version: 7.2.3
@@ -779,7 +779,7 @@ importers:
         version: 2.11.16
       eslint:
         specifier: ^4.19.1
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.3
         version: 1.1.0(eslint@4.19.1)
@@ -854,7 +854,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -866,7 +866,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.0
         version: 1.1.0(eslint@4.19.1)
@@ -897,7 +897,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -922,7 +922,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -937,7 +937,7 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ~1.0.1
-        version: 1.0.3(eslint@4.2.0)
+        version: 1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
       mkdirp:
         specifier: ^0.5.1
         version: 0.5.6
@@ -965,7 +965,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -993,7 +993,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1057,7 +1057,7 @@ importers:
         version: 1.0.3
       eslint:
         specifier: ^4.11.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -1088,7 +1088,7 @@ importers:
         version: 1.0.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1119,7 +1119,7 @@ importers:
         version: 0.19.1
       eslint:
         specifier: ^4.19.1
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1150,7 +1150,7 @@ importers:
         version: 0.19.1
       eslint:
         specifier: ^4.19.1
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1184,7 +1184,7 @@ importers:
         version: 0.19.1
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1224,7 +1224,7 @@ importers:
         version: 8.0.0(encoding@0.1.13)(supports-color@6.1.0)
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1270,7 +1270,7 @@ importers:
         version: 1.0.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1338,7 +1338,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1350,7 +1350,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.3.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1387,7 +1387,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1399,7 +1399,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.3.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1424,7 +1424,7 @@ importers:
     devDependencies:
       eslint:
         specifier: ^4.3.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1485,7 +1485,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1528,7 +1528,7 @@ importers:
         version: 3.1.1
       eslint:
         specifier: ^4.12.1
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -1544,10 +1544,10 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -1578,7 +1578,7 @@ importers:
         version: 3.1.1
       eslint:
         specifier: ^4.15.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -1596,7 +1596,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ~2.5.0
-        version: 2.5.0
+        version: 2.5.0(supports-color@6.1.0)
       think-debounce:
         specifier: ^1.0.3
         version: 1.0.4
@@ -1606,7 +1606,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -1618,7 +1618,10 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ~1.0.1
-        version: 1.0.3(eslint@4.2.0)
+        version: 1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
+      mock-require:
+        specifier: ^3.0.3
+        version: 3.0.3
       nyc:
         specifier: ~10.1.2
         version: 10.1.2
@@ -1677,13 +1680,13 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1705,7 +1708,7 @@ importers:
         version: 0.22.0
       eslint:
         specifier: ^4.7.2
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -1733,7 +1736,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1761,7 +1764,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1770,7 +1773,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1798,7 +1801,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1810,7 +1813,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1850,7 +1853,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1862,7 +1865,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -1905,7 +1908,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.4.1
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -1930,7 +1933,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1970,7 +1973,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -1982,7 +1985,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -2004,7 +2007,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -2032,7 +2035,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -2044,7 +2047,7 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ~1.0.1
-        version: 1.0.3(eslint@4.2.0)
+        version: 1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
       nyc:
         specifier: ~10.1.2
         version: 10.1.2
@@ -2097,7 +2100,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.26.0
         version: 6.26.3
@@ -2115,7 +2118,7 @@ importers:
         version: 0.27.3
       eslint:
         specifier: ^4.13.1
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -2164,7 +2167,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -2235,7 +2238,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -2247,7 +2250,7 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ~1.0.1
-        version: 1.0.3(eslint@4.2.0)
+        version: 1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
       nyc:
         specifier: ~10.1.2
         version: 10.1.2
@@ -2266,7 +2269,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2278,7 +2281,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -2303,7 +2306,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2312,7 +2315,7 @@ importers:
         version: 7.2.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -2334,7 +2337,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-cli:
         specifier: ~6.23.0
         version: 6.23.0
@@ -2365,7 +2368,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -2393,7 +2396,7 @@ importers:
     devDependencies:
       ava:
         specifier: ~0.18.1
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-eslint:
         specifier: ~7.1.1
         version: 7.1.1
@@ -2421,7 +2424,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2433,7 +2436,7 @@ importers:
         version: 2.13.3
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.1
         version: 1.1.0(eslint@4.19.1)
@@ -2467,7 +2470,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2507,7 +2510,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2550,7 +2553,7 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3
@@ -2565,7 +2568,7 @@ importers:
         version: 4.2.0(supports-color@6.1.0)
       eslint-config-think:
         specifier: ~1.0.1
-        version: 1.0.3(eslint@4.2.0)
+        version: 1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
       mock-require:
         specifier: ^2.0.1
         version: 2.0.2
@@ -2644,10 +2647,10 @@ importers:
     devDependencies:
       ava:
         specifier: ^0.18.0
-        version: 0.18.2
+        version: 0.18.2(supports-color@6.1.0)
       eslint:
         specifier: ^4.2.0
-        version: 4.19.1
+        version: 4.19.1(supports-color@5.5.0)
       eslint-config-think:
         specifier: ^1.0.2
         version: 1.1.0(eslint@4.19.1)
@@ -6965,19 +6968,19 @@ packages:
 
   glob@3.2.3:
     resolution: {integrity: sha512-WPaLsMHD1lYEqAmIQI6VOJSPwuBdGShDWnj1yUo0vQqEO809R8W3LM9OVU13CnnDhyv/EiNwOtxEW74SmrzS6w==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   glob@5.0.15:
     resolution: {integrity: sha512-c9IPMazfRITpmAAKi22dK1VKxGDX9ehhqfABDriL/lzO92xcUKEJPQHrVA/2YHSNFB4iFlykVmWvwo48nr3OxA==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   glob@6.0.4:
     resolution: {integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-dirs@0.1.1:
     resolution: {integrity: sha512-NknMLn7F2J7aflwFOlGdNIuCDpN3VGoSoB+aap3KABFWbHVn1TCgFC+np23J8W2BiZbjfEw3BFBycSMv1AFblg==}
@@ -11189,6 +11192,7 @@ packages:
 
   sliced@1.0.1:
     resolution: {integrity: sha512-VZBmZP8WU3sMOZm1bdgTadsQbcscK0UM8oKxKVBs4XAhUo2Xxzm/OFMGBkPusxw9xL3Uy8LrzEqGqJhclsr0yA==}
+    deprecated: Unsupported
 
   slide@1.1.6:
     resolution: {integrity: sha512-NwrtjCg+lZoqhFU8fOwl4ay2ei8PaqCBOUV3/ektPY9trO1yQ1oXEfmHAhKArUVUr/hOHvy5f6AdP17dCM0zMw==}
@@ -12374,19 +12378,21 @@ packages:
 
   uuid@2.0.3:
     resolution: {integrity: sha512-FULf7fayPdpASncVy4DLh3xydlXEJJpvIELjYjNeQWYUZ9pclcpvCZSr2gkmN2FrrGcI7G/cJsIEwk5/8vfXpg==}
-    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
 
   uuid@3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
-    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@7.0.3:
     resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache@2.4.0:
@@ -14621,84 +14627,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ava@0.18.2:
-    dependencies:
-      '@ava/babel-preset-stage-4': 1.1.0
-      '@ava/babel-preset-transform-test-files': 2.0.1
-      '@ava/pretty-format': 1.1.0
-      arr-flatten: 1.1.0
-      array-union: 1.0.2
-      array-uniq: 1.0.3
-      arrify: 1.0.1
-      auto-bind: 1.2.1
-      ava-init: 0.2.1
-      babel-code-frame: 6.26.0
-      babel-core: 6.26.3
-      bluebird: 3.7.2
-      caching-transform: 1.0.1
-      chalk: 1.1.3
-      chokidar: 1.7.0
-      clean-stack: 1.3.0
-      clean-yaml-object: 0.1.0
-      cli-cursor: 2.1.0
-      cli-spinners: 1.3.1
-      cli-truncate: 0.2.1
-      co-with-promise: 4.6.0
-      code-excerpt: 2.1.1
-      common-path-prefix: 1.0.0
-      convert-source-map: 1.9.0
-      core-assert: 0.2.1
-      currently-unhandled: 0.4.1
-      debug: 2.6.9(supports-color@6.1.0)
-      diff: 3.5.1
-      dot-prop: 4.2.1
-      empower-core: 0.6.2
-      equal-length: 1.0.1
-      figures: 2.0.0
-      find-cache-dir: 0.1.1
-      fn-name: 2.0.1
-      get-port: 2.1.0
-      globby: 6.1.0
-      has-flag: 2.0.0
-      ignore-by-default: 1.0.1
-      indent-string: 3.2.0
-      is-ci: 1.2.1
-      is-generator-fn: 1.0.0
-      is-obj: 1.0.1
-      is-observable: 0.2.0
-      is-promise: 2.2.2
-      jest-snapshot: 18.1.0
-      last-line-stream: 1.0.0
-      lodash.debounce: 4.0.8
-      lodash.difference: 4.5.0
-      lodash.flatten: 4.4.0
-      lodash.isequal: 4.5.0
-      loud-rejection: 1.6.0
-      matcher: 0.1.2
-      max-timeout: 1.0.0
-      md5-hex: 2.0.0
-      meow: 3.7.0
-      ms: 0.7.3
-      multimatch: 2.1.0
-      observable-to-promise: 0.4.0
-      option-chain: 0.1.1
-      package-hash: 1.2.0
-      pkg-conf: 2.1.0
-      plur: 2.1.2
-      pretty-ms: 2.1.0
-      require-precompiled: 0.1.0
-      resolve-cwd: 1.0.0
-      slash: 1.0.0
-      source-map-support: 0.4.18
-      stack-utils: 1.0.5
-      strip-ansi: 3.0.1
-      strip-bom-buf: 1.0.0
-      time-require: 0.1.2
-      unique-temp-dir: 1.0.0
-      update-notifier: 1.0.3
-    transitivePeerDependencies:
-      - supports-color
-
   ava@0.18.2(supports-color@6.1.0):
     dependencies:
       '@ava/babel-preset-stage-4': 1.1.0
@@ -14715,7 +14643,7 @@ snapshots:
       bluebird: 3.7.2
       caching-transform: 1.0.1
       chalk: 1.1.3
-      chokidar: 1.7.0(supports-color@6.1.0)
+      chokidar: 1.7.0
       clean-stack: 1.3.0
       clean-yaml-object: 0.1.0
       cli-cursor: 2.1.0
@@ -17214,7 +17142,7 @@ snapshots:
       is-binary-path: 1.0.1
       is-glob: 2.0.1
       path-is-absolute: 1.0.1
-      readdirp: 2.2.1(supports-color@6.1.0)
+      readdirp: 2.2.1
     optionalDependencies:
       fsevents: 1.2.13
     transitivePeerDependencies:
@@ -17260,21 +17188,6 @@ snapshots:
       is-glob: 2.0.1
       path-is-absolute: 1.0.1
       readdirp: 2.2.1(supports-color@5.5.0)
-    optionalDependencies:
-      fsevents: 1.2.13
-    transitivePeerDependencies:
-      - supports-color
-
-  chokidar@1.7.0(supports-color@6.1.0):
-    dependencies:
-      anymatch: 1.3.2
-      async-each: 1.0.6
-      glob-parent: 2.0.0
-      inherits: 2.0.4
-      is-binary-path: 1.0.1
-      is-glob: 2.0.1
-      path-is-absolute: 1.0.1
-      readdirp: 2.2.1(supports-color@6.1.0)
     optionalDependencies:
       fsevents: 1.2.13
     transitivePeerDependencies:
@@ -18679,7 +18592,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-config-think@1.0.3(eslint@4.2.0):
+  eslint-config-think@1.0.3(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0):
     dependencies:
       babel-eslint: 10.1.0(eslint@4.2.0)
       eslint-plugin-import: 2.32.0(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
@@ -18775,7 +18688,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-config-think@1.1.0(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0):
+  eslint-config-think@1.1.0(eslint@4.2.0):
     dependencies:
       eslint-plugin-import: 2.32.0(eslint@4.2.0(supports-color@6.1.0))(supports-color@5.5.0)
       eslint-plugin-node: 5.2.1(eslint@4.2.0)
@@ -18888,7 +18801,7 @@ snapshots:
     dependencies:
       debug: 3.2.7(supports-color@5.5.0)
     optionalDependencies:
-      eslint: 4.19.1
+      eslint: 4.19.1(supports-color@5.5.0)
       eslint-import-resolver-node: 0.3.10(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
@@ -19052,7 +18965,7 @@ snapshots:
       array.prototype.flatmap: 1.3.3
       debug: 3.2.7(supports-color@5.5.0)
       doctrine: 2.1.0
-      eslint: 4.19.1
+      eslint: 4.19.1(supports-color@5.5.0)
       eslint-import-resolver-node: 0.3.10(supports-color@5.5.0)
       eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.10)(eslint@4.19.1)
       hasown: 2.0.3
@@ -19322,7 +19235,7 @@ snapshots:
 
   eslint-plugin-node@5.2.1(eslint@4.19.1):
     dependencies:
-      eslint: 4.19.1
+      eslint: 4.19.1(supports-color@5.5.0)
       ignore: 3.3.10
       minimatch: 3.1.5
       resolve: 1.22.12
@@ -19408,7 +19321,7 @@ snapshots:
 
   eslint-plugin-standard@3.1.0(eslint@4.19.1):
     dependencies:
-      eslint: 4.19.1
+      eslint: 4.19.1(supports-color@5.5.0)
 
   eslint-plugin-standard@3.1.0(eslint@4.2.0):
     dependencies:
@@ -19681,7 +19594,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint@4.19.1:
+  eslint@4.19.1(supports-color@5.5.0):
     dependencies:
       ajv: 5.5.2
       babel-code-frame: 6.26.0
@@ -21541,7 +21454,7 @@ snapshots:
 
   invert-kv@1.0.0: {}
 
-  ioredis@2.5.0:
+  ioredis@2.5.0(supports-color@6.1.0):
     dependencies:
       bluebird: 3.7.2
       cluster-key-slot: 1.1.2
@@ -24800,6 +24713,14 @@ snapshots:
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
 
+  readdirp@2.2.1:
+    dependencies:
+      graceful-fs: 4.2.11
+      micromatch: 3.1.10(supports-color@6.1.0)
+      readable-stream: 2.3.8
+    transitivePeerDependencies:
+      - supports-color
+
   readdirp@2.2.1(supports-color@3.2.3):
     dependencies:
       graceful-fs: 4.2.11
@@ -26277,7 +26198,7 @@ snapshots:
     dependencies:
       think-helper: 1.1.5
 
-  think-crontab@1.0.4(supports-color@6.1.0):
+  think-crontab@1.0.4:
     dependencies:
       debug: 2.6.9(supports-color@6.1.0)
       node-schedule: 1.3.3
@@ -26432,7 +26353,7 @@ snapshots:
 
   think-redis@1.1.4:
     dependencies:
-      ioredis: 2.5.0
+      ioredis: 2.5.0(supports-color@6.1.0)
       think-debounce: 1.0.4
       think-helper: 1.1.5
     transitivePeerDependencies:
@@ -26569,7 +26490,7 @@ snapshots:
       think-cluster: 1.5.8(supports-color@6.1.0)
       think-config: 1.1.3
       think-controller: 1.0.5
-      think-crontab: 1.0.4(supports-color@6.1.0)
+      think-crontab: 1.0.4
       think-helper: 1.1.5
       think-loader: 1.2.3(supports-color@6.1.0)
       think-logger3: 1.4.0
@@ -26595,7 +26516,7 @@ snapshots:
       think-cluster: 1.5.8(supports-color@6.1.0)
       think-config: 1.1.3
       think-controller: 1.0.5
-      think-crontab: 1.0.4(supports-color@6.1.0)
+      think-crontab: 1.0.4
       think-helper: 1.1.5
       think-loader: 1.2.3(supports-color@6.1.0)
       think-logger3: 1.4.0

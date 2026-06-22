@@ -10,7 +10,8 @@
   },
   "ava": {
     "files": [
-      "test/*.js"
+      "test/*.js",
+      "!test/fake-redis.js"
     ]
   },
   "repository": {
@@ -42,6 +43,7 @@
     "coveralls": "~2.11.16",
     "eslint": "~4.2.0",
     "eslint-config-think": "~1.0.1",
+    "mock-require": "^3.0.3",
     "nyc": "~10.1.2"
   },
   "dependencies": {
