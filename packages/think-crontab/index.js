@@ -10,7 +10,7 @@ const debug = require('debug')('think-crontab');
 class Crontab {
   /**
    * constructor
-   * @param {Object|String} options 
+   * @param {Object|String} options
    * @param {Object} app koa app
    */
   constructor(options, app) {
@@ -19,7 +19,7 @@ class Crontab {
   }
   /**
    * parse options
-   * @param {Object|String} options 
+   * @param {Object|String} options
    */
   parseOptions(options) {
     if (helper.isString(options)) {
