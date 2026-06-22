@@ -42,7 +42,6 @@ function proxy(options, app) {
     if (helper.isArray(option.suppressResponseHeaders)) {
       suppressResponseHeaders = options.suppressResponseHeaders.map(item => item.toLowerCase());
     }
-    console.log(option);
   };
 }
 
