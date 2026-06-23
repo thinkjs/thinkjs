@@ -677,7 +677,7 @@ module.exports = class Model {
       const order = options.order;
       delete options.order;
 
-      if (!count) {
+      if (!helper.isNumber(count)) {
         _this11.options = options;
         count = yield _this11.count(`${_this11[QUOTE_FIELD](table)}.${_this11.pk}`);
       }
