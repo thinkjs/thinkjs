@@ -10,7 +10,7 @@ module.exports = app => {
   }
   const extend = {
     knex: injectKnex
-  }
+  };
   return {
     think: extend,
     service: extend,

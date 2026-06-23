@@ -17,9 +17,9 @@ const defaultOptions = {
  */
 // {host, match, map, suppressRequestHeaders, suppressResponseHeaders}
 function proxy(options, app) {
-  assert(helper.isEmpty(options), 'must hava options');
+  assert(!helper.isEmpty(options), 'must have options');
   assert(
-    !helper.isArray(options) || !helper.isObject(options),
+    helper.isArray(options) || helper.isObject(options),
     'options must be an array or an object'
   );
   if (helper.isArray(options)) {
@@ -32,15 +32,15 @@ function proxy(options, app) {
   return async function(ctx, next) {
     const option = resolver(ctx.path, options);
     if (helper.isEmpty(option)) {
-      await next();
+      return next();
     }
     let suppressRequestHeaders;
     let suppressResponseHeaders;
     if (helper.isArray(option.suppressRequestHeaders)) {
-      suppressRequestHeaders = options.suppressRequestHeaders.map(item => item.toLowerCase());
+      suppressRequestHeaders = option.suppressRequestHeaders.map(item => item.toLowerCase());
     }
     if (helper.isArray(option.suppressResponseHeaders)) {
-      suppressResponseHeaders = options.suppressResponseHeaders.map(item => item.toLowerCase());
+      suppressResponseHeaders = option.suppressResponseHeaders.map(item => item.toLowerCase());
     }
   };
 }

@@ -1,11 +1,8 @@
-/*
-* @Author: lushijie
-* @Date:   2017-03-24 09:34:57
-* @Last Modified by:   lushijie
-* @Last Modified time: 2017-09-13 12:05:37
-*/
-import test from 'ava';
-import RedisCache from '../index';
+const { default: test } = require('ava');
+const mock = require('mock-require');
+
+mock('think-redis', './mock-think-redis.js');
+const RedisCache = require('../index');
 
 test.serial('set key -> get key -> del key', async t => {
   const redisCache = new RedisCache();
