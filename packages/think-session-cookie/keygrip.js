@@ -15,6 +15,19 @@ class Keygrip {
     this.cipher = 'aes-256-cbc';
   }
   /**
+   * Derive a key of the correct length for the current cipher from a password string.
+   * @param {String|Buffer} password
+   * @returns {Buffer}
+   */
+  _deriveKey(password) {
+    const keyLen = parseInt(this.cipher.split('-')[1]) / 8;
+    if (Buffer.isBuffer(password)) {
+      if (password.length >= keyLen) return password.slice(0, keyLen);
+      return Buffer.concat([password, Buffer.alloc(keyLen - password.length)]);
+    }
+    return crypto.createHash('sha256').update(String(password)).digest().slice(0, keyLen);
+  }
+  /**
    * crypto
    * @param {Object} cipher 
    * @param {String} data 
@@ -22,31 +35,31 @@ class Keygrip {
   crypt(cipher, data){
     let text = cipher.update(data, 'utf8');
     let pad  = cipher.final();
-    // if (typeof text === 'string') {
-    //   text = new Buffer(text, 'binary');
-    //   pad  = new Buffer(pad, 'binary');
-    // }
     return Buffer.concat([text, pad]);
   }
   /**
    * encrypt a message
    * @param {String} data 
-   * @param {String} iv 
-   * @param {String} key 
+   * @param {Buffer} iv 
+   * @param {String|Buffer} key 
    */
   encrypt(data, iv, key){
     key = key || this.keys[0];
-    let cipher = iv
-      ? crypto.createCipheriv(this.cipher, key, iv)
-      : crypto.createCipher(this.cipher, key);
-
-    return this.crypt(cipher, data);
+    if (iv) {
+      const derivedKey = Buffer.isBuffer(key) ? key : this._deriveKey(key);
+      return this.crypt(crypto.createCipheriv(this.cipher, derivedKey, iv), data);
+    }
+    // Generate a random IV and prepend it to the ciphertext so decrypt can recover it
+    const generatedIv = crypto.randomBytes(16);
+    const derivedKey = this._deriveKey(key);
+    const encrypted = this.crypt(crypto.createCipheriv(this.cipher, derivedKey, generatedIv), data);
+    return Buffer.concat([generatedIv, encrypted]);
   }
   /**
    * decrypt message
-   * @param {String} data 
-   * @param {String} iv 
-   * @param {String} key 
+   * @param {String|Buffer} data 
+   * @param {Buffer} iv 
+   * @param {String|Buffer} key 
    */
   decrypt(data, iv, key){
     if (!key) {
@@ -56,16 +69,21 @@ class Keygrip {
         let message = this.decrypt(data, iv, keys[i]);
         if (message !== false) return [message, i];
       }
-      return false
+      return false;
     }
     try {
-      let cipher = iv
-        ? crypto.createDecipheriv(this.cipher, key, iv)
-        : crypto.createDecipher(this.cipher, key);
-      return this.crypt(cipher, data);
+      if (iv) {
+        const derivedKey = Buffer.isBuffer(key) ? key : this._deriveKey(key);
+        return this.crypt(crypto.createDecipheriv(this.cipher, derivedKey, iv), data);
+      }
+      // The IV was prepended during encrypt — extract the first 16 bytes
+      const extractedIv = data.slice(0, 16);
+      const encryptedData = data.slice(16);
+      const derivedKey = this._deriveKey(key);
+      return this.crypt(crypto.createDecipheriv(this.cipher, derivedKey, extractedIv), encryptedData);
     } catch (err) {
       debug(err.stack);
-      return false
+      return false;
     }
   }
 }

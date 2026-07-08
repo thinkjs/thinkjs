@@ -339,7 +339,7 @@ test('datetime 1', t => {
     [
       now.getFullYear(),
       ('0' + (now.getMonth() + 1)).slice(-2),
-      now.getDate()
+      ('0' + now.getDate()).slice(-2)
     ].join('/')
   );
 });
