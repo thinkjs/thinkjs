@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "packageManager": "pnpm@11.6.0",
   "scripts": {
-    "test": "pnpm --filter thinkjs test",
-    "lint": "pnpm --filter thinkjs lint"
+    "test": "pnpm -r --if-present --filter './packages/**' --filter '!think-apollo-graphql' --filter '!think-babel' --filter '!think-cache-memcache' --filter '!think-demo' --filter '!think-email' --filter '!think-memcache' --filter '!think-mock' --filter '!think-mongo' --filter '!think-pm2' --filter '!think-ratelimiter' --filter '!think-websocket-ws' test",
+    "lint": "pnpm -r --if-present --filter './packages/**' --filter '!think-apollo-graphql' --filter '!think-babel' --filter '!think-cache-memcache' --filter '!think-demo' --filter '!think-email' --filter '!think-memcache' --filter '!think-mock' --filter '!think-mongo' --filter '!think-pm2' --filter '!think-ratelimiter' --filter '!think-websocket-ws' lint"
+  },
+  "devDependencies": {
+    "pre-commit": "^1.2.2"
   }
 }

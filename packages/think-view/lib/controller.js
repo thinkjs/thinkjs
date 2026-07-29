@@ -23,17 +23,17 @@ module.exports = {
     return this[viewInstance];
   },
   /**
-   * 
-   * @param {String} name 
-   * @param {Mixed} value 
+   *
+   * @param {String} name
+   * @param {Mixed} value
    */
   assign(name, value) {
     return this[getViewInstance]().assign(name, value);
   },
   /**
    * render view file
-   * @param {String} file 
-   * @param {Mixed} config 
+   * @param {String} file
+   * @param {Mixed} config
    */
   render(file, config) {
     if (helper.isObject(file)) {
@@ -44,9 +44,9 @@ module.exports = {
     return this[getViewInstance]().render(file, config);
   },
   /**
-   * display view file 
-   * @param {String} file 
-   * @param {Object} config 
+   * display view file
+   * @param {String} file
+   * @param {Object} config
    */
   display(file, config) {
     return this.render(file, config).then(content => {

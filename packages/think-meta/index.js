@@ -8,7 +8,7 @@ const defaultOptions = {
   sendPowerBy: true, // send powerby
   sendResponseTime: true, // send response time
   logRequest: true,
-  ignoreUrl:[]
+  ignoreUrl: []
 };
 
 /**
@@ -43,10 +43,9 @@ module.exports = (options, app) => {
         }
         if (options.logRequest) {
           process.nextTick(() => {
-            if(!options.ignoreUrl.includes(ctx.url)){
+            if (!options.ignoreUrl.includes(ctx.url)) {
               app.think.logger.info(`${ctx.method} ${ctx.url} ${ctx.status} ${endTime - startTime}ms`);
             }
-            
           });
         }
         if (err) return Promise.reject(err);

@@ -4,6 +4,7 @@
   "version": "1.3.0",
   "author": {},
   "scripts": {
+    "pretest": "npm run compile",
     "test": "mocha --reporter spec --timeout 5000 --recursive test/",
     "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 5000 --recursive  -R spec test/",
     "compile": "babel --presets es2015-loose,stage-1 --plugins transform-runtime src/ --out-dir lib/",

@@ -59,7 +59,7 @@ test('transaction rollback should keep data unchanged', async t => {
 test('think-model integration', async t => {
   const userModel = new Model('user', {
     handle: SQLite,
-    path: '/tmp',
+    path: true,
     database: 'test',
     logConnect: false,
     debounce: false

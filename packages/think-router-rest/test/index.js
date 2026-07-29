@@ -8,6 +8,7 @@ test('rest true', t => {
     action: 'index',
     method: 'POST',
     app: {
+      modules: [],
       controllers: {
         'api/user': {
           _REST: true
@@ -27,6 +28,7 @@ test('rest false', t => {
     action: 'index',
     method: 'POST',
     app: {
+      modules: [],
       controllers: {
         'api/user': {
         }
@@ -48,6 +50,7 @@ test('rest custom method without post request', t => {
       _method: 'DeLeTe'
     },
     app: {
+      modules: [],
       controllers: {
         'api/user': {
           _REST: true,
@@ -71,6 +74,7 @@ test('rest custom method with post request', t => {
       _method: 'DeLeTe'
     },
     app: {
+      modules: [],
       controllers: {
         'api/user': {
           _REST: true,
