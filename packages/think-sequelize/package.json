@@ -22,7 +22,7 @@
   "dependencies": {
     "@types/sequelize": "^4.28.8",
     "debug": "^2.6.1",
-    "sequelize": "^4.20.1",
+    "sequelize": "^6.37.8",
     "think-helper": "^1.1.3",
     "think-instance": "^1.0.2"
   },
