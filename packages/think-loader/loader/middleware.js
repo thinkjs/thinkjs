@@ -53,7 +53,9 @@ class Middleware {
       if (helper.isFunction(item)) {
         return { handle: () => item };
       }
-      return item;
+      // Parsing replaces `handle` with the initialized middleware below. Clone
+      // descriptors so a cached middleware config can safely be parsed again.
+      return Object.assign({}, item);
     }).filter(item => {
       return !('enable' in item) || item.enable;
     }).map(item => {

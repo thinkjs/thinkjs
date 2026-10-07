@@ -108,6 +108,31 @@ test('middleware will pass options', t => {
   t.assert.deepStrictEqual(params[1], {});
 });
 
+test('middleware descriptors can be parsed more than once', t => {
+  const instance = getInstance();
+  const middleware = () => {};
+  const middlewares = [{
+    handle: 'handler',
+    options: {value: 'options'}
+  }];
+  let calls = 0;
+  const middlewarePkg = {
+    handler(options) {
+      calls++;
+      t.assert.deepStrictEqual(options, {value: 'options'});
+      return middleware;
+    }
+  };
+
+  const first = instance.parse(middlewares, middlewarePkg);
+  const second = instance.parse(middlewares, middlewarePkg);
+
+  t.assert.deepStrictEqual(first, [middleware]);
+  t.assert.deepStrictEqual(second, [middleware]);
+  t.assert.strictEqual(calls, 2);
+  t.assert.strictEqual(middlewares[0].handle, 'handler');
+});
+
 test('middleware set match and ignore', t => {
   const instance = getInstance();
 
