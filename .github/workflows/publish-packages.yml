@@ -74,8 +74,6 @@ jobs:
       - name: Publish changed packages
         if: ${{ steps.changed_packages.outputs.packages != '' }}
         shell: bash
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
           pack_dir="${RUNNER_TEMP}/npm-packages"
