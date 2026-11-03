@@ -3075,3 +3075,18 @@ test('rule-name-custom-message-else', t => {
 
 
 
+
+test('requiredWith: the method of one field does not change where the other fields are read from', t => {
+  const buildRules = items => ({
+    a: {method: 'post'},
+    b: {},
+    target: {requiredWith: items, method: 'get'}
+  });
+  const run = items => {
+    const ctx = helper.extend({}, defaultCtx, {method: 'get', PARAM: {b: 'y'}, POST: {}});
+    return Object.keys(new Validator(ctx).validate(buildRules(items)));
+  };
+  // b is set in the GET params, so target is required whatever the order of the fields is
+  t.assert.deepStrictEqual(run(['a', 'b']), ['target']);
+  t.assert.deepStrictEqual(run(['b', 'a']), ['target']);
+});
