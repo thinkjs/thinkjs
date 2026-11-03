@@ -1356,3 +1356,23 @@ test('emptycontroller', t => {
     });
   });
 });
+
+test('options passed to one router do not become the defaults of the next one', t => {
+  const makeApp = () => helper.extend({}, defaultApp, {
+    modules: [],
+    controllers: {},
+    routers: []
+  });
+  const run = options => {
+    const ctx = helper.extend({}, defaultCtx, {path: '/'});
+    const app = makeApp();
+    ctx.app = app;
+    return parseRouter(options, app)(ctx, next).then(() => ctx.controller);
+  };
+  return run({defaultController: 'first'}).then(controller => {
+    t.assert.deepStrictEqual(controller, 'first');
+    return run({});
+  }).then(controller => {
+    t.assert.deepStrictEqual(controller, 'index');
+  });
+});
