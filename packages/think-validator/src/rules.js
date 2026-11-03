@@ -87,12 +87,13 @@ Rules._requiredWith = (validValue, { currentQuery, rules, ctx }) => {
 
   // parsed all the param
   return validValue.map(item => {
+    // use a per-item query, so one item's method does not leak into the items after it
+    let query = currentQuery;
     if (rules && rules[item] && rules[item]['method']) {
-      currentQuery = helper.extend({}, currentQuery);
       const method = rules[item]['method'].toUpperCase();
-      currentQuery = ctx[METHOD_MAP[method]]();
+      query = ctx[METHOD_MAP[method]]();
     }
-    return !helper.isTrueEmpty(currentQuery[item]) ? currentQuery[item] : '';
+    return !helper.isTrueEmpty(query[item]) ? query[item] : '';
   });
 };
 
