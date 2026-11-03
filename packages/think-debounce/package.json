@@ -7,10 +7,14 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint index.js && node --test --test-concurrency=1 test/index.js",
-    "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js",
-    "lint": "eslint index.js",
-    "lint-fix": "eslint --fix index.js"
+    "test": "npm run build && npm run lint && npm run typecheck && node --test --test-concurrency=1 test/*.js",
+    "coverage": "npm run build && node --test --test-concurrency=1 --experimental-test-coverage test/*.js",
+    "lint": "eslint index.js test/regression.js test/pack.cjs",
+    "lint-fix": "eslint --fix index.js test/regression.js test/pack.cjs",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p test/types/tsconfig.json",
+    "prepack": "npm run build",
+    "test:pack": "node test/pack.cjs"
   },
   "contributors": [
     {
@@ -23,10 +27,11 @@
     }
   ],
   "main": "index.js",
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "babel-core": "^6.22.1",
-    "eslint": "^10.8.0"
+    "eslint": "^10.8.0",
+    "typescript": "5.9.3"
   },
   "keywords": [],
   "repository": {
@@ -40,5 +45,12 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/thinkjs/think-debounce/issues"
-  }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ]
 }

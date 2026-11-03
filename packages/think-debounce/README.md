@@ -50,3 +50,55 @@ return Promise.all([promise1, promise2]).then(values => {
   console.log(readTimes); // 1
 });
 ```
+
+## TypeScript migration pilot
+
+The implementation now lives in `src/index.ts`. Run `npm run build` to generate
+`index.js` and `index.d.ts`; both generated files are checked in so existing
+workspace JavaScript consumers can still require this package without a build.
+Do not edit the generated files directly. `npm pack` rebuilds them automatically.
+The runtime entry point remains `index.js` and exports the constructor directly
+using CommonJS. No runtime dependencies or package version changes are added.
+
+```ts
+import Debounce = require('think-debounce');
+
+const instance = new Debounce();
+const result: Promise<{id: number}> = instance.debounce('record', async () => ({id: 1}));
+```
+
+Synchronous values and promise-like callback results are inferred and unwrapped.
+The generated declarations require TypeScript 4.5 or newer (`Awaited`); this pilot
+uses TypeScript 5.9.3. Default imports work with `esModuleInterop` enabled.
+Use the same callback result type for all concurrent calls sharing a key. The
+runtime deduplicates by string key, so TypeScript cannot verify that two separate
+calls with the same key return the same type. The public `queues` property is
+retained for compatibility but is an implementation detail.
+
+### Validate locally
+
+From the repository root, install with the repository's pnpm version and run:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm --filter think-debounce test
+pnpm --filter think-debounce coverage
+pnpm --filter think-debounce test:pack
+cd packages/think-debounce
+npm pack
+```
+
+`test` builds the source, lints generated JavaScript and the new test helpers,
+checks source and consumer types, and runs the existing tests plus regressions.
+`test:pack` creates a real tarball, checks its exact file list, installs it into a
+temporary directory without lifecycle scripts or development dependencies, then
+runs JavaScript and strict TypeScript consumers against the installed package.
+It removes that temporary directory afterward. The published package contains
+only `index.js`, `index.d.ts`, `package.json`, `README.md`, and `LICENSE`.
+
+This is a source-language migration, not a behavior fix. It preserves microtask /
+`process.nextTick` cleanup timing and the original plain-object queue storage.
+Consequently, inherited object-property keys such as `toString` and `__proto__`
+remain unsupported by the existing implementation. That issue should be fixed
+separately rather than hidden in a TypeScript-only pilot. This small package does
+not validate framework-wide migration or database-backed packages.
