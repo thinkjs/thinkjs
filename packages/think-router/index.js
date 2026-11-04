@@ -77,7 +77,7 @@ const formatRouters = routers => {
  * parse router
  */
 module.exports = function parseRouter(options, app) {
-  options = Object.assign(defaultOptions, options);
+  options = Object.assign({}, defaultOptions, options);
   // set subdomain offset
   if (options.subdomainOffset) {
     app.subdomainOffset = options.subdomainOffset;
