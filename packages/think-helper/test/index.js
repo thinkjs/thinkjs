@@ -321,7 +321,7 @@ test('escapeHtml', t => {
   t.assert.deepStrictEqual(escapeHtml('<div width=\'200\'></div>'), '&lt;div width=&#39;200&#39;&gt;&lt;/div&gt;');
 });
 test('escapeHtml 1', t => {
-  t.assert.deepStrictEqual(escapeHtml(('<div width="200"></div>')), '&lt;div width=&quote;200&quote;&gt;&lt;/div&gt;');
+  t.assert.deepStrictEqual(escapeHtml(('<div width="200"></div>')), '&lt;div width=&quot;200&quot;&gt;&lt;/div&gt;');
 });
 test('isEmpty', t => {
   t.assert.strictEqual(isEmpty({}), true);

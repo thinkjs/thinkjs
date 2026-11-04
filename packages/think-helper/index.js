@@ -219,7 +219,7 @@ function escapeHtml(str) {
       case '>':
         return '&gt;';
       case '"':
-        return '&quote;';
+        return '&quot;';
       case '\'':
         return '&#39;';
     }
