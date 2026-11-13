@@ -22,12 +22,22 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          node-version: 20.19.0
+          node-version: 24.x
       # The existing Test workflow also runs this gate on Node 22, 24 and 26.
       # These tests use no external services or native modules.
       - name: Install maintainer and legacy consumer compilers
-        run: pnpm --filter . --filter think-typescript install --ignore-scripts --frozen-lockfile
+        run: pnpm --filter . --filter think-typescript --filter think-qs install --ignore-scripts --frozen-lockfile
       - name: Check infrastructure and TypeScript source lint
         run: pnpm lint:typescript-build && pnpm lint:typescript
+      # pnpm 11 needs Node >=22.13. Install on the tooling runtime, then
+      # execute compatibility gates directly on the supported Node minimum.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
       - name: Build, check, pack, install and clean isolated package fixtures
-        run: pnpm test:typescript-build
+        run: node --test --test-concurrency=1 test/typescript-build/*.test.cjs
+      - name: Build and validate the think-qs production package
+        run: |
+          node node_modules/typescript/bin/tsc -b packages/think-qs/tsconfig.build.json
+          node node_modules/typescript/bin/tsc -p packages/think-qs/tsconfig.build.json --noEmit
+          node --test --test-concurrency=1 packages/think-qs/test/index.js packages/think-qs/test/migration.test.cjs

@@ -86,3 +86,21 @@ module.exports = class extends think.Logic {
 }
 ```
 you can get more information about logic from https://thinkjs.org/zh-cn/doc/3.0/logic.html.
+
+## TypeScript
+
+The CommonJS factory and `think-qs/index.js` entry remain available. TypeScript
+consumers can use `import middleware = require('think-qs')` or a default import
+with `esModuleInterop`. Generated declarations are checked on TypeScript 3.9.10
+and 5.9.3. Runtime consumers do not need TypeScript, Node ambient types, or qs
+ambient types installed.
+
+`query` and `post` are checked boolean options. Other options are passed directly
+to the installed qs parser and can use an existing interface-typed options object.
+This package does not duplicate or validate the version-specific qs options API.
+Parsed request values are `unknown`: custom decoders can return arbitrary values,
+and HTTP input must be validated at runtime. Middleware preserves the exact return
+type of `next`, including synchronous values and promises.
+
+For maintainer build, package verification, and migration limitations, see
+[the migration notes](../../docs/typescript-migration/p3-think-qs.md).
