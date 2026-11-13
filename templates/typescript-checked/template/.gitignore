@@ -1,0 +1,6 @@
+node_modules/
+app/
+runtime/
+.thinkjs/types/
+.thinkjs/build-*/
+.thinkjs/checked.lock

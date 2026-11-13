@@ -9,8 +9,10 @@
     "lint": "pnpm run lint:typescript-migration && pnpm -r --if-present --filter './packages/**' lint",
     "audit:typescript-migration": "node scripts/typescript-migration/audit.cjs",
     "test:typescript-migration": "node scripts/typescript-migration/audit.cjs --check && node --test --test-concurrency=1 scripts/typescript-migration/audit.test.cjs test/typescript-migration/*.test.cjs",
-    "lint:typescript-migration": "eslint scripts/typescript-migration test/typescript-migration",
-    "test:typescript-application": "node scripts/typescript-migration/application.cjs"
+    "lint:typescript-migration": "eslint scripts/typescript-migration test/typescript-migration templates/typescript-checked/template/*.cjs templates/typescript-checked/template/scripts",
+    "test:typescript-application": "node scripts/typescript-migration/application.cjs",
+    "create:typescript-application": "node scripts/typescript-migration/scaffold.cjs",
+    "test:typescript-template": "node scripts/typescript-migration/template-application.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
