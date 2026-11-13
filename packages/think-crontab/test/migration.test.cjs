@@ -303,29 +303,69 @@ test('cold prepack installs offline with CJS, deep entries, maps and TS 3.9/5.9 
     'LICENSE', 'README.md', 'index.d.ts', 'index.js', 'lib/index.d.ts', 'lib/index.d.ts.map',
     'lib/index.js', 'lib/index.js.map', 'package.json', 'src/dependencies.d.ts', 'src/index.ts'
   ]);
-  const seen = new Set();
+  const graph = new Map();
+  const packages = new Map();
   function packDependencies(folder) {
     const localRequire = createRequire(path.join(folder, 'package.json'));
     const manifest = JSON.parse(fs.readFileSync(path.join(folder, 'package.json'), 'utf8'));
+    const identity = `${manifest.name}@${manifest.version}`;
     const dependencies = {};
     for (const name of Object.keys(manifest.dependencies || {})) {
+      dependencies[name] = localRequire(`${name}/package.json`).version;
+    }
+    if (graph.has(identity)) {
+      assert.deepEqual(graph.get(identity), dependencies, `Conflicting fixture graphs for ${identity}`);
+      return;
+    }
+    graph.set(identity, dependencies);
+    for (const name of Object.keys(dependencies)) {
       const dependency = path.dirname(localRequire.resolve(`${name}/package.json`));
       const metadata = localRequire(`${name}/package.json`);
-      const archive = path.join(tarballs, `${metadata.name.replace('@', '').replace('/', '-')}-${metadata.version}.tgz`);
-      dependencies[name] = {'.': `file:${archive}`, ...packDependencies(dependency)};
-      if (!seen.has(dependency)) {
-        seen.add(dependency);
-        assert.equal(packDependency(dependency, tarballs, staging).packed.archive, archive);
+      if (!packages.has(name)) packages.set(name, new Map());
+      const versions = packages.get(name);
+      if (!versions.has(metadata.version)) {
+        const archive = packDependency(dependency, tarballs, staging).packed.archive;
+        versions.set(metadata.version, `file:${archive}`);
       }
+      packDependencies(dependency);
     }
-    return dependencies;
   }
-  const overrides = {'think-crontab': packDependencies(packageRoot)};
+  packDependencies(packageRoot);
+  const dependencies = {};
+  const overrides = {};
+  // npm 11.19+ can lose repeated deep overrides and request registry metadata.
+  // Keep single-version packages flat. Version-specific global overrides retain
+  // both ms versions (debug's 2.0.0 and think-helper's 2.1.3) without rewriting
+  // any tarball manifests. Verify every installed edge below, not just the root.
+  for (const [name, versions] of packages) {
+    if (versions.size === 1) {
+      dependencies[name] = overrides[name] = [...versions.values()][0];
+    } else {
+      for (const [version, archive] of versions) overrides[`${name}@${version}`] = archive;
+    }
+  }
   const consumer = path.join(dir, 'consumer');
   fs.mkdirSync(consumer);
-  fs.writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({private: true, overrides}));
+  fs.writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({private: true, dependencies, overrides}));
   npm(consumer, ['install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', packed.archive]);
   const installedRequire = createRequire(path.join(consumer, 'package.json'));
+  const checked = new Set();
+  function checkInstalledGraph(folder) {
+    const localRequire = createRequire(path.join(folder, 'package.json'));
+    const manifest = localRequire('./package.json');
+    const identity = `${manifest.name}@${manifest.version}`;
+    if (checked.has(identity)) return;
+    checked.add(identity);
+    const expected = graph.get(identity);
+    assert.ok(expected, `Unexpected installed package ${identity}`);
+    assert.deepEqual(Object.keys(manifest.dependencies || {}).sort(), Object.keys(expected).sort());
+    for (const [name, version] of Object.entries(expected)) {
+      assert.equal(localRequire(`${name}/package.json`).version, version, `${identity} -> ${name}`);
+      checkInstalledGraph(path.dirname(localRequire.resolve(`${name}/package.json`)));
+    }
+  }
+  checkInstalledGraph(path.dirname(installedRequire.resolve('think-crontab/package.json')));
+  assert.equal(checked.size, graph.size);
   const api = installedRequire('think-crontab');
   assert.equal(typeof api, 'function');
   assert.equal(api.default, undefined);
