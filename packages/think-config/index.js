@@ -1,4 +1,4 @@
-const helper = require('think-helper');
+const helper = require('think-helper/pure');
 /**
  * config manage
  */

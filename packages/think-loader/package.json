@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "pnpm run lint && node --test --test-concurrency=1 test/bootstrap.js test/common_load.js test/common_load_files.js test/config.js test/config_format_adapter.js test/config_load_adapter.js test/config_load_config.js test/config_load_config_by_name.js test/extend.js test/extend_allowextends.js test/index.js test/index_constructor.js test/middleware/get_files.js test/middleware/load_files.js test/middleware/loader.js test/middleware/parse.js test/router/load.js test/util.js",
-    "lint": "eslint index.js loader/ test/",
+    "lint": "eslint index.js extend.js middleware.js loader/ test/",
     "lint-fix": "pnpm run lint -- --fix",
     "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/bootstrap.js test/common_load.js test/common_load_files.js test/config.js test/config_format_adapter.js test/config_load_adapter.js test/config_load_config.js test/config_load_config_by_name.js test/extend.js test/extend_allowextends.js test/index.js test/index_constructor.js test/middleware/get_files.js test/middleware/load_files.js test/middleware/loader.js test/middleware/parse.js test/router/load.js test/util.js"
   },
@@ -21,7 +21,9 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "loader"
+    "loader",
+    "extend.js",
+    "middleware.js"
   ],
   "dependencies": {
     "debug": "^2.6.1",

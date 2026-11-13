@@ -9,7 +9,7 @@
   "scripts": {
     "test": "eslint index.js && node --test --test-concurrency=1 test/index.js",
     "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js",
-    "lint": "eslint index.js router.js",
+    "lint": "eslint index.js router.js querystring.js",
     "lint-fix": "eslint --fix index.js & eslint --fix router.js"
   },
   "contributors": [
@@ -45,5 +45,8 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/thinkjs/think-router/issues"
+  },
+  "browser": {
+    "debug": "think-helper/debug.js"
   }
 }

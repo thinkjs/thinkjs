@@ -59,6 +59,12 @@ jobs:
         if: matrix.node-version == '24.x'
         run: pnpm lint && pnpm coverage
 
+      - name: Verify edge runtime
+        if: matrix.node-version == '24.x'
+        run: |
+          pnpm --dir packages/thinkjs run lint:edge
+          pnpm --dir packages/thinkjs run test:edge
+
       - name: Upload coverage to Codecov
         if: matrix.node-version == '24.x'
         uses: codecov/codecov-action@v5

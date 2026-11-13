@@ -4,9 +4,9 @@
 * @Last Modified by:   lushijie
 * @Last Modified time: 2018-04-19 14:11:40
 */
-const helper = require('think-helper');
+const helper = require('think-helper/pure');
 const validator = require('validator');
-const assert = require('assert');
+const assert = require('think-helper/assert');
 const METHOD_MAP = require('./method.js');
 const Rules = {};
 

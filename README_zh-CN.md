@@ -63,3 +63,7 @@ npm start
 ## License
 
 [MIT](https://github.com/thinkjs/thinkjs/blob/master/LICENSE)
+
+## 边缘运行时
+
+Worker 与边缘函数入口、构建方式及迁移限制见 [ThinkJS Edge](packages/thinkjs/edge/README.md)。

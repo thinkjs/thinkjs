@@ -1,10 +1,10 @@
+const pure = require('./pure');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const net = require('net');
 const cluster = require('cluster');
 const UUID = require('pure-uuid');
-const ms = require('ms');
 const {
   isArray,
   isBoolean,
@@ -19,16 +19,14 @@ const {
   isDate,
   isError,
   isFunction,
-  isPrimitive,
-  isBuffer
-} = require('core-util-is');
+  isPrimitive
+} = pure;
 
 const fsRmdir = promisify(fs.rmdir, fs);
 const fsUnlink = promisify(fs.unlink, fs);
 const fsReaddir = promisify(fs.readdir, fs);
 
 const numberReg = /^((-?(\d+\.|\d+|\.\d)\d*(?:e[+-]?\d*(?:\d?\.?|\.?\d?)\d*)?)|(0[0-7]+)|(0x[0-9a-f]+))$/i;
-const toString = Object.prototype.toString;
 
 exports.isIP = net.isIP;
 exports.isIPv4 = net.isIPv4;
@@ -49,27 +47,11 @@ exports.isDate = isDate;
 exports.isError = isError;
 exports.isFunction = isFunction;
 exports.isPrimitive = isPrimitive;
-exports.isBuffer = isBuffer;
-
-/**
- * override isObject method in `core-util-is` module
- */
-exports.isObject = obj => {
-  return toString.call(obj) === '[object Object]';
-};
 
 /**
  * check value is integer
  */
-function isInt(value) {
-  if (isNaN(value) || exports.isString(value)) {
-    return false;
-  }
-  var x = parseFloat(value);
-  return (x | 0) === x;
-}
-
-exports.isInt = isInt;
+exports.isInt = pure.isInt;
 
 /**
  * make callback function to promise
@@ -89,7 +71,7 @@ function promisify(fn, receiver) {
 
 exports.promisify = promisify;
 
-exports.extend = require('lodash.merge');
+exports.extend = pure.extend;
 
 /**
  * camelCase string
@@ -134,43 +116,8 @@ exports.isNumberString = isNumberString;
  * @param  {Mixed} obj []
  * @return {Boolean}     []
  */
-function isTrueEmpty(obj) {
-  if (obj === undefined || obj === null || obj === '') return true;
-  if (exports.isNumber(obj) && isNaN(obj)) return true;
-  return false;
-}
-exports.isTrueEmpty = isTrueEmpty;
-
-/**
- * check object is mepty
- * @param  {[Mixed]}  obj []
- * @return {Boolean}     []
- */
-function isEmpty(obj) {
-  if (isTrueEmpty(obj)) return true;
-  if (exports.isRegExp(obj)) {
-    return false;
-  } else if (exports.isDate(obj)) {
-    return false;
-  } else if (exports.isError(obj)) {
-    return false;
-  } else if (exports.isArray(obj)) {
-    return obj.length === 0;
-  } else if (exports.isString(obj)) {
-    return obj.length === 0;
-  } else if (exports.isNumber(obj)) {
-    return obj === 0;
-  } else if (exports.isBoolean(obj)) {
-    return !obj;
-  } else if (exports.isObject(obj)) {
-    for (const key in obj) {
-      return false && key; // only for eslint
-    }
-    return true;
-  }
-  return false;
-}
-exports.isEmpty = isEmpty;
+exports.isTrueEmpty = pure.isTrueEmpty;
+exports.isEmpty = pure.isEmpty;
 
 /**
  * get deferred object
@@ -317,14 +264,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
 /**
  * transform humanize time to ms
  */
-exports.ms = function(time) {
-  if (typeof time === 'number') return time;
-  const result = ms(time);
-  if (result === undefined) {
-    throw new Error(`think-ms('${time}') result is undefined`);
-  }
-  return result;
-};
+exports.ms = pure.ms;
 
 /**
  * omit some props in object

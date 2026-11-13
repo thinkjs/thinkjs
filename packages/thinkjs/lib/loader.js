@@ -15,8 +15,9 @@ const thinkPath = path.join(__dirname, '..');
  * think loader
  * @param {Object} options
  */
-const thinkLoader = class {
+const thinkLoader = class extends require('./core/loader') {
   constructor(options = {}) {
+    super();
     this.options = options;
   }
   /**
@@ -42,48 +43,6 @@ const thinkLoader = class {
       assert(AsyncLocalStorage, 'Requires node 12.17.0 or higher to enable asyncLocalStorage');
       think.app.ctxStorage = new AsyncLocalStorage();
     }
-  }
-  /**
-   * load app data
-   */
-  loadData() {
-    // add data to koa application
-    think.app.modules = think.loader.modules;
-    think.app.models = think.loader.loadModel();
-    think.app.services = think.loader.loadService();
-    think.app.logics = think.loader.loadLogic();
-    think.app.controllers = think.loader.loadController();
-    think.app.routers = think.loader.loadRouter();
-    think.app.validators = think.loader.loadValidator();
-  }
-  /**
-   * load middleware
-   */
-  loadMiddleware() {
-    const middlewares = think.loader.loadMiddleware(think.app);
-    middlewares.forEach(middleware => {
-      think.app.use(middleware);
-    });
-  }
-  /**
-   * load extend
-   */
-  loadExtend() {
-    const exts = think.loader.loadExtend();
-    const list = [
-      ['think', think],
-      ['application', think.app],
-      ['context', think.app.context],
-      ['request', think.app.request],
-      ['response', think.app.response],
-      ['controller', think.Controller.prototype],
-      ['logic', think.Logic.prototype],
-      ['service', think.Service.prototype]
-    ];
-    list.forEach(item => {
-      if (!exts[item[0]]) return;
-      Loader.extend(item[1], exts[item[0]]);
-    });
   }
   /**
    * load crontab

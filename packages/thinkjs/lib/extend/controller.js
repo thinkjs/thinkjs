@@ -1,6 +1,6 @@
-const helper = require('think-helper');
+const helper = require('think-helper/pure');
 const debug = require('debug')('thinkjs');
-const assert = require('assert');
+const assert = require('think-helper/assert');
 /**
  * extend controller
  */
@@ -194,7 +194,7 @@ module.exports = {
     if (value === undefined && helper.isString(name)) {
       return this.ctx.header[name];
     }
-    if (this.ctx.res.headersSent) {
+    if (this.ctx.headerSent || (this.ctx.res && this.ctx.res.headersSent)) {
       debug(`headers has already sent, url: ${this.ctx.url}`);
       return;
     }
