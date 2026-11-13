@@ -521,6 +521,9 @@ importers:
         specifier: ^1.1.3
         version: link:../think-helper
     devDependencies:
+      '@types/node':
+        specifier: 25.8.0
+        version: 25.8.0
       eslint:
         specifier: ^10.8.0
         version: 10.8.0(supports-color@7.2.0)
