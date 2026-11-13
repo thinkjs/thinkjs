@@ -6,6 +6,10 @@ This draft is stacked on P0 commit `51bdb25dfe70393ccd5fcfa27bdacae0464eefc6`
 P1 stage complete. No existing runtime or `thinkjs/index.d.ts` declaration is
 changed, and no package is published.
 
+> Follow-up: [Service adoption bridge](p1-service-adoption.md) resolves the
+> Context/Controller boundary limitation described below. This page records the
+> first slice; the follow-up changes only those legacy Service signatures.
+
 ## What is implemented
 
 - `thinkjs/service-types` is a type-only opt-in subpath. Its mergeable

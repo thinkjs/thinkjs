@@ -34,6 +34,60 @@ the application's existing ThinkJS/context/controller type. Existing ambient
 ThinkJS declarations are not replaced. See `thinkjs/service-types` for the
 underlying aliases and loose mode.
 
+## Adopting the generated types
+
+Existing values can be assigned to the generated views without a cast:
+
+```ts
+import type { Think, Context, Controller } from 'thinkjs';
+import type { AppThink, AppContext, AppController } from './.thinkjs/types';
+
+const app: AppThink<Think> = think;
+
+export function handle(context: Context) {
+  const ctx: AppContext<Context> = context;
+  // ctx.service now uses generated service names and constructor types.
+}
+```
+
+For class-based applications, annotate the members once in the application's
+base Controller. The following example binds a multi-module Controller to the
+`admin` module; single-module applications can omit the second type argument.
+Adjust the relative import for the location of the base class.
+
+```ts
+import type { Context, Controller } from 'thinkjs';
+import type { AppContext, AppController } from './.thinkjs/types';
+
+export default class BaseController extends think.Controller {
+  declare service: AppController<Controller, 'admin'>['service'];
+  declare ctx: AppContext<Context>;
+}
+```
+
+Business Controllers inherit this base normally. For Logic, extend `think.Logic`
+and use `AppController<Logic, 'admin'>['service']` with the imported `Logic` type.
+The `declare` keyword is essential: these are type-only declarations, not field
+initializers. They do not shadow the runtime service method or replace the
+constructor-injected context, including with `useDefineForClassFields: true`.
+No runtime helper or service registry is needed in application code.
+
+The module type argument describes the Controller's actual request module; it
+does not select a module at runtime or infer one from its file path. A Controller
+bound to `admin` uses admin's service map by default, while `this.ctx.service`
+still defaults to common. Unbound multi-module Controllers need an explicit
+module selector. Strict checks apply through the typed views and annotated
+members; legacy `think.service` and unannotated values remain broadly typed.
+Legacy fluent methods returning the original Controller type also retain that
+legacy return type; use the annotated instance for strict service lookup.
+
+The two legacy Context/Controller signatures now accept their actual constructor
+argument shapes, including objects and numbers. Applications using this bridge
+need those declarations as well as the new type-only subpath. This does not fix
+the other legacy declaration errors: integration fixtures still use
+`skipLibCheck: true`, while the standalone Service contract uses full declaration
+checking. See [the adoption notes](../../docs/typescript-migration/p1-service-adoption.md).
+
 ## Discovery and outputs
 
 - Discover lowercase `.ts` and `.js` recursively in each `service` directory;
