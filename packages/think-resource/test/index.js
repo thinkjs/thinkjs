@@ -1,6 +1,7 @@
 'use strict';
 
 const Koa = require('koa');
+const assert = require('node:assert/strict');
 const {test, before, after, afterEach} = require('node:test');
 const serve = require('..');
 const request = require('supertest');
@@ -42,52 +43,40 @@ function createServer (options, middlewares = [], callback) {
   return server;
 }
 
-test('serve by no options"."', async t => {
-  t.plan(1);
-  try {
-    createServer();
-    t.assert.fail();
-  }
-  catch (e) {
-    t.assert.ok(true);
-  }
+test('serve by no options"."', () => {
+  assert.throws(() => createServer(), /root directory is required to serve files/);
 });
 
 test('serve by root:"."', async t => {
-  t.plan(1);
   await request(createServer({ root: '.' }))
     .get('/package.json')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by path:"not a file"', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets' }))
     .get('/errpath.txt')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by invalid path', async t => {
-  t.plan(1)
   await request(createServer({ root: 'test/assets' }))
     .get('/%fdsa')
     .expect(400);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by valid path', async t => {
-  t.plan(1)
   await request(createServer({ root: 'test/assets' }))
     .get('/1.txt')
     .expect(200)
     .expect('txt hello');
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by upstream middleware responds', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets' }, [ (ctx, next) => {
     return next().then(() => {
       ctx.body = 'hi';
@@ -96,162 +85,144 @@ test('serve by upstream middleware responds', async t => {
     .get('/1.txt')
     .expect(200)
     .expect('txt hello');
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by index', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', index: 'index.txt' }))
     .get('/')
     .expect(200)
     .expect('Content-Type', 'text/plain; charset=utf-8')
     .expect('index');
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by index html', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets' }))
     .get('/html/')
     .expect(200)
     .expect('Content-Type', 'text/html; charset=utf-8')
     .expect('index html world');
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by disabled index', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', index: false }))
     .get('/html/')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by POST method', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets' }))
     .post('/1.txt')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by publicPath', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', publicPath: '/1.txt' }))
     .get('/1.txt')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by publicPath #2', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', publicPath: /1\.txt/ }))
     .get('/1.txt')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by publicPath #3', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', publicPath: /^\/html\/index.html/ }))
     .get('/html/index.html')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by publicPath #4', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', publicPath: '1.txt' }))
     .get('/1.txt')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by format:"true"', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', format: true }))
     .get('/html')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 
 test('serve by format:"false"', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', format: false }))
     .get('/html')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by setHeaders:"true"', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', setHeaders: true }))
     .get('/html')
     .expect(500);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by gzip', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', gzip: true }))
     .get('/gzip.json')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by extensions', async t => {
   await request(createServer({ root: extensionRoot, extensions: ['.html', 'txt'] }))
     .get('/index')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by extensions fail', async t => {
-  t.plan(1);
   await request(createServer({ root: extensionRoot, extensions: ['txt'] }))
     .get('/test')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by extensions err', async t => {
-  t.plan(1);
   await request(createServer({ root: extensionRoot, extensions: [2, {}, []] }))
     .get('/index')
     .expect(500);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by hidden file', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', hidden: true }))
     .get('/.hidden')
     .expect(200);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by hidden file #2', async t => {
-  t.plan(1);
   await request(createServer({ root: 'test/assets', hidden: false }))
     .get('/.hidden')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by notFoundNext', async t => {
-  t.plan(1)
   await request(createServer({ root: 'test/assets', notFoundNext: true }))
     .get('/1.txt')
     .expect(200)
     .expect('txt hello');
-  t.assert.ok(true);
+  assert.ok(true);
 });
 
 test('serve by notFoundNext #2', async t => {
-  t.plan(1)
   await request(createServer({ root: 'test/assets', notFoundNext: true }))
     .get('/1.txt1')
     .expect(404);
-  t.assert.ok(true);
+  assert.ok(true);
 });
