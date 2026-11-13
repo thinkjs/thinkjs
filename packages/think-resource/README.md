@@ -63,3 +63,54 @@ Contributions welcome!
 ## License
 
 [Mit](https://github.com/thinkjs/think-resource/blob/master/LICENSE)
+
+## TypeScript and package development
+
+The package ships compiled CommonJS and generated declarations. `require('think-resource')`
+and `require('think-resource/index.js')` retain the same function export. JavaScript
+consumers do not need TypeScript or a build step. There is no `exports` restriction.
+
+```ts
+import resource = require('think-resource');
+
+const middleware = resource({
+  root: './www',
+  publicPath: '/static',
+  notFoundNext: true,
+  setHeaders(response, filename, stats) {
+    response.setHeader('Last-Modified', stats.mtime.toUTCString());
+    response.setHeader('X-Static-File', filename);
+  }
+});
+```
+
+`publicPath` controls matching; it is not removed from the requested file path.
+A matching GET/HEAD uses the existing `koa-send` promise and discards its filename
+result. Missing files call `next` only when `notFoundNext` is enabled. Nonmatching
+requests return `next()` unchanged, including synchronous values. A served response
+can therefore resolve to `undefined` even when downstream returns another type.
+
+The declaration uses a structural Koa context and a small Node response/Stats surface,
+so consumers need no ambient Node types merely to import this package. The header
+hook intentionally uses method bivariance to also accept callbacks explicitly typed
+with Node's `ServerResponse` and `Stats`; additional custom properties are not
+promised. The promise type unwraps one level, compatible with TypeScript 3.9's
+promise model; exotic recursively nested custom thenables are not modeled exactly.
+The declarations are checked on TypeScript 3.9.10 and 5.9.3; this is this package's
+consumer baseline, not a framework-wide TypeScript version guarantee.
+
+Maintainers install the workspace dependencies with Node 24 and pinned pnpm, then run:
+
+```sh
+pnpm --filter think-resource build
+pnpm --filter think-resource typecheck
+pnpm --filter think-resource test
+pnpm --filter think-resource clean
+```
+
+The runtime minimum remains Node 20.19.0. The maintainer compiler is pinned at the
+workspace root, and current Node declarations are a build-only dependency. `prepack`
+forces compilation so missing outputs are restored and semantic errors refuse a
+package even when stale output exists. `clean` removes configured compiler outputs,
+not arbitrary stale or user-created files. The package includes both map formats and
+their TypeScript source targets. No registry publication is performed by these tests.

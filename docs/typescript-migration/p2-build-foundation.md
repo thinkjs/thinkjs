@@ -79,4 +79,6 @@ The package migrations #1812–#1815 branch independently from this foundation. 
 | #1814 | `--filter think-qs` | Build/typecheck `packages/think-qs/tsconfig.build.json`; run its `test/index.js` and `test/migration.test.cjs`. |
 | #1815 | `--filter think-router-rest` | Build/typecheck `packages/think-router-rest/tsconfig.build.json`; run its `test/index.js` and `test/migration.test.cjs`. |
 
+The independent think-resource migration also needs `--filter think-resource...`, its build/typecheck, and both package test files run from `packages/think-resource` (the inherited HTTP fixtures use package-relative paths).
+
 Keep the foundation fixtures gate as well. All commands after the Node 20 switch must use `node` directly, including `node node_modules/typescript/bin/tsc`; do not replace them with `pnpm` shortcuts. Verify the combined workflow after integration rather than assuming the separate sibling checks cover its merged state. This checklist does not enroll or alter those sibling packages in this PR.
