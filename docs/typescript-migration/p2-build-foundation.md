@@ -60,10 +60,23 @@ The focused gate checks:
 8. Cold `prepack`, exact tarball whitelist, offline script-free installation of both real tarballs, runtime require, source-map availability, and positive/negative installed declaration consumers on TS 3.9.10 and 5.9.3.
 9. TS lint acceptance and rejection checks.
 
-The gate is part of root `test`, so the existing Test workflow exercises it on Linux/Node 22, 24 and 26. A separate workflow covers the declared Node minimum **20.19.0** with a filtered, script-free dependency install. Tests require npm, already supplied with these Node distributions, but the tarball consumer installation is explicitly offline. Local validation results and untested platforms are recorded in the PR; a configured CI matrix is not evidence that it passed.
+The gate is part of root `test`, so the existing Test workflow exercises it on Linux/Node 22, 24 and 26. A separate workflow covers the declared Node minimum **20.19.0**. Its filtered, script-free dependency install and lint run on **Node 24**, because pnpm 11.6.0 itself requires Node >=22.13 and fails on Node 20 with `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite`. The workflow then switches to Node 20.19.0 and invokes the Node test runner directly, without running pnpm under that runtime. This separates the maintainer package manager requirement from the package/runtime compatibility check. Tests require npm, already supplied with these Node distributions, but the tarball consumer installation is explicitly offline. Local validation results and untested platforms are recorded in the PR; a configured CI matrix is not evidence that it passed.
 
 ## Integration and next slices
 
 This PR can be reviewed against master independently. Merging it with the #1796–#1810 stack requires combining the root package.json test/lint prefixes so **both** gate sets run; neither prefix may replace the other. The workflow is separate to avoid modifying that stack's application jobs. Existing lockfile importers/snapshots are preserved and only the new maintainer/lint dependency graph is added.
 
 After this foundation is reviewed: adapt an actual small source-migrated package (prefer the existing #1791 pilot), decide its output/map/publication contract and consumer minimum, then enroll acyclic package groups. Production build orchestration, cyclic declaration boundaries, package-specific output ownership, and the rest of P2 remain open.
+
+### Preserve sibling migration gates when integrating
+
+The package migrations #1812–#1815 branch independently from this foundation. Each extends `.github/workflows/typescript-build.yml`; accepting only one side of a later workflow conflict would silently drop another package's checks. Preserve the shared **Node 24 install/lint → Node 20.19.0 direct Node checks** sequence and combine all applicable additions:
+
+| PR | Additional install filter | Node 20 package gate |
+| --- | --- | --- |
+| #1812 | `--filter think-instance...` | Build/typecheck `packages/think-instance/tsconfig.build.json`; run its `test/index.js` and `test/migration.test.cjs`. |
+| #1813 | `--filter think-gc...` | Build/typecheck `packages/think-gc/tsconfig.build.json`; run its `test/index.js` and `test/migration.test.cjs`. |
+| #1814 | `--filter think-qs` | Build/typecheck `packages/think-qs/tsconfig.build.json`; run its `test/index.js` and `test/migration.test.cjs`. |
+| #1815 | `--filter think-router-rest` | Build/typecheck `packages/think-router-rest/tsconfig.build.json`; run its `test/index.js` and `test/migration.test.cjs`. |
+
+Keep the foundation fixtures gate as well. All commands after the Node 20 switch must use `node` directly, including `node node_modules/typescript/bin/tsc`; do not replace them with `pnpm` shortcuts. Verify the combined workflow after integration rather than assuming the separate sibling checks cover its merged state. This checklist does not enroll or alter those sibling packages in this PR.
