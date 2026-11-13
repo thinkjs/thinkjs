@@ -98,3 +98,7 @@ View, external databases, arbitrary plugins, Windows process teardown,
 performance budgets, and broader release matrices remain separate work.
 The startup file adds only test IPC for readiness and shutdown; routing,
 loading, extension activation and application startup use the actual framework.
+
+The [helper watch follow-up](p1-helper-watch.md) adds installed-API Service
+add/rename/delete checks to this gate. It watches declarations only; the
+application build/cleanup and server lifecycle boundaries above still apply.

@@ -1,7 +1,7 @@
 # think-ts-helper (private P1 prototype)
 
 An **opt-in Service declaration generator with optional Model and Config lookups**. It does not change ThinkJS
-runtime loading, build applications, remove compiled output, watch files, or
+runtime loading, build applications, remove compiled output, or
 implement the whole TypeScript migration plan. This package is private and is
 not published.
 
@@ -10,9 +10,10 @@ From an application root in this workspace:
 ```sh
 node /path/to/packages/think-ts-helper/cli.js generate .
 node /path/to/packages/think-ts-helper/cli.js check .
+node /path/to/packages/think-ts-helper/cli.js watch .
 ```
 
-Both commands accept `--source-dir src`, `--out-dir .thinkjs/types`, `--models`, and `--configs` (paths
+All commands accept `--source-dir src`, `--out-dir .thinkjs/types`, `--models`, and `--configs` (paths
 relative to the application root). `check` exits 1 when generated content is
 missing/stale; it never writes. Invalid input and conflicts also exit 1, with a
 diagnostic on stderr.
@@ -258,8 +259,8 @@ paths. Rename/delete is reflected on the next generation. Disabling `--configs`
 removes only the previously owned `config.d.ts`; check reports removal without
 performing it. Existing diagnostics leave old output untouched, so generation
 failure must stop typecheck/build. Do not treat old declarations as fresh.
-Compiled JavaScript cleanup, watch integration and environment-specific build
-selection remain outside this generator. See the
+Compiled JavaScript cleanup, application dev-process integration and
+environment-specific build selection remain outside this generator. See the
 [Config generation notes](../../docs/typescript-migration/p1-config-generation.md).
 
 ## Discovery and outputs
@@ -305,9 +306,92 @@ rejected. Point the generator at a real application source directory rather
 than a symlink tree.
 
 The generator does not own the application tsconfig, build output, lockfile, or
-watcher. Re-run `generate` after adding, renaming, or removing services; use
-`check` in CI. Generated declarations target the TypeScript 3.9-era syntax floor;
+application dev processes. Use `watch` or re-run `generate` after adding, renaming,
+or removing sources; use `check` in CI. Generated declarations target the TypeScript 3.9-era syntax floor;
 application dependencies may impose a newer compiler requirement.
+
+## Watching declaration inputs
+
+```sh
+node /path/to/packages/think-ts-helper/cli.js watch . --models --configs --interval 500
+```
+
+`watch` uses the same flags and generation/ownership rules as `generate`. The
+optional `--interval` is a whole number of milliseconds from 10 to 2147483647;
+the default is 500. It is not accepted by generate/check.
+
+```js
+const {watch} = require('think-ts-helper');
+const watcher = watch({root: process.cwd(), models: true, configs: true, interval: 500});
+watcher.on('diagnostic', diagnostic => {
+  // {severity: 'error' | 'warning', code, message}; never executes business code.
+  console.error(diagnostic.message);
+});
+watcher.on('update', result => {
+  // result.changed / result.removed are generator-owned output names.
+  // result.recovered is true on the first success after a later failure.
+});
+try {
+  await watcher.ready; // first successful full generation; or use the 'ready' event
+  // It is now safe to begin separate semantic checking / development startup.
+} catch (error) {
+  // Initial failure rejects readiness and closes the watcher.
+  throw error;
+}
+// When development stops, release the timer and output reservation:
+watcher.close();
+```
+
+- `watch()` returns immediately. Its `ready` Promise and one-time `ready` event
+  follow successful initial generation, including owned stale-declaration
+  cleanup. Invalid options or a duplicate active output throw synchronously.
+  A differently spelled alias whose directory does not yet exist can instead
+  reject readiness before its first write. Closing before readiness rejects
+  with `WATCH_CLOSED`.
+- Initial generation failure emits a diagnostic, rejects readiness and closes.
+  The CLI exits 1, even when old declarations exist. After readiness, failures
+  retain the generator's existing output behavior and polling continues. A
+  repeated identical failure is reported once until success or a different
+  failure. The first subsequent success emits `update`, even if no output bytes
+  changed. Warnings are also deduplicated while their set remains unchanged.
+- Add/delete/rename, module-layout changes and export/member changes are found
+  by full regeneration on each poll. This includes enabled Model/Config/Extend
+  inputs and system defaults read from the installed ThinkJS package. No mtime
+  cache can hide equal-timestamp edits. Method types still reference original
+  source; the application TypeScript service/checker observes those edits.
+- Polls are scheduled after the previous synchronous generation finishes, so a
+  session never overlaps work or accumulates a timer backlog. Edits between
+  polls coalesce naturally. Unchanged output is neither rewritten nor reported
+  as an update. This is correctness-first **full-scan polling**, not incremental
+  analysis or a production-scale performance guarantee. Generation blocks the
+  current Node event loop; use the CLI/separate process for a busy dev runner.
+- `close()` is idempotent and cancels future generation. The CLI closes on SIGINT
+  and SIGTERM. It exits 0 when the last generation succeeded, or 1 if a later
+  error is still unresolved. A recovery clears the CLI's failure status.
+- One watch session per resolved output is allowed within a process, including
+  detected case-insensitive aliases. Separate processes and manual `generate`
+  calls still need caller coordination: this is not a cross-process lock or a
+  multi-file transaction. Options are copied at startup; restart watch to change
+  flags, sourceDir or outDir. The helper does not read a watch config or tsconfig.
+
+**Ownership boundary:** disabling an opt-in when starting a new session removes
+only the previous helper-owned optional declaration. Removed/renamed sources
+also disappear from regenerated registries. No arbitrary user file, compiled
+application JS, source map or copied resource is deleted. Runtime artifact
+cleanup, semantic-check watch, application restarts and think-cli/think-watcher
+wiring remain separate work. Do not treat ready/update as a passing `tsc` check.
+
+Measure full-scan and change-detection costs separately:
+
+```sh
+node packages/think-ts-helper/scripts/benchmark.js 1000
+node packages/think-ts-helper/scripts/benchmark-watch.js 1000
+```
+
+The watch benchmark reports readiness and add/rename/delete latency, including
+the default poll delay but excluding compiler/app restart. It asserts no timing
+threshold. See [the watch slice notes](../../docs/typescript-migration/p1-helper-watch.md)
+for a measured baseline and remaining development-workflow gates.
 
 ## Tests
 

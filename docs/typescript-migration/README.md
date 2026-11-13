@@ -23,6 +23,7 @@ the bounded Model/Config/Controller Extend slices. P1 remains incomplete.
 - [Types and toolchain](types-and-toolchain.md): declaration drift, old TS/JS workflows, template boundary and compiler evidence.
 - [ADR 0001](adr-0001-compatibility.md): entry points, type ownership and strict/compat migration decisions.
 - [Validation record](validation.md): commands, results and unresolved service/matrix checks.
+- [P1 helper watch](p1-helper-watch.md): readiness, declaration updates, diagnostics and lifecycle, without claiming runtime artifact ownership.
 - [P1 installed application](p1-installed-application.md): isolated tarball installs, strict application compilation, real clustered HTTP requests, and production without development tools.
 - [P1 Service adoption](p1-service-adoption.md): no-cast legacy boundaries and type-only Controller/Logic base classes, checked against generated single/multi-module applications.
 - [P1 Service prototype](p1-service-prototype.md): generated registries, strict/compat contracts, real compiler/runtime checks and remaining adoption decisions. The current inventory includes the new private helper (74 package directories, 73 unique names); the fixed P0 source baseline above remains historical.
