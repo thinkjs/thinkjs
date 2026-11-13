@@ -1,0 +1,17 @@
+{
+  "name": "@thinkjs-build-fixture/core",
+  "private": true,
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "prepack": "npm run build"
+  }
+}

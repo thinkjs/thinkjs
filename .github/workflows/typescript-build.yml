@@ -1,0 +1,38 @@
+name: TypeScript build foundation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  minimum-node:
+    name: Cold build and pack (Node 20.19.0)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.6.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+      # The existing Test workflow also runs this gate on Node 22, 24 and 26.
+      # These tests use no external services or native modules.
+      - name: Install maintainer and legacy consumer compilers
+        run: pnpm --filter . --filter think-typescript install --ignore-scripts --frozen-lockfile
+      - name: Check infrastructure and TypeScript source lint
+        run: pnpm lint:typescript-build && pnpm lint:typescript
+      # pnpm 11 needs Node >=22.13; install with the tooling runtime, then
+      # execute the compatibility gates directly under the supported minimum.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+      - name: Build, check, pack, install and clean isolated package fixtures
+        run: node --test --test-concurrency=1 test/typescript-build/*.test.cjs
