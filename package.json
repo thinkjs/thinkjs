@@ -4,9 +4,12 @@
   "version": "1.0.0",
   "packageManager": "pnpm@11.6.0",
   "scripts": {
-    "test": "pnpm -r --if-present --filter './packages/**' --filter '!think-cache-memcache' --filter '!think-memcache' --filter '!think-mongo' test",
+    "test": "pnpm run test:typescript-migration && pnpm -r --if-present --filter './packages/**' --filter '!think-cache-memcache' --filter '!think-memcache' --filter '!think-mongo' test",
     "coverage": "c8 pnpm test",
-    "lint": "pnpm -r --if-present --filter './packages/**' lint"
+    "lint": "pnpm run lint:typescript-migration && pnpm -r --if-present --filter './packages/**' lint",
+    "audit:typescript-migration": "node scripts/typescript-migration/audit.cjs",
+    "test:typescript-migration": "node scripts/typescript-migration/audit.cjs --check && node --test --test-concurrency=1 scripts/typescript-migration/audit.test.cjs test/typescript-migration/*.test.cjs",
+    "lint:typescript-migration": "eslint scripts/typescript-migration test/typescript-migration"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
