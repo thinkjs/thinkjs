@@ -1427,6 +1427,12 @@ importers:
         specifier: ^1.1.3
         version: link:../think-helper
     devDependencies:
+      '@types/node':
+        specifier: 25.8.0
+        version: 25.8.0
+      '@types/node-legacy':
+        specifier: npm:@types/node@8.10.66
+        version: '@types/node@8.10.66'
       coveralls:
         specifier: ~2.11.16
         version: 2.11.16
