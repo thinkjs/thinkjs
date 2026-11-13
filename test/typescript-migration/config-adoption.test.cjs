@@ -15,7 +15,7 @@ const ts = process.env.THINKJS_AUDIT_TYPESCRIPT
 
 for (const multi of [false, true]) {
   for (const useDefineForClassFields of [false, true]) {
-    test(`TS ${ts.version}: Config/Model/Service adoption (${multi ? 'multi' : 'single'}, define fields: ${useDefineForClassFields})`, t => {
+    test(`TS ${ts.version}: generated Config/Model/Service adoption (${multi ? 'multi' : 'single'}, define fields: ${useDefineForClassFields})`, t => {
       const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'thinkjs-config-adoption-'));
       const output = path.join(temporary, 'app');
       const thinkFile = require.resolve('../../packages/thinkjs/lib/think.js');
@@ -38,22 +38,15 @@ for (const multi of [false, true]) {
       write(`src/${prefix}service/counter.ts`, 'export default class Counter { count = 41; }');
       write(`src/${prefix}model/user.ts`, 'export default class User extends think.Model { custom() { return 42; } }');
       if (multi) write('src/admin/config/config.ts', 'const config = {overridden: 9}; export = config;');
-      generate({root: temporary, models: true});
-      const layout = multi ? 'multi' : 'single';
+      fs.mkdirSync(path.join(temporary, 'node_modules'));
+      fs.symlinkSync(path.join(root, 'packages/thinkjs'), path.join(temporary, 'node_modules/thinkjs'), 'dir');
+      generate({root: temporary, models: true, configs: true});
       write('consumer.ts', `
         import type {} from 'think-model';
         import type { Think, Context, Controller, Logic } from 'thinkjs';
         import type { AppThink, AppContext, AppController } from './.thinkjs/types';
-        import type { ThinkConfigs, ContextConfigs, ControllerConfigs } from 'think-config/config-types';
-        declare module 'think-config/config-types' {
-          interface ConfigModules {
-            __single__: { shared: number; overridden: string; 'nested.value': number };
-            common: { shared: number; overridden: string; 'nested.value': number };
-            admin: { shared: number; overridden: number; 'nested.value': number };
-          }
-        }
-        type PageContext = ContextConfigs<AppContext<Context, 'admin'>, '${layout}', 'admin'>;
-        type PageControllerView = ControllerConfigs<AppController<Controller, 'admin'>, '${layout}', 'admin'>;
+        type PageContext = AppContext<Context, 'admin'>;
+        type PageControllerView = AppController<Controller, 'admin'>;
         export class BaseController extends think.Controller {
           declare config: PageControllerView['config'];
           declare model: PageControllerView['model'];
@@ -84,11 +77,11 @@ for (const multi of [false, true]) {
           }
         }
         export class PageLogic extends think.Logic {
-          declare config: ControllerConfigs<AppController<Logic, 'admin'>, '${layout}', 'admin'>['config'];
+          declare config: AppController<Logic, 'admin'>['config'];
           declare ctx: PageContext;
           indexAction() { return this.config('overridden'); }
         }
-        export function globalLookup(app: ThinkConfigs<AppThink<Think>, '${layout}'>) {
+        export function globalLookup(app: AppThink<Think>) {
           const common: string = app.config('overridden');
           const service: number = app.service('counter').count;
           const model: number = app.model('user').custom();
