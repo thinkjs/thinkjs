@@ -29,7 +29,8 @@ jobs:
         run: pnpm --filter . --filter think-typescript --filter think-router-rest install --ignore-scripts --frozen-lockfile
       - name: Check infrastructure and TypeScript source lint
         run: pnpm lint:typescript-build && pnpm lint:typescript
-      # pnpm 11 requires Node >=22.13; test directly on the package minimum.
+      # pnpm 11 needs Node >=22.13; install with the tooling runtime, then
+      # execute the compatibility gates directly under the supported minimum.
       - uses: actions/setup-node@v4
         with:
           node-version: 20.19.0
