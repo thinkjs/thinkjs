@@ -2,6 +2,10 @@
 
 The first reviewable implementation batch for [#1795](https://github.com/thinkjs/thinkjs/issues/1795) established the P0 compatibility baseline in [#1796](https://github.com/thinkjs/thinkjs/pull/1796). The next batch adds the [P1 Service prototype](p1-service-prototype.md): an opt-in type-only contract and a private generator. The follow-up [P1 Service adoption bridge](p1-service-adoption.md) repairs the legacy Context/Controller constructor-argument signatures and validates typed application base classes without casts. Runtime implementations, entry points and publication behavior remain unchanged. These batches do not complete the migration or the whole P1 stage.
 
+The [P1 installed-application gate](p1-installed-application.md) now checks a real
+pack/install/build/HTTP path and a second runtime-only installation, alongside
+the bounded Model/Config/Controller Extend slices. P1 remains incomplete.
+
 ## Fixed baseline and scope
 
 - Source baseline: [`aa9cdde600db87c332e5c98f704024e1a66788f4`](https://github.com/thinkjs/thinkjs/commit/aa9cdde600db87c332e5c98f704024e1a66788f4).
@@ -19,6 +23,7 @@ The first reviewable implementation batch for [#1795](https://github.com/thinkjs
 - [Types and toolchain](types-and-toolchain.md): declaration drift, old TS/JS workflows, template boundary and compiler evidence.
 - [ADR 0001](adr-0001-compatibility.md): entry points, type ownership and strict/compat migration decisions.
 - [Validation record](validation.md): commands, results and unresolved service/matrix checks.
+- [P1 installed application](p1-installed-application.md): isolated tarball installs, strict application compilation, real clustered HTTP requests, and production without development tools.
 - [P1 Service adoption](p1-service-adoption.md): no-cast legacy boundaries and type-only Controller/Logic base classes, checked against generated single/multi-module applications.
 - [P1 Service prototype](p1-service-prototype.md): generated registries, strict/compat contracts, real compiler/runtime checks and remaining adoption decisions. The current inventory includes the new private helper (74 package directories, 73 unique names); the fixed P0 source baseline above remains historical.
 

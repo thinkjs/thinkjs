@@ -67,3 +67,34 @@ jobs:
           disable_search: true
           use_oidc: true
           fail_ci_if_error: false
+
+  typescript-application:
+    name: Installed TS application (Node ${{ matrix.node }}, TS ${{ matrix.typescript }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: 22.x
+            typescript: 3.9.10
+          - node: 24.x
+            typescript: 5.9.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.6.0
+          run_install: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # No workspace install: the gate must use packed files and its own real
+      # installs, not dependencies or generated types left by another test job.
+      - name: Pack, install, compile and boot the TypeScript application
+        env:
+          THINKJS_APPLICATION_TYPESCRIPT: ${{ matrix.typescript }}
+        run: node scripts/typescript-migration/application.cjs
