@@ -5,11 +5,12 @@ const {generate} = require('./index');
 
 function main(args) {
   const command = args.shift();
-  if (!['generate', 'check'].includes(command)) throw new Error('Usage: think-ts-helper generate|check [root] [--source-dir src] [--out-dir .thinkjs/types] [--models]');
+  if (!['generate', 'check'].includes(command)) throw new Error('Usage: think-ts-helper generate|check [root] [--source-dir src] [--out-dir .thinkjs/types] [--models] [--configs]');
   const options = {check: command === 'check'};
   while (args.length) {
     const arg = args.shift();
     if (arg === '--models') options.models = true;
+    else if (arg === '--configs') options.configs = true;
     else if (arg === '--source-dir' || arg === '--out-dir') {
       const value = args.shift();
       if (!value || value.startsWith('--')) throw new Error(`Missing value for ${arg}`);

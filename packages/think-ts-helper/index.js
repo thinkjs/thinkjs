@@ -177,6 +177,28 @@ function render(options = {}) {
       `export type AppController<T extends ModelHost, M extends string = string> = ControllerModels<ControllerServices<T, '${manifest.layout}', M>, '${manifest.layout}', M>;\n`;
     files['manifest.json'] = JSON.stringify(manifest, null, 2) + '\n';
   }
+  if (options.configs) {
+    const configs = require('./config').generateConfigs({root, source, output, multi, moduleNames, header: HEADER});
+    manifest.configs = configs.manifest;
+    files['config.d.ts'] = configs.declaration;
+    const lines = [HEADER.trimEnd(), "import './service';", "import './config';",
+      "import { ThinkServices, ContextServices, ControllerServices } from 'thinkjs/service-types';",
+      "import { ConfigHost, ThinkConfigs, ContextConfigs, ControllerConfigs } from 'think-config/config-types';",
+      "export * from 'thinkjs/service-types';",
+      "export { ConfigModules, ConfigLayout, ConfigHost, ConfigCall, ThinkConfigs, ContextConfigs, ControllerConfigs } from 'think-config/config-types';"];
+    if (options.models) lines.push("import './model';",
+      "import { ModelHost, ThinkModels, ContextModels, ControllerModels } from 'think-model/model-types';",
+      "export { ModelModules, ModelLayout, ModelConfig, ModelHost, ModelBase, ModelCall, ThinkModels, ContextModels, ControllerModels } from 'think-model/model-types';");
+    for (const kind of ['Think', 'Context', 'Controller']) {
+      const current = kind === 'Think' ? '' : ', M';
+      let view = `${kind}Services<T, '${manifest.layout}'${kind === 'Controller' ? current : ''}>`;
+      if (options.models) view = `${kind}Models<${view}, '${manifest.layout}'${current}>`;
+      const args = `T extends ${options.models ? 'ModelHost & ' : ''}ConfigHost${current ? ', M extends string = string' : ''}`;
+      lines.push(`export type App${kind}<${args}> = ${kind}Configs<${view}, '${manifest.layout}'${current}>;`);
+    }
+    files['index.d.ts'] = lines.join('\n') + '\n';
+    files['manifest.json'] = JSON.stringify(manifest, null, 2) + '\n';
+  }
   return {root, output, files, manifest};
 }
 
@@ -201,21 +223,22 @@ function generate(options = {}) {
     if (previous !== undefined && !owned(name, previous)) fail('UNOWNED_OUTPUT', `Refusing to overwrite ${file}`);
     if (previous !== content) changed.push(name);
   }
-  // Disabling the opt-in must not leave an ambient model registry in tsconfig's
-  // declaration glob. Remove only the exact file owned by the previous manifest.
+  // Disabling an opt-in must not leave ambient registries in tsconfig's glob.
+  // Remove only exact files owned by the previous manifest.
   const removed = [];
-  if (!options.models) {
+  for (const [option, filename] of [['models', 'model.d.ts'], ['configs', 'config.d.ts']]) {
+    if (options[option]) continue;
     let previous;
     try { previous = JSON.parse(fs.readFileSync(path.join(result.output, 'manifest.json'), 'utf8')); } catch (error) {
       if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error;
     }
-    if (previous && previous.generator === OWNER && previous.models) {
-      const stale = path.join(result.output, 'model.d.ts');
+    if (previous && previous.generator === OWNER && previous[option]) {
+      const stale = path.join(result.output, filename);
       try {
         if (fs.lstatSync(stale).isSymbolicLink()) fail('UNSAFE_OUTPUT', stale);
-        if (!owned('model.d.ts', fs.readFileSync(stale, 'utf8'))) fail('UNOWNED_OUTPUT', `Refusing to remove ${stale}`);
-        removed.push('model.d.ts');
-        changed.push('model.d.ts');
+        if (!owned(filename, fs.readFileSync(stale, 'utf8'))) fail('UNOWNED_OUTPUT', `Refusing to remove ${stale}`);
+        removed.push(filename);
+        changed.push(filename);
       } catch (error) { if (error.code !== 'ENOENT') throw error; }
     }
   }

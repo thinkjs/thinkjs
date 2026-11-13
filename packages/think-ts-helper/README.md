@@ -1,6 +1,6 @@
 # think-ts-helper (private P1 prototype)
 
-An **opt-in Service declaration generator with optional Model lookups**. It does not change ThinkJS
+An **opt-in Service declaration generator with optional Model and Config lookups**. It does not change ThinkJS
 runtime loading, build applications, remove compiled output, watch files, or
 implement the whole TypeScript migration plan. This package is private and is
 not published.
@@ -12,7 +12,7 @@ node /path/to/packages/think-ts-helper/cli.js generate .
 node /path/to/packages/think-ts-helper/cli.js check .
 ```
 
-Both commands accept `--source-dir src`, `--out-dir .thinkjs/types`, and `--models` (paths
+Both commands accept `--source-dir src`, `--out-dir .thinkjs/types`, `--models`, and `--configs` (paths
 relative to the application root). `check` exits 1 when generated content is
 missing/stale; it never writes. Invalid input and conflicts also exit 1, with a
 diagnostic on stderr.
@@ -26,7 +26,7 @@ const result = generate({root: process.cwd(), sourceDir: 'src', outDir: '.thinkj
 ```
 
 Include `.thinkjs/types/**/*.d.ts` in the application's tsconfig. For JavaScript
-service inference enable `allowJs`; enabling `checkJs` is optional. Generated
+source inference enable `allowJs`; enabling `checkJs` is optional. Generated
 `index.d.ts` exports `AppThink<T>`, `AppContext<T>`, and
 `AppController<T, ModuleName>` aliases for opt-in typed framework views. They
 select the detected layout and strict literal-name mode. The base type `T` is
@@ -168,6 +168,95 @@ Record generics, query result/projection types, relation lookup, `transModel`,
 and schema-aware adapter configuration are not part of this slice. See the
 [Model slice notes](../../docs/typescript-migration/p1-model-lookups.md).
 
+## Optional static Config generation
+
+`generate({root, configs: true})` or `generate . --configs` adds `config.d.ts`,
+augments `think-config/config-types`, and composes Config into the generated
+application views. It can be combined with `--models`; each option is independent.
+Use the same options with `check`. Keep `thinkjs` installed in the application:
+the helper resolves and reads that installation's actual system config without
+executing it. This is a bounded static-object prototype, not general evaluation
+of arbitrary config code.
+
+```sh
+node /path/to/packages/think-ts-helper/cli.js generate . --configs --models
+node /path/to/packages/think-ts-helper/cli.js check . --configs --models
+```
+
+The base type must have a `config` method. Add its type-only declaration once:
+
+```ts
+import type { Context, Controller } from 'thinkjs';
+import type { AppContext, AppController } from './.thinkjs/types';
+
+export default class BaseController extends think.Controller {
+  declare config: AppController<Controller, 'admin'>['config'];
+  declare service: AppController<Controller, 'admin'>['service'];
+  declare ctx: AppContext<Context, 'admin'>;
+}
+```
+
+Use the same pattern for Logic and add the Model declaration from the previous
+section when enabled. No manual `ConfigModules` registry, runtime wrapper or
+business-class assertion is needed for supported sources. Do not combine an
+explicit registry for the same modules with automatic Config generation.
+
+Supported source forms:
+
+- JavaScript `module.exports = {...}`, `exports.key = value` or
+  `module.exports.key = value`, TS `export = config`, and ES default/named const
+  exports. Whole-object and property assignments must not be mixed or repeated.
+- CommonJS assignments in `.ts` are diagnosed: TypeScript does not expose
+  them as module exports. Use `export = config` or a `.js` file instead.
+- Unannotated `const` bindings to static objects/scalars, including references
+  to other local consts and shorthand object properties. `as const` is supported.
+- Nested plain object literals, strings, numbers, booleans, null, undefined,
+  static numeric arithmetic, and function/arrow values. Functions are retained
+  as values and never invoked. Application value types reference the original
+  source with `typeof import(...)` rather than copying signatures.
+- Only immediate `config.ts`/`config.js` and `config.<env>.ts`/`.js` files are
+  config inputs. Router/middleware/other files are not config namespaces.
+
+Runtime parity:
+
+- Config uses **raw CommonJS namespaces**, unlike Service/Model interop.
+  `export default {port: 3000}` contributes `default.port`, not `port`.
+  Prefer `const config = {...}; export = config` for root-level config.
+- User config is deeply merged in this order: common base, module base, common
+  environment, module environment. The merged user result then overlays system
+  defaults. Objects merge recursively; undefined does not replace an existing
+  value. Replaced object branches do not leave fictional nested paths.
+- Generated paths describe every module, inherited fields, and dotted object
+  reads. All discovered environments **plus a base-only environment** are
+  included. Environment-only fields include undefined; possible type changes
+  form unions. Parent object types also mark environment-only members optional.
+- System scalar defaults are inferred from the installed file. System callback
+  values remain `unknown`, rather than borrowing imprecise framework signatures.
+  Unknown paths and whole-config reads remain `unknown` through the contract.
+- Global Config defaults to common; Context/Controller/Logic default to the
+  explicitly bound current module. Writes retain the Config contract's rules.
+  See [the contract notes](../../docs/typescript-migration/p1-config-contract.md).
+
+Unsupported shapes fail **before any output changes**, with a source-path
+explanation: adapter files (which require runtime normalization), arrays (which
+lodash merges by index), imports/re-exports, spreads, getters/method syntax,
+computed keys, arbitrary type assertions/annotations (including JSDoc types), conditional exports,
+mutations, dynamic expressions, and object-exported config factories. Function
+values are fine, but are never interpreted using `ReturnType`. Unsafe/inherited
+keys and literal dotted keys are rejected. Module names must be comma-free and
+must not be `__proto__`. TS/JS duplicates, case collisions and input/output
+symlinks are diagnosed. Use the explicit Config contract without `--configs`
+for applications outside these boundaries; no dynamic execution fallback exists.
+
+`manifest.configs` records environment names and each module's ordered source
+paths. Rename/delete is reflected on the next generation. Disabling `--configs`
+removes only the previously owned `config.d.ts`; check reports removal without
+performing it. Existing diagnostics leave old output untouched, so generation
+failure must stop typecheck/build. Do not treat old declarations as fresh.
+Compiled JavaScript cleanup, watch integration and environment-specific build
+selection remain outside this generator. See the
+[Config generation notes](../../docs/typescript-migration/p1-config-generation.md).
+
 ## Discovery and outputs
 
 - Discover lowercase `.ts` and `.js` recursively in each `service` directory;
@@ -195,7 +284,7 @@ and schema-aware adapter configuration are not part of this slice. See the
 
 ## Boundaries
 
-The parser accepts explicit `export default`, default-exported declarations,
+The Service/Model parser accepts explicit `export default`, default-exported declarations,
 `export =`, and top-level `module.exports`/`exports.name` assignments. It rejects
 named-only ES exports, export lists/re-exports, mixed export styles, conditional
 or nested CommonJS export assignments, and `__esModule` interop markers with
