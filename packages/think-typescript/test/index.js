@@ -87,3 +87,21 @@ test('thinkTypescript-4', t => {
   fs.writeFileSync(testFilePath, originData);
   t.assert.strictEqual(helper.isError(out), true);
 });
+
+test('reports exactly the JS/map files after a successful emit', t => {
+  const reports = [];
+  const config = {srcPath: './test/src/a', outPath: './test/out', file: 'b/test.ts', onEmit: files => {
+    files.forEach(file => t.assert.strictEqual(fs.existsSync(path.join('test/out', file)), true));
+    reports.push(files);
+  }};
+  t.assert.strictEqual(thinkTypescript(config), true);
+  t.assert.deepStrictEqual(reports, [['b/test.js', 'b/test.js.map']]);
+  reports.length = 0;
+  config.options = {compilerOptions: {sourceMap: false}};
+  thinkTypescript(config);
+  t.assert.deepStrictEqual(reports, [['b/test.js']]);
+  reports.length = 0;
+  config.options = {compilerOptions: {module: 'wrong config'}};
+  t.assert.strictEqual(thinkTypescript(config) instanceof Error, true);
+  t.assert.deepStrictEqual(reports, []);
+});

@@ -41,3 +41,12 @@ thinkTypescript({
 });
 
 ```
+
+### Optional emit report
+
+Pass `onEmit(relativeFiles)` in the transpile configuration to receive the JS and
+optional source-map filenames after all writes succeed. The callback is
+synchronous and paths are relative to `outPath`; no report is sent for a compiler
+diagnostic. Existing `true`/Error returns are unchanged. The opt-in
+`think-watcher/tracked` integration uses this report for session-owned cleanup.
+This does not add semantic type checking or change the transpiler's write policy.

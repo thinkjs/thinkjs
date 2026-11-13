@@ -246,3 +246,78 @@ test('run with port args', t => {
   const result = app.parseArgv();
   t.assert.deepStrictEqual(result,{port:'8360'});
 })
+
+test('unlink reloads workers without transpiling removed source', t => {
+  const App = getApplication();
+  let transpiled = 0;
+  let reloaded = 0;
+  const app = new App({ROOT_PATH: __dirname, transpiler: () => transpiled++});
+  app.masterInstance = {forceReloadWorkers: () => reloaded++};
+  app._watcherCallBack({path: __dirname, file: 'removed.ts', event: 'unlink'});
+  t.assert.strictEqual(transpiled, 0);
+  t.assert.strictEqual(reloaded, 1);
+});
+
+test('passes emit report through before reload and retains a single closable watcher', t => {
+  const App = getApplication();
+  let created = 0;
+  let options;
+  const steps = [];
+  class Watcher {
+    constructor(value, cb) { created++; options = value; this.cb = cb; }
+    watch() { this.cb({path: __dirname, file: 'a.ts', onEmit: files => steps.push(files)}); }
+    close() { steps.push('closed'); }
+  }
+  const app = new App({ROOT_PATH: __dirname, APP_PATH: path.join(__dirname, 'app'), watcher: Watcher,
+    watcherOptions: {interval: 25, srcPath: '/cannot-override'},
+    transpiler: config => config.onEmit(['a.js', 'a.js.map'])});
+  app.masterInstance = {forceReloadWorkers: () => steps.push('reload')};
+  const watcher = app.startWatcher();
+  t.assert.strictEqual(app.startWatcher(), watcher);
+  t.assert.strictEqual(created, 1);
+  t.assert.strictEqual(options.interval, 25);
+  t.assert.strictEqual(options.srcPath, path.join(__dirname, 'src'));
+  t.assert.deepStrictEqual(steps, [['a.js', 'a.js.map'], 'reload']);
+  app.watcherInstance.close();
+  t.assert.strictEqual(steps.at(-1), 'closed');
+});
+
+test('tracked transpiler failures never reload workers', t => {
+  const App = getApplication();
+  for (const result of [false, new Error('failed'), Promise.reject(new Error('unsupported async'))]) {
+    const app = new App({ROOT_PATH: __dirname, transpiler: () => result});
+    let reloaded = false;
+    app.masterInstance = {forceReloadWorkers: () => { reloaded = true; }};
+    t.assert.strictEqual(app._watcherCallBack({path: __dirname, file: 'a.ts', onEmit() {}}), false);
+    t.assert.strictEqual(reloaded, false);
+  }
+});
+
+test('startWatcher restarts a closed retained watcher', t => {
+  const App = getApplication();
+  const app = new App({ROOT_PATH: __dirname, watcher: class {}});
+  let calls = 0;
+  const watcher = {closed: true, watch() { this.closed = false; calls++; }};
+  app.watcherInstance = watcher;
+  t.assert.strictEqual(app.startWatcher(), watcher);
+  app.startWatcher();
+  t.assert.strictEqual(calls, 1);
+});
+
+test('initial watcher failure retains a closed instance and its output ledger for retry', t => {
+  const App = getApplication();
+  let created = 0;
+  class Watcher {
+    constructor() { created++; this.closed = false; this.failed = false; }
+    watch() {
+      this.closed = false;
+      if (!this.failed) { this.failed = true; this.closed = true; throw new Error('initial emit failed'); }
+    }
+  }
+  const app = new App({ROOT_PATH: __dirname, watcher: Watcher});
+  t.assert.throws(() => app.startWatcher(), /initial emit failed/);
+  const retained = app.watcherInstance;
+  t.assert.strictEqual(app.startWatcher(), retained);
+  t.assert.strictEqual(created, 1);
+  t.assert.strictEqual(retained.closed, false);
+});

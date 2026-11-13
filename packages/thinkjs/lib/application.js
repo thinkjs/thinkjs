@@ -49,16 +49,21 @@ module.exports = class Application {
    */
   _watcherCallBack(fileInfo) {
     let transpiler = this.options.transpiler;
-    if (transpiler) {
+    if (transpiler && fileInfo.event !== 'unlink') {
       if (!helper.isArray(transpiler)) {
         transpiler = [transpiler];
       }
-      const ret = transpiler[0]({
+      let ret = transpiler[0]({
         srcPath: fileInfo.path,
         outPath: this.options.APP_PATH,
         file: fileInfo.file,
-        options: transpiler[1]
+        options: transpiler[1],
+        onEmit: fileInfo.onEmit
       });
+      if (fileInfo.onEmit && (ret === false || (ret && typeof ret.then === 'function'))) {
+        if (ret && typeof ret.then === 'function') Promise.resolve(ret).catch(() => {});
+        ret = new Error('Tracked watcher requires a successful synchronous transpiler');
+      }
       if (helper.isError(ret)) {
         console.error(ret.stack);
         this.notifier(ret);
@@ -79,11 +84,24 @@ module.exports = class Application {
   startWatcher() {
     const Watcher = this.options.watcher;
     if (!Watcher) return;
-    const instance = new Watcher({
+    if (this.watcherInstance) {
+      if (this.watcherInstance.closed) this.watcherInstance.watch();
+      return this.watcherInstance;
+    }
+    const instance = new Watcher(Object.assign({}, this.options.watcherOptions, {
       srcPath: path.join(this.options.ROOT_PATH, 'src'),
       diffPath: this.options.APP_PATH
-    }, fileInfo => this._watcherCallBack(fileInfo));
-    instance.watch();
+    }), fileInfo => this._watcherCallBack(fileInfo));
+    this.watcherInstance = instance;
+    try {
+      instance.watch();
+    } catch (error) {
+      // A tracked watcher closes on initial failure but retains emitted-file
+      // ownership. Keep it for retry; do not cache a broken legacy instance.
+      if (!instance.closed) this.watcherInstance = undefined;
+      throw error;
+    }
+    return instance;
   }
   /**
    * parse argv
