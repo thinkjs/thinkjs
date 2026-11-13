@@ -21,16 +21,16 @@ function fail(code, message) {
   throw error;
 }
 
-function assertUnique(names, description) {
+function assertUnique(names, description, code = 'SERVICE_COLLISION') {
   const seen = new Map();
   for (const name of names) {
     const key = name.toLowerCase();
-    if (seen.has(key)) fail('SERVICE_COLLISION', `${description}: ${seen.get(key)} and ${name}`);
+    if (seen.has(key)) fail(code, `${description}: ${seen.get(key)} and ${name}`);
     seen.set(key, name);
   }
 }
 
-function scan(dir, root) {
+function scan(dir, root, kind) {
   const found = [];
   if (!directory(dir)) return found;
   if (fs.lstatSync(dir).isSymbolicLink()) fail('UNSUPPORTED_SYMLINK', dir);
@@ -46,7 +46,8 @@ function scan(dir, root) {
     }
   }
   walk(dir);
-  assertUnique(found.map(item => item.name), `service directory ${slash(path.relative(root, dir))}`);
+  if (kind === 'model' && found.some(item => item.name === '__proto__')) fail('MODEL_RESERVED_NAME', '__proto__ is not a safe runtime model key');
+  assertUnique(found.map(item => item.name), `${kind} directory ${slash(path.relative(root, dir))}`, `${kind.toUpperCase()}_COLLISION`);
   return found;
 }
 
@@ -121,34 +122,40 @@ function render(options = {}) {
   const moduleNames = multi ? sorted(fs.readdirSync(source).filter(name => directory(path.join(source, name)))) : ['__single__'];
   assertUnique(moduleNames, 'module directories');
   if (multi && moduleNames.includes('__single__')) fail('RESERVED_MODULE', '__single__ is reserved for single-module applications');
-  const discovered = {};
-  for (const name of moduleNames) {
-    const base = multi ? path.join(source, name) : source;
-    if (fs.lstatSync(base).isSymbolicLink()) fail('UNSUPPORTED_SYMLINK', base);
-    Object.defineProperty(discovered, name, {value: record(scan(path.join(base, 'service'), root)), enumerable: true});
-  }
-  const modules = {};
-  for (const name of moduleNames) {
-    const effective = {...(multi ? discovered.common : {}), ...discovered[name]};
-    assertUnique(Object.keys(effective), `effective module ${name}`);
-    Object.defineProperty(modules, name, {value: Object.fromEntries(sorted(Object.keys(effective)).map(key => [key, effective[key]])), enumerable: true});
-  }
-  const selectors = new Map();
-  const lines = [HEADER.trimEnd(), "import 'thinkjs/service-types';", '', "declare module 'thinkjs/service-types' {", '  interface ServiceModules {'];
-  for (const name of moduleNames) {
-    lines.push(`    ${JSON.stringify(name)}: {`);
-    for (const [service, file] of Object.entries(modules[name])) {
-      let ref = slash(path.relative(output, path.resolve(root, file))).replace(/\.(ts|js)$/, '');
-      if (!ref.startsWith('.')) ref = './' + ref;
-      if (!selectors.has(file)) selectors.set(file, exportSelector(path.resolve(root, file)));
-      lines.push(`      ${JSON.stringify(service)}: typeof import(${JSON.stringify(ref)})${selectors.get(file)};`);
+  function registry(kind, contract, interfaceName) {
+    const discovered = {};
+    for (const name of moduleNames) {
+      const base = multi ? path.join(source, name) : source;
+      if (fs.lstatSync(base).isSymbolicLink()) fail('UNSUPPORTED_SYMLINK', base);
+      Object.defineProperty(discovered, name, {value: record(scan(path.join(base, kind), root, kind)), enumerable: true});
     }
-    lines.push('    };');
+    const modules = {};
+    for (const name of moduleNames) {
+      const effective = {...(multi ? discovered.common : {}), ...discovered[name]};
+      assertUnique(Object.keys(effective), `effective ${kind} module ${name}`, `${kind.toUpperCase()}_COLLISION`);
+      Object.defineProperty(modules, name, {value: Object.fromEntries(sorted(Object.keys(effective)).map(key => [key, effective[key]])), enumerable: true});
+    }
+    const selectors = new Map();
+    const lines = [HEADER.trimEnd(), `import '${contract}';`, '', `declare module '${contract}' {`, `  interface ${interfaceName} {`];
+    for (const name of moduleNames) {
+      lines.push(`    ${JSON.stringify(name)}: {`);
+      for (const [member, file] of Object.entries(modules[name])) {
+        let ref = slash(path.relative(output, path.resolve(root, file))).replace(/\.(ts|js)$/, '');
+        if (!ref.startsWith('.')) ref = './' + ref;
+        if (!selectors.has(file)) selectors.set(file, exportSelector(path.resolve(root, file)));
+        lines.push(`      ${JSON.stringify(member)}: typeof import(${JSON.stringify(ref)})${selectors.get(file)};`);
+      }
+      lines.push('    };');
+    }
+    lines.push('  }', '}', '');
+    return {modules, declaration: lines.join('\n')};
   }
-  lines.push('  }', '}', '');
+  if (options.models && moduleNames.includes('__proto__')) fail('MODEL_RESERVED_NAME', '__proto__ is not a safe runtime module key');
+  const services = registry('service', 'thinkjs/service-types', 'ServiceModules');
+  const modules = services.modules;
   const manifest = {generator: OWNER, version: 1, layout: multi ? 'multi' : 'single', sourceDir: slash(path.relative(root, source)), modules};
   const files = {
-    'service.d.ts': lines.join('\n'),
+    'service.d.ts': services.declaration,
     'index.d.ts': HEADER + "import './service';\n" +
       "import { ThinkServices, ContextServices, ControllerServices } from 'thinkjs/service-types';\n" +
       "export * from 'thinkjs/service-types';\n" +
@@ -157,6 +164,19 @@ function render(options = {}) {
       `export type AppController<T, M extends string = string> = ControllerServices<T, '${manifest.layout}', M>;\n`,
     'manifest.json': JSON.stringify(manifest, null, 2) + '\n'
   };
+  if (options.models) {
+    const models = registry('model', 'think-model/model-types', 'ModelModules');
+    manifest.models = models.modules;
+    files['model.d.ts'] = models.declaration;
+    files['index.d.ts'] = HEADER + "import './service';\nimport './model';\n" +
+      "import { ThinkServices, ContextServices, ControllerServices } from 'thinkjs/service-types';\n" +
+      "import { ModelHost, ThinkModels, ContextModels, ControllerModels } from 'think-model/model-types';\n" +
+      "export * from 'thinkjs/service-types';\nexport { ModelModules, ModelLayout, ModelConfig, ModelHost, ModelBase, ModelCall, ThinkModels, ContextModels, ControllerModels } from 'think-model/model-types';\n" +
+      `export type AppThink<T extends ModelHost> = ThinkModels<ThinkServices<T, '${manifest.layout}'>, '${manifest.layout}'>;\n` +
+      `export type AppContext<T extends ModelHost, M extends string = string> = ContextModels<ContextServices<T, '${manifest.layout}'>, '${manifest.layout}', M>;\n` +
+      `export type AppController<T extends ModelHost, M extends string = string> = ControllerModels<ControllerServices<T, '${manifest.layout}', M>, '${manifest.layout}', M>;\n`;
+    files['manifest.json'] = JSON.stringify(manifest, null, 2) + '\n';
+  }
   return {root, output, files, manifest};
 }
 
@@ -181,9 +201,29 @@ function generate(options = {}) {
     if (previous !== undefined && !owned(name, previous)) fail('UNOWNED_OUTPUT', `Refusing to overwrite ${file}`);
     if (previous !== content) changed.push(name);
   }
+  // Disabling the opt-in must not leave an ambient model registry in tsconfig's
+  // declaration glob. Remove only the exact file owned by the previous manifest.
+  const removed = [];
+  if (!options.models) {
+    let previous;
+    try { previous = JSON.parse(fs.readFileSync(path.join(result.output, 'manifest.json'), 'utf8')); } catch (error) {
+      if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error;
+    }
+    if (previous && previous.generator === OWNER && previous.models) {
+      const stale = path.join(result.output, 'model.d.ts');
+      try {
+        if (fs.lstatSync(stale).isSymbolicLink()) fail('UNSAFE_OUTPUT', stale);
+        if (!owned('model.d.ts', fs.readFileSync(stale, 'utf8'))) fail('UNOWNED_OUTPUT', `Refusing to remove ${stale}`);
+        removed.push('model.d.ts');
+        changed.push('model.d.ts');
+      } catch (error) { if (error.code !== 'ENOENT') throw error; }
+    }
+  }
+  // Remove before replacing the manifest so a failed unlink retains ownership.
+  if (!options.check) for (const name of removed) fs.unlinkSync(path.join(result.output, name));
   if (!options.check && changed.length) {
     fs.mkdirSync(result.output, {recursive: true});
-    for (const name of changed) {
+    for (const name of changed.filter(name => !removed.includes(name))) {
       const target = path.join(result.output, name);
       const temporary = path.join(result.output, `.${name}.${process.pid}.${require('node:crypto').randomBytes(8).toString('hex')}.tmp`);
       try {
@@ -194,7 +234,7 @@ function generate(options = {}) {
       }
     }
   }
-  return {...result, changed};
+  return {...result, changed, removed};
 }
 
 module.exports = {generate};

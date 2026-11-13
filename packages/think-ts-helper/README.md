@@ -1,6 +1,6 @@
 # think-ts-helper (private P1 prototype)
 
-An **opt-in Service-only** declaration generator. It does not change ThinkJS
+An **opt-in Service declaration generator with optional Model lookups**. It does not change ThinkJS
 runtime loading, build applications, remove compiled output, watch files, or
 implement the whole TypeScript migration plan. This package is private and is
 not published.
@@ -12,7 +12,7 @@ node /path/to/packages/think-ts-helper/cli.js generate .
 node /path/to/packages/think-ts-helper/cli.js check .
 ```
 
-Both commands accept `--source-dir src` and `--out-dir .thinkjs/types` (paths
+Both commands accept `--source-dir src`, `--out-dir .thinkjs/types`, and `--models` (paths
 relative to the application root). `check` exits 1 when generated content is
 missing/stale; it never writes. Invalid input and conflicts also exit 1, with a
 diagnostic on stderr.
@@ -36,7 +36,7 @@ underlying aliases and loose mode.
 
 ## Adopting the generated types
 
-Existing values can be assigned to the generated views without a cast:
+For the default Service-only output, existing values can be assigned to the generated views without a cast:
 
 ```ts
 import type { Think, Context, Controller } from 'thinkjs';
@@ -88,6 +88,86 @@ the other legacy declaration errors: integration fixtures still use
 `skipLibCheck: true`, while the standalone Service contract uses full declaration
 checking. See [the adoption notes](../../docs/typescript-migration/p1-service-adoption.md).
 
+## Optional Model lookup types
+
+Enable this only in applications that already install and enable `think-model`:
+
+```sh
+node /path/to/packages/think-ts-helper/cli.js generate . --models
+node /path/to/packages/think-ts-helper/cli.js check . --models
+```
+
+The equivalent API is `generate({root, models: true})`. This additionally scans
+`model` directories, writes `model.d.ts` augmenting `think-model/model-types`,
+and adds effective model maps at `manifest.models`. Default generation remains
+byte-for-byte Service-only. No source module or plugin factory is executed.
+
+With this opt-in, the generated `AppThink`, `AppContext`, and `AppController`
+aliases compose both contracts. Their base type must already have a `model`
+method. The fallback is inferred from that method's return type, preserving the
+existing ORM declarations rather than duplicating them. Context now accepts an
+optional module type argument too. Annotate type-only members once in a base
+Controller or Logic class:
+
+```ts
+import type {} from 'think-model';
+import type { Context, Controller } from 'thinkjs';
+import type { AppContext, AppController } from './.thinkjs/types';
+
+export default class BaseController extends think.Controller {
+  declare model: AppController<Controller, 'admin'>['model'];
+  declare service: AppController<Controller, 'admin'>['service'];
+  declare ctx: AppContext<Context, 'admin'>;
+}
+```
+
+Use `AppController<Logic, 'admin'>` in a base Logic class. Business classes need
+no registry or cast. These declarations emit nothing and keep inherited methods
+and the constructor-injected context. The explicit module is an application
+assertion about the actual request, not automatic inference from a folder.
+
+- Global/Service `model(name, config?, module?)` defaults to common. Context and
+  Controller default to the request module, unlike Context's Service lookup.
+- The second argument is adapter configuration (object, adapter-name string,
+  null, or undefined). A module selector belongs in the **third** argument.
+- Omitted/undefined module uses the default. An unknown explicit module,
+  including `''`, does not inherit common and returns the base Model. In a
+  single-module application, argument three has no lookup effect.
+- Known model names resolve custom methods, with common inheritance and local
+  override. Nested names stay exact lookup keys; runtime passes their basename
+  as the constructor's table name. Ordinary unregistered table-name literals
+  remain valid and expose existing ORM methods, not `any`.
+- Known exports must be constructible with the runtime's two arguments and
+  return instances compatible with the existing base Model. Constructors must
+  accept the broad parsed config object until adapter schemas are typed. Objects, arrows,
+  incompatible constructors and partially nonconstructible export unions are
+  rejected rather than falling through to table lookup.
+- Name/module unions return unions. An unbound multi-module context includes
+  the base fallback, so narrow it before using module-specific custom methods.
+- Runtime maps inherit Object.prototype. Unregistered inherited names such as
+  `constructor` and `toString` are rejected; explicit valid own model overrides
+  are supported. The generator rejects the prototype-mutating `__proto__` key
+  for models/modules. Wide-string names cannot be proven safe and are rejected
+  by this opt-in contract. Validate/narrow them or use the unchanged legacy API.
+
+Unlike legacy Service's `any`, legacy Model lookup returns only a base Model.
+Consequently, assigning an arbitrary legacy Think/Context value directly to a
+custom-model view is not a proof that it has custom methods. The earlier
+Service-only no-cast assignment example does **not** extend to Model-enabled
+views. Use the tested base-class annotations, or an application boundary already
+typed with the generated view. Legacy global calls remain unchanged.
+
+Keep `--models` consistent in generate/check commands. Generating without it
+removes only the previous helper-owned `model.d.ts`, so tsconfig declaration globs
+do not retain a stale Model registry; user files are preserved. Check reports
+this removal without performing it. Adding/removing/renaming models updates the
+references on the next generation; application JavaScript cleanup remains the
+existing build's responsibility.
+
+Record generics, query result/projection types, relation lookup, `transModel`,
+and schema-aware adapter configuration are not part of this slice. See the
+[Model slice notes](../../docs/typescript-migration/p1-model-lookups.md).
+
 ## Discovery and outputs
 
 - Discover lowercase `.ts` and `.js` recursively in each `service` directory;
@@ -108,9 +188,9 @@ checking. See [the adoption notes](../../docs/typescript-migration/p1-service-ad
   it contains no timestamps or absolute paths. `index.d.ts` imports the registry
   and exports layout-specific aliases.
 - Output replacement is atomic **per file** (temporary sibling + rename), not a
-  transaction across all three files. Unchanged files are not rewritten. Existing
+  transaction across the output set. Unchanged files are not rewritten. Existing
   output files must carry this generator's marker; unowned files are never
-  overwritten. Other files are never deleted. Do not run concurrent generators
+  overwritten. Except the opt-out cleanup described above, other files are never deleted. Do not run concurrent generators
   with different configurations against the same output directory.
 
 ## Boundaries
