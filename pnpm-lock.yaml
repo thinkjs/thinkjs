@@ -423,6 +423,9 @@ importers:
         specifier: ^1.0.1
         version: 1.0.3
     devDependencies:
+      '@types/node':
+        specifier: 25.8.0
+        version: 25.8.0
       babel-core:
         specifier: ^6.22.1
         version: 6.26.3(supports-color@7.2.0)

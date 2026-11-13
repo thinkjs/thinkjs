@@ -47,3 +47,7 @@ test/out
 
 
 coverage.lcov
+
+# TypeScript compiler-owned output
+/lib/
+/.build/
