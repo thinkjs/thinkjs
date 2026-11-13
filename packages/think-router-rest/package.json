@@ -4,9 +4,14 @@
   "description": "Let think-router recognize REST router easily without custom router.",
   "main": "index.js",
   "scripts": {
-    "test": "pnpm run lint && node --test --test-concurrency=1 test/index.js",
-    "lint": "eslint index.js",
-    "lint-fix": "pnpm run lint -- --fix"
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "test": "pnpm run build && pnpm run typecheck && pnpm run lint && node --test --test-concurrency=1 test/index.js test/migration.test.cjs",
+    "coverage": "pnpm run build && node --test --test-concurrency=1 --experimental-test-coverage test/index.js test/migration.test.cjs",
+    "lint": "eslint index.js test/migration.test.cjs && eslint --config ../../eslint.typescript.config.cjs src/**/*.ts",
+    "lint-fix": "pnpm run lint -- --fix",
+    "prepack": "npm run build -- --force"
   },
   "repository": {
     "type": "git",
@@ -32,5 +37,14 @@
   },
   "engines": {
     "node": ">=20.19.0"
-  }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }
