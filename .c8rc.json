@@ -1,14 +1,19 @@
 {
   "all": true,
   "include": [
-    "packages/**/*.js"
+    "packages/**/*.js",
+    "packages/**/*.ts"
   ],
   "exclude": [
     "packages/think-model/src/**",
     "packages/**/test/**",
+    "packages/**/*.d.ts",
     "packages/**/*.test.js",
+    "packages/**/*.test.ts",
     "packages/**/eslint.config.js",
-    "packages/**/webpack.config.js"
+    "packages/**/webpack.config.js",
+    "packages/**/eslint.config.ts",
+    "packages/**/webpack.config.ts"
   ],
   "reporter": [
     "text-summary",
