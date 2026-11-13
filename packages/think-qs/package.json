@@ -10,10 +10,14 @@
     "test"
   ],
   "scripts": {
-    "test": "pnpm run lint && pnpm run test-cov",
-    "test-cov": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js",
-    "lint": "eslint index.js",
-    "prepublish": "pnpm test"
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "lint": "eslint index.js test/migration.test.cjs && eslint --config ../../eslint.typescript.config.cjs src/**/*.ts",
+    "test": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run test-cov",
+    "test-cov": "pnpm run build && node --test --test-concurrency=1 --experimental-test-coverage test/index.js test/migration.test.cjs",
+    "prepublish": "pnpm test",
+    "prepack": "npm run build -- --force"
   },
   "contributors": [
     {
@@ -44,5 +48,14 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/thinkjs/think-qs/issues"
-  }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }
