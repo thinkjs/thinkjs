@@ -41,12 +41,17 @@ function typescriptTranspile(config) {
   helper.mkdir(path.dirname(outFile));
   fs.writeFileSync(outFile, data.outputText);
 
+  const outputFiles = [path.relative(outPath, outFile)];
+
   // write map file
   if (options && options.compilerOptions && options.compilerOptions.sourceMap) {
     const sourceMap = JSON.parse(data.sourceMapText);
     sourceMap.file = sourceMap.sources[0] = relativePath;
     fs.writeFileSync(outFile + '.map', JSON.stringify(sourceMap, undefined, 4));
+    outputFiles.push(path.relative(outPath, outFile + '.map'));
   }
+  // An opt-in watcher can record exactly what this successful transpilation wrote.
+  if (config.onEmit) config.onEmit(outputFiles);
   return true;
 }
 

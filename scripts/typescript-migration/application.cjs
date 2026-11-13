@@ -17,7 +17,7 @@ const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'thinkjs-installed-appli
 const consumer = path.join(temporary, 'development');
 const production = path.join(temporary, 'production');
 const tarballs = path.join(temporary, 'tarballs');
-const env = {...process.env, NODE_PATH: '', npm_config_cache: path.join(temporary, 'npm-cache')};
+const env = {...process.env, NODE_PATH: '', npm_config_cache: path.join(temporary, 'npm-cache'), npm_config_update_notifier: 'false'};
 const log = message => process.stdout.write(message + '\n');
 const json = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const writeJson = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
@@ -148,8 +148,8 @@ async function exerciseDeclarationWatch(directory, local) {
   }
 }
 
-async function exercise(directory) {
-  const childEnv = {...env, NODE_ENV: 'production'};
+async function exercise(directory, runtimeWatch = false) {
+  const childEnv = {...env, NODE_ENV: 'production', THINKJS_FIXTURE_WATCH: runtimeWatch ? '1' : '0'};
   delete childEnv.THINK_UNIT_TEST;
   delete childEnv.JEST_WORKER_ID;
   const child = fork(path.join(directory, 'start.cjs'), [], {cwd: directory, env: childEnv,
@@ -158,6 +158,14 @@ async function exercise(directory) {
   let output = '';
   child.stdout.on('data', data => { output += data; });
   child.stderr.on('data', data => { output += data; });
+  const diagnostics = [];
+  const workers = new Set();
+  const reloads = [];
+  child.on('message', message => {
+    if (message?.type === 'fixture-watch-error') diagnostics.push(message.code);
+    if (message?.type === 'fixture-ready') workers.add(message.pid);
+    if (message?.type === 'fixture-reload-request') reloads.push(message);
+  });
   const exited = new Promise(resolve => child.once('close', (code, signal) => resolve({code, signal})));
   try {
     let startupTimer;
@@ -180,6 +188,10 @@ async function exercise(directory) {
     assert.equal(blocked.status, 200);
     assert.deepEqual(JSON.parse(blocked.body), {errno: 1001, errmsg: 'blocked-by-logic'});
     assert.equal((await request(ready.port, '/admin/missing/index')).status, 404);
+    if (runtimeWatch) {
+      await exerciseRuntimeWatch(directory, ready.port, diagnostics, reloads);
+      assert.ok(workers.size > 1, 'Runtime edits must start a new application worker');
+    }
     child.send('fixture-stop');
     const result = await Promise.race([exited, new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Application shutdown timed out')), 5000);
@@ -194,6 +206,84 @@ async function exercise(directory) {
     killChild(child);
     await exited;
     activeChildren.delete(child);
+  }
+}
+
+async function eventually(check) {
+  let lastError;
+  const deadline = Date.now() + 15000;
+  while (Date.now() < deadline) {
+    try { await check(); return; } catch (error) { lastError = error; }
+    await new Promise(resolve => setTimeout(resolve, 25));
+  }
+  throw lastError;
+}
+
+async function exerciseRuntimeWatch(directory, port, diagnostics, reloads) {
+  const local = createRequire(path.join(directory, 'package.json'));
+  const helper = local('think-ts-helper').watch({root: directory, models: true, configs: true, interval: 20});
+  const source = name => path.join(directory, 'src/common/service', name + '.ts');
+  const output = name => path.join(directory, 'app/common/service', name + '.js');
+  const declaration = path.join(directory, '.thinkjs/types/service.d.ts');
+  const controller = path.join(directory, 'src/admin/controller/watch.ts');
+  const unrelated = path.join(directory, 'app/common/service/unrelated.js');
+  try {
+    await helper.ready;
+    fs.writeFileSync(unrelated, 'module.exports = {retained: true};\n');
+    fs.writeFileSync(controller, `export default class WatchController extends think.Controller {
+      indexAction() {
+        const name: string = this.get('name');
+        try { return this.success(this.service(name)); }
+        catch (error) { return this.success({missing: true}); }
+      }
+    }\n`);
+    const response = async (name, expected) => eventually(async () => {
+      const result = await request(port, '/admin/watch/index?name=' + name);
+      assert.equal(result.status, 200);
+      assert.deepEqual(JSON.parse(result.body).data, expected);
+    });
+    fs.writeFileSync(source('watch-original'), 'export default {value: 1};\n');
+    await response('watch-original', {value: 1});
+    await eventually(() => assert.match(fs.readFileSync(declaration, 'utf8'), /watch-original/));
+    assert.ok(fs.existsSync(output('watch-original') + '.map'));
+
+    // A bad edit must preserve the currently running worker and retry without a
+    // restart until transpilation succeeds. This is syntactic, not semantic QA.
+    const beforeSyntaxError = reloads.length;
+    fs.writeFileSync(source('watch-original'), 'export default {value: ;\n');
+    await eventually(() => assert.ok(diagnostics.includes('CALLBACK_FAILED')));
+    await response('watch-original', {value: 1});
+    assert.equal(reloads.length, beforeSyntaxError, 'Failed transpilation must not request worker reload');
+    fs.writeFileSync(source('watch-original'), 'export default {value: 2};\n');
+    await response('watch-original', {value: 2});
+
+    fs.renameSync(source('watch-original'), source('watch-renamed'));
+    await response('watch-renamed', {value: 2});
+    await response('watch-original', {missing: true});
+    assert.equal(fs.existsSync(output('watch-original')), false);
+    assert.equal(fs.existsSync(output('watch-original') + '.map'), false);
+    await eventually(() => {
+      const content = fs.readFileSync(declaration, 'utf8');
+      assert.match(content, /watch-renamed/); assert.doesNotMatch(content, /watch-original/);
+    });
+
+    // A user-edited map blocks the entire deletion group and worker reload.
+    const beforeOwnershipError = reloads.length;
+    fs.appendFileSync(output('watch-renamed') + '.map', 'user edit');
+    fs.unlinkSync(source('watch-renamed'));
+    await eventually(() => assert.ok(diagnostics.includes('OUTPUT_CHANGED')));
+    assert.ok(fs.existsSync(output('watch-renamed')));
+    await response('watch-renamed', {value: 2});
+    assert.equal(reloads.length, beforeOwnershipError, 'Refused cleanup must not request worker reload');
+    fs.unlinkSync(output('watch-renamed') + '.map');
+    await response('watch-renamed', {missing: true});
+    assert.equal(fs.existsSync(output('watch-renamed')), false);
+    assert.ok(fs.existsSync(unrelated));
+    await eventually(() => assert.doesNotMatch(fs.readFileSync(declaration, 'utf8'), /watch-renamed/));
+    run(process.execPath, [local.resolve('typescript/bin/tsc'), '--noEmit', '--pretty', 'false'], directory);
+  } finally {
+    helper.close();
+    for (const file of [source('watch-original'), source('watch-renamed'), controller]) fs.rmSync(file, {force: true});
   }
 }
 
@@ -212,6 +302,7 @@ async function main() {
     assert.ok(packages.has(pkg.name));
     overrides[pkg.name] = 'file:' + path.join(tarballs, pkg.filename);
   }
+  overrides['think-typescript>typescript'] = manifest.devDependencies.typescript;
   install(consumer, manifest, overrides);
   verifyInstalled(consumer, packages, Object.keys({...manifest.dependencies, ...manifest.devDependencies}));
   const local = createRequire(path.join(consumer, 'package.json'));
@@ -221,6 +312,8 @@ async function main() {
   const cli = local.resolve('think-ts-helper/cli.js');
   const compiler = local.resolve('typescript/bin/tsc');
   assert.equal(local('typescript').version, manifest.devDependencies.typescript);
+  const transpilerRequire = createRequire(local.resolve('think-typescript/package.json'));
+  assert.equal(transpilerRequire('typescript').version, manifest.devDependencies.typescript);
   log('Checking missing/stale generation, real tsc, clean build and negative contracts');
   const flags = ['.', '--models', '--configs'];
   assert.match(run(process.execPath, [cli, 'check', ...flags], consumer, 1), /service\.d\.ts/);
@@ -268,6 +361,9 @@ async function main() {
   log('Installed helper watch: Service add/rename/delete updated declarations');
   await exercise(consumer);
   log('Development install: real master/worker startup and three HTTP routes passed');
+  await exercise(consumer, true);
+  log('Tracked runtime watch: live add/edit/rename/delete, syntax recovery, ownership refusal and worker reload passed');
+  run(process.execPath, ['build.cjs'], consumer);
 
   // A second real install gets runtime dependencies only. Copying node_modules,
   // source files, generated types or the helper would defeat this acceptance.

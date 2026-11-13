@@ -2,7 +2,31 @@
 
 const cluster = require('node:cluster');
 const Application = require('thinkjs');
-const application = new Application({ROOT_PATH: __dirname, env: 'production'});
+const options = {ROOT_PATH: __dirname, env: 'production'};
+if (process.env.THINKJS_FIXTURE_WATCH === '1') {
+  options.watcher = require('think-watcher/tracked');
+  options.transpiler = [require('think-typescript'), {compilerOptions: {
+    module: 'commonjs', target: 'es2018', sourceMap: true
+  }}];
+  options.watcherOptions = {interval: 20, onError: error => {
+    if (process.send) process.send({type: 'fixture-watch-error', code: error.code});
+  }};
+}
+const application = new Application(options);
+if (cluster.isPrimary && process.env.THINKJS_FIXTURE_WATCH === '1') {
+  const callback = application._watcherCallBack;
+  application._watcherCallBack = function(info) {
+    const master = this.masterInstance;
+    if (!master) return callback.call(this, info);
+    const reload = master.forceReloadWorkers;
+    master.forceReloadWorkers = function(...args) {
+      if (process.send) process.send({type: 'fixture-reload-request'});
+      return reload.apply(this, args);
+    };
+    try { return callback.call(this, info); }
+    finally { master.forceReloadWorkers = reload; }
+  };
+}
 
 // IPC is only the acceptance harness's readiness/shutdown transport. The normal
 // Application.run() master/worker startup and real HTTP server are unchanged.
@@ -12,6 +36,7 @@ if (cluster.isPrimary) {
   });
   process.on('message', message => {
     if (message === 'fixture-stop') {
+      if (application.watcherInstance) application.watcherInstance.close();
       // Prevent the framework's deliberate worker-refork handlers during teardown.
       for (const worker of Object.values(cluster.workers)) {
         worker.removeAllListeners('disconnect');
@@ -22,7 +47,7 @@ if (cluster.isPrimary) {
   });
 } else {
   think.app.once('appReady', () => {
-    process.send({type: 'fixture-ready', port: think.app.server.address().port});
+    process.send({type: 'fixture-ready', pid: process.pid, port: think.app.server.address().port});
   });
 }
 application.run();

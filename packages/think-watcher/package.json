@@ -10,10 +10,10 @@
     "test"
   ],
   "scripts": {
-    "lint": "eslint index.js",
+    "lint": "eslint index.js tracked.js",
     "lint-fix": "eslint --fix index.js",
-    "test": "eslint index.js && node --test --test-concurrency=1 test/index.js",
-    "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js"
+    "test": "eslint index.js tracked.js && node --test --test-concurrency=1 test/index.js test/tracked.js",
+    "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js test/tracked.js"
   },
   "contributors": [
     {
