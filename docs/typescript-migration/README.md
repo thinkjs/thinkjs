@@ -1,6 +1,6 @@
 # TypeScript migration: staged implementation
 
-The first reviewable implementation batch for [#1795](https://github.com/thinkjs/thinkjs/issues/1795) established the P0 compatibility baseline in [#1796](https://github.com/thinkjs/thinkjs/pull/1796). The next batch adds the [P1 Service prototype](p1-service-prototype.md): an opt-in type-only contract and a private generator. Existing runtime implementations, default declarations, entry points and publication behavior remain unchanged. Neither batch completes the migration or the whole P1 stage.
+The first reviewable implementation batch for [#1795](https://github.com/thinkjs/thinkjs/issues/1795) established the P0 compatibility baseline in [#1796](https://github.com/thinkjs/thinkjs/pull/1796). The next batch adds the [P1 Service prototype](p1-service-prototype.md): an opt-in type-only contract and a private generator. The follow-up [P1 Service adoption bridge](p1-service-adoption.md) repairs the legacy Context/Controller constructor-argument signatures and validates typed application base classes without casts. Runtime implementations, entry points and publication behavior remain unchanged. These batches do not complete the migration or the whole P1 stage.
 
 ## Fixed baseline and scope
 
@@ -19,6 +19,7 @@ The first reviewable implementation batch for [#1795](https://github.com/thinkjs
 - [Types and toolchain](types-and-toolchain.md): declaration drift, old TS/JS workflows, template boundary and compiler evidence.
 - [ADR 0001](adr-0001-compatibility.md): entry points, type ownership and strict/compat migration decisions.
 - [Validation record](validation.md): commands, results and unresolved service/matrix checks.
+- [P1 Service adoption](p1-service-adoption.md): no-cast legacy boundaries and type-only Controller/Logic base classes, checked against generated single/multi-module applications.
 - [P1 Service prototype](p1-service-prototype.md): generated registries, strict/compat contracts, real compiler/runtime checks and remaining adoption decisions. The current inventory includes the new private helper (74 package directories, 73 unique names); the fixed P0 source baseline above remains historical.
 
 ## Reproduce
@@ -52,7 +53,7 @@ When the workspace changes, update the audit's explicit classification, regenera
 | Stage | State after this batch | Next acceptance work |
 | --- | --- | --- |
 | P0 | Executable behavior/dependency/type baseline implemented; external-service and alternate-runtime checks explicitly open | Review the corrected semantics and compatibility ADR; run the recorded independent integration commands |
-| P1 | Service registry/helper vertical prototype implemented; existing debounce pilot remains separate | Review opt-in contract and legacy Context/Controller bridge; finish Model/Config context identity, extensions, app-output cleanup and pack acceptance before declaring P1 complete |
+| P1 | Service registry/helper and legacy adoption bridge implemented; existing debounce pilot remains separate | Review opt-in contract and adoption bridge; finish Model/Config context identity, extensions, app-output cleanup and pack acceptance before declaring P1 complete |
 | P2 | Not started | Strict shared build configuration, helper watch/ready/atomic output, CLI templates and clean install → check → dev → build → start |
 | P3 | Not started | Migrate the audited dependency groups without altering CommonJS shapes/deep paths |
 | P4 | Not started | Data/adapters/official ecosystem and remaining generators, with service-backed tests |

@@ -2,7 +2,7 @@
  * Opt-in, type-only service lookup contract (TypeScript 3.9+).
  * Augment ServiceModules with raw source exports. '__single__' is reserved for
  * single-module applications; multi-module keys include 'common'. Never import
- * this subpath as a runtime value. The legacy thinkjs declarations are unchanged.
+ * this subpath as a runtime value. Legacy service entry points remain broadly typed.
  */
 export interface ServiceModules {}
 export type ServiceLayout = 'single' | 'multi';

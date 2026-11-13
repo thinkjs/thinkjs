@@ -224,7 +224,10 @@ declare module 'thinkjs' {
      *
      * @memberOf Context
      */
-    service(name: string, module?: string, ...args: any[]): any;
+    // Compatibility signature: single-module applications pass constructor
+    // arguments immediately after name. Use thinkjs/service-types for strict
+    // generated names and constructor types; this legacy entry remains broad.
+    service(name: string, ...args: any[]): any;
 
     /**
      * download
@@ -425,7 +428,10 @@ declare module 'thinkjs' {
      *
      * @memberOf Controller
      */
-    service(name: string, module?: string, ...args: any[]): any;
+    // Compatibility signature: argument two is a constructor argument unless
+    // it selects a registered module. It can be a number, object or undefined.
+    // Use thinkjs/service-types for the strict generated Controller contract.
+    service(name: string, ...args: any[]): any;
 
 
     /**

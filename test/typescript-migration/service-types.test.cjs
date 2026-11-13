@@ -64,7 +64,7 @@ test('service contract mirrors runtime module dispatch and export behavior', () 
 });
 
 
-test(`TS ${ts.version}: legacy Think adoption without casts (legacy declarations require skipLibCheck)`, () => {
+test(`TS ${ts.version}: legacy Think/Context/Controller adoption without casts (legacy declarations require skipLibCheck)`, () => {
   const file = path.join(__dirname, 'service-types-fixtures/integration.ts');
   const program = ts.createProgram([file], {
     noEmit: true, strict: true, skipLibCheck: true, types: [],
