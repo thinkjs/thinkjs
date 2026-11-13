@@ -274,3 +274,131 @@ test('timer-driven semantic failures are deduplicated and recover without restar
   assert.match(f.read('app/service/first.js'), /value: 3/);
   f.watcher.close();
 });
+
+test('warm polls reuse syntax but still perform full semantic checking and emission', t => {
+  let checks = 0;
+  const f = fixture(t, {...ts, getPreEmitDiagnostics(program) {
+    checks++;
+    return ts.getPreEmitDiagnostics(program);
+  }});
+  f.watcher.poll();
+  assert.ok(f.watcher.lastCompilerCache.parsed > 1);
+  assert.equal(f.watcher.lastCompilerCache.reused, 0);
+  const first = f.watcher.compilerSources.get(path.join(f.root, 'src/service/first.ts')).source;
+  f.watcher.poll();
+  assert.equal(f.watcher.lastCompilerCache.parsed, 0);
+  assert.ok(f.watcher.lastCompilerCache.reused > 1);
+  assert.equal(checks, 2);
+  assert.equal(f.builds.length, 1);
+  // Same size and restored mtime must not hide content changes.
+  const file = path.join(f.root, 'src/service/first.ts');
+  const stat = fs.statSync(file);
+  f.write('src/service/first.ts', 'export default {value: 9};\n');
+  fs.utimesSync(file, stat.atime, stat.mtime);
+  f.watcher.poll();
+  assert.equal(f.watcher.lastCompilerCache.parsed, 1);
+  assert.notEqual(f.watcher.compilerSources.get(file).source, first);
+  assert.match(f.read('app/service/first.js'), /value: 9/);
+});
+
+test('warm programs observe changed, missing and restored dependency declarations', t => {
+  const f = fixture(t);
+  f.write('node_modules/dependency/index.d.ts', 'export const value: number;\n');
+  f.write('src/service/first.ts', 'import {value} from "dependency"; const result: number = value; export default result;\n');
+  f.watcher.poll();
+  const previous = f.read('app/service/first.js');
+  f.write('node_modules/dependency/index.d.ts', 'export const value: string;\n');
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_TYPECHECK'});
+  assert.equal(f.read('app/service/first.js'), previous);
+  assert.equal(f.watcher.lastCompilerCache.parsed, 1);
+  fs.unlinkSync(path.join(f.root, 'node_modules/dependency/index.d.ts'));
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_TYPECHECK'});
+  assert.equal(f.watcher.compilerSources.has(path.join(f.root, 'node_modules/dependency/index.d.ts')), false);
+  f.write('node_modules/dependency/index.d.ts', 'export const value: number;\n');
+  f.watcher.poll();
+  assert.equal(f.read('app/service/first.js'), previous);
+});
+
+test('warm resolution sees package metadata changes and previously missing modules', t => {
+  const f = fixture(t);
+  f.write('node_modules/dependency/package.json', '{"types":"number.d.ts"}');
+  f.write('node_modules/dependency/number.d.ts', 'export const value: number;\n');
+  f.write('node_modules/dependency/string.d.ts', 'export const value: string;\n');
+  f.write('src/service/first.ts', 'import {value} from "dependency"; const result: number = value; export default result;\n');
+  f.watcher.poll();
+  f.write('node_modules/dependency/package.json', '{"types":"string.d.ts"}');
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_TYPECHECK'});
+  assert.equal(f.watcher.compilerSources.has(path.join(f.root, 'node_modules/dependency/number.d.ts')), false);
+  f.write('node_modules/dependency/package.json', '{"types":"number.d.ts"}');
+  f.watcher.poll();
+  f.write('src/service/first.ts', 'import {value} from "new-dependency"; export default value;\n');
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_TYPECHECK'});
+  f.write('node_modules/new-dependency/index.d.ts', 'export const value: number;\n');
+  f.watcher.poll();
+  assert.match(f.read('app/service/first.js'), /new-dependency/);
+});
+
+test('inherited compiler options invalidate every cached syntax tree', t => {
+  const f = fixture(t);
+  delete f.config.compilerOptions.target;
+  f.configure({extends: './base.json'});
+  f.write('base.json', '{"compilerOptions":{"target":"es2018"}}');
+  f.watcher.poll();
+  f.watcher.poll();
+  assert.equal(f.watcher.lastCompilerCache.parsed, 0);
+  f.write('base.json', '{"compilerOptions":{"target":"es5"}}');
+  f.watcher.poll();
+  assert.equal(f.watcher.lastCompilerCache.reused, 0);
+  assert.match(f.read('app/service/first.js'), /exports.default/);
+  assert.equal(f.builds.length, 2);
+});
+
+test('renamed sources are evicted and closing releases retained syntax', t => {
+  const f = fixture(t);
+  f.watcher.poll();
+  const count = f.watcher.compilerSources.size;
+  fs.renameSync(path.join(f.root, 'src/service/first.ts'), path.join(f.root, 'src/service/renamed.ts'));
+  f.watcher.poll();
+  assert.equal(f.watcher.compilerSources.size, count);
+  assert.equal(f.watcher.compilerSources.has(path.join(f.root, 'src/service/first.ts')), false);
+  assert.equal(f.watcher.compilerSources.has(path.join(f.root, 'src/service/renamed.ts')), true);
+  f.watcher.close();
+  assert.equal(f.watcher.compilerSources.size, 0);
+  f.watcher.watch();
+  assert.equal(f.watcher.lastCompilerCache.reused, 0);
+  f.watcher.close();
+});
+
+test('warm and cold programs agree through global merging, deletion and const-enum changes', t => {
+  const f = fixture(t);
+  const options = {strict: true, skipLibCheck: false, types: [],
+    target: ts.ScriptTarget.ES2018, module: ts.ModuleKind.CommonJS};
+  const files = ['parity/main.ts', 'parity/global.d.ts', 'parity/other.d.ts'];
+  f.write(files[0], 'let x: Global = {a: 1}; let y: number = E.X;\n');
+  f.write(files[1], 'interface Global {a: number} declare const enum E {X = 1}\n');
+  f.write(files[2], 'interface Global {b?: number}\n');
+  const compare = () => {
+    const roots = files.filter(file => f.exists(file)).map(file => path.join(f.root, file));
+    const result = program => {
+      const diagnostics = ts.getPreEmitDiagnostics(program).map(item =>
+        [item.code, ts.flattenDiagnosticMessageText(item.messageText, '\n')]);
+      const output = [];
+      program.emit(undefined, (file, text) => output.push([file, text]));
+      return {diagnostics, output};
+    };
+    assert.deepEqual(result(f.watcher.program(roots, options)), result(ts.createProgram(roots, options)));
+  };
+  compare();
+  compare();
+  f.write(files[1], 'interface Global {a: string} declare const enum E {X = 2}\n');
+  compare();
+  f.write(files[2], 'interface Global {b: number}\n');
+  compare();
+  fs.unlinkSync(path.join(f.root, files[1]));
+  compare();
+  f.write(files[1], 'interface Global {a: number} declare const enum E {X = 3}\n');
+  compare();
+  fs.unlinkSync(path.join(f.root, files[2]));
+  compare();
+  compare();
+});

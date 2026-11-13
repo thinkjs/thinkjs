@@ -1,0 +1,448 @@
+{
+  "date": "2026-11-13",
+  "baselineCommit": "38aaf6ff133c3f5c8ba6c3d9603fc689e37fa211",
+  "fixture": "benchmark-development.js: 1000 service files, 5 warm samples, strict and skipLibCheck=false",
+  "limitations": "One fresh process per scenario set on a shared Linux runner; no OS cache flush or CPU isolation. Timings are observations, not a portable budget or statistically proven speedup. Cold compilation does not benefit from syntax reuse.",
+  "results": {
+    "baseline-59-multi": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "5.9.3",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "multi",
+      "serviceFiles": 1000,
+      "loadMs": 298.66428399999995,
+      "cold": {
+        "wallMs": 5467.026142,
+        "cpuMs": 9168.877
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 4667.3848210000015,
+          "max": 5713.286103000002
+        },
+        "cpuMs": {
+          "median": 6928.746,
+          "max": 7410.34
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 5319.734528999994,
+          "max": 5508.743783000005
+        },
+        "cpuMs": {
+          "median": 6450.614,
+          "max": 7508.101
+        }
+      },
+      "failure": {
+        "wallMs": 3839.6818850000054,
+        "cpuMs": 4585.655
+      },
+      "recovery": {
+        "wallMs": 4980.514005999998,
+        "cpuMs": 5679.323
+      },
+      "rename": {
+        "wallMs": 4821.884669999992,
+        "cpuMs": 5784.619
+      },
+      "maxRssKiB": 1343296
+    },
+    "cached-39-multi": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "3.9.10",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "multi",
+      "serviceFiles": 1000,
+      "loadMs": 144.783207,
+      "cold": {
+        "wallMs": 6949.597943,
+        "cpuMs": 11332.596
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 4545.812047000003,
+          "max": 4807.520695000001
+        },
+        "cpuMs": {
+          "median": 5318.947,
+          "max": 6501.544
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 5074.673530999993,
+          "max": 5316.175278000002
+        },
+        "cpuMs": {
+          "median": 5449.226,
+          "max": 6044.515
+        }
+      },
+      "failure": {
+        "wallMs": 4111.2185580000005,
+        "cpuMs": 4754.324
+      },
+      "recovery": {
+        "wallMs": 5250.678457000002,
+        "cpuMs": 5792.248
+      },
+      "rename": {
+        "wallMs": 5037.821617000001,
+        "cpuMs": 5362.657
+      },
+      "unchangedCache": {
+        "parsed": 0,
+        "reused": 1035,
+        "retained": 1035
+      },
+      "editedCache": {
+        "parsed": 1,
+        "reused": 1034,
+        "retained": 1035
+      },
+      "maxRssKiB": 940676
+    },
+    "cached-59-single": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "5.9.3",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "single",
+      "serviceFiles": 1000,
+      "loadMs": 486.35675100000003,
+      "cold": {
+        "wallMs": 2437.960332,
+        "cpuMs": 5239.087
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 964.3105079999996,
+          "max": 1095.9628459999994
+        },
+        "cpuMs": {
+          "median": 1944.812,
+          "max": 2414.203
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1562.1901770000004,
+          "max": 1866.0195790000007
+        },
+        "cpuMs": {
+          "median": 2043.323,
+          "max": 2602.856
+        }
+      },
+      "failure": {
+        "wallMs": 567.9631410000002,
+        "cpuMs": 1157.286
+      },
+      "recovery": {
+        "wallMs": 1549.6809729999986,
+        "cpuMs": 2414.319
+      },
+      "rename": {
+        "wallMs": 1810.1032559999985,
+        "cpuMs": 2247.215
+      },
+      "unchangedCache": {
+        "parsed": 0,
+        "reused": 1040,
+        "retained": 1040
+      },
+      "editedCache": {
+        "parsed": 1,
+        "reused": 1039,
+        "retained": 1040
+      },
+      "maxRssKiB": 1030400
+    },
+    "cached-39-single": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "3.9.10",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "single",
+      "serviceFiles": 1000,
+      "loadMs": 192.523569,
+      "cold": {
+        "wallMs": 2892.1510789999998,
+        "cpuMs": 5458.059
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1003.571226,
+          "max": 1150.2990690000001
+        },
+        "cpuMs": {
+          "median": 1653.644,
+          "max": 2384.483
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1703.311812,
+          "max": 2062.7535929999995
+        },
+        "cpuMs": {
+          "median": 2176.508,
+          "max": 2543.133
+        }
+      },
+      "failure": {
+        "wallMs": 596.1897279999976,
+        "cpuMs": 879.639
+      },
+      "recovery": {
+        "wallMs": 1690.484196999998,
+        "cpuMs": 2024.798
+      },
+      "rename": {
+        "wallMs": 1558.814563,
+        "cpuMs": 1853.322
+      },
+      "unchangedCache": {
+        "parsed": 0,
+        "reused": 1034,
+        "retained": 1034
+      },
+      "editedCache": {
+        "parsed": 1,
+        "reused": 1033,
+        "retained": 1034
+      },
+      "maxRssKiB": 718592
+    },
+    "cached-59-multi": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "5.9.3",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "multi",
+      "serviceFiles": 1000,
+      "loadMs": 287.739415,
+      "cold": {
+        "wallMs": 4924.209194,
+        "cpuMs": 8367.355
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 4018.841407,
+          "max": 4241.079409
+        },
+        "cpuMs": {
+          "median": 5004.983,
+          "max": 6264.814
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 4817.079040000004,
+          "max": 5127.409098000004
+        },
+        "cpuMs": {
+          "median": 5707.921,
+          "max": 6273.876
+        }
+      },
+      "failure": {
+        "wallMs": 3970.6449040000007,
+        "cpuMs": 4810.948
+      },
+      "recovery": {
+        "wallMs": 4031.627446999999,
+        "cpuMs": 4586.953
+      },
+      "rename": {
+        "wallMs": 3977.149295000003,
+        "cpuMs": 5049.089
+      },
+      "unchangedCache": {
+        "parsed": 0,
+        "reused": 1041,
+        "retained": 1041
+      },
+      "editedCache": {
+        "parsed": 1,
+        "reused": 1040,
+        "retained": 1041
+      },
+      "maxRssKiB": 1392404
+    },
+    "baseline-39-multi": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "3.9.10",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "multi",
+      "serviceFiles": 1000,
+      "loadMs": 167.618486,
+      "cold": {
+        "wallMs": 8898.775627,
+        "cpuMs": 14151.534
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 5687.190947000003,
+          "max": 5975.523172999998
+        },
+        "cpuMs": {
+          "median": 6776.679,
+          "max": 8213.348
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 5672.569406000002,
+          "max": 7394.705977999998
+        },
+        "cpuMs": {
+          "median": 6597.761,
+          "max": 8365.819
+        }
+      },
+      "failure": {
+        "wallMs": 3892.6464750000014,
+        "cpuMs": 4430.699
+      },
+      "recovery": {
+        "wallMs": 4812.092744999987,
+        "cpuMs": 5683.506
+      },
+      "rename": {
+        "wallMs": 5503.095352000004,
+        "cpuMs": 6026.208
+      },
+      "maxRssKiB": 924780
+    },
+    "baseline-39-single": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "3.9.10",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "single",
+      "serviceFiles": 1000,
+      "loadMs": 155.276296,
+      "cold": {
+        "wallMs": 2175.6807830000002,
+        "cpuMs": 4210.179
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1384.317271,
+          "max": 1815.9982
+        },
+        "cpuMs": {
+          "median": 2463.586,
+          "max": 3013.895
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1746.9232709999997,
+          "max": 2442.3754419999987
+        },
+        "cpuMs": {
+          "median": 2259.884,
+          "max": 3153.173
+        }
+      },
+      "failure": {
+        "wallMs": 1078.2253219999984,
+        "cpuMs": 1903.028
+      },
+      "recovery": {
+        "wallMs": 2154.639110999997,
+        "cpuMs": 3064.16
+      },
+      "rename": {
+        "wallMs": 1972.8755950000013,
+        "cpuMs": 2630.612
+      },
+      "maxRssKiB": 888096
+    },
+    "baseline-59-single": {
+      "schema": 1,
+      "node": "v24.22.1",
+      "typescript": "5.9.3",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "layout": "single",
+      "serviceFiles": 1000,
+      "loadMs": 300.56603,
+      "cold": {
+        "wallMs": 2493.014106,
+        "cpuMs": 5302.915
+      },
+      "unchanged": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1294.5497059999998,
+          "max": 1433.47289
+        },
+        "cpuMs": {
+          "median": 2512.383,
+          "max": 3238.934
+        }
+      },
+      "edit": {
+        "samples": 5,
+        "wallMs": {
+          "median": 1971.395448000003,
+          "max": 2247.123944000001
+        },
+        "cpuMs": {
+          "median": 3132.561,
+          "max": 3200.107
+        }
+      },
+      "failure": {
+        "wallMs": 825.9196449999981,
+        "cpuMs": 1391.685
+      },
+      "recovery": {
+        "wallMs": 1756.703203000001,
+        "cpuMs": 2389.695
+      },
+      "rename": {
+        "wallMs": 1871.7556469999981,
+        "cpuMs": 2364.539
+      },
+      "maxRssKiB": 1061036
+    }
+  }
+}

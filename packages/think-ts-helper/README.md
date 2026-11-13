@@ -517,6 +517,20 @@ same supplied compiler and project, not `transpileModule`.
 
 See [the setup, supported tsconfig and failure boundaries](../../docs/typescript-migration/p1-checked-development.md).
 Set `APP_PATH` explicitly and do not run a parallel helper/runtime watcher.
-This currently full-compiles on every poll and is not transactional output
-publication. It remains a private correctness prototype, not a new CLI template
+This currently full-compiles on every poll, reusing unchanged parsed syntax,
+and is not transactional output publication. It remains a private correctness prototype, not a new CLI template
 or a declaration that the P1/P2 development workflow is complete.
+
+
+### Measuring checked development
+
+`pnpm --filter think-ts-helper benchmark:development 1000 5 single` measures a
+1,000-service project using the real generated Service contract and semantic
+consumer. Use `multi` for common/home/admin overrides. JSON output records
+compiler loading, cold checking, unchanged polls, edits, failure/recovery,
+rename cleanup, CPU time, peak RSS and syntax-cache work counts.
+Set `THINKJS_AUDIT_TYPESCRIPT` to another installed compiler's package directory
+to compare compilers without changing the lockfile.
+
+See [the measurement contract and limitations](../../docs/typescript-migration/p2-compiler-syntax-cache.md).
+There is no portable wall-time SLA or automatic phase-completion assertion.
