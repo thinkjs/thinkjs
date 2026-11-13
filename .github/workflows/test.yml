@@ -163,7 +163,7 @@ jobs:
           pnpm install --ignore-scripts --frozen-lockfile
           npm install --prefix "$RUNNER_TEMP/thinkjs-compiler" --ignore-scripts --no-audit --no-fund --package-lock=false "typescript@$TYPESCRIPT_VERSION"
           echo "THINKJS_AUDIT_TYPESCRIPT=$RUNNER_TEMP/thinkjs-compiler/node_modules/typescript" >> "$GITHUB_ENV"
-      - name: Verify syntax cache invalidation and deterministic work budgets
+      - name: Verify checked resources, syntax invalidation and deterministic work budgets
         run: node --test --test-concurrency=1 packages/think-ts-helper/test/development.test.js packages/think-ts-helper/test/benchmark-development.test.js
       # Timing observations are reported, never used as portable pass thresholds.
       - name: Record large generated-contract development costs

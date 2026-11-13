@@ -7,6 +7,7 @@ const {generate} = require('./index');
 
 const fail = (code, message) => { throw Object.assign(new Error(message), {code}); };
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
+const codeExtensions = ['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs', 'es'];
 function inside(root, file) {
   const relative = path.relative(root, file);
   return relative && !path.isAbsolute(relative) && relative !== '..' && !relative.startsWith('..' + path.sep);
@@ -35,8 +36,14 @@ function createWatcher(TrackedWatcher, ts) {
   }
   return class DevelopmentWatcher extends TrackedWatcher {
     constructor(options, callback) {
+      const resources = options.resourceExtensions === undefined ? [] : options.resourceExtensions;
+      if (!Array.isArray(resources) || resources.some(ext => typeof ext !== 'string' ||
+          !/^[a-z0-9][a-z0-9_-]*$/.test(ext) || codeExtensions.includes(ext) || ext === 'map')) {
+        fail('DEVELOPMENT_CONFIG', 'resourceExtensions must list lowercase extensions without dots; code and source maps cannot be copied as resources');
+      }
       super({...options, interval: options.interval === undefined ? 500 : options.interval,
-        allowExts: ['ts', 'json', 'js', 'es', 'tsx', 'mts', 'cts'], filter: undefined}, info => this.emitSource(info));
+        allowExts: [...codeExtensions, 'json', ...resources], filter: undefined}, info => this.emitSource(info));
+      this.resourceExtensions = new Set(resources);
       if (this.roots.length !== 1) fail('DEVELOPMENT_CONFIG', 'Development watch supports exactly one source/output pair');
       this.root = path.resolve(options.root || path.dirname(this.roots[0].source));
       this.project = path.resolve(this.root, options.project || 'tsconfig.json');
@@ -130,8 +137,15 @@ function createWatcher(TrackedWatcher, ts) {
       const started = Date.now();
       const {source, output} = this.roots[0];
       const sources = super.scan();
-      for (const file of sources.keys()) {
-        if (!/\.(ts|json)$/.test(file)) fail('DEVELOPMENT_CONFIG', `Only TypeScript and imported JSON sources are supported: ${file}`);
+      const resources = new Map();
+      for (const [file, entry] of sources) {
+        if (this.resourceExtensions.has(path.extname(file).slice(1))) {
+          const bytes = fs.readFileSync(file);
+          if (hash(bytes) !== entry.hash) fail('DEVELOPMENT_CHANGED', `Resource changed while reading: ${file}`);
+          resources.set(file, bytes);
+        } else if (!/\.(ts|json)$/.test(file)) {
+          fail('DEVELOPMENT_CONFIG', `Only TypeScript, imported JSON and explicitly selected resources are supported: ${file}`);
+        }
       }
       const declarationOutput = path.resolve(this.root, this.declarations.outDir || '.thinkjs/types');
       if (declarationOutput === output || inside(output, declarationOutput) || inside(declarationOutput, output)) {
@@ -158,7 +172,7 @@ function createWatcher(TrackedWatcher, ts) {
         fail('DEVELOPMENT_CONFIG', 'tsconfig must include the generated declaration index.d.ts');
       }
       for (const file of sources.keys()) {
-        if (!program.getSourceFile(file)) fail('DEVELOPMENT_CONFIG', `Runtime source is not in the checked project: ${file}`);
+        if (!resources.has(file) && !program.getSourceFile(file)) fail('DEVELOPMENT_CONFIG', `Runtime source is not in the checked project: ${file}`);
       }
       const outputs = new Map();
       const destinations = new Set();
@@ -176,12 +190,22 @@ function createWatcher(TrackedWatcher, ts) {
       });
       this.diagnostics('DEVELOPMENT_EMIT', emitted.diagnostics);
       if (emitted.emitSkipped) fail('DEVELOPMENT_EMIT', 'TypeScript skipped project emission');
+      for (const [owner, bytes] of resources) {
+        // Imported JSON keeps the compiler's emit behavior and one owner. A JSON
+        // file no longer imported becomes a raw resource, without stale output.
+        if (outputs.has(owner)) continue;
+        const file = path.join(output, path.relative(source, owner));
+        if (destinations.has(file)) fail('DEVELOPMENT_EMIT', `Resource collides with compiler output: ${file}`);
+        destinations.add(file);
+        outputs.set(owner, [{file, text: bytes}]);
+      }
       for (const file of sources.keys()) {
-        if (!outputs.has(file)) fail('DEVELOPMENT_EMIT', `No compiler output for ${file}; non-imported resources are not supported`);
+        if (!outputs.has(file)) fail('DEVELOPMENT_EMIT', `No compiler output for ${file}; select non-code resourceExtensions explicitly`);
       }
       // A whole-project fingerprint also invalidates unchanged importers of const
       // enums, compiler option changes, declarations and imported JSON resources.
-      const signature = hash(JSON.stringify([options, [...outputs], program.getSourceFiles().map(file => [file.fileName, file.text])]));
+      const emittedHashes = [...outputs].map(([file, list]) => [file, list.map(item => [item.file, hash(item.text)])]);
+      const signature = hash(JSON.stringify([options, emittedHashes, program.getSourceFiles().map(file => [file.fileName, file.text])]));
       const current = super.scan();
       if (sources.size !== current.size || [...sources].some(([file, value]) => current.get(file)?.hash !== value.hash)) {
         fail('DEVELOPMENT_CHANGED', 'Source changed during checking; retrying before emission');

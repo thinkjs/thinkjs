@@ -9,7 +9,7 @@ process.once('exit', release);
 const application = new Application({
   ROOT_PATH: root, APP_PATH: path.join(root, 'app'), env: 'development',
   watcher: checked.Watcher,
-  watcherOptions: {root, declarations: {configs: true},
+  watcherOptions: {root, declarations: {configs: true}, resourceExtensions: checked.resourceExtensions,
     onError: error => console.error(error.code, error.message)}
 });
 // Register permanent lifecycle handlers before synchronous initial work. Do not

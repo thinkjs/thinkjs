@@ -20,6 +20,10 @@ updates. A semantic error is reported and does not replace running JS. Fixing it
 reloads the worker. New/renamed/deleted services update generated declarations
 and session-owned JS/map outputs.
 
+Open http://127.0.0.1:8360/index/resource to read `src/assets/message.txt` from
+the compiled app. Editing that file triggers a checked resource copy and worker
+reload, just like editing a service.
+
 - `prepare-types` creates `.thinkjs/types` for the editor, including first open.
   Installation does not silently generate files. Run it explicitly in CI too.
 - `typecheck` regenerates declarations, then runs `tsc --noEmit`.
@@ -45,15 +49,40 @@ For a production-only installation, copy `app`, `start.cjs`,
 No src, generated declarations, dev.cjs or scripts/checked.cjs are required.
 The tarballs are a local review distribution mechanism, not an npm release.
 
+## Non-code resources
+
+Build and dev share `resourceExtensions` in `scripts/checked.cjs`. The starter
+selects `json`, `txt`, `html` and `bin`; add lowercase extensions without dots for
+other resources, then restart dev. Selected non-hidden files anywhere under src
+are copied byte-for-byte to the same relative path under app. Binary content is
+supported. Imported JSON remains compiler-owned and uses TypeScript's emitted
+format; JSON that is not imported is copied unchanged.
+
+Unselected extensions, hidden paths and declaration files are not copied. Code
+extensions and source maps cannot be selected as resources. This is an explicit
+allowlist, not a bundler, asset transformer or static-file server. Keep private
+files outside the selected source paths. No files outside src are copied.
+Semantic failure preserves the previous runtime resources. Live deletion/rename
+uses the same session ownership checks as JS: externally changed outputs are not
+deleted. A fresh build replaces the whole marked app directory, so manual app
+edits are not preserved. Resource contents must fit in memory with compiler emit.
+
 ## Limits and recovery
 
 The sample enables Service and Config generation. It does not enable Model,
-Controller Extend, database drivers, general resource copying or multi-module
-scaffolding. The checked coordinator supports CommonJS `.ts` and imported JSON,
+Controller Extend, database drivers, glob-based resource rules or multi-module
+scaffolding. The checked coordinator supports CommonJS `.ts`, imported JSON and
+explicitly selected non-code resources,
 not JS/TSX/MTS/CTS, project references or incremental/declaration builds. Keep
 rootDir=src and outDir=app in the project config. The helper still parses TS 3.9
 syntax even if the project compiler is newer. Existing JS/TS default templates
 are unchanged.
+
+The starter pins `@types/node` 14.14.31 for TypeScript 3.9 syntax compatibility
+and explicitly includes those ambient types. This covers the example's fs/path
+APIs, not all APIs in the required modern Node runtime. A newer compiler/Node
+typing baseline is a separate compatibility decision; do not infer that Node 14
+is a supported runtime from this development-only type package.
 
 Build/dev acquire `.thinkjs/checked.lock` to prevent cooperating commands from
 writing concurrently. Graceful SIGINT/SIGTERM closes the watcher and workers,

@@ -54,8 +54,12 @@ and clustered workers; start does not load development packages.
 See the generated [README](../../templates/typescript-checked/template/README.md)
 for deployment inputs and failure/recovery boundaries. Directory publication is
 not a crash-safe atomic transaction. Live writes retain #1807's partial-write
-risk; performance, resource copying, advanced generators and full CLI/template
+risk; performance, advanced generators and full CLI/template
 adoption remain open. No P1/P2 completion claim is made.
+
+The subsequent [checked resource slice](p2-resources.md) adds an explicit shared
+resource-extension allowlist to staged build and dev, with a sample asset route
+and production-only resource acceptance. It does not change registry templates.
 
 ## Verification
 
