@@ -4,6 +4,9 @@ linkWorkspacePackages: true
 preferWorkspacePackages: true
 saveWorkspaceProtocol: false
 allowBuilds:
+  esbuild: true
+  workerd: true
+  deno: true
   better-sqlite3: true
   core-js: true
   ejs: true

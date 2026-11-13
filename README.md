@@ -74,3 +74,7 @@ You will see some messages on console like :
 ## License
 
 [MIT](https://github.com/thinkjs/thinkjs/blob/master/LICENSE)
+
+## Edge runtime
+
+For the experimental Fetch-based Worker entry, build instructions and compatibility limits, see [ThinkJS Edge](packages/thinkjs/edge/README.md).

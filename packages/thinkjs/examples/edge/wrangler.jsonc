@@ -1,0 +1,5 @@
+{
+  "name": "thinkjs-edge-example",
+  "main": "dist/worker.js",
+  "compatibility_date": "2026-11-13"
+}

@@ -13,7 +13,10 @@
     "test": "pnpm run lint && pnpm run test-cov",
     "test-cov": "NODE_ENV=test node --test --test-concurrency=1 --experimental-test-coverage test/case/application.js test/case/extend/context.js test/case/extend/controller.js test/case/extend/logic.js test/case/loader.js test/case/think.js",
     "lint": "eslint ./lib/",
-    "prepublish": "pnpm test"
+    "prepublish": "pnpm test",
+    "build:edge-runtime": "node edge/prepare.cjs",
+    "test:edge": "node --test test/edge/*.test.mjs",
+    "lint:edge": "eslint edge/ --ignore-pattern \"**/shared.generated.js\""
   },
   "contributors": [
     {
@@ -43,6 +46,7 @@
     "cookies": "^0.8.0",
     "debug": "^3.1.0",
     "destroy": "^1.0.4",
+    "esbuild": "^0.27.7",
     "koa": "^3.0.0",
     "on-finished": "^2.3.0",
     "think-cluster": "^1.5.8",
@@ -63,7 +67,9 @@
     "think-validator": "^1.7.0"
   },
   "devDependencies": {
+    "deno": "^2.9.6",
     "eslint": "^10.8.0",
+    "miniflare": "^4.20260730.0",
     "mkdirp": "^0.5.1",
     "mock-require": "^2.0.1",
     "pre-commit": "^1.2.2"
@@ -97,5 +103,22 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/thinkjs/thinkjs/issues"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./lib/application.js"
+    },
+    "./edge": {
+      "types": "./edge/index.d.ts",
+      "default": "./edge/index.js"
+    },
+    "./edge/build": {
+      "types": "./edge/build.d.ts",
+      "default": "./edge/build.js"
+    },
+    "./lib/*.js": "./lib/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": "./*"
   }
 }
