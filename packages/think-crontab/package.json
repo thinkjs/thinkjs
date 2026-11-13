@@ -10,10 +10,14 @@
     "test"
   ],
   "scripts": {
-    "lint": "eslint index.js",
-    "lint-fix": "eslint --fix index.js",
-    "test": "eslint index.js && node --test --test-concurrency=1 test/index.js",
-    "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js"
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "lint": "eslint index.js test/migration.test.cjs && eslint --config ../../eslint.typescript.config.cjs src/**/*.ts",
+    "lint-fix": "eslint --fix index.js test/migration.test.cjs && eslint --fix --config ../../eslint.typescript.config.cjs src/**/*.ts",
+    "test": "pnpm run build && pnpm run typecheck && pnpm run lint && node --test --test-concurrency=1 test/index.js test/migration.test.cjs",
+    "coverage": "pnpm run build && node --test --test-concurrency=1 --experimental-test-coverage test/index.js test/migration.test.cjs",
+    "prepack": "npm run build -- --force"
   },
   "contributors": [
     {
@@ -36,7 +40,8 @@
     "mkdirp": "^0.5.1",
     "mock-require": "^2.0.1",
     "rimraf": "^2.6.1",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "@types/node": "25.8.0"
   },
   "keywords": [],
   "repository": {
@@ -50,5 +55,14 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/thinkjs/think-crontab/issues"
-  }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }

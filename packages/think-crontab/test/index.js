@@ -10,6 +10,8 @@ after(() => {
 });
 
 function getCrontab() {
+  // Reload the compiled implementation as well as the compatibility entry.
+  delete require.cache[require.resolve('../lib/index')];
   return mock.reRequire('../index');
 }
 
