@@ -3,6 +3,13 @@
 const cluster = require('node:cluster');
 const Application = require('thinkjs');
 const options = {ROOT_PATH: __dirname, env: 'production'};
+const checked = process.env.THINKJS_FIXTURE_WATCH === 'checked';
+if (checked) {
+  options.APP_PATH = require('node:path').join(__dirname, 'app');
+  options.watcher = require('think-ts-helper/development').createWatcher(require('think-watcher/tracked'), require('typescript'));
+  options.watcherOptions = {root: __dirname, interval: 100, declarations: {models: true, configs: true},
+    onError: error => { if (process.send) process.send({type: 'fixture-watch-error', code: error.code}); }};
+}
 if (process.env.THINKJS_FIXTURE_WATCH === '1') {
   options.watcher = require('think-watcher/tracked');
   options.transpiler = [require('think-typescript'), {compilerOptions: {
@@ -13,9 +20,12 @@ if (process.env.THINKJS_FIXTURE_WATCH === '1') {
   }};
 }
 const application = new Application(options);
-if (cluster.isPrimary && process.env.THINKJS_FIXTURE_WATCH === '1') {
+if (cluster.isPrimary && (checked || process.env.THINKJS_FIXTURE_WATCH === '1')) {
   const callback = application._watcherCallBack;
   application._watcherCallBack = function(info) {
+    if (checked && info.event === 'build' && process.send) {
+      process.send({type: 'fixture-checked-build', durationMs: info.durationMs});
+    }
     const master = this.masterInstance;
     if (!master) return callback.call(this, info);
     const reload = master.forceReloadWorkers;
