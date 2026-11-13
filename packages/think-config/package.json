@@ -7,9 +7,13 @@
     "email": "welefen@gmail.com"
   },
   "scripts": {
-    "test": "eslint index.js && node --test --test-concurrency=1 test/index.js",
-    "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js",
-    "lint": "eslint index.js"
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "test": "pnpm run build && pnpm run typecheck && pnpm run lint && node --test --test-concurrency=1 test/index.js test/migration.test.cjs",
+    "coverage": "pnpm run build && node --test --test-concurrency=1 --experimental-test-coverage test/index.js test/migration.test.cjs",
+    "lint": "eslint index.js test/migration.test.cjs && eslint --config ../../eslint.typescript.config.cjs src/**/*.ts",
+    "prepack": "npm run build -- --force"
   },
   "contributors": [
     {
@@ -39,5 +43,14 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/thinkjs/think-config/issues"
-  }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "*.d.ts",
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }
