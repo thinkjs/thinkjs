@@ -26,7 +26,7 @@ jobs:
       # The existing Test workflow also runs this gate on Node 22, 24 and 26.
       # These tests use no external services or native modules.
       - name: Install maintainer and legacy consumer compilers
-        run: pnpm --filter . --filter think-typescript install --ignore-scripts --frozen-lockfile
+        run: pnpm --filter . --filter think-typescript --filter think-store-file... install --ignore-scripts --frozen-lockfile
       - name: Check infrastructure and TypeScript source lint
         run: pnpm lint:typescript-build && pnpm lint:typescript
       # pnpm 11 needs Node >=22.13; install with the tooling runtime, then
@@ -36,3 +36,8 @@ jobs:
           node-version: 20.19.0
       - name: Build, check, pack, install and clean isolated package fixtures
         run: node --test --test-concurrency=1 test/typescript-build/*.test.cjs
+      - name: Build and validate the think-store-file production package
+        run: |
+          node node_modules/typescript/bin/tsc -b packages/think-store-file/tsconfig.build.json
+          node node_modules/typescript/bin/tsc -p packages/think-store-file/tsconfig.build.json --noEmit
+          node --test --test-concurrency=1 packages/think-store-file/test/index.js packages/think-store-file/test/migration.test.cjs

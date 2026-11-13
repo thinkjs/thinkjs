@@ -4,9 +4,13 @@
   "description": "store content use file",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint index.js",
-    "test": "pnpm run lint && node --test --test-concurrency=1 test/index.js",
-    "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js"
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "lint": "eslint index.js test/migration.test.cjs && eslint --config ../../eslint.typescript.config.cjs src/**/*.ts",
+    "test": "pnpm run build && pnpm run typecheck && pnpm run lint && node --test --test-concurrency=1 test/index.js test/migration.test.cjs",
+    "coverage": "pnpm run build && node --test --test-concurrency=1 --experimental-test-coverage test/index.js test/migration.test.cjs",
+    "prepack": "npm run build -- --force"
   },
   "repository": {
     "type": "git",
@@ -33,7 +37,9 @@
   "homepage": "https://github.com/thinkjs/think-store-file#readme",
   "devDependencies": {
     "coveralls": "~2.11.16",
-    "eslint": "^10.8.0"
+    "eslint": "^10.8.0",
+    "@types/node": "25.8.0",
+    "@types/node-legacy": "npm:@types/node@8.10.66"
   },
   "dependencies": {
     "think-debounce": "^1.0.3",
@@ -41,5 +47,14 @@
   },
   "engines": {
     "node": ">=20.19.0"
-  }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }

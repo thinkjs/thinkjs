@@ -38,3 +38,7 @@ jspm_packages
 
 #cache file
 test/cache
+
+# Generated TypeScript output
+/lib/
+/.build/

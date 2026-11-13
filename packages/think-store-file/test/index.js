@@ -5,6 +5,7 @@
 * @Last Modified time: 2017-03-21 11:30:32
 */
 const {test, afterEach} = require('node:test');
+const assert = require('node:assert/strict');
 const helper = require('think-helper');
 const path = require('path');
 const fs = require('fs');
@@ -16,7 +17,7 @@ afterEach(() => {
   return helper.rmdir(cachePath, false);
 });
 
-test('set file & get file & del file', async t => {
+test('set file & get file & del file', async () => {
   let content = 'Welcome to Thinkjs\'s World';
   let relativePath = 'abc/a.js';
   let storeInst = new FileStore(path.join(__dirname, 'data'));
@@ -26,27 +27,27 @@ test('set file & get file & del file', async t => {
   await storeInst.delete(relativePath);
   let ret2 = await storeInst.get(relativePath);
 
-  t.assert.strictEqual(ret1 === content && !ret2, true)
+  assert.strictEqual(ret1 === content && !ret2, true)
 });
 
-test('set file & get file empty', async t => {
+test('set file & get file empty', async () => {
   let content = '';
   let relativePath = 'abc/a.js';
   let storeInst = new FileStore(path.join(__dirname, 'data'));
   await storeInst.set(relativePath, content);
   let ret1 = await storeInst.get(relativePath);
-  t.assert.strictEqual(ret1 === '', true)
+  assert.strictEqual(ret1 === '', true)
 });
 
 
-test('use exist dir', async t => {
+test('use exist dir', async () => {
   let content = 'Welcome to Thinkjs\'s World';
   let relativePath = 'abc/a.js';
   let storeInst = new FileStore(path.join(__dirname));
   await storeInst.set(relativePath, content);
   let ret1 = await storeInst.get(relativePath);
 
-  helper.rmdir(path.join(__dirname, 'abc'), false).then(() => {
-    t.assert.strictEqual(ret1 === content, true)
+  await helper.rmdir(path.join(__dirname, 'abc'), false).then(() => {
+    assert.strictEqual(ret1 === content, true)
   });
 });
