@@ -325,3 +325,95 @@ node packages/think-ts-helper/scripts/benchmark.js 1000
 Example on Node v24.22.1 in the development container: 1,000 simple TS service
 files, initial generation 67 ms, median unchanged generation across five runs
 26 ms. These are local observations, not a portability guarantee or CI gate.
+
+## Optional Controller extension prototype
+
+`generate({controllerExtends: true})` or `--controller-extends` additionally emits
+`controller-extend.d.ts`. It composes with `--models` and `--configs`, but leaves
+existing `AppController`/Logic adoption unchanged. The new
+`AppExtendedController<T, M>` view adds the effective Controller members.
+
+This bounded P1 slice reads only TypeScript static object exports. It inspects
+`config/extend.ts`, followed by `extend/controller.ts`; multi-module apps use
+only `common/config/extend.ts` and `common/extend/controller.ts`, exactly like the
+loader. Module-local Extend files are not treated as overrides.
+
+Supported configuration exports are a single `{controller: {...}}` object or an
+ordered array of those objects with `as const` (a tuple is required to preserve
+individual source types). Application extensions use `export default {...}` or
+an unannotated `const` object with `export =`. Type-only imports and explicit
+method `this` parameters are supported. The helper never executes source files,
+getters, methods or plugin factories.
+
+Example application extension:
+
+```ts
+interface ControllerHost {
+  ctx: {module: string};
+  prefix: string;
+}
+const controller = {
+  prefix: 'hello',
+  greet(this: ControllerHost, name: string) {
+    return this.prefix + ':' + this.ctx.module + ':' + name;
+  },
+  get label() { return this.prefix + ':controller'; }
+};
+export = controller;
+```
+
+Opt in once in the application's BaseController. Declaration merging makes the
+new members available without copying each method or emitting class fields:
+
+```ts
+import type {Controller, Context} from 'thinkjs';
+import type {
+  ControllerExtension, AppExtendedController, AppContext
+} from '../../.thinkjs/types'; // adjust for the BaseController's location
+
+export interface BaseController extends ControllerExtension {}
+export class BaseController extends think.Controller {
+  declare service: AppExtendedController<Controller, 'home'>['service'];
+  declare ctx: AppContext<Context>;
+}
+```
+
+With Model/Config generation enabled, retain their existing `declare model` /
+`declare config` adoption fields and the module-aware Context view. These are
+still type-only declarations. This fixture is checked with `strict` /
+`noImplicitThis` and both class-field emit modes. Getter-only properties remain
+readonly; paired accessors retain writable source types. Use an independent host
+interface for an extension's `this`, rather than importing its own generated
+view and creating a circular type dependency. A method/getter that needs host
+members not present in its inferred source object must describe that host
+explicitly; the helper does not invent a contextual `this` type.
+
+Effective properties reference their source with `Pick<typeof import(...), ...>`.
+An overridden key comes only from the winning layer, never an intersection of
+incompatible signatures. Every override produces a
+`CONTROLLER_EXTEND_OVERRIDE` diagnostic (API `diagnostics`, CLI stderr), even if
+it is compatible. This is conservative reporting, **not** a semantic
+compatibility proof; normal `tsc` checks source and consumer types afterward.
+
+Boundaries:
+
+- Only Controller extension types are generated. Other extension targets,
+  imported plugin values/factories, runtime imports, JS/JSDoc sources, numeric
+  or computed member syntax, spreads, top-level mutation and shape-changing
+  assertions/annotations are diagnosed rather than guessed. Quoted numeric
+  string keys are supported. Numeric literal keys are not.
+- System Controller members, instance `ctx`, and `model` are protected from
+  override so this slice cannot invalidate existing lookup contracts.
+- A setter without a getter cannot describe safe reads and is rejected.
+  Data-over-accessor and partial accessor overrides that would retain an old
+  getter/setter are also rejected: the runtime copies descriptors and is not
+  equivalent to object spread. Complete getter/setter-pair replacements work.
+- `ControllerExtension` is for an explicit application BaseController, not a
+  global augmentation or a promise about Logic, plugins, subclasses or objects
+  that replace those members at runtime.
+- Disabling this option removes only the helper-owned
+  `controller-extend.d.ts`. Check mode stays read-only, and source errors leave
+  previous output unchanged. Concurrent/multi-file output transactions remain
+  outside this prototype.
+
+This does not complete P1 or provide automatic typing for all Extend targets.
