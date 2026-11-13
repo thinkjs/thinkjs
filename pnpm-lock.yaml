@@ -1502,6 +1502,12 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
 
+  packages/think-ts-helper:
+    dependencies:
+      typescript:
+        specifier: 3.9.10
+        version: 3.9.10
+
   packages/think-typescript:
     dependencies:
       line-column:

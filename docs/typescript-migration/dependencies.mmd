@@ -63,18 +63,19 @@ flowchart LR
   p58["packages/think-store-file<br/>think-store-file<br/>P3-foundations"]
   p59["packages/think-svg-captcha<br/>think-svg-captcha<br/>P4-integrations"]
   p60["packages/think-trace<br/>think-trace<br/>P3-request-pipeline"]
-  p61["packages/think-typescript<br/>think-typescript<br/>P4-tooling"]
-  p62["packages/think-validator<br/>think-validator<br/>P3-request-pipeline"]
-  p63["packages/think-view<br/>think-view<br/>P4-presentation-transport"]
-  p64["packages/think-view-ejs<br/>think-view-ejs<br/>P4-presentation-transport"]
-  p65["packages/think-view-handlebars<br/>think-view-handlebars<br/>P4-presentation-transport"]
-  p66["packages/think-view-nunjucks<br/>think-view-nunjucks<br/>P4-presentation-transport"]
-  p67["packages/think-view-pug<br/>think-view-pug<br/>P4-presentation-transport"]
-  p68["packages/think-watcher<br/>think-watcher<br/>P4-tooling"]
-  p69["packages/think-websocket<br/>think-websocket<br/>P4-presentation-transport"]
-  p70["packages/think-websocket-socket.io<br/>think-websocket-socket.io<br/>P4-presentation-transport"]
-  p71["packages/think-websocket-ws<br/>think-websocket-ws<br/>P4-presentation-transport"]
-  p72["packages/thinkjs<br/>thinkjs<br/>P3-bootstrap"]
+  p61["packages/think-ts-helper<br/>think-ts-helper<br/>P1-service-prototype"]
+  p62["packages/think-typescript<br/>think-typescript<br/>P4-tooling"]
+  p63["packages/think-validator<br/>think-validator<br/>P3-request-pipeline"]
+  p64["packages/think-view<br/>think-view<br/>P4-presentation-transport"]
+  p65["packages/think-view-ejs<br/>think-view-ejs<br/>P4-presentation-transport"]
+  p66["packages/think-view-handlebars<br/>think-view-handlebars<br/>P4-presentation-transport"]
+  p67["packages/think-view-nunjucks<br/>think-view-nunjucks<br/>P4-presentation-transport"]
+  p68["packages/think-view-pug<br/>think-view-pug<br/>P4-presentation-transport"]
+  p69["packages/think-watcher<br/>think-watcher<br/>P4-tooling"]
+  p70["packages/think-websocket<br/>think-websocket<br/>P4-presentation-transport"]
+  p71["packages/think-websocket-socket.io<br/>think-websocket-socket.io<br/>P4-presentation-transport"]
+  p72["packages/think-websocket-ws<br/>think-websocket-ws<br/>P4-presentation-transport"]
+  p73["packages/thinkjs<br/>thinkjs<br/>P3-bootstrap"]
   p1 -->|"runtime"| p18
   p2 -->|"runtime"| p12
   p2 -->|"runtime"| p18
@@ -104,12 +105,12 @@ flowchart LR
   p13 -->|"runtime"| p38
   p13 -->|"runtime"| p53
   p13 -->|"runtime"| p54
-  p13 -->|"runtime"| p63
-  p13 -->|"runtime"| p66
-  p13 -->|"runtime"| p68
+  p13 -->|"runtime"| p64
+  p13 -->|"runtime"| p67
   p13 -->|"runtime"| p69
   p13 -->|"runtime"| p70
-  p13 -->|"runtime"| p72
+  p13 -->|"runtime"| p71
+  p13 -->|"runtime"| p73
   p13 -.->|"development"| p1
   p13 -.->|"development"| p20
   p14 -->|"runtime"| p18
@@ -119,7 +120,7 @@ flowchart LR
   p21 -->|"runtime"| p18
   p22 -->|"runtime"| p18
   p23 -->|"runtime"| p18
-  p23 -->|"runtime"| p72
+  p23 -->|"runtime"| p73
   p26 -->|"runtime"| p18
   p27 -->|"runtime"| p12
   p27 -->|"runtime"| p18
@@ -185,7 +186,6 @@ flowchart LR
   p58 -->|"runtime"| p18
   p59 -->|"runtime"| p18
   p60 -->|"runtime"| p18
-  p61 -->|"runtime"| p18
   p62 -->|"runtime"| p18
   p63 -->|"runtime"| p18
   p64 -->|"runtime"| p18
@@ -195,23 +195,24 @@ flowchart LR
   p68 -->|"runtime"| p18
   p69 -->|"runtime"| p18
   p70 -->|"runtime"| p18
-  p70 -->|"runtime"| p30
   p71 -->|"runtime"| p18
   p71 -->|"runtime"| p30
-  p72 -->|"runtime"| p7
-  p72 -->|"runtime"| p8
-  p72 -->|"runtime"| p9
-  p72 -->|"runtime"| p10
   p72 -->|"runtime"| p18
-  p72 -->|"runtime"| p23
-  p72 -->|"runtime ambiguous"| p24
-  p72 -->|"runtime ambiguous"| p25
-  p72 -->|"runtime"| p26
-  p72 -->|"runtime"| p28
   p72 -->|"runtime"| p30
-  p72 -->|"runtime"| p42
-  p72 -->|"runtime"| p43
-  p72 -->|"runtime"| p48
-  p72 -->|"runtime"| p49
-  p72 -->|"runtime"| p60
-  p72 -->|"runtime"| p62
+  p73 -->|"runtime"| p7
+  p73 -->|"runtime"| p8
+  p73 -->|"runtime"| p9
+  p73 -->|"runtime"| p10
+  p73 -->|"runtime"| p18
+  p73 -->|"runtime"| p23
+  p73 -->|"runtime ambiguous"| p24
+  p73 -->|"runtime ambiguous"| p25
+  p73 -->|"runtime"| p26
+  p73 -->|"runtime"| p28
+  p73 -->|"runtime"| p30
+  p73 -->|"runtime"| p42
+  p73 -->|"runtime"| p43
+  p73 -->|"runtime"| p48
+  p73 -->|"runtime"| p49
+  p73 -->|"runtime"| p60
+  p73 -->|"runtime"| p63

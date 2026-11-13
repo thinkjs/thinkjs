@@ -10,6 +10,7 @@ const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const sorted = object => Object.fromEntries(Object.entries(object || {}).sort(([a], [b]) => compare(a, b)));
 
 const BATCHES = [
+  ['P1-service-prototype', 'P1', 'Private Service registry generator prototype; complete development integration in P2', 'think-ts-helper'],
   ['P3-foundations', 'P3', 'Foundations: pure utilities, storage primitives and process helpers',
     'think-helper think-debounce think-instance think-gc think-store-file think-mock-http think-cluster think-pm2'],
   ['P3-request-pipeline', 'P3', 'Request pipeline: configuration, routing, parsing, dispatch, validation and errors',
