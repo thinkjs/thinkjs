@@ -66,8 +66,20 @@ The migration suite covers:
   positive and negative consumers. Removing negative directives must produce errors.
 - An additional current-compiler test with actual Node response/Stats annotations.
 
-Installed acceptance packs the actual resolved runtime dependency graph without
-scripts and installs real tarballs offline. Flat exact overrides keep multiple `ms`
+Installed acceptance first copies each resolved runtime dependency into an isolated
+source directory using ordinary byte copies, then runs npm pack with scripts disabled
+and installs real tarballs offline. This breaks pnpm store hardlinks without changing
+package contents or manifests: npm's bundled node-tar can otherwise deadlock on the
+combination of external store links and internally repeated hardlinked files (see
+[node-tar #460](https://github.com/isaacs/node-tar/issues/460)). The fixture graph has
+no bundled dependencies; their installed node_modules directories are excluded, and
+new bundled dependencies fail explicitly until their packaging is handled.
+
+A regression package reproduces both hardlink patterns, checks that staging produces
+independent files with identical bytes, verifies the exact archive, and installs it
+offline before checking every file again. npm errors retain their package directory
+and final debug-log lines before temporary-fixture cleanup. The package under test
+still exercises its real prepack lifecycle; only dependency repacks disable scripts. Flat exact overrides keep multiple `ms`
 versions distinct without editing published manifests. This is installed-artifact
 acceptance, not live registry-resolution testing. The ordinary declaration consumer
 has no workspace links, TypeScript or Node ambient dependency. The separate optional

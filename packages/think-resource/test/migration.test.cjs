@@ -35,14 +35,27 @@ function findNpmCli() {
 const npmCli = findNpmCli();
 
 function npm(cwd, args, cache = path.join(cwd, '.npm-cache')) {
-  return execFileSync(process.execPath, [npmCli, ...args], {
-    cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
-    env: {...process.env,
-      PATH: `${path.join(root, 'node_modules/.bin')}${path.delimiter}${process.env.PATH}`,
-      npm_config_cache: cache,
-      npm_config_ignore_scripts: 'false', npm_config_update_notifier: 'false'
+  try {
+    return execFileSync(process.execPath, [npmCli, ...args], {
+      cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
+      env: {...process.env,
+        PATH: `${path.join(root, 'node_modules/.bin')}${path.delimiter}${process.env.PATH}`,
+        npm_config_cache: cache,
+        npm_config_ignore_scripts: 'false', npm_config_update_notifier: 'false'
+      }
+    });
+  } catch (error) {
+    // The fixture is cleaned after failure. Preserve the package identity and
+    // npm's final diagnostic before that cleanup, rather than only its argv.
+    let diagnostic = '';
+    const logs = path.join(cache, '_logs');
+    if (fs.existsSync(logs)) {
+      const files = fs.readdirSync(logs).filter(file => file.endsWith('-debug-0.log')).sort();
+      if (files.length) diagnostic = fs.readFileSync(path.join(logs, files[files.length - 1]), 'utf8').split('\n').slice(-40).join('\n');
     }
-  });
+    error.message = `npm ${args.join(' ')} failed in ${cwd} (${process.version})\n${error.message}\n${diagnostic}`;
+    throw error;
+  }
 }
 
 function compile(cwd, args, compiler = tsc, expected = 0) {
@@ -79,6 +92,76 @@ function pack(source, tarballs, ignoreScripts = false) {
   const [packed] = JSON.parse(output.slice(output.indexOf('[\n')));
   return {...packed, archive: path.join(tarballs, packed.filename)};
 }
+
+function packDependency(source, tarballs, staging) {
+  const manifest = JSON.parse(fs.readFileSync(path.join(source, 'package.json'), 'utf8'));
+  const bundled = manifest.bundleDependencies || manifest.bundledDependencies;
+  assert.ok(!bundled || (Array.isArray(bundled) && bundled.length === 0),
+    `The isolated dependency fixture must explicitly handle bundled dependencies in ${manifest.name}`);
+  const copy = fs.mkdtempSync(path.join(staging, 'package-'));
+  // pnpm may hardlink every package file to its content-addressed store. npm's
+  // async node-tar packer can deadlock on that topology (node-tar#460). Copy
+  // bytes to independent files, not links, without changing package manifests.
+  // This graph has no bundles; installed node_modules is not package content.
+  fs.cpSync(source, copy, {recursive: true, filter: file => path.basename(file) !== 'node_modules'});
+  return {copy, packed: pack(copy, tarballs, true)};
+}
+
+test('dependency packing copies hardlinked store files before producing a real tarball', t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'think-resource-hardlinks-'));
+  t.after(() => fs.rmSync(dir, {recursive: true, force: true}));
+  const store = path.join(dir, 'store');
+  const installed = path.join(dir, 'installed');
+  const staging = path.join(dir, 'staging');
+  const tarballs = path.join(dir, 'tarballs');
+  for (const folder of [store, installed, staging, tarballs]) fs.mkdirSync(folder);
+  fs.writeFileSync(path.join(store, 'package.json'), JSON.stringify({
+    name: 'think-resource-hardlink-fixture', version: '1.0.0', main: 'index.js',
+    scripts: {prepack: 'node -e "process.exit(99)"'}
+  }));
+  fs.writeFileSync(path.join(store, 'index.js'), "module.exports = 'hardlink-safe';\n");
+  const repeated = path.join(store, 'shared.txt');
+  fs.writeFileSync(repeated, 'shared hardlinked content');
+  for (let i = 0; i < 20; i++) {
+    const folder = path.join(store, `dir${String(i).padStart(3, '0')}`);
+    fs.mkdirSync(folder);
+    fs.writeFileSync(path.join(folder, 'unique.txt'), `unique-${i}`);
+    if (i < 15) fs.linkSync(repeated, path.join(folder, 'shared.txt'));
+  }
+  const files = [];
+  function linkFiles(source, target, relative = '') {
+    for (const entry of fs.readdirSync(source, {withFileTypes: true})) {
+      const next = path.join(relative, entry.name);
+      if (entry.isDirectory()) {
+        fs.mkdirSync(path.join(target, entry.name));
+        linkFiles(path.join(source, entry.name), path.join(target, entry.name), next);
+      } else {
+        fs.linkSync(path.join(source, entry.name), path.join(target, entry.name));
+        files.push(next);
+      }
+    }
+  }
+  linkFiles(store, installed);
+  for (const file of files) assert.ok(fs.statSync(path.join(installed, file)).nlink > 1);
+  // Exclude the installed dependency links, not any publishable package bytes.
+  fs.mkdirSync(path.join(installed, 'node_modules'));
+  fs.writeFileSync(path.join(installed, 'node_modules/not-published.txt'), 'not shipped');
+  const {copy, packed} = packDependency(installed, tarballs, staging);
+  assert.equal(fs.existsSync(path.join(copy, 'node_modules')), false);
+  for (const file of files) {
+    assert.equal(fs.statSync(path.join(copy, file)).nlink, 1);
+    assert.deepEqual(fs.readFileSync(path.join(copy, file)), fs.readFileSync(path.join(installed, file)));
+  }
+  assert.deepEqual(packed.files.map(file => file.path).sort(), files.map(file => file.split(path.sep).join('/')).sort());
+  const consumer = path.join(dir, 'consumer');
+  fs.mkdirSync(consumer);
+  fs.writeFileSync(path.join(consumer, 'package.json'), '{"private":true}');
+  npm(consumer, ['install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', packed.archive]);
+  const load = createRequire(path.join(consumer, 'package.json'));
+  assert.equal(load('think-resource-hardlink-fixture'), 'hardlink-safe');
+  const installedRoot = path.dirname(load.resolve('think-resource-hardlink-fixture/package.json'));
+  for (const file of files) assert.deepEqual(fs.readFileSync(path.join(installedRoot, file)), fs.readFileSync(path.join(installed, file)));
+});
 
 test('cold build, no-emit check and clean preserve source and non-output files', t => {
   const {source} = fixture(t);
@@ -366,6 +449,8 @@ test('cold prepack installs offline with CommonJS, source maps and TS 3.9/5.9 co
     'LICENSE', 'README.md', 'index.d.ts', 'index.js', 'lib/index.d.ts', 'lib/index.d.ts.map',
     'lib/index.js', 'lib/index.js.map', 'package.json', 'src/dependencies.d.ts', 'src/index.ts'
   ]);
+  const staging = path.join(dir, 'dependency-sources');
+  fs.mkdirSync(staging);
   const versions = new Map();
   const seen = new Set();
   const overrides = {};
@@ -378,7 +463,7 @@ test('cold prepack installs offline with CommonJS, source maps and TS 3.9/5.9 co
       const key = `${name}@${metadata.version}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      const archive = pack(dependency, tarballs, true).archive;
+      const archive = packDependency(dependency, tarballs, staging).packed.archive;
       const records = versions.get(name) || [];
       records.push({version: metadata.version, archive});
       versions.set(name, records);
