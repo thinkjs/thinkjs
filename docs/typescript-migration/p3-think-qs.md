@@ -94,7 +94,9 @@ checks ensure unrelated files and source are retained.
   after deleted output, and refusal to pack a semantic error.
 - Cold prepack verifies an exact file list; a fresh consumer installs the package
   and its real dependency tarballs offline, with lifecycle scripts disabled.
-  It verifies root/deep CommonJS and dynamic import, runtime behavior, map sources,
+  Exact local dependencies and flat overrides avoid registry lookups across npm
+  versions; the fixture fails explicitly if the graph gains multiple versions of
+  one dependency name. It verifies root/deep CommonJS and dynamic import, runtime behavior, map sources,
   and TS 3.9/5.9 positive/negative cases, including interfaces and invalid flags.
 - The minimum-Node job installs tooling using Node 24 because pnpm 11 requires
   Node >=22.13, then directly executes the foundation/package gates on Node

@@ -338,29 +338,34 @@ test('cold prepack installs offline with CommonJS, maps and TS 3.9/5.9 consumers
   ]);
   // Pack the installed dependency graph without lifecycle scripts; consumers
   // receive real tarballs, no workspace links, registry fallback or dev tools.
-  const seen = new Set();
+  const dependencies = {};
+  const versions = new Map();
   function packDependencies(folder) {
     const localRequire = createRequire(path.join(folder, 'package.json'));
     const manifest = JSON.parse(fs.readFileSync(path.join(folder, 'package.json'), 'utf8'));
-    const dependencies = {};
     for (const name of Object.keys(manifest.dependencies || {})) {
       const dependency = path.dirname(localRequire.resolve(`${name}/package.json`));
       const metadata = localRequire(`${name}/package.json`);
-      const archive = path.join(tarballs, `${metadata.name.replace('@', '').replace('/', '-')}-${metadata.version}.tgz`);
-      dependencies[name] = {'.': `file:${archive}`, ...packDependencies(dependency)};
-      if (!seen.has(dependency)) {
-        seen.add(dependency);
-        assert.equal(pack(dependency, tarballs, true).archive, archive);
+      if (versions.has(name)) {
+        // This package's graph has one version per name. Fail explicitly if a
+        // future dependency change needs a version-aware tarball fixture.
+        assert.equal(versions.get(name), metadata.version, `multiple fixture versions of ${name}`);
+        continue;
       }
+      versions.set(name, metadata.version);
+      const archive = path.join(tarballs, `${metadata.name.replace('@', '').replace('/', '-')}-${metadata.version}.tgz`);
+      dependencies[name] = `file:${archive}`;
+      assert.equal(pack(dependency, tarballs, true).archive, archive);
+      packDependencies(dependency);
     }
-    return dependencies;
   }
-  const overrides = {'think-qs': packDependencies(packageRoot)};
+  packDependencies(packageRoot);
   const consumer = path.join(dir, 'consumer');
   fs.mkdirSync(consumer);
-  // Resolve the exact dependency graph from local tarballs without modifying
-  // published manifests or relying on workspace links or a registry.
-  fs.writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({private: true, overrides}));
+  // npm 11.19+ can fall back to registry metadata for repeated dependencies in
+  // nested override trees. Flat exact local dependencies/overrides keep this
+  // single-version graph fully offline on both old and current npm releases.
+  fs.writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({private: true, dependencies, overrides: dependencies}));
   npm(consumer, ['install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', packed.archive]);
   const installedRequire = createRequire(path.join(consumer, 'package.json'));
   const create = installedRequire('think-qs');
