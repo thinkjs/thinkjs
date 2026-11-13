@@ -8,6 +8,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {createRequire} = require('node:module');
+const {once} = require('node:events');
 const {execFileSync, fork} = require('node:child_process');
 
 const root = path.resolve(__dirname, '../..');
@@ -120,6 +121,31 @@ function verifyInstalled(directory, packages, directNames) {
 async function request(port, route) {
   const response = await fetch(`http://127.0.0.1:${port}${route}`, {signal: AbortSignal.timeout(10000)});
   return {status: response.status, headers: response.headers, body: await response.text()};
+}
+
+async function exerciseDeclarationWatch(directory, local) {
+  const watcher = local('think-ts-helper').watch({root: directory, models: true, configs: true, interval: 20});
+  const original = path.join(directory, 'src/common/service/watch-added.ts');
+  const renamed = path.join(directory, 'src/common/service/watch-renamed.ts');
+  try {
+    await watcher.ready;
+    async function change(action) {
+      const updated = once(watcher, 'update', {signal: AbortSignal.timeout(10000)});
+      action();
+      return (await updated)[0];
+    }
+    const added = await change(() => fs.writeFileSync(original, 'export default {value: 1};\n'));
+    assert.ok(added.manifest.modules.admin['watch-added']);
+    const moved = await change(() => fs.renameSync(original, renamed));
+    assert.equal(moved.manifest.modules.admin['watch-added'], undefined);
+    assert.ok(moved.manifest.modules.admin['watch-renamed']);
+    const deleted = await change(() => fs.unlinkSync(renamed));
+    assert.equal(deleted.manifest.modules.admin['watch-renamed'], undefined);
+  } finally {
+    watcher.close();
+    fs.rmSync(original, {force: true});
+    fs.rmSync(renamed, {force: true});
+  }
 }
 
 async function exercise(directory) {
@@ -236,6 +262,10 @@ async function main() {
   run(process.execPath, ['build.cjs'], consumer);
   assert.equal(fs.existsSync(path.join(consumer, 'app/common/service/renamed.js')), false);
   assert.equal(fs.readFileSync(generated, 'utf8'), clean);
+  await exerciseDeclarationWatch(consumer, local);
+  assert.equal(fs.readFileSync(generated, 'utf8'), clean);
+  run(process.execPath, [compiler, '--noEmit', '--pretty', 'false'], consumer);
+  log('Installed helper watch: Service add/rename/delete updated declarations');
   await exercise(consumer);
   log('Development install: real master/worker startup and three HTTP routes passed');
 

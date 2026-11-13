@@ -272,4 +272,4 @@ function generate(options = {}) {
   return {...result, changed, removed};
 }
 
-module.exports = {generate};
+module.exports = {generate, watch: require('./watch').watch};
