@@ -1,0 +1,25 @@
+{
+  "name": "thinkjs-checked-app",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.6.0",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "prepare-types": "think-ts-helper generate . --configs",
+    "typecheck": "pnpm run prepare-types && tsc --noEmit",
+    "dev": "node dev.cjs",
+    "build": "node scripts/build.cjs",
+    "start": "node start.cjs"
+  },
+  "dependencies": {
+    "thinkjs": "4.0.0"
+  },
+  "devDependencies": {
+    "think-ts-helper": "0.0.0",
+    "think-config": "1.1.3",
+    "think-watcher": "3.0.4",
+    "typescript": "3.9.10"
+  }
+}

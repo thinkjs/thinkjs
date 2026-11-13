@@ -98,3 +98,36 @@ jobs:
         env:
           THINKJS_APPLICATION_TYPESCRIPT: ${{ matrix.typescript }}
         run: node scripts/typescript-migration/application.cjs
+
+  typescript-template:
+    name: Checked TS template (Node ${{ matrix.node }}, TS ${{ matrix.typescript }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: 22.x
+            typescript: 3.9.10
+          - node: 24.x
+            typescript: 5.9.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.6.0
+          run_install: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # Only template rendering consumes workspace CLI dependencies. The generated
+      # and production apps install their own packages in independent directories.
+      - name: Install template generator dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+      - name: Create, move, install and run the checked TypeScript template
+        env:
+          THINKJS_APPLICATION_TYPESCRIPT: ${{ matrix.typescript }}
+        run: pnpm test:typescript-template

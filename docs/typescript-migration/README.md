@@ -23,6 +23,7 @@ the bounded Model/Config/Controller Extend slices. P1 remains incomplete.
 - [Types and toolchain](types-and-toolchain.md): declaration drift, old TS/JS workflows, template boundary and compiler evidence.
 - [ADR 0001](adr-0001-compatibility.md): entry points, type ownership and strict/compat migration decisions.
 - [Validation record](validation.md): commands, results and unresolved service/matrix checks.
+- [P2 local checked starter](p2-local-template.md): real CLI template generation, portable local package installs and explicit checked dev/build scripts, without changing published defaults.
 - [P1 checked development](p1-checked-development.md): one-program generation/check/emission and batch worker reload, with explicit compiler/configuration and publication boundaries.
 - [P1 tracked runtime watch](p1-runtime-watch.md): session-owned JS/map cleanup and failure-aware reload without altering the legacy watcher.
 - [P1 helper watch](p1-helper-watch.md): readiness, declaration updates, diagnostics and lifecycle, without claiming runtime artifact ownership.
@@ -62,7 +63,7 @@ When the workspace changes, update the audit's explicit classification, regenera
 | --- | --- | --- |
 | P0 | Executable behavior/dependency/type baseline implemented; external-service and alternate-runtime checks explicitly open | Review the corrected semantics and compatibility ADR; run the recorded independent integration commands |
 | P1 | Bounded dynamic-type prototypes, installed application gates, and opt-in checked development flow implemented; existing debounce pilot remains separate | Review the supported contract, full-project polling cost, publication boundaries and remaining compatibility/performance gates before declaring P1 complete |
-| P2 | Development/watch prototypes only; broader infrastructure incomplete | Strict shared build configuration, incremental scheduling, transactional runtime publication, persistent ownership, resource copying and CLI/template integration |
+| P2 | Development/watch and local template prototypes; broader infrastructure incomplete | Strict shared build configuration, incremental scheduling, transactional runtime publication, persistent ownership, resource copying and registry-facing CLI/template integration |
 | P3 | Not started | Migrate the audited dependency groups without altering CommonJS shapes/deep paths |
 | P4 | Not started | Data/adapters/official ecosystem and remaining generators, with service-backed tests |
 | P5 | Not started | Complete old/new application matrix, performance, package installation and release review |
