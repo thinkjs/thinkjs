@@ -334,14 +334,19 @@ test('cold prepack installs offline with CJS, deep entries, maps and TS 3.9/5.9 
   const dependencies = {};
   const overrides = {};
   // npm 11.19+ can lose repeated deep overrides and request registry metadata.
-  // Keep single-version packages flat. Version-specific global overrides retain
-  // both ms versions (debug's 2.0.0 and think-helper's 2.1.3) without rewriting
-  // any tarball manifests. Verify every installed edge below, not just the root.
+  // Keep single-version packages flat. npm 10 can misapply version-qualified
+  // overrides on local tarballs, so conflicting leaf versions are scoped to
+  // their owning packages instead. Never rewrite the published manifests.
   for (const [name, versions] of packages) {
-    if (versions.size === 1) {
-      dependencies[name] = overrides[name] = [...versions.values()][0];
-    } else {
-      for (const [version, archive] of versions) overrides[`${name}@${version}`] = archive;
+    if (versions.size === 1) dependencies[name] = overrides[name] = [...versions.values()][0];
+  }
+  for (const [identity, edges] of graph) {
+    const parent = identity.slice(0, identity.lastIndexOf('@'));
+    for (const [name, version] of Object.entries(edges)) {
+      if (packages.get(name).size === 1) continue;
+      assert.equal(packages.get(parent).size, 1, `Version-aware parent fixture needed for ${identity}`);
+      if (typeof overrides[parent] === 'string') overrides[parent] = {'.': overrides[parent]};
+      overrides[parent][name] = packages.get(name).get(version);
     }
   }
   const consumer = path.join(dir, 'consumer');
