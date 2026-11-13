@@ -9,7 +9,7 @@ const ts = process.env.THINKJS_AUDIT_TYPESCRIPT ? require(path.resolve(process.e
 const TrackedWatcher = require('../../think-watcher/tracked');
 const {createWatcher} = require('../development');
 
-function fixture(t, compiler = ts) {
+function fixture(t, compiler = ts, options = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'think-development-'));
   t.after(() => fs.rmSync(root, {recursive: true, force: true}));
   const write = (file, content) => {
@@ -30,7 +30,7 @@ function fixture(t, compiler = ts) {
   configure({});
   const builds = [];
   const Watcher = createWatcher(TrackedWatcher, compiler);
-  const watcher = new Watcher({root, srcPath: path.join(root, 'src'), diffPath: path.join(root, 'app')}, result => builds.push(result));
+  const watcher = new Watcher({root, srcPath: path.join(root, 'src'), diffPath: path.join(root, 'app'), ...options}, result => builds.push(result));
   t.after(() => watcher.close());
   return {root, write, config, configure, watcher, builds,
     read: file => fs.readFileSync(path.join(root, file), 'utf8'),
@@ -56,6 +56,131 @@ test('generation precedes real semantic checking; one whole batch emits then rel
   assert.equal(f.exists('app/service/first.js.map'), false);
   assert.ok(f.exists('app/service/second.js'));
   assert.ok(f.exists('app/service/moved.js'));
+});
+
+test('explicit resources preserve bytes and nested paths through add, edit, rename and deletion', t => {
+  const f = fixture(t, ts, {resourceExtensions: ['txt', 'bin']});
+  const binary = Buffer.from([0, 255, 128, 13, 10, 0, 1]);
+  f.write('src/assets/nested/data.bin', binary);
+  f.write('src/assets/message.txt', 'first\r\n');
+  f.write('src/assets/not-selected.svg', '<svg/>');
+  f.write('src/assets/.hidden.txt', 'secret');
+  f.watcher.poll();
+  assert.deepEqual(fs.readFileSync(path.join(f.root, 'app/assets/nested/data.bin')), binary);
+  assert.equal(f.read('app/assets/message.txt'), 'first\r\n');
+  assert.equal(f.exists('app/assets/not-selected.svg'), false);
+  assert.equal(f.exists('app/assets/.hidden.txt'), false);
+  const original = fs.statSync(path.join(f.root, 'app/assets/message.txt')).mtimeMs;
+  f.watcher.poll();
+  assert.equal(f.builds.length, 1);
+  assert.equal(fs.statSync(path.join(f.root, 'app/assets/message.txt')).mtimeMs, original);
+  const input = path.join(f.root, 'src/assets/message.txt');
+  const stat = fs.statSync(input);
+  f.write('src/assets/message.txt', 'other\r\n');
+  fs.utimesSync(input, stat.atime, stat.mtime);
+  f.watcher.poll();
+  assert.equal(f.read('app/assets/message.txt'), 'other\r\n');
+  assert.equal(f.builds.length, 2);
+  f.write('src/assets/added.txt', 'added');
+  fs.renameSync(input, path.join(f.root, 'src/assets/renamed.txt'));
+  fs.unlinkSync(path.join(f.root, 'src/assets/nested/data.bin'));
+  f.watcher.poll();
+  assert.equal(f.exists('app/assets/message.txt'), false);
+  assert.equal(f.exists('app/assets/nested/data.bin'), false);
+  assert.equal(f.read('app/assets/renamed.txt'), 'other\r\n');
+  assert.equal(f.read('app/assets/added.txt'), 'added');
+  assert.equal(f.builds.length, 3);
+});
+
+test('selected JSON transitions between compiler and byte-copy ownership without duplicate outputs', t => {
+  const f = fixture(t, ts, {resourceExtensions: ['json']});
+  const json = '{"value":1}\r\n';
+  f.write('src/data.json', json);
+  f.watcher.poll();
+  assert.equal(f.read('app/data.json'), json);
+  f.write('src/service/first.ts', 'import data = require("../data.json"); export default data;\n');
+  f.watcher.poll();
+  assert.deepEqual(JSON.parse(f.read('app/data.json')), {value: 1});
+  assert.equal(f.builds[1].files.filter(file => file === path.join(f.root, 'app/data.json')).length, 1);
+  f.write('src/service/first.ts', 'export default {value: 2};\n');
+  f.watcher.poll();
+  assert.equal(f.read('app/data.json'), json);
+  fs.unlinkSync(path.join(f.root, 'src/data.json'));
+  f.watcher.poll();
+  assert.equal(f.exists('app/data.json'), false);
+});
+
+test('semantic failure preserves changed and removed resources until a successful check', t => {
+  const f = fixture(t, ts, {resourceExtensions: ['txt']});
+  f.write('src/assets/changed.txt', 'before');
+  f.write('src/assets/deleted.txt', 'before');
+  f.watcher.poll();
+  f.write('src/assets/changed.txt', 'after');
+  fs.unlinkSync(path.join(f.root, 'src/assets/deleted.txt'));
+  f.write('src/assets/added.txt', 'new');
+  f.write('src/service/first.ts', 'const value: number = "bad"; export default value;\n');
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_TYPECHECK'});
+  assert.equal(f.read('app/assets/changed.txt'), 'before');
+  assert.equal(f.read('app/assets/deleted.txt'), 'before');
+  assert.equal(f.exists('app/assets/added.txt'), false);
+  assert.equal(f.builds.length, 1);
+  f.write('src/service/first.ts', 'export default {value: 2};\n');
+  f.watcher.poll();
+  assert.equal(f.read('app/assets/changed.txt'), 'after');
+  assert.equal(f.exists('app/assets/deleted.txt'), false);
+  assert.equal(f.read('app/assets/added.txt'), 'new');
+  assert.equal(f.builds.length, 2);
+});
+
+test('resource selection cannot disguise code or source maps as unchecked copies', t => {
+  for (const extensions of [null, 'txt', [1], [''], ['.txt'], ['TXT'], ['../txt'],
+    ['js'], ['jsx'], ['mjs'], ['cjs'], ['es'], ['ts'], ['tsx'], ['mts'], ['cts'], ['map']]) {
+    assert.throws(() => fixture(t, ts, {resourceExtensions: extensions}), {code: 'DEVELOPMENT_CONFIG'});
+  }
+  const f = fixture(t, ts, {resourceExtensions: ['txt']});
+  f.write('src/unchecked.cjs', 'module.exports = 1;');
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_CONFIG'});
+  assert.equal(f.exists('app'), false);
+});
+
+test('resources changing during semantic checking fail before writing any outputs', t => {
+  let mutate;
+  const compiler = {...ts, getPreEmitDiagnostics(program) {
+    const result = ts.getPreEmitDiagnostics(program);
+    if (mutate) { const action = mutate; mutate = undefined; action(); }
+    return result;
+  }};
+  const f = fixture(t, compiler, {resourceExtensions: ['bin']});
+  f.write('src/data.bin', Buffer.from([0, 1]));
+  mutate = () => f.write('src/data.bin', Buffer.from([0, 2]));
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_CHANGED'});
+  assert.equal(f.exists('app'), false);
+  f.watcher.poll();
+  assert.deepEqual(fs.readFileSync(path.join(f.root, 'app/data.bin')), Buffer.from([0, 2]));
+});
+
+test('resource symlinks are refused and external output edits block deletion', t => {
+  const f = fixture(t, ts, {resourceExtensions: ['txt']});
+  f.write('outside.txt', 'untouched');
+  f.write('src/assets/message.txt', 'owned');
+  fs.mkdirSync(path.join(f.root, 'app/assets'), {recursive: true});
+  const destination = path.join(f.root, 'app/assets/message.txt');
+  fs.symlinkSync(path.join(f.root, 'outside.txt'), destination);
+  assert.throws(() => f.watcher.poll(), {code: 'DEVELOPMENT_OUTPUT'});
+  assert.equal(f.exists('app/service/first.js'), false);
+  assert.equal(f.read('outside.txt'), 'untouched');
+  fs.unlinkSync(destination);
+  f.watcher.poll();
+  f.write('app/assets/message.txt', 'user edit');
+  fs.unlinkSync(path.join(f.root, 'src/assets/message.txt'));
+  assert.throws(() => f.watcher.poll(), {code: 'OUTPUT_CHANGED'});
+  assert.equal(f.read('app/assets/message.txt'), 'user edit');
+  assert.equal(f.builds.length, 1);
+  fs.unlinkSync(destination);
+  f.watcher.poll();
+  fs.symlinkSync(path.join(f.root, 'outside.txt'), path.join(f.root, 'src/assets/link.txt'));
+  assert.throws(() => f.watcher.poll(), {code: 'UNSAFE_SOURCE_PATH'});
+  assert.equal(f.read('outside.txt'), 'untouched');
 });
 
 test('semantic errors block all writes and deletion, then recover without stale declarations', t => {

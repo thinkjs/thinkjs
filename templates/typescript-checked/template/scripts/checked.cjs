@@ -4,6 +4,9 @@ const path = require('node:path');
 const Watcher = require('think-ts-helper/development').createWatcher(require('think-watcher/tracked'), require('typescript'));
 const marker = '.thinkjs-checked-output';
 const owner = 'thinkjs-checked-template-v1\n';
+// One explicit source-relative resource policy for staged build and live dev.
+// Add lowercase extensions without dots here, then restart dev.
+const resourceExtensions = Object.freeze(['json', 'txt', 'html', 'bin']);
 
 function stateDirectory(root) {
   const state = path.join(root, '.thinkjs');
@@ -80,7 +83,7 @@ function build(root) {
     fs.writeFileSync(project, JSON.stringify({extends: path.join(root, 'tsconfig.json'),
       compilerOptions: {outDir: stagedOutput}}));
     watcher = new Watcher({root, project, srcPath: path.join(root, 'src'), diffPath: stagedOutput,
-      declarations: {configs: true}}, () => {});
+      declarations: {configs: true}, resourceExtensions}, () => {});
     // Checking and emitting use the same program, with no runtime writes until
     // diagnostics pass. A failed staging build leaves the published app alone.
     watcher.poll();
@@ -106,4 +109,4 @@ function build(root) {
     if (!preserveStage) fs.rmSync(stage, {recursive: true, force: true});
   }
 }
-module.exports = {Watcher, lock, build};
+module.exports = {Watcher, lock, build, resourceExtensions};

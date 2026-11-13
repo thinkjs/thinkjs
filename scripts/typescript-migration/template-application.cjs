@@ -104,8 +104,17 @@ async function main() {
   const service = path.join(project, 'src/service/greeting.ts');
   const source = fs.readFileSync(service, 'utf8');
   const compiled = path.join(project, 'app/service/greeting.js');
+  const resource = path.join(project, 'src/assets/message.txt');
+  const resourceSource = fs.readFileSync(resource, 'utf8');
+  const resourceOutput = path.join(project, 'app/assets/message.txt');
+  const binary = Buffer.from([0, 255, 128, 13, 10]);
+  fs.writeFileSync(path.join(project, 'src/assets/data.bin'), binary);
+  fs.writeFileSync(path.join(project, 'src/assets/settings.json'), '{"raw":true}\r\n');
   run(['run', 'build'], project);
   const built = fs.readFileSync(compiled, 'utf8');
+  assert.equal(fs.readFileSync(resourceOutput, 'utf8'), resourceSource);
+  assert.deepEqual(fs.readFileSync(path.join(project, 'app/assets/data.bin')), binary);
+  assert.equal(fs.readFileSync(path.join(project, 'app/assets/settings.json'), 'utf8'), '{"raw":true}\r\n');
   const tsconfigFile = path.join(project, 'tsconfig.json');
   const tsconfig = json(tsconfigFile);
   writeJson(tsconfigFile, {...tsconfig, compilerOptions: {...tsconfig.compilerOptions, sourceMap: false, inlineSourceMap: true}});
@@ -118,16 +127,22 @@ async function main() {
   const map = json(compiled + '.map');
   assert.equal(path.resolve(path.dirname(compiled), map.sources[0]), service);
   fs.writeFileSync(service, source.replace('return this.text;', 'return 123;'));
+  fs.writeFileSync(resource, 'Must not publish\n');
+  fs.unlinkSync(path.join(project, 'src/assets/data.bin'));
   assert.match(run(['run', 'typecheck'], project, 1), /not assignable/);
   assert.match(run(['run', 'build'], project, 1), /DEVELOPMENT_TYPECHECK/);
   assert.equal(fs.readFileSync(compiled, 'utf8'), built);
+  assert.equal(fs.readFileSync(resourceOutput, 'utf8'), resourceSource);
+  assert.deepEqual(fs.readFileSync(path.join(project, 'app/assets/data.bin')), binary);
   fs.writeFileSync(service, source);
+  fs.writeFileSync(resource, resourceSource);
   const obsolete = path.join(project, 'src/service/obsolete.ts');
   fs.writeFileSync(obsolete, 'export default {value: 1};\n');
   run(['run', 'build'], project);
   fs.unlinkSync(obsolete);
   run(['run', 'build'], project);
   assert.equal(fs.existsSync(path.join(project, 'app/service/obsolete.js')), false);
+  assert.equal(fs.existsSync(path.join(project, 'app/assets/data.bin')), false);
   // Refuse unowned output instead of deleting a user's directory.
   const marker = path.join(project, 'app/.thinkjs-checked-output');
   const owner = fs.readFileSync(marker);
@@ -141,8 +156,8 @@ async function main() {
   await new Promise(resolve => server.close(resolve));
   const config = path.join(project, 'src/config/config.ts');
   fs.writeFileSync(config, fs.readFileSync(config, 'utf8').replace('8360', String(port)));
-  const request = async expected => {
-    const response = await fetch(`http://127.0.0.1:${port}/index/index`, {signal: AbortSignal.timeout(3000)});
+  const request = async (expected, action = 'index') => {
+    const response = await fetch(`http://127.0.0.1:${port}/index/${action}`, {signal: AbortSignal.timeout(3000)});
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), {errno: 0, errmsg: '', data: expected});
   };
@@ -152,14 +167,31 @@ async function main() {
   const dev = launch(project, 'dev.cjs');
   try {
     await eventually(() => request('Hello, ThinkJS'));
+    await request(resourceSource.trim(), 'resource');
     const previous = fs.readFileSync(compiled, 'utf8');
     assert.match(run(['run', 'build'], project, 1), /build\/dev lock already exists/);
     fs.writeFileSync(service, source.replace('return this.text;', 'return 123;'));
+    fs.writeFileSync(resource, 'Updated resource\n');
     await eventually(() => assert.match(dev.output(), /DEVELOPMENT_TYPECHECK/));
     assert.equal(fs.readFileSync(compiled, 'utf8'), previous);
     await request('Hello, ThinkJS');
+    await request(resourceSource.trim(), 'resource');
+    assert.equal(fs.readFileSync(resourceOutput, 'utf8'), resourceSource);
     fs.writeFileSync(service, source.replace('return this.text;', "return this.text + '!';"));
     await eventually(() => request('Hello, ThinkJS!'));
+    await eventually(() => request('Updated resource', 'resource'));
+    // An asset-only edit must reload a worker that read its value once at boot.
+    fs.writeFileSync(resource, 'Resource-only reload\n');
+    await eventually(() => request('Resource-only reload', 'resource'));
+    fs.writeFileSync(path.join(project, 'src/assets/live.bin'), binary);
+    await eventually(() => assert.deepEqual(fs.readFileSync(path.join(project, 'app/assets/live.bin')), binary));
+    fs.renameSync(path.join(project, 'src/assets/live.bin'), path.join(project, 'src/assets/renamed.bin'));
+    await eventually(() => {
+      assert.equal(fs.existsSync(path.join(project, 'app/assets/live.bin')), false);
+      assert.deepEqual(fs.readFileSync(path.join(project, 'app/assets/renamed.bin')), binary);
+    });
+    fs.unlinkSync(path.join(project, 'src/assets/renamed.bin'));
+    await eventually(() => assert.equal(fs.existsSync(path.join(project, 'app/assets/renamed.bin')), false));
   } finally { await dev.stop(); }
   assert.equal(fs.existsSync(path.join(project, '.thinkjs/checked.lock')), false);
   fs.writeFileSync(service, source);
@@ -176,7 +208,10 @@ async function main() {
   for (const name of ['think-ts-helper', 'typescript', 'think-watcher']) assert.throws(() => prodRequire.resolve(name), {code: 'MODULE_NOT_FOUND'});
   for (const dir of ['src', '.thinkjs/types']) assert.equal(fs.existsSync(path.join(production, dir)), false);
   const prod = launch(production, 'start.cjs');
-  try { await eventually(() => request('Hello, ThinkJS')); } finally { await prod.stop(); }
-  log(`Generated template acceptance passed (TypeScript ${manifest.devDependencies.typescript}): portable tarballs, cold typecheck/dev, semantic recovery, build cleanup, production HTTP and shutdown.`);
+  try {
+    await eventually(() => request('Hello, ThinkJS'));
+    await request('Resource-only reload', 'resource');
+  } finally { await prod.stop(); }
+  log(`Generated template acceptance passed (TypeScript ${manifest.devDependencies.typescript}): portable tarballs, cold typecheck/dev, semantic recovery, binary/resource copy/reload/cleanup, production HTTP and shutdown.`);
 }
 main().catch(error => { process.stderr.write(error.stack + '\n'); process.exitCode = 1; }).finally(cleanup);

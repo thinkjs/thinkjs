@@ -515,6 +515,12 @@ emits one complete TypeScript project, tracks JS/map/imported-JSON cleanup, then
 requests one worker reload per successful batch. Checking and emission use the
 same supplied compiler and project, not `transpileModule`.
 
+Set `resourceExtensions` (for example `['json', 'txt', 'bin']`) to copy selected
+non-code files below src while retaining relative paths and binary bytes.
+Resource changes/deletion participate in the checked batch and session cleanup;
+the default empty list retains the TS/imported-JSON path. Imported JSON keeps its
+compiler-owned output. See [selection, safety and limits](../../docs/typescript-migration/p2-resources.md).
+
 See [the setup, supported tsconfig and failure boundaries](../../docs/typescript-migration/p1-checked-development.md).
 Set `APP_PATH` explicitly and do not run a parallel helper/runtime watcher.
 This currently full-compiles on every poll, reusing unchanged parsed syntax,

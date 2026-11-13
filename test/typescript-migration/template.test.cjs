@@ -17,12 +17,14 @@ test('checked template renders through the actual CLI generator with explicit sc
   await render(root);
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json')));
   assert.equal(manifest.private, true);
+  assert.equal(manifest.devDependencies['@types/node'], '14.14.31');
   assert.deepEqual(Object.keys(manifest.scripts), ['prepare-types', 'typecheck', 'dev', 'build', 'start']);
   assert.ok(fs.existsSync(path.join(root, '.gitignore')));
   assert.match(fs.readFileSync(path.join(root, 'src/controller/base.ts'), 'utf8'), /declare service/);
   assert.doesNotMatch(fs.readFileSync(path.join(root, 'start.cjs'), 'utf8'), /helper|typescript|watcher|checked/);
   const config = JSON.parse(fs.readFileSync(path.join(root, 'tsconfig.json')));
   assert.equal(config.compilerOptions.strict, true);
+  assert.deepEqual(config.compilerOptions.types, ['node']);
   assert.ok(config.include.includes('.thinkjs/types/**/*.d.ts'));
   const packages = collectPackages(manifest);
   for (const name of ['thinkjs', 'think-ts-helper', 'think-watcher', 'think-loader']) assert.ok(packages.has(name));
