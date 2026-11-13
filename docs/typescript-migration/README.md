@@ -1,0 +1,60 @@
+# TypeScript migration: P0 compatibility baseline
+
+This is the first reviewable implementation batch for [#1795](https://github.com/thinkjs/thinkjs/issues/1795), not a completed TypeScript migration. No package implementation, public declaration, dependency version, export shape or publishing behavior changes in this batch.
+
+## Fixed baseline and scope
+
+- Source baseline: [`aa9cdde600db87c332e5c98f704024e1a66788f4`](https://github.com/thinkjs/thinkjs/commit/aa9cdde600db87c332e5c98f704024e1a66788f4).
+- Audit run: 2026-11-13, Linux, Node 24.22.1, pnpm 11.6.0.
+- 73 package directories, 72 unique package names. The workspace root is orchestration, not a library. One template submodule is tracked separately.
+- `think-logger` and `think-logger3` both declare the name `think-logger3`. The inventory preserves directory identity and flags ambiguous edges; it does not delete or rename either package.
+- The declared runtime graph contains `think-loader` ↔ `thinkjs`. Do not turn this into circular TypeScript project references.
+- Existing draft [#1791](https://github.com/thinkjs/thinkjs/pull/1791) is the `think-debounce` pilot. It is not merged into this baseline and is not reapplied here.
+
+## Deliverables
+
+- [Package inventory](packages.json): entry points, declarations, scripts, publication whitelist, direct/reverse workspace candidates, external first-party-looking dependencies and a migration responsibility for every directory.
+- [Dependency graph](dependencies.mmd): runtime/optional versus development/peer edges, with aliases and ambiguous package names identified.
+- [Runtime contracts](runtime-contracts.md): Service, Model, Config and Extend behavior tied to executable fixtures.
+- [Types and toolchain](types-and-toolchain.md): declaration drift, old TS/JS workflows, template boundary and compiler evidence.
+- [ADR 0001](adr-0001-compatibility.md): entry points, type ownership and strict/compat migration decisions.
+- [Validation record](validation.md): commands, results and unresolved service/matrix checks.
+
+## Reproduce
+
+Use the repository-pinned pnpm 11.6.0 and install the unchanged lockfile:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm run audit:typescript-migration
+pnpm run test:typescript-migration
+pnpm run lint:typescript-migration
+pnpm lint
+pnpm test
+```
+
+The audit needs only Node and runs before dependency installation. `test:typescript-migration` also checks generated inventory drift. The root `test` and `lint` commands explicitly include the new checks, so existing CI executes them. Fixtures deliberately characterize existing behavior; passing them does not mean old declarations are correct.
+
+The audit records *declared candidate edges*, not installed resolution. In particular, a dependency range may select a registry version despite a same-name workspace package. Do not use this graph alone as a build order. The proposed P3/P4 batches describe responsibility, not permission to skip P1/P2 or ignore dependency order. CLI/transpiler workflow integration remains P2 even where full source migration is assigned a later batch.
+
+When the workspace changes, update the audit's explicit classification, regenerate its outputs, and review the diff. Do not silently classify a new package as migrated. Examples and legacy-review packages have explicit treatment but are not assumed safe to publish.
+
+## Corrections to the planning issue
+
+1. **Controller service calls are not Context service calls.** `think.service` and `ctx.service` use the global common default. `controller.service` can infer the current module and reinterpret argument two as a constructor argument unless it equals a registered module name. P1 must model separate call signatures. Changing runtime behavior to fit the original draft would be a separate compatibility decision.
+2. Config supports existing dotted lookup/set syntax, and array merging preserves trailing base elements. Generated types must describe those rules rather than invent flat-only or replacement semantics.
+3. Context/Controller model calls can select an explicit model module while retaining config/cache from the context's module.
+4. Getter/value extension overwrites are descriptor-sensitive. A blanket “last member always wins” type intersection/override model is insufficient.
+
+## Stage gates
+
+| Stage | State after this batch | Next acceptance work |
+| --- | --- | --- |
+| P0 | Executable behavior/dependency/type baseline implemented; external-service and alternate-runtime checks explicitly open | Review the corrected semantics and compatibility ADR; run the recorded independent integration commands |
+| P1 | Not implemented here; existing debounce pilot remains separate | Prototype separate global/Context/Controller service contracts, generate single/multi registries, validate constructors/objects/unknown names with real positive and negative `tsc` cases, model/config context identity and extensions |
+| P2 | Not started | Strict shared build configuration, helper watch/ready/atomic output, CLI templates and clean install → check → dev → build → start |
+| P3 | Not started | Migrate the audited dependency groups without altering CommonJS shapes/deep paths |
+| P4 | Not started | Data/adapters/official ecosystem and remaining generators, with service-backed tests |
+| P5 | Not started | Complete old/new application matrix, performance, package installation and release review |
+
+Do not infer that a stage is complete from an unchecked planning item or a passing transpilation. A broad ecosystem migration has no credible duration estimate until the P1 type/overload and generation experiments pass. This batch does not merge, publish, deprecate packages, or edit the planning issue.
