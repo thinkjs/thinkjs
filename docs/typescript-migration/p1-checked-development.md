@@ -126,7 +126,9 @@ cross-process locks and safe initial cleanup remain open.
 ## Cost and acceptance
 
 This correctness prototype performs a full check and emit-to-memory even on idle
-polls. It does not yet use incremental compiler/watch APIs or dependency caches.
+polls. The [syntax-reuse follow-up](p2-compiler-syntax-cache.md) avoids reparsing
+unchanged source/declaration text. It does not use incremental semantic checks
+or retain module-resolution caches.
 The default interval is 500 ms **after** work completes, not a total latency
 promise. `lastCheckDurationMs` records the latest successful check; `lastBuild`
 contains `durationMs`, `compilerVersion`, emitted files and generator warnings.

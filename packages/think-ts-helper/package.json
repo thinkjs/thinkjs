@@ -10,7 +10,8 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "lint": "eslint index.js config.js controller-extend.js watch.js development.js cli.js test scripts",
-    "benchmark": "node scripts/benchmark.js"
+    "benchmark": "node scripts/benchmark.js",
+    "benchmark:development": "node scripts/benchmark-development.js"
   },
   "engines": {
     "node": ">=20.19.0"

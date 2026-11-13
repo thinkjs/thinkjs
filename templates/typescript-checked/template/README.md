@@ -69,8 +69,10 @@ Live development writes inherit the coordinator's non-transactional behavior:
 a disk/cleanup error may leave partially changed files without a worker reload.
 Fresh startup rebuilds app, so the watcher's ownership ledger need not persist.
 
-Every poll currently checks/emits the complete project in memory. Large-project
-performance and cross-platform behavior remain unvalidated. This starter does
+Every poll currently checks/emits the complete project in memory, reusing parsed
+syntax only while source text and compiler options match. Synthetic large-project
+measurements are available in the roadmap branch, but they are not an application
+latency guarantee. Incremental checking and cross-platform behavior remain open. This starter does
 not complete P1/P2 or the overall TypeScript migration.
 
 The local creation command currently requires a POSIX host and explicitly rejects

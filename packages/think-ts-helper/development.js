@@ -45,6 +45,59 @@ function createWatcher(TrackedWatcher, ts) {
       this.buildSignature = undefined;
       this.dirty = false;
       this.staged = undefined;
+      this.compilerSources = new Map();
+      this.compilerOptionsKey = undefined;
+    }
+
+    close() {
+      super.close();
+      // Do not retain a project's parsed libraries after its watch session ends.
+      this.compilerSources.clear();
+      this.compilerOptionsKey = undefined;
+    }
+
+    program(files, options) {
+      const key = JSON.stringify(options);
+      const previous = key === this.compilerOptionsKey ? this.compilerSources : new Map();
+      const next = new Map();
+      const host = ts.createCompilerHost(options);
+      const readFile = host.readFile.bind(host);
+      const getSourceFile = host.getSourceFile.bind(host);
+      const reads = new Map();
+      const stats = {parsed: 0, reused: 0};
+      // Read current text on every poll, including declarations and libraries.
+      // Cache syntax only, never resolution, file existence or semantic results.
+      // A fresh host/program observes new files and changed package.json/paths.
+      host.readFile = file => {
+        if (!reads.has(file)) reads.set(file, readFile(file));
+        return reads.get(file);
+      };
+      host.getSourceFile = (file, version, onError, fresh) => {
+        const parseKey = JSON.stringify(version);
+        let text;
+        try { text = host.readFile(file); }
+        catch (_) { return getSourceFile(file, version, onError, fresh); }
+        const cached = previous.get(file);
+        if (!fresh && cached && cached.parseKey === parseKey && cached.source.text === text) {
+          next.set(file, cached);
+          stats.reused++;
+          return cached.source;
+        }
+        // Let the compiler's own host choose script kind and parser flags.
+        const source = getSourceFile(file, version, onError, fresh);
+        if (source) {
+          next.set(file, {source, parseKey});
+          stats.parsed++;
+        }
+        return source;
+      };
+      const program = ts.createProgram(files, options, host);
+      // Retain only files requested in this program, including on semantic
+      // failure. Removed/renamed/unreferenced files cannot accumulate forever.
+      this.compilerSources = next;
+      this.compilerOptionsKey = key;
+      this.lastCompilerCache = {...stats, retained: next.size};
+      return program;
     }
 
     // The tracked ledger must record the same source snapshot the compiler
@@ -99,7 +152,7 @@ function createWatcher(TrackedWatcher, ts) {
       }
       // noEmit is a convenient standalone typecheck setting. This explicitly
       // opted-in development pipeline checks first and then emits the project.
-      const program = ts.createProgram(parsed.fileNames, {...options, noEmit: false, noEmitOnError: true});
+      const program = this.program(parsed.fileNames, {...options, noEmit: false, noEmitOnError: true});
       this.diagnostics('DEVELOPMENT_TYPECHECK', ts.getPreEmitDiagnostics(program));
       if (!program.getSourceFile(path.join(declarations.output, 'index.d.ts'))) {
         fail('DEVELOPMENT_CONFIG', 'tsconfig must include the generated declaration index.d.ts');
