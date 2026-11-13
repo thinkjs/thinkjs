@@ -22,8 +22,8 @@ function fixture(t, manifests) {
 
 test('real inventory covers every package and records known boundary risks', () => {
   const inventory = buildInventory();
-  assert.equal(inventory.summary.packages, 73);
-  assert.equal(inventory.summary.uniqueNames, 72);
+  assert.equal(inventory.summary.packages, 74);
+  assert.equal(inventory.summary.uniqueNames, 73);
   assert.deepEqual(inventory.duplicateNames, [{name: 'think-logger3', paths: ['packages/think-logger', 'packages/think-logger3']}]);
   assert.deepEqual(inventory.runtimeCycles, [['packages/think-loader', 'packages/thinkjs']]);
   assert.deepEqual(inventory.scope.excludedSubmodules, ['packages/think-cli/default_template']);

@@ -1,0 +1,22 @@
+{
+  "name": "think-ts-helper",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Opt-in Service declaration generator prototype for ThinkJS",
+  "main": "index.js",
+  "bin": {
+    "think-ts-helper": "cli.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "lint": "eslint index.js cli.js test scripts",
+    "benchmark": "node scripts/benchmark.js"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "3.9.10"
+  }
+}

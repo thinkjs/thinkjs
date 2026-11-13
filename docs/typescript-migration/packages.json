@@ -22,13 +22,18 @@
     "baseline": "Fixed planning baseline; manifests reflect current checkout. Generation does not depend on wall-clock time, installed modules or git HEAD."
   },
   "summary": {
-    "packages": 73,
-    "uniqueNames": 72,
+    "packages": 74,
+    "uniqueNames": 73,
     "runtimeEdges": 131,
     "developmentEdges": 7,
     "runtimeCycles": 1
   },
   "batches": [
+    {
+      "id": "P1-service-prototype",
+      "phase": "P1",
+      "responsibility": "Private Service registry generator prototype; complete development integration in P2"
+    },
     {
       "id": "P3-foundations",
       "phase": "P3",
@@ -4777,6 +4782,48 @@
       }
     },
     {
+      "path": "packages/think-ts-helper",
+      "name": "think-ts-helper",
+      "version": "0.0.0",
+      "private": true,
+      "boundary": "first-party",
+      "migration": {
+        "status": "proposed",
+        "phase": "P1",
+        "batch": "P1-service-prototype"
+      },
+      "main": "index.js",
+      "types": null,
+      "typings": null,
+      "bin": {
+        "think-ts-helper": "cli.js"
+      },
+      "files": null,
+      "scripts": {
+        "benchmark": "node scripts/benchmark.js",
+        "lint": "eslint index.js cli.js test scripts",
+        "test": "node --test test/*.test.js"
+      },
+      "dependencies": {
+        "typescript": "3.9.10"
+      },
+      "devDependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "workspaceDependencies": {
+        "runtime": [],
+        "development": [],
+        "optional": [],
+        "peer": []
+      },
+      "reverseWorkspaceDependencies": {
+        "runtime": [],
+        "development": [],
+        "optional": [],
+        "peer": []
+      }
+    },
+    {
       "path": "packages/think-typescript",
       "name": "think-typescript",
       "version": "2.0.0",
@@ -7393,6 +7440,9 @@
     ],
     [
       "packages/think-trace"
+    ],
+    [
+      "packages/think-ts-helper"
     ],
     [
       "packages/think-typescript"
