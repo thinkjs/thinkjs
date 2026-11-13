@@ -49,7 +49,7 @@ module.exports = class Application {
    */
   _watcherCallBack(fileInfo) {
     let transpiler = this.options.transpiler;
-    if (transpiler && fileInfo.event !== 'unlink') {
+    if (transpiler && fileInfo.event !== 'unlink' && fileInfo.event !== 'build') {
       if (!helper.isArray(transpiler)) {
         transpiler = [transpiler];
       }

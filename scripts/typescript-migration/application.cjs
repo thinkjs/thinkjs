@@ -149,7 +149,7 @@ async function exerciseDeclarationWatch(directory, local) {
 }
 
 async function exercise(directory, runtimeWatch = false) {
-  const childEnv = {...env, NODE_ENV: 'production', THINKJS_FIXTURE_WATCH: runtimeWatch ? '1' : '0'};
+  const childEnv = {...env, NODE_ENV: 'production', THINKJS_FIXTURE_WATCH: runtimeWatch === 'checked' ? 'checked' : runtimeWatch ? '1' : '0'};
   delete childEnv.THINK_UNIT_TEST;
   delete childEnv.JEST_WORKER_ID;
   const child = fork(path.join(directory, 'start.cjs'), [], {cwd: directory, env: childEnv,
@@ -161,10 +161,12 @@ async function exercise(directory, runtimeWatch = false) {
   const diagnostics = [];
   const workers = new Set();
   const reloads = [];
+  const checkedDurations = [];
   child.on('message', message => {
     if (message?.type === 'fixture-watch-error') diagnostics.push(message.code);
     if (message?.type === 'fixture-ready') workers.add(message.pid);
     if (message?.type === 'fixture-reload-request') reloads.push(message);
+    if (message?.type === 'fixture-checked-build') checkedDurations.push(message.durationMs);
   });
   const exited = new Promise(resolve => child.once('close', (code, signal) => resolve({code, signal})));
   try {
@@ -189,8 +191,10 @@ async function exercise(directory, runtimeWatch = false) {
     assert.deepEqual(JSON.parse(blocked.body), {errno: 1001, errmsg: 'blocked-by-logic'});
     assert.equal((await request(ready.port, '/admin/missing/index')).status, 404);
     if (runtimeWatch) {
-      await exerciseRuntimeWatch(directory, ready.port, diagnostics, reloads);
+      if (runtimeWatch === 'checked') await exerciseCheckedWatch(directory, ready.port, diagnostics, reloads);
+      else await exerciseRuntimeWatch(directory, ready.port, diagnostics, reloads);
       assert.ok(workers.size > 1, 'Runtime edits must start a new application worker');
+      if (runtimeWatch === 'checked') log('Checked-build durations (ms, initial then updates): ' + checkedDurations.join(', '));
     }
     child.send('fixture-stop');
     const result = await Promise.race([exited, new Promise((resolve, reject) => {
@@ -287,6 +291,75 @@ async function exerciseRuntimeWatch(directory, port, diagnostics, reloads) {
   }
 }
 
+async function exerciseCheckedWatch(directory, port, diagnostics, reloads) {
+  const source = name => path.join(directory, 'src/common/service', name + '.ts');
+  const output = name => path.join(directory, 'app/common/service', name + '.js');
+  const controller = path.join(directory, 'src/admin/controller/checked.ts');
+  const resource = path.join(directory, 'src/common/service/checked-data.json');
+  const resourceOutput = path.join(directory, 'app/common/service/checked-data.json');
+  const configFile = path.join(directory, 'tsconfig.json');
+  const config = fs.readFileSync(configFile, 'utf8');
+  const response = async (name, expected) => eventually(async () => {
+    const result = await request(port, '/admin/checked/index?name=' + name);
+    assert.equal(result.status, 200);
+    assert.deepEqual(JSON.parse(result.body).data, expected);
+  });
+  try {
+    fs.writeFileSync(controller, `export default class CheckedController extends think.Controller {
+      indexAction() {
+        const name: string = this.get('name');
+        try { return this.success(this.service(name)); }
+        catch (error) { return this.success({missing: true}); }
+      }
+    }\n`);
+    fs.writeFileSync(source('checked-original'), 'export default {value: 1};\n');
+    await response('checked-original', {value: 1});
+    const previous = fs.readFileSync(output('checked-original'), 'utf8');
+    const before = reloads.length;
+    fs.writeFileSync(source('checked-original'), 'const value: number = "semantic error"; export default {value};\n');
+    await eventually(() => assert.ok(diagnostics.includes('DEVELOPMENT_TYPECHECK')));
+    assert.equal(fs.readFileSync(output('checked-original'), 'utf8'), previous);
+    assert.equal(reloads.length, before);
+    await response('checked-original', {value: 1});
+    fs.writeFileSync(source('checked-original'), 'export default {value: 2};\n');
+    await response('checked-original', {value: 2});
+    fs.writeFileSync(resource, '{"value":3}');
+    fs.writeFileSync(source('checked-original'), 'import data = require("./checked-data.json"); export default data;\n');
+    await response('checked-original', {value: 3});
+    fs.writeFileSync(resource, '{"value":4}');
+    await response('checked-original', {value: 4});
+    assert.equal(JSON.parse(fs.readFileSync(resourceOutput, 'utf8')).value, 4);
+    fs.writeFileSync(source('checked-original'), 'export default {value: 2};\n');
+    fs.unlinkSync(resource);
+    await response('checked-original', {value: 2});
+    assert.equal(fs.existsSync(resourceOutput), false);
+    const beforeRename = reloads.length;
+    fs.renameSync(source('checked-original'), source('checked-renamed'));
+    await response('checked-renamed', {value: 2});
+    await response('checked-original', {missing: true});
+    assert.equal(reloads.length, beforeRename + 1, 'A complete rename batch requests exactly one reload');
+    assert.equal(fs.existsSync(output('checked-original')), false);
+    assert.equal(fs.existsSync(output('checked-original') + '.map'), false);
+    const declaration = fs.readFileSync(path.join(directory, '.thinkjs/types/service.d.ts'), 'utf8');
+    assert.match(declaration, /checked-renamed/);
+    assert.doesNotMatch(declaration, /checked-original/);
+    const withoutMaps = JSON.parse(config);
+    withoutMaps.compilerOptions.sourceMap = false;
+    fs.writeFileSync(configFile, JSON.stringify(withoutMaps));
+    await eventually(() => assert.equal(fs.existsSync(output('checked-renamed') + '.map'), false));
+    await eventually(() => assert.equal(reloads.length, beforeRename + 2));
+    await response('checked-renamed', {value: 2});
+    fs.unlinkSync(source('checked-renamed'));
+    await response('checked-renamed', {missing: true});
+    assert.equal(fs.existsSync(output('checked-renamed')), false);
+    const local = createRequire(path.join(directory, 'package.json'));
+    run(process.execPath, [local.resolve('typescript/bin/tsc'), '--noEmit', '--pretty', 'false'], directory);
+  } finally {
+    fs.writeFileSync(configFile, config);
+    for (const file of [source('checked-original'), source('checked-renamed'), resource, controller]) fs.rmSync(file, {force: true});
+  }
+}
+
 async function main() {
   fs.mkdirSync(tarballs);
   fs.cpSync(fixture, consumer, {recursive: true});
@@ -363,6 +436,9 @@ async function main() {
   log('Development install: real master/worker startup and three HTTP routes passed');
   await exercise(consumer, true);
   log('Tracked runtime watch: live add/edit/rename/delete, syntax recovery, ownership refusal and worker reload passed');
+  run(process.execPath, ['build.cjs'], consumer);
+  await exercise(consumer, 'checked');
+  log('Checked development watch: semantic failure blocked all emits/reloads; batch rename/delete, JSON and compiler-option changes passed');
   run(process.execPath, ['build.cjs'], consumer);
 
   // A second real install gets runtime dependencies only. Copying node_modules,

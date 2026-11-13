@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "node --test test/*.test.js",
-    "lint": "eslint index.js config.js controller-extend.js watch.js cli.js test scripts",
+    "lint": "eslint index.js config.js controller-extend.js watch.js development.js cli.js test scripts",
     "benchmark": "node scripts/benchmark.js"
   },
   "engines": {

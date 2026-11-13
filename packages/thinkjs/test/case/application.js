@@ -321,3 +321,12 @@ test('initial watcher failure retains a closed instance and its output ledger fo
   t.assert.strictEqual(created, 1);
   t.assert.strictEqual(retained.closed, false);
 });
+
+test('completed development builds reload once without invoking the per-file transpiler', t => {
+  const App = getApplication();
+  const app = new App({ROOT_PATH: __dirname, transpiler() { throw new Error('must not transpile a build event'); }});
+  let reloads = 0;
+  app.masterInstance = {forceReloadWorkers() { reloads++; }};
+  app._watcherCallBack({event: 'build', files: ['app/service/example.js']});
+  t.assert.strictEqual(reloads, 1);
+});

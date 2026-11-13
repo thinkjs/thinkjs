@@ -506,3 +506,17 @@ Boundaries:
   outside this prototype.
 
 This does not complete P1 or provide automatic typing for all Extend targets.
+
+## Checked development prototype
+
+`require('think-ts-helper/development').createWatcher(TrackedWatcher, typescript)`
+provides an opt-in Application watcher that generates declarations, checks and
+emits one complete TypeScript project, tracks JS/map/imported-JSON cleanup, then
+requests one worker reload per successful batch. Checking and emission use the
+same supplied compiler and project, not `transpileModule`.
+
+See [the setup, supported tsconfig and failure boundaries](../../docs/typescript-migration/p1-checked-development.md).
+Set `APP_PATH` explicitly and do not run a parallel helper/runtime watcher.
+This currently full-compiles on every poll and is not transactional output
+publication. It remains a private correctness prototype, not a new CLI template
+or a declaration that the P1/P2 development workflow is complete.
