@@ -199,7 +199,19 @@ function render(options = {}) {
     files['index.d.ts'] = lines.join('\n') + '\n';
     files['manifest.json'] = JSON.stringify(manifest, null, 2) + '\n';
   }
-  return {root, output, files, manifest};
+  let diagnostics = [];
+  if (options.controllerExtends) {
+    const extensions = require('./controller-extend').generateControllerExtends({root, source, output, multi, header: HEADER});
+    manifest.controllerExtends = extensions.manifest;
+    files['controller-extend.d.ts'] = extensions.declaration;
+    const constraint = options.models && options.configs ? ' extends ModelHost & ConfigHost' : options.models ? ' extends ModelHost' : options.configs ? ' extends ConfigHost' : '';
+    files['index.d.ts'] += "import { ControllerExtends } from './controller-extend';\n" +
+      "export { ControllerExtension, ControllerExtends } from './controller-extend';\n" +
+      `export type AppExtendedController<T${constraint}, M extends string = string> = ControllerExtends<AppController<T, M>>;\n`;
+    files['manifest.json'] = JSON.stringify(manifest, null, 2) + '\n';
+    diagnostics = extensions.diagnostics;
+  }
+  return {root, output, files, manifest, diagnostics};
 }
 
 function owned(name, content) {
@@ -226,7 +238,7 @@ function generate(options = {}) {
   // Disabling an opt-in must not leave ambient registries in tsconfig's glob.
   // Remove only exact files owned by the previous manifest.
   const removed = [];
-  for (const [option, filename] of [['models', 'model.d.ts'], ['configs', 'config.d.ts']]) {
+  for (const [option, filename] of [['models', 'model.d.ts'], ['configs', 'config.d.ts'], ['controllerExtends', 'controller-extend.d.ts']]) {
     if (options[option]) continue;
     let previous;
     try { previous = JSON.parse(fs.readFileSync(path.join(result.output, 'manifest.json'), 'utf8')); } catch (error) {

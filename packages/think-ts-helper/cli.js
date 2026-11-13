@@ -5,12 +5,13 @@ const {generate} = require('./index');
 
 function main(args) {
   const command = args.shift();
-  if (!['generate', 'check'].includes(command)) throw new Error('Usage: think-ts-helper generate|check [root] [--source-dir src] [--out-dir .thinkjs/types] [--models] [--configs]');
+  if (!['generate', 'check'].includes(command)) throw new Error('Usage: think-ts-helper generate|check [root] [--source-dir src] [--out-dir .thinkjs/types] [--models] [--configs] [--controller-extends]');
   const options = {check: command === 'check'};
   while (args.length) {
     const arg = args.shift();
     if (arg === '--models') options.models = true;
     else if (arg === '--configs') options.configs = true;
+    else if (arg === '--controller-extends') options.controllerExtends = true;
     else if (arg === '--source-dir' || arg === '--out-dir') {
       const value = args.shift();
       if (!value || value.startsWith('--')) throw new Error(`Missing value for ${arg}`);
@@ -19,6 +20,7 @@ function main(args) {
     else options.root = arg;
   }
   const result = generate(options);
+  for (const diagnostic of result.diagnostics) process.stderr.write(`${diagnostic.code}: ${diagnostic.message}\n`);
   process.stdout.write(`${command}: ${result.changed.length ? result.changed.join(', ') : 'up to date'}\n`);
   if (options.check && result.changed.length) process.exitCode = 1;
 }
