@@ -175,7 +175,12 @@ augments `think-config/config-types`, and composes Config into the generated
 application views. It can be combined with `--models`; each option is independent.
 Use the same options with `check`. Keep `thinkjs` installed in the application:
 the helper resolves and reads that installation's actual system config without
-executing it. This is a bounded static-object prototype, not general evaluation
+executing it. With strict dependency isolation (for example pnpm), also declare
+`think-config` as a direct build dependency: the generated declarations import
+`think-config/config-types`, which cannot rely on transitive package visibility.
+Use the version containing this new type-only subpath. See the
+[installed-application acceptance gate](../../docs/typescript-migration/p1-installed-application.md)
+for tarball consumption before publication. This is a bounded static-object prototype, not general evaluation
 of arbitrary config code.
 
 ```sh
