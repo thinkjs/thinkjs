@@ -304,7 +304,9 @@ test('original and migrated implementations agree against real filesystem operat
     const access = await store.has('nested/value');
     await store.set('empty', ''); assert.equal(await store.get('empty'), '');
     await store.set('bytes', new Uint16Array([65]));
-    assert.equal(fs.statSync(path.join(store.storePath, 'bytes')).size, 2);
+    await store.append('bytes', new Uint16Array([66]));
+    await store.append('bytes', new DataView(new ArrayBuffer(2)));
+    assert.equal(fs.statSync(path.join(store.storePath, 'bytes')).size, 6);
     await store.delete('nested/value'); await store.delete('nested/value');
     assert.equal(await store.get('nested/value'), undefined);
     await assert.rejects(store.has('nested/value'), {code: 'ENOENT'});

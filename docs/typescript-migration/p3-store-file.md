@@ -49,7 +49,7 @@ signatures now describe actual outcomes:
 - `delete`, `append`, `has`: `Promise<void>`. `has` resolves on access and rejects
   on failure; it does not return an existence boolean.
 - `info`: `Promise<fs.Stats | undefined>`.
-- `append` accepts strings and Uint8Array/Buffer. `storePath` is a mutable string.
+- `append` accepts strings and ArrayBuffer views, including Buffer. `storePath` is a mutable string.
 
 Code that depended on the old `any` returns may need missing-value checks or
 corrections. Consumers supply Node declarations compatible with their compiler.

@@ -15,7 +15,7 @@ const readFile = helper.promisify(fs.readFile, fs) as
   (file: string, options: {encoding: 'utf8'}) => Promise<string>;
 const writeFile = helper.promisify(fs.writeFile, fs) as (file: string, content: string | ArrayBufferView) => Promise<void>;
 const unlink = helper.promisify(fs.unlink, fs) as (file: string) => Promise<void>;
-const appendFile = helper.promisify(fs.appendFile, fs) as (file: string, content: string | Uint8Array) => Promise<void>;
+const appendFile = helper.promisify(fs.appendFile, fs) as (file: string, content: string | ArrayBufferView) => Promise<void>;
 const access = helper.promisify(fs.access, fs) as (file: string, mode: number) => Promise<void>;
 const stat = helper.promisify(fs.stat, fs) as (file: string) => Promise<fs.Stats>;
 
@@ -117,7 +117,7 @@ class FileStore {
      * @param  {String | Buffer} data [String or Buffer data]
      * @return {Promise}     []
      */
-  append(relativePath: string, data: string | Uint8Array): Promise<void> {
+  append(relativePath: string, data: string | ArrayBufferView): Promise<void> {
     const filePath = this[getFilePath](relativePath);
     if (!helper.isFile(filePath)) {
       return Promise.resolve() as Promise<undefined>;

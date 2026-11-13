@@ -13,6 +13,8 @@ store.set('file', Buffer.from('buffer'));
 store.set('file', new Uint16Array([1, 2]));
 store.set('file', new DataView(new ArrayBuffer(4)));
 const append: Promise<void> = store.append('file', Buffer.from('more'));
+store.append('file', new Uint16Array([1, 2]));
+store.append('file', new DataView(new ArrayBuffer(4)));
 const remove: Promise<void> = store.delete('file');
 const access: Promise<void> = store.has('file');
 const info: Promise<Stats | undefined> = store.info('file');
@@ -25,7 +27,7 @@ new FileStore(42);
 store.get();
 // @ts-expect-error Content must be supported by filesystem writes.
 store.set('file', {});
-// @ts-expect-error Append accepts text or Uint8Array/Buffer, not arbitrary arrays.
+// @ts-expect-error Append accepts text or ArrayBuffer views, not arbitrary arrays.
 store.append('file', [1, 2]);
 // @ts-expect-error has resolves undefined, not an existence boolean.
 const existence: Promise<boolean> = store.has('file');
