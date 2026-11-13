@@ -4,16 +4,21 @@
   "version": "1.0.0",
   "packageManager": "pnpm@11.6.0",
   "scripts": {
-    "test": "pnpm -r --if-present --filter './packages/**' --filter '!think-cache-memcache' --filter '!think-memcache' --filter '!think-mongo' test",
+    "test": "pnpm run test:typescript-build && pnpm -r --if-present --filter './packages/**' --filter '!think-cache-memcache' --filter '!think-memcache' --filter '!think-mongo' test",
     "coverage": "c8 pnpm test",
-    "lint": "pnpm -r --if-present --filter './packages/**' lint"
+    "lint": "pnpm run lint:typescript-build && pnpm run lint:typescript && pnpm -r --if-present --filter './packages/**' lint",
+    "test:typescript-build": "node --test --test-concurrency=1 test/typescript-build/*.test.cjs",
+    "lint:typescript-build": "eslint test/typescript-build/*.cjs eslint.typescript.config.cjs",
+    "lint:typescript": "eslint --config eslint.typescript.config.cjs \"packages/*/src/**/*.ts\" --no-error-on-unmatched-pattern"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "c8": "^12.0.0",
     "eslint": "^10.8.0",
     "globals": "^17.9.0",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.2"
   },
   "engines": {
     "node": ">=20.19.0"
