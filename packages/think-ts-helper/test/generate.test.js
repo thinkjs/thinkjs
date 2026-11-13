@@ -142,3 +142,109 @@ test('ignores dependency services and rejects output/source overlap and output s
   fs.symlinkSync(path.join(root, 'destination'), path.join(root, 'linked'), 'dir');
   assert.throws(() => generate({root, outDir: 'linked/types'}), {code: 'UNSAFE_OUTPUT'});
 });
+
+test('Model generation is explicit, deterministic, non-executing, and preserves source references', t => {
+  const {root, write} = fixture(t);
+  write('src/service/service.ts');
+  write('src/model/side-effect.js', 'throw new Error("never execute models"); module.exports = class Model {};');
+  write('src/model/nested/item.ts', 'class Item {} export = Item;');
+  write('src/model/default.ts', 'export default class Model {}');
+  const plain = generate({root});
+  assert.equal(plain.manifest.models, undefined);
+  assert.equal(plain.files['model.d.ts'], undefined);
+  assert.doesNotMatch(plain.files['index.d.ts'], /think-model/);
+  const first = generate({root, models: true});
+  assert.deepEqual(Object.keys(first.manifest.models.__single__), ['default', 'nested/item', 'side-effect']);
+  assert.match(first.files['model.d.ts'], /"default": typeof import\([^\n]+\)\.default;/);
+  assert.match(first.files['model.d.ts'], /"nested\/item": typeof import\([^\n]+\);/);
+  assert.match(first.files['model.d.ts'], /"side-effect": typeof import\([^\n]+\);/);
+  assert.match(first.files['index.d.ts'], /AppContext<T extends ModelHost, M extends string = string>/);
+  assert.deepEqual(generate({root, models: true}).changed, []);
+  fs.renameSync(path.join(root, 'src/model/default.ts'), path.join(root, 'src/model/renamed.ts'));
+  fs.unlinkSync(path.join(root, 'src/model/nested/item.ts'));
+  const stale = generate({root, models: true, check: true});
+  assert.ok(stale.changed.includes('model.d.ts'));
+  assert.match(fs.readFileSync(path.join(root, '.thinkjs/types/model.d.ts'), 'utf8'), /"default":/);
+  const updated = generate({root, models: true});
+  assert.deepEqual(Object.keys(updated.manifest.models.__single__), ['renamed', 'side-effect']);
+  write('.thinkjs/types/user.d.ts', '// preserve');
+  assert.ok(generate({root, check: true}).removed.includes('model.d.ts'));
+  assert.equal(fs.existsSync(path.join(root, '.thinkjs/types/model.d.ts')), true);
+  const disabled = generate({root});
+  assert.deepEqual(disabled.removed, ['model.d.ts']);
+  assert.equal(fs.existsSync(path.join(root, '.thinkjs/types/model.d.ts')), false);
+  assert.equal(fs.readFileSync(path.join(root, '.thinkjs/types/user.d.ts'), 'utf8'), '// preserve');
+  assert.deepEqual(disabled.files, plain.files, 'disabling returns to the exact service-only outputs');
+});
+
+test('Model common inheritance and override maps follow the loader', t => {
+  const {root, write} = fixture(t);
+  write('src/common/config/config.ts');
+  write('src/common/model/shared.ts');
+  write('src/common/model/nested/item.ts');
+  write('src/admin/model/shared.js');
+  fs.mkdirSync(path.join(root, 'src/empty'));
+  const {manifest} = generate({root, models: true});
+  assert.deepEqual(manifest.models.empty, manifest.models.common);
+  assert.deepEqual(manifest.models.admin, {'nested/item': 'src/common/model/nested/item.ts', shared: 'src/admin/model/shared.js'});
+});
+
+for (const files of [['src/model/a.ts', 'src/model/a.js'], ['src/model/A.ts', 'src/model/a.ts'], ['src/common/config/a.ts', 'src/common/model/A.ts', 'src/admin/model/a.ts']]) {
+  test(`Model collision before any write: ${files.join(', ')}`, t => {
+    const {root, write} = fixture(t);
+    files.forEach(file => write(file));
+    assert.throws(() => generate({root, models: true}), {code: 'MODEL_COLLISION'});
+    assert.equal(fs.existsSync(path.join(root, '.thinkjs')), false);
+  });
+}
+
+test('Model outputs preserve ownership on enable/disable and never follow symlinks', t => {
+  const {root, write} = fixture(t);
+  write('src/model/a.ts');
+  write('.thinkjs/types/model.d.ts', '// user registry');
+  assert.throws(() => generate({root, models: true}), {code: 'UNOWNED_OUTPUT'});
+  assert.equal(fs.existsSync(path.join(root, '.thinkjs/types/service.d.ts')), false);
+  fs.unlinkSync(path.join(root, '.thinkjs/types/model.d.ts'));
+  generate({root, models: true});
+  const before = fs.readFileSync(path.join(root, '.thinkjs/types/index.d.ts'), 'utf8');
+  write('.thinkjs/types/model.d.ts', '// user replacement');
+  assert.throws(() => generate({root}), {code: 'UNOWNED_OUTPUT'});
+  assert.equal(fs.readFileSync(path.join(root, '.thinkjs/types/index.d.ts'), 'utf8'), before);
+  fs.unlinkSync(path.join(root, '.thinkjs/types/model.d.ts'));
+  fs.symlinkSync(path.join(root, 'src/model/a.ts'), path.join(root, '.thinkjs/types/model.d.ts'));
+  assert.throws(() => generate({root}), {code: 'UNSAFE_OUTPUT'});
+  fs.symlinkSync(path.join(root, 'src/model/a.ts'), path.join(root, 'src/model/b.ts'));
+  assert.throws(() => generate({root, models: true}), {code: 'UNSUPPORTED_SYMLINK'});
+});
+
+test('CLI --models enables generation and read-only drift checks', t => {
+  const {root, write} = fixture(t);
+  const cli = (...args) => spawnSync(process.execPath, [path.resolve(__dirname, '../cli.js'), ...args], {encoding: 'utf8'});
+  write('src/model/a.ts');
+  assert.equal(cli('check', root, '--models').status, 1);
+  assert.equal(cli('generate', '--models', root).status, 0);
+  assert.equal(cli('check', root, '--models').status, 0);
+  write('src/model/b.ts');
+  assert.equal(cli('check', root, '--models').status, 1);
+  assert.doesNotMatch(fs.readFileSync(path.join(root, '.thinkjs/types/model.d.ts'), 'utf8'), /"b":/);
+  assert.equal(cli('generate', root).status, 0);
+  assert.equal(fs.existsSync(path.join(root, '.thinkjs/types/model.d.ts')), false);
+});
+
+for (const file of ['src/model/__proto__.ts', 'src/__proto__/model/item.ts']) {
+  test(`rejects prototype-mutating Model layout: ${file}`, t => {
+    const {root, write} = fixture(t);
+    write(file);
+    if (file.startsWith('src/__proto__/')) write('src/common/config/config.ts');
+    assert.throws(() => generate({root, models: true}), {code: 'MODEL_RESERVED_NAME'});
+    assert.equal(fs.existsSync(path.join(root, '.thinkjs')), false);
+  });
+}
+
+test('without Model opt-in, unsupported model sources do not affect service generation', t => {
+  const {root, write} = fixture(t);
+  write('src/service/valid.ts');
+  write('src/model/dynamic.js', 'if (true) module.exports = {};');
+  assert.doesNotThrow(() => generate({root}));
+  assert.throws(() => generate({root, models: true}), {code: 'UNSUPPORTED_EXPORT'});
+});
