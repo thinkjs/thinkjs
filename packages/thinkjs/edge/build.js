@@ -1,4 +1,4 @@
-import {readdir, stat, mkdir} from 'node:fs/promises';
+import {readdir, stat, mkdir, readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {builtinModules} from 'node:module';
@@ -146,7 +146,9 @@ export async function buildEdge({
   const middlewareConfig = await find(configFolder, 'middleware');
   if (middlewareConfig !== '{}')
     expressions.push(`middlewares: ${middlewareConfig}`);
-  expressions.push(`extensions: extensions(${await find(configFolder, 'extend')}, ${await map(path.join(common, 'extend'))})`);
+  expressions.push(
+    `extensions: extensions(${await find(configFolder, 'extend')}, ${await map(path.join(common, 'extend'))})`
+  );
   expressions.push(`validators: ${await find(configFolder, 'validator')}`);
   const bootstraps = [];
   for (const file of await files(path.join(common, 'bootstrap'))) {
@@ -157,7 +159,7 @@ export async function buildEdge({
   }
   expressions.push(`bootstrap: [${bootstraps.join(',\n')}]`);
   const source = `${imports.join('\n')}
-import {helper} from ${JSON.stringify(path.join(directory, 'shared.generated.js'))};
+import helper from 'think-helper/pure.js';
 const merge = helper.extend;
 function unwrap(value) {
   return value.default ?? value;
@@ -188,10 +190,10 @@ modules: ${JSON.stringify(modules)},
 ${expressions.join(',\n')}
 };`;
   // The manifest is loaded after the global think base classes are installed.
-  const entry = `import {createApp, installGlobal} from ${JSON.stringify(path.join(directory, 'index.js'))};
+  const entry = `import {Application, installGlobal} from ${JSON.stringify(path.join(directory, 'index.js'))};
 installGlobal();
 const manifest = await import('thinkjs-edge-manifest');
-const app = createApp(manifest.default, ${JSON.stringify({...options, env})});
+const app = new Application({...${JSON.stringify({...options, env})}, runtime: 'edge', manifest: manifest.default}).run();
 export default {fetch: (request, env, context) => app.fetch(request, env, context)};
 `;
   await mkdir(path.dirname(outfile), {recursive: true});
@@ -213,13 +215,38 @@ export default {fetch: (request, env, context) => app.fetch(request, env, contex
       {
         name: 'thinkjs-edge-boundary',
         setup(builder) {
+          builder.onLoad(
+            {filter: /[/\\]lodash\.merge[/\\]index\.js$/},
+            async (args) => {
+              const source = await readFile(args.path, 'utf8');
+              const contents = source
+                .replace(
+                  "var root = freeGlobal || freeSelf || Function('return this')();",
+                  'var root = globalThis;'
+                )
+                .replace(
+                  /var nodeUtil = \(function\(\) \{[\s\S]*?\}\(\)\);/,
+                  'var nodeUtil;'
+                );
+              if (
+                contents.includes("Function('return this')") ||
+                contents.includes("require('util')")
+              ) {
+                throw new Error(
+                  'Unsupported lodash.merge version: review the edge adaptation'
+                );
+              }
+              return {contents, loader: 'js'};
+            }
+          );
+
           builder.onResolve({filter: /^thinkjs-edge-manifest$/}, () => ({
             path: 'manifest',
             namespace: 'thinkjs-edge'
           }));
           builder.onLoad({filter: /.*/, namespace: 'thinkjs-edge'}, () => ({
             contents: source,
-            resolveDir: appPath,
+            resolveDir: directory,
             loader: 'js'
           }));
           builder.onResolve({filter: /.*/}, (args) => {
@@ -235,13 +262,7 @@ export default {fetch: (request, env, context) => app.fetch(request, env, contex
             if (args.path === 'thinkjs/edge')
               return {path: path.join(directory, 'index.js')};
             if (args.path === 'thinkjs')
-              return {
-                errors: [
-                  {
-                    text: `Use thinkjs/edge instead of the Node.js entry in ${args.importer}`
-                  }
-                ]
-              };
+              return {path: path.join(directory, '../lib/application.js')};
           });
         }
       }

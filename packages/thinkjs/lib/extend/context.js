@@ -1,256 +1,16 @@
 const helper = require('think-helper');
 const assert = require('assert');
 const Cookies = require('cookies');
-const {URL} = require('url');
 
-const PARAM = Symbol('context-param');
-const POST = Symbol('context-post');
-const FILE = Symbol('context-file');
 const COOKIE_STORE = Symbol('cookie-store');
 const path = require('path');
 const fs = require('fs');
 const onFinished = require('on-finished');
 const destroy = require('destroy');
 
-/**
- * extend context
- */
-module.exports = {
-  /**
-   * get userAgent header
-   */
-  get userAgent() {
-    return this.header['user-agent'];
-  },
-  /**
-   * is get request
-   */
-  get isGet() {
-    return this.method === 'GET';
-  },
-  /**
-   * is post request
-   */
-  get isPost() {
-    return this.method === 'POST';
-  },
-  /**
-   * is command line invoke
-   */
-  get isCli() {
-    return this.method === 'CLI';
-  },
-  /**
-   * get referer header
-   */
-  referer(onlyHost) {
-    return this.referrer(onlyHost);
-  },
-  /**
-   * get referer header
-   */
-  referrer(onlyHost) {
-    const referrer = this.header['referer'];
-    if (!referrer || !onlyHost) return referrer;
-    try {
-      return new URL(referrer).hostname;
-    } catch (e) {}
-  },
-  /**
-   * is method
-   */
-  isMethod(method) {
-    return this.method === method.toUpperCase();
-  },
-  /**
-   * is ajax request
-   */
-  isAjax(method) {
-    if (method && !this.isMethod(method)) return false;
-    return this.header['x-requested-with'] === 'XMLHttpRequest';
-  },
-  /**
-   * is jsonp request
-   */
-  isJsonp(callbackField = this.config('jsonpCallbackField')) {
-    return !!this.param(callbackField);
-  },
-  /**
-   * send jsonp data
-   */
-  jsonp(data, callbackField = this.config('jsonpCallbackField')) {
-    let field = this.param(callbackField);
-    // remove unsafe chars
-    field = (field || '').replace(/[^\w.]/g, '');
-    if (field) {
-      data = `${field}(${JSON.stringify(data)})`;
-    }
-    this.type = this.config('jsonpContentType');
-    this.body = data;
-    return false;
-  },
-  /**
-   * send json data
-   */
-  json(data) {
-    this.type = this.config('jsonContentType');
-    this.body = data;
-    return false;
-  },
-  /**
-   * send success data
-   */
-  success(data = '', message = '') {
-    const obj = {
-      [this.config('errnoField')]: 0,
-      [this.config('errmsgField')]: message,
-      data
-    };
-    this.type = this.config('jsonContentType');
-    this.body = obj;
-    return false;
-  },
-  /**
-   * send fail data
-   */
-  fail(errno, errmsg = '', data = '') {
-    let obj;
-    if (helper.isObject(errno)) {
-      obj = errno;
-    } else {
-      if (/^[A-Z_]+$/.test(errno)) {
-        const messages = think.app.validators.messages || {};
-        const msg = messages[errno];
-        if (think.isArray(msg)) {
-          [errno, errmsg] = msg;
-        }
-      }
-      if (!think.isNumber(errno)) {
-        [data, errmsg, errno] = [errmsg, errno, this.config('defaultErrno')];
-      }
-      obj = {
-        [this.config('errnoField')]: errno,
-        [this.config('errmsgField')]: errmsg
-      };
-      if (data) {
-        obj.data = data;
-      }
-    }
-    this.type = this.config('jsonContentType');
-    this.body = obj;
-    return false;
-  },
-  /**
-   * set expires header
-   */
-  expires(time) {
-    time = helper.ms(time);
-    const date = new Date(Date.now() + time);
-    this.set('Cache-Control', `max-age=${time}`);
-    this.set('Expires', date.toUTCString());
-  },
-  /**
-   * get or set configs
-   * @param {String} name
-   * @param {Mixed} value
-   * @param {String} m
-   */
-  config(name, value, m = this.module) {
-    return think.config(name, value, m);
-  },
-  /**
-   * get or set query data
-   * `query` or `get` is already used in koa
-   * @param {String} name
-   * @param {Mixed} value
-   */
-  param(name, value) {
-    if (!this[PARAM]) {
-      this[PARAM] = Object.assign({}, this.request._query || this.request.query);
-      this.app.emit('filterParam', this[PARAM]);
-    }
-    if (!name) return this[PARAM];
-    if (helper.isObject(name)) {
-      this[PARAM] = Object.assign(this[PARAM], name);
-      return this;
-    }
-    if (value === undefined) {
-      // this.param('a,b')
-      if (helper.isString(name) && name.indexOf(',') > -1) {
-        name = name.split(/\s*,\s*/);
-      }
-      if (helper.isArray(name)) {
-        const value = {};
-        name.forEach(item => {
-          const val = this[PARAM][item];
-          if (val !== undefined) {
-            value[item] = val;
-          }
-        });
-        return value;
-      }
-      return this[PARAM][name];
-    }
-    this[PARAM][name] = value;
-    return this;
-  },
-  /**
-   * get or set post data
-   * @param {String} name
-   * @param {Mixed} value
-   */
-  post(name, value) {
-    if (!this[POST]) {
-      const json = this.request.body && this.request.body.post;
-      this[POST] = think.isArray(json) ? Array.from(json) : Object.assign({}, json);
-      this.app.emit('filterParam', this[POST]);
-    }
-    if (!name) return this[POST];
-    if (helper.isObject(name)) {
-      this[POST] = Object.assign(this[POST], name);
-      return this;
-    }
-    if (value === undefined) {
-      // this.param('a,b')
-      if (helper.isString(name) && name.indexOf(',') > -1) {
-        name = name.split(/\s*,\s*/);
-      }
-      if (helper.isArray(name)) {
-        const value = {};
-        name.forEach(item => {
-          const val = this[POST][item];
-          if (val !== undefined) {
-            value[item] = val;
-          }
-        });
-        return value;
-      }
-      return this[POST][name];
-    }
-    this[POST][name] = value;
-    return this;
-  },
-  /**
-   * get or set file data
-   * @param {String} name
-   * @param {Mixed} value
-   */
-  file(name, value) {
-    if (!this[FILE]) {
-      this[FILE] = Object.assign({}, this.request.body && this.request.body.file);
-    }
-    if (!name) return this[FILE];
-    if (helper.isObject(name)) {
-      this[FILE] = Object.assign(this[FILE], name);
-      return this;
-    }
-    if (value === undefined) {
-      return this[FILE][name];
-    }
-    this[FILE][name] = value;
-    return this;
-  },
-  /**
+const context = require('../core/context');
+
+module.exports = Object.defineProperties({  /**
    * get or set cookie
    * @param {String} name
    * @param {String} value
@@ -288,14 +48,6 @@ module.exports = {
     return instance.set(name, value, options);
   },
   /**
-   * get service
-   * @param {String} name
-   * @param {String} m
-   */
-  service(...args) {
-    return think.service(...args);
-  },
-  /**
    * download
    * @param {String} filepath
    * @param {String} filename
@@ -317,4 +69,4 @@ module.exports = {
     });
     return false;
   }
-};
+}, Object.getOwnPropertyDescriptors(context));

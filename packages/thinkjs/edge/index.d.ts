@@ -127,3 +127,12 @@ export const think: {
 };
 export function installGlobal(): typeof think;
 export function createApp(manifest?: EdgeManifest, options?: EdgeOptions): EdgeApplication;
+
+export class Application {
+  constructor(options: EdgeOptions & {runtime: 'edge'; manifest?: EdgeManifest});
+  options: EdgeOptions & {runtime: 'edge'; manifest?: EdgeManifest};
+  _isRunInEdge(): boolean;
+  runInEdge(): EdgeApplication;
+  run(): EdgeApplication;
+}
+export default Application;

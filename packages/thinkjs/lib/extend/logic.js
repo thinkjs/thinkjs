@@ -1,5 +1,5 @@
 const Validator = require('think-validator');
-const helper = require('think-helper');
+const helper = require('think-helper/pure');
 
 const INVOKED = Symbol('invoked');
 let validatorsRuleAdd = false;

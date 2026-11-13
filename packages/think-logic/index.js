@@ -1,4 +1,4 @@
-const helper = require('think-helper');
+const helper = require('think-helper/pure');
 // const deprecate = require('depd')('logic');
 /**
  * invoke logic

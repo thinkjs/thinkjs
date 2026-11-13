@@ -9,7 +9,7 @@
   "scripts": {
     "test": "eslint index.js && node --test --test-concurrency=1 test/index.js",
     "coverage": "node --test --test-concurrency=1 --experimental-test-coverage test/index.js",
-    "lint": "eslint index.js",
+    "lint": "eslint index.js pure.js assert.js debug.js",
     "lint-fix": "eslint --fix index.js"
   },
   "contributors": [

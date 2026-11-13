@@ -20,6 +20,11 @@ test('same HTTP contract on Node Fetch, Deno and Workers without nodejs_compat',
       appPath: path.join(here, '../../examples/edge/src'),
       outfile
     });
+    const inputs = Object.keys(result.metafile.inputs);
+    assert.ok(inputs.some(file => file.endsWith('lib/core/context.js')));
+    assert.ok(inputs.some(file => file.endsWith('lib/core/think.js')));
+    assert.ok(inputs.some(file => file.endsWith('think-loader/middleware.js')));
+    assert.equal(inputs.some(file => file.endsWith('lib/runtime/node.js') || file.includes('/koa/lib/')), false);
     const start = performance.now();
     const {default: app} = await import(pathToFileURL(outfile));
     const importMs = performance.now() - start;

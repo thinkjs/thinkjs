@@ -62,8 +62,6 @@ jobs:
       - name: Verify edge runtime
         if: matrix.node-version == '24.x'
         run: |
-          pnpm --dir packages/thinkjs run build:edge-runtime
-          git diff --exit-code -- packages/thinkjs/edge/shared.generated.js
           pnpm --dir packages/thinkjs run lint:edge
           pnpm --dir packages/thinkjs run test:edge
 

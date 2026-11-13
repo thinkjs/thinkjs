@@ -1,13 +1,5 @@
-const path = require('path');
-const cluster = require('cluster');
-const helper = require('think-helper');
-const thinkCluster = require('think-cluster');
-const pm2 = require('think-pm2');
-const http = require('http');
-const assert = require('assert');
-const mockHttp = require('think-mock-http');
-
-const ThinkLoader = require('./loader.js');
+const helper = require('think-helper/pure');
+const assert = require('think-helper/assert');
 
 /**
  * applition class
@@ -17,16 +9,19 @@ module.exports = class Application {
    * constructor
    */
   constructor(options = {}) {
+    this.options = options;
+    if (this._isRunInEdge()) return;
+    this.node = require('#thinkjs-node')();
     assert(options.ROOT_PATH, 'options.ROOT_PATH must be set');
     if (!options.APP_PATH) {
-      let appPath = path.join(options.ROOT_PATH, 'app');
-      if (!options.transpiler && !helper.isDirectory(appPath)) {
-        appPath = path.join(options.ROOT_PATH, 'src');
+      let appPath = this.node.path.join(options.ROOT_PATH, 'app');
+      if (!options.transpiler && !this.node.helper.isDirectory(appPath)) {
+        appPath = this.node.path.join(options.ROOT_PATH, 'src');
       }
       options.APP_PATH = appPath;
     }
     if (!options.RUNTIME_PATH) {
-      options.RUNTIME_PATH = path.join(options.ROOT_PATH, 'runtime');
+      options.RUNTIME_PATH = this.node.path.join(options.ROOT_PATH, 'runtime');
     }
     this.options = options;
   }
@@ -80,7 +75,7 @@ module.exports = class Application {
     const Watcher = this.options.watcher;
     if (!Watcher) return;
     const instance = new Watcher({
-      srcPath: path.join(this.options.ROOT_PATH, 'src'),
+      srcPath: this.node.path.join(this.options.ROOT_PATH, 'src'),
       diffPath: this.options.APP_PATH
     }, fileInfo => this._watcherCallBack(fileInfo));
     instance.watch();
@@ -105,7 +100,7 @@ module.exports = class Application {
   _getMasterInstance(argv) {
     const port = argv.port || think.config('port');
     const host = think.config('host');
-    const instance = new thinkCluster.Master({
+    const instance = new this.node.thinkCluster.Master({
       port,
       host,
       sticky: think.config('stickyCluster'),
@@ -137,7 +132,7 @@ module.exports = class Application {
   }
   _getWorkerInstance(argv) {
     const port = argv.port || think.config('port');
-    const instance = new thinkCluster.Worker({
+    const instance = new this.node.thinkCluster.Worker({
       port,
       host: think.config('host'),
       sticky: think.config('stickyCluster'),
@@ -147,7 +142,7 @@ module.exports = class Application {
         if (createServerFn) {
           assert(helper.isFunction(createServerFn), 'config.createServer must be a function');
         }
-        const server = createServerFn ? createServerFn(callback) : http.createServer(callback);
+        const server = createServerFn ? createServerFn(callback) : this.node.http.createServer(callback);
         think.app.server = server;
         return server;
       },
@@ -177,7 +172,7 @@ module.exports = class Application {
    */
   runInCli(argv) {
     think.app.emit('appReady');
-    return mockHttp({
+    return this.node.mockHttp({
       url: argv.path,
       method: 'CLI',
       exitOnEnd: true
@@ -224,14 +219,22 @@ module.exports = class Application {
   /**
    * run
    */
+  _isRunInEdge() {
+    return this.options.runtime === 'edge';
+  }
+  runInEdge() {
+    return require('../edge/runtime.js').run(this);
+  }
   run() {
-    if (pm2.isClusterMode) {
+    if (this._isRunInEdge()) return this.runInEdge();
+    think[Symbol.for('thinkjs.started')] = true;
+    if (this.node.pm2.isClusterMode) {
       throw new Error('can not use pm2 cluster mode, please change exec_mode to fork');
     }
     // start file watcher
-    if (cluster.isMaster) this.startWatcher();
+    if (this.node.cluster.isMaster) this.startWatcher();
 
-    const instance = new ThinkLoader(this.options);
+    const instance = new this.node.ThinkLoader(this.options);
     const argv = this.parseArgv();
     try {
       if (this._isRunInTest()) {
@@ -239,7 +242,7 @@ module.exports = class Application {
       } else if (argv.path) {
         instance.loadAll('worker', true);
         return this.runInCli(argv);
-      } else if (cluster.isMaster) {
+      } else if (this.node.cluster.isMaster) {
         instance.loadAll('master');
         return this.runInMaster(argv);
       } else {
@@ -255,4 +258,9 @@ module.exports = class Application {
 /**
  * global think instance, mostly use in typescript
  */
-module.exports.think = global.think;
+Object.defineProperty(module.exports, 'think', {
+  configurable: true,
+  get() {
+    return globalThis.think || require('#thinkjs-node')().think;
+  }
+});

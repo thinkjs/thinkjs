@@ -4,8 +4,8 @@
 * @Last Modified by:   lushijie
 * @Last Modified time: 2018-10-11 19:14:21
 */
-const assert = require('assert');
-const helper = require('think-helper');
+const assert = require('think-helper/assert');
+const helper = require('think-helper/pure');
 const preRules = require('./rules.js');
 const preErrors = require('./errors.js');
 const METHOD_MAP = require('./method.js');

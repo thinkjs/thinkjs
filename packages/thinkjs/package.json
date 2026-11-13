@@ -14,9 +14,8 @@
     "test-cov": "NODE_ENV=test node --test --test-concurrency=1 --experimental-test-coverage test/case/application.js test/case/extend/context.js test/case/extend/controller.js test/case/extend/logic.js test/case/loader.js test/case/think.js",
     "lint": "eslint ./lib/",
     "prepublish": "pnpm test",
-    "build:edge-runtime": "node edge/prepare.cjs",
     "test:edge": "node --test test/edge/*.test.mjs",
-    "lint:edge": "eslint edge/ --ignore-pattern \"**/shared.generated.js\""
+    "lint:edge": "eslint edge/"
   },
   "contributors": [
     {
@@ -40,7 +39,7 @@
       "email": "quguangyu@gmail.com"
     }
   ],
-  "main": "lib/application.js",
+  "main": "lib/index.js",
   "types": "index.d.ts",
   "dependencies": {
     "cookies": "^0.8.0",
@@ -107,7 +106,7 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "default": "./lib/application.js"
+      "default": "./lib/index.js"
     },
     "./edge": {
       "types": "./edge/index.d.ts",
@@ -120,5 +119,14 @@
     "./lib/*.js": "./lib/*.js",
     "./lib/*": "./lib/*.js",
     "./*": "./*"
+  },
+  "imports": {
+    "#thinkjs-node": {
+      "browser": "./lib/runtime/node-unavailable.js",
+      "default": "./lib/runtime/node.js"
+    }
+  },
+  "browser": {
+    "debug": "think-helper/debug.js"
   }
 }

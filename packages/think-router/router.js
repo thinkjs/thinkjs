@@ -1,7 +1,7 @@
-const helper = require('think-helper');
+const helper = require('think-helper/pure');
 const debug = require('debug')('think-router');
-const querystring = require('querystring');
-const assert = require('assert');
+const querystring = require('./querystring');
+const assert = require('think-helper/assert');
 /**
  *
  * rules = [

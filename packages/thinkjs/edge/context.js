@@ -1,4 +1,3 @@
-import {helper} from './shared.generated.js';
 import {CookieJar} from './cookies.js';
 
 export function parameters(entries) {
@@ -9,31 +8,6 @@ export function parameters(entries) {
       : value;
   }
   return result;
-}
-
-function access(store, name, value, ctx) {
-  if (!name) return store;
-  if (helper.isObject(name)) {
-    for (const key of Object.keys(name)) {
-      if (!['__proto__', 'constructor', 'prototype'].includes(key))
-        store[key] = name[key];
-    }
-    return ctx;
-  }
-  if (value !== undefined) {
-    if (!['__proto__', 'constructor', 'prototype'].includes(name))
-      store[name] = value;
-    return ctx;
-  }
-  if (typeof name === 'string' && name.includes(','))
-    name = name.split(/\s*,\s*/);
-  if (Array.isArray(name))
-    return Object.fromEntries(
-      name
-        .filter((key) => store[key] !== undefined)
-        .map((key) => [key, store[key]])
-    );
-  return store[name];
 }
 
 export class Context {
@@ -59,9 +33,6 @@ export class Context {
       body: {post: {}, file: {}}
     };
     this.response = {get: (name) => this.responseHeaders.get(name) || ''};
-    this._params = null;
-    this._post = null;
-    this._file = null;
     this._body = undefined;
     this.ip = app.options.clientIP ? app.options.clientIP(request, env) : '';
     this.ips = this.ip ? [this.ip] : [];
@@ -97,27 +68,6 @@ export class Context {
     };
     this.set('content-type', types[value] || value);
   }
-  get userAgent() {
-    return this.header['user-agent'];
-  }
-  get isGet() {
-    return this.method === 'GET';
-  }
-  get isPost() {
-    return this.method === 'POST';
-  }
-  get isCli() {
-    return false;
-  }
-  isMethod(method) {
-    return this.method === method.toUpperCase();
-  }
-  isAjax(method) {
-    return (
-      (!method || this.isMethod(method)) &&
-      this.header['x-requested-with'] === 'XMLHttpRequest'
-    );
-  }
   get(name) {
     return this.webRequest.headers.get(name) || '';
   }
@@ -142,91 +92,14 @@ export class Context {
   assert(value, status, message) {
     if (!value) this.throw(status, message);
   }
-  config(name, value, module = this.module) {
-    return this.think.config(name, value, module);
-  }
-  param(name, value) {
-    if (!this._params) {
-      this._params = Object.assign(Object.create(null), this.request.query);
-      this.app.emit('filterParam', this._params);
-    }
-    return access(this._params, name, value, this);
-  }
-  post(name, value) {
-    if (!this._post) {
-      this._post = Array.isArray(this.request.body.post)
-        ? [...this.request.body.post]
-        : Object.assign(Object.create(null), this.request.body.post);
-      this.app.emit('filterParam', this._post);
-    }
-    return access(this._post, name, value, this);
-  }
-  file(name, value) {
-    this._file ||= Object.assign(Object.create(null), this.request.body.file);
-    return access(this._file, name, value, this);
-  }
   cookie(...args) {
     return this.jar.cookie(...args);
-  }
-  json(value) {
-    this.type = this.config('jsonContentType');
-    this.body = value;
-    return false;
-  }
-  success(data = '', message = '') {
-    return this.json({
-      [this.config('errnoField')]: 0,
-      [this.config('errmsgField')]: message,
-      data
-    });
-  }
-  fail(errno, errmsg = '', data = '') {
-    if (helper.isObject(errno)) return this.json(errno);
-    const mapped = this.app.validators.messages?.[errno];
-    if (Array.isArray(mapped)) [errno, errmsg] = mapped;
-    if (typeof errno !== 'number')
-      [data, errmsg, errno] = [errmsg, errno, this.config('defaultErrno')];
-    const result = {
-      [this.config('errnoField')]: errno,
-      [this.config('errmsgField')]: errmsg
-    };
-    if (data) result.data = data;
-    return this.json(result);
   }
   redirect(url, alt) {
     if (url === 'back') url = this.get('referer') || alt || '/';
     this.set('location', url);
     if (![301, 302, 303, 307, 308].includes(this.status)) this.status = 302;
     this.body = `Redirecting to ${url}`;
-  }
-  referer(onlyHost) {
-    const value = this.header.referer;
-    if (!onlyHost) return value;
-    try {
-      return new URL(value).hostname;
-    } catch {
-      return undefined;
-    }
-  }
-  referrer(onlyHost) {
-    return this.referer(onlyHost);
-  }
-  isJsonp(field = this.config('jsonpCallbackField')) {
-    return Boolean(this.param(field));
-  }
-  jsonp(data, field = this.config('jsonpCallbackField')) {
-    const callback = String(this.param(field) || '').replace(/[^\w.]/g, '');
-    this.type = this.config('jsonpContentType');
-    this.body = callback ? `${callback}(${JSON.stringify(data)})` : data;
-    return false;
-  }
-  expires(time) {
-    const duration = helper.ms(time);
-    this.set('cache-control', `max-age=${duration}`);
-    this.set('expires', new Date(Date.now() + duration).toUTCString());
-  }
-  service(...args) {
-    return this.think.service(...args);
   }
   waitUntil(promise) {
     if (!this.executionContext?.waitUntil)

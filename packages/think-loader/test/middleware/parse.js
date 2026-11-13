@@ -5,7 +5,7 @@ var assertCallParams;
 function mockAssert() {
   if (!assertCallParams) {
     assertCallParams = [];
-    mock('assert', (type, desc) => {
+    mock('think-helper/assert', (type, desc) => {
       assertCallParams.push(type, desc);
     });
   } else {
@@ -15,6 +15,7 @@ function mockAssert() {
 }
 
 function getInstance() {
+  mock.reRequire('../../middleware');
   const Middleware = mock.reRequire('../../loader/middleware');
   return new Middleware();
 }
