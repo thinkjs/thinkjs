@@ -130,8 +130,6 @@ class PostgreSQLSocket {
         const endTime = Date.now();
         this.config.logger(`SQL: ${sqlOptions.sql}, Time: ${endTime - startTime}ms`);
       }
-      this.releaseConnection(connection);
-
       if (helper.isError(data)) return Promise.reject(data);
       return data;
     });
@@ -153,31 +151,28 @@ class PostgreSQLSocket {
       }
     }
     const startTime = Date.now();
-    return this.getConnection(connection).then(connection => {
-      // set transaction status to connection
-      if (sqlOptions.transaction) {
-        if (sqlOptions.transaction === TRANSACTION.start) {
-          if (connection.transaction === TRANSACTION.start) return;
-        } else if (sqlOptions.transaction === TRANSACTION.end) {
-          if (connection.transaction !== TRANSACTION.start) {
-            this.releaseConnection(connection);
-            return;
+    return this.getConnection(connection).then(async connection => {
+      try {
+        // set transaction status to connection
+        if (sqlOptions.transaction) {
+          if (sqlOptions.transaction === TRANSACTION.start) {
+            if (connection.transaction === TRANSACTION.start) return;
+          } else if (sqlOptions.transaction === TRANSACTION.end) {
+            if (connection.transaction !== TRANSACTION.start) return;
           }
+          connection.transaction = sqlOptions.transaction;
         }
-        connection.transaction = sqlOptions.transaction;
-      }
 
-      if (sqlOptions.debounce) {
-        const key = JSON.stringify(sqlOptions);
-        return debounceInstance.debounce(key, () => {
-          return this[QUERY](sqlOptions, connection, startTime);
-        }).then(data => {
-          // release connection if debounce patch
-          this.releaseConnection(connection);
-          return data;
-        });
-      } else {
-        return this[QUERY](sqlOptions, connection, startTime);
+        if (sqlOptions.debounce) {
+          const key = JSON.stringify(sqlOptions);
+          return await debounceInstance.debounce(key, () => {
+            return this[QUERY](sqlOptions, connection, startTime);
+          });
+        }
+        return await this[QUERY](sqlOptions, connection, startTime);
+      } finally {
+        // The query and any deduplicated callers each own their own checkout.
+        this.releaseConnection(connection);
       }
     });
   }
