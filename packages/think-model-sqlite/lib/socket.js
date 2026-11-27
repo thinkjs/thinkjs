@@ -1,5 +1,5 @@
 const thinkInstance = require('think-instance');
-const BetterSqlite3 = require('better-sqlite3');
+const {DatabaseSync} = require('node:sqlite');
 const assert = require('assert');
 const helper = require('think-helper');
 const path = require('path');
@@ -23,7 +23,17 @@ const TRANSACTION = {
   end: 2
 };
 
+const DEFAULT_BUSY_TIMEOUT = 5000;
 const SELECT_SQL_RE = /^\s*(SELECT|PRAGMA|WITH|EXPLAIN)\b/i;
+
+function normalizeRow(row) {
+  // Keep ordinary objects, numeric INTEGERs and Buffer BLOBs as in v2.
+  return Object.fromEntries(Object.entries(row).map(([key, value]) => {
+    if (typeof value === 'bigint') value = Number(value);
+    else if (value instanceof Uint8Array) value = Buffer.from(value.buffer, value.byteOffset, value.byteLength);
+    return [key, value];
+  }));
+}
 
 class SQLiteSocket {
   constructor(config = {}) {
@@ -55,13 +65,8 @@ class SQLiteSocket {
     const factory = {
       create: () => {
         return Promise.resolve().then(() => {
-          let timeout = this.config.timeout;
-          const options = {};
-          if (timeout) {
-            timeout = helper.ms(timeout);
-            options.timeout = timeout;
-          }
-          const db = new BetterSqlite3(this.savePath, options);
+          const timeout = this.config.timeout ? helper.ms(this.config.timeout) : DEFAULT_BUSY_TIMEOUT;
+          const db = new DatabaseSync(this.savePath, {timeout});
           if (this.config.logConnect) {
             this.config.logger(`sqlite:${this.savePath}`);
           }
@@ -187,7 +192,9 @@ class SQLiteSocket {
         }
 
         if (SELECT_SQL_RE.test(sqlOptions.sql)) {
-          return stmt.all();
+          // node:sqlite otherwise throws when an INTEGER is outside the safe Number range.
+          stmt.setReadBigInts(true);
+          return stmt.all().map(normalizeRow);
         }
 
         stmt.run();
