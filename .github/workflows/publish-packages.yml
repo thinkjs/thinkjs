@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -34,34 +34,9 @@ jobs:
 
       - name: Find packages with version changes
         id: changed_packages
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          before_sha="${{ github.event.before }}"
-          if [ "$before_sha" = "0000000000000000000000000000000000000000" ]; then
-            before_sha="$(git rev-parse HEAD^)"
-          fi
-
-          changed_files=$(git diff --name-only "$before_sha" "$GITHUB_SHA" -- 'packages/*/package.json' || true)
-          packages=""
-
-          for file in $changed_files; do
-            old_version=$(git show "$before_sha:$file" 2>/dev/null | node -p "try { JSON.parse(require('fs').readFileSync(0, 'utf8')).version || '' } catch { '' }")
-            new_version=$(node -p "try { require('./$file').version || '' } catch { '' }")
-
-            if [ -n "$new_version" ] && [ "$old_version" != "$new_version" ]; then
-              pkg_dir=$(dirname "$file")
-              packages="${packages}${pkg_dir}"$'\n'
-            fi
-          done
-
-          packages=$(printf "%s" "$packages" | sed '/^$/d' | sort -u || true)
-          {
-            echo "packages<<EOF"
-            echo "$packages"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: node .github/scripts/changed-packages.cjs
 
       - name: Install dependencies
         if: ${{ steps.changed_packages.outputs.packages != '' }}
@@ -74,6 +49,8 @@ jobs:
       - name: Publish changed packages
         if: ${{ steps.changed_packages.outputs.packages != '' }}
         shell: bash
+        env:
+          CHANGED_PACKAGES: ${{ steps.changed_packages.outputs.packages }}
         run: |
           set -euo pipefail
           pack_dir="${RUNNER_TEMP}/npm-packages"
@@ -114,4 +91,4 @@ jobs:
 
             echo "Publishing $tarball"
             npm publish "$tarball_path" --provenance
-          done <<< "${{ steps.changed_packages.outputs.packages }}"
+          done <<< "$CHANGED_PACKAGES"
