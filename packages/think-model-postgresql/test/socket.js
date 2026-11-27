@@ -214,7 +214,7 @@ test('release connection', t => {
 });
 
 test('query', async t => {
-  t.plan(5);
+  t.plan(4);
 
   const sqlOption1 = 'string sqloption';
   mock('think-debounce', class {
@@ -238,6 +238,69 @@ test('query', async t => {
   mock.stopAll();
   t.assert.strictEqual(ret, sqlOption1);
 });
+
+for (const fails of [false, true]) {
+  test(`debounced queries release each checkout once on ${fails ? 'failure' : 'success'}`, async t => {
+    const error = new Error('query failed');
+    const calls = [];
+    const released = [];
+    const socket = new Socket({logConnect: false});
+    const client = id => ({
+      query(sql, callback) {
+        calls.push(id);
+        callback(fails ? error : null, sql);
+      },
+      release() {
+        released.push(id);
+      }
+    });
+    const leases = [client('first'), client('second')];
+    socket.pool.connect = async () => leases.shift();
+
+    const [first, second] = await Promise.allSettled([
+      socket.query('SELECT 1'),
+      socket.query('SELECT 1')
+    ]);
+
+    t.assert.deepStrictEqual(calls, ['first']);
+    t.assert.deepStrictEqual(released.sort(), ['first', 'second']);
+    const expected = fails
+      ? {status: 'rejected', reason: error}
+      : {status: 'fulfilled', value: 'SELECT 1'};
+    t.assert.deepStrictEqual(first, expected);
+    t.assert.deepStrictEqual(second, expected);
+  });
+}
+
+for (const fails of [false, true]) {
+  test(`transaction releases the checkout only after ${fails ? 'rollback' : 'commit'}`, async t => {
+    const error = new Error('aborted transaction');
+    const sql = fails ? 'SELECT 2' : 'SELECT 3';
+    const calls = [];
+    const socket = new Socket({logConnect: false});
+    const client = {
+      query(sql, callback) {
+        calls.push(sql);
+        callback(null, sql);
+      },
+      release() {
+        calls.push('release');
+      }
+    };
+    socket.pool.connect = async () => client;
+
+    const transaction = socket.transaction(async connection => {
+      t.assert.strictEqual(connection, client);
+      await socket.query(sql, connection);
+      t.assert.deepStrictEqual(calls, ['BEGIN', sql]);
+      if (fails) throw error;
+      return 'ok';
+    });
+    if (fails) await t.assert.rejects(transaction, error);
+    else t.assert.strictEqual(await transaction, 'ok');
+    t.assert.deepStrictEqual(calls, ['BEGIN', sql, fails ? 'ROLLBACK' : 'COMMIT', 'release']);
+  });
+}
 
 test('query with object', async t => {
   t.plan(2);
