@@ -51,9 +51,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The SQLite v3 adapter requires Node 24.15+, while other packages still test on Node 22.
+      - name: Run tests on Node 22
+        if: matrix.node-version == '22.x'
+        run: |
+          pnpm lint
+          pnpm -r --if-present --filter './packages/**' --filter '!think-cache-memcache' --filter '!think-memcache' --filter '!think-mongo' --filter '!think-model-sqlite' test
+
       - name: Run tests
-        if: matrix.node-version != '24.x'
+        if: matrix.node-version == '26.x'
         run: pnpm lint && pnpm test
+
+      - name: Check SQLite minimum Node versions
+        if: matrix.node-version == '24.x'
+        run: |
+          npm exec --yes --package=node@24.15.0 -- node --test packages/think-model-sqlite/test/index.js
+          npm exec --yes --package=node@25.7.0 -- node --test packages/think-model-sqlite/test/index.js
 
       - name: Run tests with coverage
         if: matrix.node-version == '24.x'
