@@ -26,6 +26,25 @@ const TRANSACTION = {
 const DEFAULT_BUSY_TIMEOUT = 5000;
 const SELECT_SQL_RE = /^\s*(SELECT|PRAGMA|WITH|EXPLAIN)\b/i;
 
+function prepareSingleStatement(connection, sql) {
+  if (typeof sql === 'string' && sql.includes('\0')) {
+    throw new Error('The supplied SQL string contains a null character');
+  }
+  const statement = connection.prepare(sql);
+  // SQLite identifies the statement boundary, including semicolons inside
+  // strings and trigger bodies. Only empty statements and comments may follow.
+  const tail = /(?:[ \t\n\v\f\r;]+|--[^\n]*|\/\*[^]*?(?:\*\/|$))/y;
+  let offset = statement.sourceSQL.length;
+  while (offset < sql.length) {
+    tail.lastIndex = offset;
+    if (!tail.test(sql)) {
+      throw new Error('The supplied SQL string contains more than one statement');
+    }
+    offset = tail.lastIndex;
+  }
+  return statement;
+}
+
 function normalizeRow(row) {
   // Keep ordinary objects, numeric INTEGERs and Buffer BLOBs as in v2.
   return Object.fromEntries(Object.entries(row).map(([key, value]) => {
@@ -182,7 +201,7 @@ class SQLiteSocket {
 
       let promise = null;
       promise = Promise.resolve().then(() => {
-        const stmt = connection.prepare(sqlOptions.sql);
+        const stmt = prepareSingleStatement(connection, sqlOptions.sql);
         if (sqlOptions.execute) {
           const ret = stmt.run();
           return {

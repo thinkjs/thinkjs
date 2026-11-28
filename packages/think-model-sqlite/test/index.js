@@ -39,6 +39,47 @@ test('socket execute & query with node:sqlite', async t => {
   }
 });
 
+test('rejects extra SQL statements before reading or writing', async t => {
+  const socket = createMemorySocket();
+  try {
+    await socket.execute('CREATE TABLE item (name TEXT)');
+    await t.assert.rejects(
+      socket.execute("INSERT INTO item VALUES ('first'); /* comment; */ INSERT INTO item VALUES ('second')"),
+      /more than one statement/
+    );
+    await t.assert.rejects(
+      socket.query("SELECT name FROM item; -- comment;\n INSERT INTO item VALUES ('ignored')"),
+      /more than one statement/
+    );
+    await t.assert.rejects(
+      socket.execute("INSERT INTO item VALUES ('first');\0INSERT INTO item VALUES ('second')"),
+      /null character/
+    );
+    t.assert.deepStrictEqual(await socket.query('SELECT name FROM item'), []);
+  } finally {
+    await socket.close();
+  }
+});
+
+test('permits quoted semicolons, trigger bodies and trailing SQL comments', async t => {
+  const socket = createMemorySocket();
+  try {
+    await socket.execute('CREATE TABLE item (name TEXT)');
+    await socket.execute('CREATE TABLE audit (name TEXT)');
+    await socket.execute(
+      "CREATE TRIGGER log_insert AFTER INSERT ON item BEGIN " +
+      "INSERT INTO audit VALUES (new.name); INSERT INTO audit VALUES ('trigger'); END;"
+    );
+    await socket.execute("INSERT INTO item VALUES ('中文;表情😀');; -- comment;\n /* block; */ ;");
+    t.assert.deepStrictEqual(await socket.query('SELECT name FROM audit ORDER BY rowid; /* trailing'), [
+      {name: '中文;表情😀'},
+      {name: 'trigger'}
+    ]);
+  } finally {
+    await socket.close();
+  }
+});
+
 test('read results keep v2 row, BLOB and integer types', async t => {
   const socket = createMemorySocket();
 
