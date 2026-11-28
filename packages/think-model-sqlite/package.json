@@ -1,6 +1,6 @@
 {
   "name": "think-model-sqlite",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "SQLite adapter for ThinkJS 3.x",
   "scripts": {
     "test": "pnpm run eslint && pnpm run test-cov",

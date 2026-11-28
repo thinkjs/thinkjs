@@ -25,3 +25,7 @@ On older Node versions, stay on `think-model-sqlite@2`. The CommonJS entry,
 adapter configuration (including `path: true` / `':memory:'`) and on-disk
 database path are unchanged. Existing SQLite files can be opened directly
 without importing or migrating them.
+
+Raw `query()` and `execute()` accept one SQL statement per call. For multiple
+statements, call them separately within a transaction. Trailing comments and
+empty statements are allowed.
